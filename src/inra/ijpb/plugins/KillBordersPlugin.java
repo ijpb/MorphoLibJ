@@ -1,18 +1,18 @@
 /**
  * 
  */
-package inra.ijpb.morphology;
+package inra.ijpb.plugins;
 
 import ij.IJ;
 import ij.ImagePlus;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
+import inra.ijpb.morphology.GeodesicReconstruction;
 
 /**
- * Plugin for filling holes (dark holes within bright structures) in 8-bits 
- * grayscale or binary images.
+ * Plugin for removing borders in 8-bits grayscale or binary image.
  */
-public class FillHolesPlugin implements PlugInFilter {
+public class KillBordersPlugin implements PlugInFilter {
 
 	ImagePlus imp;
 	
@@ -35,7 +35,7 @@ public class FillHolesPlugin implements PlugInFilter {
 	 */
 	@Override
 	public void run(ImageProcessor ip) {
-		ImageProcessor recProc = GeodesicReconstruction.fillHoles(ip);
+		ImageProcessor recProc = GeodesicReconstruction.killBorders(ip);
 		String newName = createResultImageName(imp);
 		
 		ImagePlus resultImage = new ImagePlus(newName, recProc);
@@ -43,6 +43,6 @@ public class FillHolesPlugin implements PlugInFilter {
 	}
 
 	private static String createResultImageName(ImagePlus baseImage) {
-		return baseImage.getShortTitle() + "-fillHoles";
+		return baseImage.getShortTitle() + "-killBorders";
 	}
 }

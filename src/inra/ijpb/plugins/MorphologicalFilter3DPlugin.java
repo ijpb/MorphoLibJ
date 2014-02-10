@@ -1,7 +1,7 @@
 /**
  * 
  */
-package inra.ijpb.morphology;
+package inra.ijpb.plugins;
 
 import ij.IJ;
 import ij.ImagePlus;
@@ -11,6 +11,8 @@ import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
+import inra.ijpb.morphology.Morphology;
+import inra.ijpb.morphology.Strel3D;
 import inra.ijpb.morphology.Morphology.Operation;
 import inra.ijpb.util.IJUtils;
 

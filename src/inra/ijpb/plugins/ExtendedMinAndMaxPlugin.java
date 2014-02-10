@@ -1,4 +1,4 @@
-package inra.ijpb.morphology;
+package inra.ijpb.plugins;
 
 
 import ij.IJ;
@@ -9,6 +9,7 @@ import ij.plugin.filter.ExtendedPlugInFilter;
 import ij.plugin.filter.PlugInFilterRunner;
 import ij.process.ImageProcessor;
 import ij.process.ByteProcessor;
+import inra.ijpb.morphology.MinimaAndMaxima;
 
 import java.awt.AWTEvent;
 

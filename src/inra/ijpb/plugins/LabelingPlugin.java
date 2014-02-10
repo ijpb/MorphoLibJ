@@ -1,7 +1,7 @@
 /**
  * 
  */
-package inra.ijpb.morphology;
+package inra.ijpb.plugins;
 
 import ij.IJ;
 import ij.ImagePlus;

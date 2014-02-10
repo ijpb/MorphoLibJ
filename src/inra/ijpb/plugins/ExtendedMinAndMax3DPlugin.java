@@ -1,4 +1,4 @@
-package inra.ijpb.morphology;
+package inra.ijpb.plugins;
 
 
 import ij.IJ;
@@ -6,6 +6,8 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
+import inra.ijpb.morphology.MinimaAndMaxima;
+import inra.ijpb.morphology.MinimaAndMaxima3D;
 import inra.ijpb.util.IJUtils;
 
 /**
@@ -16,14 +18,14 @@ import inra.ijpb.util.IJUtils;
  * @author David Legland
  *
  */
-public class RegionalMinAndMax3DPlugin implements PlugIn {
+public class ExtendedMinAndMax3DPlugin implements PlugIn {
 
 	/**
-	 * A customized enumeration to choose between regional minima or maxima.
+	 * A customized enumeration to choose between extended minima or maxima.
 	 */
 	public enum Operation {
-		REGIONAL_MAXIMA("Regional Maxima", "rmax"),
-		REGIONAL_MINIMA("Regional Minima", "rmin");
+		EXTENDED_MAXIMA("Extended Maxima", "emax"),
+		EXTENDED_MINIMA("Extended Minima", "emin");
 		
 		private final String label;
 		private final String suffix;
@@ -33,11 +35,21 @@ public class RegionalMinAndMax3DPlugin implements PlugIn {
 			this.suffix = suffix;
 		}
 		
-		public ImageStack apply(ImageStack image, int connectivity) {
-			if (this == REGIONAL_MAXIMA)
-				return MinimaAndMaxima3D.regionalMaxima(image, connectivity);
-			if (this == REGIONAL_MINIMA)
-				return MinimaAndMaxima3D.regionalMinima(image, connectivity);
+		public ImageStack apply(ImageStack image, int dynamic) {
+			if (this == EXTENDED_MAXIMA)
+				return MinimaAndMaxima3D.extendedMaxima(image, dynamic);
+			if (this == EXTENDED_MINIMA)
+				return MinimaAndMaxima3D.extendedMinima(image, dynamic);
+			
+			throw new RuntimeException(
+					"Unable to process the " + this + " morphological operation");
+		}
+		
+		public ImageStack apply(ImageStack image, int dynamic, int connectivity) {
+			if (this == EXTENDED_MAXIMA)
+				return MinimaAndMaxima3D.extendedMaxima(image, dynamic, connectivity);
+			if (this == EXTENDED_MINIMA)
+				return MinimaAndMaxima3D.extendedMinima(image, dynamic, connectivity);
 			
 			throw new RuntimeException(
 					"Unable to process the " + this + " morphological operation");
@@ -92,25 +104,48 @@ public class RegionalMinAndMax3DPlugin implements PlugIn {
 		}
 		
 		ImageStack stack = imagePlus.getStack();
+		int sizeX = stack.getWidth();
+		int sizeY = stack.getHeight();
+		int sizeZ = stack.getSize();
+		boolean isGray8 = stack.getBitDepth() == 8;
+		double minValue, maxValue;
+		if (isGray8) {
+			minValue = 1;
+			maxValue = 255;
+		} else {
+			minValue = Double.MAX_VALUE;
+			maxValue = Double.MAX_VALUE;
+			for (int z = 0; z < sizeZ; z++) {
+				for (int y = 0; y < sizeY; y++) {
+					for (int x = 0; x < sizeX; x++) {
+						double val = stack.getVoxel(x, y, z);
+						minValue = Math.min(minValue, val);
+						maxValue = Math.max(maxValue, val);
+					}
+				}
+			}
+		}
 		
 		// Create the configuration dialog
 		GenericDialog gd = new GenericDialog("Regional Minima and Maxima");
 		gd.addChoice("Operation", Operation.getAllLabels(), 
-				Operation.REGIONAL_MINIMA.label);
+				Operation.EXTENDED_MINIMA.label);
+		gd.addSlider("Dynamic", minValue, maxValue, 10);		
 		gd.addChoice("Connectivity", connectivityLabels, connectivityLabels[0]);
 //		gd.addHelp("http://imagejdocu.tudor.lu/doku.php?id=plugin:morphology:fast_morphological_filters:start");
         gd.showDialog();
         if (gd.wasCanceled())
         	return;
         
-		// extract chosen parameters
-		Operation op = Operation.fromLabel(gd.getNextChoice());
-		int conn = connectivityValues[gd.getNextChoiceIndex()];
-        
 		long t0 = System.currentTimeMillis();
 		
-		ImageStack result = op.apply(stack, conn);
-
+		// extract chosen parameters
+		Operation op = Operation.fromLabel(gd.getNextChoice());
+		int dynamic = (int) gd.getNextNumber();
+		int conn = connectivityValues[gd.getNextChoiceIndex()];
+        
+		ImageStack result = op.apply(stack, dynamic, conn);
+		
 		String newName = createResultImageName(imagePlus, op);
 		ImagePlus resultPlus = new ImagePlus(newName, result);
 		resultPlus.show();

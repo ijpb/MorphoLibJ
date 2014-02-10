@@ -1,4 +1,4 @@
-package inra.ijpb.binary;
+package inra.ijpb.plugins;
 
 import ij.IJ;
 import ij.ImagePlus;

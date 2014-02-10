@@ -1,14 +1,15 @@
 /**
  * 
  */
-package inra.ijpb.morphology;
+package inra.ijpb.plugins;
 
 import ij.IJ;
 import ij.ImagePlus;
+import ij.ImageStack;
 import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
-import ij.process.ImageProcessor;
+import inra.ijpb.morphology.GeodesicReconstruction3D;
 import inra.ijpb.util.IJUtils;
 
 /**
@@ -19,7 +20,7 @@ import inra.ijpb.util.IJUtils;
  * reconstruction, an the mask image, used to constrain the reconstruction.
  * The connectivity can also be specified.
  */
-public class GeodesicReconstructionPlugin implements PlugIn {
+public class GeodesicReconstruction3DPlugin implements PlugIn {
 
 	/**
 	 * A pre-defined set of operations for geodesic reconstruction.
@@ -34,11 +35,11 @@ public class GeodesicReconstructionPlugin implements PlugIn {
 			this.label = label;
 		}
 		
-		public ImageProcessor applyTo(ImageProcessor marker, ImageProcessor mask, int conn) {
+		public ImageStack applyTo(ImageStack marker, ImageStack mask, int conn) {
 			if (this == BY_DILATION)
-				return GeodesicReconstruction.reconstructByDilation(marker, mask, conn);
+				return GeodesicReconstruction3D.reconstructByDilation(marker, mask, conn);
 			if (this == BY_EROSION)
-				return GeodesicReconstruction.reconstructByErosion(marker, mask, conn);
+				return GeodesicReconstruction3D.reconstructByErosion(marker, mask, conn);
 						
 			throw new RuntimeException(
 					"Unable to process the " + this + " operation");
@@ -76,16 +77,16 @@ public class GeodesicReconstructionPlugin implements PlugIn {
 	};
 
 	/**
-	 * A pre-defined set of connectivities
+	 * A pre-defined set of 3D connectivities
 	 */
-	enum Conn2D {
-		C4("4", 4),
-		C8("8", 8);
+	enum Conn3D {
+		C6("6", 6),
+		C26("26", 26);
 		
 		private final String label;
 		private final int value;
 		
-		private Conn2D(String label, int value) {
+		private Conn3D(String label, int value) {
 			this.label = label;
 			this.value = value;
 		}
@@ -99,11 +100,11 @@ public class GeodesicReconstructionPlugin implements PlugIn {
 		}
 		
 		public static String[] getAllLabels(){
-			int n = Conn2D.values().length;
+			int n = Conn3D.values().length;
 			String[] result = new String[n];
 			
 			int i = 0;
-			for (Conn2D op : Conn2D.values())
+			for (Conn3D op : Conn3D.values())
 				result[i++] = op.label;
 			
 			return result;
@@ -113,10 +114,10 @@ public class GeodesicReconstructionPlugin implements PlugIn {
 		 * Determines the operation type from its label.
 		 * @throws IllegalArgumentException if label is not recognized.
 		 */
-		public static Conn2D fromLabel(String opLabel) {
+		public static Conn3D fromLabel(String opLabel) {
 			if (opLabel != null)
 				opLabel = opLabel.toLowerCase();
-			for (Conn2D op : Conn2D.values()) {
+			for (Conn3D op : Conn3D.values()) {
 				String cmp = op.label.toLowerCase();
 				if (cmp.equals(opLabel))
 					return op;
@@ -125,7 +126,6 @@ public class GeodesicReconstructionPlugin implements PlugIn {
 		}
 	};
 
-	
 	/* (non-Javadoc)
 	 * @see ij.plugin.PlugIn#run(java.lang.String)
 	 */
@@ -155,8 +155,8 @@ public class GeodesicReconstructionPlugin implements PlugIn {
 				Operation.getAllLabels(), 
 				Operation.BY_DILATION.label);
 		gd.addChoice("Connectivity", 
-				Conn2D.getAllLabels(), 
-				Conn2D.C4.label);
+				Conn3D.getAllLabels(), 
+				Conn3D.C6.label);
 		gd.showDialog();
 		
 		if (gd.wasCanceled())
@@ -168,26 +168,28 @@ public class GeodesicReconstructionPlugin implements PlugIn {
 		int maskImageIndex = gd.getNextChoiceIndex();
 		ImagePlus maskImage = WindowManager.getImage(maskImageIndex + 1);
 		Operation op = Operation.fromLabel(gd.getNextChoice());
-		int conn = Conn2D.fromLabel(gd.getNextChoice()).getValue();
-		
+		int conn = Conn3D.fromLabel(gd.getNextChoice()).getValue();
+
 		// Extract image procesors
-		ImageProcessor markerProc = markerImage.getProcessor();
-		ImageProcessor maskProc = maskImage.getProcessor();
+		ImageStack markerProc = markerImage.getStack();
+		ImageStack maskProc = maskImage.getStack();
 		
 		long t0 = System.currentTimeMillis();
 		
 		// Compute geodesic reconstruction
-		ImageProcessor recProc = op.applyTo(markerProc, maskProc, conn);
+		ImageStack recProc = op.applyTo(markerProc, maskProc, conn);
 		
 		// Keep same color model
 		recProc.setColorModel(maskProc.getColorModel());
 
 		// create resulting image
-		String newName = createResultImageName(markerImage);
+		String newName = createResultImageName(maskImage);
 		ImagePlus resultImage = new ImagePlus(newName, recProc);
 		resultImage.copyScale(maskImage);
 		resultImage.show();
 		
+		resultImage.setSlice(maskImage.getSlice());
+
 		long t1 = System.currentTimeMillis();
 		IJUtils.showElapsedTime(op.toString(), t1 - t0, markerImage);
 	}

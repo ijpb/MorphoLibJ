@@ -1,7 +1,7 @@
 /**
  * 
  */
-package inra.ijpb.morphology;
+package inra.ijpb.plugins;
 
 import ij.IJ;
 import ij.ImagePlus;
@@ -9,6 +9,7 @@ import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
+import inra.ijpb.morphology.MinimaAndMaxima;
 
 /**
  * Plugin for imposing minima or maxima on a grayscale image, using a specific

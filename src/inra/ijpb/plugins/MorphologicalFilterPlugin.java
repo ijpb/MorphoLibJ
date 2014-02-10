@@ -1,4 +1,4 @@
-package inra.ijpb.morphology;
+package inra.ijpb.plugins;
 
 
 import java.awt.AWTEvent;
@@ -11,6 +11,8 @@ import ij.plugin.filter.ExtendedPlugInFilter;
 import ij.plugin.filter.PlugInFilterRunner;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
+import inra.ijpb.morphology.Morphology;
+import inra.ijpb.morphology.Strel;
 import inra.ijpb.morphology.Morphology.Operation;
 
 /**

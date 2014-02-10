@@ -1,6 +1,4 @@
-package inra.ijpb.filter.border;
-
-
+package inra.ijpb.plugins;
 
 import ij.IJ;
 import ij.ImagePlus;

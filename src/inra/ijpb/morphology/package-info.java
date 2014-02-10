@@ -14,8 +14,8 @@
  * <p>The class {@link inra.ijpb.morphology.GeodesicReconstruction} performs 
  * morphological geodesic reconstruction of a grayscale marker image within a 
  * grayscale mask image. This class is used by the two plugins 
- * {@link inra.ijpb.morphology.FillHolesPlugin}
- * and {@link inra.ijpb.morphology.KillBordersPlugin}.</p>
+ * {@link inra.ijpb.plugins.FillHolesPlugin}
+ * and {@link inra.ijpb.plugins.KillBordersPlugin}.</p>
  */
 package inra.ijpb.morphology;
 

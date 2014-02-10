@@ -1,4 +1,4 @@
-package inra.ijpb.binary.distmap;
+package inra.ijpb.plugins;
 
 import ij.ImagePlus;
 import ij.gui.DialogListener;
@@ -6,6 +6,11 @@ import ij.gui.GenericDialog;
 import ij.plugin.filter.ExtendedPlugInFilter;
 import ij.plugin.filter.PlugInFilterRunner;
 import ij.process.ImageProcessor;
+import inra.ijpb.binary.distmap.ChamferDistance;
+import inra.ijpb.binary.distmap.ChamferDistance3x3Float;
+import inra.ijpb.binary.distmap.ChamferDistance3x3Short;
+import inra.ijpb.binary.distmap.ChamferDistance5x5Float;
+import inra.ijpb.binary.distmap.ChamferDistance5x5Short;
 
 import java.awt.AWTEvent;
 
