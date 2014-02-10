@@ -54,9 +54,6 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 						</goals>
 					</execution>
 				</executions>
-				<configuration>
-					<mainClass>Process_Pixels</mainClass>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
