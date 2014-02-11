@@ -15,7 +15,7 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<artifactId>ijpb-plugins</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 
-	<name>plugins/ijpb-plugins.jar</name>
+	<name>plugins/ijpb_plugins.jar</name>
 	<description>Plugins from the IJPB institute for morphology and segmentation</description>
 
 	<dependencies>
