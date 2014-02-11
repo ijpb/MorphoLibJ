@@ -34,7 +34,7 @@ public class MinimaAndMaxima3D {
 	 * The default connectivity used by reconstruction algorithms in 3D images.
 	 */
 	public final static int DEFAULT_CONNECTIVITY_3D = 6;
-	
+
 	/**
 	 * Computes the regional maxima in grayscale image <code>image</code>, 
 	 * using the default connectivity.
@@ -55,7 +55,7 @@ public class MinimaAndMaxima3D {
 		else
 			return regionalMaximaInt(stack, conn);
 	}
-	
+
 	/**
 	 * Computes the regional maxima in grayscale image <code>image</code>, 
 	 * using the specified connectivity and binary mask.
@@ -71,8 +71,8 @@ public class MinimaAndMaxima3D {
 		else
 			return regionalMaximaInt( stack, conn, mask );
 	}
-	
-	
+
+
 	/**
 	 * Dispatching method depending on specified connectivity for integer images.
 	 */
@@ -91,8 +91,8 @@ public class MinimaAndMaxima3D {
 					"Unknown connectivity argument: " + conn);
 		}
 	}
-	
-	
+
+
 	/**
 	 * Dispatching method depending on specified connectivity for integer images.
 	 */
@@ -108,20 +108,20 @@ public class MinimaAndMaxima3D {
 					"Unknown connectivity argument: " + conn);
 		}
 	}
-	
+
 	/**
 	 * Computes regional maxima in grayscale image <code>image</code>, using
 	 * flood-filling-like algorithm with 4 connectivity.
 	 */
 	private final static ImageStack regionalMaximaIntC6(ImageStack stack) {
 		ImageStack result = stack.duplicate();
-		
+
 		int sizeX = stack.getWidth();
 		int sizeY = stack.getHeight();
 		int sizeZ = stack.getSize();
 
 		int nonMaximaMarker = 0;
-		
+
 		for (int z = 0; z < sizeZ; z++) {
 			for (int y = 0; y < sizeY; y++) {
 				for (int x = 0; x < sizeX; x++) {
@@ -157,16 +157,16 @@ public class MinimaAndMaxima3D {
 				}
 			}
 		}
-		
+
 		// Ensure result is byte stack
 		if (result.getBitDepth() != 8)
 			result = convertToByteStack(result);
-		
+
 		binariseMaxima(result);
-		
+
 		return result;
 	}
-	
+
 	/**
 	 * Computes regional maxima in grayscale image <code>image</code>, using
 	 * flood-filling-like algorithm with 4 connectivity.
@@ -176,13 +176,13 @@ public class MinimaAndMaxima3D {
 			ImageStack mask ) 
 	{
 		ImageStack result = stack.duplicate();
-		
+
 		int sizeX = stack.getWidth();
 		int sizeY = stack.getHeight();
 		int sizeZ = stack.getSize();
 
 		int nonMaximaMarker = 0;
-		
+
 		for (int z = 0; z < sizeZ; z++) {
 			for (int y = 0; y < sizeY; y++) {
 				for (int x = 0; x < sizeX; x++) {
@@ -198,19 +198,19 @@ public class MinimaAndMaxima3D {
 					int maxVal = 0;
 					if ( x > 0 && mask.getVoxel( x-1, y, z ) != 0 ) 
 						maxVal = max(maxVal, (int) stack.getVoxel(x-1, y, z)); 
-					
+
 					if (x < sizeX - 1 && mask.getVoxel( x+1, y, z ) != 0 ) 
 						maxVal = max(maxVal, (int) stack.getVoxel(x+1, y, z));
-					
+
 					if (y > 0 && mask.getVoxel( x, y-1, z ) != 0 )
 						maxVal = max(maxVal, (int) stack.getVoxel(x, y-1, z));
-					
+
 					if (y < sizeY - 1 && mask.getVoxel( x, y+1, z ) != 0 ) 
 						maxVal = max(maxVal, (int) stack.getVoxel(x, y+1, z));
-					
+
 					if (z > 0 && mask.getVoxel( x, y, z-1 ) != 0 ) 
 						maxVal = max(maxVal, (int) stack.getVoxel(x, y, z-1));
-					
+
 					if (z < sizeZ - 1 && mask.getVoxel( x, y, z+1 ) != 0 ) 
 						maxVal = max(maxVal, (int) stack.getVoxel(x, y, z+1));  
 
@@ -223,16 +223,16 @@ public class MinimaAndMaxima3D {
 				}
 			}
 		}
-		
+
 		// Ensure result is byte stack
 		if (result.getBitDepth() != 8)
 			result = convertToByteStack(result);
-		
+
 		binariseMaxima(result);
-		
+
 		return result;
 	}
-	
+
 
 	/**
 	 * Computes regional maxima in grayscale image <code>image</code>, using
@@ -240,13 +240,13 @@ public class MinimaAndMaxima3D {
 	 */
 	private final static ImageStack regionalMaximaIntC26(ImageStack stack) {
 		ImageStack result = stack.duplicate();
-		
+
 		int sizeX = stack.getWidth();
 		int sizeY = stack.getHeight();
 		int sizeZ = stack.getSize();
 
 		int nonMaximaMarker = 0;
-		
+
 		for (int z = 0; z < sizeZ; z++) {
 			for (int y = 0; y < sizeY; y++) {
 				for (int x = 0; x < sizeX; x++) {
@@ -278,9 +278,9 @@ public class MinimaAndMaxima3D {
 		// Ensure result is byte stack
 		if (result.getBitDepth() != 8)
 			result = convertToByteStack(result);
-		
+
 		binariseMaxima(result);
-		
+
 		return result;					
 	}
 
@@ -293,20 +293,20 @@ public class MinimaAndMaxima3D {
 			ImageStack mask ) 
 	{
 		ImageStack result = stack.duplicate();
-		
+
 		int sizeX = stack.getWidth();
 		int sizeY = stack.getHeight();
 		int sizeZ = stack.getSize();
 
 		int nonMaximaMarker = 0;
-		
+
 		for (int z = 0; z < sizeZ; z++) {
 			for (int y = 0; y < sizeY; y++) {
 				for (int x = 0; x < sizeX; x++) {
 					// check mask
 					if ( mask.getVoxel(x, y, z) == 0 )
 						continue;
-					
+
 					// current value
 					int value = (int) result.getVoxel(x, y, z);
 					if (value == nonMaximaMarker)
@@ -336,13 +336,13 @@ public class MinimaAndMaxima3D {
 		// Ensure result is byte stack
 		if (result.getBitDepth() != 8)
 			result = convertToByteStack(result);
-		
+
 		binariseMaxima(result);
-		
+
 		return result;					
 	}
-	
-	
+
+
 	/**
 	 * Dispatching method depending on specified connectivity for float images.
 	 */
@@ -358,7 +358,7 @@ public class MinimaAndMaxima3D {
 					"Unknown connectivity argument: " + conn);
 		}
 	}
-	
+
 	/**
 	 * Dispatching method depending on specified connectivity for float images.
 	 */
@@ -377,8 +377,8 @@ public class MinimaAndMaxima3D {
 					"Unknown connectivity argument: " + conn);
 		}
 	}
-	
-	
+
+
 	/**
 	 * Computes regional maxima in grayscale image <code>image</code>, using
 	 * flood-filling-like algorithm with 4 connectivity.
@@ -388,21 +388,21 @@ public class MinimaAndMaxima3D {
 			ImageStack mask ) 
 	{
 		ImageStack result = stack.duplicate();
-		
+
 		int sizeX = stack.getWidth();
 		int sizeY = stack.getHeight();
 		int sizeZ = stack.getSize();
 
 		float nonMaximaMarker = 0;
-	
+
 		for (int z = 0; z < sizeZ; z++) {
 			for (int y = 0; y < sizeY; y++) {
 				for (int x = 0; x < sizeX; x++) {
-					
+
 					// check mask
 					if ( mask.getVoxel(x, y, z) == 0 )
 						continue;
-					
+
 					// current value
 					double value = result.getVoxel(x, y, z);
 					if (value == nonMaximaMarker)
@@ -412,19 +412,19 @@ public class MinimaAndMaxima3D {
 					double maxVal = 0;
 					if ( x > 0 && mask.getVoxel( x-1, y, z ) != 0 ) 
 						maxVal = max(maxVal, stack.getVoxel(x-1, y, z)); 
-					
+
 					if (x < sizeX - 1 && mask.getVoxel( x+1, y, z ) != 0 ) 
 						maxVal = max(maxVal, stack.getVoxel(x+1, y, z));
-					
+
 					if (y > 0 && mask.getVoxel( x, y-1, z ) != 0 )
 						maxVal = max(maxVal, stack.getVoxel(x, y-1, z));
-					
+
 					if (y < sizeY - 1 && mask.getVoxel( x, y+1, z ) != 0 ) 
 						maxVal = max(maxVal, stack.getVoxel(x, y+1, z));
-					
+
 					if (z > 0 && mask.getVoxel( x, y, z-1 ) != 0 ) 
 						maxVal = max(maxVal, stack.getVoxel(x, y, z-1));
-					
+
 					if (z < sizeZ - 1 && mask.getVoxel( x, y, z+1 ) != 0 ) 
 						maxVal = max(maxVal, stack.getVoxel(x, y, z+1)); 
 
@@ -437,29 +437,29 @@ public class MinimaAndMaxima3D {
 				}
 			}
 		}
-		
+
 		// Ensure result is byte stack
 		if (result.getBitDepth() != 8)
 			result = convertToByteStack(result);
 		binariseMaxima(result);
-		
+
 		return result;
 	}
-	
-	
+
+
 	/**
 	 * Computes regional maxima in grayscale image <code>image</code>, using
 	 * flood-filling-like algorithm with 4 connectivity.
 	 */
 	private final static ImageStack regionalMaximaFloatC6(ImageStack stack) {
 		ImageStack result = stack.duplicate();
-		
+
 		int sizeX = stack.getWidth();
 		int sizeY = stack.getHeight();
 		int sizeZ = stack.getSize();
 
 		float nonMaximaMarker = 0;
-	
+
 		for (int z = 0; z < sizeZ; z++) {
 			for (int y = 0; y < sizeY; y++) {
 				for (int x = 0; x < sizeX; x++) {
@@ -495,16 +495,16 @@ public class MinimaAndMaxima3D {
 				}
 			}
 		}
-		
+
 		// Ensure result is byte stack
 		if (result.getBitDepth() != 8)
 			result = convertToByteStack(result);
 		binariseMaxima(result);
-		
+
 		return result;
 	}
 
-	
+
 	/**
 	 * Computes regional maxima in grayscale image <code>image</code>, using
 	 * flood-filling-like algorithm with 8 connectivity.
@@ -524,11 +524,11 @@ public class MinimaAndMaxima3D {
 		for (int z = 0; z < sizeZ; z++) {
 			for (int y = 0; y < sizeY; y++) {
 				for (int x = 0; x < sizeX; x++) {
-					
+
 					// check mask
 					if ( mask.getVoxel(x, y, z) == 0 )
 						continue;
-					
+
 					// current value
 					double value = result.getVoxel(x, y, z);
 					if (value == nonMaximaMarker)
@@ -559,10 +559,10 @@ public class MinimaAndMaxima3D {
 		if (result.getBitDepth() != 8)
 			result = convertToByteStack(result);
 		binariseMaxima(result);
-		
+
 		return result;					
 	}
-	
+
 	/**
 	 * Computes regional maxima in grayscale image <code>image</code>, using
 	 * flood-filling-like algorithm with 8 connectivity.
@@ -608,7 +608,7 @@ public class MinimaAndMaxima3D {
 		if (result.getBitDepth() != 8)
 			result = convertToByteStack(result);
 		binariseMaxima(result);
-		
+
 		return result;					
 	}
 
@@ -621,7 +621,7 @@ public class MinimaAndMaxima3D {
 		int sizeX = stack.getWidth();
 		int sizeY = stack.getHeight();
 		int sizeZ = stack.getSize();
-		
+
 		for (int z = 0; z < sizeZ; z++) {
 			for (int y = 0; y < sizeY; y++) {
 				for (int x = 0; x < sizeX; x++) {
@@ -631,7 +631,7 @@ public class MinimaAndMaxima3D {
 			}
 		}
 	}
-	
+
 	/**
 	 * Computes the regional maxima in grayscale image <code>image</code>, 
 	 * using the specified connectivity, and a slower algorithm (used for testing).
@@ -646,12 +646,12 @@ public class MinimaAndMaxima3D {
 
 		ImageStack mask = stack.duplicate();
 		addValue(mask, 1);
-		
+
 		GeodesicReconstruction3DAlgo algo = new GeodesicReconstructionByDilation3DGray8Scanning(conn);
 		ImageStack rec = algo.applyTo(stack, mask);
-		
+
 		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
-		
+
 		for (int z = 0; z < sizeZ; z++) {
 			for (int y = 0; y < sizeY; y++) {
 				for (int x = 0; x < sizeX; x++) {
@@ -680,12 +680,12 @@ public class MinimaAndMaxima3D {
 	 */
 	public final static ImageStack regionalMinima(ImageStack stack,
 			int conn) {
-	if (stack.getBitDepth() == 32)
-		return regionalMinimaFloat(stack, conn);
-	else
-		return regionalMinimaInt(stack, conn);
+		if (stack.getBitDepth() == 32)
+			return regionalMinimaFloat(stack, conn);
+		else
+			return regionalMinimaInt(stack, conn);
 	}
-	
+
 	/**
 	 * Computes the regional minima in grayscale image <code>image</code>, 
 	 * using the specified connectivity.
@@ -701,7 +701,7 @@ public class MinimaAndMaxima3D {
 		else
 			return regionalMinimaInt( stack, conn, mask );
 	}
-	
+
 
 	/**
 	 * Dispatching method depending on specified connectivity for integer images.
@@ -718,7 +718,7 @@ public class MinimaAndMaxima3D {
 					"Unknown connectivity argument: " + conn);
 		}
 	}
-	
+
 	/**
 	 * Dispatching method depending on specified connectivity for integer images.
 	 */
@@ -737,8 +737,8 @@ public class MinimaAndMaxima3D {
 					"Unknown connectivity argument: " + conn);
 		}
 	}
-	
-	
+
+
 	/**
 	 * Dispatching method depending on specified connectivity for float images.
 	 */
@@ -754,7 +754,7 @@ public class MinimaAndMaxima3D {
 					"Unknown connectivity argument: " + conn);
 		}
 	}
-	
+
 	/**
 	 * Dispatching method depending on specified connectivity for float images.
 	 */
@@ -780,13 +780,13 @@ public class MinimaAndMaxima3D {
 	 */
 	private final static ImageStack regionalMinimaIntC6(ImageStack stack) {
 		ImageStack result = stack.duplicate();
-		
+
 		int sizeX = stack.getWidth();
 		int sizeY = stack.getHeight();
 		int sizeZ = stack.getSize();
 
 		int nonMinimaMarker = 255;
-		
+
 		for (int z = 0; z < sizeZ; z++) {
 			for (int y = 0; y < sizeY; y++) {
 				for (int x = 0; x < sizeX; x++) {
@@ -794,7 +794,7 @@ public class MinimaAndMaxima3D {
 					int value = (int) result.getVoxel(x, y, z);
 					if (value == nonMinimaMarker)
 						continue;
-					
+
 					// maximum value in 4-neighborhood
 					int minVal = Integer.MAX_VALUE;
 					if (x > 0) 
@@ -819,7 +819,7 @@ public class MinimaAndMaxima3D {
 				}
 			}
 		}
-		
+
 		// Convert result to binary ByteProcessor
 		if (result.getBitDepth() != 8)
 			result = convertToByteStack(result);
@@ -827,7 +827,7 @@ public class MinimaAndMaxima3D {
 
 		return result;
 	}
-	
+
 	/**
 	 * Computes regional minima in grayscale image <code>image</code>, using
 	 * flood-filling-like algorithm with 4 connectivity.
@@ -837,13 +837,13 @@ public class MinimaAndMaxima3D {
 			ImageStack mask ) 
 	{
 		ImageStack result = stack.duplicate();
-		
+
 		int sizeX = stack.getWidth();
 		int sizeY = stack.getHeight();
 		int sizeZ = stack.getSize();
 
 		int nonMinimaMarker = 255;
-		
+
 		for (int z = 0; z < sizeZ; z++) {
 			for (int y = 0; y < sizeY; y++) {
 				for (int x = 0; x < sizeX; x++) {
@@ -854,24 +854,24 @@ public class MinimaAndMaxima3D {
 					int value = (int) result.getVoxel(x, y, z);
 					if (value == nonMinimaMarker)
 						continue;
-					
+
 					// maximum value in 4-neighborhood
 					int minVal = Integer.MAX_VALUE;
 					if (x > 0 && mask.getVoxel( x-1, y, z ) != 0 )
 						minVal = min(minVal, (int)stack.getVoxel(x-1, y, z)); 
-					
+
 					if (x < sizeX - 1 && mask.getVoxel( x+1, y, z ) != 0 ) 
 						minVal = min(minVal, (int)stack.getVoxel(x+1, y, z));
-					
+
 					if (y > 0 && mask.getVoxel( x, y-1, z ) != 0 ) 
 						minVal = min(minVal, (int)stack.getVoxel(x, y-1, z)); 
-					
+
 					if (y < sizeY - 1 && mask.getVoxel( x, y+1, z ) != 0 )
 						minVal = min(minVal, (int)stack.getVoxel(x, y+1, z));
-					
+
 					if (z > 0 && mask.getVoxel( x, y, z-1 ) != 0 )
 						minVal = min(minVal, (int)stack.getVoxel(x, y, z-1));
-					
+
 					if (z < sizeZ - 1 && mask.getVoxel( x, y, z+1 ) != 0 )
 						minVal = min(minVal, (int)stack.getVoxel(x, y, z+1)); 
 
@@ -884,7 +884,7 @@ public class MinimaAndMaxima3D {
 				}
 			}
 		}
-		
+
 		// Convert result to binary ByteProcessor
 		if (result.getBitDepth() != 8)
 			result = convertToByteStack(result);
@@ -892,7 +892,7 @@ public class MinimaAndMaxima3D {
 
 		return result;
 	}
-	
+
 
 	/**
 	 * Computes regional minima in grayscale image <code>image</code>, using
@@ -906,7 +906,7 @@ public class MinimaAndMaxima3D {
 		int sizeZ = stack.getSize();
 
 		int nonMinimaMarker = 255;
-		
+
 		for (int z = 0; z < sizeZ; z++) {
 			for (int y = 0; y < sizeY; y++) {
 				for (int x = 0; x < sizeX; x++) {
@@ -934,15 +934,15 @@ public class MinimaAndMaxima3D {
 				}
 			}
 		}
-		
+
 		// Convert result to binary ByteProcessor
 		if (result.getBitDepth() != 8)
 			result = convertToByteStack(result);
 		binariseMinima(result);
-		
+
 		return result;
 	}
-	
+
 	/**
 	 * Computes regional minima in grayscale image <code>image</code>, using
 	 * flood-filling-like algorithm with 8 connectivity.
@@ -958,7 +958,7 @@ public class MinimaAndMaxima3D {
 		int sizeZ = stack.getSize();
 
 		int nonMinimaMarker = 255;
-		
+
 		for (int z = 0; z < sizeZ; z++) {
 			for (int y = 0; y < sizeY; y++) {
 				for (int x = 0; x < sizeX; x++) {
@@ -991,15 +991,15 @@ public class MinimaAndMaxima3D {
 				}
 			}
 		}
-		
+
 		// Convert result to binary ByteProcessor
 		if (result.getBitDepth() != 8)
 			result = convertToByteStack(result);
 		binariseMinima(result);
-		
+
 		return result;
 	}
-	
+
 
 	/**
 	 * Computes regional minima in float image <code>image</code>, using
@@ -1007,13 +1007,13 @@ public class MinimaAndMaxima3D {
 	 */
 	private final static ImageStack regionalMinimaFloatC6(ImageStack stack) {
 		ImageStack result = stack.duplicate();
-		
+
 		int sizeX = stack.getWidth();
 		int sizeY = stack.getHeight();
 		int sizeZ = stack.getSize();
-	
+
 		float nonMinimaMarker = Float.MAX_VALUE;
-		
+
 		for (int z = 0; z < sizeZ; z++) {
 			for (int y = 0; y < sizeY; y++) {
 				for (int x = 0; x < sizeX; x++) {
@@ -1053,7 +1053,7 @@ public class MinimaAndMaxima3D {
 
 		return result;
 	}
-	
+
 	/**
 	 * Computes regional minima in float image <code>image</code>, using
 	 * flood-filling-like algorithm with 4 connectivity.
@@ -1063,13 +1063,13 @@ public class MinimaAndMaxima3D {
 			ImageStack mask ) 
 	{
 		ImageStack result = stack.duplicate();
-		
+
 		int sizeX = stack.getWidth();
 		int sizeY = stack.getHeight();
 		int sizeZ = stack.getSize();
-	
+
 		float nonMinimaMarker = Float.MAX_VALUE;
-		
+
 		for (int z = 0; z < sizeZ; z++) {
 			for (int y = 0; y < sizeY; y++) {
 				for (int x = 0; x < sizeX; x++) {
@@ -1085,19 +1085,19 @@ public class MinimaAndMaxima3D {
 					double minVal = value;
 					if (x > 0 && mask.getVoxel( x-1, y, z ) != 0 )
 						minVal = min(minVal, stack.getVoxel(x-1, y, z)); 
-					
+
 					if (x < sizeX - 1 && mask.getVoxel( x+1, y, z ) != 0 ) 
 						minVal = min(minVal, stack.getVoxel(x+1, y, z));
-					
+
 					if (y > 0 && mask.getVoxel( x, y-1, z ) != 0 ) 
 						minVal = min(minVal, stack.getVoxel(x, y-1, z)); 
-					
+
 					if (y < sizeY - 1 && mask.getVoxel( x, y+1, z ) != 0 )
 						minVal = min(minVal, stack.getVoxel(x, y+1, z));
-					
+
 					if (z > 0 && mask.getVoxel( x, y, z-1 ) != 0 )
 						minVal = min(minVal, stack.getVoxel(x, y, z-1));
-					
+
 					if (z < sizeZ - 1 && mask.getVoxel( x, y, z+1 ) != 0 )
 						minVal = min(minVal, stack.getVoxel(x, y, z+1)); 
 
@@ -1124,13 +1124,13 @@ public class MinimaAndMaxima3D {
 	 */
 	private final static ImageStack regionalMinimaFloatC26(ImageStack stack) {
 		ImageStack result = stack.duplicate();
-		
+
 		int sizeX = stack.getWidth();
 		int sizeY = stack.getHeight();
 		int sizeZ = stack.getSize();
 
 		float nonMinimaMarker = Float.MAX_VALUE;
-		
+
 		for (int z = 0; z < sizeZ; z++) {
 			for (int y = 0; y < sizeY; y++) {
 				for (int x = 0; x < sizeX; x++) {
@@ -1159,15 +1159,15 @@ public class MinimaAndMaxima3D {
 				}
 			}
 		}
-		
+
 		// Convert result to binary ByteProcessor
 		if (result.getBitDepth() != 8)
 			result = convertToByteStack(result);
 		binariseMinima(result);
-		
+
 		return result;
 	}
-	
+
 	/**
 	 * Computes regional minima in float image <code>image</code>, using
 	 * flood-filling-like algorithm with 8 connectivity.
@@ -1177,13 +1177,13 @@ public class MinimaAndMaxima3D {
 			ImageStack mask ) 
 	{
 		ImageStack result = stack.duplicate();
-		
+
 		int sizeX = stack.getWidth();
 		int sizeY = stack.getHeight();
 		int sizeZ = stack.getSize();
 
 		float nonMinimaMarker = Float.MAX_VALUE;
-		
+
 		for (int z = 0; z < sizeZ; z++) {
 			for (int y = 0; y < sizeY; y++) {
 				for (int x = 0; x < sizeX; x++) {
@@ -1217,12 +1217,12 @@ public class MinimaAndMaxima3D {
 				}
 			}
 		}
-		
+
 		// Convert result to binary ByteProcessor
 		if (result.getBitDepth() != 8)
 			result = convertToByteStack(result);
 		binariseMinima(result);
-		
+
 		return result;
 	}
 
@@ -1235,7 +1235,7 @@ public class MinimaAndMaxima3D {
 		int sizeX = stack.getWidth();
 		int sizeY = stack.getHeight();
 		int sizeZ = stack.getSize();
-		
+
 		for (int z = 0; z < sizeZ; z++) {
 			for (int y = 0; y < sizeY; y++) {
 				for (int x = 0; x < sizeX; x++) {
@@ -1247,7 +1247,7 @@ public class MinimaAndMaxima3D {
 			}
 		}
 	}
-	
+
 	/**
 	 * Computes the regional minima in grayscale image <code>image</code>, 
 	 * using the specified connectivity, and a slower algorithm (used for testing).
@@ -1255,19 +1255,19 @@ public class MinimaAndMaxima3D {
 	 */
 	public final static ImageStack regionalMinimaByReconstruction(ImageStack stack,
 			int conn) {
-		
+
 		int sizeX = stack.getWidth();
 		int sizeY = stack.getHeight();
 		int sizeZ = stack.getSize();
 
 		ImageStack marker = stack.duplicate();
 		addValue(marker, 1);
-		
+
 		GeodesicReconstruction3DAlgo algo = new GeodesicReconstructionByErosion3DGray8Scanning(conn);
 		ImageStack rec = algo.applyTo(marker, stack);
-		
+
 		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
-		
+
 		for (int z = 0; z < sizeZ; z++) {
 			for (int y = 0; y < sizeY; y++) {
 				for (int x = 0; x < sizeX; x++) {
@@ -1300,11 +1300,11 @@ public class MinimaAndMaxima3D {
 			int dynamic, int conn) {
 		ImageStack mask = image.duplicate();
 		addValue(mask, dynamic);
-		
-//		GeodesicReconstruction3DAlgo algo = new GeodesicReconstructionByDilation3DGray8Scanning(conn);
-//		ImageStack rec = algo.applyTo(image, mask);
+
+		//		GeodesicReconstruction3DAlgo algo = new GeodesicReconstructionByDilation3DGray8Scanning(conn);
+		//		ImageStack rec = algo.applyTo(image, mask);
 		ImageStack rec = GeodesicReconstruction3D.reconstructByDilation(image, mask, conn);
-		
+
 		return regionalMaxima(rec, conn);
 	}
 
@@ -1326,10 +1326,10 @@ public class MinimaAndMaxima3D {
 			int dynamic, int conn) {
 		ImageStack marker = stack.duplicate();
 		addValue(marker, dynamic);
-		
+
 		GeodesicReconstruction3DAlgo algo = new GeodesicReconstructionByErosion3DGray8Scanning(conn);
 		ImageStack rec = algo.applyTo(marker, stack);
-//		ImageStack rec = GeodesicReconstruction3D.reconstructByErosion(marker, stack, conn);
+		//		ImageStack rec = GeodesicReconstruction3D.reconstructByErosion(marker, stack, conn);
 
 		return regionalMinima(rec, conn);
 	}
@@ -1342,21 +1342,21 @@ public class MinimaAndMaxima3D {
 			ImageStack maxima) {
 		return imposeMaxima(stack, maxima, DEFAULT_CONNECTIVITY_3D);
 	}
-	
+
 	/**
 	 * Imposes the maxima given by marker image into the input image, using
 	 * the specified connectivity.
 	 */
 	public final static ImageStack imposeMaxima(ImageStack stack,
 			ImageStack maxima, int conn) {
-		
+
 		ImageStack marker = stack.duplicate();
 		ImageStack mask = stack.duplicate();
-		
+
 		int sizeX = stack.getWidth();
 		int sizeY = stack.getHeight();
 		int sizeZ = stack.getSize();
-		
+
 		for (int z = 0; z < sizeZ; z++) {
 			for (int y = 0; y < sizeY; y++) {
 				for (int x = 0; x < sizeX; x++) {
@@ -1370,7 +1370,7 @@ public class MinimaAndMaxima3D {
 				}
 			}
 		}
-		
+
 		return GeodesicReconstruction3D.reconstructByDilation(marker, mask, conn);
 	}
 
@@ -1382,21 +1382,21 @@ public class MinimaAndMaxima3D {
 			ImageStack minima) {
 		return imposeMinima(stack, minima, DEFAULT_CONNECTIVITY_3D);
 	}
-	
+
 	/**
 	 * Imposes the minima given by marker image into the input image, using 
 	 * the specified connectivity.
 	 */
 	public final static ImageStack imposeMinima(ImageStack stack,
 			ImageStack minima, int conn) {
-		
+
 		ImageStack marker = stack.duplicate();
 		ImageStack mask = stack.duplicate();
-		
+
 		int sizeX = stack.getWidth();
 		int sizeY = stack.getHeight();
 		int sizeZ = stack.getSize();
-		
+
 		for (int z = 0; z < sizeZ; z++) {
 			for (int y = 0; y < sizeY; y++) {
 				for (int x = 0; x < sizeX; x++) {
@@ -1413,7 +1413,7 @@ public class MinimaAndMaxima3D {
 
 		return GeodesicReconstruction3D.reconstructByErosion(marker, mask, conn);
 	}
-	
+
 	private final static ImageStack convertToByteStack(ImageStack stack) {
 		if (stack.getBitDepth() == 8)
 			return stack;
@@ -1443,5 +1443,5 @@ public class MinimaAndMaxima3D {
 			}
 		}
 	}
-	
+
 }
