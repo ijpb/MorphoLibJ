@@ -178,8 +178,8 @@ public class ConnectedComponents {
 		int oldValue = (int) image.getVoxel(x, y, z);
 		
 		// test if already the right value 
-		if (oldValue == value) 
-			return ;
+		//if (oldValue == value) 
+		//	return ;
 		
 		// initialize the stack with original pixel
 		ArrayList<Cursor3D> stack = new ArrayList<Cursor3D>();
@@ -317,8 +317,8 @@ public class ConnectedComponents {
 		float oldValue = (float) image.getVoxel(x, y, z);
 		
 		// test if already the right value 
-		if (oldValue == value) 
-			return ;
+		//if (oldValue == value) 
+		//	return ;
 		
 		// initialize the stack with original pixel
 		ArrayList<Cursor3D> stack = new ArrayList<Cursor3D>();
@@ -629,8 +629,8 @@ public class ConnectedComponents {
 		int oldValue = image.getPixel(x, y);
 		
 		// test if already the right value 
-		if (oldValue == value) 
-			return ;
+		//if (oldValue == value) 
+		//	return ;
 		
 		// initialize the stack with original pixel
 		ArrayList<Point> stack = new ArrayList<Point>();
