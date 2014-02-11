@@ -391,7 +391,13 @@ public class MinimaAndMaxima {
 		int width = image.getWidth();
 		int height = image.getHeight();
 	
-		int nonMinimaMarker = 255;
+		int nonMinimaMarker;
+		switch (image.getBitDepth()) {
+		case 8: nonMinimaMarker = 255; break;
+		case 16: nonMinimaMarker = (int)(0x0FFFF); break;
+		default:
+			throw new IllegalArgumentException("Requires 8- or 16-bits image as input");
+		}
 		
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
@@ -401,7 +407,7 @@ public class MinimaAndMaxima {
 					continue;
 				
 				// maximum value in 4-neighborhood
-				int minVal = Integer.MAX_VALUE;
+				int minVal = value;
 				if (x > 0) 
 					minVal = Math.min(minVal, image.get(x-1, y)); 
 				if (y > 0) 
@@ -438,7 +444,13 @@ public class MinimaAndMaxima {
 		int width = image.getWidth();
 		int height = image.getHeight();
 
-		int nonMinimaMarker = 255;
+		int nonMinimaMarker;
+		switch (image.getBitDepth()) {
+		case 8: nonMinimaMarker = 255; break;
+		case 16: nonMinimaMarker = (int)(0x0FFFF); break;
+		default:
+			throw new IllegalArgumentException("Requires 8- or 16-bits image as input");
+		}
 		
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
@@ -448,7 +460,7 @@ public class MinimaAndMaxima {
 					continue;
 				
 				// maximum value in 8-neighborhood
-				int minVal = Integer.MAX_VALUE;
+				int minVal = value;
 				if (y > 0) {
 					// check minima on line before
 					if (x > 0) 

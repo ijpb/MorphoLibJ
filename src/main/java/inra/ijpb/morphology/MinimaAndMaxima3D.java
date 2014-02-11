@@ -36,7 +36,7 @@ public class MinimaAndMaxima3D {
 	public final static int DEFAULT_CONNECTIVITY_3D = 6;
 
 	/**
-	 * Computes the regional maxima in grayscale image <code>image</code>, 
+	 * Computes the regional maxima in grayscale image <code>stack</code>, 
 	 * using the default connectivity.
 	 */
 	public final static ImageStack regionalMaxima(ImageStack stack) {
@@ -44,7 +44,7 @@ public class MinimaAndMaxima3D {
 	}
 
 	/**
-	 * Computes the regional maxima in grayscale image <code>image</code>, 
+	 * Computes the regional maxima in grayscale image <code>stack</code>, 
 	 * using the specified connectivity.
 	 * @param conn the connectivity for maxima, that should be either 6 or 26
 	 */
@@ -57,7 +57,7 @@ public class MinimaAndMaxima3D {
 	}
 
 	/**
-	 * Computes the regional maxima in grayscale image <code>image</code>, 
+	 * Computes the regional maxima in grayscale image <code>stack</code>, 
 	 * using the specified connectivity and binary mask.
 	 * @param conn the connectivity for maxima, that should be either 6 or 26
 	 */
@@ -110,8 +110,8 @@ public class MinimaAndMaxima3D {
 	}
 
 	/**
-	 * Computes regional maxima in grayscale image <code>image</code>, using
-	 * flood-filling-like algorithm with 4 connectivity.
+	 * Computes regional maxima in 3D image <code>stack</code>, using
+	 * flood-filling-like algorithm with 6 connectivity.
 	 */
 	private final static ImageStack regionalMaximaIntC6(ImageStack stack) {
 		ImageStack result = stack.duplicate();
@@ -168,8 +168,8 @@ public class MinimaAndMaxima3D {
 	}
 
 	/**
-	 * Computes regional maxima in grayscale image <code>image</code>, using
-	 * flood-filling-like algorithm with 4 connectivity.
+	 * Computes regional maxima in 3D image <code>stack</code>, using
+	 * flood-filling-like algorithm with 6 connectivity.
 	 */
 	private final static ImageStack regionalMaximaIntC6(
 			ImageStack stack,
@@ -235,8 +235,8 @@ public class MinimaAndMaxima3D {
 
 
 	/**
-	 * Computes regional maxima in grayscale image <code>image</code>, using
-	 * flood-filling-like algorithm with 8 connectivity.
+	 * Computes regional maxima in grayscale image <code>stack</code>, using
+	 * flood-filling-like algorithm with 26 connectivity.
 	 */
 	private final static ImageStack regionalMaximaIntC26(ImageStack stack) {
 		ImageStack result = stack.duplicate();
@@ -285,8 +285,8 @@ public class MinimaAndMaxima3D {
 	}
 
 	/**
-	 * Computes regional maxima in grayscale image <code>image</code>, using
-	 * flood-filling-like algorithm with 8 connectivity.
+	 * Computes regional maxima in 3D image <code>stack</code>, using
+	 * flood-filling-like algorithm with 26 connectivity.
 	 */
 	private final static ImageStack regionalMaximaIntC26(
 			ImageStack stack,
@@ -380,8 +380,8 @@ public class MinimaAndMaxima3D {
 
 
 	/**
-	 * Computes regional maxima in grayscale image <code>image</code>, using
-	 * flood-filling-like algorithm with 4 connectivity.
+	 * Computes regional maxima in 3D image <code>stack</code>, using
+	 * flood-filling-like algorithm with 6 connectivity.
 	 */
 	private final static ImageStack regionalMaximaFloatC6(
 			ImageStack stack,
@@ -448,8 +448,8 @@ public class MinimaAndMaxima3D {
 
 
 	/**
-	 * Computes regional maxima in grayscale image <code>image</code>, using
-	 * flood-filling-like algorithm with 4 connectivity.
+	 * Computes regional maxima in 3D image <code>stack</code>, using
+	 * flood-filling-like algorithm with 6 connectivity.
 	 */
 	private final static ImageStack regionalMaximaFloatC6(ImageStack stack) {
 		ImageStack result = stack.duplicate();
@@ -506,8 +506,8 @@ public class MinimaAndMaxima3D {
 
 
 	/**
-	 * Computes regional maxima in grayscale image <code>image</code>, using
-	 * flood-filling-like algorithm with 8 connectivity.
+	 * Computes regional maxima in grayscale image <code>stack</code>, using
+	 * flood-filling-like algorithm with 26 connectivity.
 	 */
 	private final static ImageStack regionalMaximaFloatC26(
 			ImageStack stack,
@@ -564,8 +564,8 @@ public class MinimaAndMaxima3D {
 	}
 
 	/**
-	 * Computes regional maxima in grayscale image <code>image</code>, using
-	 * flood-filling-like algorithm with 8 connectivity.
+	 * Computes regional maxima in grayscale image <code>stack</code>, using
+	 * flood-filling-like algorithm with 26 connectivity.
 	 */
 	private final static ImageStack regionalMaximaFloatC26(ImageStack stack) {
 		ImageStack result = stack.duplicate();
@@ -633,7 +633,7 @@ public class MinimaAndMaxima3D {
 	}
 
 	/**
-	 * Computes the regional maxima in grayscale image <code>image</code>, 
+	 * Computes the regional maxima in 3D image <code>stack</code>, 
 	 * using the specified connectivity, and a slower algorithm (used for testing).
 	 * @param conn the connectivity for maxima, that should be either 6 or 26
 	 */
@@ -666,7 +666,7 @@ public class MinimaAndMaxima3D {
 	}
 
 	/**
-	 * Computes the regional minima in grayscale image <code>image</code>, 
+	 * Computes the regional minima in 3D image <code>stack</code>, 
 	 * using the default connectivity.
 	 */
 	public final static ImageStack regionalMinima(ImageStack stack) {
@@ -674,9 +674,9 @@ public class MinimaAndMaxima3D {
 	}
 
 	/**
-	 * Computes the regional minima in grayscale image <code>image</code>, 
+	 * Computes the regional minima in grayscale image <code>stack</code>, 
 	 * using the specified connectivity.
-	 * @param conn the connectivity for minima, that should be either 4 or 8
+	 * @param conn the connectivity for minima, that should be either 6 or 26
 	 */
 	public final static ImageStack regionalMinima(ImageStack stack,
 			int conn) {
@@ -687,9 +687,9 @@ public class MinimaAndMaxima3D {
 	}
 
 	/**
-	 * Computes the regional minima in grayscale image <code>image</code>, 
+	 * Computes the regional minima in 3D image <code>stack</code>, 
 	 * using the specified connectivity.
-	 * @param conn the connectivity for minima, that should be either 4 or 8
+	 * @param conn the connectivity for minima, that should be either 6 or 26
 	 */
 	public final static ImageStack regionalMinima(
 			ImageStack stack,
@@ -785,7 +785,13 @@ public class MinimaAndMaxima3D {
 		int sizeY = stack.getHeight();
 		int sizeZ = stack.getSize();
 
-		int nonMinimaMarker = 255;
+		int nonMinimaMarker;
+		switch (stack.getBitDepth()) {
+		case 8: nonMinimaMarker = 255; break;
+		case 16: nonMinimaMarker = (int)(0x0FFFF); break;
+		default:
+			throw new IllegalArgumentException("Requires 8- or 16-bits stack as input");
+		}
 
 		for (int z = 0; z < sizeZ; z++) {
 			for (int y = 0; y < sizeY; y++) {
@@ -795,8 +801,8 @@ public class MinimaAndMaxima3D {
 					if (value == nonMinimaMarker)
 						continue;
 
-					// maximum value in 4-neighborhood
-					int minVal = Integer.MAX_VALUE;
+					// maximum value in 6-neighborhood
+					int minVal = value;
 					if (x > 0) 
 						minVal = min(minVal, (int)stack.getVoxel(x-1, y, z)); 
 					if (x < sizeX - 1) 
@@ -842,7 +848,13 @@ public class MinimaAndMaxima3D {
 		int sizeY = stack.getHeight();
 		int sizeZ = stack.getSize();
 
-		int nonMinimaMarker = 255;
+		int nonMinimaMarker;
+		switch (stack.getBitDepth()) {
+		case 8: nonMinimaMarker = 255; break;
+		case 16: nonMinimaMarker = (int)(0x0FFFF); break;
+		default:
+			throw new IllegalArgumentException("Requires 8- or 16-bits stack as input");
+		}
 
 		for (int z = 0; z < sizeZ; z++) {
 			for (int y = 0; y < sizeY; y++) {
@@ -855,8 +867,8 @@ public class MinimaAndMaxima3D {
 					if (value == nonMinimaMarker)
 						continue;
 
-					// maximum value in 4-neighborhood
-					int minVal = Integer.MAX_VALUE;
+					// maximum value in 6-neighborhood
+					int minVal = value;
 					if (x > 0 && mask.getVoxel( x-1, y, z ) != 0 )
 						minVal = min(minVal, (int)stack.getVoxel(x-1, y, z)); 
 
@@ -905,7 +917,13 @@ public class MinimaAndMaxima3D {
 		int sizeY = stack.getHeight();
 		int sizeZ = stack.getSize();
 
-		int nonMinimaMarker = 255;
+		int nonMinimaMarker;
+		switch (stack.getBitDepth()) {
+		case 8: nonMinimaMarker = 255; break;
+		case 16: nonMinimaMarker = (int)(0x0FFFF); break;
+		default:
+			throw new IllegalArgumentException("Requires 8- or 16-bits stack as input");
+		}
 
 		for (int z = 0; z < sizeZ; z++) {
 			for (int y = 0; y < sizeY; y++) {
@@ -915,8 +933,8 @@ public class MinimaAndMaxima3D {
 					if (value == nonMinimaMarker)
 						continue;
 
-					// minimum value in 8-neighborhood
-					int minVal = Integer.MAX_VALUE;
+					// minimum value in 26-neighborhood
+					int minVal = value;
 					for (int z2 = max(z-1,0); z2 <= min(z+1, sizeZ-1); z2++) {
 						for (int y2 = max(y-1,0); y2 <= min(y+1, sizeY-1); y2++) {
 							for (int x2 = max(x-1,0); x2 <= min(x+1, sizeX-1); x2++) {
@@ -957,7 +975,13 @@ public class MinimaAndMaxima3D {
 		int sizeY = stack.getHeight();
 		int sizeZ = stack.getSize();
 
-		int nonMinimaMarker = 255;
+		int nonMinimaMarker;
+		switch (stack.getBitDepth()) {
+		case 8: nonMinimaMarker = 255; break;
+		case 16: nonMinimaMarker = (int)(0x0FFFF); break;
+		default:
+			throw new IllegalArgumentException("Requires 8- or 16-bits stack as input");
+		}
 
 		for (int z = 0; z < sizeZ; z++) {
 			for (int y = 0; y < sizeY; y++) {
@@ -970,8 +994,8 @@ public class MinimaAndMaxima3D {
 					if (value == nonMinimaMarker)
 						continue;
 
-					// minimum value in 8-neighborhood
-					int minVal = Integer.MAX_VALUE;
+					// minimum value in 26-neighborhood
+					int minVal = value;
 					for (int z2 = max(z-1,0); z2 <= min(z+1, sizeZ-1); z2++) {
 						for (int y2 = max(y-1,0); y2 <= min(y+1, sizeY-1); y2++) {
 							for (int x2 = max(x-1,0); x2 <= min(x+1, sizeX-1); x2++) {
