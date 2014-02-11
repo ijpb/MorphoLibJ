@@ -267,16 +267,16 @@ public class WatershedTransform3D
       						if ( u >= 0 && u < size1 && v >= 0 && v < size2 && w >= 0 && w < size3 )
       						{
       							// Unlabeled neighbors go into the queue if they are not there yet 
-      							if ( tabLabels[u][v][w] == 0 )
+      							if ( tabLabels[ u ][ v ][ w ] == 0 )
       							{
-      								voxelList.add( new VoxelRecord( u, v, w, inputStack.getVoxel(u,v,w) ));
+      								voxelList.add( new VoxelRecord( u, v, w, inputStack.getVoxel( u, v, w ) ));
       								tabLabels[u][v][w] = INQUEUE;
       							}
-      							else if ( tabLabels[u][v][w] > 0 && inputStack.getVoxel(u,v,w) <= voxelValue )
+      							else if ( tabLabels[ u ][ v ][ w ] > 0 && inputStack.getVoxel( u, v, w ) <= voxelValue )
       							{
       								// assign label of smallest neighbor
-      								tabLabels[i][j][k] = tabLabels[u][v][w];
-      								voxelValue = inputStack.getVoxel(u,v,w);
+      								tabLabels[ i ][ j ][ k ] = tabLabels[ u ][ v ][ w ];
+      								voxelValue = inputStack.getVoxel( u, v, w );
       							}
       						}
       					}    
