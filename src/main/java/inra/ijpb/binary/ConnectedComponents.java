@@ -156,8 +156,17 @@ public class ConnectedComponents {
 
 	
 	/**
-	 * Replaces all the neighbor pixels of (x,y) that have the same values
-	 * by the specified value, using the specified connectivity.
+	 * Assign to all the neighbor voxels of (x,y,z) that have the same voxel value 
+	 * in <code>image</code>, the specified new label value (<code>value</code>) 
+	 * in <code>labelImage</code>, using the specified connectivity.
+	 * 
+	 * @param image original image to read the voxel values from
+	 * @param x x- coordinate of voxel of interest
+	 * @param y y- coordinate of voxel of interest
+	 * @param z z- coordinate of voxel of interest
+	 * @param labelImage output label image (to fill) 
+	 * @param value filling value
+	 * @param conn connectivity to use (6-26)
 	 */
 	private final static void fill(ImageStack image, int x, int y, int z,
 			ImageStack labelImage, int value, int conn) {
@@ -291,8 +300,17 @@ public class ConnectedComponents {
 	}
 
 	/**
-	 * Replaces all the neighbor pixels of (x,y) that have the same values
-	 * by the specified value.
+	 * Assign to all the neighbor voxels of (x,y,z) that have the same voxel value 
+	 * in <code>image</code>, the specified new label value (<code>value</code>) 
+	 * in <code>labelImage</code>, using the specified connectivity.
+	 * 
+	 * @param image original image to read the voxel values from
+	 * @param x x- coordinate of voxel of interest
+	 * @param y y- coordinate of voxel of interest
+	 * @param z z- coordinate of voxel of interest
+	 * @param labelImage output label image (to fill) 
+	 * @param value filling value
+	 * @param conn connectivity to use (6-26)
 	 */
 	private final static void fillFloat(ImageStack image, int x, int y, int z,
 			ImageStack labelImage, float value, int conn) {
@@ -496,8 +514,16 @@ public class ConnectedComponents {
 
 
 	/**
-	 * Replaces all the neighbor pixels of (x,y) that have the same values
-	 * by the specified value, using the specified connectivity.
+	 * Assign to all the neighbor pixels of (x,y,z) that have the same pixel value 
+	 * in <code>image</code>, the specified new label value (<code>value</code>) 
+	 * in <code>labelImage</code>, using the specified connectivity.
+	 * 
+	 * @param image original image to read the pixel values from
+	 * @param x x- coordinate of pixel of interest
+	 * @param y y- coordinate of pixel of interest
+	 * @param labelImage output label image (to fill) 
+	 * @param value filling value
+	 * @param conn connectivity to use (4-8)
 	 */
 	private final static void fill(ImageProcessor image, int x, int y,
 			ImageProcessor labelImage, int value, int conn) {
@@ -595,8 +621,16 @@ public class ConnectedComponents {
 	}
 
 	/**
-	 * Replaces all the neighbor pixels of (x,y) that have the same values
-	 * by the specified value, using the specified connectivity.
+	 * Assign to all the neighbor pixels of (x,y,z) that have the same pixel value 
+	 * in <code>image</code>, the specified new label value (<code>value</code>) 
+	 * in <code>labelImage</code>, using the specified connectivity.
+	 * 
+	 * @param image original image to read the pixel values from
+	 * @param x x- coordinate of pixel of interest
+	 * @param y y- coordinate of pixel of interest
+	 * @param labelImage output label image (to fill) 
+	 * @param value filling value
+	 * @param conn connectivity to use (4-8)
 	 */
 	private final static void fillFloat(ImageProcessor image, int x, int y,
 			ImageProcessor labelImage, float value, int conn) {
