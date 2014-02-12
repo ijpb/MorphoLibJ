@@ -816,9 +816,9 @@ public class MinimaAndMaxima3D {
 					if (z < sizeZ - 1) 
 						minVal = min(minVal, (int)stack.getVoxel(x, y, z+1)); 
 
-					// if one of the neighbors has greater value, the local pixel 
-					// is not a maxima. All connected pixels with same value are 
-					// set to the marker for maxima.
+					// if one of the neighbors has lower value, the local pixel 
+					// is not a minimum. All connected pixels with same value are 
+					// set to the marker for non minimum.
 					if (minVal < value) {
 						FloodFill.floodFillC6(result, x, y, z, nonMinimaMarker);
 					}
