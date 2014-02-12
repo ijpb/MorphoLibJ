@@ -27,6 +27,7 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	</dependencies>
 
 	<build>
+		
 		<resources>
 			<resource>
 				<directory>${basedir}/src/main/resources</directory>
@@ -35,6 +36,7 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 				<directory>${project.build.sourceDirectory}</directory>
 			</resource>
 		</resources>
+		
 		<testResources>
 			<testResource>
 				<directory>${basedir}/src/test/resources</directory>
@@ -43,6 +45,7 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 				<directory>${project.build.testSourceDirectory}</directory>
 			</testResource>
 		</testResources>
+		
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -55,6 +58,16 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 					</execution>
 				</executions>
 			</plugin>
+			
+			<!-- Configure the jar output directory such that plugin can be seen when ImageJ is run directly from eclipse workspace -->
+   			<plugin>
+      			<groupId>org.apache.maven.plugins</groupId>
+      			<artifactId>maven-jar-plugin</artifactId>
+      			<configuration>
+        			<outputDirectory>${basedir}/plugins</outputDirectory>
+      			</configuration>
+    		</plugin>
+    		
 		</plugins>
 	</build>
 
