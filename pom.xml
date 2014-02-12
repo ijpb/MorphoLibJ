@@ -68,6 +68,15 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
       			</configuration>
     		</plugin>
     		
+			<!-- plugin for generating the javadoc -->
+    		<plugin>
+        		<groupId>org.apache.maven.plugins</groupId>
+        		<artifactId>maven-javadoc-plugin</artifactId>
+        		<configuration>
+        			<outputDirectory>${project.build.directory}/apidocs</outputDirectory>
+      			</configuration>
+      		</plugin>
+      		
 		</plugins>
 	</build>
 
