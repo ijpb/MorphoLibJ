@@ -87,7 +87,7 @@ public class RegionalMinAndMaxPlugin implements ExtendedPlugInFilter, DialogList
 	
 	
 	/** Apparently, it's better to store flags in plugin */
-	private int flags = DOES_8G | DOES_16 | DOES_RGB | KEEP_PREVIEW | FINAL_PROCESSING;
+	private int flags = DOES_ALL | KEEP_PREVIEW | FINAL_PROCESSING;
 	
 	PlugInFilterRunner pfr;
 	int nPasses;
