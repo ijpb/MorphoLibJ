@@ -181,7 +181,7 @@ public class GeodesicReconstructionByDilation3DGray8Scanning implements
 							+ connectivity);
 		}
 
-		initializeResult();
+		initializeResult( binaryMask );
 		
 		// Count the number of iterations for eventually displaying progress
 		int iter = 1;
@@ -260,6 +260,42 @@ public class GeodesicReconstructionByDilation3DGray8Scanning implements
 					int index = y * sizeX + x;
 					int value = min(markerSlice[index] & 0x00FF, maskSlice[index] & 0x00FF);
 					slice[index] = (byte) value;
+				}
+			}
+		}
+	}
+	
+	/** 
+	 * Initialize the result image with the minimum value of marker and mask
+	 * images.
+	 */
+	private void initializeResult( ImageStack binaryMask ) 
+	{
+		// Create result image the same size as marker image
+		this.result = ImageStack.create(sizeX, sizeY, sizeZ, marker.getBitDepth());
+
+		Object[] stack = result.getImageArray();
+		Object[] markerStack = marker.getImageArray();
+		Object[] maskStack = mask.getImageArray();
+		byte[] slice;
+		byte[] markerSlice;
+		byte[] maskSlice;
+
+		// Initialize the result image with the minimum value of marker and mask
+		// images
+		for (int z = 0; z < sizeZ; z++) {
+			slice = (byte[]) stack[z];
+			maskSlice = (byte[]) maskStack[z];
+			markerSlice = (byte[]) markerStack[z];
+			
+			for (int y = 0; y < sizeY; y++) {
+				for (int x = 0; x < sizeX; x++) {
+					if( binaryMask.getVoxel(x, y, z) != 0 )
+					{
+						int index = y * sizeX + x;
+						int value = min(markerSlice[index] & 0x00FF, maskSlice[index] & 0x00FF);
+						slice[index] = (byte) value;
+					}
 				}
 			}
 		}
