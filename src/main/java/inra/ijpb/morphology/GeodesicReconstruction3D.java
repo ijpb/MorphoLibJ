@@ -106,6 +106,28 @@ public abstract class GeodesicReconstruction3D {
 	}
 
 	/**
+	 * Static method to computes the geodesic reconstruction by dilation of 
+	 * the marker image under the mask image, but restricted to a binary mask.
+	 * 
+	 * @param marker input image
+	 * @param mask mask image
+	 * @param connectivity 3d connnectivity
+	 * @param binaryMask binary mask to restrict area of application
+	 * @return geodesic reconstruction by dilation of input image
+	 */
+	public final static ImageStack reconstructByDilation(
+			ImageStack marker,
+			ImageStack mask, 
+			int connectivity,
+			ImageStack binaryMask ) 
+	{
+		GeodesicReconstruction3DAlgo algo = new GeodesicReconstructionByDilation3DGray8Scanning(
+				connectivity);
+		return algo.applyTo( marker, mask, binaryMask );
+	}
+	
+	
+	/**
 	 * Static method to computes the geodesic reconstruction by erosion of the
 	 * marker image over the mask image.
 	 */
