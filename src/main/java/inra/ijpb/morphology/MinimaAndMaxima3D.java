@@ -1316,6 +1316,22 @@ public class MinimaAndMaxima3D {
 	}
 
 	/**
+	 * Computes the extended maxima in the grayscale image <code>image</code>, 
+	 * keeping maxima with the specified dynamic, restricted to the non-zero
+	 * voxels of the binary mask, and using the default connectivity.
+	 * 
+	 * @param image input grayscale image
+	 * @param dynamic nonnegative scalar defining the depth threshold of maxima removal ("h" value in Soile, 1999) 
+	 * @param binaryMask binary mask image to restrict region of application
+	 */
+	public final static ImageStack extendedMaxima(
+			ImageStack image,
+			int dynamic, 
+			ImageStack binaryMask ) {
+		return extendedMaxima( image, dynamic, DEFAULT_CONNECTIVITY_3D, binaryMask );
+	}
+	
+	/**
 	 * Computes the extended maxima in grayscale image <code>image</code>, 
 	 * keeping maxima with the specified dynamic, and using the specified
 	 * connectivity.
@@ -1328,6 +1344,32 @@ public class MinimaAndMaxima3D {
 		//		GeodesicReconstruction3DAlgo algo = new GeodesicReconstructionByDilation3DGray8Scanning(conn);
 		//		ImageStack rec = algo.applyTo(image, mask);
 		ImageStack rec = GeodesicReconstruction3D.reconstructByDilation(image, mask, conn);
+
+		return regionalMaxima(rec, conn);
+	}
+	
+	/**
+	 * Computes the extended maxima in the grayscale image <code>image</code>, 
+	 * keeping maxima with the specified dynamic, restricted to the non-zero
+	 * voxels of the binary mask, and using the specified connectivity.
+	 * 
+	 * @param image input grayscale image
+	 * @param dynamic nonnegative scalar defining the depth threshold of maxima removal ("h" value in Soile, 1999) 
+	 * @param conn connectivity value (6 or 26)
+	 * @param binaryMask binary mask image to restrict region of application
+	 */
+	public final static ImageStack extendedMaxima(
+			ImageStack image,
+			int dynamic, 
+			int conn,
+			ImageStack binaryMask ) 
+	{
+		ImageStack mask = image.duplicate();
+		addValue( mask, dynamic );
+
+		//		GeodesicReconstruction3DAlgo algo = new GeodesicReconstructionByDilation3DGray8Scanning(conn);
+		//		ImageStack rec = algo.applyTo(image, mask);
+		ImageStack rec = GeodesicReconstruction3D.reconstructByDilation( image, mask, conn, binaryMask );
 
 		return regionalMaxima(rec, conn);
 	}
