@@ -78,13 +78,13 @@ public interface Strel3D {
 		 * Diagonal line of a given length 
 		 * @see LinearDiagUpStrel
 		 */
-		LINE_DIAG_UP("Line 45°"),
+		LINE_DIAG_UP("Line 45ï¿½"),
 		
 		/** 
 		 * Diagonal line of a given length 
 		 * @see LinearDiagDownStrel
 		 */
-		LINE_DIAG_DOWN("Line 135°");
+		LINE_DIAG_DOWN("Line 135ï¿½");
 		
 		private final String label;
 		
@@ -225,9 +225,9 @@ public interface Strel3D {
 	 * @param image
 	 *            the input image
 	 * @return the result of dilation with this structuring element
-	 * @see #erosion(ij.process.ImageStack)
-	 * @see #closing(ij.process.ImageStack)
-	 * @see #opening(ij.process.ImageStack)
+	 * @see #erosion(ij.ImageStack)
+	 * @see #closing(ij.ImageStack)
+	 * @see #opening(ij.ImageStack)
 	 */
 	public ImageStack dilation(ImageStack image);
 
@@ -238,9 +238,9 @@ public interface Strel3D {
 	 * @param image
 	 *            the input image
 	 * @return the result of erosion with this structuring element
-	 * @see #dilation(ij.process.ImageStack)
-	 * @see #closing(ij.process.ImageStack)
-	 * @see #opening(ij.process.ImageStack)
+	 * @see #dilation(ij.ImageStack)
+	 * @see #closing(ij.ImageStack)
+	 * @see #opening(ij.ImageStack)
 	 */
 	public ImageStack erosion(ImageStack image);
 	
@@ -254,9 +254,9 @@ public interface Strel3D {
 	 * @param image
 	 *            the input image
 	 * @return the result of closing with this structuring element
-	 * @see #dilation(ij.process.ImageStack)
-	 * @see #erosion(ij.process.ImageStack)
-	 * @see #opening(ij.process.ImageStack)
+	 * @see #dilation(ij.ImageStack)
+	 * @see #erosion(ij.ImageStack)
+	 * @see #opening(ij.ImageStack)
 	 * @see #reverse()
 	 */
 	public ImageStack closing(ImageStack image);
@@ -271,9 +271,9 @@ public interface Strel3D {
 	 * @param image
 	 *            the input image
 	 * @return the result of opening with this structuring element
-	 * @see #dilation(ij.process.ImageStack)
-	 * @see #erosion(ij.process.ImageStack)
-	 * @see #closing(ij.process.ImageStack)
+	 * @see #dilation(ij.ImageStack)
+	 * @see #erosion(ij.ImageStack)
+	 * @see #closing(ij.ImageStack)
 	 * @see #reverse()
 	 */
 	public ImageStack opening(ImageStack image);

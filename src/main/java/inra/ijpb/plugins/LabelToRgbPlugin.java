@@ -144,7 +144,7 @@ public class LabelToRgbPlugin implements PlugIn {
 	 * Creates a new Color image from a label image, a LUT, and a
 	 * color for background.
 	 * 
-	 * @param image a 2D or 3D image containing labels and 0 for background
+	 * @param imagePlus a 2D or 3D image containing labels and 0 for background
 	 * @param lut the array of color components for each label 
 	 * @param bgColor the background color
 	 * @return a new Color image
