@@ -20,14 +20,14 @@ public interface InPlaceStrel3D extends Strel3D {
 	/**
 	 * Performs dilation of the stack given as argument, and stores the result
 	 * in the same image. 
-	 * @param image the input image to dilate
+	 * @param stack the input image stack to dilate
 	 */
 	public void inPlaceDilation(ImageStack stack);
 
 	/**
 	 * Performs erosion of the image given as argument, and stores the result
 	 * in the same image. 
-	 * @param image the input image to erode
+	 * @param stack the input image stack to erode
 	 */
 	public void inPlaceErosion(ImageStack stack);
 	

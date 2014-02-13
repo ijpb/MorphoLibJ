@@ -15,10 +15,11 @@ import java.util.TreeMap;
  * up-to-date.
  * </p>
  * <p>
- * Works only for Grayscale images coded between 0 and 255.
+ * Based on a map using floating-poitn values as a key. Should work on any 
+ * type of scalar image (8 bits, 16 bits, 32 bits float).
  * </p>
  * 
- * @see LocalBufferMin
+ * @see LocalBufferMinFloat
  * @see LocalBufferedHistogram
  * @author David Legland
  *
