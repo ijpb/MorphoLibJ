@@ -20,6 +20,8 @@ public interface GeodesicReconstruction3DAlgo {
 	 */
 	public ImageStack applyTo(ImageStack marker, ImageStack mask);
 	
+	public ImageStack applyTo(ImageStack marker, ImageStack mask, ImageStack binaryMask );
+	
 	public int getConnectivity();
 	public void setConnectivity(int conn);
 }
