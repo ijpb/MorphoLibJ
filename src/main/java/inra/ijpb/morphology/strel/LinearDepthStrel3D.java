@@ -86,9 +86,9 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 	
 	// ==================================================
 	// General methods 
-	
+
 	/* (non-Javadoc)
-	 * @see ijt.morphology.InPlaceStrel#inPlaceDilation(ij.process.ImageStack)
+	 * @see inra.ijpb.morphology.InPlaceStrel#inPlaceDilation(ij.process.ImageStack)
 	 */
 	@Override
 	public void inPlaceDilation(ImageStack stack) {
@@ -97,6 +97,16 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 			return;
 		}
 		
+		if (stack.getBitDepth() == 8)
+			inPlaceDilationGray8(stack);
+		else
+			inPlaceDilationFloat(stack);
+	}
+
+	/* (non-Javadoc)
+	 * @see inra.ijpb.morphology.InPlaceStrel#inPlaceDilation(ij.process.ImageStack)
+	 */
+	private void inPlaceDilationGray8(ImageStack stack) {
 		// get image size
 		int width 	= stack.getWidth(); 
 		int height 	= stack.getHeight();
@@ -145,7 +155,57 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 	}
 
 	/* (non-Javadoc)
-	 * @see ijt.morphology.InPlaceStrel#inPlaceErosion(ij.process.ImageStack)
+	 * @see inra.ijpb.morphology.InPlaceStrel#inPlaceDilation(ij.process.ImageStack)
+	 */
+	private void inPlaceDilationFloat(ImageStack stack) {
+		// get image size
+		int width 	= stack.getWidth(); 
+		int height 	= stack.getHeight();
+		int depth 	= stack.getSize();
+			
+		// shifts between reference position and last position
+		int shift = this.length - this.offset - 1;
+		
+		// local histogram
+		LocalBufferMaxFloat localMax = new LocalBufferMaxFloat(length);
+		
+		// Iterate on image z-columns
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				if (this.showProgress()) {
+					IJ.showProgress(y, height);
+				}
+
+				// init local histogram with background values
+				localMax.fill(Float.NEGATIVE_INFINITY);
+
+				// add neighbor values
+				for (int z = 0; z < Math.min(shift, depth); z++) {
+					localMax.add((float) stack.getVoxel(x, y, z));
+				}
+
+				// iterate along "middle" values
+				for (int z = 0; z < depth - shift; z++) {
+					localMax.add((float) stack.getVoxel(x, y, z + shift));
+					stack.setVoxel(x, y, z, localMax.getMax());
+				}
+
+				// process pixels at the end of the line
+				for (int z = Math.max(0, depth - shift); z < depth; z++) {
+					localMax.add(Float.NEGATIVE_INFINITY);
+					stack.setVoxel(x, y, z, localMax.getMax());
+				}
+			}
+		}
+
+		// clear the progress bar
+		if (this.showProgress()) {
+			IJ.showProgress(1);
+		}	
+	}
+
+	/* (non-Javadoc)
+	 * @see inra.ijpb.morphology.InPlaceStrel#inPlaceErosion(ij.process.ImageStack)
 	 */
 	@Override
 	public void inPlaceErosion(ImageStack stack) {
@@ -153,7 +213,18 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 		if (length <= 1) { 
 			return;
 		}
+
+		if (stack.getBitDepth() == 8)
+			inPlaceErosionGray8(stack);
+		else
+			inPlaceErosionFloat(stack);
 		
+	}
+	
+	/* (non-Javadoc)
+	 * @see inra.ijpb.morphology.InPlaceStrel#inPlaceErosion(ij.process.ImageStack)
+	 */
+	private void inPlaceErosionGray8(ImageStack stack) {
 		// get image size
 		int width 	= stack.getWidth(); 
 		int height 	= stack.getHeight();
@@ -201,7 +272,57 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 	}
 
 	/* (non-Javadoc)
-	 * @see ijt.morphology.Strel#getMask()
+	 * @see inra.ijpb.morphology.InPlaceStrel#inPlaceErosion(ij.process.ImageStack)
+	 */
+	private void inPlaceErosionFloat(ImageStack stack) {
+		// get image size
+		int width 	= stack.getWidth(); 
+		int height 	= stack.getHeight();
+		int depth 	= stack.getSize();
+		
+		// shifts between reference position and last position
+		int shift = this.length - this.offset - 1;
+		
+		// local histogram
+		LocalBufferMinFloat localMin = new LocalBufferMinFloat(length);
+		
+		// Iterate on image z-columns
+		for (int y = 0; y < height; y++) {
+			if (this.showProgress()) {
+				IJ.showProgress(y, height);
+			}
+			for (int x = 0; x < width; x++) {
+
+				// init local histogram with background values
+				localMin.fill(Float.MAX_VALUE);
+
+				// add neighbor values
+				for (int z = 0; z < Math.min(shift, depth); z++) {
+					localMin.add((float) stack.getVoxel(x, y, z));
+				}
+
+				// iterate along "middle" values
+				for (int z = 0; z < depth - shift; z++) {
+					localMin.add((float) stack.getVoxel(x, y, z + shift));
+					stack.setVoxel(x, y, z, localMin.getMin());
+				}
+
+				// process pixels at the end of the line
+				for (int z = Math.max(0, depth - shift); z < depth; z++) {
+					localMin.add(Float.MAX_VALUE);
+					stack.setVoxel(x, y, z, localMin.getMin());
+				}
+			}
+		}
+		
+		// clear the progress bar
+		if (this.showProgress()) {
+			IJ.showProgress(1);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see inra.ijpb.morphology.Strel#getMask()
 	 */
 	@Override
 	public int[][][] getMask3D() {
@@ -214,7 +335,7 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 	}
 
 	/* (non-Javadoc)
-	 * @see ijt.morphology.Strel#getOffset()
+	 * @see inra.ijpb.morphology.Strel#getOffset()
 	 */
 	@Override
 	public int[] getOffset() {
@@ -222,7 +343,7 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 	}
 
 	/* (non-Javadoc)
-	 * @see ijt.morphology.Strel#getShifts()
+	 * @see inra.ijpb.morphology.Strel#getShifts()
 	 */
 	@Override
 	public int[][] getShifts3D() {
@@ -236,7 +357,7 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 	}
 
 	/* (non-Javadoc)
-	 * @see ijt.morphology.Strel#getSize()
+	 * @see inra.ijpb.morphology.Strel#getSize()
 	 */
 	@Override
 	public int[] getSize() {

@@ -3,19 +3,16 @@
  */
 package inra.ijpb.morphology;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import ij.ImageStack;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
-import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
-import ij.process.ShortProcessor;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-
-import static java.lang.Math.max;
-import static java.lang.Math.min;
 
 /**
  * Collection of static methods for morphological filters,
@@ -835,10 +832,10 @@ public class Morphology {
 	 * @param image
 	 */
 	private final static void checkImageType(ImageStack stack) {
-		ImageProcessor image = stack.getProcessor(1);
-		if ((image instanceof FloatProcessor) || (image instanceof ShortProcessor)) {
-			throw new IllegalArgumentException("Input image must be a ByteProcessor or a ColorProcessor");
-		}
+//		ImageProcessor image = stack.getProcessor(1);
+//		if ((image instanceof FloatProcessor) || (image instanceof ShortProcessor)) {
+//			throw new IllegalArgumentException("Input image must be a ByteProcessor or a ColorProcessor");
+//		}
 	}
 	
 	private static Collection<ByteProcessor> splitChannels(ImageProcessor image) {

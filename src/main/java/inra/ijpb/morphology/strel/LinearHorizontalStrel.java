@@ -89,7 +89,7 @@ public class LinearHorizontalStrel extends AbstractInPlaceStrel  {
 	// General methods 
 	
 	/* (non-Javadoc)
-	 * @see ijt.morphology.InPlaceStrel#inPlaceDilation(ij.process.ImageProcessor)
+	 * @see inra.ijpb.morphology.InPlaceStrel#inPlaceDilation(ij.process.ImageProcessor)
 	 */
 	@Override
 	public void inPlaceDilation(ImageProcessor image) {
@@ -194,7 +194,7 @@ public class LinearHorizontalStrel extends AbstractInPlaceStrel  {
 
 
 	/* (non-Javadoc)
-	 * @see ijt.morphology.InPlaceStrel#inPlaceErosion(ij.process.ImageProcessor)
+	 * @see inra.ijpb.morphology.InPlaceStrel#inPlaceErosion(ij.process.ImageProcessor)
 	 */
 	@Override
 	public void inPlaceErosion(ImageProcessor image) {
@@ -253,7 +253,7 @@ public class LinearHorizontalStrel extends AbstractInPlaceStrel  {
 		}
 	}
 
-	public void inPlaceErosionFloat(ImageProcessor image) {
+	private void inPlaceErosionFloat(ImageProcessor image) {
 		// get image size
 		int width = image.getWidth(); 
 		int height = image.getHeight();
@@ -299,7 +299,7 @@ public class LinearHorizontalStrel extends AbstractInPlaceStrel  {
 
 	
 	/* (non-Javadoc)
-	 * @see ijt.morphology.Strel#getMask()
+	 * @see inra.ijpb.morphology.Strel#getMask()
 	 */
 	@Override
 	public int[][] getMask() {
@@ -312,7 +312,7 @@ public class LinearHorizontalStrel extends AbstractInPlaceStrel  {
 	}
 
 	/* (non-Javadoc)
-	 * @see ijt.morphology.Strel#getOffset()
+	 * @see inra.ijpb.morphology.Strel#getOffset()
 	 */
 	@Override
 	public int[] getOffset() {
@@ -320,7 +320,7 @@ public class LinearHorizontalStrel extends AbstractInPlaceStrel  {
 	}
 
 	/* (non-Javadoc)
-	 * @see ijt.morphology.Strel#getShifts()
+	 * @see inra.ijpb.morphology.Strel#getShifts()
 	 */
 	@Override
 	public int[][] getShifts() {
@@ -333,7 +333,7 @@ public class LinearHorizontalStrel extends AbstractInPlaceStrel  {
 	}
 
 	/* (non-Javadoc)
-	 * @see ijt.morphology.Strel#getSize()
+	 * @see inra.ijpb.morphology.Strel#getSize()
 	 */
 	@Override
 	public int[] getSize() {
