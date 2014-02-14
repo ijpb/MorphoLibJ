@@ -148,6 +148,8 @@ public class ExtendedMinAndMax3DPlugin implements PlugIn {
 		
 		String newName = createResultImageName(imagePlus, op);
 		ImagePlus resultPlus = new ImagePlus(newName, result);
+		resultPlus.copyScale(imagePlus);
+				
 		resultPlus.show();
 		
 		resultPlus.setSlice(imagePlus.getSlice());

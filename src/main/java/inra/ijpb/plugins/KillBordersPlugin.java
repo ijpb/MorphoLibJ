@@ -14,7 +14,7 @@ import inra.ijpb.morphology.GeodesicReconstruction;
  */
 public class KillBordersPlugin implements PlugInFilter {
 
-	ImagePlus imp;
+	ImagePlus imagePlus;
 	
 	/* (non-Javadoc)
 	 * @see ij.plugin.filter.PlugInFilter#setup(java.lang.String, ij.ImagePlus)
@@ -26,7 +26,7 @@ public class KillBordersPlugin implements PlugInFilter {
 			return DONE;
 		}
 		
-		this.imp = imp;
+		this.imagePlus = imp;
 		return DOES_ALL;
 	}
 
@@ -36,10 +36,11 @@ public class KillBordersPlugin implements PlugInFilter {
 	@Override
 	public void run(ImageProcessor ip) {
 		ImageProcessor recProc = GeodesicReconstruction.killBorders(ip);
-		String newName = createResultImageName(imp);
+		String newName = createResultImageName(imagePlus);
 		
-		ImagePlus resultImage = new ImagePlus(newName, recProc);
-		resultImage.show();
+		ImagePlus resultPlus = new ImagePlus(newName, recProc);
+		resultPlus.copyScale(imagePlus);
+		resultPlus.show();
 	}
 
 	private static String createResultImageName(ImagePlus baseImage) {

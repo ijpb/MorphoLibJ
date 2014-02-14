@@ -7,7 +7,6 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
-import ij.process.ImageProcessor;
 import inra.ijpb.binary.ConnectedComponents;
 
 /**
@@ -43,21 +42,26 @@ public class LabelingPlugin implements PlugIn {
 
 		int connIndex = gd.getNextChoiceIndex();
 		int bitDepth = resultBitDepthList[gd.getNextChoiceIndex()];
-
+		
 		ImagePlus resultPlus;
 		if (nSlices == 1) {
 			// Process planar image
 			int conn = conn2DValues[connIndex];
-			ImageProcessor image = imagePlus.getProcessor();
-			ImageProcessor labelImage = ConnectedComponents.computeLabels(image, conn, bitDepth);
-			resultPlus = new ImagePlus("labels", labelImage);
-			resultPlus.show();
-			
+			resultPlus  = ConnectedComponents.computeLabels(imagePlus, conn, bitDepth);
 		} else {
 			// Process 3D image stack
 			int conn = conn3DValues[connIndex];
 			resultPlus = ConnectedComponents.computeLabels(imagePlus, conn, bitDepth);
-			resultPlus.show();
+		}
+		
+		// udpate meta information of result image
+		String newName = imagePlus.getShortTitle() + "-lbl";
+		resultPlus.setTitle(newName);
+		resultPlus.copyScale(imagePlus);
+		
+		// Display with same settings as original image
+		resultPlus.show();
+		if (nSlices > 1) {
 			resultPlus.setZ(imagePlus.getZ());
 			resultPlus.setSlice(imagePlus.getSlice());
 		}

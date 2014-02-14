@@ -166,6 +166,7 @@ public class LabelToRgbPlugin implements PlugIn {
 			resultPlus = new ImagePlus(newName, result);
 		}
 		
+		resultPlus.copyScale(imagePlus);
 		return resultPlus;
 	}
 	

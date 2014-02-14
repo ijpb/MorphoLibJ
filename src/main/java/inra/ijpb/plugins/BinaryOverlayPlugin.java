@@ -173,18 +173,23 @@ public class BinaryOverlayPlugin implements PlugIn {
 			ImagePlus maskPlus, Color color) {
 		
 		String newName = createResultImageName(imagePlus);
+		ImagePlus resultPlus;
 		
 		if (imagePlus.getStackSize() == 1) {
 			ImageProcessor image = imagePlus.getProcessor();
 			ImageProcessor mask = maskPlus.getProcessor();
 			ImageProcessor result = binaryOverlay(image, mask, color);
-			return new ImagePlus(newName, result);
+			resultPlus = new ImagePlus(newName, result);
 		} else {
 			ImageStack image = imagePlus.getStack();
 			ImageStack mask = maskPlus.getStack();
 			ImageStack result = binaryOverlay(image, mask, color);
-			return new ImagePlus(newName, result);
+			resultPlus = new ImagePlus(newName, result);
 		}
+		
+		// keep calibration of parent image
+		resultPlus.copyScale(imagePlus);
+		return resultPlus;
 	}
 	
 	public final static ImageProcessor binaryOverlay(ImageProcessor refImage, 
