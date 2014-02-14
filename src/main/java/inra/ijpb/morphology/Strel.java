@@ -73,13 +73,13 @@ public interface Strel extends Strel3D {
 		 * Diagonal line of a given length 
 		 * @see LinearDiagUpStrel
 		 */
-		LINE_DIAG_UP("Line 45°"),
+		LINE_DIAG_UP("Line 45ï¿½"),
 		
 		/** 
 		 * Diagonal line of a given length 
 		 * @see LinearDiagDownStrel
 		 */
-		LINE_DIAG_DOWN("Line 135°");
+		LINE_DIAG_DOWN("Line 135ï¿½");
 		
 		private final String label;
 		
@@ -196,7 +196,7 @@ public interface Strel extends Strel3D {
 	/**
 	 * Returns the structuring element as a set of shifts. The size of the
 	 * result is N-by-2, where N is the number of elements of the structuring
-	 * element.
+	 * element. The first value corresponds to the shift in the x direction.
 	 * 
 	 * @return a set of shifts
 	 */

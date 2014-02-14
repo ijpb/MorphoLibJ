@@ -117,7 +117,7 @@ public class CubeStrel extends AbstractSeparableStrel3D {
 	 */
 	@Override
 	public int[] getOffset() {
-		return new int[]{this.offset, this.offset};
+		return new int[]{this.offset, this.offset, this.offset};
 	}
 
 	/* (non-Javadoc)
