@@ -1,7 +1,7 @@
 /**
  * 
  */
-package inra.ijpb.morphology;
+package inra.ijpb.plugins;
 
 import ij.IJ;
 import ij.ImagePlus;
@@ -9,6 +9,7 @@ import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import ij.ImageStack;
+import inra.ijpb.morphology.MinimaAndMaxima3D;
 import inra.ijpb.util.IJUtils;
 
 /**
