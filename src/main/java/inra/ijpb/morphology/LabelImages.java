@@ -17,6 +17,32 @@ import java.awt.Color;
  *
  */
 public class LabelImages {
+	
+	public final static ImageStack labelBoundaries(ImageStack stack) {
+		int sizeX = stack.getWidth();
+		int sizeY = stack.getHeight();
+		int sizeZ = stack.getSize();
+		
+		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
+		
+		for (int z = 0; z < sizeZ - 1; z++) {
+			for (int y = 0; y < sizeY - 1; y++) {
+				for (int x = 0; x < sizeX - 1; x++) {
+					double value = stack.getVoxel(x, y, z);
+					if (stack.getVoxel(x+1, y, z) != value)
+						result.setVoxel(x, y, z, 255);
+					if (stack.getVoxel(x, y+1, z) != value)
+						result.setVoxel(x, y, z, 255);
+					if (stack.getVoxel(x, y, z+1) != value)
+						result.setVoxel(x, y, z, 255);
+				}
+			}
+		}
+		
+		return result;
+	}
+	
+	
 	/**
 	 * Creates a new Color image from a label image, a LUT, and a
 	 * color for background.
