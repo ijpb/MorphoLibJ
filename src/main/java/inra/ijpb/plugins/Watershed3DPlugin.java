@@ -39,7 +39,7 @@ public class Watershed3DPlugin implements PlugIn
 		
 		IJ.log("-> Running regional minima filter...");
 		
-		ImageStack regionalMinima = MinimaAndMaxima3D.regionalMinima( input.getImageStack(), 26 );
+		ImageStack regionalMinima = MinimaAndMaxima3D.regionalMinima( seed.getImageStack(), 26 );
 		
 		//regionalMinima.show();
 		
@@ -87,8 +87,8 @@ public class Watershed3DPlugin implements PlugIn
 		IJ.log("-> Running regional minima filter...");
 		
 		ImageStack regionalMinima = null != mask  ? 
-				MinimaAndMaxima3D.regionalMinima( input.getImageStack(), 26, mask.getImageStack() ) :
-					MinimaAndMaxima3D.regionalMinima( input.getImageStack(), 26 )	;
+				MinimaAndMaxima3D.regionalMinima( seed.getImageStack(), 26, mask.getImageStack() ) :
+					MinimaAndMaxima3D.regionalMinima( seed.getImageStack(), 26 )	;
 		
 		//regionalMinima.show();
 		
