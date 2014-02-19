@@ -81,7 +81,8 @@ public class GeodesicReconstructionByDilation3DGray8ScanningTest {
 
 	@Test
 	public final void testCochleaVolumeC26() {
-		ImagePlus imagePlus = IJ.openImage("files/bat-cochlea-volume.tif");
+		String fileName = getClass().getResource("/files/bat-cochlea-volume.tif").getFile();
+		ImagePlus imagePlus = IJ.openImage(fileName);
 		assertNotNull(imagePlus);
 
 		assertTrue(imagePlus.getStackSize() > 0);
@@ -119,7 +120,9 @@ public class GeodesicReconstructionByDilation3DGray8ScanningTest {
 	
 	@Test
 	public final void testCochleaVolumeC6() {
-		ImagePlus imagePlus = IJ.openImage("files/bat-cochlea-volume.tif");
+		String fileName = getClass().getResource("/files/bat-cochlea-volume.tif").getFile();
+		ImagePlus imagePlus = IJ.openImage(fileName);
+		
 		assertNotNull(imagePlus);
 
 		assertTrue(imagePlus.getStackSize() > 0);

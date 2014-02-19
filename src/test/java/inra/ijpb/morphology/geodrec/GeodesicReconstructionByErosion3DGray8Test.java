@@ -15,7 +15,8 @@ public class GeodesicReconstructionByErosion3DGray8Test {
 	@Test
 	public final void testApplyTo() {
 		// Open test image
-		ImagePlus imagePlus = IJ.openImage("files/bat-cochlea-volume.tif");
+		String fileName = getClass().getResource("/files/bat-cochlea-volume.tif").getFile();
+		ImagePlus imagePlus = IJ.openImage(fileName);
 		assertNotNull(imagePlus);
 		assertTrue(imagePlus.getStackSize() > 0);
 		ImageStack mask = imagePlus.getStack();
