@@ -35,7 +35,7 @@ import ij.util.ThreadUtil;
 import inra.ijpb.data.Cursor3D;
 import inra.ijpb.data.Neighborhood2D;
 import inra.ijpb.data.Neighborhood3D;
-import inra.ijpb.data.Neighborhood3D6C;
+import inra.ijpb.data.Neighborhood3DC6;
 import inra.ijpb.data.Neighborhood3DC26;
 import inra.ijpb.data.VoxelRecord;
 
@@ -164,7 +164,7 @@ public class WatershedTransform3D
       	
       	// Check connectivity
        	final Neighborhood3D neigh = connectivity == 26 ? 
-       			new Neighborhood3DC26() : new Neighborhood3D6C();
+       			new Neighborhood3DC26() : new Neighborhood3DC6();
 	    
 	    boolean change = true;
 	    while ( voxelList.isEmpty() == false && change )
@@ -284,7 +284,7 @@ public class WatershedTransform3D
       	
       	// Check connectivity
        	final Neighborhood3D neigh = connectivity == 26 ? 
-       			new Neighborhood3DC26() : new Neighborhood3D6C();
+       			new Neighborhood3DC26() : new Neighborhood3DC6();
 
 	    final int count = voxelList.size();
 	    IJ.log( "  Flooding from " + count + " voxels..." );

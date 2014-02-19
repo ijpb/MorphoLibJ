@@ -2,7 +2,7 @@ package inra.ijpb.data;
 
 import java.util.ArrayList;
 
-public class Neighborhood3D6C extends Neighborhood3D {
+public class Neighborhood3DC6 extends Neighborhood3D {
 	
 	ArrayList<Cursor3D> neighbors = new ArrayList<Cursor3D>();
 
