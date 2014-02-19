@@ -1165,7 +1165,7 @@ public class MinimaAndMaxima3D {
 						continue;
 
 					// minimum value in 26-neighborhood
-					double minVal = 0;
+					double minVal = value;
 					for (int z2 = max(z-1,0); z2 <= min(z+1, sizeZ-1); z2++) {
 						for (int y2 = max(y-1,0); y2 <= min(y+1, sizeY-1); y2++) {
 							for (int x2 = max(x-1,0); x2 <= min(x+1, sizeX-1); x2++) {
@@ -1221,7 +1221,7 @@ public class MinimaAndMaxima3D {
 						continue;
 
 					// minimum value in 26-neighborhood
-					double minVal = 0;
+					double minVal = value;
 					for (int z2 = max(z-1,0); z2 <= min(z+1, sizeZ-1); z2++) {
 						for (int y2 = max(y-1,0); y2 <= min(y+1, sizeY-1); y2++) {
 							for (int x2 = max(x-1,0); x2 <= min(x+1, sizeX-1); x2++) {
