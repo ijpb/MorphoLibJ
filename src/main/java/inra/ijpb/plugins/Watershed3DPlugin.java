@@ -16,7 +16,7 @@ import inra.ijpb.watershed.WatershedTransform3D;
 /**
  * Watershed 3D
  *
- * A plugin to perform watershed on a 3D image.
+ * A plugin to perform marker-controlled watershed on a 3D image.
  *
  * @author Ignacio Arganda-Carreras
  */
