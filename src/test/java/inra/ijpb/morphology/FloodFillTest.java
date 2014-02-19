@@ -161,6 +161,47 @@ public class FloodFillTest {
 	}
 	
 	@Test
+	public final void testFloodFill_EmptySquaresC4() {
+		int[] data = new int[]{
+				10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+				10, 20, 20, 20, 10, 10, 10, 30, 30, 30, 10,
+				10, 20, 20, 20, 10, 10, 10, 30, 30, 30, 10,
+				10, 20, 20, 20, 10, 10, 10, 30, 30, 30, 10,
+				10, 10, 10, 10, 40, 40, 40, 10, 10, 10, 10,
+				10, 10, 10, 10, 40, 40, 40, 10, 10, 10, 10,
+				10, 10, 10, 10, 40, 40, 40, 10, 10, 10, 10,
+				10, 20, 20, 20, 10, 10, 10, 30, 30, 30, 10,
+				10, 20, 20, 20, 10, 10, 10, 30, 30, 30, 10,
+				10, 20, 20, 20, 10, 10, 10, 30, 30, 30, 10,
+				10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10
+		};
+		ImageProcessor image = new ByteProcessor(11, 11);
+		for (int i = 0; i < 11*11; i++) {
+			image.set(i, data[i]);
+		}
+
+		// initialize result
+		ImageProcessor result = new ByteProcessor(11, 11);
+		result.setValue(255);
+		result.fill();
+		
+		// compute flood fill result
+		FloodFill.floodFill(image, 1, 0, result, 50, 4);
+		
+		assertEquals(50, result.get(0, 0));
+		assertEquals(50, result.get(10, 0));
+		assertEquals(50, result.get(0, 10));
+		assertEquals(50, result.get(10, 10));
+		
+		assertEquals(50, result.get(5, 3));
+		assertEquals(50, result.get(5, 7));
+		assertEquals(50, result.get(3, 5));
+		assertEquals(50, result.get(7, 5));
+		
+		printImage(result);
+	}
+	
+	@Test
 	public final void testFloodFill_BatCochlea_C26() {
 		String fileName = getClass().getResource("/files/bat-cochlea-volume.tif").getFile();
 		ImagePlus imagePlus = IJ.openImage(fileName);
@@ -358,7 +399,7 @@ public class FloodFillTest {
 		int height = image.getHeight();
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
-				System.out.print(image.get(x, y) + " ");
+				System.out.print(String.format("%3d", image.get(x, y)) + " ");
 			}
 			System.out.println("");			
 		}

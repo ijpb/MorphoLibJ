@@ -42,7 +42,7 @@ public class MinimaAndMaximaTest {
 		}
 		
 		ImageProcessor maxima = MinimaAndMaxima.regionalMaxima(image, 4);
-//		printImage(maxima);
+		printImage(maxima);
 		
 		assertEquals(0, maxima.get(0, 0));
 		assertEquals(255, maxima.get(1, 1));

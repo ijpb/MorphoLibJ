@@ -337,6 +337,105 @@ public class FloodFill {
 
 	}
 
+	/**
+	 * Assign to all the neighbor pixels of (x,y,z) that have the same pixel value 
+	 * in <code>image</code>, the specified new label value (<code>value</code>) 
+	 * in <code>labelImage</code>, using the specified connectivity.
+	 * 
+	 * @param inputImage original image to read the pixel values from
+	 * @param x x- coordinate of pixel of interest
+	 * @param y y- coordinate of pixel of interest
+	 * @param outputImage output label image (to fill) 
+	 * @param value filling value
+	 * @param conn connectivity to use (4-8)
+	 */
+	public final static void floodFill(ImageProcessor inputImage, int x, int y,
+			ImageProcessor outputImage, int value, int conn) {
+		
+		// the shifts to look for new markers to start lines
+		int dx1 = 0;
+		int dx2 = 0;
+		if (conn == 8) {
+			dx1 = -1;
+			dx2 = +1;
+		}
+		
+		// get image size
+		int width = inputImage.getWidth();
+		int height = inputImage.getHeight();
+		
+		// get old value
+		int oldValue = inputImage.getPixel(x, y);
+				
+		// initialize the stack with original pixel
+		ArrayList<Point> stack = new ArrayList<Point>();
+		stack.add(new Point(x, y));
+		
+		
+		boolean inScanLine;
+		
+		// process all items in stack
+		while (!stack.isEmpty()) {
+			// Extract current position
+			Point p = stack.remove(stack.size()-1);
+			x = p.x;
+			y = p.y;
+			
+			// process only pixel of the same value
+			if (inputImage.get(x, y) != oldValue) 
+				continue;
+			
+			// x extremities of scan-line
+			int x1 = x; 
+			int x2 = x;
+			
+			// find start of scan-line
+			//TODO: find cleaner way of writing this
+			while (x1 >= 0 && inputImage.getPixel(x1, y) == oldValue) 
+				x1--;
+			x1++;
+			
+			// find end of scan-line
+			//TODO: find cleaner way of writing this
+			while (x2 < width && inputImage.getPixel(x2, y) == oldValue) 
+				x2++;                   
+			x2--;
+			
+			// fill current scan-line
+			fillLine(outputImage, y, x1, x2, value);
+			
+			
+			// find scan-lines above the current one
+			if (y > 0) {
+				inScanLine = false;
+				for (int i = max(x1 + dx1, 0); i <= min(x2 + dx2, width - 1); i++) {
+					int val = inputImage.get(i, y - 1);
+					int lab = (int) outputImage.get(i, y - 1);
+					if (!inScanLine && val == oldValue && lab != value) {
+						stack.add(new Point(i, y - 1));
+						inScanLine = true;
+					} else if (inScanLine && val != oldValue)
+						inScanLine = false;
+				}
+			}
+			
+			// find scan-lines below the current one
+			if (y < height - 1) {
+				inScanLine = false;
+//				for (int i = x1; i <= x2; i++) {
+				for (int i = max(x1 + dx1, 0); i <= min(x2 + dx2, width - 1); i++) {
+					int val = inputImage.getPixel(i, y + 1);
+					int lab = (int) outputImage.get(i, y + 1);
+					if (!inScanLine && val == oldValue && lab != value) {
+						stack.add(new Point(i, y + 1));
+						inScanLine = true;
+					} else if (inScanLine && val != oldValue)
+						inScanLine = false;
+				}
+			}
+		}
+	}
+
 	private final static void fillLine(ImageProcessor ip, int y, int x1, int x2, int value) {
 		if (x1 > x2) {
 			int t = x1;
@@ -345,6 +444,102 @@ public class FloodFill {
 		}
 		for (int x = x1; x <= x2; x++)
 			ip.set(x, y, value);
+	}
+
+	/**
+	 * Assign to all the neighbor pixels of (x,y,z) that have the same pixel value 
+	 * in <code>image</code>, the specified new label value (<code>value</code>) 
+	 * in <code>labelImage</code>, using the specified connectivity.
+	 * 
+	 * @param inputImage original image to read the pixel values from
+	 * @param x x- coordinate of pixel of interest
+	 * @param y y- coordinate of pixel of interest
+	 * @param outputImage output label image (to fill) 
+	 * @param value filling value
+	 * @param conn connectivity to use (4-8)
+	 */
+	public final static void floodFill(ImageProcessor inputImage, int x, int y,
+			ImageProcessor outputImage, float value, int conn) {
+		
+		// the shifts to look for new markers to start lines
+		int dx1 = 0;
+		int dx2 = 0;
+		if (conn == 8) {
+			dx1 = -1;
+			dx2 = +1;
+		}
+		
+		// get image size
+		int width = inputImage.getWidth();
+		int height = inputImage.getHeight();
+		
+		// get old value
+		int oldValue = inputImage.getPixel(x, y);
+		
+		// initialize the stack with original pixel
+		ArrayList<Point> stack = new ArrayList<Point>();
+		stack.add(new Point(x, y));
+		
+		
+		boolean inScanLine;
+		
+		// process all items in stack
+		while (!stack.isEmpty()) {
+			// Extract current position
+			Point p = stack.remove(stack.size()-1);
+			x = p.x;
+			y = p.y;
+			
+			// process only pixel of the same value
+			if (inputImage.get(x, y) != oldValue) 
+				continue;
+			
+			// x extremities of scan-line
+			int x1 = x; 
+			int x2 = x;
+			
+			// find start of scan-line
+			while (x1 >= 0 && inputImage.get(x1, y) == oldValue && outputImage.getf(x1, y) == 0) 
+				x1--;
+			x1++;
+			
+			// find end of scan-line
+			while (x2 < width && inputImage.get(x2, y) == oldValue && outputImage.getf(x1, y) == 0) 
+				x2++;                   
+			x2--;
+			
+			// fill current scan-line
+			fillLine(outputImage, y, x1, x2, value);
+			
+			
+			// find scan-lines above the current one
+			if (y > 0) {
+				inScanLine = false;
+				for (int i = max(x1 + dx1, 0); i <= min(x2 + dx2, width - 1); i++) {
+					int val = inputImage.get(i, y - 1);
+					float lab = outputImage.getf(i, y - 1);
+					if (!inScanLine && val == oldValue && lab == 0) {
+						stack.add(new Point(i, y - 1));
+						inScanLine = true;
+					} else if (inScanLine && val != oldValue)
+						inScanLine = false;
+				}
+			}
+			
+			// find scan-lines below the current one
+			if (y < height - 1) {
+				inScanLine = false;
+				for (int i = max(x1 + dx1, 0); i <= min(x2 + dx2, width - 1); i++) {
+					int val = inputImage.getPixel(i, y + 1);
+					float lab = outputImage.getf(i, y + 1);
+					if (!inScanLine && val == oldValue && lab == 0) {
+						stack.add(new Point(i, y + 1));
+						inScanLine = true;
+					} else if (inScanLine && val != oldValue)
+						inScanLine = false;
+				}
+			}
+		}
 	}
 
 	/**
