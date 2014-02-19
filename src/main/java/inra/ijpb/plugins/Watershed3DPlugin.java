@@ -16,7 +16,7 @@ import inra.ijpb.watershed.WatershedTransform3D;
 /**
  * Watershed 3D
  *
- * A plugin to perform watershed on a 3D image.
+ * A plugin to perform marker-controlled watershed on a 3D image.
  *
  * @author Ignacio Arganda-Carreras
  */
@@ -114,7 +114,7 @@ public class Watershed3DPlugin implements PlugIn
 		final long end = System.currentTimeMillis();
 		IJ.log( "Watershed 3d took " + (end-step2) + " ms.");
 		IJ.log( "Whole plugin took " + (end-start) + " ms.");
-		
+						
 		return resultImage;
 				
 	}
@@ -174,6 +174,9 @@ public class Watershed3DPlugin implements PlugIn
             ImageProcessor ip = result.getProcessor();
             ip.resetMinAndMax();
             result.setDisplayRange(ip.getMin(),ip.getMax());
+            
+    		// Set result slice to the current slice in the input image
+            result.setSlice( inputImage.getCurrentSlice() );
             
             // show result
             result.show();
