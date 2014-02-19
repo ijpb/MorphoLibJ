@@ -1,0 +1,12 @@
+
+# do not include compilation results
+/target/
+
+# David put resulting jar into this directory to test directly from eclipse
+/plugins/
+
+# confiuration files of eclipse EDI
+/.classpath
+/.project
+/.settings/
+
