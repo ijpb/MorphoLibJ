@@ -10,6 +10,7 @@ import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
 import inra.ijpb.morphology.MinimaAndMaxima;
+import inra.ijpb.util.IJUtils;
 
 /**
  * Plugin for imposing minima or maxima on a grayscale image, using a specific
@@ -22,7 +23,7 @@ public class ImposeMinAndMaxPlugin implements PlugIn {
 	 */
 	public enum Operation {
 		IMPOSE_MINIMA("Impose Minima"),
-		IMPOSE_MAXIMA("Impose Minima");
+		IMPOSE_MAXIMA("Impose Maxima");
 		
 		private final String label;
 		
@@ -111,7 +112,7 @@ public class ImposeMinAndMaxPlugin implements PlugIn {
 		GenericDialog gd = new GenericDialog("Geodesic Reconstruction");
 		
 		gd.addChoice("Original Image", imageNames, IJ.getImage().getTitle());
-		gd.addChoice("Minima Image", imageNames, IJ.getImage().getTitle());
+		gd.addChoice("Marker Image", imageNames, IJ.getImage().getTitle());
 		gd.addChoice("Operation", 
 				Operation.getAllLabels(), 
 				Operation.IMPOSE_MINIMA.label);
@@ -149,6 +150,7 @@ public class ImposeMinAndMaxPlugin implements PlugIn {
 		
 		long t1 = System.currentTimeMillis();
 		IJ.showStatus("Elapsed time: " + (t1 - t0) / 1000. + "s");
+		IJUtils.showElapsedTime(op.toString(), t1 - t0, refImage);
 	}
 
 	private static String createResultImageName(ImagePlus baseImage) {
