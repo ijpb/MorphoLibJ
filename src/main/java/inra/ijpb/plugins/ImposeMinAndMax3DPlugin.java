@@ -23,7 +23,7 @@ public class ImposeMinAndMax3DPlugin implements PlugIn {
 	 */
 	public enum Operation {
 		IMPOSE_MINIMA("Impose Minima"),
-		IMPOSE_MAXIMA("Impose Minima");
+		IMPOSE_MAXIMA("Impose Maxima");
 		
 		private final String label;
 		
@@ -112,7 +112,7 @@ public class ImposeMinAndMax3DPlugin implements PlugIn {
 		GenericDialog gd = new GenericDialog("Geodesic Reconstruction");
 		
 		gd.addChoice("Original Image", imageNames, IJ.getImage().getTitle());
-		gd.addChoice("Minima Image", imageNames, IJ.getImage().getTitle());
+		gd.addChoice("Marker Image", imageNames, IJ.getImage().getTitle());
 		gd.addChoice("Operation", 
 				Operation.getAllLabels(), 
 				Operation.IMPOSE_MINIMA.label);

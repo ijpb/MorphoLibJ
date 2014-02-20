@@ -24,6 +24,8 @@ public class Watershed3DPlugin implements PlugIn
 {
 	/** flag to use a priority queue */
 	public static boolean usePriorityQueue = true;
+	/** flag to use 26-connectivity */
+	public static boolean use26neighbors = true;
 	
 	/**
 	 * Apply 3D watershed to a 2D or 3D image (it does work for 2D images too).
@@ -119,6 +121,57 @@ public class Watershed3DPlugin implements PlugIn
 				
 	}
 	
+	/**
+	 * Apply 3D watershed to a 2D or 3D image (it does work for 2D images too).
+	 *	 
+	 * @param input the 2D or 3D image (in principle a "gradient" image)
+	 * @param seed the image to calculate the seeds from (it can be the same as the input or another one)
+	 * @param mask binary mask to restrict region of interest
+	 * @param connectivity 6 or 26 voxel connectivity
+	 */
+	public ImagePlus process(
+			ImagePlus input, 
+			ImagePlus seed,
+			ImagePlus mask,
+			int connectivity ) 
+	{
+		final long start = System.currentTimeMillis();
+		
+		IJ.log("-> Running regional minima filter...");
+		
+		ImageStack regionalMinima = null != mask  ? 
+				MinimaAndMaxima3D.regionalMinima( seed.getImageStack(), connectivity, mask.getImageStack() ) :
+					MinimaAndMaxima3D.regionalMinima( seed.getImageStack(), connectivity )	;
+		
+		//regionalMinima.show();
+		
+		final long step1 = System.currentTimeMillis();
+		
+		IJ.log( "Regional minima took " + (step1-start) + " ms.");
+		
+		IJ.log("-> Running connected components...");
+		
+		ImageStack components = ConnectedComponents.computeLabels( regionalMinima, connectivity, 32 );				
+		
+		final long step2 = System.currentTimeMillis();
+		IJ.log( "Connected components took " + (step2-step1) + " ms.");
+		
+		IJ.log("-> Running watershed...");
+		
+		ImagePlus connectedMinima = new ImagePlus("connected minima", components );
+		//connectedMinima.show();
+		
+		WatershedTransform3D wt = new WatershedTransform3D( input, connectedMinima, mask, connectivity );
+		ImagePlus resultImage = usePriorityQueue == false ? wt.apply() : wt.applyWithPriorityQueue();
+		
+		final long end = System.currentTimeMillis();
+		IJ.log( "Watershed 3d took " + (end-step2) + " ms.");
+		IJ.log( "Whole plugin took " + (end-start) + " ms.");
+						
+		return resultImage;
+				
+	}
+	
 
 	@Override
 	public void run(String arg) 
@@ -152,6 +205,7 @@ public class Watershed3DPlugin implements PlugIn
         gd.addChoice( "Image to seed from", names, names[seed] );
         gd.addChoice( "Mask", namesMask, namesMask[ nbima > 2 ? 3 : 0 ] );
         gd.addCheckbox( "Use priority queue", usePriorityQueue );
+        gd.addCheckbox( "Use diagonal connectivity", use26neighbors );
 
         gd.showDialog();
         
@@ -161,12 +215,15 @@ public class Watershed3DPlugin implements PlugIn
             seed = gd.getNextChoiceIndex();
             int maskIndex = gd.getNextChoiceIndex();
             usePriorityQueue = gd.getNextBoolean();
+            use26neighbors = gd.getNextBoolean();
 
             ImagePlus inputImage = WindowManager.getImage(spot + 1);
             ImagePlus seedImage = WindowManager.getImage(seed + 1);
             ImagePlus maskImage = maskIndex > 0 ? WindowManager.getImage( maskIndex ) : null;
             
-            ImagePlus result = process( inputImage, seedImage, maskImage );
+            final int connectivity = use26neighbors ? 26 : 6;
+            
+            ImagePlus result = process( inputImage, seedImage, maskImage, connectivity );
             
             // Adjust range to visualize result
             //if( result.getImageStackSize() > 1 )
