@@ -33,7 +33,6 @@ import ij.Prefs;
 import ij.process.ImageProcessor;
 import ij.util.ThreadUtil;
 import inra.ijpb.data.Cursor3D;
-import inra.ijpb.data.Neighborhood2D;
 import inra.ijpb.data.Neighborhood3D;
 import inra.ijpb.data.Neighborhood3DC6;
 import inra.ijpb.data.Neighborhood3DC26;
@@ -279,7 +278,7 @@ public class WatershedTransform3D
 		// Watershed
 	    final long start = System.currentTimeMillis();
 	    
-	 // Auxiliary cursor to visit neighbors
+	    // Auxiliary cursor to visit neighbors
 	    final Cursor3D cursor = new Cursor3D(0, 0, 0);
       	
       	// Check connectivity
@@ -421,6 +420,13 @@ public class WatershedTransform3D
 		
 	            
         final PriorityQueue<VoxelRecord> voxelList = new PriorityQueue<VoxelRecord>();
+        
+        // Auxiliary cursor to visit neighbors
+	    final Cursor3D cursor = new Cursor3D(0, 0, 0);
+      	
+      	// Check connectivity
+       	final Neighborhood3D neigh = connectivity == 26 ? 
+       			new Neighborhood3DC26() : new Neighborhood3DC6();
 	    
 		if( null != maskImage ) // apply mask
 		{
@@ -439,23 +445,27 @@ public class WatershedTransform3D
 						{
 							int label = (int) ipSeed.getf( x, y );
 							if( label > 0 )
-							{
-								// add unlabeled neighbors to priority queue
-								for (int u = x-1; u <= x+1; ++u) 
-									for (int v = y-1; v <= y+1; ++v) 
-										for (int w = z-1; w <= z+1; ++w) 
-										{
-											if ( u >= 0 && u < size1 && 
-													v >= 0 && v < size2 && 
-													w >= 0 && w < size3 &&
-													(int) seedStack.getVoxel( u, v, w ) == 0 &&
-													tabLabels[ u ][ v ][ w ] != INQUEUE )															 
-											{
-												voxelList.add( new VoxelRecord( u, v, w, inputStack.getVoxel( u, v, w ) ) );
-												tabLabels[ u ][ v ][ w ] = INQUEUE;
-											}
+							{								
+								cursor.set( x, y, z );
+								neigh.setCursor( cursor );
 
-										}
+								// add unlabeled neighbors to priority queue
+								for( Cursor3D c : neigh.getNeighbors() )			       		
+								{
+									int u = c.getX();
+									int v = c.getY();
+									int w = c.getZ();
+									if ( u >= 0 && u < size1 && 
+											v >= 0 && v < size2 && 
+											w >= 0 && w < size3 &&
+											(int) seedStack.getVoxel( u, v, w ) == 0 &&
+											tabLabels[ u ][ v ][ w ] != INQUEUE )															 
+									{
+										voxelList.add( new VoxelRecord( u, v, w, inputStack.getVoxel( u, v, w ) ) );
+										tabLabels[ u ][ v ][ w ] = INQUEUE;
+									}
+
+								}
 								tabLabels[x][y][z] = label;
 							}
 						}
@@ -475,22 +485,26 @@ public class WatershedTransform3D
 						int label = (int) ipSeed.getf( x, y );
 						if( label > 0 )
 						{
-							// add unlabeled neighbors to priority queue
-							for (int u = x-1; u <= x+1; ++u) 
-								for (int v = y-1; v <= y+1; ++v) 
-									for (int w = z-1; w <= z+1; ++w) 
-									{
-										if ( u >= 0 && u < size1 && 
-												v >= 0 && v < size2 && 
-												w >= 0 && w < size3 &&
-												(int) seedStack.getVoxel( u, v, w ) == 0 &&
-												tabLabels[ u ][ v ][ w ] != INQUEUE )															 
-										{
-											voxelList.add( new VoxelRecord( u, v, w, inputStack.getVoxel( u, v, w ) ) );
-											tabLabels[ u ][ v ][ w ] = INQUEUE;
-										}
+							cursor.set( x, y, z );
+							neigh.setCursor( cursor );
 
-									}
+							// add unlabeled neighbors to priority queue
+							for( Cursor3D c : neigh.getNeighbors() )			       		
+							{
+								int u = c.getX();
+								int v = c.getY();
+								int w = c.getZ();
+								if ( u >= 0 && u < size1 && 
+										v >= 0 && v < size2 && 
+										w >= 0 && w < size3 &&
+										(int) seedStack.getVoxel( u, v, w ) == 0 &&
+										tabLabels[ u ][ v ][ w ] != INQUEUE )															 
+								{
+									voxelList.add( new VoxelRecord( u, v, w, inputStack.getVoxel( u, v, w ) ) );
+									tabLabels[ u ][ v ][ w ] = INQUEUE;
+								}
+
+							}
 							tabLabels[x][y][z] = label;
 						}
 					}
