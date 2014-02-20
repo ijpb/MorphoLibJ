@@ -14,7 +14,8 @@ public class GeodesicReconstructionByDilation3DGray8Test {
 	public final void testApplyTo() {
 		GeodesicReconstructionByDilation3DGray8 algo = new GeodesicReconstructionByDilation3DGray8();
 
-		ImagePlus imagePlus = IJ.openImage("files/bat-cochlea-volume.tif");
+		String fileName = getClass().getResource("/files/bat-cochlea-volume.tif").getFile();
+		ImagePlus imagePlus = IJ.openImage(fileName);
 		assertNotNull(imagePlus);
 
 		assertTrue(imagePlus.getStackSize() > 0);
