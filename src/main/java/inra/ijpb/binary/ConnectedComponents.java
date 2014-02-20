@@ -173,7 +173,7 @@ public class ConnectedComponents {
 		// the shifts to look for new markers to start lines
 		int dx1 = 0;
 		int dx2 = 0;
-		if (conn == 8) {
+		if (conn == 26) {
 			dx1 = -1;
 			dx2 = +1;
 		}
@@ -317,7 +317,7 @@ public class ConnectedComponents {
 		// the shifts to look for new markers to start lines
 		int dx1 = 0;
 		int dx2 = 0;
-		if (conn == 8) {
+		if (conn == 26) {
 			dx1 = -1;
 			dx2 = +1;
 		}
