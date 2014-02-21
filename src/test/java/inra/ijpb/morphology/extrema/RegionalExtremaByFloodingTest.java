@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
-import inra.ijpb.morphology.extrema.RegionalExtremaAlgo.ExtremaType;
 
 import org.junit.Test;
 

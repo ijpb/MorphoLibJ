@@ -5,6 +5,7 @@ package inra.ijpb.morphology;
 
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
+import inra.ijpb.morphology.extrema.ExtremaType;
 import inra.ijpb.morphology.extrema.RegionalExtremaAlgo;
 import inra.ijpb.morphology.extrema.RegionalExtremaByFlooding;
 import inra.ijpb.morphology.geodrec.GeodesicReconstructionAlgo;
@@ -50,7 +51,7 @@ public class MinimaAndMaxima {
 			int conn) {
 		RegionalExtremaAlgo algo = new RegionalExtremaByFlooding();
 		algo.setConnectivity(conn);
-		algo.setExtremaType(RegionalExtremaAlgo.ExtremaType.MAXIMA);
+		algo.setExtremaType(ExtremaType.MAXIMA);
 		
 		return algo.applyTo(image);
 	}
@@ -102,7 +103,7 @@ public class MinimaAndMaxima {
 			int conn) {
 		RegionalExtremaAlgo algo = new RegionalExtremaByFlooding();
 		algo.setConnectivity(conn);
-		algo.setExtremaType(RegionalExtremaAlgo.ExtremaType.MINIMA);
+		algo.setExtremaType(ExtremaType.MINIMA);
 		
 		return algo.applyTo(image);
 	}

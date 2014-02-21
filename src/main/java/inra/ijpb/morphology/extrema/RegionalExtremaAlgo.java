@@ -13,7 +13,7 @@ import ij.process.ImageProcessor;
  * ImageProcessor image = IJ.getImage().getProcessor();
  * RegionalExtremaAlgo algo = new RegionalExtremaByFlooding(); 
  * algo.setConnectivity(4);
- * algo.setExtremaType(RegionalExtremaAlgo.ExtremaType.MAXIMA);
+ * algo.setExtremaType(ExtremaType.MAXIMA);
  * ImageProcessor result = algo.applyTo(image);
  * ImagePlus resPlus = new ImagePlus("Regional Extrema", result); 
  * resPlus.show(); 
@@ -24,17 +24,6 @@ import ij.process.ImageProcessor;
  */
 public abstract class RegionalExtremaAlgo {
 
-	// ==============================================================
-	// constants
-	
-	/**
-	 * One of the two types of extrema
-	 */
-	public enum ExtremaType {
-		MINIMA, 
-		MAXIMA;
-	}
-	
 	// ==============================================================
 	// class variables
 	
