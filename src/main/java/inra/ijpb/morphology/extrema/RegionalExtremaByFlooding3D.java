@@ -48,10 +48,10 @@ public class RegionalExtremaByFlooding3D extends RegionalExtremaAlgo3D {
 						continue;
 					
 					// current value
-					double currentValue = image.getVoxel(x, y, z);
+					double currentValue = image.getVoxel(x, y, z) * sign;
 					
 					// compute extremum value in 6-neighborhood
-					double value = currentValue * sign;
+					double value = currentValue;
 					if (x > 0) 
 						value = min(value, image.getVoxel(x-1, y, z) * sign); 
 					if (x < sizeX - 1) 
@@ -68,7 +68,7 @@ public class RegionalExtremaByFlooding3D extends RegionalExtremaAlgo3D {
 					// if one of the neighbors has lower value, the local pixel 
 					// is not a minima. All connected pixels with same value are 
 					// set to the marker for non-minima.
-					if (value < currentValue * sign) {
+					if (value < currentValue) {
 						FloodFill.floodFillFloat(image, x, y, z, result, 0, 6);
 					}
 				}

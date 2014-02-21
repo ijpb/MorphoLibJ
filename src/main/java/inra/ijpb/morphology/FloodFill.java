@@ -988,15 +988,11 @@ public class FloodFill {
 				int x2 = x;
 				
 				// find start of scan-line
-				while (x1 > 0 
-						&& inputImage.getVoxel(x1-1, y, z) == oldValue
-						&& outputImage.getVoxel(x1-1, y, z) == 0)
+				while (x1 > 0 && inputImage.getVoxel(x1 - 1, y, z) == oldValue)
 					x1--;
 				
 				// find end of scan-line
-				while (x2 < sizeX - 1 
-						&& inputImage.getVoxel(x2+1, y, z) == oldValue 
-						&& outputImage.getVoxel(x2+1, y, z) == 0)
+				while (x2 < sizeX - 1 && inputImage.getVoxel(x2 + 1, y, z) == oldValue)
 					x2++;
 			
 				// fill current scan-line
@@ -1114,15 +1110,11 @@ public class FloodFill {
 			int x2 = x;
 			
 			// find start of scan-line
-			while (x1 > 0 
-					&& inputImage.getVoxel(x1-1, y, z) == oldValue
-					&& outputImage.getVoxel(x1-1, y, z) == 0)
+			while (x1 > 0 && inputImage.getVoxel(x1-1, y, z) == oldValue)
 				x1--;
 			
 			// find end of scan-line
-			while (x2 < sizeX - 1 
-					&& inputImage.getVoxel(x2+1, y, z) == oldValue 
-					&& outputImage.getVoxel(x2+1, y, z) == 0)
+			while (x2 < sizeX - 1 && inputImage.getVoxel(x2+1, y, z) == oldValue)
 				x2++;
 		
 			// fill current scan-line
