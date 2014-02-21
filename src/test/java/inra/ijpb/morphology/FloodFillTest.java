@@ -335,6 +335,36 @@ public class FloodFillTest {
 	}
 
 	@Test
+	public final void testFloodFillPair_Cross3d_C6Float() {
+		// Create test image
+		int sizeX = 5;
+		int sizeY = 5;
+		int sizeZ = 5;
+		ImageStack image = ImageStack.create(sizeX, sizeY, sizeZ, 8);
+		int val0 = 50;
+		// three axes
+		for (int i = 0; i < 5; i++) {
+			image.setVoxel(i, 2, 2, val0);
+			image.setVoxel(2, i, 2, val0);
+			image.setVoxel(2, 2, i, val0);
+		}
+		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
+		
+		float newVal = 37;
+		FloodFill.floodFillFloat(image, 1, 2, 2, result, newVal, 6);
+		
+//		printStack(result);
+		
+		// Test each of the branches
+		assertEquals(newVal, result.getVoxel(0, 2, 2), .01);
+		assertEquals(newVal, result.getVoxel(4, 2, 2), .01);
+		assertEquals(newVal, result.getVoxel(2, 0, 2), .01);
+		assertEquals(newVal, result.getVoxel(2, 4, 2), .01);
+		assertEquals(newVal, result.getVoxel(2, 2, 0), .01);
+		assertEquals(newVal, result.getVoxel(2, 2, 4), .01);
+	}
+
+	@Test
 	public final void testFloodFill_Cross3d_C26() {
 		ImageStack image = createCornerCross();
 		int newVal = 37;
@@ -366,6 +396,29 @@ public class FloodFillTest {
 		assertEquals(newVal, image.getVoxel(4, 8, 4), .01);
 		assertEquals(newVal, image.getVoxel(4, 4, 0), .01);
 		assertEquals(newVal, image.getVoxel(4, 4, 8), .01);
+	}
+	
+	@Test
+	public final void testFloodFillPair_Cross3d_C26Float() {
+		ImageStack image = createCornerCross();
+//		System.out.println("input image:");
+//		printStack(image);
+		
+		ImageStack result = ImageStack.create(image.getWidth(), image.getHeight(), image.getSize(), 8);
+		
+		float newVal = 120;
+		FloodFill.floodFillFloat(image, 2, 4, 4, result, newVal, 26);
+		
+//		System.out.println("output image:");
+//		printStack(result);
+		
+		// Test each of the branches
+		assertEquals(newVal, result.getVoxel(0, 4, 4), .01);
+		assertEquals(newVal, result.getVoxel(8, 4, 4), .01);
+		assertEquals(newVal, result.getVoxel(4, 0, 4), .01);
+		assertEquals(newVal, result.getVoxel(4, 8, 4), .01);
+		assertEquals(newVal, result.getVoxel(4, 4, 0), .01);
+		assertEquals(newVal, result.getVoxel(4, 4, 8), .01);
 	}
 	
 	/**

@@ -91,7 +91,7 @@ public class RegionalExtremaByFlooding extends RegionalExtremaAlgo {
 				// Consequently, the current pixel, and all its connected 
 				// neighbors with same value are set to 0 in the output image. 
 				if (value < currentValue * sign) {
-					FloodFill.floodFill(image, x, y, result, 0.f, 4);
+					FloodFill.floodFillFloat(image, x, y, result, 0.f, 4);
 				}
 			}
 		}
@@ -144,7 +144,7 @@ public class RegionalExtremaByFlooding extends RegionalExtremaAlgo {
 				// Consequently, the current pixel, and all its connected 
 				// neighbors with same value are set to 0 in the output image. 
 				if (value < currentValue * sign) {
-					FloodFill.floodFill(image, x, y, result, 0.f, 8);
+					FloodFill.floodFillFloat(image, x, y, result, 0.f, 8);
 				}
 			}
 		}
