@@ -51,7 +51,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		 * 
 		 * @param imp input image
 		 */
-		CustomWindow(ImagePlus imp)
+		CustomWindow( ImagePlus imp )
 		{
 			super(imp, new ImageCanvas(imp));
 			
@@ -59,8 +59,8 @@ public class MorphologicalSegmentation implements PlugIn {
 			
 			setTitle("Morphological Segmentation");
 			
-			segmentButton = new JButton("Segment");
-			segmentButton.setToolTipText("Run the morphological segmentation");
+			segmentButton = new JButton( "Segment" );
+			segmentButton.setToolTipText( "Run the morphological segmentation" );
 			
 			// Parameters panel (left side of the GUI)
 			paramsPanel.setBorder(BorderFactory.createTitledBorder("Parameters"));
@@ -75,7 +75,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			paramsConstraints.insets = new Insets(5, 5, 6, 6);
 			paramsPanel.setLayout(paramsLayout);
 
-			paramsPanel.add( segmentButton, paramsConstraints);
+			paramsPanel.add( segmentButton, paramsConstraints );
 			
 			// main panel
 			GridBagLayout layout = new GridBagLayout();
@@ -92,7 +92,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			allConstraints.gridheight = 2;
 			allConstraints.weightx = 0;
 			allConstraints.weighty = 0;
-			all.add( paramsPanel, allConstraints);
+			all.add( paramsPanel, allConstraints );
 
 			// put canvas in place
 			allConstraints.gridx++;
@@ -100,14 +100,20 @@ public class MorphologicalSegmentation implements PlugIn {
 			allConstraints.weighty = 1;
 			allConstraints.gridheight = 1;
 			all.add( canvas, allConstraints);
-	/*		
+			
 			allConstraints.gridy++;
 			allConstraints.weightx = 1;
 			allConstraints.weighty = 1;
-			if(null != sliceSelector)
-				all.add(sliceSelector, allConstraints);
+			
+			// if the input image is 3d, put the
+			// slice selectors in place
+			if( null != super.sliceSelector )
+			{
+				all.add( super.zSelector, allConstraints );
+				all.add( super.sliceSelector, allConstraints );
+			}
 			allConstraints.gridy--;
-
+/*
 			allConstraints.gridx++;
 			allConstraints.anchor = GridBagConstraints.NORTHEAST;
 			allConstraints.weightx = 0;
@@ -121,8 +127,8 @@ public class MorphologicalSegmentation implements PlugIn {
 			winc.fill = GridBagConstraints.BOTH;
 			winc.weightx = 1;
 			winc.weighty = 1;
-			setLayout(wingb);
-			add(all, winc);
+			setLayout( wingb );
+			add( all, winc );
 			
 			
 		}
