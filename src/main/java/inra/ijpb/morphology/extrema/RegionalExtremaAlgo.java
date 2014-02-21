@@ -6,6 +6,19 @@ package inra.ijpb.morphology.extrema;
 import ij.process.ImageProcessor;
 
 /**
+ * Interface for appying regional extrema (regional mininma and regional maxima).
+ * 
+ * Example of use:
+ * <code><pre>
+ * ImageProcessor image = IJ.getImage().getProcessor();
+ * RegionalExtremaAlgo algo = new RegionalExtremaByFlooding(); 
+ * algo.setConnectivity(4);
+ * algo.setExtremaType(RegionalExtremaAlgo.ExtremaType.MAXIMA);
+ * ImageProcessor result = algo.applyTo(image);
+ * ImagePlus resPlus = new ImagePlus("Regional Extrema", result); 
+ * resPlus.show(); 
+ * </pre></code>
+ *
  * @author David Legland
  *
  */
@@ -62,6 +75,10 @@ public abstract class RegionalExtremaAlgo {
 	// ==============================================================
 	// interface for running the algorithm
 	
+	/**
+	 * Applies this regional extrema algorithm on the image given as argument,
+	 * and returns the result as a binary image. 
+	 */
 	public abstract ImageProcessor applyTo(ImageProcessor inputImage); 
 	
 }

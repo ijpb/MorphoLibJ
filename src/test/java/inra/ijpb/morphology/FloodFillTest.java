@@ -161,6 +161,47 @@ public class FloodFillTest {
 	}
 	
 	@Test
+	public final void testFloodFillC8Marker() {
+		int[][] data = new int[][]{
+				{10, 10, 10, 20, 20, 20, 10, 10, 10, 10, 20, 20, 10, 10, 10},
+				{10, 10, 20, 20, 20, 20, 20, 20, 10, 20, 20, 20, 20, 10, 10},
+				{10, 20, 10, 10, 10, 10, 20, 20, 10, 20, 10, 10, 20, 20, 10},
+				{20, 20, 10, 20, 10, 10, 10, 20, 10, 20, 20, 10, 10, 20, 20},
+				{20, 20, 10, 20, 10, 10, 10, 20, 10, 10, 10, 20, 10, 20, 20},
+				{20, 20, 10, 10, 20, 20, 10, 20, 10, 10, 10, 20, 10, 20, 20},
+				{10, 20, 10, 10, 10, 20, 10, 20, 20, 10, 10, 10, 10, 20, 10},
+				{10, 20, 10, 20, 20, 20, 10, 20, 20, 20, 20, 20, 20, 20, 10},
+				{10, 10, 20, 20, 10, 10, 10, 10, 10, 10, 10, 20, 20, 10, 10},
+		};
+		int height = data.length;
+		int width = data[0].length;
+		ImageProcessor image = new ByteProcessor(width, height);
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				image.set(x, y, data[y][x]);
+			}
+		}
+		
+		// initialize empty result image fill with 255
+		ImageProcessor result = new ByteProcessor(width, height);
+		result.setValue(255);
+		result.fill();
+		
+		// Apply 
+		FloodFill.floodFill(image, 7, 4, result, 50, 8);
+//		printImage(result);
+		
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				if (image.get(x, y) == 20)
+					assertEquals(50, result.get(x, y));
+				else
+					assertEquals(255, result.get(x, y));
+			}
+		}
+		
+	}
+	@Test
 	public final void testFloodFill_EmptySquaresC4() {
 		int[] data = new int[]{
 				10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
@@ -198,7 +239,7 @@ public class FloodFillTest {
 		assertEquals(50, result.get(3, 5));
 		assertEquals(50, result.get(7, 5));
 		
-		printImage(result);
+//		printImage(result);
 	}
 	
 	@Test

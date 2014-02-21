@@ -390,16 +390,12 @@ public class FloodFill {
 			int x2 = x;
 			
 			// find start of scan-line
-			//TODO: find cleaner way of writing this
-			while (x1 >= 0 && inputImage.getPixel(x1, y) == oldValue) 
+			while (x1 > 0 && inputImage.get(x1-1, y) == oldValue)
 				x1--;
-			x1++;
 			
 			// find end of scan-line
-			//TODO: find cleaner way of writing this
-			while (x2 < width && inputImage.getPixel(x2, y) == oldValue) 
-				x2++;                   
-			x2--;
+			while (x2 < width - 1 && inputImage.get(x2+1, y) == oldValue)
+				x2++;
 			
 			// fill current scan-line
 			fillLine(outputImage, y, x1, x2, value);
@@ -422,7 +418,6 @@ public class FloodFill {
 			// find scan-lines below the current one
 			if (y < height - 1) {
 				inScanLine = false;
-//				for (int i = x1; i <= x2; i++) {
 				for (int i = max(x1 + dx1, 0); i <= min(x2 + dx2, width - 1); i++) {
 					int val = inputImage.getPixel(i, y + 1);
 					int lab = (int) outputImage.get(i, y + 1);
@@ -474,7 +469,7 @@ public class FloodFill {
 		int height = inputImage.getHeight();
 		
 		// get old value
-		int oldValue = inputImage.getPixel(x, y);
+		float oldValue = inputImage.getf(x, y);
 		
 		// initialize the stack with original pixel
 		ArrayList<Point> stack = new ArrayList<Point>();
@@ -491,7 +486,7 @@ public class FloodFill {
 			y = p.y;
 			
 			// process only pixel of the same value
-			if (inputImage.get(x, y) != oldValue) 
+			if (inputImage.getf(x, y) != oldValue) 
 				continue;
 			
 			// x extremities of scan-line
@@ -499,14 +494,12 @@ public class FloodFill {
 			int x2 = x;
 			
 			// find start of scan-line
-			while (x1 >= 0 && inputImage.get(x1, y) == oldValue && outputImage.getf(x1, y) == 0) 
+			while (x1 > 0 && inputImage.getf(x1-1, y) == oldValue)
 				x1--;
-			x1++;
 			
 			// find end of scan-line
-			while (x2 < width && inputImage.get(x2, y) == oldValue && outputImage.getf(x1, y) == 0) 
-				x2++;                   
-			x2--;
+			while (x2 < width - 1 && inputImage.getf(x2+1, y) == oldValue)
+				x2++;
 			
 			// fill current scan-line
 			fillLine(outputImage, y, x1, x2, value);
@@ -516,9 +509,9 @@ public class FloodFill {
 			if (y > 0) {
 				inScanLine = false;
 				for (int i = max(x1 + dx1, 0); i <= min(x2 + dx2, width - 1); i++) {
-					int val = inputImage.get(i, y - 1);
+					float val = inputImage.getf(i, y - 1);
 					float lab = outputImage.getf(i, y - 1);
-					if (!inScanLine && val == oldValue && lab == 0) {
+					if (!inScanLine && val == oldValue && lab != value) {
 						stack.add(new Point(i, y - 1));
 						inScanLine = true;
 					} else if (inScanLine && val != oldValue)
@@ -530,9 +523,9 @@ public class FloodFill {
 			if (y < height - 1) {
 				inScanLine = false;
 				for (int i = max(x1 + dx1, 0); i <= min(x2 + dx2, width - 1); i++) {
-					int val = inputImage.getPixel(i, y + 1);
+					float val = inputImage.getf(i, y + 1);
 					float lab = outputImage.getf(i, y + 1);
-					if (!inScanLine && val == oldValue && lab == 0) {
+					if (!inScanLine && val == oldValue && lab != value) {
 						stack.add(new Point(i, y + 1));
 						inScanLine = true;
 					} else if (inScanLine && val != oldValue)
