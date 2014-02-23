@@ -30,13 +30,8 @@ public abstract class AbstractSeparableStrel3D extends AbstractStrel3D
 		int i = 1;
 		for (InPlaceStrel3D strel : strels) {
 			fireStatusChanged(this, "Dilation " + (i++) + "/" + n);
+			runDilation(result, strel);
 			
-			strel.showProgress(this.showProgress());
-			strel.addProgressListener(this);
-			
-			strel.inPlaceDilation(result);
-			
-			strel.removeProgressListener(this);
 //			long t = System.currentTimeMillis();
 //			long dt = t - t0;
 //			System.out.println("elapsed time: " + (dt / 1000) + " s.");
@@ -61,13 +56,7 @@ public abstract class AbstractSeparableStrel3D extends AbstractStrel3D
 		int i = 1;
 		for (InPlaceStrel3D strel : strels) {
 			fireStatusChanged(this, "Erosion " + (i++) + "/" + n);
-			
-			strel.showProgress(this.showProgress());
-			strel.addProgressListener(this);
-
-			strel.inPlaceErosion(result);
-			
-			strel.removeProgressListener(this);
+			runErosion(result, strel);
 		}
 		
 		// clear status bar
@@ -88,13 +77,7 @@ public abstract class AbstractSeparableStrel3D extends AbstractStrel3D
 		int i = 1;
 		for (InPlaceStrel3D strel : strels) {
 			fireStatusChanged(this, "Dilation " + (i++) + "/" + n);
-			
-			strel.showProgress(this.showProgress());
-			strel.addProgressListener(this);
-			
-			strel.inPlaceDilation(result);
-			
-			strel.removeProgressListener(this);
+			runDilation(result, strel);
 		}
 		
 		// Erosion (with reversed strel)
@@ -102,13 +85,7 @@ public abstract class AbstractSeparableStrel3D extends AbstractStrel3D
 		strels = this.reverse().decompose();
 		for (InPlaceStrel3D strel : strels) {
 			fireStatusChanged(this, "Erosion " + (i++) + "/" + n);
-			
-			strel.showProgress(this.showProgress());
-			strel.addProgressListener(this);
-
-			strel.inPlaceErosion(result);
-			
-			strel.removeProgressListener(this);
+			runErosion(result, strel);
 		}
 		
 		// clear status bar
@@ -129,13 +106,7 @@ public abstract class AbstractSeparableStrel3D extends AbstractStrel3D
 		int i = 1;
 		for (InPlaceStrel3D strel : strels) {
 			fireStatusChanged(this, "Erosion " + (i++) + "/" + n);
-			
-			strel.showProgress(this.showProgress());
-			strel.addProgressListener(this);
-
-			strel.inPlaceErosion(result);
-			
-			strel.removeProgressListener(this);
+			runErosion(result, strel);
 		}
 		
 		// Dilation (with reversed strel)
@@ -143,19 +114,27 @@ public abstract class AbstractSeparableStrel3D extends AbstractStrel3D
 		strels = this.reverse().decompose();
 		for (InPlaceStrel3D strel : strels) {
 			fireStatusChanged(this, "Dilation " + (i++) + "/" + n);
-			
-			strel.showProgress(this.showProgress());
-			strel.addProgressListener(this);
-			
-			strel.inPlaceDilation(result);
-			
-			strel.removeProgressListener(this);
+			runDilation(result, strel);
 		}
 		
 		// clear status bar
 		fireStatusChanged(this, "");
 
 		return result;
+	}
+	
+	private void runDilation(ImageStack image, InPlaceStrel3D strel) {
+		strel.showProgress(this.showProgress());
+		strel.addProgressListener(this);
+		strel.inPlaceDilation(image);
+		strel.removeProgressListener(this);
+	}
+	
+	private void runErosion(ImageStack image, InPlaceStrel3D strel) {
+		strel.showProgress(this.showProgress());
+		strel.addProgressListener(this);
+		strel.inPlaceErosion(image);
+		strel.removeProgressListener(this);
 	}
 	
 	/**

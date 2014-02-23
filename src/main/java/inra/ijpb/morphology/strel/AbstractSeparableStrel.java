@@ -29,13 +29,7 @@ implements SeparableStrel, ProgressListener {
 		int i = 1;
 		for (InPlaceStrel strel : strels) {
 			fireStatusChanged(this, "Dilation " + (i++) + "/" + n);
-			
-			strel.showProgress(this.showProgress());
-			strel.addProgressListener(this);
-			
-			strel.inPlaceDilation(result);
-			
-			strel.removeProgressListener(this);
+			runDilation(result, strel);
 		}
 		
 		// clear status bar
@@ -56,13 +50,7 @@ implements SeparableStrel, ProgressListener {
 		int i = 1;
 		for (InPlaceStrel strel : strels) {
 			fireStatusChanged(this, "Erosion " + (i++) + "/" + n);
-			
-			strel.showProgress(this.showProgress());
-			strel.addProgressListener(this);
-			
-			strel.inPlaceErosion(result);
-			
-			strel.removeProgressListener(this);
+			runErosion(result, strel);
 		}
 		
 		// clear status bar
@@ -83,13 +71,7 @@ implements SeparableStrel, ProgressListener {
 		int i = 1;
 		for (InPlaceStrel strel : strels) {
 			fireStatusChanged(this, "Dilation " + (i++) + "/" + n);
-
-			strel.showProgress(this.showProgress());
-			strel.addProgressListener(this);
-			
-			strel.inPlaceDilation(result);
-			
-			strel.removeProgressListener(this);
+			runDilation(result, strel);
 		}
 		
 		// Erosion (with reversed strel)
@@ -97,13 +79,7 @@ implements SeparableStrel, ProgressListener {
 		strels = this.reverse().decompose();
 		for (InPlaceStrel strel : strels) {
 			fireStatusChanged(this, "Erosion " + (i++) + "/" + n);
-			
-			strel.showProgress(this.showProgress());
-			strel.addProgressListener(this);
-			
-			strel.inPlaceErosion(result);
-			
-			strel.removeProgressListener(this);
+			runErosion(result, strel);
 		}
 		
 		// clear status bar
@@ -124,13 +100,7 @@ implements SeparableStrel, ProgressListener {
 		int i = 1;
 		for (InPlaceStrel strel : strels) {
 			fireStatusChanged(this, "Erosion " + (i++) + "/" + n);
-			
-			strel.showProgress(this.showProgress());
-			strel.addProgressListener(this);
-			
-			strel.inPlaceErosion(result);
-			
-			strel.removeProgressListener(this);
+			runErosion(result, strel);
 		}
 		
 		// Dilation (with reversed strel)
@@ -138,19 +108,27 @@ implements SeparableStrel, ProgressListener {
 		strels = this.reverse().decompose();
 		for (InPlaceStrel strel : strels) {
 			fireStatusChanged(this, "Dilation " + (i++) + "/" + n);
-			
-			strel.showProgress(this.showProgress());
-			strel.addProgressListener(this);
-			
-			strel.inPlaceDilation(result);
-			
-			strel.removeProgressListener(this);
+			runDilation(result, strel);
 		}
 		
 		// clear status bar
 		fireStatusChanged(this, "");
 
 		return result;
+	}
+	
+	private void runDilation(ImageProcessor image, InPlaceStrel strel) {
+		strel.showProgress(this.showProgress());
+		strel.addProgressListener(this);
+		strel.inPlaceDilation(image);
+		strel.removeProgressListener(this);
+	}
+	
+	private void runErosion(ImageProcessor image, InPlaceStrel strel) {
+		strel.showProgress(this.showProgress());
+		strel.addProgressListener(this);
+		strel.inPlaceErosion(image);
+		strel.removeProgressListener(this);
 	}
 	
 	/**
