@@ -3,7 +3,6 @@
  */
 package inra.ijpb.morphology.strel;
 
-import ij.IJ;
 import ij.ImageStack;
 import ij.process.ImageProcessor;
 import inra.ijpb.morphology.Strel;
@@ -45,43 +44,40 @@ public abstract class AbstractStrel extends AbstractStrel3D implements Strel {
 		
 		int nSlices = stack.getSize();
 		for (int i = 1; i <= nSlices; i++) {
-			if (flag) {
-				IJ.showProgress(i-1, nSlices);
-			}
+			this.showProgress(flag);
+			fireProgressChange(this, i-1, nSlices);
+			this.showProgress(false);
 			
 			ImageProcessor img = stack.getProcessor(i);
 			img = dilation(img);
 			result.setProcessor(img, i);
 		}
 		
-		if (flag) {
-			IJ.showProgress(1);
-		}
+		// notify end of slices progression
 		this.showProgress(flag);
+		fireProgressChange(this, nSlices, nSlices);
 		
 		return result;
 	}
 	
 	public ImageStack erosion(ImageStack stack) {
 		boolean flag = this.showProgress();
-		this.showProgress(false);
 		
 		int nSlices = stack.getSize();
 		ImageStack result = stack.duplicate();
 		for (int i = 1; i <= nSlices; i++) {
-			if (flag) {
-				IJ.showProgress(i-1, nSlices);
-			}
+			this.showProgress(flag);
+			fireProgressChange(this, i-1, nSlices);
+			this.showProgress(false);
 			
 			ImageProcessor img = stack.getProcessor(i);
 			img = erosion(img);
 			result.setProcessor(img, i);
 		}
 		
-		if (flag) {
-			IJ.showProgress(1);
-		}
+		// notify end of slices progression
 		this.showProgress(flag);
+		fireProgressChange(this, nSlices, nSlices);
 		
 		return result;
 	}
@@ -93,19 +89,18 @@ public abstract class AbstractStrel extends AbstractStrel3D implements Strel {
 		int nSlices = stack.getSize();
 		ImageStack result = stack.duplicate();
 		for (int i = 1; i <= nSlices; i++) {
-			if (flag) {
-				IJ.showProgress(i-1, nSlices);
-			}
+			this.showProgress(flag);
+			fireProgressChange(this, i-1, nSlices);
+			this.showProgress(false);
 			
 			ImageProcessor img = stack.getProcessor(i);
 			img = closing(img);
 			result.setProcessor(img, i);
 		}
 		
-		if (flag) {
-			IJ.showProgress(1);
-		}
+		// notify end of slices progression
 		this.showProgress(flag);
+		fireProgressChange(this, nSlices, nSlices);
 		
 		return result;
 	}
@@ -117,19 +112,18 @@ public abstract class AbstractStrel extends AbstractStrel3D implements Strel {
 		int nSlices = stack.getSize();
 		ImageStack result = stack.duplicate();
 		for (int i = 1; i <= nSlices; i++) {
-			if (flag) {
-				IJ.showProgress(i-1, nSlices);
-			}
+			this.showProgress(flag);
+			fireProgressChange(this, i-1, nSlices);
+			this.showProgress(false);
 			
 			ImageProcessor img = stack.getProcessor(i);
 			img = opening(img);
 			result.setProcessor(img, i);
 		}
 		
-		if (flag) {
-			IJ.showProgress(1);
-		}
+		// notify end of slices progression
 		this.showProgress(flag);
+		fireProgressChange(this, nSlices, nSlices);
 		
 		return result;
 	}

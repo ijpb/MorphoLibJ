@@ -1,8 +1,6 @@
 package inra.ijpb.plugins;
 
 
-import java.awt.AWTEvent;
-
 import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.DialogListener;
@@ -11,9 +9,15 @@ import ij.plugin.filter.ExtendedPlugInFilter;
 import ij.plugin.filter.PlugInFilterRunner;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
+import inra.ijpb.event.ProgressEvent;
+import inra.ijpb.event.ProgressListener;
+import inra.ijpb.event.StatusEvent;
+import inra.ijpb.event.StatusListener;
 import inra.ijpb.morphology.Morphology;
-import inra.ijpb.morphology.Strel;
 import inra.ijpb.morphology.Morphology.Operation;
+import inra.ijpb.morphology.Strel;
+
+import java.awt.AWTEvent;
 
 /**
  * Plugin for computing various morphological filters on gray scale or color
@@ -22,7 +26,8 @@ import inra.ijpb.morphology.Morphology.Operation;
  * @author David Legland
  *
  */
-public class MorphologicalFilterPlugin implements ExtendedPlugInFilter, DialogListener {
+public class MorphologicalFilterPlugin
+implements ExtendedPlugInFilter, DialogListener, ProgressListener, StatusListener {
 
 	/** Apparently, it's better to store flags in plugin */
 	private int flags = DOES_ALL | KEEP_PREVIEW | FINAL_PROCESSING;
@@ -131,6 +136,10 @@ public class MorphologicalFilterPlugin implements ExtendedPlugInFilter, DialogLi
 		// Create structuring element of the given size
 		Strel strel = shape.fromRadius(radius);
 		
+//		strel.showProgress(true);
+		strel.addProgressListener(this);
+		strel.addStatusListener(this);
+		
 		// Eventually display the structuring element used for processing 
 		if (showStrel) {
 			showStrelImage(strel);
@@ -221,6 +230,18 @@ public class MorphologicalFilterPlugin implements ExtendedPlugInFilter, DialogLi
 	 */
 	private String createResultImageName(ImagePlus baseImage) {
 		return baseImage.getShortTitle() + "-" + op.toString();
+	}
+
+
+	@Override
+	public void progressChanged(ProgressEvent evt) {
+		IJ.showProgress(evt.getProgressRatio());
+	}
+
+
+	@Override
+	public void statusChanged(StatusEvent evt) {
+		IJ.showStatus(evt.getMessage());
 	}
 
 }

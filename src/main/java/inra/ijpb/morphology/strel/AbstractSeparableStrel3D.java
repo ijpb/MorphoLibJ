@@ -3,8 +3,9 @@
  */
 package inra.ijpb.morphology.strel;
 
-import ij.IJ;
 import ij.ImageStack;
+import inra.ijpb.event.ProgressEvent;
+import inra.ijpb.event.ProgressListener;
 
 import java.util.Collection;
 
@@ -13,7 +14,8 @@ import java.util.Collection;
  * @author David Legland
  *
  */
-public abstract class AbstractSeparableStrel3D extends AbstractStrel3D implements SeparableStrel3D {
+public abstract class AbstractSeparableStrel3D extends AbstractStrel3D
+		implements SeparableStrel3D, ProgressListener {
 
 	public ImageStack dilation(ImageStack stack) {
 		// Allocate memory for result
@@ -27,12 +29,14 @@ public abstract class AbstractSeparableStrel3D extends AbstractStrel3D implement
 //		long t0 = System.currentTimeMillis();
 		int i = 1;
 		for (InPlaceStrel3D strel : strels) {
-			if (this.showProgress()) {
-				IJ.showStatus("Dilation " + (i++) + "/" + n);
-			}
+			fireStatusChanged(this, "Dilation " + (i++) + "/" + n);
 			
 			strel.showProgress(this.showProgress());
+			strel.addProgressListener(this);
+			
 			strel.inPlaceDilation(result);
+			
+			strel.removeProgressListener(this);
 //			long t = System.currentTimeMillis();
 //			long dt = t - t0;
 //			System.out.println("elapsed time: " + (dt / 1000) + " s.");
@@ -40,9 +44,7 @@ public abstract class AbstractSeparableStrel3D extends AbstractStrel3D implement
 		}
 		
 		// clear status bar
-		if (this.showProgress()) {
-			IJ.showStatus("");
-		}
+		fireStatusChanged(this, "");
 		
 		return result;
 	}
@@ -58,18 +60,18 @@ public abstract class AbstractSeparableStrel3D extends AbstractStrel3D implement
 		// Erosion
 		int i = 1;
 		for (InPlaceStrel3D strel : strels) {
-			if (this.showProgress()) {
-				IJ.showStatus("Erosion " + (i++) + "/" + n);
-			}
+			fireStatusChanged(this, "Erosion " + (i++) + "/" + n);
 			
 			strel.showProgress(this.showProgress());
+			strel.addProgressListener(this);
+
 			strel.inPlaceErosion(result);
+			
+			strel.removeProgressListener(this);
 		}
 		
 		// clear status bar
-		if (this.showProgress()) {
-			IJ.showStatus("");
-		}
+		fireStatusChanged(this, "");
 		
 		return result;
 	}
@@ -85,28 +87,32 @@ public abstract class AbstractSeparableStrel3D extends AbstractStrel3D implement
 		// Dilation
 		int i = 1;
 		for (InPlaceStrel3D strel : strels) {
-			if (this.showProgress()) {
-				IJ.showStatus("Dilation " + (i++) + "/" + n);
-			}
+			fireStatusChanged(this, "Dilation " + (i++) + "/" + n);
+			
 			strel.showProgress(this.showProgress());
+			strel.addProgressListener(this);
+			
 			strel.inPlaceDilation(result);
+			
+			strel.removeProgressListener(this);
 		}
 		
 		// Erosion (with reversed strel)
 		i = 1;
 		strels = this.reverse().decompose();
 		for (InPlaceStrel3D strel : strels) {
-			if (this.showProgress()) {
-				IJ.showStatus("Erosion " + (i++) + "/" + n);
-			}
+			fireStatusChanged(this, "Erosion " + (i++) + "/" + n);
+			
 			strel.showProgress(this.showProgress());
+			strel.addProgressListener(this);
+
 			strel.inPlaceErosion(result);
+			
+			strel.removeProgressListener(this);
 		}
 		
 		// clear status bar
-		if (this.showProgress()) {
-			IJ.showStatus("");
-		}
+		fireStatusChanged(this, "");
 		
 		return result;
 	}
@@ -122,31 +128,40 @@ public abstract class AbstractSeparableStrel3D extends AbstractStrel3D implement
 		// Erosion
 		int i = 1;
 		for (InPlaceStrel3D strel : strels) {
-			if (this.showProgress()) {
-				IJ.showStatus("Erosion " + (i++) + "/" + n);
-			}
+			fireStatusChanged(this, "Erosion " + (i++) + "/" + n);
 			
 			strel.showProgress(this.showProgress());
+			strel.addProgressListener(this);
+
 			strel.inPlaceErosion(result);
+			
+			strel.removeProgressListener(this);
 		}
 		
 		// Dilation (with reversed strel)
 		i = 1;
 		strels = this.reverse().decompose();
 		for (InPlaceStrel3D strel : strels) {
-			if (this.showProgress()) {
-				IJ.showStatus("Dilation " + (i++) + "/" + n);
-			}
+			fireStatusChanged(this, "Dilation " + (i++) + "/" + n);
 			
 			strel.showProgress(this.showProgress());
+			strel.addProgressListener(this);
+			
 			strel.inPlaceDilation(result);
+			
+			strel.removeProgressListener(this);
 		}
 		
 		// clear status bar
-		if (this.showProgress()) {
-			IJ.showStatus("");
-		}
+		fireStatusChanged(this, "");
 
 		return result;
+	}
+	
+	/**
+	 * Propagates the event by changing the source.
+	 */
+	public void progressChanged(ProgressEvent evt) {
+		this.fireProgressChange(this, evt.getStep(), evt.getTotal());
 	}
 }

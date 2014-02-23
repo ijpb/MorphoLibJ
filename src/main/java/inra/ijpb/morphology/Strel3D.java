@@ -4,6 +4,8 @@
 package inra.ijpb.morphology;
 
 import ij.ImageStack;
+import inra.ijpb.event.ProgressListener;
+import inra.ijpb.event.StatusListener;
 import inra.ijpb.morphology.strel.Cross3x3Strel;
 import inra.ijpb.morphology.strel.CubeStrel;
 import inra.ijpb.morphology.strel.DiamondStrel;
@@ -288,4 +290,12 @@ public interface Strel3D {
 	 * Specifies if this structuring element should display its progress.
 	 */
 	public void showProgress(boolean b);
+	
+	public void addProgressListener(ProgressListener listener);
+
+	public void removeProgressListener(ProgressListener listener);
+	
+	public void addStatusListener(StatusListener listener);
+
+	public void removeStatusListener(StatusListener listener);
 }
