@@ -70,4 +70,10 @@ public abstract class RegionalExtremaAlgo3D {
 	 */
 	public abstract ImageStack applyTo(ImageStack inputImage); 
 	
+	/**
+	 * Applies this regional extrema algorithm on the 3D image given as argument
+	 * and using the given mask, and returns the result as a binary image stack. 
+	 */
+	public abstract ImageStack applyTo(ImageStack inputImage, ImageStack maskImage);
+	
 }
