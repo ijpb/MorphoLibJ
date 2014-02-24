@@ -3,7 +3,7 @@
  */
 package inra.ijpb.morphology.extrema;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import ij.ImageStack;
 
 import org.junit.Test;
@@ -12,16 +12,16 @@ import org.junit.Test;
  * @author David Legland
  *
  */
-public class RegionalExtremaByFlooding3DTest {
+public class RegionalExtrema3DByFloodingTest {
 
 	/**
 	 * Test method for {@link inra.ijpb.morphology.extrema.RegionalExtremaByFlooding3D#applyTo(ij.ImageStack)}.
 	 */
 	@Test
-	public final void testMaximaEightCubesC6() {
+	public final void testMaximaEightCubesIntC6() {
 		ImageStack image = createEightCubesImage();
 		
-		RegionalExtremaAlgo3D algo = new RegionalExtremaByFlooding3D();
+		RegionalExtrema3DAlgo algo = new RegionalExtrema3DByFlooding();
 		algo.setExtremaType(ExtremaType.MAXIMA);
 		algo.setConnectivity(6);
 		
@@ -44,10 +44,37 @@ public class RegionalExtremaByFlooding3DTest {
 	 * Test method for {@link inra.ijpb.morphology.extrema.RegionalExtremaByFlooding3D#applyTo(ij.ImageStack)}.
 	 */
 	@Test
-	public final void testMinimaEightCubesC6() {
+	public final void testMaximaEightCubesFloatC6() {
+		ImageStack image = createEightCubesImage();
+		image = image.convertToFloat();
+		
+		RegionalExtrema3DAlgo algo = new RegionalExtrema3DByFlooding();
+		algo.setExtremaType(ExtremaType.MAXIMA);
+		algo.setConnectivity(6);
+		
+		ImageStack maxima = algo.applyTo(image);
+		
+		for (int z = 0; z < 9; z++){
+			for (int y = 0; y < 9; y++){
+				for (int x = 0; x < 9; x++){
+					if (image.getVoxel(x, y, z) > 0) {
+						assertEquals(255, maxima.getVoxel(x, y, z), 1e-10);
+					} else {
+						assertEquals(0, maxima.getVoxel(x, y, z), 1e-10);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Test method for {@link inra.ijpb.morphology.extrema.RegionalExtremaByFlooding3D#applyTo(ij.ImageStack)}.
+	 */
+	@Test
+	public final void testMinimaEightCubesIntC6() {
 		ImageStack image = invertGray8Image(createEightCubesImage());
 		
-		RegionalExtremaAlgo3D algo = new RegionalExtremaByFlooding3D();
+		RegionalExtrema3DAlgo algo = new RegionalExtrema3DByFlooding();
 		algo.setExtremaType(ExtremaType.MINIMA);
 		algo.setConnectivity(6);
 		
@@ -70,10 +97,64 @@ public class RegionalExtremaByFlooding3DTest {
 	 * Test method for {@link inra.ijpb.morphology.extrema.RegionalExtremaByFlooding3D#applyTo(ij.ImageStack)}.
 	 */
 	@Test
-	public final void testMaximaEightCubesC26() {
+	public final void testMinimaEightCubesFloatC6() {
+		ImageStack image = invertGray8Image(createEightCubesImage());
+		image = image.convertToFloat();
+		
+		RegionalExtrema3DAlgo algo = new RegionalExtrema3DByFlooding();
+		algo.setExtremaType(ExtremaType.MINIMA);
+		algo.setConnectivity(6);
+		
+		ImageStack maxima = algo.applyTo(image);
+		
+		for (int z = 0; z < 9; z++){
+			for (int y = 0; y < 9; y++){
+				for (int x = 0; x < 9; x++){
+					if (image.getVoxel(x, y, z) != 255) {
+						assertEquals(255, maxima.getVoxel(x, y, z), 1e-10);
+					} else {
+						assertEquals(0, maxima.getVoxel(x, y, z), 1e-10);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Test method for {@link inra.ijpb.morphology.extrema.RegionalExtremaByFlooding3D#applyTo(ij.ImageStack)}.
+	 */
+	@Test
+	public final void testMaximaEightCubesIntC26() {
 		ImageStack image = createEightCubesImage();
 		
-		RegionalExtremaAlgo3D algo = new RegionalExtremaByFlooding3D();
+		RegionalExtrema3DAlgo algo = new RegionalExtrema3DByFlooding();
+		algo.setExtremaType(ExtremaType.MAXIMA);
+		algo.setConnectivity(26);
+		
+		ImageStack maxima = algo.applyTo(image);
+		
+		for (int z = 0; z < 9; z++){
+			for (int y = 0; y < 9; y++){
+				for (int x = 0; x < 9; x++){
+					if (image.getVoxel(x, y, z) > 0) {
+						assertEquals(255, maxima.getVoxel(x, y, z), 1e-10);
+					} else {
+						assertEquals(0, maxima.getVoxel(x, y, z), 1e-10);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Test method for {@link inra.ijpb.morphology.extrema.RegionalExtremaByFlooding3D#applyTo(ij.ImageStack)}.
+	 */
+	@Test
+	public final void testMaximaEightCubesFloatC26() {
+		ImageStack image = createEightCubesImage();
+		image = image.convertToFloat();
+		
+		RegionalExtrema3DAlgo algo = new RegionalExtrema3DByFlooding();
 		algo.setExtremaType(ExtremaType.MAXIMA);
 		algo.setConnectivity(26);
 		
@@ -93,10 +174,34 @@ public class RegionalExtremaByFlooding3DTest {
 	}
 
 	@Test
-	public final void testMinimaEightCubesC26() {
+	public final void testMinimaEightCubesIntC26() {
 		ImageStack image = invertGray8Image(createEightCubesImage());
 		
-		RegionalExtremaAlgo3D algo = new RegionalExtremaByFlooding3D();
+		RegionalExtrema3DAlgo algo = new RegionalExtrema3DByFlooding();
+		algo.setExtremaType(ExtremaType.MINIMA);
+		algo.setConnectivity(26);
+		
+		ImageStack maxima = algo.applyTo(image);
+		
+		for (int z = 0; z < 9; z++){
+			for (int y = 0; y < 9; y++){
+				for (int x = 0; x < 9; x++){
+					if (image.getVoxel(x, y, z) != 255) {
+						assertEquals(255, maxima.getVoxel(x, y, z), 1e-10);
+					} else {
+						assertEquals(0, maxima.getVoxel(x, y, z), 1e-10);
+					}
+				}
+			}
+		}
+	}
+
+	@Test
+	public final void testMinimaEightCubesFloatC26() {
+		ImageStack image = invertGray8Image(createEightCubesImage());
+		image = image.convertToFloat();
+		
+		RegionalExtrema3DAlgo algo = new RegionalExtrema3DByFlooding();
 		algo.setExtremaType(ExtremaType.MINIMA);
 		algo.setConnectivity(26);
 		
@@ -130,16 +235,16 @@ public class RegionalExtremaByFlooding3DTest {
 				image.setVoxel(5, i, j, 127);
 			}
 		}
-		System.out.println("--input--");
-		printImage(image);
+//		System.out.println("--input--");
+//		printImage(image);
 		
-		RegionalExtremaAlgo3D algo = new RegionalExtremaByFlooding3D();
+		RegionalExtrema3DAlgo algo = new RegionalExtrema3DByFlooding();
 		algo.setExtremaType(ExtremaType.MAXIMA);
 		algo.setConnectivity(6);
 		
 		ImageStack maxima = algo.applyTo(image);
-		System.out.println("--maxima--");
-		printImage(maxima);
+//		System.out.println("--maxima--");
+//		printImage(maxima);
 		
 		for (int z = 0; z < 11; z++){
 			for (int y = 0; y < 11; y++){

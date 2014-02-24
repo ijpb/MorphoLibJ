@@ -49,7 +49,7 @@ public class GeodesicReconstructionByErosion3DGray8Test {
 		
 		// create reconstruction algorithm
 		GeodesicReconstructionByErosion3DGray8 algo = new GeodesicReconstructionByErosion3DGray8();
-		algo.verbose = true;
+		algo.verbose = false;
 
 		// run algo and compute elapsed time
 		long t0 = System.currentTimeMillis();

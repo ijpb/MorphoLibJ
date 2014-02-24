@@ -10,11 +10,11 @@ import ij.ImageStack;
  * 
  * Example of use:
  * <code><pre>
- * ImageProcessor image = IJ.getImage().getProcessor();
- * RegionalExtremaAlgo algo = new RegionalExtremaByFlooding(); 
- * algo.setConnectivity(4);
+ * ImageStack image = IJ.getImage().getStack();
+ * RegionalExtrema3DAlgo algo = new RegionalExtrema3DFlooding(); 
+ * algo.setConnectivity(6);
  * algo.setExtremaType(ExtremaType.MAXIMA);
- * ImageProcessor result = algo.applyTo(image);
+ * ImageStack result = algo.applyTo(image);
  * ImagePlus resPlus = new ImagePlus("Regional Extrema", result); 
  * resPlus.show(); 
  * </pre></code>
@@ -22,27 +22,19 @@ import ij.ImageStack;
  * @author David Legland
  *
  */
-public abstract class RegionalExtremaAlgo3D {
+public abstract class RegionalExtrema3DAlgo {
 
 	// ==============================================================
 	// class variables
 	
-	int connectivity = 6;
-	
 	ExtremaType extremaType = ExtremaType.MINIMA;
+	
+	int connectivity = 6;
 	
 	boolean progressVisible = true;
 	
 	// ==============================================================
 	// getter and setters
-	
-	public int getConnectivity() {
-		return this.connectivity;
-	}
-	
-	public void setConnectivity(int conn) {
-		this.connectivity = conn;
-	}
 	
 	public ExtremaType getExtremaType() {
 		return extremaType;
@@ -52,6 +44,14 @@ public abstract class RegionalExtremaAlgo3D {
 		this.extremaType = extremaType;
 	}
 
+	public int getConnectivity() {
+		return this.connectivity;
+	}
+	
+	public void setConnectivity(int conn) {
+		this.connectivity = conn;
+	}
+	
 	public boolean isProgressVisible() {
 		return progressVisible;
 	}

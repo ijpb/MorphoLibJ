@@ -5,8 +5,8 @@ package inra.ijpb.morphology;
 
 import ij.ImageStack;
 import inra.ijpb.morphology.extrema.ExtremaType;
-import inra.ijpb.morphology.extrema.RegionalExtremaAlgo3D;
-import inra.ijpb.morphology.extrema.RegionalExtremaByFlooding3D;
+import inra.ijpb.morphology.extrema.RegionalExtrema3DAlgo;
+import inra.ijpb.morphology.extrema.RegionalExtrema3DByFlooding;
 import inra.ijpb.morphology.geodrec.GeodesicReconstruction3DAlgo;
 import inra.ijpb.morphology.geodrec.GeodesicReconstructionByDilation3DGray8Scanning;
 import inra.ijpb.morphology.geodrec.GeodesicReconstructionByErosion3DGray8Scanning;
@@ -51,7 +51,7 @@ public class MinimaAndMaxima3D {
 	 */
 	public final static ImageStack regionalMaxima(ImageStack image,
 			int conn) {
-		RegionalExtremaAlgo3D algo = new RegionalExtremaByFlooding3D();
+		RegionalExtrema3DAlgo algo = new RegionalExtrema3DByFlooding();
 		algo.setConnectivity(conn);
 		algo.setExtremaType(ExtremaType.MAXIMA);
 		
@@ -68,7 +68,7 @@ public class MinimaAndMaxima3D {
 			int conn,
 			ImageStack mask ) 
 	{
-		RegionalExtremaAlgo3D algo = new RegionalExtremaByFlooding3D();
+		RegionalExtrema3DAlgo algo = new RegionalExtrema3DByFlooding();
 		algo.setConnectivity(conn);
 		algo.setExtremaType(ExtremaType.MAXIMA);
 		
@@ -123,7 +123,7 @@ public class MinimaAndMaxima3D {
 	 */
 	public final static ImageStack regionalMinima(ImageStack image,
 			int conn) {
-		RegionalExtremaAlgo3D algo = new RegionalExtremaByFlooding3D();
+		RegionalExtrema3DAlgo algo = new RegionalExtrema3DByFlooding();
 		algo.setConnectivity(conn);
 		algo.setExtremaType(ExtremaType.MINIMA);
 		
@@ -140,7 +140,7 @@ public class MinimaAndMaxima3D {
 			int conn,
 			ImageStack mask ) 
 	{
-		RegionalExtremaAlgo3D algo = new RegionalExtremaByFlooding3D();
+		RegionalExtrema3DAlgo algo = new RegionalExtrema3DByFlooding();
 		algo.setConnectivity(conn);
 		algo.setExtremaType(ExtremaType.MINIMA);
 		
