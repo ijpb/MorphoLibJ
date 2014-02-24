@@ -1,32 +1,83 @@
 package inra.ijpb.plugins;
 
+import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Panel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
+import java.awt.image.ColorModel;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import ij.IJ;
 import ij.ImagePlus;
+import ij.ImageStack;
 import ij.WindowManager;
 import ij.gui.ImageCanvas;
+import ij.gui.ImageRoi;
+import ij.gui.Overlay;
 import ij.gui.StackWindow;
 import ij.plugin.PlugIn;
+import ij.process.ImageProcessor;
+import inra.ijpb.binary.ConnectedComponents;
+import inra.ijpb.morphology.MinimaAndMaxima3D;
+import inra.ijpb.util.ColorMaps;
+import inra.ijpb.util.ColorMaps.CommonLabelMaps;
+import inra.ijpb.watershed.WatershedTransform3D;
 
 public class MorphologicalSegmentation implements PlugIn {
 
 	/** original input image */
-	ImagePlus inputImage;
+	ImagePlus inputImage = null;
 	/** image to be displayed in the GUI */
-	ImagePlus displayImage;
+	ImagePlus displayImage = null;
+	
+	/** segmentation result image */
+	ImagePlus resultImage = null;
+	
 	/** GUI window */
 	private CustomWindow win;
+		
+	/** parameters panel */
+	JPanel paramsPanel = new JPanel();
+	/** main panel */
+	Panel all = new Panel();
+	
+	/** segmentation button */
+	JButton segmentButton;
+	
+	/** regional minima dynamic panel */
+	JPanel dynamicPanel = new JPanel();
+	JLabel dynamicLabel;
+	JTextField dynamicText;
+	
+	/** connectivity choice */
+	JPanel connectivityPanel = new JPanel();
+	JLabel connectivityLabel;
+	String[] connectivityOptions = new String[]{ "6", "26" }; 
+	JComboBox<String> connectivityList;
 	
 	
+	
+	/** executor service to launch threads for the plugin methods and events */
+	final ExecutorService exec = Executors.newFixedThreadPool(1);
 	
 	/**
 	 * Custom window to define the plugin GUI
@@ -38,13 +89,33 @@ public class MorphologicalSegmentation implements PlugIn {
 		 */
 		private static final long serialVersionUID = -6201855439028581892L;
 		
-		/** parameters panel */
-		JPanel paramsPanel = new JPanel();
-		/** main panel */
-		Panel all = new Panel();
 		
-		/** segmentation button */
-		JButton segmentButton;
+		
+		
+		private ActionListener listener = new ActionListener() {
+
+			@Override
+			public void actionPerformed( final ActionEvent e ) {
+				//final String command = e.getActionCommand();
+				
+				// listen to the buttons on separate threads not to block
+				// the event dispatch thread
+				exec.submit(new Runnable() {
+													
+					public void run()
+					{
+						if( e.getSource() == segmentButton )
+						{
+							runSegmentation();						
+						}
+					}
+
+					
+				});
+			}
+			
+		};
+		
 		
 		/**
 		 * Construct the plugin window
@@ -57,10 +128,30 @@ public class MorphologicalSegmentation implements PlugIn {
 			
 			final ImageCanvas canvas = (ImageCanvas) getCanvas();
 			
-			setTitle("Morphological Segmentation");
+			setTitle( "Morphological Segmentation" );
 			
+			// regional minima dynamic value
+			dynamicLabel = new JLabel( "Dynamic" );
+			dynamicLabel.setToolTipText( "Extended minima dynamic" );
+			dynamicText = new JTextField( "10", 5 );
+			dynamicPanel.setLayout( new FlowLayout( FlowLayout.LEFT, 5, 5 ) );
+			dynamicPanel.add( dynamicLabel );
+			dynamicPanel.add( dynamicText );
+			dynamicPanel.setToolTipText( "Extended minima dynamic" );
+				
+				
+			// connectivity
+			connectivityList = new JComboBox<String>( connectivityOptions );
+			connectivityList.setToolTipText( "Voxel connectivity to use" );
+			connectivityLabel = new JLabel( "Connectivity" );
+			connectivityPanel.add( connectivityLabel );
+			connectivityPanel.add( connectivityList );
+			connectivityPanel.setToolTipText( "Voxel connectivity to use" );
+			
+			// Segmentation button
 			segmentButton = new JButton( "Segment" );
 			segmentButton.setToolTipText( "Run the morphological segmentation" );
+			segmentButton.addActionListener( listener );
 			
 			// Parameters panel (left side of the GUI)
 			paramsPanel.setBorder(BorderFactory.createTitledBorder("Parameters"));
@@ -73,9 +164,14 @@ public class MorphologicalSegmentation implements PlugIn {
 			paramsConstraints.gridx = 0;
 			paramsConstraints.gridy = 0;
 			paramsConstraints.insets = new Insets(5, 5, 6, 6);
-			paramsPanel.setLayout(paramsLayout);
-
+			paramsPanel.setLayout(paramsLayout);						
+						
+			paramsPanel.add( connectivityPanel, paramsConstraints );
+			paramsConstraints.gridy++;
+			paramsPanel.add( dynamicPanel, paramsConstraints );
+			paramsConstraints.gridy++;
 			paramsPanel.add( segmentButton, paramsConstraints );
+			paramsConstraints.gridy++;
 			
 			// main panel
 			GridBagLayout layout = new GridBagLayout();
@@ -99,7 +195,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			allConstraints.weightx = 1;
 			allConstraints.weighty = 1;
 			allConstraints.gridheight = 1;
-			all.add( canvas, allConstraints);
+			all.add( canvas, allConstraints );
 			
 			allConstraints.gridy++;
 			allConstraints.weightx = 1;
@@ -130,10 +226,179 @@ public class MorphologicalSegmentation implements PlugIn {
 			setLayout( wingb );
 			add( all, winc );
 			
+			// add especial listener if the input image is a stack
+			if(null != sliceSelector)
+			{
+				// add adjustment listener to the scroll bar
+				sliceSelector.addAdjustmentListener(new AdjustmentListener() 
+				{
+
+					public void adjustmentValueChanged(final AdjustmentEvent e) {
+						exec.submit(new Runnable() {
+							public void run() {							
+								if(e.getSource() == sliceSelector)
+								{
+									//IJ.log("moving scroll");
+									displayImage.killRoi();
+									
+									updateResultOverlay();
+									displayImage.updateAndDraw();
+								}
+
+							}
+
+							
+						});
+
+					}
+				});
+
+				// mouse wheel listener to update the rois while scrolling
+				addMouseWheelListener(new MouseWheelListener() {
+
+					@Override
+					public void mouseWheelMoved(final MouseWheelEvent e) {
+
+						exec.submit(new Runnable() {
+							public void run() 
+							{
+								//IJ.log("moving scroll");
+								displayImage.killRoi();
+								updateResultOverlay();
+								displayImage.updateAndDraw();
+							}
+						});
+
+					}
+				});
+
+				// key listener to repaint the display image and the traces
+				// when using the keys to scroll the stack
+				KeyListener keyListener = new KeyListener() {
+
+					@Override
+					public void keyTyped(KeyEvent e) {}
+
+					@Override
+					public void keyReleased(final KeyEvent e) {
+						exec.submit(new Runnable() {
+							public void run() 
+							{
+								if(e.getKeyCode() == KeyEvent.VK_LEFT ||
+										e.getKeyCode() == KeyEvent.VK_RIGHT ||
+										e.getKeyCode() == KeyEvent.VK_LESS ||
+										e.getKeyCode() == KeyEvent.VK_GREATER ||
+										e.getKeyCode() == KeyEvent.VK_COMMA ||
+										e.getKeyCode() == KeyEvent.VK_PERIOD)
+								{
+									//IJ.log("moving scroll");
+									displayImage.killRoi();
+									updateResultOverlay();									
+									displayImage.updateAndDraw();
+									
+								}
+							}
+						});
+
+					}
+
+					@Override
+					public void keyPressed(KeyEvent e) {}
+				};
+				// add key listener to the window and the canvas
+				addKeyListener(keyListener);
+				canvas.addKeyListener(keyListener);
+
+			}
 			
 		}
 	}
 	
+	
+	void updateResultOverlay() 
+	{
+		if( null != resultImage )
+		{
+			int slice = displayImage.getCurrentSlice();
+			ImageRoi roi = new ImageRoi(0, 0, resultImage.getImageStack().getProcessor( slice ) );
+			roi.setOpacity( 1.0/3.0 );
+			displayImage.setOverlay( new Overlay( roi ) );
+		}
+	}
+	
+	/**
+	 * Run morphological segmentation pipeline
+	 */
+	private void runSegmentation() 
+	{
+		// read dynamic
+		double dynamic;
+		
+		int connectivity = Integer.parseInt( (String) connectivityList.getSelectedItem() );
+		
+		try{
+			dynamic = Double.parseDouble( this.dynamicText.getText() );
+		}
+		catch( NullPointerException ex )
+		{
+			IJ.error( "Error", "Missing dynamic value" );
+			return;
+		}
+		catch( NumberFormatException ex )
+		{
+			IJ.error( "Error", "Dynamic value must be a number" );
+			return;
+		}
+		
+		IJ.log( "Running extended minima with dynamic value " + dynamic + "..." );
+		
+		final ImageStack image = this.inputImage.getImageStack(); 
+		
+		// TODO: change regional minima to extendedMinima (not yet implemented)
+		ImageStack regionalMinima = MinimaAndMaxima3D.regionalMinima( image, connectivity );
+		
+		IJ.log( "Imposing regional minima on original image (connectivity = " + connectivity + ")..." );
+		
+		// Impose regional minima over the original image
+		
+		// TODO: use impose minima (not implemented yet for 32-bit images)
+		//ImageStack imposedMinima = MinimaAndMaxima3D.imposeMinima( image, regionalMinima, connectivity );
+		
+		IJ.log( "Labeling regional minima..." );
+		
+		// Label regional minima
+		ImageStack labeledMinima = ConnectedComponents.computeLabels( regionalMinima, connectivity, 32 );
+		
+		// Apply watershed
+		ImagePlus connectedMinima = new ImagePlus( "connected minima", labeledMinima );				
+		WatershedTransform3D wt = new WatershedTransform3D( this.inputImage, connectedMinima, null, connectivity );
+		resultImage = wt.applyWithPriorityQueue();
+		
+		// Adjust min and max values to display
+		double min = 0;
+		double max = 0;
+		for( int slice=1; slice<=resultImage.getImageStackSize(); slice++ )			
+		{
+			ImageProcessor ip = resultImage.getImageStack().getProcessor(slice);
+			ip.resetMinAndMax();
+			if( max < ip.getMax() )
+				max = ip.getMax();
+			if( min > ip.getMin() )
+				min = ip.getMin();
+		}
+		
+		resultImage.setDisplayRange( min, max );
+		
+		byte[][] colorMap = CommonLabelMaps.fromLabel( CommonLabelMaps.SPECTRUM.getLabel() ).computeLut(255, true);;
+		ColorModel cm = ColorMaps.createColorModel(colorMap, Color.BLACK);
+		resultImage.getProcessor().setColorModel(cm);
+		resultImage.getImageStack().setColorModel(cm);
+		resultImage.updateAndDraw();
+		resultImage.show();
+		
+		updateResultOverlay();
+		
+	}
 	
 	@Override
 	public void run(String arg0) 
