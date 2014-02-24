@@ -8,6 +8,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
 	// generic classes
 	AllTests.class,
+	inra.ijpb.morphology.extrema.AllTests.class,
 	inra.ijpb.morphology.geodrec.AllTests.class,
 	inra.ijpb.morphology.strel.AllTests.class
 	})

@@ -6,7 +6,9 @@ package inra.ijpb.morphology;
 import ij.ImageStack;
 import inra.ijpb.morphology.geodrec.GeodesicReconstruction3DAlgo;
 import inra.ijpb.morphology.geodrec.GeodesicReconstructionByDilation3DGray8Scanning;
+import inra.ijpb.morphology.geodrec.GeodesicReconstructionByDilation3DScanning;
 import inra.ijpb.morphology.geodrec.GeodesicReconstructionByErosion3DGray8Scanning;
+import inra.ijpb.morphology.geodrec.GeodesicReconstructionByErosion3DScanning;
 
 
 /**
@@ -90,7 +92,12 @@ public abstract class GeodesicReconstruction3D {
 	 */
 	public final static ImageStack reconstructByDilation(ImageStack marker,
 			ImageStack mask) {
-		GeodesicReconstruction3DAlgo algo = new GeodesicReconstructionByDilation3DGray8Scanning();
+		GeodesicReconstruction3DAlgo algo;
+		if (marker.getBitDepth() == 8 && mask.getBitDepth() == 8) {
+			algo = new GeodesicReconstructionByDilation3DGray8Scanning();
+		} else {
+			algo = new GeodesicReconstructionByDilation3DScanning();
+		}
 		return algo.applyTo(marker, mask);
 	}
 
@@ -100,8 +107,12 @@ public abstract class GeodesicReconstruction3D {
 	 */
 	public final static ImageStack reconstructByDilation(ImageStack marker,
 			ImageStack mask, int connectivity) {
-		GeodesicReconstruction3DAlgo algo = new GeodesicReconstructionByDilation3DGray8Scanning(
-				connectivity);
+		GeodesicReconstruction3DAlgo algo;
+		if (marker.getBitDepth() == 8 && mask.getBitDepth() == 8) {
+			algo = new GeodesicReconstructionByDilation3DGray8Scanning(connectivity);
+		} else {
+			algo = new GeodesicReconstructionByDilation3DScanning(connectivity);
+		}
 		return algo.applyTo(marker, mask);
 	}
 
@@ -121,6 +132,7 @@ public abstract class GeodesicReconstruction3D {
 			int connectivity,
 			ImageStack binaryMask ) 
 	{
+		//TODO: add support for non gray8 stacks
 		GeodesicReconstruction3DAlgo algo = new GeodesicReconstructionByDilation3DGray8Scanning(
 				connectivity);
 		return algo.applyTo( marker, mask, binaryMask );
@@ -133,7 +145,12 @@ public abstract class GeodesicReconstruction3D {
 	 */
 	public final static ImageStack reconstructByErosion(ImageStack marker,
 			ImageStack mask) {
-		GeodesicReconstruction3DAlgo algo = new GeodesicReconstructionByErosion3DGray8Scanning();
+		GeodesicReconstruction3DAlgo algo;
+		if (marker.getBitDepth() == 8 && mask.getBitDepth() == 8) {
+			algo = new GeodesicReconstructionByErosion3DGray8Scanning();
+		} else {
+			algo = new GeodesicReconstructionByErosion3DScanning();
+		}
 		return algo.applyTo(marker, mask);
 	}
 
@@ -143,8 +160,12 @@ public abstract class GeodesicReconstruction3D {
 	 */
 	public final static ImageStack reconstructByErosion(ImageStack marker,
 			ImageStack mask, int connectivity) {
-		GeodesicReconstruction3DAlgo algo = new GeodesicReconstructionByErosion3DGray8Scanning(
-				connectivity);
+		GeodesicReconstruction3DAlgo algo;
+		if (marker.getBitDepth() == 8 && mask.getBitDepth() == 8) {
+			algo = new GeodesicReconstructionByErosion3DGray8Scanning(connectivity);
+		} else {
+			algo = new GeodesicReconstructionByErosion3DScanning(connectivity);
+		}
 		return algo.applyTo(marker, mask);
 	}
 	

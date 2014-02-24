@@ -5,9 +5,6 @@ package inra.ijpb.morphology.geodrec;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-
-import java.util.LinkedList;
-
 import ij.IJ;
 import ij.ImageStack;
 
@@ -31,8 +28,6 @@ public class GeodesicReconstructionByErosion3DGray8Scanning implements GeodesicR
 	int sizeZ = 0;
 
 	int connectivity = 6;
-	
-	LinkedList<int[]> queue;
 	
 	/**
 	 * The flag indicating whether the result image has been modified during
@@ -80,6 +75,11 @@ public class GeodesicReconstructionByErosion3DGray8Scanning implements GeodesicR
 		// Keep references to input images
 		this.marker = marker;
 		this.mask = mask;
+		
+		// Check input image type
+		if (marker.getBitDepth() != 8 || mask.getBitDepth() != 8) {
+			throw new IllegalArgumentException("Marker and Mask images must be byte stacks");
+		}
 		
 		// Check sizes are consistent
 		this.sizeX 	= marker.getWidth();
