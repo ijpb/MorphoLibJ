@@ -1,12 +1,11 @@
 package inra.ijpb.morphology.strel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
+import inra.ijpb.morphology.Strel;
 
 import org.junit.Test;
-
-import inra.ijpb.morphology.Strel;
 
 public class LinearHorizontalStrelTest {
 

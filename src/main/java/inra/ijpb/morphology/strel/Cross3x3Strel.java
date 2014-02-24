@@ -3,7 +3,6 @@
  */
 package inra.ijpb.morphology.strel;
 
-import ij.IJ;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.morphology.Strel;
@@ -95,9 +94,7 @@ public class Cross3x3Strel extends AbstractInPlaceStrel {
 		// Iterate over image lines
 		int valMax;
 		for (int y = 0; y < height; y++) {
-			if (this.showProgress()) {
-				IJ.showProgress(y, height);
-			}
+			fireProgressChange(this, y, height);
 			
 			// permute lines in buffer
 			int[] tmp = buffer[0];
@@ -133,9 +130,7 @@ public class Cross3x3Strel extends AbstractInPlaceStrel {
 		}
 		
 		// clear the progress bar
-		if (this.showProgress()) {
-			IJ.showProgress(1);
-		}
+		fireProgressChange(this, height, height);
 	}
 
 	private void inPlaceDilationFloat(ImageProcessor image) {
@@ -155,9 +150,7 @@ public class Cross3x3Strel extends AbstractInPlaceStrel {
 		// Iterate over image lines
 		float valMax;
 		for (int y = 0; y < height; y++) {
-			if (this.showProgress()) {
-				IJ.showProgress(y, height);
-			}
+			fireProgressChange(this, y, height);
 			
 			// permute lines in buffer
 			float[] tmp = buffer[0];
@@ -193,9 +186,7 @@ public class Cross3x3Strel extends AbstractInPlaceStrel {
 		}
 		
 		// clear the progress bar
-		if (this.showProgress()) {
-			IJ.showProgress(1);
-		}
+		fireProgressChange(this, height, height);
 	}
 
 	
@@ -247,9 +238,7 @@ public class Cross3x3Strel extends AbstractInPlaceStrel {
 		// Iterate over image lines
 		int valMin;
 		for (int y = 0; y < height; y++) {
-			if (this.showProgress()) {
-				IJ.showProgress(y, height);
-			}
+			fireProgressChange(this, y, height);
 
 			// permute lines in buffer
 			int[] tmp = buffer[0];
@@ -285,9 +274,7 @@ public class Cross3x3Strel extends AbstractInPlaceStrel {
 		}
 		
 		// clear the progress bar
-		if (this.showProgress()) {
-			IJ.showProgress(1);
-		}
+		fireProgressChange(this, height, height);
 	}
 
 	private void inPlaceErosionFloat(ImageProcessor image) {
@@ -307,9 +294,7 @@ public class Cross3x3Strel extends AbstractInPlaceStrel {
 		// Iterate over image lines
 		float valMin;
 		for (int y = 0; y < height; y++) {
-			if (this.showProgress()) {
-				IJ.showProgress(y, height);
-			}
+			fireProgressChange(this, y, height);
 
 			// permute lines in buffer
 			float[] tmp = buffer[0];
@@ -345,9 +330,7 @@ public class Cross3x3Strel extends AbstractInPlaceStrel {
 		}
 		
 		// clear the progress bar
-		if (this.showProgress()) {
-			IJ.showProgress(1);
-		}
+		fireProgressChange(this, height, height);
 	}
 
 	/**

@@ -3,7 +3,6 @@
  */
 package inra.ijpb.morphology.strel;
 
-import ij.IJ;
 import ij.ImageStack;
 import inra.ijpb.morphology.Strel;
 
@@ -120,10 +119,8 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 		
 		// Iterate on image z-columns
 		for (int y = 0; y < height; y++) {
+			fireProgressChange(this, y, height);
 			for (int x = 0; x < width; x++) {
-				if (this.showProgress()) {
-					IJ.showProgress(y, height);
-				}
 
 				// init local histogram with background values
 				localMax.fill(Strel.BACKGROUND);
@@ -148,10 +145,7 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 		}
 
 		// clear the progress bar
-		if (this.showProgress()) {
-			IJ.showProgress(1);
-		}
-		
+		fireProgressChange(this, height, height);		
 	}
 
 	/* (non-Javadoc)
@@ -171,10 +165,8 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 		
 		// Iterate on image z-columns
 		for (int y = 0; y < height; y++) {
+			fireProgressChange(this, y, height);
 			for (int x = 0; x < width; x++) {
-				if (this.showProgress()) {
-					IJ.showProgress(y, height);
-				}
 
 				// init local histogram with background values
 				localMax.fill(Float.NEGATIVE_INFINITY);
@@ -199,9 +191,7 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 		}
 
 		// clear the progress bar
-		if (this.showProgress()) {
-			IJ.showProgress(1);
-		}	
+		fireProgressChange(this, height, height);		
 	}
 
 	/* (non-Javadoc)
@@ -238,9 +228,7 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 		
 		// Iterate on image z-columns
 		for (int y = 0; y < height; y++) {
-			if (this.showProgress()) {
-				IJ.showProgress(y, height);
-			}
+			fireProgressChange(this, y, height);
 			for (int x = 0; x < width; x++) {
 
 				// init local histogram with background values
@@ -266,9 +254,7 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 		}
 		
 		// clear the progress bar
-		if (this.showProgress()) {
-			IJ.showProgress(1);
-		}
+		fireProgressChange(this, height, height);		
 	}
 
 	/* (non-Javadoc)
@@ -288,9 +274,7 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 		
 		// Iterate on image z-columns
 		for (int y = 0; y < height; y++) {
-			if (this.showProgress()) {
-				IJ.showProgress(y, height);
-			}
+			fireProgressChange(this, y, height);
 			for (int x = 0; x < width; x++) {
 
 				// init local histogram with background values
@@ -316,9 +300,7 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 		}
 		
 		// clear the progress bar
-		if (this.showProgress()) {
-			IJ.showProgress(1);
-		}
+		fireProgressChange(this, height, height);		
 	}
 
 	/* (non-Javadoc)

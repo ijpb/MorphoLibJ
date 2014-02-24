@@ -11,6 +11,10 @@ import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
+import inra.ijpb.event.ProgressEvent;
+import inra.ijpb.event.ProgressListener;
+import inra.ijpb.event.StatusEvent;
+import inra.ijpb.event.StatusListener;
 import inra.ijpb.morphology.Morphology;
 import inra.ijpb.morphology.Strel3D;
 import inra.ijpb.morphology.Morphology.Operation;
@@ -27,7 +31,8 @@ import inra.ijpb.util.IJUtils;
  *
  */
 
-public class MorphologicalFilter3DPlugin implements PlugIn {
+public class MorphologicalFilter3DPlugin 
+implements PlugIn, ProgressListener, StatusListener {
 
 	/* (non-Javadoc)
 	 * @see ij.plugin.PlugIn#run(java.lang.String)
@@ -67,6 +72,8 @@ public class MorphologicalFilter3DPlugin implements PlugIn {
 		// Create structuring element of the given size
 		Strel3D strel = type.fromRadius(radius);
 		strel.showProgress(true);
+		strel.addProgressListener(this);
+		strel.addStatusListener(this);
 		
 		// Eventually display the structuring element used for processing 
 		if (showStrel) {
@@ -139,4 +146,15 @@ public class MorphologicalFilter3DPlugin implements PlugIn {
 		return resultPlus;
 	}
 	
+	@Override
+	public void progressChanged(ProgressEvent evt) {
+		IJ.showProgress(evt.getProgressRatio());
+	}
+
+
+	@Override
+	public void statusChanged(StatusEvent evt) {
+		IJ.showStatus(evt.getMessage());
+	}
+
 }

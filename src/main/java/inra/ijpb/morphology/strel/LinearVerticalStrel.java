@@ -3,7 +3,6 @@
  */
 package inra.ijpb.morphology.strel;
 
-import ij.IJ;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.morphology.Strel;
@@ -117,9 +116,7 @@ public class LinearVerticalStrel extends AbstractInPlaceStrel {
 		
 		// Iterate on image columns
 		for (int x = 0; x < width; x++) {
-			if (this.showProgress()) {
-				IJ.showProgress(x, width);
-			}
+			fireProgressChange(this, x, width);
 			
 			// reset local histogram
 			localMax.fill(Strel.BACKGROUND);
@@ -143,9 +140,7 @@ public class LinearVerticalStrel extends AbstractInPlaceStrel {
 		}
 		
 		// clear the progress bar
-		if (this.showProgress()) {
-			IJ.showProgress(1);
-		}
+		fireProgressChange(this, width, width);
 	}
 
 	
@@ -162,9 +157,7 @@ public class LinearVerticalStrel extends AbstractInPlaceStrel {
 		
 		// Iterate on image columns
 		for (int x = 0; x < width; x++) {
-			if (this.showProgress()) {
-				IJ.showProgress(x, width);
-			}
+			fireProgressChange(this, x, width);
 			
 			// reset local histogram
 			localMax.fill(Float.MIN_VALUE);
@@ -188,9 +181,7 @@ public class LinearVerticalStrel extends AbstractInPlaceStrel {
 		}
 		
 		// clear the progress bar
-		if (this.showProgress()) {
-			IJ.showProgress(1);
-		}
+		fireProgressChange(this, width, width);
 	}
 
 	/* (non-Javadoc)
@@ -222,9 +213,7 @@ public class LinearVerticalStrel extends AbstractInPlaceStrel {
 		
 		// Iterate on image columns
 		for (int x = 0; x < width; x++) {
-			if (this.showProgress()) {
-				IJ.showProgress(x, width);
-			}
+			fireProgressChange(this, x, width);
 			
 			// reset local histogram
 			localMin.fill(Strel.FOREGROUND);
@@ -248,9 +237,7 @@ public class LinearVerticalStrel extends AbstractInPlaceStrel {
 		}
 		
 		// clear the progress bar
-		if (this.showProgress()) {
-			IJ.showProgress(1);
-		}
+		fireProgressChange(this, width, width);
 	}
 
 	private void inPlaceErosionFloat(ImageProcessor image) {
@@ -266,9 +253,7 @@ public class LinearVerticalStrel extends AbstractInPlaceStrel {
 		
 		// Iterate on image columns
 		for (int x = 0; x < width; x++) {
-			if (this.showProgress()) {
-				IJ.showProgress(x, width);
-			}
+			fireProgressChange(this, x, width);
 			
 			// reset local histogram
 			localMin.fill(Float.MAX_VALUE);
@@ -292,9 +277,7 @@ public class LinearVerticalStrel extends AbstractInPlaceStrel {
 		}
 		
 		// clear the progress bar
-		if (this.showProgress()) {
-			IJ.showProgress(1);
-		}
+		fireProgressChange(this, width, width);
 	}
 
 	
@@ -348,5 +331,4 @@ public class LinearVerticalStrel extends AbstractInPlaceStrel {
 	public LinearVerticalStrel reverse() {
 		return new LinearVerticalStrel(this.size, this.size - this.offset - 1);
 	}
-
 }

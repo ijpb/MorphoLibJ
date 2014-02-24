@@ -161,6 +161,88 @@ public class FloodFillTest {
 	}
 	
 	@Test
+	public final void testFloodFillC8Marker() {
+		int[][] data = new int[][]{
+				{10, 10, 10, 20, 20, 20, 10, 10, 10, 10, 20, 20, 10, 10, 10},
+				{10, 10, 20, 20, 20, 20, 20, 20, 10, 20, 20, 20, 20, 10, 10},
+				{10, 20, 10, 10, 10, 10, 20, 20, 10, 20, 10, 10, 20, 20, 10},
+				{20, 20, 10, 20, 10, 10, 10, 20, 10, 20, 20, 10, 10, 20, 20},
+				{20, 20, 10, 20, 10, 10, 10, 20, 10, 10, 10, 20, 10, 20, 20},
+				{20, 20, 10, 10, 20, 20, 10, 20, 10, 10, 10, 20, 10, 20, 20},
+				{10, 20, 10, 10, 10, 20, 10, 20, 20, 10, 10, 10, 10, 20, 10},
+				{10, 20, 10, 20, 20, 20, 10, 20, 20, 20, 20, 20, 20, 20, 10},
+				{10, 10, 20, 20, 10, 10, 10, 10, 10, 10, 10, 20, 20, 10, 10},
+		};
+		int height = data.length;
+		int width = data[0].length;
+		ImageProcessor image = new ByteProcessor(width, height);
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				image.set(x, y, data[y][x]);
+			}
+		}
+		
+		// initialize empty result image fill with 255
+		ImageProcessor result = new ByteProcessor(width, height);
+		result.setValue(255);
+		result.fill();
+		
+		// Apply 
+		FloodFill.floodFill(image, 7, 4, result, 50, 8);
+//		printImage(result);
+		
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				if (image.get(x, y) == 20)
+					assertEquals(50, result.get(x, y));
+				else
+					assertEquals(255, result.get(x, y));
+			}
+		}
+		
+	}
+	@Test
+	public final void testFloodFill_EmptySquaresC4() {
+		int[] data = new int[]{
+				10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+				10, 20, 20, 20, 10, 10, 10, 30, 30, 30, 10,
+				10, 20, 20, 20, 10, 10, 10, 30, 30, 30, 10,
+				10, 20, 20, 20, 10, 10, 10, 30, 30, 30, 10,
+				10, 10, 10, 10, 40, 40, 40, 10, 10, 10, 10,
+				10, 10, 10, 10, 40, 40, 40, 10, 10, 10, 10,
+				10, 10, 10, 10, 40, 40, 40, 10, 10, 10, 10,
+				10, 20, 20, 20, 10, 10, 10, 30, 30, 30, 10,
+				10, 20, 20, 20, 10, 10, 10, 30, 30, 30, 10,
+				10, 20, 20, 20, 10, 10, 10, 30, 30, 30, 10,
+				10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10
+		};
+		ImageProcessor image = new ByteProcessor(11, 11);
+		for (int i = 0; i < 11*11; i++) {
+			image.set(i, data[i]);
+		}
+
+		// initialize result
+		ImageProcessor result = new ByteProcessor(11, 11);
+		result.setValue(255);
+		result.fill();
+		
+		// compute flood fill result
+		FloodFill.floodFill(image, 1, 0, result, 50, 4);
+		
+		assertEquals(50, result.get(0, 0));
+		assertEquals(50, result.get(10, 0));
+		assertEquals(50, result.get(0, 10));
+		assertEquals(50, result.get(10, 10));
+		
+		assertEquals(50, result.get(5, 3));
+		assertEquals(50, result.get(5, 7));
+		assertEquals(50, result.get(3, 5));
+		assertEquals(50, result.get(7, 5));
+		
+//		printImage(result);
+	}
+	
+	@Test
 	public final void testFloodFill_BatCochlea_C26() {
 		String fileName = getClass().getResource("/files/bat-cochlea-volume.tif").getFile();
 		ImagePlus imagePlus = IJ.openImage(fileName);
@@ -253,6 +335,36 @@ public class FloodFillTest {
 	}
 
 	@Test
+	public final void testFloodFillPair_Cross3d_C6Float() {
+		// Create test image
+		int sizeX = 5;
+		int sizeY = 5;
+		int sizeZ = 5;
+		ImageStack image = ImageStack.create(sizeX, sizeY, sizeZ, 8);
+		int val0 = 50;
+		// three axes
+		for (int i = 0; i < 5; i++) {
+			image.setVoxel(i, 2, 2, val0);
+			image.setVoxel(2, i, 2, val0);
+			image.setVoxel(2, 2, i, val0);
+		}
+		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
+		
+		float newVal = 37;
+		FloodFill.floodFillFloat(image, 1, 2, 2, result, newVal, 6);
+		
+//		printStack(result);
+		
+		// Test each of the branches
+		assertEquals(newVal, result.getVoxel(0, 2, 2), .01);
+		assertEquals(newVal, result.getVoxel(4, 2, 2), .01);
+		assertEquals(newVal, result.getVoxel(2, 0, 2), .01);
+		assertEquals(newVal, result.getVoxel(2, 4, 2), .01);
+		assertEquals(newVal, result.getVoxel(2, 2, 0), .01);
+		assertEquals(newVal, result.getVoxel(2, 2, 4), .01);
+	}
+
+	@Test
 	public final void testFloodFill_Cross3d_C26() {
 		ImageStack image = createCornerCross();
 		int newVal = 37;
@@ -284,6 +396,29 @@ public class FloodFillTest {
 		assertEquals(newVal, image.getVoxel(4, 8, 4), .01);
 		assertEquals(newVal, image.getVoxel(4, 4, 0), .01);
 		assertEquals(newVal, image.getVoxel(4, 4, 8), .01);
+	}
+	
+	@Test
+	public final void testFloodFillPair_Cross3d_C26Float() {
+		ImageStack image = createCornerCross();
+//		System.out.println("input image:");
+//		printStack(image);
+		
+		ImageStack result = ImageStack.create(image.getWidth(), image.getHeight(), image.getSize(), 8);
+		
+		float newVal = 120;
+		FloodFill.floodFillFloat(image, 2, 4, 4, result, newVal, 26);
+		
+//		System.out.println("output image:");
+//		printStack(result);
+		
+		// Test each of the branches
+		assertEquals(newVal, result.getVoxel(0, 4, 4), .01);
+		assertEquals(newVal, result.getVoxel(8, 4, 4), .01);
+		assertEquals(newVal, result.getVoxel(4, 0, 4), .01);
+		assertEquals(newVal, result.getVoxel(4, 8, 4), .01);
+		assertEquals(newVal, result.getVoxel(4, 4, 0), .01);
+		assertEquals(newVal, result.getVoxel(4, 4, 8), .01);
 	}
 	
 	/**
@@ -358,7 +493,7 @@ public class FloodFillTest {
 		int height = image.getHeight();
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
-				System.out.print(image.get(x, y) + " ");
+				System.out.print(String.format("%3d", image.get(x, y)) + " ");
 			}
 			System.out.println("");			
 		}

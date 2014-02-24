@@ -19,47 +19,7 @@ import org.junit.Test;
 public class MinimaAndMaxima3DTest {
 	
 	@Test
-	public final void testRegionalMaxima_BatCochlea() {
-		String fileName = getClass().getResource("/files/bat-cochlea-volume.tif").getFile();
-		ImagePlus imagePlus = IJ.openImage(fileName);
-		assertNotNull(imagePlus);
-		assertTrue(imagePlus.getStackSize() > 0);
-
-		// load the reference image, and get its size
-		ImageStack image = imagePlus.getStack();
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-		int sizeZ = image.getSize();
-		
-		// create test image:
-		// use cochlea volume, but add a band with value 127 in the middle
-		int zMid = sizeZ / 2;
-		for (int y = 0; y < sizeY; y++) {
-			for (int x = 0; x < sizeX; x++) {
-				double val = image.getVoxel(x, y, zMid);
-				if (val == 255)
-					image.setVoxel(x, y, zMid, 127);
-			}
-		}
-		
-		ImageStack maxima = MinimaAndMaxima3D.regionalMaxima(image);
-		
-		for (int z = 0; z < sizeZ; z++) {
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
-					int v0 = (int) image.getVoxel(x, y, z);
-					int v = (int) maxima.getVoxel(x, y, z);
-					if (v0 == 255)
-						assertEquals(255, v);
-					else
-						assertEquals(0, v);
-				}
-			}
-		}
-	}
-	
-	@Test
-	public final void testRegionalMaxima_CubicMesh() {
+	public final void testRegionalMaxima_CubicMeshC6() {
 		// load the reference image, and get its size
 		ImageStack image = createCubicMeshImage();
 		int sizeX = image.getWidth();
@@ -309,6 +269,46 @@ public class MinimaAndMaxima3DTest {
 	}
 
 	@Test
+	public final void testRegionalMaxima_BatCochlea() {
+		String fileName = getClass().getResource("/files/bat-cochlea-volume.tif").getFile();
+		ImagePlus imagePlus = IJ.openImage(fileName);
+		assertNotNull(imagePlus);
+		assertTrue(imagePlus.getStackSize() > 0);
+
+		// load the reference image, and get its size
+		ImageStack image = imagePlus.getStack();
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		int sizeZ = image.getSize();
+		
+		// create test image:
+		// use cochlea volume, but add a band with value 127 in the middle
+		int zMid = sizeZ / 2;
+		for (int y = 0; y < sizeY; y++) {
+			for (int x = 0; x < sizeX; x++) {
+				double val = image.getVoxel(x, y, zMid);
+				if (val == 255)
+					image.setVoxel(x, y, zMid, 127);
+			}
+		}
+		
+		ImageStack maxima = MinimaAndMaxima3D.regionalMaxima(image);
+		
+		for (int z = 0; z < sizeZ; z++) {
+			for (int y = 0; y < sizeY; y++) {
+				for (int x = 0; x < sizeX; x++) {
+					int v0 = (int) image.getVoxel(x, y, z);
+					int v = (int) maxima.getVoxel(x, y, z);
+					if (v0 == 255)
+						assertEquals(255, v);
+					else
+						assertEquals(0, v);
+				}
+			}
+		}
+	}
+	
+	@Test
 	public final void testExtendedMaxima_CubeGraph_C6() {
 		// load the reference image, and get its size
 		ImageStack image = createLeveledCubeGraphImage();
@@ -416,5 +416,5 @@ public class MinimaAndMaxima3DTest {
 		
 		return stack;
 	}
-
+	
 }
