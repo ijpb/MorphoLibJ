@@ -391,30 +391,47 @@ public class MorphologicalSegmentation implements PlugIn {
 		
 		// disable parameter panel
 		setParamsEnabled( false );
-		
+				
 		IJ.log( "Running extended minima with dynamic value " + dynamic + "..." );
+		final long start = System.currentTimeMillis();
 		
 		final ImageStack image = this.inputImage.getImageStack(); 
 		
 		// TODO: change regional minima to extendedMinima (not yet implemented)
 		ImageStack regionalMinima = MinimaAndMaxima3D.regionalMinima( image, connectivity );
 		
-		IJ.log( "Imposing regional minima on original image (connectivity = " + connectivity + ")..." );
+		final long step1 = System.currentTimeMillis();		
+		IJ.log( "Regional minima took " + (step1-start) + " ms.");
 		
+		IJ.log( "Imposing regional minima on original image (connectivity = " + connectivity + ")..." );
+						
 		// Impose regional minima over the original image
 		
 		// TODO: use impose minima (not implemented yet for 32-bit images)
 		//ImageStack imposedMinima = MinimaAndMaxima3D.imposeMinima( image, regionalMinima, connectivity );
 		
+		final long step2 = System.currentTimeMillis();
+		//IJ.log( "Imposition took " + (step2-step1) + " ms.");
+						
 		IJ.log( "Labeling regional minima..." );
 		
 		// Label regional minima
 		ImageStack labeledMinima = ConnectedComponents.computeLabels( regionalMinima, connectivity, 32 );
 		
+		final long step3 = System.currentTimeMillis();
+		IJ.log( "Connected components took " + (step3-step2) + " ms.");
+		
 		// Apply watershed
+		
+		IJ.log("Running watershed...");
+		
 		ImagePlus connectedMinima = new ImagePlus( "connected minima", labeledMinima );				
 		WatershedTransform3D wt = new WatershedTransform3D( this.inputImage, connectedMinima, null, connectivity );
 		resultImage = wt.applyWithPriorityQueue();
+		
+		final long end = System.currentTimeMillis();
+		IJ.log( "Watershed 3d took " + (end-step3) + " ms.");
+		IJ.log( "Whole plugin took " + (end-start) + " ms.");
 		
 		// Adjust min and max values to display
 		double min = 0;
@@ -436,7 +453,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		resultImage.getProcessor().setColorModel(cm);
 		resultImage.getImageStack().setColorModel(cm);
 		resultImage.updateAndDraw();
-		resultImage.show();
+		//resultImage.show();
 		
 		// display result overlaying the input image
 		updateResultOverlay();
