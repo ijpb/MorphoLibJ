@@ -389,6 +389,9 @@ public class MorphologicalSegmentation implements PlugIn {
 			return;
 		}
 		
+		// disable parameter panel
+		setParamsEnabled( false );
+		
 		IJ.log( "Running extended minima with dynamic value " + dynamic + "..." );
 		
 		final ImageStack image = this.inputImage.getImageStack(); 
@@ -439,6 +442,22 @@ public class MorphologicalSegmentation implements PlugIn {
 		updateResultOverlay();
 		showColorOverlay = true;
 		
+		// enable parameter panel
+		setParamsEnabled( true );
+		
+	}
+	
+	/**
+	 * Enable/disable all components in the parameter panel
+	 * 
+	 * @param enabled boolean flag to enable/disable components
+	 */
+	void setParamsEnabled( Boolean enabled )
+	{
+		this.dynamicText.setEnabled( enabled );
+		this.connectivityList.setEnabled( enabled );
+		this.segmentButton.setEnabled( enabled );
+		this.overlayButton.setEnabled( enabled );
 	}
 	
 	@Override
