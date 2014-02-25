@@ -20,6 +20,7 @@ import java.util.concurrent.Executors;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -86,7 +87,12 @@ public class MorphologicalSegmentation implements PlugIn {
 	/** connectivity combo box */
 	JComboBox<String> connectivityList;
 	
-	
+	/** checkbox to choose the priority queue watershed method */
+	JCheckBox queueBox;
+	/** flag to use a priority queue in the watershed transform */
+	private boolean usePriorityQueue = true;
+	/** priority queue panel */
+	JPanel queuePanel = new JPanel();;
 	
 	/** executor service to launch threads for the plugin methods and events */
 	final ExecutorService exec = Executors.newFixedThreadPool(1);
@@ -159,8 +165,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			dynamicPanel.setLayout( new FlowLayout( FlowLayout.LEFT, 5, 5 ) );
 			dynamicPanel.add( dynamicLabel );
 			dynamicPanel.add( dynamicText );
-			dynamicPanel.setToolTipText( "Extended minima dynamic" );
-				
+			dynamicPanel.setToolTipText( "Extended minima dynamic" );				
 				
 			// connectivity
 			connectivityList = new JComboBox<String>( connectivityOptions );
@@ -169,6 +174,12 @@ public class MorphologicalSegmentation implements PlugIn {
 			connectivityPanel.add( connectivityLabel );
 			connectivityPanel.add( connectivityList );
 			connectivityPanel.setToolTipText( "Voxel connectivity to use" );
+			
+			// use priority queue option
+			queueBox = new JCheckBox( "Use priority queue", usePriorityQueue );
+			queueBox.setToolTipText( "Check to use a priority queue in the watershed transform" );
+			queuePanel.add( queueBox );
+			
 			
 			// Segmentation button
 			segmentButton = new JButton( "Segment" );
@@ -205,6 +216,8 @@ public class MorphologicalSegmentation implements PlugIn {
 			paramsPanel.add( connectivityPanel, paramsConstraints );
 			paramsConstraints.gridy++;
 			paramsPanel.add( dynamicPanel, paramsConstraints );
+			paramsConstraints.gridy++;
+			paramsPanel.add( queuePanel, paramsConstraints );
 			paramsConstraints.gridy++;
 			paramsPanel.add( segmentButton, paramsConstraints );
 			paramsConstraints.gridy++;
@@ -410,6 +423,9 @@ public class MorphologicalSegmentation implements PlugIn {
 			return;
 		}
 		
+		// read priority queue flag
+		this.usePriorityQueue = queueBox.isSelected();
+		
 		// disable parameter panel
 		setParamsEnabled( false );
 				
@@ -449,7 +465,11 @@ public class MorphologicalSegmentation implements PlugIn {
 		
 		ImagePlus connectedMinima = new ImagePlus( "connected minima", labeledMinima );				
 		WatershedTransform3D wt = new WatershedTransform3D( impMin, connectedMinima, null, connectivity );
-		resultImage = wt.applyWithPriorityQueue();
+		
+		if ( usePriorityQueue )
+			resultImage = wt.applyWithPriorityQueue();
+		else 
+			resultImage = wt.apply();
 		
 		final long end = System.currentTimeMillis();
 		IJ.log( "Watershed 3d took " + (end-step3) + " ms.");
@@ -498,6 +518,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		this.segmentButton.setEnabled( enabled );
 		this.overlayButton.setEnabled( enabled );
 		this.resultButton.setEnabled( enabled );
+		this.queueBox.setEnabled( enabled );
 	}
 	
 	@Override
