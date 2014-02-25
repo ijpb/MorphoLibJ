@@ -62,6 +62,11 @@ public class MorphologicalSegmentation implements PlugIn {
 	
 	/** segmentation button */
 	JButton segmentButton;
+	/** toggle overlay button */
+	JButton overlayButton;
+	
+	/** flag to display the overlay image */
+	private boolean showColorOverlay;
 	
 	/** regional minima dynamic panel */
 	JPanel dynamicPanel = new JPanel();
@@ -108,6 +113,11 @@ public class MorphologicalSegmentation implements PlugIn {
 						{
 							runSegmentation();						
 						}
+						
+						if( e.getSource() == overlayButton )
+						{
+							toggleOverlay();						
+						}
 					}
 
 					
@@ -153,6 +163,13 @@ public class MorphologicalSegmentation implements PlugIn {
 			segmentButton.setToolTipText( "Run the morphological segmentation" );
 			segmentButton.addActionListener( listener );
 			
+			// Overlay button
+			overlayButton = new JButton( "Toggle overlay" );
+			overlayButton.setToolTipText( "Toggle overlay with segmentation result" );
+			overlayButton.addActionListener( listener );
+			
+			showColorOverlay = false;
+			
 			// Parameters panel (left side of the GUI)
 			paramsPanel.setBorder(BorderFactory.createTitledBorder("Parameters"));
 			GridBagLayout paramsLayout = new GridBagLayout();
@@ -171,6 +188,8 @@ public class MorphologicalSegmentation implements PlugIn {
 			paramsPanel.add( dynamicPanel, paramsConstraints );
 			paramsConstraints.gridy++;
 			paramsPanel.add( segmentButton, paramsConstraints );
+			paramsConstraints.gridy++;
+			paramsPanel.add( overlayButton, paramsConstraints );
 			paramsConstraints.gridy++;
 			
 			// main panel
@@ -217,6 +236,9 @@ public class MorphologicalSegmentation implements PlugIn {
 			allConstraints.gridheight = 2;
 			all.add(annotationsPanel, allConstraints);
 */
+			
+			
+			
 			GridBagLayout wingb = new GridBagLayout();
 			GridBagConstraints winc = new GridBagConstraints();
 			winc.anchor = GridBagConstraints.NORTHWEST;
@@ -314,7 +336,10 @@ public class MorphologicalSegmentation implements PlugIn {
 		}
 	}
 	
-	
+	/**
+	 * Update the overlay in the display image based on 
+	 * the current result and slice
+	 */
 	void updateResultOverlay() 
 	{
 		if( null != resultImage )
@@ -324,6 +349,20 @@ public class MorphologicalSegmentation implements PlugIn {
 			roi.setOpacity( 1.0/3.0 );
 			displayImage.setOverlay( new Overlay( roi ) );
 		}
+	}
+	
+	/**
+	 * Toggle overlay with segmentation results (if any)
+	 */
+	void toggleOverlay()
+	{
+		showColorOverlay = !showColorOverlay;
+
+		if ( showColorOverlay )		
+			updateResultOverlay();
+		else
+			displayImage.setOverlay( null );
+		displayImage.updateAndDraw();
 	}
 	
 	/**
@@ -396,7 +435,9 @@ public class MorphologicalSegmentation implements PlugIn {
 		resultImage.updateAndDraw();
 		resultImage.show();
 		
+		// display result overlaying the input image
 		updateResultOverlay();
+		showColorOverlay = true;
 		
 	}
 	
