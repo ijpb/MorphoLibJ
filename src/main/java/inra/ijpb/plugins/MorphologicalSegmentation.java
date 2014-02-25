@@ -396,7 +396,11 @@ public class MorphologicalSegmentation implements PlugIn {
 	void showResult()
 	{
 		if( null != this.resultImage )
-			resultImage.duplicate().show();
+		{
+			ImagePlus watershedResult = resultImage.duplicate();
+			watershedResult.setTitle( "Watershed-" + this.inputImage.getTitle() );
+			watershedResult.show();
+		}
 	}
 	
 	/**
