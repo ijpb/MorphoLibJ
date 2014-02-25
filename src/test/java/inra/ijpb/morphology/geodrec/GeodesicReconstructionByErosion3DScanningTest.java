@@ -6,11 +6,10 @@ import static org.junit.Assert.assertTrue;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
-import inra.ijpb.morphology.geodrec.GeodesicReconstructionByErosion3DGray8;
 
 import org.junit.Test;
 
-public class GeodesicReconstructionByErosion3DGray8Test {
+public class GeodesicReconstructionByErosion3DScanningTest {
 
 	@Test
 	public final void testApplyTo() {
@@ -48,7 +47,7 @@ public class GeodesicReconstructionByErosion3DGray8Test {
 		marker.setVoxel(20, 80, 50, 0);
 		
 		// create reconstruction algorithm
-		GeodesicReconstructionByErosion3DGray8 algo = new GeodesicReconstructionByErosion3DGray8();
+		GeodesicReconstructionByErosion3DScanning algo = new GeodesicReconstructionByErosion3DScanning();
 		algo.verbose = false;
 
 		// run algo and compute elapsed time

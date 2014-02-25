@@ -188,7 +188,7 @@ public class FloodFillTest {
 		result.fill();
 		
 		// Apply 
-		FloodFill.floodFill(image, 7, 4, result, 50, 8);
+		FloodFill.floodFillInt(image, 7, 4, result, 50, 8);
 //		printImage(result);
 		
 		for (int y = 0; y < height; y++) {
@@ -227,7 +227,7 @@ public class FloodFillTest {
 		result.fill();
 		
 		// compute flood fill result
-		FloodFill.floodFill(image, 1, 0, result, 50, 4);
+		FloodFill.floodFillInt(image, 1, 0, result, 50, 4);
 		
 		assertEquals(50, result.get(0, 0));
 		assertEquals(50, result.get(10, 0));

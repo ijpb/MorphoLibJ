@@ -5,11 +5,8 @@ package inra.ijpb.morphology;
 
 import ij.ImageStack;
 import inra.ijpb.morphology.extrema.ExtremaType;
-import inra.ijpb.morphology.extrema.RegionalExtremaAlgo3D;
-import inra.ijpb.morphology.extrema.RegionalExtremaByFlooding3D;
-import inra.ijpb.morphology.geodrec.GeodesicReconstruction3DAlgo;
-import inra.ijpb.morphology.geodrec.GeodesicReconstructionByDilation3DGray8Scanning;
-import inra.ijpb.morphology.geodrec.GeodesicReconstructionByErosion3DGray8Scanning;
+import inra.ijpb.morphology.extrema.RegionalExtrema3DAlgo;
+import inra.ijpb.morphology.extrema.RegionalExtrema3DByFlooding;
 
 /**
  * A collection of static methods for computing regional and extended minima and
@@ -51,7 +48,7 @@ public class MinimaAndMaxima3D {
 	 */
 	public final static ImageStack regionalMaxima(ImageStack image,
 			int conn) {
-		RegionalExtremaAlgo3D algo = new RegionalExtremaByFlooding3D();
+		RegionalExtrema3DAlgo algo = new RegionalExtrema3DByFlooding();
 		algo.setConnectivity(conn);
 		algo.setExtremaType(ExtremaType.MAXIMA);
 		
@@ -68,7 +65,7 @@ public class MinimaAndMaxima3D {
 			int conn,
 			ImageStack mask ) 
 	{
-		RegionalExtremaAlgo3D algo = new RegionalExtremaByFlooding3D();
+		RegionalExtrema3DAlgo algo = new RegionalExtrema3DByFlooding();
 		algo.setConnectivity(conn);
 		algo.setExtremaType(ExtremaType.MAXIMA);
 		
@@ -90,9 +87,9 @@ public class MinimaAndMaxima3D {
 		ImageStack mask = stack.duplicate();
 		addValue(mask, 1);
 
-		GeodesicReconstruction3DAlgo algo = new GeodesicReconstructionByDilation3DGray8Scanning(conn);
-		ImageStack rec = algo.applyTo(stack, mask);
-
+//		GeodesicReconstruction3DAlgo algo = new GeodesicReconstructionByDilation3DGray8Scanning(conn);
+//		ImageStack rec = algo.applyTo(stack, mask);
+		ImageStack rec = GeodesicReconstruction3D.reconstructByDilation(stack, mask, conn);
 		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
 
 		for (int z = 0; z < sizeZ; z++) {
@@ -123,7 +120,7 @@ public class MinimaAndMaxima3D {
 	 */
 	public final static ImageStack regionalMinima(ImageStack image,
 			int conn) {
-		RegionalExtremaAlgo3D algo = new RegionalExtremaByFlooding3D();
+		RegionalExtrema3DAlgo algo = new RegionalExtrema3DByFlooding();
 		algo.setConnectivity(conn);
 		algo.setExtremaType(ExtremaType.MINIMA);
 		
@@ -140,7 +137,7 @@ public class MinimaAndMaxima3D {
 			int conn,
 			ImageStack mask ) 
 	{
-		RegionalExtremaAlgo3D algo = new RegionalExtremaByFlooding3D();
+		RegionalExtrema3DAlgo algo = new RegionalExtrema3DByFlooding();
 		algo.setConnectivity(conn);
 		algo.setExtremaType(ExtremaType.MINIMA);
 		
@@ -162,9 +159,9 @@ public class MinimaAndMaxima3D {
 		ImageStack marker = stack.duplicate();
 		addValue(marker, 1);
 
-		GeodesicReconstruction3DAlgo algo = new GeodesicReconstructionByErosion3DGray8Scanning(conn);
-		ImageStack rec = algo.applyTo(marker, stack);
-
+//		GeodesicReconstruction3DAlgo algo = new GeodesicReconstructionByErosion3DGray8Scanning(conn);
+//		ImageStack rec = algo.applyTo(marker, stack);
+		ImageStack rec = GeodesicReconstruction3D.reconstructByErosion(marker, stack, conn);
 		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
 
 		for (int z = 0; z < sizeZ; z++) {
@@ -268,9 +265,9 @@ public class MinimaAndMaxima3D {
 		ImageStack marker = stack.duplicate();
 		addValue(marker, dynamic);
 
-		GeodesicReconstruction3DAlgo algo = new GeodesicReconstructionByErosion3DGray8Scanning(conn);
-		ImageStack rec = algo.applyTo(marker, stack);
-		//		ImageStack rec = GeodesicReconstruction3D.reconstructByErosion(marker, stack, conn);
+//		GeodesicReconstruction3DAlgo algo = new GeodesicReconstructionByErosion3DGray8Scanning(conn);
+//		ImageStack rec = algo.applyTo(marker, stack);
+		ImageStack rec = GeodesicReconstruction3D.reconstructByErosion(marker, stack, conn);
 
 		return regionalMinima(rec, conn);
 	}

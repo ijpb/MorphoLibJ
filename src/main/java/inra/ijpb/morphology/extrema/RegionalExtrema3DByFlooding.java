@@ -5,27 +5,57 @@ import static java.lang.Math.min;
 import ij.ImageStack;
 import inra.ijpb.morphology.FloodFill;
 
-public class RegionalExtremaByFlooding3D extends RegionalExtremaAlgo3D {
+/**
+ * Computes regional extrema in 3D images using flooding algorithm. 
+ * This class manages 6 and 26 connectivities as well as integer and 
+ * floating-point images. 
+ * 
+ * Example of use:
+ * <code><pre>
+ * ImageStack image = IJ.getImage().getStack();
+ * RegionalExtrema3DAlgo algo = new RegionalExtrema3DFlooding(); 
+ * algo.setExtremaType(ExtremaType.MAXIMA);
+ * algo.setConnectivity(6);
+ * ImageStack result = algo.applyTo(image);
+ * ImagePlus resPlus = new ImagePlus("Regional Maxima", result); 
+ * resPlus.show(); 
+ * </pre></code>
+ *
+ * @see inra.ijpb.morphology.MinimaAndMaxima3D
+ * @see inra.ijpb.morphology.FloodFill
+ * 
+ * @author David Legland
+ */
+public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo {
 
 	@Override
-	public ImageStack applyTo(ImageStack inputImage) {
+	public ImageStack applyTo(ImageStack image) {
+		return regionalExtremaFloat(image);
+	}
+	
+	/**
+	 * Computes regional minima in float 3D image <code>image</code>, using
+	 * flood-filling-like algorithm.  
+	 */
+	// This methods calls the methods with specific connectivity.
+	ImageStack regionalExtremaFloat(ImageStack image) {
 		switch (this.connectivity) {
 		case 6:
-			return regionalExtremaFloatC6(inputImage);
+			return regionalExtremaFloatC6(image);
 		case 26:
-			return regionalExtremaFloatC26(inputImage);
+			return regionalExtremaFloatC26(image);
 		default:
 			throw new IllegalArgumentException(
 					"Connectivity must be either 6 or 26, not "
 							+ this.connectivity);
 		}
 	}
-
+	
 	/**
-	 * Computes regional minima in float image <code>image</code>, using
-	 * flood-filling-like algorithm with 4 connectivity.
+	 * Computes regional minima in float 3D image <code>image</code>, using
+	 * flood-filling-like algorithm with 6 connectivity.
 	 */
-	private ImageStack regionalExtremaFloatC6(ImageStack image) {
+	ImageStack regionalExtremaFloatC6(ImageStack image) {
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		int sizeZ = image.getSize();
@@ -76,7 +106,11 @@ public class RegionalExtremaByFlooding3D extends RegionalExtremaAlgo3D {
 		return result;
 	}
 
-	private ImageStack regionalExtremaFloatC26(ImageStack image) {
+	/**
+	 * Computes regional minima in float 3D image <code>image</code>, using
+	 * flood-filling-like algorithm with 6 connectivity.
+	 */
+	ImageStack regionalExtremaFloatC26(ImageStack image) {
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		int sizeZ = image.getSize();
@@ -97,10 +131,10 @@ public class RegionalExtremaByFlooding3D extends RegionalExtremaAlgo3D {
 						continue;
 					
 					// current value
-					double currentValue = image.getVoxel(x, y, z);
+					double currentValue = image.getVoxel(x, y, z) * sign;
 					
 					// compute extremum value in 26-neighborhood
-					double value = currentValue * sign;
+					double value = currentValue;
 					for (int z2 = max(z-1, 0); z2 <= min(z+1, sizeZ-1); z2++) {
 						for (int y2 = max(y-1, 0); y2 <= min(y+1, sizeY-1); y2++) {
 							for (int x2 = max(x-1, 0); x2 <= min(x+1, sizeX-1); x2++) {
@@ -111,7 +145,7 @@ public class RegionalExtremaByFlooding3D extends RegionalExtremaAlgo3D {
 					// if one of the neighbors has lower value, the local pixel 
 					// is not a minima. All connected pixels with same value are 
 					// set to the marker for non-minima.
-					if (value < currentValue * sign) {
+					if (value < currentValue) {
 						FloodFill.floodFillFloat(image, x, y, z, result, 0, 26);
 					}
 				}
@@ -139,7 +173,7 @@ public class RegionalExtremaByFlooding3D extends RegionalExtremaAlgo3D {
 	 * Computes regional minima in float image <code>image</code>, using
 	 * flood-filling-like algorithm with 4 connectivity.
 	 */
-	private ImageStack regionalExtremaFloatC6(ImageStack image, ImageStack mask) {
+	ImageStack regionalExtremaFloatC6(ImageStack image, ImageStack mask) {
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		int sizeZ = image.getSize();
@@ -199,7 +233,7 @@ public class RegionalExtremaByFlooding3D extends RegionalExtremaAlgo3D {
 		return result;
 	}
 
-	private ImageStack regionalExtremaFloatC26(ImageStack image, ImageStack mask) {
+	ImageStack regionalExtremaFloatC26(ImageStack image, ImageStack mask) {
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		int sizeZ = image.getSize();

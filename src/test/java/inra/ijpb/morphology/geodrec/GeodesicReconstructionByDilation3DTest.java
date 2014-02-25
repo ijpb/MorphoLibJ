@@ -29,7 +29,7 @@ public class GeodesicReconstructionByDilation3DTest {
 
 		marker.setVoxel(20, 80, 50, 255);
 
-		algo.verbose = true;
+		algo.verbose = false;
 
 		long t0 = System.currentTimeMillis();
 		ImageStack result = algo.applyTo(marker, mask);
