@@ -397,8 +397,8 @@ public class MorphologicalSegmentation implements PlugIn {
 		
 		final ImageStack image = this.inputImage.getImageStack(); 
 		
-		// TODO: change regional minima to extendedMinima (not yet implemented)
-		ImageStack regionalMinima = MinimaAndMaxima3D.regionalMinima( image, connectivity );
+		// Run extended minima
+		ImageStack regionalMinima = MinimaAndMaxima3D.extendedMinima( image, (int)dynamic, connectivity );
 		
 		final long step1 = System.currentTimeMillis();		
 		IJ.log( "Regional minima took " + (step1-start) + " ms.");
@@ -406,12 +406,12 @@ public class MorphologicalSegmentation implements PlugIn {
 		IJ.log( "Imposing regional minima on original image (connectivity = " + connectivity + ")..." );
 						
 		// Impose regional minima over the original image
+		ImageStack imposedMinima = MinimaAndMaxima3D.imposeMinima( image, regionalMinima, connectivity );
 		
-		// TODO: use impose minima (not implemented yet for 32-bit images)
-		//ImageStack imposedMinima = MinimaAndMaxima3D.imposeMinima( image, regionalMinima, connectivity );
+		ImagePlus impMin = new ImagePlus( "imposed minima", imposedMinima );
 		
 		final long step2 = System.currentTimeMillis();
-		//IJ.log( "Imposition took " + (step2-step1) + " ms.");
+		IJ.log( "Imposition took " + (step2-step1) + " ms.");
 						
 		IJ.log( "Labeling regional minima..." );
 		
@@ -426,7 +426,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		IJ.log("Running watershed...");
 		
 		ImagePlus connectedMinima = new ImagePlus( "connected minima", labeledMinima );				
-		WatershedTransform3D wt = new WatershedTransform3D( this.inputImage, connectedMinima, null, connectivity );
+		WatershedTransform3D wt = new WatershedTransform3D( impMin, connectedMinima, null, connectivity );
 		resultImage = wt.applyWithPriorityQueue();
 		
 		final long end = System.currentTimeMillis();
