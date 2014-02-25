@@ -44,16 +44,16 @@ import inra.ijpb.watershed.WatershedTransform3D;
 
 public class MorphologicalSegmentation implements PlugIn {
 
+	/** GUI window */
+	private CustomWindow win;
+	
 	/** original input image */
 	ImagePlus inputImage = null;
 	/** image to be displayed in the GUI */
 	ImagePlus displayImage = null;
 	
 	/** segmentation result image */
-	ImagePlus resultImage = null;
-	
-	/** GUI window */
-	private CustomWindow win;
+	ImagePlus resultImage = null;		
 		
 	/** parameters panel */
 	JPanel paramsPanel = new JPanel();
@@ -70,15 +70,20 @@ public class MorphologicalSegmentation implements PlugIn {
 	/** flag to display the overlay image */
 	private boolean showColorOverlay;
 	
-	/** regional minima dynamic panel */
+	/** extended regional minima dynamic panel */
 	JPanel dynamicPanel = new JPanel();
+	/** extended regional minima dynamic label */
 	JLabel dynamicLabel;
+	/** extended regional minima dynamic text field */
 	JTextField dynamicText;
 	
 	/** connectivity choice */
 	JPanel connectivityPanel = new JPanel();
+	/** connectivity label */
 	JLabel connectivityLabel;
-	String[] connectivityOptions = new String[]{ "6", "26" }; 
+	/** connectivity list of options (6 and 26) */
+	String[] connectivityOptions = new String[]{ "6", "26" };
+	/** connectivity combo box */
 	JComboBox<String> connectivityList;
 	
 	
@@ -98,7 +103,9 @@ public class MorphologicalSegmentation implements PlugIn {
 		
 		
 		
-		
+		/**
+		 * Listener for the GUI buttons
+		 */
 		private ActionListener listener = new ActionListener() {
 
 			@Override
