@@ -162,7 +162,6 @@ public class MorphologicalSegmentation implements PlugIn {
 			dynamicLabel = new JLabel( "Dynamic" );
 			dynamicLabel.setToolTipText( "Extended minima dynamic" );
 			dynamicText = new JTextField( "10", 5 );
-			dynamicPanel.setLayout( new FlowLayout( FlowLayout.LEFT, 5, 5 ) );
 			dynamicPanel.add( dynamicLabel );
 			dynamicPanel.add( dynamicText );
 			dynamicPanel.setToolTipText( "Extended minima dynamic" );				
