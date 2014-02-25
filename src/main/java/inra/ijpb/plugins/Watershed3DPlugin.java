@@ -143,7 +143,7 @@ public class Watershed3DPlugin implements PlugIn
 				MinimaAndMaxima3D.regionalMinima( seed.getImageStack(), connectivity, mask.getImageStack() ) :
 					MinimaAndMaxima3D.regionalMinima( seed.getImageStack(), connectivity )	;
 		
-		//regionalMinima.show();
+		//(new ImagePlus( "Regional minima", regionalMinima)).show();
 		
 		final long step1 = System.currentTimeMillis();
 		
