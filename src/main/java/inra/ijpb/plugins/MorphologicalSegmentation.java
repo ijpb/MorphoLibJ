@@ -64,6 +64,8 @@ public class MorphologicalSegmentation implements PlugIn {
 	JButton segmentButton;
 	/** toggle overlay button */
 	JButton overlayButton;
+	/** create result button */
+	JButton resultButton;
 	
 	/** flag to display the overlay image */
 	private boolean showColorOverlay;
@@ -112,11 +114,14 @@ public class MorphologicalSegmentation implements PlugIn {
 						if( e.getSource() == segmentButton )
 						{
 							runSegmentation();						
-						}
-						
-						if( e.getSource() == overlayButton )
+						}						
+						else if( e.getSource() == overlayButton )
 						{
 							toggleOverlay();						
+						}
+						else if( e.getSource() == resultButton )
+						{
+							showResult();						
 						}
 					}
 
@@ -165,11 +170,18 @@ public class MorphologicalSegmentation implements PlugIn {
 			
 			// Overlay button
 			overlayButton = new JButton( "Toggle overlay" );
+			overlayButton.setEnabled( false );
 			overlayButton.setToolTipText( "Toggle overlay with segmentation result" );
 			overlayButton.addActionListener( listener );
 			
 			showColorOverlay = false;
 			
+			// Result button
+			resultButton = new JButton( "Create result" );
+			resultButton.setEnabled( false );
+			resultButton.setToolTipText( "Show segmentation result in new window" );
+			resultButton.addActionListener( listener );
+
 			// Parameters panel (left side of the GUI)
 			paramsPanel.setBorder(BorderFactory.createTitledBorder("Parameters"));
 			GridBagLayout paramsLayout = new GridBagLayout();
@@ -190,6 +202,8 @@ public class MorphologicalSegmentation implements PlugIn {
 			paramsPanel.add( segmentButton, paramsConstraints );
 			paramsConstraints.gridy++;
 			paramsPanel.add( overlayButton, paramsConstraints );
+			paramsConstraints.gridy++;
+			paramsPanel.add( resultButton, paramsConstraints );
 			paramsConstraints.gridy++;
 			
 			// main panel
@@ -228,16 +242,7 @@ public class MorphologicalSegmentation implements PlugIn {
 				all.add( super.sliceSelector, allConstraints );
 			}
 			allConstraints.gridy--;
-/*
-			allConstraints.gridx++;
-			allConstraints.anchor = GridBagConstraints.NORTHEAST;
-			allConstraints.weightx = 0;
-			allConstraints.weighty = 0;
-			allConstraints.gridheight = 2;
-			all.add(annotationsPanel, allConstraints);
-*/
-			
-			
+				
 			
 			GridBagLayout wingb = new GridBagLayout();
 			GridBagConstraints winc = new GridBagConstraints();
@@ -366,6 +371,15 @@ public class MorphologicalSegmentation implements PlugIn {
 	}
 	
 	/**
+	 * Show segmentation result in a new window (it exists)
+	 */
+	void showResult()
+	{
+		if( null != this.resultImage )
+			resultImage.duplicate().show();
+	}
+	
+	/**
 	 * Run morphological segmentation pipeline
 	 */
 	private void runSegmentation() 
@@ -409,6 +423,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		ImageStack imposedMinima = MinimaAndMaxima3D.imposeMinima( image, regionalMinima, connectivity );
 		
 		ImagePlus impMin = new ImagePlus( "imposed minima", imposedMinima );
+		impMin.setCalibration( this.inputImage.getCalibration() );
 		
 		final long step2 = System.currentTimeMillis();
 		IJ.log( "Imposition took " + (step2-step1) + " ms.");
@@ -475,6 +490,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		this.connectivityList.setEnabled( enabled );
 		this.segmentButton.setEnabled( enabled );
 		this.overlayButton.setEnabled( enabled );
+		this.resultButton.setEnabled( enabled );
 	}
 	
 	@Override
