@@ -41,6 +41,7 @@ import inra.ijpb.binary.ConnectedComponents;
 import inra.ijpb.morphology.MinimaAndMaxima3D;
 import inra.ijpb.util.ColorMaps;
 import inra.ijpb.util.ColorMaps.CommonLabelMaps;
+import inra.ijpb.watershed.Watershed;
 import inra.ijpb.watershed.WatershedTransform3D;
 
 public class MorphologicalSegmentation implements PlugIn {
@@ -293,9 +294,11 @@ public class MorphologicalSegmentation implements PlugIn {
 								{
 									//IJ.log("moving scroll");
 									displayImage.killRoi();
-									
-									updateResultOverlay();
-									displayImage.updateAndDraw();
+									if( showColorOverlay )
+									{
+										updateResultOverlay();
+										displayImage.updateAndDraw();
+									}
 								}
 
 							}
@@ -317,8 +320,11 @@ public class MorphologicalSegmentation implements PlugIn {
 							{
 								//IJ.log("moving scroll");
 								displayImage.killRoi();
-								updateResultOverlay();
-								displayImage.updateAndDraw();
+								if( showColorOverlay )
+								{
+									updateResultOverlay();
+									displayImage.updateAndDraw();
+								}
 							}
 						});
 
@@ -346,9 +352,11 @@ public class MorphologicalSegmentation implements PlugIn {
 								{
 									//IJ.log("moving scroll");
 									displayImage.killRoi();
-									updateResultOverlay();									
-									displayImage.updateAndDraw();
-									
+									if( showColorOverlay )
+									{
+										updateResultOverlay();
+										displayImage.updateAndDraw();
+									}
 								}
 							}
 						});
@@ -455,9 +463,6 @@ public class MorphologicalSegmentation implements PlugIn {
 		// Impose regional minima over the original image
 		ImageStack imposedMinima = MinimaAndMaxima3D.imposeMinima( image, regionalMinima, connectivity );
 		
-		ImagePlus impMin = new ImagePlus( "imposed minima", imposedMinima );
-		impMin.setCalibration( this.inputImage.getCalibration() );
-		
 		final long step2 = System.currentTimeMillis();
 		IJ.log( "Imposition took " + (step2-step1) + " ms.");
 						
@@ -469,17 +474,12 @@ public class MorphologicalSegmentation implements PlugIn {
 		final long step3 = System.currentTimeMillis();
 		IJ.log( "Connected components took " + (step3-step2) + " ms.");
 		
-		// Apply watershed
-		
+		// Apply watershed		
 		IJ.log("Running watershed...");
 		
-		ImagePlus connectedMinima = new ImagePlus( "connected minima", labeledMinima );				
-		WatershedTransform3D wt = new WatershedTransform3D( impMin, connectedMinima, null, connectivity );
-		
-		if ( usePriorityQueue )
-			resultImage = wt.applyWithPriorityQueue();
-		else 
-			resultImage = wt.apply();
+		ImageStack resultStack = Watershed.computeWatershed( imposedMinima, labeledMinima, connectivity, usePriorityQueue );
+		resultImage = new ImagePlus( "watershed", resultStack );
+		resultImage.setCalibration( this.inputImage.getCalibration() );
 		
 		final long end = System.currentTimeMillis();
 		IJ.log( "Watershed 3d took " + (end-step3) + " ms.");
@@ -505,7 +505,6 @@ public class MorphologicalSegmentation implements PlugIn {
 		resultImage.getProcessor().setColorModel(cm);
 		resultImage.getImageStack().setColorModel(cm);
 		resultImage.updateAndDraw();
-		//resultImage.show();
 		
 		// display result overlaying the input image
 		updateResultOverlay();
