@@ -257,8 +257,15 @@ public class MorphologicalSegmentation implements PlugIn {
 			// slice selectors in place
 			if( null != super.sliceSelector )
 			{
-				all.add( super.zSelector, allConstraints );
 				all.add( super.sliceSelector, allConstraints );
+				
+				if( null != super.zSelector )
+					all.add( super.zSelector, allConstraints );
+				if( null != super.tSelector )
+					all.add( super.tSelector, allConstraints );
+				if( null != super.cSelector )
+					all.add( super.cSelector, allConstraints );
+				
 			}
 			allConstraints.gridy--;
 				
