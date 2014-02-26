@@ -13,7 +13,7 @@ import ij.process.ShortProcessor;
 import inra.ijpb.morphology.FloodFill;
 
 /**
- * Several static methods for computing connected components iin binary images. 
+ * Several static methods for computing connected components in binary images. 
  *
  */
 public class ConnectedComponents {
