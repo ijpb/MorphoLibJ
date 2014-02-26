@@ -86,7 +86,7 @@ public class MorphologicalSegmentation implements PlugIn {
 	/** connectivity list of options (6 and 26) */
 	String[] connectivityOptions = new String[]{ "6", "26" };
 	/** connectivity combo box */
-	JComboBox<String> connectivityList;
+	JComboBox connectivityList;
 	
 	/** checkbox to choose the priority queue watershed method */
 	JCheckBox queueBox;
@@ -168,7 +168,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			dynamicPanel.setToolTipText( "Extended minima dynamic" );				
 				
 			// connectivity
-			connectivityList = new JComboBox<String>( connectivityOptions );
+			connectivityList = new JComboBox( connectivityOptions );
 			connectivityList.setToolTipText( "Voxel connectivity to use" );
 			connectivityLabel = new JLabel( "Connectivity" );
 			connectivityPanel.add( connectivityLabel );
