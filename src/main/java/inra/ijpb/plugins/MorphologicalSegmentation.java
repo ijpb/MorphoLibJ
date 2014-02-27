@@ -1,7 +1,6 @@
 package inra.ijpb.plugins;
 
 import java.awt.Color;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -42,7 +41,6 @@ import inra.ijpb.morphology.MinimaAndMaxima3D;
 import inra.ijpb.util.ColorMaps;
 import inra.ijpb.util.ColorMaps.CommonLabelMaps;
 import inra.ijpb.watershed.Watershed;
-import inra.ijpb.watershed.WatershedTransform3D;
 
 public class MorphologicalSegmentation implements PlugIn {
 
