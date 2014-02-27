@@ -211,10 +211,10 @@ public class MorphologicalSegmentation implements PlugIn {
 			paramsConstraints.insets = new Insets(5, 5, 6, 6);
 			paramsPanel.setLayout(paramsLayout);						
 						
-			paramsPanel.add( connectivityPanel, paramsConstraints );
-			paramsConstraints.gridy++;
 			paramsPanel.add( dynamicPanel, paramsConstraints );
 			paramsConstraints.gridy++;
+			paramsPanel.add( connectivityPanel, paramsConstraints );
+			paramsConstraints.gridy++;			
 			paramsPanel.add( queuePanel, paramsConstraints );
 			paramsConstraints.gridy++;
 			paramsPanel.add( segmentButton, paramsConstraints );
