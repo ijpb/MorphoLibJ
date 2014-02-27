@@ -463,7 +463,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		ImageStack imposedMinima = MinimaAndMaxima3D.imposeMinima( image, regionalMinima, connectivity );
 		
 		final long step2 = System.currentTimeMillis();
-		IJ.log( "Imposition took " + (step2-step1) + " ms.");
+		IJ.log( "Imposition took " + (step2-step1) + " ms." );
 						
 		IJ.log( "Labeling regional minima..." );
 		
@@ -471,7 +471,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		ImageStack labeledMinima = ConnectedComponents.computeLabels( regionalMinima, connectivity, 32 );
 		
 		final long step3 = System.currentTimeMillis();
-		IJ.log( "Connected components took " + (step3-step2) + " ms.");
+		IJ.log( "Connected components took " + (step3-step2) + " ms." );
 		
 		// Apply watershed		
 		IJ.log("Running watershed...");
