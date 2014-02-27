@@ -21,8 +21,9 @@ package inra.ijpb.watershed;
  */
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -30,6 +31,7 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.Prefs;
+import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.util.ThreadUtil;
 import inra.ijpb.data.Cursor3D;
@@ -39,57 +41,60 @@ import inra.ijpb.data.Neighborhood3DC26;
 import inra.ijpb.data.VoxelRecord;
 
 /**
- * Class to apply the watershed algorithm in 3D to an image. It allows specifying the
- * input image, the image to read the seeds from and a mask image. 
+ * Class to apply the watershed algorithm in 3D to an image. 
+ * It allows specifying a binary mask to restrict the regions
+ * of interest. 
+ * 
+ * @author Ignacio Arganda-Carreras
  */
 public class WatershedTransform3D 
 {
 	/** input image (usually a gradient image) */
 	ImagePlus inputImage = null;
-	/** image containing the seeds to start the watershed */
-	ImagePlus seedImage = null;
+	
 	/** binary mask to restrict the region of interest */
 	ImagePlus maskImage = null;
 	
 	/** voxel connectivity */
 	int connectivity = 6;
 	
+	/** initial value of a threshold level */
+	static final int MASK = -2;
+	/** value of voxels belonging to watersheds */
+	static final int WSHED = 0;
+	/** initial value of output voxels */
+	static final int INIT = -1;	
 	/** value assigned to voxels put into the queue */
 	static final int INQUEUE = -3;
+	
 	
 	/**
 	 * Construct a watershed transform
 	 * 
 	 * @param input input image (usually a gradient image)
-	 * @param seed image containing the seeds to start the watershed (marker image)
 	 * @param mask binary mask to restrict the region of interest (null to use whole input image)
 	 */
 	public WatershedTransform3D(
 			final ImagePlus input,
-			final ImagePlus seed,
 			final ImagePlus mask )
 	{
 		this.inputImage = input;
-		this.seedImage = seed;
 		this.maskImage = mask;
 	}
 	
 	/**
 	 * Construct a watershed transform
 	 * 
-	 * @param input input image (usually a gradient image)
-	 * @param seed image containing the seeds to start the watershed (marker image)
+	 * @param input grayscale image (usually a gradient image)
 	 * @param mask binary mask to restrict the region of interest (null to use whole input image)
 	 * @param connectivity voxel connectivity (6 or 26)
 	 */
 	public WatershedTransform3D(
 			final ImagePlus input,
-			final ImagePlus seed,
 			final ImagePlus mask,
 			final int connectivity )
 	{
 		this.inputImage = input;
-		this.seedImage = seed;
 		this.maskImage = mask;
 		this.connectivity = connectivity;
 	}
@@ -111,171 +116,67 @@ public class WatershedTransform3D
 	}
 	
 	/**
-	 * Apply watershed transform on inputImage, using the seeds 
-	 * from seedImage and the mask of maskImage.
-	 * @return watershed domains image
+	 * Apply fast watersheds using flooding simulations, as described
+	 * by Soille, Pierre, and Luc M. Vincent. "Determining watersheds 
+	 * in digital pictures via flooding simulations." Lausanne-DL 
+	 * tentative. International Society for Optics and Photonics, 1990.
+	 *
+	 * @return image of labeled catchment basins (with dams)
 	 */
 	public ImagePlus apply()
 	{
-		final ImageStack inputStack = inputImage.getStack();
-	    final int size1 = inputStack.getWidth();
-	    final int size2 = inputStack.getHeight();
-	    final int size3 = inputStack.getSize();
-	    
-	    if (size1 != seedImage.getWidth() || size2 != seedImage.getHeight() || size3 != seedImage.getStackSize()) {
-			throw new IllegalArgumentException("Marker and input images must have the same size");
-		}
-		
-		// Check connectivity has a correct value
-		if (connectivity != 6 && connectivity != 26) {
-			throw new RuntimeException(
-					"Connectivity for stacks must be either 6 or 26, not "
-							+ connectivity);
-		}
-	    
-		// list of original voxels values and corresponding coordinates
-		LinkedList<VoxelRecord> voxelList = null;
-		
-		final int[][][] tabLabels = new int[ size1 ][ size2 ][ size3 ]; 
-		
-		// Make list of voxels and sort it in ascending order
-		IJ.showStatus( "Extracting voxel values..." );
-		IJ.log("  Extracting voxel values..." );
-		final long t0 = System.currentTimeMillis();
-		
-		voxelList = extractVoxelValues( inputStack, seedImage.getStack(), tabLabels );
-						
-		final long t1 = System.currentTimeMillis();		
-		IJ.log("  Extraction took " + (t1-t0) + " ms.");
-		IJ.log("  Sorting voxels by value..." );
-		IJ.showStatus("Sorting voxels by value...");
-		Collections.sort( voxelList );
-		final long t2 = System.currentTimeMillis();
-		IJ.log("  Sorting took " + (t2-t1) + " ms.");
-			    
-		// Watershed
-	    boolean found = false;	    
+		if( null != this.maskImage )
+			return applyWithMask();
+		else
+			return applyWithoutMask();
 
-	    final long start = System.currentTimeMillis();
-
-	    // Auxiliary cursor to visit neighbors
-	    final Cursor3D cursor = new Cursor3D(0, 0, 0);
-      	
-      	// Check connectivity
-       	final Neighborhood3D neigh = connectivity == 26 ? 
-       			new Neighborhood3DC26() : new Neighborhood3DC6();
-	    
-	    boolean change = true;
-	    while ( voxelList.isEmpty() == false && change )
-	    {
-	    	change = false;
-			final int count = voxelList.size();
-	      	IJ.log( "  Flooding " + count + " voxels..." );
-	      	IJ.showStatus("Flooding " + count + " voxels...");	      		      	
-	      	
-			for (int p = 0; p < count; ++p)
-	      	{
-				IJ.showProgress(p, count);
-	       		final VoxelRecord voxelRecord = voxelList.removeFirst();
-	       		final int[] coord = voxelRecord.getCoordinates();
-	       		final int i = coord[0];
-	       		final int j = coord[1];
-	       		final int k = coord[2];
-	       		
-	       		// If the voxel is unlabeled
-				if( tabLabels[ i ][ j ][ k ] == 0 )
-	       		{
-			       	found = false;
-			       	double voxelValue = voxelRecord.getValue();
-			       	
-			       	// Read neighbor coordinates
-			       	cursor.set( i, j, k );
-			       	neigh.setCursor( cursor );
-			       		
-			       	for( Cursor3D c : neigh.getNeighbors() )			       		
-			       	{
-			       		// Look in neighborhood for labeled voxels with
-			       		// smaller or equal original value
-			       		int u = c.getX();
-			       		int v = c.getY();
-			       		int w = c.getZ();
-			       					       		
-			       		if ( u >= 0 && u < size1 && v >= 0 && v < size2 && w >= 0 && w < size3 )
-			       		{
-			       			if ( tabLabels[u][v][w] != 0 && inputStack.getVoxel(u,v,w) <= voxelValue )
-			       			{
-			       				tabLabels[i][j][k] = tabLabels[u][v][w];
-			       				voxelValue = inputStack.getVoxel(u,v,w);
-			       				found = true;
-			       			}
-			       		}			       		
-			       	}
-			       
-					if ( found == false )    
-						voxelList.addLast( voxelRecord );
-					else
-						change = true;
-	      		}
-	        }
-		}
-
-		final long end = System.currentTimeMillis();
-		IJ.log("  Flooding took: " + (end-start) + " ms");
-		
-		// Create result label image
-		ImageStack labelStack = seedImage.duplicate().getStack();
-	    
-	    for (int i = 0; i < size1; ++i)
-	      for (int j = 0; j < size2; ++j)
-	        for (int k = 0; k < size3; ++k)
-	            labelStack.setVoxel( i, j, k, tabLabels[i][j][k] );
-	    final ImagePlus ws = new ImagePlus( "watershed", labelStack );
-	    ws.setCalibration( inputImage.getCalibration() );
-	    return ws;
 	}
 
-	
 	/**
-	 * Apply watershed transform on inputImage, using the seeds 
-	 * from seedImage and the mask of maskImage.
-	 * @return watershed domains image
+	 * Apply fast watersheds using flooding simulations, as described
+	 * by Soille, Pierre, and Luc M. Vincent. "Determining watersheds 
+	 * in digital pictures via flooding simulations." Lausanne-DL 
+	 * tentative. International Society for Optics and Photonics, 1990.
+	 *
+	 * @return image of labeled catchment basins (with dams)
 	 */
-	public ImagePlus applyWithPriorityQueue()
+	private ImagePlus applyWithoutMask() 
 	{
 		final ImageStack inputStack = inputImage.getStack();
 	    final int size1 = inputStack.getWidth();
 	    final int size2 = inputStack.getHeight();
 	    final int size3 = inputStack.getSize();
+	    	    
+	    // output labels
+	    final int[][][] tabLabels = new int[ size1 ][ size2 ][ size3 ]; 
 	    
-	    if (size1 != seedImage.getWidth() || size2 != seedImage.getHeight() || size3 != seedImage.getStackSize()) 
-	    {
-			throw new IllegalArgumentException("Marker and input images must have the same size");
-		}
-		
-		// Check connectivity has a correct value
-		if ( connectivity != 6 && connectivity != 26 ) 
-		{
-			throw new RuntimeException(
-					"Connectivity for stacks must be either 6 or 26, not "
-							+ connectivity);
-		}	    
+	    // value INIT is assigned to each voxel of the output labels
+	    for( int i=0; i<size1; i++ )
+	    	for( int j=0; j<size2; j++ )
+	    		Arrays.fill( tabLabels[i][j], INIT );
 	    
-		// list of original voxels values and corresponding coordinates
-		PriorityQueue<VoxelRecord> voxelList = null;
-		
-		final int[][][] tabLabels = new int[ size1 ][ size2 ][ size3 ]; 
-		
-		// Make list of voxels and sort it in ascending order
-		IJ.showStatus( "Extracting voxel values..." );
-		IJ.log("  Extracting voxel values..." );
-		final long t0 = System.currentTimeMillis();
-		
-		voxelList = extractVoxelValuesPriorityQueue( inputStack, seedImage.getStack(), tabLabels );
-						
-		final long t1 = System.currentTimeMillis();		
-		IJ.log("  Extraction took " + (t1-t0) + " ms.");
-					    
-		// Watershed
+	    int currentLabel = 0;
+	    
+	    boolean flag = false;	    
+	    
+	    // Make list of voxels and sort it in ascending order
+	    IJ.showStatus( "Extracting voxel values..." );
+	    IJ.log("  Extracting voxel values..." );
+	    final long t0 = System.currentTimeMillis();
+
+	    // list of original voxels values and corresponding coordinates
+	    ArrayList<VoxelRecord> voxelList = extractVoxelValues( inputStack );
+
+	    final long t1 = System.currentTimeMillis();		
+	    IJ.log("  Extraction took " + (t1-t0) + " ms.");
+	    IJ.log("  Sorting voxels by value..." );
+	    IJ.showStatus("Sorting voxels by value...");
+	    Collections.sort( voxelList );
+	    final long t2 = System.currentTimeMillis();
+	    IJ.log("  Sorting took " + (t2-t1) + " ms.");
+	    
+	    IJ.log( "  Flooding..." );
+	    IJ.showStatus( "Flooding..." );
 	    final long start = System.currentTimeMillis();
 	    
 	    // Auxiliary cursor to visit neighbors
@@ -283,253 +184,194 @@ public class WatershedTransform3D
       	
       	// Check connectivity
        	final Neighborhood3D neigh = connectivity == 26 ? 
-       			new Neighborhood3DC26() : new Neighborhood3DC6();
-
-	    final int count = voxelList.size();
-	    IJ.log( "  Flooding from " + count + " voxels..." );
-      	IJ.showStatus("Flooding from " + count + " voxels...");
+       									new Neighborhood3DC26() : new Neighborhood3DC6();
 	    
-      	final int numVoxels = size1 * size2 * size3;
-      	
-      	// with mask
-      	if ( null != maskImage )
-      	{
-      		final ImageStack maskStack = maskImage.getStack();
-      		
-      		while ( voxelList.isEmpty() == false )
-      		{
-      			IJ.showProgress( numVoxels-voxelList.size(), numVoxels );
+	    
+	    PriorityQueue<VoxelRecord> fifo = new PriorityQueue<VoxelRecord>();
+	    
+	    int currentIndex = 0;
+	    
+	    // for h <- h_min to h_max
+	    while( currentIndex < voxelList.size() )
+	    {
+	    	
+	    	final double h = voxelList.get( currentIndex ).getValue();	    	
+	    	
+	    	int indexToVisit = currentIndex;
+	    	
+	    	double retrievedH = h;
+	    	
+	    	while( retrievedH == h && indexToVisit < voxelList.size() )
+	    	{
+	    		final VoxelRecord voxelRecord = voxelList.get( indexToVisit );
+	    		final int[] coord = voxelRecord.getCoordinates();
+	    		final int i = coord[0];
+	    		final int j = coord[1];
+	    		final int k = coord[2];
+	    		
+	    		retrievedH = voxelRecord.getValue();
+	    		indexToVisit ++;
 
-      			final VoxelRecord voxelRecord = voxelList.poll();
-      			final int[] coord = voxelRecord.getCoordinates();
-      			final int i = coord[0];
-      			final int j = coord[1];
-      			final int k = coord[2];
+	    		tabLabels[ i ][ j ][ k ] = MASK;
 
-      			double voxelValue = voxelRecord.getValue();
+	    		// Read neighbor coordinates
+	    		cursor.set( i, j, k );
+	    		neigh.setCursor( cursor );
 
-      			// Read neighbor coordinates
-		       	cursor.set( i, j, k );
-		       	neigh.setCursor( cursor );
-		       		
-		       	for( Cursor3D c : neigh.getNeighbors() )			       		
-		       	{
-		       		// Look in neighborhood for labeled voxels with
-		       		// smaller or equal original value
-		       		int u = c.getX();
-		       		int v = c.getY();
-		       		int w = c.getZ();
-		       		
-		       		if ( u >= 0 && u < size1 && v >= 0 && v < size2 && w >= 0 && w < size3 )
-		       		{
-		       			// Unlabeled neighbors go into the queue if they are not there yet 
-		       			if ( tabLabels[u][v][w] == 0 && maskStack.getVoxel(u, v, w) > 0)
-		       			{
-		       				voxelList.add( new VoxelRecord( u, v, w, inputStack.getVoxel(u,v,w) ));
-		       				tabLabels[u][v][w] = INQUEUE;
-		       			}
-		       			else if ( tabLabels[u][v][w] > 0 && inputStack.getVoxel(u,v,w) <= voxelValue )
-		       			{
-		       				// assign label of smallest neighbor
-		       				tabLabels[i][j][k] = tabLabels[u][v][w];
-		       				voxelValue = inputStack.getVoxel(u,v,w);
-		       			}
-		       		}
-		       	}    
+	    		for( Cursor3D c : neigh.getNeighbors() )			       		
+	    		{       			
+	    			int u = c.getX();
+	    			int v = c.getY();
+	    			int w = c.getZ();
 
-      		}
-      	}
-      	else // without mask
-      	{
-      		while ( voxelList.isEmpty() == false )
-      		{
-      			IJ.showProgress( numVoxels-voxelList.size(), numVoxels );
+	    			if ( u >= 0 && u < size1 && v >= 0 && v < size2 && w >= 0 && w < size3 )
+	    			{       			
+	    				if ( tabLabels[ u ][ v ][ w ] > 0 || tabLabels[ u ][ v ][ w ] == WSHED )
+	    				{
+	    					fifo.add( new VoxelRecord( i, j, k, inputStack.getVoxel( i, j, k ) ));
+	    					tabLabels[ i ][ j ][ k ] = INQUEUE;
+	    				}
 
-      			final VoxelRecord voxelRecord = voxelList.poll();
-      			final int[] coord = voxelRecord.getCoordinates();
-      			final int i = coord[0];
-      			final int j = coord[1];
-      			final int k = coord[2];
+	    			}
+	    		}   	    	
+	    	}
 
+	    	while( fifo.isEmpty() == false )
+	    	{
+	    		final VoxelRecord voxelRecord = fifo.poll();
+	    		final int[] coord = voxelRecord.getCoordinates();
+	    		final int i = coord[0];
+	    		final int j = coord[1];
+	    		final int k = coord[2];
 
-      			double voxelValue = voxelRecord.getValue(); //inputStack.getVoxel( i, j, k );
+	    		// Read neighbor coordinates
+	    		cursor.set( i, j, k );
+	    		neigh.setCursor( cursor );
 
-      			// Read neighbor coordinates
-      			cursor.set( i, j, k );
-      			neigh.setCursor( cursor );
+	    		for( Cursor3D c : neigh.getNeighbors() )			       		
+	    		{       			
+	    			int u = c.getX();
+	    			int v = c.getY();
+	    			int w = c.getZ();
 
-      			for( Cursor3D c : neigh.getNeighbors() )			       		
-      			{
-      				// Look in neighborhood for labeled voxels with
-      				// smaller or equal original value
-      				int u = c.getX();
-      				int v = c.getY();
-      				int w = c.getZ();
-      				if ( u >= 0 && u < size1 && v >= 0 && v < size2 && w >= 0 && w < size3 )
-      				{
-      					// Unlabeled neighbors go into the queue if they are not there yet 
-      					if ( tabLabels[ u ][ v ][ w ] == 0 )
-      					{
-      						voxelList.add( new VoxelRecord( u, v, w, inputStack.getVoxel( u, v, w ) ));
-      						tabLabels[u][v][w] = INQUEUE;
-      					}
-      					else if ( tabLabels[ u ][ v ][ w ] > 0 && inputStack.getVoxel( u, v, w ) <= voxelValue )
-      					{
-      						// assign label of smallest neighbor
-      						tabLabels[ i ][ j ][ k ] = tabLabels[ u ][ v ][ w ];
-      						voxelValue = inputStack.getVoxel( u, v, w );
-      					}
-      				}
-      			}    
+	    			if ( u >= 0 && u < size1 && v >= 0 && v < size2 && w >= 0 && w < size3 )
+	    			{
+	    				if ( tabLabels[ u ][ v ][ w ] > 0 ) // i.e. the voxel belongs to an already labeled basin
+	    				{
+	    					if ( tabLabels[ i ][ j ][ k ] == INQUEUE || (tabLabels[ i ][ j ][ k ] == WSHED && flag == true ) )
+	    					{
+	    						tabLabels[ i ][ j ][ k ] = tabLabels[ u ][ v ][ w ];
+	    					}
+	    					else if ( tabLabels[ i ][ j ][ k ] > 0 && tabLabels[ i ][ j ][ k ] != tabLabels[ u ][ v ][ w ] )
+	    					{
+	    						tabLabels[ i ][ j ][ k ] = WSHED;
+	    						flag = false;
+	    					}       					
+	    				}
+	    				else if ( tabLabels[ u ][ v ][ w ] == WSHED &&  tabLabels[ i ][ j ][ k ] == INQUEUE )
+	    				{
+	    					tabLabels[ i ][ j ][ k ] = WSHED;
+	    					flag = true;
+	    				}
+	    				else if ( tabLabels[ u ][ v ][ w ] == MASK )
+	    				{
+	    					tabLabels[ u ][ v ][ w ] = INQUEUE;
+	    					fifo.add( new VoxelRecord( u, v, w, inputStack.getVoxel( u, v, w ) ));
 
-      		}
-      	}
+	    				}
+	    			}       			       			
+	    		}	    	
+	    	}
 
-		final long end = System.currentTimeMillis();
+	    	// check for new minima
+	    	indexToVisit = currentIndex;	    	
+	    	retrievedH = h;
+	    	
+	    	while( retrievedH == h && indexToVisit < voxelList.size() )
+	    	{
+	    		final VoxelRecord voxelRecord = voxelList.get( indexToVisit );
+	    		final int[] coord = voxelRecord.getCoordinates();
+	    		final int i = coord[0];
+	    		final int j = coord[1];
+	    		final int k = coord[2];
+	    		
+	    		retrievedH = voxelRecord.getValue();
+	    		indexToVisit ++;
+	    		
+	    		if ( tabLabels[ i ][ j ][ k ] == MASK )
+	    		{
+	    			currentLabel ++;
+	    			fifo.add( new VoxelRecord( i, j, k, inputStack.getVoxel( i, j, k ) ));
+	    			tabLabels[ i ][ j ][ k ] = currentLabel;
+	    			
+	    			while( fifo.isEmpty() == false )
+	    	    	{
+	    				final VoxelRecord voxelRecord2 = fifo.poll();
+	    	    		final int[] coord2 = voxelRecord2.getCoordinates();
+	    	    		final int i2 = coord2[0];
+	    	    		final int j2 = coord2[1];
+	    	    		final int k2 = coord2[2];
+
+	    	    		// Read neighbor coordinates
+	    	    		cursor.set( i2, j2, k2 );
+	    	    		neigh.setCursor( cursor );
+
+	    	    		for( Cursor3D c : neigh.getNeighbors() )			       		
+	    	    		{       			
+	    	    			int u = c.getX();
+	    	    			int v = c.getY();
+	    	    			int w = c.getZ();
+	    	    			
+	    	    			if ( u >= 0 && u < size1 && v >= 0 && v < size2 && w >= 0 && w < size3 )
+	    	    			{
+	    	    				if ( tabLabels[ u ][ v ][ w ] == MASK )
+	    	    				{
+	    	    					fifo.add( new VoxelRecord( u, v, w, inputStack.getVoxel( u, v, w ) ));
+	    	    					tabLabels[ u ][ v ][ w ] = currentLabel;
+	    	    				}
+	    	    			}
+	    	    			
+	    	    		}
+	    	    	}
+	    		}	    			    		
+	    	}
+	    	
+	    	currentIndex = indexToVisit; // new h index
+	    	
+	    	IJ.showProgress(currentIndex, voxelList.size());	    		    		    	
+	    }
+	    
+	    final long end = System.currentTimeMillis();
 		IJ.log("  Flooding took: " + (end-start) + " ms");
-		
-		// Create result label image
-		ImageStack labelStack = seedImage.duplicate().getStack();
 	    
-	    for (int i = 0; i < size1; ++i)
-	      for (int j = 0; j < size2; ++j)
-	        for (int k = 0; k < size3; ++k)
-	            labelStack.setVoxel( i, j, k, tabLabels[i][j][k] );
+	    // Create result label image
+	    ImageStack labelStack = new ImageStack( size1, size2 );
+
+	    for (int k = 0; k < size3; ++k)
+	    {
+	    	
+	    	FloatProcessor fp = new FloatProcessor( size1, size2 );
+	    	for (int i = 0; i < size1; ++i)
+	    		for (int j = 0; j < size2; ++j)
+	    			fp.setf( i, j, tabLabels[i][j][k] );
+	    	labelStack.addSlice( fp );
+	    	
+	    }		
+	    			
 	    final ImagePlus ws = new ImagePlus( "watershed", labelStack );
 	    ws.setCalibration( inputImage.getCalibration() );
 	    return ws;
 	}
-	
-	/**
-	 * Extract voxel values from input and seed images
-	 * 
-	 * @param inputStack input stack
-	 * @param seedStack seed stack
-	 * @param tabLabels output label array
-	 * @return priority queue of voxels neighboring the seeds
-	 */
-	public PriorityQueue<VoxelRecord> extractVoxelValuesPriorityQueue(
-			final ImageStack inputStack,
-			final ImageStack seedStack,
-			final int[][][] tabLabels) 
-	{
 		
-		final int size1 = inputStack.getWidth();
-	    final int size2 = inputStack.getHeight();
-	    final int size3 = inputStack.getSize();
-		
-	            
-        final PriorityQueue<VoxelRecord> voxelList = new PriorityQueue<VoxelRecord>();
-        
-        // Auxiliary cursor to visit neighbors
-	    final Cursor3D cursor = new Cursor3D(0, 0, 0);
-      	
-      	// Check connectivity
-       	final Neighborhood3D neigh = connectivity == 26 ? 
-       			new Neighborhood3DC26() : new Neighborhood3DC6();
-	    
-		if( null != maskImage ) // apply mask
-		{
-			final ImageStack mask = maskImage.getImageStack();
-						
-			for (int z = 0; z < size3; ++z)	
-			{
-				IJ.showProgress( z+1, size3 );
-
-				final ImageProcessor ipMask = mask.getProcessor( z+1 );
-				final ImageProcessor ipSeed = seedStack.getProcessor( z+1 );
-
-				for( int x = 0; x < size1; ++x )
-					for( int y = 0; y < size2; ++y )
-						if( ipMask.getf( x, y ) > 0 )
-						{
-							int label = (int) ipSeed.getf( x, y );
-							if( label > 0 )
-							{								
-								cursor.set( x, y, z );
-								neigh.setCursor( cursor );
-
-								// add unlabeled neighbors to priority queue
-								for( Cursor3D c : neigh.getNeighbors() )			       		
-								{
-									int u = c.getX();
-									int v = c.getY();
-									int w = c.getZ();
-									if ( u >= 0 && u < size1 && 
-											v >= 0 && v < size2 && 
-											w >= 0 && w < size3 &&
-											(int) seedStack.getVoxel( u, v, w ) == 0 &&
-											tabLabels[ u ][ v ][ w ] != INQUEUE )															 
-									{
-										voxelList.add( new VoxelRecord( u, v, w, inputStack.getVoxel( u, v, w ) ) );
-										tabLabels[ u ][ v ][ w ] = INQUEUE;
-									}
-
-								}
-								tabLabels[x][y][z] = label;
-							}
-						}
-			}
-		}							
-		else // without mask
-		{
-			for (int z = 0; z < size3; ++z)	
-			{
-				IJ.showProgress( z+1, size3 );
-
-				final ImageProcessor ipSeed = seedStack.getProcessor( z+1 );
-
-				for( int x = 0; x < size1; ++x )
-					for( int y = 0; y < size2; ++y )
-					{
-						int label = (int) ipSeed.getf( x, y );
-						if( label > 0 )
-						{
-							cursor.set( x, y, z );
-							neigh.setCursor( cursor );
-
-							// add unlabeled neighbors to priority queue
-							for( Cursor3D c : neigh.getNeighbors() )			       		
-							{
-								int u = c.getX();
-								int v = c.getY();
-								int w = c.getZ();
-								if ( u >= 0 && u < size1 && 
-										v >= 0 && v < size2 && 
-										w >= 0 && w < size3 &&
-										(int) seedStack.getVoxel( u, v, w ) == 0 &&
-										tabLabels[ u ][ v ][ w ] != INQUEUE )															 
-								{
-									voxelList.add( new VoxelRecord( u, v, w, inputStack.getVoxel( u, v, w ) ) );
-									tabLabels[ u ][ v ][ w ] = INQUEUE;
-								}
-
-							}
-							tabLabels[x][y][z] = label;
-						}
-					}
-			}
-
-		}
-
-
-		IJ.showProgress(1.0);
-
-		return voxelList;
-	}
 
 	/**
-	 * Extract voxel values from input and seed images
+	 * Extract voxel values from input image
 	 * 
 	 * @param inputStack input stack
-	 * @param seedStack seed stack
-	 * @param tabLabels output label array
 	 * @return list of input voxel values
 	 */
-	public LinkedList<VoxelRecord> extractVoxelValues(
-			final ImageStack inputStack,
-			final ImageStack seedStack,
-			final int[][][] tabLabels) 
+	public ArrayList<VoxelRecord> extractVoxelValues(
+			final ImageStack inputStack ) 
 	{
 		
 		final int size1 = inputStack.getWidth();
@@ -543,7 +385,7 @@ public class WatershedTransform3D
         
         Thread[] threads = ThreadUtil.createThreadArray( n_cpus );
         
-        final LinkedList<VoxelRecord>[] lists = new LinkedList[ n_cpus ];
+        final ArrayList<VoxelRecord>[] lists = new ArrayList[ n_cpus ];
 	    
 		if( null != maskImage )
 		{
@@ -551,7 +393,7 @@ public class WatershedTransform3D
 			
 			for (int ithread = 0; ithread < threads.length; ithread++) 
 			{
-				lists[ ithread ] = new LinkedList<VoxelRecord>();
+				lists[ ithread ] = new ArrayList<VoxelRecord>();
 				
 				threads[ithread] = new Thread() {
 					public void run() {
@@ -571,14 +413,12 @@ public class WatershedTransform3D
 
 								final ImageProcessor ipMask = mask.getProcessor( z+1 );
 								final ImageProcessor ipInput = inputStack.getProcessor( z+1 );
-								final ImageProcessor ipSeed = seedStack.getProcessor( z+1 );
-
+								
 								for( int x = 0; x < size1; ++x )
 									for( int y = 0; y < size2; ++y )
 										if( ipMask.getf( x, y ) > 0 )
 										{
-											lists[k].addLast( new VoxelRecord( x, y, z, ipInput.getf( x, y )));
-											tabLabels[x][y][z] = (int) ipSeed.getf( x, y );
+											lists[k].add( new VoxelRecord( x, y, z, ipInput.getf( x, y )));								
 										}
 							}
 
@@ -592,7 +432,7 @@ public class WatershedTransform3D
 		{
 			for (int ithread = 0; ithread < threads.length; ithread++) 
 			{
-				lists[ ithread ] = new LinkedList<VoxelRecord>();
+				lists[ ithread ] = new ArrayList<VoxelRecord>();
 				
 				threads[ithread] = new Thread() {
 					public void run() {
@@ -611,13 +451,11 @@ public class WatershedTransform3D
 									IJ.showProgress(z+1, zmax);
 
 								final ImageProcessor ipInput = inputStack.getProcessor( z+1 );
-								final ImageProcessor ipSeed = seedStack.getProcessor( z+1 );
 
 								for( int x = 0; x < size1; ++x )
 									for( int y = 0; y < size2; ++y )
 									{
-										lists[k].addLast( new VoxelRecord( x, y, z, ipInput.getf( x, y )));
-										tabLabels[x][y][z] = (int) ipSeed.getf( x, y );
+										lists[k].add( new VoxelRecord( x, y, z, ipInput.getf( x, y )));
 									}
 							}
 
@@ -628,7 +466,7 @@ public class WatershedTransform3D
 			ThreadUtil.startAndJoin(threads);			
 		}
 		
-		final LinkedList<VoxelRecord> voxelList = lists[ 0 ];
+		final ArrayList<VoxelRecord> voxelList = lists[ 0 ];
 		for (int ithread = 1; ithread < threads.length; ithread++)
 			voxelList.addAll(lists[ ithread ]);
 		
@@ -637,7 +475,246 @@ public class WatershedTransform3D
 		return voxelList;
 	}
 
-	
-	
+	/**
+	 * Apply fast watersheds using flooding simulations, as described
+	 * by Soille, Pierre, and Luc M. Vincent. "Determining watersheds 
+	 * in digital pictures via flooding simulations." Lausanne-DL 
+	 * tentative. International Society for Optics and Photonics, 1990.
+	 * This implementation restricts the watershed to the regions in
+	 * white in the binary mask.
+	 *
+	 * @return image of labeled catchment basins (with dams)
+	 */
+	private ImagePlus applyWithMask() 
+	{
+		final ImageStack inputStack = inputImage.getStack();
+	    final int size1 = inputStack.getWidth();
+	    final int size2 = inputStack.getHeight();
+	    final int size3 = inputStack.getSize();
+	    
+	    final ImageStack mask = maskImage.getImageStack();
+	    	    
+	    // output labels
+	    final int[][][] tabLabels = new int[ size1 ][ size2 ][ size3 ]; 
+	    
+	    // value INIT is assigned to each voxel of the output labels
+	    // inside the mask
+	    for( int i=0; i<size1; i++ )
+	    	for( int j=0; j<size2; j++ )
+	    		for( int k=0; k<size3; k++ )
+	    			if( mask.getVoxel( i, j, k ) > 0 )
+	    				tabLabels[i][j][k] = INIT;
+	    
+	    int currentLabel = 0;
+	    
+	    boolean flag = false;	    
+	    
+	    // Make list of voxels and sort it in ascending order
+	    IJ.showStatus( "Extracting voxel values..." );
+	    IJ.log("  Extracting voxel values..." );
+	    final long t0 = System.currentTimeMillis();
+
+	    // list of original voxels values and corresponding coordinates
+	    ArrayList<VoxelRecord> voxelList = extractVoxelValues( inputStack );
+
+	    final long t1 = System.currentTimeMillis();		
+	    IJ.log("  Extraction took " + (t1-t0) + " ms.");
+	    IJ.log("  Sorting voxels by value..." );
+	    IJ.showStatus("Sorting voxels by value...");
+	    Collections.sort( voxelList );
+	    final long t2 = System.currentTimeMillis();
+	    IJ.log("  Sorting took " + (t2-t1) + " ms.");
+	    
+	    IJ.log( "  Flooding..." );
+	    IJ.showStatus( "Flooding..." );
+	    final long start = System.currentTimeMillis();
+	    
+	    // Auxiliary cursor to visit neighbors
+	    final Cursor3D cursor = new Cursor3D( 0, 0, 0 );
+      	
+      	// Check connectivity
+       	final Neighborhood3D neigh = connectivity == 26 ? 
+       									new Neighborhood3DC26() : new Neighborhood3DC6();
+	    
+	    
+	    PriorityQueue<VoxelRecord> fifo = new PriorityQueue<VoxelRecord>();
+	    
+	    int currentIndex = 0;
+	    
+	    // for h <- h_min to h_max
+	    while( currentIndex < voxelList.size() )
+	    {
+	    	
+	    	final double h = voxelList.get( currentIndex ).getValue();	    	
+	    	
+	    	int indexToVisit = currentIndex;
+	    	
+	    	double retrievedH = h;
+	    	
+	    	while( retrievedH == h && indexToVisit < voxelList.size() )
+	    	{
+	    		final VoxelRecord voxelRecord = voxelList.get( indexToVisit );
+	    		final int[] coord = voxelRecord.getCoordinates();
+	    		final int i = coord[0];
+	    		final int j = coord[1];
+	    		final int k = coord[2];
+	    		
+	    		retrievedH = voxelRecord.getValue();
+	    		indexToVisit ++;
+
+	    		tabLabels[ i ][ j ][ k ] = MASK;
+
+	    		// Read neighbor coordinates
+	    		cursor.set( i, j, k );
+	    		neigh.setCursor( cursor );
+
+	    		for( Cursor3D c : neigh.getNeighbors() )			       		
+	    		{       			
+	    			int u = c.getX();
+	    			int v = c.getY();
+	    			int w = c.getZ();
+
+	    			if ( u >= 0 && u < size1 && v >= 0 && v < size2 && w >= 0 && w < size3 
+	    					&& mask.getVoxel(u, v, w) > 0 )
+	    			{       			
+	    				if ( tabLabels[ u ][ v ][ w ] > 0 || tabLabels[ u ][ v ][ w ] == WSHED )
+	    				{
+	    					fifo.add( new VoxelRecord( i, j, k, inputStack.getVoxel( i, j, k ) ));
+	    					tabLabels[ i ][ j ][ k ] = INQUEUE;
+	    				}
+
+	    			}
+	    		}   	    	
+	    	}
+
+	    	while( fifo.isEmpty() == false )
+	    	{
+	    		final VoxelRecord voxelRecord = fifo.poll();
+	    		final int[] coord = voxelRecord.getCoordinates();
+	    		final int i = coord[0];
+	    		final int j = coord[1];
+	    		final int k = coord[2];
+
+	    		// Read neighbor coordinates
+	    		cursor.set( i, j, k );
+	    		neigh.setCursor( cursor );
+
+	    		for( Cursor3D c : neigh.getNeighbors() )			       		
+	    		{       			
+	    			int u = c.getX();
+	    			int v = c.getY();
+	    			int w = c.getZ();
+
+	    			if ( u >= 0 && u < size1 && v >= 0 && v < size2 && w >= 0 && w < size3 
+	    					&& mask.getVoxel(u, v, w) > 0 )
+	    			{
+	    				if ( tabLabels[ u ][ v ][ w ] > 0 ) // i.e. the voxel belongs to an already labeled basin
+	    				{
+	    					if ( tabLabels[ i ][ j ][ k ] == INQUEUE || (tabLabels[ i ][ j ][ k ] == WSHED && flag == true ) )
+	    					{
+	    						tabLabels[ i ][ j ][ k ] = tabLabels[ u ][ v ][ w ];
+	    					}
+	    					else if ( tabLabels[ i ][ j ][ k ] > 0 && tabLabels[ i ][ j ][ k ] != tabLabels[ u ][ v ][ w ] )
+	    					{
+	    						tabLabels[ i ][ j ][ k ] = WSHED;
+	    						flag = false;
+	    					}       					
+	    				}
+	    				else if ( tabLabels[ u ][ v ][ w ] == WSHED &&  tabLabels[ i ][ j ][ k ] == INQUEUE )
+	    				{
+	    					tabLabels[ i ][ j ][ k ] = WSHED;
+	    					flag = true;
+	    				}
+	    				else if ( tabLabels[ u ][ v ][ w ] == MASK )
+	    				{
+	    					tabLabels[ u ][ v ][ w ] = INQUEUE;
+	    					fifo.add( new VoxelRecord( u, v, w, inputStack.getVoxel( u, v, w ) ));
+
+	    				}
+	    			}       			       			
+	    		}	    	
+	    	}
+
+	    	// check for new minima
+	    	indexToVisit = currentIndex;	    	
+	    	retrievedH = h;
+	    	
+	    	while( retrievedH == h && indexToVisit < voxelList.size() )
+	    	{
+	    		final VoxelRecord voxelRecord = voxelList.get( indexToVisit );
+	    		final int[] coord = voxelRecord.getCoordinates();
+	    		final int i = coord[0];
+	    		final int j = coord[1];
+	    		final int k = coord[2];
+	    		
+	    		retrievedH = voxelRecord.getValue();
+	    		indexToVisit ++;
+	    		
+	    		if ( tabLabels[ i ][ j ][ k ] == MASK )
+	    		{
+	    			currentLabel ++;
+	    			fifo.add( new VoxelRecord( i, j, k, inputStack.getVoxel( i, j, k ) ));
+	    			tabLabels[ i ][ j ][ k ] = currentLabel;
+	    			
+	    			while( fifo.isEmpty() == false )
+	    	    	{
+	    				final VoxelRecord voxelRecord2 = fifo.poll();
+	    	    		final int[] coord2 = voxelRecord2.getCoordinates();
+	    	    		final int i2 = coord2[0];
+	    	    		final int j2 = coord2[1];
+	    	    		final int k2 = coord2[2];
+
+	    	    		// Read neighbor coordinates
+	    	    		cursor.set( i2, j2, k2 );
+	    	    		neigh.setCursor( cursor );
+
+	    	    		for( Cursor3D c : neigh.getNeighbors() )			       		
+	    	    		{       			
+	    	    			int u = c.getX();
+	    	    			int v = c.getY();
+	    	    			int w = c.getZ();
+	    	    			
+	    	    			if ( u >= 0 && u < size1 && v >= 0 && v < size2 && w >= 0 && w < size3 
+	    	    					&& mask.getVoxel(u, v, w) > 0 )
+	    	    			{
+	    	    				if ( tabLabels[ u ][ v ][ w ] == MASK )
+	    	    				{
+	    	    					fifo.add( new VoxelRecord( u, v, w, inputStack.getVoxel( u, v, w ) ));
+	    	    					tabLabels[ u ][ v ][ w ] = currentLabel;
+	    	    				}
+	    	    			}
+	    	    			
+	    	    		}
+	    	    	}
+	    		}	    			    		
+	    	}
+	    	
+	    	currentIndex = indexToVisit; // new h index
+	    	
+	    	IJ.showProgress(currentIndex, voxelList.size());	    		    		    	
+	    }
+	    
+	    final long end = System.currentTimeMillis();
+		IJ.log("  Flooding took: " + (end-start) + " ms");
+	    
+	    // Create result label image
+	    ImageStack labelStack = new ImageStack( size1, size2 );
+
+	    for (int k = 0; k < size3; ++k)
+	    {
+	    	
+	    	FloatProcessor fp = new FloatProcessor( size1, size2 );
+	    	for (int i = 0; i < size1; ++i)
+	    		for (int j = 0; j < size2; ++j)
+	    			fp.setf( i, j, tabLabels[i][j][k] );
+	    	labelStack.addSlice( fp );
+	    	
+	    }		
+	    			
+	    final ImagePlus ws = new ImagePlus( "watershed", labelStack );
+	    ws.setCalibration( inputImage.getCalibration() );
+	    return ws;
+	}
 	
 } // end class WatershedTransform3D
+

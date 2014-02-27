@@ -1,6 +1,5 @@
 package inra.ijpb.plugins;
 
-
 import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
@@ -11,41 +10,42 @@ import inra.ijpb.watershed.Watershed;
 
 
 /**
- * A plugin to perform watershed on a 3D image using flooding simulations, 
- * as described by Soille, Pierre, and Luc M. Vincent. "Determining watersheds 
- * in digital pictures via flooding simulations." Lausanne-DL tentative. 
- * International Society for Optics and Photonics, 1990.
+ * 
+ * A plugin to perform marker-controlled watershed on a 3D image.
  *
  * @author Ignacio Arganda-Carreras
  */
-public class Watershed3DPlugin implements PlugIn 
+public class MarkerControlledWatershed3DPlugin implements PlugIn 
 {
-
+	/** flag to use a priority queue */
+	public static boolean usePriorityQueue = true;
 	/** flag to use 26-connectivity */
 	public static boolean use26neighbors = true;
-	
 		
 	/**
-	 * Apply 3D watershed to a 2D or 3D image (it does work for 2D images too).
+	 * Apply marker controlled watershed to a 2D or 3D image (it does work for 2D images too).
 	 *	 
 	 * @param input the 2D or 3D image (in principle a "gradient" image)
+	 * @param marker the labeled marker image
 	 * @param mask binary mask to restrict region of interest
 	 * @param connectivity 6 or 26 voxel connectivity
 	 */
 	public ImagePlus process(
 			ImagePlus input, 
+			ImagePlus marker,
 			ImagePlus mask,
 			int connectivity ) 
 	{
 		final long start = System.currentTimeMillis();
-				
-		ImagePlus resultImage = Watershed.computeWatershed( input, mask, connectivity );
-					
-		final long end = System.currentTimeMillis();
-		IJ.log( "Watershed 3d took " + (end-start) + " ms.");
 						
-		return resultImage;
-			
+		IJ.log("-> Running watershed...");
+								
+		ImagePlus resultImage = Watershed.computeWatershed(input, marker, mask, connectivity, usePriorityQueue);				
+		
+		final long end = System.currentTimeMillis();
+		IJ.log( "Watershed 3d took " + (end-start) + " ms.");		
+						
+		return resultImage;				
 	}
 	
 
@@ -56,7 +56,7 @@ public class Watershed3DPlugin implements PlugIn
 		
 		if( nbima == 0 )
 		{
-			IJ.error( "Watershed 3D", 
+			IJ.error( "Marker-controlled watershed 3D", 
 					"ERROR: At least one image needs to be open to run watershed in 3D");
 			return;
 		}
@@ -72,13 +72,15 @@ public class Watershed3DPlugin implements PlugIn
             namesMask[ i + 1 ] = WindowManager.getImage(i + 1).getShortTitle();
         }
         
-        GenericDialog gd = new GenericDialog("Watershed 3D");
+        GenericDialog gd = new GenericDialog("Marker-controlled watershed 3D");
 
         int inputIndex = 0;
-        int maskIndex = nbima > 1 ? 1 : 0;
+        int markerIndex = nbima > 1 ? 1 : 0;
         
         gd.addChoice( "Input", names, names[ inputIndex ] );
-        gd.addChoice( "Mask", namesMask, namesMask[ maskIndex ] );
+        gd.addChoice( "Marker", names, names[ markerIndex ] );
+        gd.addChoice( "Mask", namesMask, namesMask[ nbima > 2 ? 3 : 0 ] );
+        gd.addCheckbox( "Use priority queue", usePriorityQueue );
         gd.addCheckbox( "Use diagonal connectivity", use26neighbors );
 
         gd.showDialog();
@@ -86,15 +88,18 @@ public class Watershed3DPlugin implements PlugIn
         if (gd.wasOKed()) 
         {
             inputIndex = gd.getNextChoiceIndex();
-            maskIndex = gd.getNextChoiceIndex();
+            markerIndex = gd.getNextChoiceIndex();
+            int maskIndex = gd.getNextChoiceIndex();
+            usePriorityQueue = gd.getNextBoolean();
             use26neighbors = gd.getNextBoolean();
 
             ImagePlus inputImage = WindowManager.getImage( inputIndex + 1 );
+            ImagePlus markerImage = WindowManager.getImage( markerIndex + 1 );
             ImagePlus maskImage = maskIndex > 0 ? WindowManager.getImage( maskIndex ) : null;
             
             final int connectivity = use26neighbors ? 26 : 6;
             
-            ImagePlus result = process( inputImage, maskImage, connectivity );
+            ImagePlus result = process( inputImage, markerImage, maskImage, connectivity );
             
             // Adjust range to visualize result
     		Images3D.optimizeDisplayRange( result );
@@ -109,3 +114,4 @@ public class Watershed3DPlugin implements PlugIn
 	}
 
 }
+
