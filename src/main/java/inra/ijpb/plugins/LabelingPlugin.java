@@ -30,9 +30,10 @@ public class LabelingPlugin implements PlugIn {
 	public void run(String arg) {
 		ImagePlus imagePlus = IJ.getImage();
 		
+		boolean isPlanar = imagePlus.getStackSize() == 1;
+		
 		GenericDialog gd = new GenericDialog("Labeling");
-		int nSlices = imagePlus.getStackSize();
-		String[] connLabels = nSlices == 1 ? conn2DLabels : conn3DLabels;
+		String[] connLabels = isPlanar ? conn2DLabels : conn3DLabels;
 		gd.addChoice("Connectivity", connLabels, connLabels[0]);
 		gd.addChoice("Type of result", resultBitDepthLabels, resultBitDepthLabels[1]);
 		gd.showDialog();
@@ -43,16 +44,8 @@ public class LabelingPlugin implements PlugIn {
 		int connIndex = gd.getNextChoiceIndex();
 		int bitDepth = resultBitDepthList[gd.getNextChoiceIndex()];
 		
-		ImagePlus resultPlus;
-		if (nSlices == 1) {
-			// Process planar image
-			int conn = conn2DValues[connIndex];
-			resultPlus  = ConnectedComponents.computeLabels(imagePlus, conn, bitDepth);
-		} else {
-			// Process 3D image stack
-			int conn = conn3DValues[connIndex];
-			resultPlus = ConnectedComponents.computeLabels(imagePlus, conn, bitDepth);
-		}
+		int conn = isPlanar ? conn2DValues[connIndex] : conn3DValues[connIndex];
+		ImagePlus resultPlus  = ConnectedComponents.computeLabels(imagePlus, conn, bitDepth);
 		
 		// udpate meta information of result image
 		String newName = imagePlus.getShortTitle() + "-lbl";
@@ -61,7 +54,7 @@ public class LabelingPlugin implements PlugIn {
 		
 		// Display with same settings as original image
 		resultPlus.show();
-		if (nSlices > 1) {
+		if (!isPlanar) {
 			resultPlus.setZ(imagePlus.getZ());
 			resultPlus.setSlice(imagePlus.getSlice());
 		}
