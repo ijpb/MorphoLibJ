@@ -224,8 +224,8 @@ public class WatershedTransform3D
 	    			int v = c.getY();
 	    			int w = c.getZ();
 
-	    			if ( u >= 0 && u < size1 && v >= 0 && v < size2 && w >= 0 && w < size3 ) 	    			       			
-	    				if( tabLabels[ u ][ v ][ w ] > 0 || tabLabels[ u ][ v ][ w ] == WSHED )
+	    			if ( u >= 0 && u < size1 && v >= 0 && v < size2 && w >= 0 && w < size3  	    			       			
+	    				&&  ( tabLabels[ u ][ v ][ w ] > 0 || tabLabels[ u ][ v ][ w ] == WSHED ) )
 	    				{
 	    					fifo.add( new VoxelRecord( i, j, k, inputStack.getVoxel( i, j, k ) ));
 	    					tabLabels[ i ][ j ][ k ] = INQUEUE;
@@ -266,7 +266,7 @@ public class WatershedTransform3D
 	    						flag = false;
 	    					}       					
 	    				}
-	    				else if ( tabLabels[ u ][ v ][ w ] == WSHED &&  tabLabels[ i ][ j ][ k ] == INQUEUE )
+	    				else if ( tabLabels[ u ][ v ][ w ] == WSHED && tabLabels[ i ][ j ][ k ] == INQUEUE )
 	    				{
 	    					tabLabels[ i ][ j ][ k ] = WSHED;
 	    					flag = true;
@@ -320,14 +320,13 @@ public class WatershedTransform3D
 	    	    			int v = c.getY();
 	    	    			int w = c.getZ();
 	    	    			
-	    	    			if ( u >= 0 && u < size1 && v >= 0 && v < size2 && w >= 0 && w < size3 )
+	    	    			if ( u >= 0 && u < size1 && v >= 0 && v < size2 && w >= 0 && w < size3 
+	    	    					&&  tabLabels[ u ][ v ][ w ] == MASK )
 	    	    			{
-	    	    				if ( tabLabels[ u ][ v ][ w ] == MASK )
-	    	    				{
-	    	    					fifo.add( new VoxelRecord( u, v, w, inputStack.getVoxel( u, v, w ) ));
-	    	    					tabLabels[ u ][ v ][ w ] = currentLabel;
-	    	    				}
+	    	    				fifo.add( new VoxelRecord( u, v, w, inputStack.getVoxel( u, v, w ) ));
+	    	    				tabLabels[ u ][ v ][ w ] = currentLabel;
 	    	    			}
+	    	    			
 	    	    			
 	    	    		}
 	    	    	}
