@@ -10,7 +10,7 @@ import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
 import inra.ijpb.binary.ConnectedComponents;
 import inra.ijpb.morphology.MinimaAndMaxima3D;
-import inra.ijpb.watershed.WatershedTransform3D;
+import inra.ijpb.watershed.MarkerControlledWatershedTransform3D;
 
 
 /**
@@ -61,8 +61,8 @@ public class Watershed3DPlugin implements PlugIn
 		ImagePlus connectedMinima = new ImagePlus("connected minima", components );
 		//connectedMinima.show();
 		
-		WatershedTransform3D wt = new WatershedTransform3D(input, connectedMinima, null);
-		ImagePlus resultImage = usePriorityQueue == false ? wt.apply() : wt.applyWithPriorityQueue();
+		MarkerControlledWatershedTransform3D wt = new MarkerControlledWatershedTransform3D(input, connectedMinima, null);
+		ImagePlus resultImage = usePriorityQueue == false ? wt.applyWithSortedList() : wt.applyWithPriorityQueue();
 		
 		final long end = System.currentTimeMillis();
 		IJ.log( "Watershed 3d took " + (end-step2) + " ms.");
@@ -110,8 +110,8 @@ public class Watershed3DPlugin implements PlugIn
 		ImagePlus connectedMinima = new ImagePlus("connected minima", components );
 		//connectedMinima.show();
 		
-		WatershedTransform3D wt = new WatershedTransform3D( input, connectedMinima, mask );
-		ImagePlus resultImage = usePriorityQueue == false ? wt.apply() : wt.applyWithPriorityQueue();
+		MarkerControlledWatershedTransform3D wt = new MarkerControlledWatershedTransform3D(input, connectedMinima, mask);
+		ImagePlus resultImage = usePriorityQueue == false ? wt.applyWithSortedList() : wt.applyWithPriorityQueue();			
 		
 		final long end = System.currentTimeMillis();
 		IJ.log( "Watershed 3d took " + (end-step2) + " ms.");
@@ -161,8 +161,8 @@ public class Watershed3DPlugin implements PlugIn
 		ImagePlus connectedMinima = new ImagePlus("connected minima", components );
 		//connectedMinima.show();
 		
-		WatershedTransform3D wt = new WatershedTransform3D( input, connectedMinima, mask, connectivity );
-		ImagePlus resultImage = usePriorityQueue == false ? wt.apply() : wt.applyWithPriorityQueue();
+		MarkerControlledWatershedTransform3D wt = new MarkerControlledWatershedTransform3D(input, connectedMinima, mask, connectivity );
+		ImagePlus resultImage = usePriorityQueue == false ? wt.applyWithSortedList() : wt.applyWithPriorityQueue();				
 		
 		final long end = System.currentTimeMillis();
 		IJ.log( "Watershed 3d took " + (end-step2) + " ms.");

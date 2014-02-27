@@ -28,11 +28,11 @@ public class Watershed {
 			int connectivity,
 			boolean usePriorityQueue )
 	{
-		WatershedTransform3D wt = new WatershedTransform3D( input, marker, binaryMask, connectivity );
+		MarkerControlledWatershedTransform3D wt = new MarkerControlledWatershedTransform3D( input, marker, binaryMask, connectivity );
 		if( usePriorityQueue )
 			return wt.applyWithPriorityQueue();
 		else
-			return wt.apply();
+			return wt.applyWithSortedList();
 	}
 	
 	/**
@@ -57,11 +57,11 @@ public class Watershed {
 		final ImagePlus markerIP = new ImagePlus( "marker", marker );
 		final ImagePlus binaryMaskIP = ( null != binaryMask ) ? new ImagePlus( "binary mask", binaryMask ) : null;
 		
-		WatershedTransform3D wt = new WatershedTransform3D( inputIP, markerIP, binaryMaskIP, connectivity );
+		MarkerControlledWatershedTransform3D wt = new MarkerControlledWatershedTransform3D( inputIP, markerIP, binaryMaskIP, connectivity );
 		if( usePriorityQueue )
 			return wt.applyWithPriorityQueue().getImageStack();
 		else
-			return wt.apply().getImageStack();
+			return wt.applyWithSortedList().getImageStack();
 	}
 	
 	/**
@@ -88,11 +88,11 @@ public class Watershed {
 		
 		final int conn3d = connectivity == 4 ? 6 : 26;
 									
-		WatershedTransform3D wt = new WatershedTransform3D( inputIP, markerIP, binaryMaskIP, conn3d );
+		MarkerControlledWatershedTransform3D wt = new MarkerControlledWatershedTransform3D( inputIP, markerIP, binaryMaskIP, conn3d );
 		if( usePriorityQueue )
 			return wt.applyWithPriorityQueue().getProcessor();
 		else
-			return wt.apply().getProcessor();
+			return wt.applyWithSortedList().getProcessor();
 	}
 
 	/**
@@ -110,11 +110,11 @@ public class Watershed {
 			int connectivity,
 			boolean usePriorityQueue )
 	{
-		WatershedTransform3D wt = new WatershedTransform3D( input, marker, null, connectivity );
+		MarkerControlledWatershedTransform3D wt = new MarkerControlledWatershedTransform3D( input, marker, null, connectivity );
 		if( usePriorityQueue )
 			return wt.applyWithPriorityQueue();
 		else
-			return wt.apply();
+			return wt.applyWithSortedList();
 	}
 	
 	/**
@@ -135,11 +135,11 @@ public class Watershed {
 		final ImagePlus inputIP = new ImagePlus( "input", input );
 		final ImagePlus markerIP = new ImagePlus( "marker", marker );	
 		
-		WatershedTransform3D wt = new WatershedTransform3D( inputIP, markerIP, null, connectivity );
+		MarkerControlledWatershedTransform3D wt = new MarkerControlledWatershedTransform3D( inputIP, markerIP, null, connectivity );
 		if( usePriorityQueue )
 			return wt.applyWithPriorityQueue().getImageStack();
 		else
-			return wt.apply().getImageStack();
+			return wt.applyWithSortedList().getImageStack();
 	}
 	
 	/**
@@ -162,11 +162,11 @@ public class Watershed {
 		
 		final int conn3d = connectivity == 4 ? 6 : 26;
 									
-		WatershedTransform3D wt = new WatershedTransform3D( inputIP, markerIP, null, conn3d );
+		MarkerControlledWatershedTransform3D wt = new MarkerControlledWatershedTransform3D( inputIP, markerIP, null, conn3d );
 		if( usePriorityQueue )
 			return wt.applyWithPriorityQueue().getProcessor();
 		else
-			return wt.apply().getProcessor();
+			return wt.applyWithSortedList().getProcessor();
 	}
 
 }
