@@ -37,6 +37,7 @@ import ij.gui.StackWindow;
 import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
 import inra.ijpb.binary.ConnectedComponents;
+import inra.ijpb.data.image.Images3D;
 import inra.ijpb.morphology.MinimaAndMaxima3D;
 import inra.ijpb.util.ColorMaps;
 import inra.ijpb.util.ColorMaps.CommonLabelMaps;
@@ -484,19 +485,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		IJ.log( "Whole plugin took " + (end-start) + " ms.");
 		
 		// Adjust min and max values to display
-		double min = 0;
-		double max = 0;
-		for( int slice=1; slice<=resultImage.getImageStackSize(); slice++ )			
-		{
-			ImageProcessor ip = resultImage.getImageStack().getProcessor(slice);
-			ip.resetMinAndMax();
-			if( max < ip.getMax() )
-				max = ip.getMax();
-			if( min > ip.getMin() )
-				min = ip.getMin();
-		}
-		
-		resultImage.setDisplayRange( min, max );
+		Images3D.optimizeDisplayRange( resultImage );
 		
 		byte[][] colorMap = CommonLabelMaps.fromLabel( CommonLabelMaps.SPECTRUM.getLabel() ).computeLut(255, true);;
 		ColorModel cm = ColorMaps.createColorModel(colorMap, Color.BLACK);
