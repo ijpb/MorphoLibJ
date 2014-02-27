@@ -8,7 +8,28 @@ import ij.process.ImageProcessor;
  * Several static methods for computing watershed in 2D/3D images. 
  * @author Ignacio Arganda-Carreras
  */
-public class Watershed {
+public class Watershed 
+{
+	/**
+	 * Compute fast watershed using flooding simulations, as described by 
+	 * Soille, Pierre, and Luc M. Vincent. "Determining watersheds in 
+	 * digital pictures via flooding simulations." Lausanne-DL tentative. 
+	 * International Society for Optics and Photonics, 1990.
+	 * 
+	 * @param input original grayscale image (usually a gradient image)
+	 * @param mask binary mask to restrict the regions of interest
+	 * @param connectivity voxel connectivity to define neighborhoods
+	 * @return image of labeled catchment basins with dams (labels are 1, 2, ...)
+	 */
+	public static ImagePlus computeWatershed( 
+			ImagePlus input,
+			ImagePlus mask,
+			int connectivity )
+	{
+		WatershedTransform3D wt = new WatershedTransform3D( input, mask, connectivity );
+		
+		return wt.apply();		
+	}
 	
 	/**
 	 * Compute watershed with markers with an optional binary mask
