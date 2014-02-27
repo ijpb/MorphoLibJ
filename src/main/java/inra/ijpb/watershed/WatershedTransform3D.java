@@ -201,16 +201,23 @@ public class WatershedTransform3D
 	    	
 	    	double retrievedH = h;
 	    	
-	    	while( retrievedH == h && indexToVisit < voxelList.size() )
+	    	while( indexToVisit < voxelList.size() )
 	    	{
 	    		final VoxelRecord voxelRecord = voxelList.get( indexToVisit );
+	    		
+	    		retrievedH = voxelRecord.getValue();
+	    		
+	    		if( retrievedH != h )
+	    			break;
+	    		
+	    		indexToVisit ++;
+	    		
 	    		final int[] coord = voxelRecord.getCoordinates();
 	    		final int i = coord[0];
 	    		final int j = coord[1];
 	    		final int k = coord[2];
 	    		
-	    		retrievedH = voxelRecord.getValue();
-	    		indexToVisit ++;
+	    		
 
 	    		tabLabels[ i ][ j ][ k ] = MASK;
 
@@ -285,17 +292,23 @@ public class WatershedTransform3D
 	    	indexToVisit = currentIndex;	    	
 	    	retrievedH = h;
 	    	
-	    	while( retrievedH == h && indexToVisit < voxelList.size() )
+	    	while( indexToVisit < voxelList.size() )
 	    	{
 	    		final VoxelRecord voxelRecord = voxelList.get( indexToVisit );
+	    		
+	    		retrievedH = voxelRecord.getValue();
+	    		
+	    		if( retrievedH != h )
+	    			break;
+	    		
+	    		indexToVisit ++;
+	    		
 	    		final int[] coord = voxelRecord.getCoordinates();
 	    		final int i = coord[0];
 	    		final int j = coord[1];
 	    		final int k = coord[2];
 	    		
-	    		retrievedH = voxelRecord.getValue();
-	    		indexToVisit ++;
-	    		
+
 	    		if ( tabLabels[ i ][ j ][ k ] == MASK )
 	    		{
 	    			currentLabel ++;
