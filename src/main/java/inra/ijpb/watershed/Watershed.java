@@ -32,6 +32,52 @@ public class Watershed
 	}
 	
 	/**
+	 * Compute fast watershed using flooding simulations, as described by 
+	 * Soille, Pierre, and Luc M. Vincent. "Determining watersheds in 
+	 * digital pictures via flooding simulations." Lausanne-DL tentative. 
+	 * International Society for Optics and Photonics, 1990.
+	 * 
+	 * @param input original grayscale image (usually a gradient image)
+	 * @param mask binary mask to restrict the regions of interest
+	 * @param connectivity voxel connectivity to define neighborhoods
+	 * @return image of labeled catchment basins with dams (labels are 1, 2, ...)
+	 */
+	public static ImagePlus computeWatershed( 
+			ImageStack input,
+			ImageStack mask,
+			int connectivity )
+	{
+		final ImagePlus inputIP = new ImagePlus( "input", input );		
+		final ImagePlus binaryMaskIP = ( null != mask ) ? new ImagePlus( "binary mask", mask ) : null;
+		WatershedTransform3D wt = new WatershedTransform3D( inputIP, binaryMaskIP, connectivity );
+		
+		return wt.apply();		
+	}
+	
+	/**
+	 * Compute fast watershed using flooding simulations, as described by 
+	 * Soille, Pierre, and Luc M. Vincent. "Determining watersheds in 
+	 * digital pictures via flooding simulations." Lausanne-DL tentative. 
+	 * International Society for Optics and Photonics, 1990.
+	 * 
+	 * @param input original grayscale image (usually a gradient image)
+	 * @param mask binary mask to restrict the regions of interest
+	 * @param connectivity voxel connectivity to define neighborhoods
+	 * @return image of labeled catchment basins with dams (labels are 1, 2, ...)
+	 */
+	public static ImagePlus computeWatershed( 
+			ImageProcessor input,
+			ImageProcessor mask,
+			int connectivity )
+	{
+		final ImagePlus inputIP = new ImagePlus( "input", input );		
+		final ImagePlus binaryMaskIP = ( null != mask ) ? new ImagePlus( "binary mask", mask ) : null;
+		WatershedTransform3D wt = new WatershedTransform3D( inputIP, binaryMaskIP, connectivity );
+		
+		return wt.apply();		
+	}
+	
+	/**
 	 * Compute watershed with markers with an optional binary mask
 	 * to restrict the regions of application
 	 * 
