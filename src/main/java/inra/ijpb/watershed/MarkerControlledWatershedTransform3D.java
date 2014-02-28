@@ -133,10 +133,10 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 	      	{
 				IJ.showProgress(p, count);
 	       		final VoxelRecord voxelRecord = voxelList.removeFirst();
-	       		final int[] coord = voxelRecord.getCoordinates();
-	       		final int i = coord[0];
-	       		final int j = coord[1];
-	       		final int k = coord[2];
+	       		final Cursor3D p2 = voxelRecord.getCursor();
+	    		final int i = p2.getX();
+	    		final int j = p2.getY();
+	    		final int k = p2.getZ();
 	       		
 	       		// If the voxel is unlabeled
 				if( tabLabels[ i ][ j ][ k ] == 0 )
@@ -261,10 +261,10 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
       			IJ.showProgress( numVoxels-voxelList.size(), numVoxels );
 
       			final VoxelRecord voxelRecord = voxelList.poll();
-      			final int[] coord = voxelRecord.getCoordinates();
-      			final int i = coord[0];
-      			final int j = coord[1];
-      			final int k = coord[2];
+      			final Cursor3D p = voxelRecord.getCursor();
+	    		final int i = p.getX();
+	    		final int j = p.getY();
+	    		final int k = p.getZ();
 
       			double voxelValue = voxelRecord.getValue();
 
@@ -306,10 +306,10 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
       			IJ.showProgress( numVoxels-voxelList.size(), numVoxels );
 
       			final VoxelRecord voxelRecord = voxelList.poll();
-      			final int[] coord = voxelRecord.getCoordinates();
-      			final int i = coord[0];
-      			final int j = coord[1];
-      			final int k = coord[2];
+      			final Cursor3D p = voxelRecord.getCursor();
+	    		final int i = p.getX();
+	    		final int j = p.getY();
+	    		final int k = p.getZ();
 
 
       			double voxelValue = voxelRecord.getValue(); //inputStack.getVoxel( i, j, k );
