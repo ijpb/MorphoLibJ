@@ -54,6 +54,7 @@ public class Images3D {
 	{
 		double[] extremeValue = findMinAndMax(image);
 		image.setDisplayRange( extremeValue[ 0 ], extremeValue[ 1 ] );
+		image.updateAndDraw();
 	}
 	
 }
