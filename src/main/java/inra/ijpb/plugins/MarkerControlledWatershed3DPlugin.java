@@ -19,6 +19,8 @@ public class MarkerControlledWatershed3DPlugin implements PlugIn
 {
 	/** flag to use a priority queue */
 	public static boolean usePriorityQueue = true;
+	/** flag to calculate watershed dams */
+	public static boolean getDams = true;
 	/** flag to use 26-connectivity */
 	public static boolean use26neighbors = true;
 		
@@ -40,7 +42,7 @@ public class MarkerControlledWatershed3DPlugin implements PlugIn
 						
 		IJ.log("-> Running watershed...");
 								
-		ImagePlus resultImage = Watershed.computeWatershed(input, marker, mask, connectivity, usePriorityQueue);				
+		ImagePlus resultImage = Watershed.computeWatershed(input, marker, mask, connectivity, usePriorityQueue, getDams );				
 		
 		final long end = System.currentTimeMillis();
 		IJ.log( "Watershed 3d took " + (end-start) + " ms.");		
@@ -81,6 +83,7 @@ public class MarkerControlledWatershed3DPlugin implements PlugIn
         gd.addChoice( "Marker", names, names[ markerIndex ] );
         gd.addChoice( "Mask", namesMask, namesMask[ nbima > 2 ? 3 : 0 ] );
         gd.addCheckbox( "Use priority queue", usePriorityQueue );
+        gd.addCheckbox( "Calculate dams", getDams );
         gd.addCheckbox( "Use diagonal connectivity", use26neighbors );
 
         gd.showDialog();
@@ -91,6 +94,7 @@ public class MarkerControlledWatershed3DPlugin implements PlugIn
             markerIndex = gd.getNextChoiceIndex();
             int maskIndex = gd.getNextChoiceIndex();
             usePriorityQueue = gd.getNextBoolean();
+            getDams = gd.getNextBoolean();
             use26neighbors = gd.getNextBoolean();
 
             ImagePlus inputImage = WindowManager.getImage( inputIndex + 1 );
@@ -100,12 +104,12 @@ public class MarkerControlledWatershed3DPlugin implements PlugIn
             final int connectivity = use26neighbors ? 26 : 6;
             
             ImagePlus result = process( inputImage, markerImage, maskImage, connectivity );
-            
-            // Adjust range to visualize result
-    		Images3D.optimizeDisplayRange( result );
-            
+                                    
     		// Set result slice to the current slice in the input image
             result.setSlice( inputImage.getCurrentSlice() );
+            
+            // optimize display range
+            Images3D.optimizeDisplayRange( result );
             
             // show result
             result.show();
