@@ -86,6 +86,7 @@ public class Watershed
 	 * @param binaryMask binary mask to restrict the regions of interest
 	 * @param connectivity voxel connectivity to define neighborhoods
 	 * @param usePriorityQueue select/deselect the use of the algorithm based on a priority queue
+	 * @param getDams select/deselect the calculation of dams
 	 * @return image of labeled catchment basins (labels are 1, 2, ...)
 	 */
 	public static ImagePlus computeWatershed( 
@@ -93,13 +94,24 @@ public class Watershed
 			ImagePlus marker,
 			ImagePlus binaryMask,
 			int connectivity,
-			boolean usePriorityQueue )
+			boolean usePriorityQueue,
+			boolean getDams )
 	{
 		MarkerControlledWatershedTransform3D wt = new MarkerControlledWatershedTransform3D( input, marker, binaryMask, connectivity );
 		if( usePriorityQueue )
-			return wt.applyWithPriorityQueue();
+		{
+			if( getDams )
+				return wt.applyWithPriorityQueueAndDams();
+			else 
+				return wt.applyWithPriorityQueue();
+		}
 		else
-			return wt.applyWithSortedList();
+		{
+			if( getDams )
+				return wt.applyWithSortedListAndDams();
+			else
+				return wt.applyWithSortedList();			
+		}
 	}
 	
 	/**
@@ -111,6 +123,7 @@ public class Watershed
 	 * @param binaryMask binary mask to restrict the regions of interest
 	 * @param connectivity voxel connectivity to define neighborhoods
 	 * @param usePriorityQueue select/deselect the use of the algorithm based on a priority queue
+	 * @param getDams select/deselect the calculation of dams
 	 * @return image of labeled catchment basins (labels are 1, 2, ...)
 	 */
 	public static ImageStack computeWatershed( 
@@ -118,7 +131,8 @@ public class Watershed
 			ImageStack marker,
 			ImageStack binaryMask,
 			int connectivity,
-			boolean usePriorityQueue )
+			boolean usePriorityQueue,
+			boolean getDams )
 	{		
 		final ImagePlus inputIP = new ImagePlus( "input", input );
 		final ImagePlus markerIP = new ImagePlus( "marker", marker );
@@ -126,9 +140,19 @@ public class Watershed
 		
 		MarkerControlledWatershedTransform3D wt = new MarkerControlledWatershedTransform3D( inputIP, markerIP, binaryMaskIP, connectivity );
 		if( usePriorityQueue )
-			return wt.applyWithPriorityQueue().getImageStack();
+		{
+			if( getDams )
+				return wt.applyWithPriorityQueueAndDams().getImageStack();
+			else 
+				return wt.applyWithPriorityQueue().getImageStack();
+		}
 		else
-			return wt.applyWithSortedList().getImageStack();
+		{
+			if( getDams )
+				return wt.applyWithSortedListAndDams().getImageStack();
+			else
+				return wt.applyWithSortedList().getImageStack();			
+		}
 	}
 	
 	/**
@@ -140,6 +164,7 @@ public class Watershed
 	 * @param binaryMask binary mask to restrict the regions of interest
 	 * @param connectivity voxel connectivity to define neighborhoods
 	 * @param usePriorityQueue select/deselect the use of the algorithm based on a priority queue
+	 * @param getDams select/deselect the calculation of dams
 	 * @return image of labeled catchment basins (labels are 1, 2, ...)
 	 */
 	public static ImageProcessor computeWatershed( 
@@ -147,7 +172,8 @@ public class Watershed
 			ImageProcessor marker,
 			ImageProcessor binaryMask,
 			int connectivity,
-			boolean usePriorityQueue )
+			boolean usePriorityQueue,
+			boolean getDams )
 	{		
 		final ImagePlus inputIP = new ImagePlus( "input", input );
 		final ImagePlus markerIP = new ImagePlus( "marker", marker );
@@ -157,9 +183,19 @@ public class Watershed
 									
 		MarkerControlledWatershedTransform3D wt = new MarkerControlledWatershedTransform3D( inputIP, markerIP, binaryMaskIP, conn3d );
 		if( usePriorityQueue )
-			return wt.applyWithPriorityQueue().getProcessor();
+		{
+			if( getDams )
+				return wt.applyWithPriorityQueueAndDams().getProcessor();
+			else 
+				return wt.applyWithPriorityQueue().getProcessor();
+		}
 		else
-			return wt.applyWithSortedList().getProcessor();
+		{
+			if( getDams )
+				return wt.applyWithSortedListAndDams().getProcessor();
+			else
+				return wt.applyWithSortedList().getProcessor();				
+		}
 	}
 
 	/**
@@ -169,19 +205,31 @@ public class Watershed
 	 * @param marker image with labeled markers
 	 * @param connectivity voxel connectivity to define neighborhoods
 	 * @param usePriorityQueue select/deselect the use of the algorithm based on a priority queue
+	 * @param getDams select/deselect the calculation of dams
 	 * @return image of labeled catchment basins (labels are 1, 2, ...)
 	 */
 	public static ImagePlus computeWatershed( 
 			ImagePlus input,
 			ImagePlus marker,
 			int connectivity,
-			boolean usePriorityQueue )
+			boolean usePriorityQueue,
+			boolean getDams )
 	{
 		MarkerControlledWatershedTransform3D wt = new MarkerControlledWatershedTransform3D( input, marker, null, connectivity );
 		if( usePriorityQueue )
-			return wt.applyWithPriorityQueue();
+		{
+			if( getDams )
+				return wt.applyWithPriorityQueueAndDams();
+			else 
+				return wt.applyWithPriorityQueue();
+		}
 		else
-			return wt.applyWithSortedList();
+		{
+			if( getDams )
+				return wt.applyWithSortedListAndDams();
+			else
+				return wt.applyWithSortedList();			
+		}
 	}
 	
 	/**
@@ -191,22 +239,34 @@ public class Watershed
 	 * @param marker image with labeled markers
 	 * @param connectivity voxel connectivity to define neighborhoods
 	 * @param usePriorityQueue select/deselect the use of the algorithm based on a priority queue
+	 * @param getDams select/deselect the calculation of dams
 	 * @return image of labeled catchment basins (labels are 1, 2, ...)
 	 */
 	public static ImageStack computeWatershed( 
 			ImageStack input,
 			ImageStack marker,
 			int connectivity,
-			boolean usePriorityQueue )
+			boolean usePriorityQueue,
+			boolean getDams )
 	{		
 		final ImagePlus inputIP = new ImagePlus( "input", input );
 		final ImagePlus markerIP = new ImagePlus( "marker", marker );	
 		
 		MarkerControlledWatershedTransform3D wt = new MarkerControlledWatershedTransform3D( inputIP, markerIP, null, connectivity );
 		if( usePriorityQueue )
-			return wt.applyWithPriorityQueue().getImageStack();
+		{
+			if( getDams )
+				return wt.applyWithPriorityQueueAndDams().getImageStack();
+			else 
+				return wt.applyWithPriorityQueue().getImageStack();
+		}
 		else
-			return wt.applyWithSortedList().getImageStack();
+		{
+			if( getDams )
+				return wt.applyWithSortedListAndDams().getImageStack();
+			else
+				return wt.applyWithSortedList().getImageStack();			
+		}
 	}
 	
 	/**
@@ -216,13 +276,15 @@ public class Watershed
 	 * @param marker image with labeled markers
 	 * @param connectivity voxel connectivity to define neighborhoods
 	 * @param usePriorityQueue select/deselect the use of the algorithm based on a priority queue
+	 * @param getDams select/deselect the calculation of dams
 	 * @return image of labeled catchment basins (labels are 1, 2, ...)
 	 */
 	public static ImageProcessor computeWatershed( 
 			ImageProcessor input,
 			ImageProcessor marker,
 			int connectivity,
-			boolean usePriorityQueue )
+			boolean usePriorityQueue,
+			boolean getDams )
 	{		
 		final ImagePlus inputIP = new ImagePlus( "input", input );
 		final ImagePlus markerIP = new ImagePlus( "marker", marker );
@@ -231,9 +293,19 @@ public class Watershed
 									
 		MarkerControlledWatershedTransform3D wt = new MarkerControlledWatershedTransform3D( inputIP, markerIP, null, conn3d );
 		if( usePriorityQueue )
-			return wt.applyWithPriorityQueue().getProcessor();
+		{
+			if( getDams )
+				return wt.applyWithPriorityQueueAndDams().getProcessor();
+			else 
+				return wt.applyWithPriorityQueue().getProcessor();
+		}
 		else
-			return wt.applyWithSortedList().getProcessor();
+		{
+			if( getDams )
+				return wt.applyWithSortedListAndDams().getProcessor();
+			else
+				return wt.applyWithSortedList().getProcessor();			
+		}
 	}
 
 }
