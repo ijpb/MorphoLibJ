@@ -24,6 +24,7 @@ package inra.ijpb.watershed;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -179,82 +180,75 @@ public class WatershedTransform3D
 	    IJ.showStatus( "Flooding..." );
 	    final long start = System.currentTimeMillis();
 	    
-	    // Auxiliary cursor to visit neighbors
-	    final Cursor3D cursor = new Cursor3D(0, 0, 0);
-      	
       	// Check connectivity
        	final Neighborhood3D neigh = connectivity == 26 ? 
        									new Neighborhood3DC26() : new Neighborhood3DC6();
 	    
 	    
-	    PriorityQueue<VoxelRecord> fifo = new PriorityQueue<VoxelRecord>();
+	    LinkedList<Cursor3D> fifo = new LinkedList<Cursor3D>();
 	    
 	    int currentIndex = 0;
-	    
-	    // for h <- h_min to h_max
+	    int heightIndex1 = 0;
+        int heightIndex2 = 0;
+        
+	    // for h <- h_min to h_max; geodesic SKIZ of level h-1 inside level h
 	    while( currentIndex < voxelList.size() )
-	    {
-	    	
+	    {	    	
 	    	final double h = voxelList.get( currentIndex ).getValue();	    	
-	    	
-	    	int indexToVisit = currentIndex;
-	    	
-	    	double retrievedH = h;
-	    	
-	    	while( indexToVisit < voxelList.size() )
+	    		    		    		    	
+	    	for(int voxelIndex = heightIndex1; voxelIndex < voxelList.size(); voxelIndex ++)
 	    	{
-	    		final VoxelRecord voxelRecord = voxelList.get( indexToVisit );
-	    		
-	    		retrievedH = voxelRecord.getValue();
-	    		
-	    		if( retrievedH != h )
+	    		final VoxelRecord voxelRecord = voxelList.get( voxelIndex );
+	    			    		
+	    		if( voxelRecord.getValue() != h )
+	    		{
+	    			// this voxel is at level h+1
+	    			heightIndex1 = voxelIndex;
 	    			break;
-	    		
-	    		indexToVisit ++;
-	    		
-	    		final int[] coord = voxelRecord.getCoordinates();
-	    		final int i = coord[0];
-	    		final int j = coord[1];
-	    		final int k = coord[2];
-	    		
-	    		
-
+	    		}
+	    			    		
+	    		final Cursor3D p = voxelRecord.getCursor();
+	    		final int i = p.getX();
+	    		final int j = p.getY();
+	    		final int k = p.getZ();
+	    			    		
+	    		// set label to MASK
 	    		tabLabels[ i ][ j ][ k ] = MASK;
 
-	    		// Read neighbor coordinates
-	    		cursor.set( i, j, k );
-	    		neigh.setCursor( cursor );
-
+	    		// Read neighbor coordinates	    		
+	    		neigh.setCursor( p );
 	    		for( Cursor3D c : neigh.getNeighbors() )			       		
 	    		{       			
 	    			int u = c.getX();
 	    			int v = c.getY();
 	    			int w = c.getZ();
 
-	    			if ( u >= 0 && u < size1 && v >= 0 && v < size2 && w >= 0 && w < size3  	    			       			
-	    				&&  ( tabLabels[ u ][ v ][ w ] > 0 || tabLabels[ u ][ v ][ w ] == WSHED ) )
+	    			// initialize queue with neighbors at level h of current basins or watersheds
+	    			if ( u >= 0 && u < size1 && v >= 0 && v < size2 && w >= 0 && w < size3
+	    					&&   tabLabels[ u ][ v ][ w ] >= WSHED ) 
+	    				//&&  ( tabLabels[ u ][ v ][ w ] > 0 || tabLabels[ u ][ v ][ w ] == WSHED ) )
 	    				{
-	    					fifo.add( new VoxelRecord( i, j, k, inputStack.getVoxel( i, j, k ) ));
+	    					fifo.addLast( p );
 	    					tabLabels[ i ][ j ][ k ] = INQUEUE;
 	    					break;
 	    				}	    			
-	    		}   	    	
-	    	}
+	    		}// end for	    	
+	    	}// end for
 
 	    	while( fifo.isEmpty() == false )
 	    	{
-	    		final VoxelRecord voxelRecord = fifo.poll();
-	    		final int[] coord = voxelRecord.getCoordinates();
-	    		final int i = coord[0];
-	    		final int j = coord[1];
-	    		final int k = coord[2];
+	    		// retrieve point p
+	    		final Cursor3D p = fifo.poll();	    		
+	    		final int i = p.getX();
+	    		final int j = p.getY();
+	    		final int k = p.getZ();
 
 	    		// Read neighbor coordinates
-	    		cursor.set( i, j, k );
-	    		neigh.setCursor( cursor );
+	    		neigh.setCursor( p );
 
 	    		for( Cursor3D c : neigh.getNeighbors() )			       		
-	    		{       			
+	    		{
+	    			// labeling current point by inspecting neighbors
 	    			int u = c.getX();
 	    			int v = c.getY();
 	    			int w = c.getZ();
@@ -281,53 +275,46 @@ public class WatershedTransform3D
 	    				else if ( tabLabels[ u ][ v ][ w ] == MASK )
 	    				{
 	    					tabLabels[ u ][ v ][ w ] = INQUEUE;
-	    					fifo.add( new VoxelRecord( u, v, w, inputStack.getVoxel( u, v, w ) ));
+	    					fifo.addLast( c );
 
 	    				}
 	    			}       			       			
 	    		}	    	
 	    	}
 
-	    	// check for new minima
-	    	indexToVisit = currentIndex;	    	
-	    	retrievedH = h;
-	    	
-	    	while( indexToVisit < voxelList.size() )
+	    	// check for new minima at level h
+	    		    	
+	    	for(int voxelIndex = heightIndex2; voxelIndex < voxelList.size(); voxelIndex ++, currentIndex++)
 	    	{
-	    		final VoxelRecord voxelRecord = voxelList.get( indexToVisit );
+	    		final VoxelRecord voxelRecord = voxelList.get( voxelIndex );	    			    		
 	    		
-	    		retrievedH = voxelRecord.getValue();
-	    		
-	    		if( retrievedH != h )
+	    		if( voxelRecord.getValue() != h )
+	    		{
+	    			// this voxel is at level h+1
+	    			heightIndex2 = voxelIndex;
 	    			break;
-	    		
-	    		indexToVisit ++;
-	    		
-	    		final int[] coord = voxelRecord.getCoordinates();
-	    		final int i = coord[0];
-	    		final int j = coord[1];
-	    		final int k = coord[2];
+	    		}
+	    			    		
+	    		final Cursor3D p = voxelRecord.getCursor();
+	    		final int i = p.getX();
+	    		final int j = p.getY();
+	    		final int k = p.getZ();
 	    		
 
-	    		if ( tabLabels[ i ][ j ][ k ] == MASK )
+	    		if ( tabLabels[ i ][ j ][ k ] == MASK ) // the voxel is inside a new minimum
 	    		{
 	    			currentLabel ++;
-	    			fifo.add( new VoxelRecord( i, j, k, inputStack.getVoxel( i, j, k ) ));
+	    			fifo.addLast( p );
 	    			tabLabels[ i ][ j ][ k ] = currentLabel;
 	    			
 	    			while( fifo.isEmpty() == false )
 	    	    	{
-	    				final VoxelRecord voxelRecord2 = fifo.poll();
-	    	    		final int[] coord2 = voxelRecord2.getCoordinates();
-	    	    		final int i2 = coord2[0];
-	    	    		final int j2 = coord2[1];
-	    	    		final int k2 = coord2[2];
+	    				final Cursor3D p2 = fifo.poll();
 
 	    	    		// Read neighbor coordinates
-	    	    		cursor.set( i2, j2, k2 );
-	    	    		neigh.setCursor( cursor );
+	    	    		neigh.setCursor( p2 );
 
-	    	    		for( Cursor3D c : neigh.getNeighbors() )			       		
+	    	    		for( Cursor3D c : neigh.getNeighbors() ) // inspect neighbors of p2		       		
 	    	    		{       			
 	    	    			int u = c.getX();
 	    	    			int v = c.getY();
@@ -336,20 +323,19 @@ public class WatershedTransform3D
 	    	    			if ( u >= 0 && u < size1 && v >= 0 && v < size2 && w >= 0 && w < size3 
 	    	    					&&  tabLabels[ u ][ v ][ w ] == MASK )
 	    	    			{
-	    	    				fifo.add( new VoxelRecord( u, v, w, inputStack.getVoxel( u, v, w ) ));
+	    	    				fifo.addLast( c );
 	    	    				tabLabels[ u ][ v ][ w ] = currentLabel;
-	    	    			}
-	    	    			
-	    	    			
-	    	    		}
-	    	    	}
-	    		}	    			    		
-	    	}
+	    	    			}	    	    				    	    			
+	    	    		}// end for
+	    	    	}// end while
+	    		}// end if	    		
+	    	}// end for
 	    	
-	    	currentIndex = indexToVisit; // new h index
+	    	//currentIndex = heightIndex2; // new h index
 	    	
-	    	IJ.showProgress(currentIndex, voxelList.size());	    		    		    	
-	    }
+	    	//IJ.showProgress(currentIndex, voxelList.size());
+	    	
+	    }// end while (flooding)
 	    
 	    final long end = System.currentTimeMillis();
 		IJ.log("  Flooding took: " + (end-start) + " ms");
@@ -564,10 +550,10 @@ public class WatershedTransform3D
 	    	while( retrievedH == h && indexToVisit < voxelList.size() )
 	    	{
 	    		final VoxelRecord voxelRecord = voxelList.get( indexToVisit );
-	    		final int[] coord = voxelRecord.getCoordinates();
-	    		final int i = coord[0];
-	    		final int j = coord[1];
-	    		final int k = coord[2];
+	    		final Cursor3D p = voxelRecord.getCursor();
+	    		final int i = p.getX();
+	    		final int j = p.getY();
+	    		final int k = p.getZ();
 	    		
 	    		retrievedH = voxelRecord.getValue();
 	    		indexToVisit ++;
@@ -601,10 +587,10 @@ public class WatershedTransform3D
 	    	while( fifo.isEmpty() == false )
 	    	{
 	    		final VoxelRecord voxelRecord = fifo.poll();
-	    		final int[] coord = voxelRecord.getCoordinates();
-	    		final int i = coord[0];
-	    		final int j = coord[1];
-	    		final int k = coord[2];
+	    		final Cursor3D p = voxelRecord.getCursor();
+	    		final int i = p.getX();
+	    		final int j = p.getY();
+	    		final int k = p.getZ();
 
 	    		// Read neighbor coordinates
 	    		cursor.set( i, j, k );
@@ -653,10 +639,10 @@ public class WatershedTransform3D
 	    	while( retrievedH == h && indexToVisit < voxelList.size() )
 	    	{
 	    		final VoxelRecord voxelRecord = voxelList.get( indexToVisit );
-	    		final int[] coord = voxelRecord.getCoordinates();
-	    		final int i = coord[0];
-	    		final int j = coord[1];
-	    		final int k = coord[2];
+	    		final Cursor3D p = voxelRecord.getCursor();
+	    		final int i = p.getX();
+	    		final int j = p.getY();
+	    		final int k = p.getZ();
 	    		
 	    		retrievedH = voxelRecord.getValue();
 	    		indexToVisit ++;
@@ -670,10 +656,10 @@ public class WatershedTransform3D
 	    			while( fifo.isEmpty() == false )
 	    	    	{
 	    				final VoxelRecord voxelRecord2 = fifo.poll();
-	    	    		final int[] coord2 = voxelRecord2.getCoordinates();
-	    	    		final int i2 = coord2[0];
-	    	    		final int j2 = coord2[1];
-	    	    		final int k2 = coord2[2];
+	    				final Cursor3D p2 = voxelRecord2.getCursor();
+	    	    		final int i2 = p2.getX();
+	    	    		final int j2 = p2.getY();
+	    	    		final int k2 = p2.getZ();
 
 	    	    		// Read neighbor coordinates
 	    	    		cursor.set( i2, j2, k2 );
