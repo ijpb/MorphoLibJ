@@ -476,7 +476,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		// Apply watershed		
 		IJ.log("Running watershed...");
 		
-		ImageStack resultStack = Watershed.computeWatershed( imposedMinima, labeledMinima, connectivity, usePriorityQueue );
+		ImageStack resultStack = Watershed.computeWatershed( imposedMinima, labeledMinima, connectivity, usePriorityQueue, true );
 		resultImage = new ImagePlus( "watershed", resultStack );
 		resultImage.setCalibration( this.inputImage.getCalibration() );
 		
