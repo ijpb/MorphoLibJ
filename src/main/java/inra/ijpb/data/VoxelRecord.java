@@ -24,33 +24,36 @@ package inra.ijpb.data;
 /**
  * Class to store integer voxel coordinates and its 
  * corresponding double value 
+ * 
+ * @author Ignacio Arganda-Carreras
  */
 public class VoxelRecord implements Comparable<VoxelRecord>{
 
-		int i = 0;
-		int j = 0;
-		int k = 0;
+		Cursor3D cursor = null;
 		double value = 0;
 		
 		public VoxelRecord(
-				final int i,
-				final int j,
-				final int k,
+				final Cursor3D cursor,
 				final double value)
 		{
-			this.i = i;
-			this.j = j;
-			this.k = k;
+			this.cursor = cursor;
 			this.value = value;
 		}
 		
-		public int getI(){ return this.i; }
-		public int getJ(){ return this.j; }
-		public int getK(){ return this.k; }
-		
-		public int[] getCoordinates()
+		public VoxelRecord(
+				final int x,
+				final int y,
+				final int z,
+				final double value )
 		{
-			return new int[]{ i, j, k };
+			this.cursor = new Cursor3D(x, y, z);
+			this.value = value;
+		}
+		
+		
+		public Cursor3D getCursor()
+		{
+			return cursor;
 		}
 		
 		public double getValue()
