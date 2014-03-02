@@ -378,7 +378,7 @@ public class WatershedTransform3D
 	    		}// end if	    		
 	    	}// end for
 	    		    		    	
-	    	IJ.showProgress(currentIndex, voxelList.size());
+	    	IJ.showProgress( h / hMax );
 	    	
 	    }// end while (flooding)
 	    
