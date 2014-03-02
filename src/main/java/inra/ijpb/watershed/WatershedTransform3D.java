@@ -39,6 +39,7 @@ import inra.ijpb.data.Neighborhood3D;
 import inra.ijpb.data.Neighborhood3DC6;
 import inra.ijpb.data.Neighborhood3DC26;
 import inra.ijpb.data.VoxelRecord;
+import inra.ijpb.data.image.Images3D;
 
 /**
  * Class to apply the watershed algorithm in 3D to an image. 
@@ -140,7 +141,45 @@ public class WatershedTransform3D
 	 *
 	 * @return image of labeled catchment basins (with dams)
 	 */
+	public ImagePlus apply(
+			double hMin,
+			double hMax )
+	{
+		if( null != this.maskImage )
+			return applyWithMask();
+		else
+			return applyWithoutMask( hMin, hMax );
+
+	}
+	
+	
+	/**
+	 * Apply fast watersheds using flooding simulations, as described
+	 * by Soille, Pierre, and Luc M. Vincent. "Determining watersheds 
+	 * in digital pictures via flooding simulations." Lausanne-DL 
+	 * tentative. International Society for Optics and Photonics, 1990.
+	 *
+	 * @return image of labeled catchment basins (with dams)
+	 */
 	private ImagePlus applyWithoutMask() 
+	{
+		final double[] extrema = Images3D.findMinAndMax(inputImage);
+		return applyWithoutMask( extrema[ 0 ], extrema[ 1 ] );
+	}
+	
+	/**
+	 * Apply fast watersheds using flooding simulations, as described
+	 * by Soille, Pierre, and Luc M. Vincent. "Determining watersheds 
+	 * in digital pictures via flooding simulations." Lausanne-DL 
+	 * tentative. International Society for Optics and Photonics, 1990.
+	 *
+	 * @param hMin
+	 * @param hMax
+	 * @return image of labeled catchment basins (with dams)
+	 */
+	private ImagePlus applyWithoutMask(
+			double hMin,
+			double hMax ) 
 	{
 		final ImageStack inputStack = inputImage.getStack();
 	    final int size1 = inputStack.getWidth();
@@ -184,15 +223,26 @@ public class WatershedTransform3D
        									new Neighborhood3DC26() : new Neighborhood3DC6();
 	    	    
 	    LinkedList<Cursor3D> fifo = new LinkedList<Cursor3D>();
-	    
-	    int currentIndex = 0;
-	    int heightIndex1 = 0;
-        int heightIndex2 = 0;
+	      
+        // initial height
+        double h = hMin;
+        
+        // find corresponding voxel index
+        int currentIndex = 0;
+        while( h < hMin )
+        {
+        	h = voxelList.get( currentIndex ).getValue();
+        	currentIndex++;
+        }
+        
+        int heightIndex1 = currentIndex;
+        int heightIndex2 = currentIndex;
+        
         
 	    // for h <- h_min to h_max; geodesic SKIZ of level h-1 inside level h
-	    while( currentIndex < voxelList.size() )
+	    while( currentIndex < voxelList.size() && h <= hMax )
 	    {	    	
-	    	final double h = voxelList.get( currentIndex ).getValue();	    	
+	    	h = voxelList.get( currentIndex ).getValue();	    	
 	    		    		    		    	
 	    	for(int voxelIndex = heightIndex1; voxelIndex < voxelList.size(); voxelIndex ++)
 	    	{
