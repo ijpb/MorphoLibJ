@@ -43,6 +43,29 @@ public class Watershed
 	 * @return image of labeled catchment basins with dams (labels are 1, 2, ...)
 	 */
 	public static ImagePlus computeWatershed( 
+			ImagePlus input,
+			ImagePlus mask,
+			int connectivity,
+			double hMin,
+			double hMax )
+	{
+		WatershedTransform3D wt = new WatershedTransform3D( input, mask, connectivity );
+		
+		return wt.apply( hMin, hMax );		
+	}
+	
+	/**
+	 * Compute fast watershed using flooding simulations, as described by 
+	 * Soille, Pierre, and Luc M. Vincent. "Determining watersheds in 
+	 * digital pictures via flooding simulations." Lausanne-DL tentative. 
+	 * International Society for Optics and Photonics, 1990.
+	 * 
+	 * @param input original grayscale image (usually a gradient image)
+	 * @param mask binary mask to restrict the regions of interest
+	 * @param connectivity voxel connectivity to define neighborhoods
+	 * @return image of labeled catchment basins with dams (labels are 1, 2, ...)
+	 */
+	public static ImagePlus computeWatershed( 
 			ImageStack input,
 			ImageStack mask,
 			int connectivity )
