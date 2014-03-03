@@ -206,11 +206,11 @@ public class WatershedTransform3D
 	    
 	    // Make list of voxels and sort it in ascending order
 	    IJ.showStatus( "Extracting voxel values..." );
-	    IJ.log("  Extracting voxel values..." );
+	    IJ.log("  Extracting voxel values (h_min = " + hMin + ", h_max = " + hMax + ")..." );
 	    final long t0 = System.currentTimeMillis();
 
 	    // list of original voxels values and corresponding coordinates
-	    ArrayList<VoxelRecord> voxelList = extractVoxelValues( inputStack );
+	    ArrayList<VoxelRecord> voxelList = extractVoxelValues( inputStack, hMin, hMax );
 
 	    final long t1 = System.currentTimeMillis();		
 	    IJ.log("  Extraction took " + (t1-t0) + " ms.");
@@ -391,6 +391,8 @@ public class WatershedTransform3D
 	    	
 	    }// end while (flooding)
 	    
+	    IJ.showProgress( 1.0 );
+	    
 	    final long end = System.currentTimeMillis();
 		IJ.log("  Flooding took: " + (end-start) + " ms");
 	    
@@ -465,11 +467,11 @@ public class WatershedTransform3D
 	    
 	    // Make list of voxels and sort it in ascending order
 	    IJ.showStatus( "Extracting voxel values..." );
-	    IJ.log("  Extracting voxel values..." );
+	    IJ.log("  Extracting voxel values (h_min = " + hMin + ", h_max = " + hMax + ")..." );
 	    final long t0 = System.currentTimeMillis();
 
 	    // list of original voxels values and corresponding coordinates
-	    ArrayList<VoxelRecord> voxelList = extractVoxelValues( inputStack );
+	    ArrayList<VoxelRecord> voxelList = extractVoxelValues( inputStack, hMin, hMax );
 
 	    final long t1 = System.currentTimeMillis();		
 	    IJ.log("  Extraction took " + (t1-t0) + " ms.");
@@ -647,6 +649,8 @@ public class WatershedTransform3D
 	    	
 	    }// end while (flooding)
 	    
+	    IJ.showProgress( 1.0 );
+	    
 	    final long end = System.currentTimeMillis();
 		IJ.log("  Flooding took: " + (end-start) + " ms");
 	    
@@ -675,13 +679,19 @@ public class WatershedTransform3D
 		
 
 	/**
-	 * Extract voxel values from input image
+	 * Extract voxel values from input image such that
+	 * they have value h, hMin <= h <= hMax. A binary
+	 * mask is used if it exists.
 	 * 
 	 * @param inputStack input stack
+	 * @param hMin minimum grayscale height value
+	 * @param hMax maximum grayscale height value
 	 * @return list of input voxel values
 	 */
 	public ArrayList<VoxelRecord> extractVoxelValues(
-			final ImageStack inputStack ) 
+			final ImageStack inputStack,
+			final double hMin,
+			final double hMax ) 
 	{
 		
 		final int size1 = inputStack.getWidth();
@@ -726,10 +736,13 @@ public class WatershedTransform3D
 								
 								for( int x = 0; x < size1; ++x )
 									for( int y = 0; y < size2; ++y )
-										if( ipMask.getf( x, y ) > 0 )
+									{
+										final double h = ipInput.getf( x, y );
+										if( ipMask.getf( x, y ) > 0 && h >= hMin && h <= hMax )
 										{
-											lists[k].add( new VoxelRecord( x, y, z, ipInput.getf( x, y )));								
+											lists[k].add( new VoxelRecord( x, y, z, h ) );								
 										}
+									}
 							}
 
 						}
@@ -765,7 +778,9 @@ public class WatershedTransform3D
 								for( int x = 0; x < size1; ++x )
 									for( int y = 0; y < size2; ++y )
 									{
-										lists[k].add( new VoxelRecord( x, y, z, ipInput.getf( x, y )));
+										final double h = ipInput.getf( x, y );
+										if( h >= hMin && h <= hMax )
+											lists[k].add( new VoxelRecord( x, y, z, h ) );
 									}
 							}
 
