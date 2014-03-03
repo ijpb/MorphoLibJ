@@ -34,6 +34,9 @@ public class Watershed3DPlugin implements PlugIn
 	 * @param input the 2D or 3D image (in principle a "gradient" image)
 	 * @param mask binary mask to restrict region of interest
 	 * @param connectivity 6 or 26 voxel connectivity
+	 * @param hMin minimum grayscale level height
+	 * @param hMax maximum grayscale level height
+	 * @return labeled catchment basins image
 	 */
 	public ImagePlus process(
 			ImagePlus input, 
