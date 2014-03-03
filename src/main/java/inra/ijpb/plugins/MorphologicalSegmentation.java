@@ -55,8 +55,14 @@ public class MorphologicalSegmentation implements PlugIn {
 	/** segmentation result image */
 	ImagePlus resultImage = null;		
 		
-	/** parameters panel */
+	/** segmentation panel */
+	JPanel segmentationPanel = new JPanel();
+	/** display panel */
+	JPanel displayPanel = new JPanel();
+	
+	/** parameters panel (segmentation + display options) */
 	JPanel paramsPanel = new JPanel();
+	
 	/** main panel */
 	Panel all = new Panel();
 	
@@ -64,6 +70,7 @@ public class MorphologicalSegmentation implements PlugIn {
 	JButton segmentButton;
 	/** toggle overlay button */
 	JButton overlayButton;
+	JPanel overlayPanel = new JPanel();
 	
 	/** display segmentation result button */
 	JButton resultButton;	
@@ -194,13 +201,15 @@ public class MorphologicalSegmentation implements PlugIn {
 			overlayButton.setEnabled( false );
 			overlayButton.setToolTipText( "Toggle overlay with segmentation result" );
 			overlayButton.addActionListener( listener );
+			overlayPanel.add( overlayButton );
 			
 			showColorOverlay = false;
 			
 			// Result pannel
 			resultDisplayList = new JComboBox( resultDisplayOption );
 			resultDisplayList.setEnabled( false );
-			resultButton = new JButton( "Show result" );
+			resultDisplayList.setToolTipText( "Select how to display segmentation results" );
+			resultButton = new JButton( "Show" );
 			resultButton.setEnabled( false );
 			resultButton.setToolTipText( "Show segmentation result in new window" );
 			resultButton.addActionListener( listener );
@@ -208,33 +217,63 @@ public class MorphologicalSegmentation implements PlugIn {
 			resultDisplayPanel.add( resultButton );
 			
 
-			// Parameters panel (left side of the GUI)
-			paramsPanel.setBorder(BorderFactory.createTitledBorder("Parameters"));
+			// Segmentation panel
+			segmentationPanel.setBorder( BorderFactory.createTitledBorder( "Segmentation" ) );
+			GridBagLayout segmentationLayout = new GridBagLayout();
+			GridBagConstraints segmentationConstraints = new GridBagConstraints();
+			segmentationConstraints.anchor = GridBagConstraints.NORTHWEST;
+			segmentationConstraints.fill = GridBagConstraints.HORIZONTAL;
+			segmentationConstraints.gridwidth = 1;
+			segmentationConstraints.gridheight = 1;
+			segmentationConstraints.gridx = 0;
+			segmentationConstraints.gridy = 0;
+			segmentationConstraints.insets = new Insets(5, 5, 6, 6);
+			segmentationPanel.setLayout( segmentationLayout );						
+						
+			segmentationPanel.add( dynamicPanel, segmentationConstraints );
+			segmentationConstraints.gridy++;
+			segmentationPanel.add( connectivityPanel, segmentationConstraints );
+			segmentationConstraints.gridy++;			
+			segmentationPanel.add( queuePanel, segmentationConstraints );
+			segmentationConstraints.gridy++;
+			segmentationPanel.add( segmentButton, segmentationConstraints );
+			segmentationConstraints.gridy++;
+			
+			// Display panel
+			displayPanel.setBorder( BorderFactory.createTitledBorder( "Display" ) );
+			GridBagLayout displayLayout = new GridBagLayout();
+			GridBagConstraints displayConstraints = new GridBagConstraints();
+			displayConstraints.anchor = GridBagConstraints.NORTHWEST;
+			displayConstraints.fill = GridBagConstraints.HORIZONTAL;
+			displayConstraints.gridwidth = 1;
+			displayConstraints.gridheight = 1;
+			displayConstraints.gridx = 0;
+			displayConstraints.gridy = 0;
+			displayConstraints.insets = new Insets(5, 5, 6, 6);
+			displayPanel.setLayout( displayLayout );					
+			
+			displayPanel.add( overlayPanel, displayConstraints );
+			displayConstraints.gridy++;
+			displayPanel.add( resultDisplayPanel, displayConstraints );
+			displayConstraints.gridy++;
+			
+			// Parameter panel (left side of the GUI, including training and options)
 			GridBagLayout paramsLayout = new GridBagLayout();
 			GridBagConstraints paramsConstraints = new GridBagConstraints();
+			paramsPanel.setLayout( paramsLayout );
 			paramsConstraints.anchor = GridBagConstraints.NORTHWEST;
 			paramsConstraints.fill = GridBagConstraints.HORIZONTAL;
 			paramsConstraints.gridwidth = 1;
 			paramsConstraints.gridheight = 1;
 			paramsConstraints.gridx = 0;
 			paramsConstraints.gridy = 0;
-			paramsConstraints.insets = new Insets(5, 5, 6, 6);
-			paramsPanel.setLayout(paramsLayout);						
-						
-			paramsPanel.add( dynamicPanel, paramsConstraints );
+			paramsPanel.add( segmentationPanel, paramsConstraints);
 			paramsConstraints.gridy++;
-			paramsPanel.add( connectivityPanel, paramsConstraints );
-			paramsConstraints.gridy++;			
-			paramsPanel.add( queuePanel, paramsConstraints );
+			paramsPanel.add( displayPanel, paramsConstraints);
 			paramsConstraints.gridy++;
-			paramsPanel.add( segmentButton, paramsConstraints );
-			paramsConstraints.gridy++;
-			paramsPanel.add( overlayButton, paramsConstraints );
-			paramsConstraints.gridy++;
-			paramsPanel.add( resultDisplayPanel, paramsConstraints );
-			paramsConstraints.gridy++;
+			paramsConstraints.insets = new Insets( 5, 5, 6, 6 );
 			
-			// main panel
+			// main panel (including parameters panel and canvas)
 			GridBagLayout layout = new GridBagLayout();
 			GridBagConstraints allConstraints = new GridBagConstraints();
 			all.setLayout(layout);
@@ -249,8 +288,9 @@ public class MorphologicalSegmentation implements PlugIn {
 			allConstraints.gridheight = 2;
 			allConstraints.weightx = 0;
 			allConstraints.weighty = 0;
+			
 			all.add( paramsPanel, allConstraints );
-
+									
 			// put canvas in place
 			allConstraints.gridx++;
 			allConstraints.weightx = 1;
@@ -450,7 +490,7 @@ public class MorphologicalSegmentation implements PlugIn {
 	{
 		final ImagePlus lines = labels.duplicate();
 		IJ.setThreshold( lines, 0, 0 );
-		IJ.run(lines, "Convert to Mask", "" );
+		IJ.run(lines, "Convert to Mask", "method=Default background=Light" );
 		return lines;
 	}
 	
@@ -570,6 +610,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		
 		displayImage = inputImage.duplicate();
 		displayImage.setTitle("Morphological Segmentation");
+		displayImage.setSlice( inputImage.getSlice() );
 		
 		// Build GUI
 		SwingUtilities.invokeLater(
