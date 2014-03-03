@@ -463,6 +463,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			{			
 				ImagePlus watershedResult = resultImage.duplicate();
 				watershedResult.setTitle( "Catchment-basins-" + this.inputImage.getTitle() );
+				watershedResult.setSlice( this.displayImage.getSlice() );
 				watershedResult.show();
 			}
 			else if( displayOption.equals( "Overlayed dams" ) )
@@ -470,12 +471,14 @@ public class MorphologicalSegmentation implements PlugIn {
 				final ImagePlus lines = getWatershedLines( resultImage );
 				final ImagePlus overlayed = BinaryOverlayPlugin.binaryOverlay( inputImage, lines, Color.red ) ;
 				overlayed.setTitle( "Overlayed-dams" + this.inputImage.getTitle() );
+				overlayed.setSlice( this.displayImage.getSlice() );
 				overlayed.show();
 			}
 			else if( displayOption.equals( "Watershed lines" ) )
 			{
 				final ImagePlus lines = getWatershedLines( resultImage );
 				lines.setTitle( "Watershed-lines-" + this.inputImage.getTitle() );
+				lines.setSlice( this.displayImage.getSlice() );
 				lines.show();
 			}
 		}
