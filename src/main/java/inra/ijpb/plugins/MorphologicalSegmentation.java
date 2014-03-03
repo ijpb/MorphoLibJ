@@ -94,7 +94,7 @@ public class MorphologicalSegmentation implements PlugIn {
 	JComboBox connectivityList;
 	
 	/** checkbox to choose the priority queue watershed method */
-	JCheckBox queueBox;
+	JCheckBox queueCheckBox;
 	/** flag to use a priority queue in the watershed transform */
 	private boolean usePriorityQueue = true;
 	/** priority queue panel */
@@ -179,9 +179,9 @@ public class MorphologicalSegmentation implements PlugIn {
 			connectivityPanel.setToolTipText( "Voxel connectivity to use" );
 			
 			// use priority queue option
-			queueBox = new JCheckBox( "Use priority queue", usePriorityQueue );
-			queueBox.setToolTipText( "Check to use a priority queue in the watershed transform" );
-			queuePanel.add( queueBox );
+			queueCheckBox = new JCheckBox( "Use priority queue", usePriorityQueue );
+			queueCheckBox.setToolTipText( "Check to use a priority queue in the watershed transform" );
+			queuePanel.add( queueCheckBox );
 			
 			
 			// Segmentation button
@@ -449,7 +449,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		}
 		
 		// read priority queue flag
-		this.usePriorityQueue = queueBox.isSelected();
+		this.usePriorityQueue = queueCheckBox.isSelected();
 		
 		// disable parameter panel
 		setParamsEnabled( false );
@@ -523,7 +523,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		this.overlayButton.setEnabled( enabled );
 		this.resultButton.setEnabled( enabled );
 		this.resultDisplayList.setEnabled( enabled );
-		this.queueBox.setEnabled( enabled );
+		this.queueCheckBox.setEnabled( enabled );
 	}
 	
 	@Override
