@@ -83,7 +83,7 @@ public class Watershed3DPlugin implements PlugIn
         GenericDialog gd = new GenericDialog("Watershed 3D");
 
         int inputIndex = 0;
-        int maskIndex = nbima > 1 ? 1 : 0;
+        int maskIndex = nbima > 1 ? 2 : 0;
           
         // guess maximum height from image type
         switch( WindowManager.getImage( inputIndex + 1 ).getBitDepth() ){
