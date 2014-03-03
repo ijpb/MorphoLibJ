@@ -35,7 +35,6 @@ import ij.gui.ImageRoi;
 import ij.gui.Overlay;
 import ij.gui.StackWindow;
 import ij.plugin.PlugIn;
-import ij.process.ImageProcessor;
 import inra.ijpb.binary.ConnectedComponents;
 import inra.ijpb.data.image.Images3D;
 import inra.ijpb.morphology.MinimaAndMaxima3D;
@@ -65,8 +64,15 @@ public class MorphologicalSegmentation implements PlugIn {
 	JButton segmentButton;
 	/** toggle overlay button */
 	JButton overlayButton;
-	/** create result button */
-	JButton resultButton;
+	
+	/** display segmentation result button */
+	JButton resultButton;	
+	/** result display options */
+	String[] resultDisplayOption = new String[]{ "Catchment basins", "Overlayed dams", "Watershed lines" };
+	/** result display combo box */
+	JComboBox resultDisplayList;
+	/** result display panel */
+	JPanel resultDisplayPanel = new JPanel();
 	
 	/** flag to display the overlay image */
 	private boolean showColorOverlay;
@@ -106,9 +112,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		 * serial version uid
 		 */
 		private static final long serialVersionUID = -6201855439028581892L;
-		
-		
-		
+						
 		/**
 		 * Listener for the GUI buttons
 		 */
@@ -193,11 +197,15 @@ public class MorphologicalSegmentation implements PlugIn {
 			
 			showColorOverlay = false;
 			
-			// Result button
-			resultButton = new JButton( "Create result" );
+			// Result pannel
+			resultDisplayList = new JComboBox( resultDisplayOption );
+			resultButton = new JButton( "Show result" );
 			resultButton.setEnabled( false );
 			resultButton.setToolTipText( "Show segmentation result in new window" );
 			resultButton.addActionListener( listener );
+			resultDisplayPanel.add( resultDisplayList );
+			resultDisplayPanel.add( resultButton );
+			
 
 			// Parameters panel (left side of the GUI)
 			paramsPanel.setBorder(BorderFactory.createTitledBorder("Parameters"));
@@ -222,7 +230,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			paramsConstraints.gridy++;
 			paramsPanel.add( overlayButton, paramsConstraints );
 			paramsConstraints.gridy++;
-			paramsPanel.add( resultButton, paramsConstraints );
+			paramsPanel.add( resultDisplayPanel, paramsConstraints );
 			paramsConstraints.gridy++;
 			
 			// main panel
@@ -514,6 +522,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		this.segmentButton.setEnabled( enabled );
 		this.overlayButton.setEnabled( enabled );
 		this.resultButton.setEnabled( enabled );
+		this.resultDisplayList.setEnabled( enabled );
 		this.queueBox.setEnabled( enabled );
 	}
 	
