@@ -199,6 +199,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			
 			// Result pannel
 			resultDisplayList = new JComboBox( resultDisplayOption );
+			resultDisplayList.setEnabled( false );
 			resultButton = new JButton( "Show result" );
 			resultButton.setEnabled( false );
 			resultButton.setToolTipText( "Show segmentation result in new window" );
@@ -308,11 +309,8 @@ public class MorphologicalSegmentation implements PlugIn {
 									}
 								}
 
-							}
-
-							
+							}							
 						});
-
 					}
 				});
 
@@ -418,10 +416,42 @@ public class MorphologicalSegmentation implements PlugIn {
 	{
 		if( null != this.resultImage )
 		{
-			ImagePlus watershedResult = resultImage.duplicate();
-			watershedResult.setTitle( "Watershed-" + this.inputImage.getTitle() );
-			watershedResult.show();
+			final String displayOption = (String) resultDisplayList.getSelectedItem();
+			
+			// options: "Catchment basins", "Overlayed dams", "Watershed lines"
+			if( displayOption.equals( "Catchment basins" ) )
+			{			
+				ImagePlus watershedResult = resultImage.duplicate();
+				watershedResult.setTitle( "Catchment-basins-" + this.inputImage.getTitle() );
+				watershedResult.show();
+			}
+			else if( displayOption.equals( "Overlayed dams" ) )
+			{
+				final ImagePlus lines = getWatershedLines( resultImage );
+				final ImagePlus overlayed = BinaryOverlayPlugin.binaryOverlay( inputImage, lines, Color.red ) ;
+				overlayed.setTitle( "Overlayed-dams" + this.inputImage.getTitle() );
+				overlayed.show();
+			}
+			else if( displayOption.equals( "Watershed lines" ) )
+			{
+				final ImagePlus lines = getWatershedLines( resultImage );
+				lines.setTitle( "Watershed-lines-" + this.inputImage.getTitle() );
+				lines.show();
+			}
 		}
+	}
+	
+	/**
+	 * Get the watershed lines out of the result catchment basins image
+	 * @param labels labeled catchment basins image
+	 * @return binary image with the watershed lines
+	 */
+	ImagePlus getWatershedLines( ImagePlus labels )
+	{
+		final ImagePlus lines = labels.duplicate();
+		IJ.setThreshold( lines, 0, 0 );
+		IJ.run(lines, "Convert to Mask", "" );
+		return lines;
 	}
 	
 	/**
@@ -515,7 +545,7 @@ public class MorphologicalSegmentation implements PlugIn {
 	 * 
 	 * @param enabled boolean flag to enable/disable components
 	 */
-	void setParamsEnabled( Boolean enabled )
+	void setParamsEnabled( boolean enabled )
 	{
 		this.dynamicText.setEnabled( enabled );
 		this.connectivityList.setEnabled( enabled );
