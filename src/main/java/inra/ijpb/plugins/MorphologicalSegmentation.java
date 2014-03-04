@@ -591,12 +591,25 @@ public class MorphologicalSegmentation implements PlugIn {
 		}
 		catch( NullPointerException ex )
 		{
-			IJ.error( "Error", "Missing dynamic value" );
+			IJ.error( "Morphological Sementation", "ERROR: missing dynamic value" );
 			return;
 		}
 		catch( NumberFormatException ex )
 		{
-			IJ.error( "Error", "Dynamic value must be a number" );
+			IJ.error( "Morphological Sementation", "ERROR: dynamic value must be a number" );
+			return;
+		}
+		
+		double max = 255;
+		int bitDepth = inputImage.getBitDepth();
+		if( bitDepth == 16 )
+			max = 65535;
+		else if( bitDepth == 32 )
+			max = Float.MAX_VALUE;
+								
+		if( dynamic < 0 || dynamic > max )
+		{
+			IJ.error( "Morphological Sementation", "ERROR: the dynamic value must be a number between 0 and " + max );
 			return;
 		}
 		
@@ -720,6 +733,13 @@ public class MorphologicalSegmentation implements PlugIn {
 		}
 		else
 			inputImage = WindowManager.getCurrentImage();
+		
+		if( inputImage.getType() == ImagePlus.COLOR_256 || 
+			inputImage.getType() == ImagePlus.COLOR_RGB )
+		{
+			IJ.error( "Morphological Segmentation", "This plugin only works on grayscale images.\nPlease convert it to 8, 16 or 32-bit." );
+			return;
+		}
 		
 		displayImage = inputImage.duplicate();
 		displayImage.setTitle("Morphological Segmentation");
