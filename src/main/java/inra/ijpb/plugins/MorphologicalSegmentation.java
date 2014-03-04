@@ -43,9 +43,21 @@ import inra.ijpb.util.ColorMaps;
 import inra.ijpb.util.ColorMaps.CommonLabelMaps;
 import inra.ijpb.watershed.Watershed;
 
+/**
+ * Plugin to perform automatic segmentation of 2D and 3D images 
+ * based on morphological operations, mainly extended minima
+ * and watershed transforms.
+ * 
+ * References:
+ * [1] Soille, P., Morphological Image Analysis: Principles and
+ *     Applications, Springer-Verlag, 1999, pp. 170-171.
+ * 
+ * @author Ignacio Arganda-Carreras
+ *
+ */
 public class MorphologicalSegmentation implements PlugIn {
 
-	/** GUI window */
+	/** main GUI window */
 	private CustomWindow win;
 	
 	/** original input image */
