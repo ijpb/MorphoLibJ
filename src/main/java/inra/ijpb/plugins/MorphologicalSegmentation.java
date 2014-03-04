@@ -700,6 +700,7 @@ public class MorphologicalSegmentation implements PlugIn {
 	void setParamsEnabled( boolean enabled )
 	{
 		this.dynamicText.setEnabled( enabled );
+		this.dynamicLabel.setEnabled( enabled );
 		this.advancedOptionsCheckBox.setEnabled( enabled );
 		this.segmentButton.setEnabled( enabled );
 		this.overlayButton.setEnabled( enabled );
