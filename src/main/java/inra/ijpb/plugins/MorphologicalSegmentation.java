@@ -39,6 +39,8 @@ import ij.plugin.PlugIn;
 import inra.ijpb.binary.ConnectedComponents;
 import inra.ijpb.data.image.Images3D;
 import inra.ijpb.morphology.MinimaAndMaxima3D;
+import inra.ijpb.morphology.Morphology;
+import inra.ijpb.morphology.Strel3D;
 import inra.ijpb.util.ColorMaps;
 import inra.ijpb.util.ColorMaps.CommonLabelMaps;
 import inra.ijpb.watershed.Watershed;
@@ -111,6 +113,13 @@ public class MorphologicalSegmentation implements PlugIn {
 	/** flag to select/deselect the advanced options */
 	private boolean selectAdvancedOptions = false;
 	
+	/** checkbox to select the use of morphological gradient */
+	JCheckBox gradientCheckBox;
+	/** flag to apply morphological gradient to the input image */
+	private boolean applyGradient = false;
+	/** gradient panel */
+	JPanel gradientPanel = new JPanel();
+	
 	/** connectivity choice */
 	JPanel connectivityPanel = new JPanel();
 	/** connectivity label */
@@ -125,7 +134,7 @@ public class MorphologicalSegmentation implements PlugIn {
 	/** flag to use a priority queue in the watershed transform */
 	private boolean usePriorityQueue = true;
 	/** priority queue panel */
-	JPanel queuePanel = new JPanel();;
+	JPanel queuePanel = new JPanel();
 	
 	/** executor service to launch threads for the plugin methods and events */
 	final ExecutorService exec = Executors.newFixedThreadPool(1);
@@ -207,6 +216,11 @@ public class MorphologicalSegmentation implements PlugIn {
 			advancedOptionsCheckBox.setToolTipText( "Enable advanced options" );
 			advancedOptionsCheckBox.addActionListener( listener );
 			
+			// gradient
+			gradientCheckBox = new JCheckBox( "Apply morphological gradient", applyGradient );
+			gradientCheckBox.setToolTipText( "Select to apply morphological gradient to input image");
+			gradientPanel.add( gradientCheckBox );
+			
 			// connectivity
 			connectivityList = new JComboBox( connectivityOptions );
 			connectivityList.setToolTipText( "Voxel connectivity to use" );
@@ -232,9 +246,13 @@ public class MorphologicalSegmentation implements PlugIn {
 			advancedOptoinsConstraints.gridx = 0;
 			advancedOptoinsConstraints.gridy = 0;
 			advancedOptionsPanel.setLayout( advancedOptionsLayout );
-			advancedOptionsPanel.add( connectivityPanel, advancedOptoinsConstraints );
+			
+			advancedOptionsPanel.add( gradientPanel, advancedOptoinsConstraints );
 			advancedOptoinsConstraints.gridy++;
+			advancedOptionsPanel.add( connectivityPanel, advancedOptoinsConstraints );
+			advancedOptoinsConstraints.gridy++;			
 			advancedOptionsPanel.add( queuePanel, advancedOptoinsConstraints );
+			
 			advancedOptionsPanel.setBorder(BorderFactory.createTitledBorder(""));
 			
 			
@@ -578,22 +596,40 @@ public class MorphologicalSegmentation implements PlugIn {
 			return;
 		}
 		
+		// read gradient flag
+		this.applyGradient = gradientCheckBox.isSelected();
+		
 		// read priority queue flag
 		this.usePriorityQueue = queueCheckBox.isSelected();
 		
 		// disable parameter panel
 		setParamsEnabled( false );
-				
-		IJ.log( "Running extended minima with dynamic value " + dynamic + "..." );
+		
+		ImageStack image = this.inputImage.getImageStack();
+		
 		final long start = System.currentTimeMillis();
 		
-		final ImageStack image = this.inputImage.getImageStack(); 
+		if( applyGradient )
+		{
+			final long t1 = System.currentTimeMillis();
+			IJ.log( "Applying morphological gradient to input image..." );
+			
+			Strel3D strel = Strel3D.Shape.CUBE.fromRadius( 1 );
+			image = Morphology.gradient( image, strel );
+			//(new ImagePlus("gradient", image) ).show();
+			
+			final long t2 = System.currentTimeMillis();
+			IJ.log( "Morphological gradient took " + (t2-t1) + " ms.");
+		}
+				
+		IJ.log( "Running extended minima with dynamic value " + (int)dynamic + "..." );
+		final long step0 = System.currentTimeMillis();				
 		
 		// Run extended minima
 		ImageStack regionalMinima = MinimaAndMaxima3D.extendedMinima( image, (int)dynamic, connectivity );
 		
 		final long step1 = System.currentTimeMillis();		
-		IJ.log( "Regional minima took " + (step1-start) + " ms.");
+		IJ.log( "Regional minima took " + (step1-step0) + " ms.");
 		
 		IJ.log( "Imposing regional minima on original image (connectivity = " + connectivity + ")..." );
 						
@@ -666,6 +702,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		this.connectivityLabel.setEnabled( enabled );
 		this.connectivityList.setEnabled( enabled );
 		this.queueCheckBox.setEnabled( enabled );
+		this.gradientCheckBox.setEnabled( enabled );
 	}
 	
 	@Override
