@@ -104,6 +104,13 @@ public class MorphologicalSegmentation implements PlugIn {
 	/** extended regional minima dynamic text field */
 	JTextField dynamicText;
 	
+	/** advanced options panel */
+	JPanel advancedOptionsPanel = new JPanel();
+	/** checkbox to enable/disable the advanced options */
+	JCheckBox advancedOptionsCheckBox;
+	/** flag to select/deselect the advanced options */
+	private boolean selectAdvancedOptions = false;
+	
 	/** connectivity choice */
 	JPanel connectivityPanel = new JPanel();
 	/** connectivity label */
@@ -160,6 +167,11 @@ public class MorphologicalSegmentation implements PlugIn {
 						{
 							showResult();						
 						}
+						else if( e.getSource() == advancedOptionsCheckBox )
+						{
+							selectAdvancedOptions = !selectAdvancedOptions;
+							enableAdvancedOptions( selectAdvancedOptions );
+						}
 					}
 
 					
@@ -190,6 +202,11 @@ public class MorphologicalSegmentation implements PlugIn {
 			dynamicPanel.add( dynamicText );
 			dynamicPanel.setToolTipText( "Extended minima dynamic" );				
 				
+			// advanced options (connectivity + priority queue choices)
+			advancedOptionsCheckBox = new JCheckBox( "Advanced options", selectAdvancedOptions );
+			advancedOptionsCheckBox.setToolTipText( "Enable advanced options" );
+			advancedOptionsCheckBox.addActionListener( listener );
+			
 			// connectivity
 			connectivityList = new JComboBox( connectivityOptions );
 			connectivityList.setToolTipText( "Voxel connectivity to use" );
@@ -202,6 +219,23 @@ public class MorphologicalSegmentation implements PlugIn {
 			queueCheckBox = new JCheckBox( "Use priority queue", usePriorityQueue );
 			queueCheckBox.setToolTipText( "Check to use a priority queue in the watershed transform" );
 			queuePanel.add( queueCheckBox );
+			
+			enableAdvancedOptions( selectAdvancedOptions );
+			
+			// add components to advanced options panel
+			GridBagLayout advancedOptionsLayout = new GridBagLayout();
+			GridBagConstraints advancedOptoinsConstraints = new GridBagConstraints();
+			advancedOptoinsConstraints.anchor = GridBagConstraints.NORTHEAST;
+			advancedOptoinsConstraints.fill = GridBagConstraints.HORIZONTAL;
+			advancedOptoinsConstraints.gridwidth = 1;
+			advancedOptoinsConstraints.gridheight = 1;
+			advancedOptoinsConstraints.gridx = 0;
+			advancedOptoinsConstraints.gridy = 0;
+			advancedOptionsPanel.setLayout( advancedOptionsLayout );
+			advancedOptionsPanel.add( connectivityPanel, advancedOptoinsConstraints );
+			advancedOptoinsConstraints.gridy++;
+			advancedOptionsPanel.add( queuePanel, advancedOptoinsConstraints );
+			advancedOptionsPanel.setBorder(BorderFactory.createTitledBorder(""));
 			
 			
 			// Segmentation button
@@ -245,9 +279,9 @@ public class MorphologicalSegmentation implements PlugIn {
 						
 			segmentationPanel.add( dynamicPanel, segmentationConstraints );
 			segmentationConstraints.gridy++;
-			segmentationPanel.add( connectivityPanel, segmentationConstraints );
-			segmentationConstraints.gridy++;			
-			segmentationPanel.add( queuePanel, segmentationConstraints );
+			segmentationPanel.add( advancedOptionsCheckBox, segmentationConstraints );
+			segmentationConstraints.gridy++;
+			segmentationPanel.add( advancedOptionsPanel, segmentationConstraints );			
 			segmentationConstraints.gridy++;
 			segmentationPanel.add( segmentButton, segmentationConstraints );
 			segmentationConstraints.gridy++;
@@ -602,8 +636,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		showColorOverlay = true;
 		
 		// enable parameter panel
-		setParamsEnabled( true );
-		
+		setParamsEnabled( true );				
 	}
 	
 	/**
@@ -614,11 +647,24 @@ public class MorphologicalSegmentation implements PlugIn {
 	void setParamsEnabled( boolean enabled )
 	{
 		this.dynamicText.setEnabled( enabled );
-		this.connectivityList.setEnabled( enabled );
+		this.advancedOptionsCheckBox.setEnabled( enabled );
 		this.segmentButton.setEnabled( enabled );
 		this.overlayButton.setEnabled( enabled );
 		this.resultButton.setEnabled( enabled );
 		this.resultDisplayList.setEnabled( enabled );
+		if( selectAdvancedOptions )
+			enableAdvancedOptions( enabled );
+	}
+	
+	/**
+	 * Enable/disable advanced options components
+	 * 
+	 * @param enabled flag to enable/disable components
+	 */
+	void enableAdvancedOptions( boolean enabled )
+	{
+		this.connectivityLabel.setEnabled( enabled );
+		this.connectivityList.setEnabled( enabled );
 		this.queueCheckBox.setEnabled( enabled );
 	}
 	
