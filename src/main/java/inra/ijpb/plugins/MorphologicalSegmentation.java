@@ -13,6 +13,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.event.WindowEvent;
 import java.awt.image.ColorModel;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -415,10 +416,20 @@ public class MorphologicalSegmentation implements PlugIn {
 				addKeyListener(keyListener);
 				canvas.addKeyListener(keyListener);
 
-			}
-			
+			}		
 		}
-	}
+		
+		/**
+		 * Overwrite windowClosing to display the input image after closing GUI
+		 */
+		public void windowClosing( WindowEvent e ) 
+		{		
+			inputImage.getWindow().setVisible( true );			
+			super.windowClosing(e);		
+		}
+		
+		
+	}// end class CustomWindow
 	
 	/**
 	 * Update the overlay in the display image based on 
@@ -614,6 +625,9 @@ public class MorphologicalSegmentation implements PlugIn {
 		displayImage = inputImage.duplicate();
 		displayImage.setTitle("Morphological Segmentation");
 		displayImage.setSlice( inputImage.getSlice() );
+		
+		// hide input image (to avoid accidental closing)
+		inputImage.getWindow().setVisible( false );
 		
 		// Build GUI
 		SwingUtilities.invokeLater(
