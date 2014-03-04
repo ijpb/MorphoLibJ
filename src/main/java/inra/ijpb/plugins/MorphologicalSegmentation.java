@@ -201,6 +201,10 @@ public class MorphologicalSegmentation implements PlugIn {
 			
 			final ImageCanvas canvas = (ImageCanvas) getCanvas();
 			
+			// Zoom in if image is too small
+			while(ic.getWidth() < 512 && ic.getHeight() < 512)
+				IJ.run( imp, "In","" );
+			
 			setTitle( "Morphological Segmentation" );
 			
 			// regional minima dynamic value
