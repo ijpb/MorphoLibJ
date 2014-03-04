@@ -3,11 +3,22 @@
  */
 package inra.ijpb.measure;
 
+import ij.IJ;
 import ij.ImageStack;
 import ij.measure.ResultsTable;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeSet;
+
+import Jama.Matrix;
+import Jama.SingularValueDecomposition;
+
+import static java.lang.Math.sqrt;
+import static java.lang.Math.hypot;
+import static java.lang.Math.atan2;
+import static java.lang.Math.toDegrees;
 
 /**
  * @author David Legland
@@ -15,27 +26,112 @@ import java.util.TreeSet;
  */
 public class GeometricMeasures3D {
 
+	/**
+	 * Computes the surface area of each label in the 3D image, using the
+	 * specified resolution, and the number of directions.
+	 */
 	public final static ResultsTable surfaceArea(ImageStack labelImage, double[] resol, int nDirs) {
-		 int[] labels = findAllLabels(labelImage);
-		 int nbLabels = labels.length;
+		IJ.showStatus("Count labels...");
+		int[] labels = findAllLabels(labelImage);
+		int nbLabels = labels.length;
 
-		 // Create data table
-		 ResultsTable table = new ResultsTable();
-		 double surf;
-		 
-		// iterate over labels in image
+		double[] surfaces = surfaceAreaByLut(labelImage, labels, resol, nDirs);
+
+		// Create data table
+		ResultsTable table = new ResultsTable();
 		for (int i = 0; i < nbLabels; i++) {
-			int label = labels[i];
-			surf = surfaceAreaByLut(labelImage, label, resol, nDirs);
-
 			table.incrementCounter();
-			table.addValue("Label", label);
-			table.addValue("Surface", surf);
+			table.addLabel(Integer.toString(labels[i]));
+			table.addValue("Surface", surfaces[i]);
 		}
 
 		return table;
 	}
+
+	/**
+	 * Compute surface area for a each of the labels given in the "labels"
+	 * argument.
+	 */
+	public final static double[] surfaceAreaByLut(ImageStack image, int[] labels, double[] resol, int nDirs) {
+        
+        // create associative array to know index of each label
+		int nLabels = labels.length;
+        HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
+        for (int i = 0; i < nLabels; i++) {
+        	labelIndices.put(labels[i], i);
+        }
+
+        // pre-compute LUT corresponding to resolution and number of directions
+		IJ.showStatus("Compute LUT...");
+		double[] surfLut = computeSurfaceAreaLut(resol, nDirs);
+
+		// initialize result
+		double[] surfaces = new double[nLabels];
+
+		// size of image
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		int sizeZ = image.getSize();
+
+		// for each configuration of 2x2x2 voxels, we identify the labels
+		ArrayList<Integer> localLabels = new ArrayList<Integer>(8);
+		
+		// iterate on image voxel configurations
+		IJ.showStatus("Measure surface...");
+        for (int z = 0; z < sizeZ - 1; z++) {
+        	IJ.showProgress(z, sizeZ);
+        	for (int y = 0; y < sizeY - 1; y++) {
+        		for (int x = 0; x < sizeX - 1; x++) {
+
+        			// identify labels in current config
+        			localLabels.clear();
+					for (int z2 = z; z2 <= z + 1; z2++) {
+						for (int y2 = y; y2 <= y + 1; y2++) {
+							for (int x2 = x; x2 <= x + 1; x2++) {
+								int label = (int) image.getVoxel(x2, y2, z2);
+								// do not consider background
+								if (label == 0)
+									continue;
+								// keep only one instance of each label
+								if (!localLabels.contains(label))
+									localLabels.add(label);
+                			}
+            			}
+        			}
+
+					// if no label in local configuration contribution is zero
+					if (localLabels.size() == 0) {
+						continue;
+					}
+					
+					// For each label, compute binary confi
+					for (int label : localLabels) {
+	        			// Compute index of local configuration
+	        			int index = 0;
+	        			index += image.getVoxel(x, y, z) == label ? 1 : 0;
+	        			index += image.getVoxel(x + 1, y, z) == label ? 2 : 0;
+	        			index += image.getVoxel(x, y + 1, z) == label ? 4 : 0;
+	        			index += image.getVoxel(x + 1, y + 1, z) == label ? 8 : 0;
+	        			index += image.getVoxel(x, y, z + 1) == label ? 16 : 0;
+	        			index += image.getVoxel(x + 1, y, z + 1) == label ? 32 : 0;
+	        			index += image.getVoxel(x, y + 1, z + 1) == label ? 64 : 0;
+	        			index += image.getVoxel(x + 1, y + 1, z + 1) == label ? 128 : 0;
+
+	        			int labelIndex = labelIndices.get(label);
+	        			surfaces[labelIndex] += surfLut[index];
+					}
+        		}
+        	}
+        }
+        
+    	IJ.showProgress(1);
+        return surfaces;
+	}
 	
+	/**
+	 * Compute surface area for a single label in the image. This can be useful
+	 * for binary images by using label 255.  
+	 */
 	public final static double surfaceAreaByLut(ImageStack image, int label, double[] resol, int nDirs) {
         
 		// pre-compute LUT corresponding to resolution and number of directions
@@ -73,11 +169,14 @@ public class GeometricMeasures3D {
         return surf;
 	}
 	
+	/**
+	 * Computes the Look-up table that is used to compute surface area.
+	 */
 	private final static double[] computeSurfaceAreaLut(double[] resol, int nDirs) {
-		// distance between a pixel and its neighbours.
-		// di refer to orthogonal neighbours
-		// dij refer to neighbours on the same plane 
-		// dijk refer to the opposite pixel in a tile
+		// distances between a voxel and its neighbors.
+		// di refer to orthogonal neighbors
+		// dij refer to neighbors on the same plane 
+		// dijk refer to the opposite voxel in a tile
 		double d1 = resol[0];
 		double d2 = resol[1];
 		double d3 = resol[2];
@@ -132,21 +231,24 @@ public class GeometricMeasures3D {
 		    im[1][1][0] = (i & 64) > 0;
 		    im[1][1][1] = (i & 128) > 0;
 		    
-		    // iterate over voxels within the configuration
+	        // contributions for isothetic directions
+		    double ke1, ke2, ke3;
+		    
+		    // contributions for diagonal directions
+            double ke4, ke5, ke6, ke7;
+            
+            // iterate over the 8 voxels within the configuration
 		    for (int z = 0; z < 2; z++) {
 			    for (int y = 0; y < 2; y++) {
 				    for (int x = 0; x < 2; x++) {
 				    	if (!im[z][y][x])
 				    		continue;
-				    	
-				        // contributions for isothetic directions
-					    double ke1 = 0; 
-					    double ke2 = 0; 
-					    double ke3 = 0;
-					    
-					    if (!im[z][y][1-x]) ke1 += vol/d1/2;
-					    if (!im[z][1-y][x]) ke2 += vol/d2/2;
-					    if (!im[1-z][y][x]) ke3 += vol/d3/2;
+//					    if (!im[z][y][1-x]) ke1 += vol/d1/2;
+//					    if (!im[z][1-y][x]) ke2 += vol/d2/2;
+//					    if (!im[1-z][y][x]) ke3 += vol/d3/2;
+					    ke1 = im[z][y][1-x] ? 0 : vol/d1/2;
+					    ke2 = im[z][1-y][x] ? 0 : vol/d2/2;
+					    ke3 = im[1-z][y][x] ? 0 : vol/d3/2;
 					    
 					    if (nDirs == 3) {
 				            // For 3 directions, the multiplicity is 4, and is canceled by the
@@ -155,16 +257,17 @@ public class GeometricMeasures3D {
 				            tab[i] += (ke1 + ke2 + ke3) / 3;
 				            
 					    } else if (nDirs == 13) {
-				            double ke4 = 0; 
-				            double ke5 = 0; 
-				            double ke6 = 0;
-						    if (!im[z][1-y][1-x]) ke4 += vol/d12/2;
-						    if (!im[1-z][y][1-x]) ke5 += vol/d13/2;
-						    if (!im[1-z][1-y][x]) ke6 += vol/d23/2;
+//						    if (!im[z][1-y][1-x]) ke4 += vol/d12/2;
+//						    if (!im[1-z][y][1-x]) ke5 += vol/d13/2;
+//						    if (!im[1-z][1-y][x]) ke6 += vol/d23/2;
+						    ke4 = im[z][1-y][1-x] ? 0 : vol/d12/2;
+						    ke5 = im[1-z][y][1-x] ? 0 : vol/d13/2;
+						    ke6 = im[1-z][1-y][x] ? 0 : vol/d23/2;
 				            
 				            // diagonals of cube
-				            double ke7 = 0;
-				            if (!im[1-z][1-y][1-x]) ke7 += 1./2*vol/d123; 
+
+//				            if (!im[1-z][1-y][1-x]) ke7 += 1./2*vol/d123; 
+				            ke7 = im[1-z][1-y][1-x] ? 0 : vol/d123/2; 
 				            
 				            // Decomposition of Crofton formula on 13 directions
 				            tab[i] = tab[i] + 4*(ke1*c1/4 + ke2*c2/4 + ke3*c3/4 + 
@@ -176,7 +279,10 @@ public class GeometricMeasures3D {
 		}
 		return tab;		
 	}
-	
+	 
+	/**
+	 * Compute surface area of a binary image using 3 directions.
+	 */
 	public final static double surfaceAreaD3(ImageStack image, double[] resol) {
 		double d1 = resol[0];
 		double d2 = resol[1];
@@ -185,16 +291,16 @@ public class GeometricMeasures3D {
 		int n1 = countTransitionsD1(image, 255, true);
 		int n2 = countTransitionsD2(image, 255, true);
 		int n3 = countTransitionsD3(image, 255, true);
-		System.out.println("counts: " + n1 + " " + n2 + " " + n3);
+//		System.out.println("counts: " + n1 + " " + n2 + " " + n3);
 		
 		double surf = 4./3. * .5 * (n1/d1 + n2/d2 + n3/d3) * vol;
 		return surf;
 	}
 	
 	/**
-	 * Count the number of binary transitions in the OX direction.
+	 * Counts the number of binary transitions in the OX direction.
 	 */
-	public static int countTransitionsD1(ImageStack image, int label, boolean countBorder) {
+	private static int countTransitionsD1(ImageStack image, int label, boolean countBorder) {
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		int sizeZ = image.getSize();
@@ -229,9 +335,9 @@ public class GeometricMeasures3D {
 	}
 	
 	/**
-	 * Count the number of binary transitions in the OY direction.
+	 * Counts the number of binary transitions in the OY direction.
 	 */
-	public static int countTransitionsD2(ImageStack image, int label, boolean countBorder) {
+	private static int countTransitionsD2(ImageStack image, int label, boolean countBorder) {
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		int sizeZ = image.getSize();
@@ -266,41 +372,194 @@ public class GeometricMeasures3D {
 	}
 	
 	/**
-	 * Count the number of binary transitions in the OZ direction.
+     * Computes inertia ellipsoid of each 3D region in input 3D label image.
+     */
+    public final static ResultsTable inertiaEllipsoid(ImageStack image) {
+        // Check validity of parameters
+        if (image==null) return null;
+        
+        // size of image
+        int sizeX = image.getWidth();
+        int sizeY = image.getHeight();
+        int sizeZ = image.getSize();
+        
+        // extract particle labels
+        int[] labels = findAllLabels(image);
+        int nLabels = labels.length;
+        
+        // create associative array to know index of each label
+        HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
+        for (int i = 0; i < nLabels; i++) {
+        	labelIndices.put(labels[i], i);
+        }
+        
+        // allocate memory for result
+        int[] counts = new int[nLabels];
+        double[] cx = new double[nLabels];
+        double[] cy = new double[nLabels];
+        double[] cz = new double[nLabels];
+        double[] Ixx = new double[nLabels];
+        double[] Iyy = new double[nLabels];
+        double[] Izz = new double[nLabels];
+        double[] Ixy = new double[nLabels];
+        double[] Ixz = new double[nLabels];
+        double[] Iyz = new double[nLabels];
+
+        // compute centroid of each region
+        for (int z = 0; z < sizeZ; z++) {
+        	for (int y = 0; y < sizeY; y++) {
+        		for (int x = 0; x < sizeX; x++) {
+        			int label = (int) image.getVoxel(x, y, z);
+        			if (label == 0)
+        				continue;
+
+        			int index = labelIndices.get(label);
+        			cx[index] += x;
+        			cy[index] += y;
+        			cz[index] += z;
+        			counts[index]++;
+        		}
+        	}
+        }    	
+        // normalize by number of pixels in each region
+        for (int i = 0; i < nLabels; i++) {
+        	cx[i] = cx[i] / counts[i];
+        	cy[i] = cy[i] / counts[i];
+        	cz[i] = cz[i] / counts[i];
+        }
+        
+        // compute centered inertia matrix of each label
+        for (int z = 0; z < sizeZ; z++) {
+        	for (int y = 0; y < sizeY; y++) {
+        		for (int x = 0; x < sizeX; x++) {
+        			int label = (int) image.getVoxel(x, y, z);
+        			if (label == 0)
+        				continue;
+            	
+        			int index = labelIndices.get(label);
+        			double x2 = x - cx[index];
+        			double y2 = y - cy[index];
+        			double z2 = z - cz[index];
+        			
+        			Ixx[index] += x2 * x2;
+        			Iyy[index] += y2 * y2;
+        			Izz[index] += z2 * z2;
+        			Ixy[index] += x2 * y2;
+        			Ixz[index] += x2 * z2;
+        			Iyz[index] += y2 * z2;
+        		}
+        	}
+        }
+        // normalize by number of pixels in each region 
+        for (int i = 0; i < nLabels; i++) {
+        	Ixx[i] = Ixx[i] / counts[i];
+        	Iyy[i] = Iyy[i] / counts[i];
+        	Izz[i] = Izz[i] / counts[i];
+        	Ixy[i] = Ixy[i] / counts[i];
+        	Ixz[i] = Ixz[i] / counts[i];
+        	Iyz[i] = Iyz[i] / counts[i];
+        }
+        
+        // Create data table
+        ResultsTable table = new ResultsTable();
+
+    	Matrix matrix = new Matrix(3, 3);
+    	
+        // compute ellipse parameters for each region
+        for (int i = 0; i < nLabels; i++) {
+        	// fill up the 3x3 inertia matrix
+			matrix.set(0, 0, Ixx[i]);
+			matrix.set(0, 1, Ixy[i]);
+			matrix.set(0, 2, Ixz[i]);
+			matrix.set(1, 0, Ixy[i]);
+			matrix.set(1, 1, Iyy[i]);
+			matrix.set(1, 2, Iyz[i]);
+			matrix.set(2, 0, Ixz[i]);
+			matrix.set(2, 1, Iyz[i]);
+			matrix.set(2, 2, Izz[i]);
+			
+			SingularValueDecomposition svd = new SingularValueDecomposition(matrix);
+			
+			Matrix values = svd.getS();
+			double r1 = 2 * sqrt(values.get(0, 0));
+			double r2 = 2 * sqrt(values.get(1, 1));
+			double r3 = 2 * sqrt(values.get(2, 2));
+			
+			// extract |cos(theta)|
+			Matrix mat = svd.getU();
+			double tmp = hypot(mat.get(1, 1), mat.get(2, 1));
+			double phi, theta, psi;
+
+			// avoid dividing by 0
+			if (tmp > 16 * Double.MIN_VALUE) {
+			    // normal case: theta <> 0
+			    psi     = atan2( mat.get(2, 1), mat.get(2, 2));
+			    theta   = atan2(-mat.get(2, 0), tmp);
+			    phi     = atan2( mat.get(1, 0), mat.get(0, 0));
+			} else {
+				// theta is around 0 
+			    psi     = atan2(-mat.get(1, 2), mat.get(1,1));
+			    theta   = atan2(-mat.get(2, 0), tmp);
+			    phi     = 0;
+			}
+            
+            table.incrementCounter();
+            table.addLabel(Integer.toString(labels[i]));
+            // add coordinates of origin pixel (IJ coordinate system) 
+            table.addValue("XCentroid", cx[i] + .5);
+        	table.addValue("YCentroid", cy[i] + .5);
+        	table.addValue("ZCentroid", cz[i] + .5);
+        	// add scaling parameters 
+            table.addValue("Radius1", r1);
+        	table.addValue("Radius2", r2);
+        	table.addValue("Radius3", r3);
+        	// add orientation info
+            table.addValue("Phi", toDegrees(phi));
+        	table.addValue("Theta", toDegrees(theta));
+        	table.addValue("Psi", toDegrees(psi));
+        }
+
+        return table;
+    }
+
+    /**
+	 * Counts the number of binary transitions in the OZ direction.
 	 */
-	public static int countTransitionsD3(ImageStack image, int label, boolean countBorder) {
+	private static int countTransitionsD3(ImageStack image, int label, boolean countBorder) {
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		int sizeZ = image.getSize();
-
+	
 		int count = 0;
-        double previous = 0;
-        double current;
-        
-        // iterate on image voxels
-        	for (int y = 0; y < sizeY; y++) {
-        		for (int x = 0; x < sizeX; x++) {
-
-        		// Count border of image
-        		previous = image.getVoxel(x, y, 0);
-        		if (countBorder && previous == label)
-        			count++;
-
-        		// count middle of image
-                for (int z = 0; z < sizeZ; z++) {
-            		current = image.getVoxel(x, y, z);
-        			if (previous == label ^ current == label) // Exclusive or
-        				count++;
-        			previous = current;
-        		}
-
-        		// Count border of image
-        		if (countBorder && previous == label)
-        			count++;
-        	}
-        }
-        return count;
+	    double previous = 0;
+	    double current;
+	    
+	    // iterate on image voxels
+	    	for (int y = 0; y < sizeY; y++) {
+	    		for (int x = 0; x < sizeX; x++) {
+	
+	    		// Count border of image
+	    		previous = image.getVoxel(x, y, 0);
+	    		if (countBorder && previous == label)
+	    			count++;
+	
+	    		// count middle of image
+	            for (int z = 0; z < sizeZ; z++) {
+	        		current = image.getVoxel(x, y, z);
+	    			if (previous == label ^ current == label) // Exclusive or
+	    				count++;
+	    			previous = current;
+	    		}
+	
+	    		// Count border of image
+	    		if (countBorder && previous == label)
+	    			count++;
+	    	}
+	    }
+	    return count;
 	}
+
+	
 	
     // ====================================================
     // Utilitary functions 
@@ -313,16 +572,19 @@ public class GeometricMeasures3D {
         TreeSet<Integer> labels = new TreeSet<Integer> ();
         
         // iterate on image pixels
-        for (int z = 0; z < sizeZ; z++) 
+        for (int z = 0; z < sizeZ; z++) {
+        	IJ.showProgress(z, sizeZ);
         	for (int y = 0; y < sizeY; y++) 
         		for (int x = 0; x < sizeX; x++) 
         			labels.add((int) image.getVoxel(x, y, z));
+        }
+        IJ.showProgress(1);
         
         // remove 0 if it exists
         if (labels.contains(0))
             labels.remove(0);
         
-        // convert to array
+        // convert to array of integers
         int[] array = new int[labels.size()];
         Iterator<Integer> iterator = labels.iterator();
         for (int i = 0; i < labels.size(); i++) 
@@ -330,53 +592,4 @@ public class GeometricMeasures3D {
         
         return array;
     }
-    
-    
-	public final static void main(String[] args) {
-		ImageStack image = createBallImage();
-		double[] resol = new double[]{1., 1., 1.};
-		double surf = surfaceAreaD3(image, resol);
-		System.out.println("Surface: " + surf);
-		double surf2 = surfaceAreaByLut(image, 255, resol, 3);
-		System.out.println("Surface: " + surf2);
-		double surf3 = surfaceAreaByLut(image, 255, resol, 13);
-		System.out.println("Surface: " + surf3);
-		
-	}
-	
-	/**
-	 * Generate a ball of radius 20 in a discrete image of size 50x50x50. 
-	 * Expected surface area is around 5026.
-	 */
-	public final static ImageStack createBallImage() {
-		// ball features
-		double xc = 25.12;
-		double yc = 25.23;
-		double zc = 25.34;
-		double radius = 20;
-		double r2 = radius * radius;
-		
-		// image size
-		int size1 = 50;
-		int size2 = 50;
-		int size3 = 50;
-		
-		ImageStack result = ImageStack.create(size1, size2, size3, 8);
-		
-		for (int z = 0; z < size3; z++) {
-			double z2 = z - zc; 
-			for (int y = 0; y < size2; y++) {
-				double y2 = y - yc; 
-				for (int x = 0; x < size1; x++) {
-					double x2 = x - xc;
-					double ri = x2 * x2 + y2 * y2 + z2 * z2; 
-					if (ri <= r2) {
-						result.setVoxel(x, y, z, 255);
-					}
-				}
-			}
-		}
-		
-		return result;
-	}
 }

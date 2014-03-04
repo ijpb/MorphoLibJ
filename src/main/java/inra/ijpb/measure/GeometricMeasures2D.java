@@ -3,11 +3,14 @@
  */
 package inra.ijpb.measure;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeSet;
 
 import ij.measure.ResultsTable;
 import ij.process.ImageProcessor;
+
+import static java.lang.Math.sqrt;
 
 /**
  * Provides a set of static methods to compute geometric measures such as area,
@@ -27,8 +30,26 @@ public class GeometricMeasures2D {
 	// ====================================================
     // Main processing functions 
 
-    /**
-     * Compute perimeter of each label using Crofton method.  
+	/**
+	 * Counts the number of pixel that composes the particle with given label. 
+	 */
+    public static int particleArea(ImageProcessor image, int label) {
+	    int width 	= image.getWidth();
+	    int height 	= image.getHeight();
+	
+	    int count = 0;
+	
+	    // count all pixels belonging to the particle
+	    for (int y = 0; y < height; y++)
+	        for (int x = 0; x < width; x++)
+	            if (image.get(x, y) == label)
+	            	count++;
+	
+	    return count;
+	}
+
+	/**
+     * Computes perimeter of each label using Crofton method.  
      * 
      * @param labelImage the input image containing label of particles
      * @param nDirs the number of directions to process, either 2 or 4
@@ -46,7 +67,7 @@ public class GeometricMeasures2D {
     }
     
     /**
-     * Compute porosity and perimeter density of binary image.  
+     * Computes porosity and perimeter density of binary image.  
      * 
      */
 	public static ResultsTable perimeterDensity(ImageProcessor image,
@@ -58,7 +79,7 @@ public class GeometricMeasures2D {
     }
 
     /**
-     * Compute perimeter of each label using Crofton method with 2 directions.  
+     * Computes perimeter of each label using Crofton method with 2 directions.  
      */
     private static ResultsTable croftonPerimeter_D2(ImageProcessor labelImage, 
     		double[] resol) {
@@ -107,7 +128,7 @@ public class GeometricMeasures2D {
     }
     
     /**
-     * Compute perimeter of each label using Crofton method with 4 directions
+     * Computes perimeter of each label using Crofton method with 4 directions
      * (orthogonal and diagonal).  
      */
     private static ResultsTable croftonPerimeter_D4(ImageProcessor labelImage, 
@@ -314,7 +335,7 @@ public class GeometricMeasures2D {
     }
 
     /**
-     * Count the number of transitions in the horizontal direction, by counting
+     * Counts the number of transitions in the horizontal direction, by counting
      * +1 when the structure touches image edges.
      */
     private static int countTransitionsD00(ImageProcessor image, int label, boolean countBorder) {
@@ -351,7 +372,7 @@ public class GeometricMeasures2D {
     
     
     /**
-     * Count the number of transitions in the horizontal direction, by counting
+     * Counts the number of transitions in the horizontal direction, by counting
      * 1 when structure touches image edges.
      */
     private static int countTransitionsD90(ImageProcessor image, int label, boolean countBorder) {
@@ -386,7 +407,7 @@ public class GeometricMeasures2D {
     }
     
     /**
-     * Count the number of transitions in the upper diagonal direction, by counting
+     * Counts the number of transitions in the upper diagonal direction, by counting
      * 1 when structure touches image edges.
      */
     private static int countTransitionsD45(ImageProcessor image, int label, boolean countBorder) {
@@ -433,7 +454,7 @@ public class GeometricMeasures2D {
     }
     
     /**
-     * Count the number of transitions in the lower diagonal direction, by counting
+     * Counts the number of transitions in the lower diagonal direction, by counting
      * 1 when structure touches image edges.
      */
     private static int countTransitionsD135(ImageProcessor image, int label, boolean countBorder) {
@@ -478,22 +499,6 @@ public class GeometricMeasures2D {
         return count;
     }
     
-    public static int particleArea(ImageProcessor image, int label) {
-        int width 	= image.getWidth();
-        int height 	= image.getHeight();
-    
-        int count = 0;
-       
-        // count all pixels belonging to the particle
-        for (int y = 0; y < height; y++)
-            for (int x = 0; x < width; x++)
-                if (image.get(x, y) == label)
-                	count++;
-  
-        return count;
-    }
-    
-    
     private static double[] computeDirectionWeightsD4(double[] resol) {
     	
     	// resolution in each direction
@@ -516,9 +521,117 @@ public class GeometricMeasures2D {
     	return new double[]{alpha1, alpha2, alpha34, alpha34};
     }
     
-    // ====================================================
-    // Utilitary functions 
+    /**
+     * Computes inertia ellipse of each region in input label image.
+     */
+    public final static ResultsTable inertiaEllipse(ImageProcessor image) {
+        // Check validity of parameters
+        if (image==null) return null;
+        
+        // size of image
+        int width = image.getWidth();
+        int height = image.getHeight();
+        
+        // extract particle labels
+        int[] labels = findAllLabels(image);
+        int nLabels = labels.length;
 
+        // create associative array to know index of each label
+        HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
+        for (int i = 0; i < nLabels; i++) {
+        	labelIndices.put(labels[i], i);
+        }
+        
+        // allocate memory for result
+        int[] counts = new int[nLabels];
+        double[] cx = new double[nLabels];
+        double[] cy = new double[nLabels];
+        double[] Ixx = new double[nLabels];
+        double[] Iyy = new double[nLabels];
+        double[] Ixy = new double[nLabels];
+
+        // compute centroid of each region
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+            	int label = image.get(x, y);
+            	if (label == 0)
+            		continue;
+            	
+            	int index = labelIndices.get(label);
+            	cx[index] += x;
+            	cy[index] += y;
+            	counts[index]++;
+            }
+        }
+    	
+        // normalize by number of pixels in each region
+        for (int i = 0; i < nLabels; i++) {
+        	cx[i] = cx[i] / counts[i];
+        	cy[i] = cy[i] / counts[i];
+        }
+
+        // compute centered inertia matrix of each label
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+            	int label = image.get(x, y);
+            	if (label == 0)
+            		continue;
+            	
+            	int index = labelIndices.get(label);
+            	double x2 = x - cx[index];
+            	double y2 = y - cy[index];
+            	Ixx[index] += x2 * x2;
+            	Ixy[index] += x2 * y2;
+            	Iyy[index] += y2 * y2;
+            }
+        }
+    	
+        // normalize by number of pixels in each region 
+        for (int i = 0; i < nLabels; i++) {
+        	Ixx[i] = Ixx[i] / counts[i] + 1./12.;
+        	Ixy[i] = Ixy[i] / counts[i];
+        	Iyy[i] = Iyy[i] / counts[i] + 1./12.;
+        }
+
+        // Create data table
+        ResultsTable table = new ResultsTable();
+        
+        // compute ellipse parameters for each region
+        final double sqrt2 = sqrt(2);
+        for (int i = 0; i < nLabels; i++) {
+        	double xx = Ixx[i];
+        	double xy = Ixy[i];
+        	double yy = Iyy[i];
+
+            // compute ellipse semi-axes lengths
+        	double common = sqrt((xx - yy) * (xx - yy) + 4 * xy * xy);
+        	double ra = sqrt2 * sqrt(xx + yy + common);
+        	double rb = sqrt2 * sqrt(xx + yy - common);
+
+        	// compute ellipse angle and convert into degrees
+            double theta = Math.toDegrees(Math.atan2(2 * xy, xx - yy) / 2);
+            
+            table.incrementCounter();
+            table.addLabel(Integer.toString(labels[i]));
+            // add coordinates of origin pixel (IJ coordinate system) 
+            table.addValue("XCentroid", cx[i] + .5);
+        	table.addValue("YCentroid", cy[i] + .5);
+        	table.addValue("Radius1", ra);
+        	table.addValue("Radius2", rb);
+        	table.addValue("Orientation", theta);
+        }
+
+        return table;
+    }
+    
+    
+    // ====================================================
+    // Utility functions 
+
+    /**
+     * Computes all the unique labels existing in the image, excluding label 0
+     * (used for background). The result is sorted in ascend order.
+     */
     private static int[] findAllLabels(ImageProcessor image) {
         int width 	= image.getWidth();
         int height 	= image.getHeight();
@@ -534,7 +647,7 @@ public class GeometricMeasures2D {
         if (labels.contains(0))
             labels.remove(0);
         
-        // convert to array
+        // convert to an array of integers
         int[] array = new int[labels.size()];
         Iterator<Integer> iterator = labels.iterator();
         for (int i = 0; i < labels.size(); i++) 
