@@ -68,6 +68,10 @@ public class WatershedTransform3D
 	/** value assigned to voxels put into the queue */
 	static final int INQUEUE = -3;
 	
+	/** flag to output the transform steps and their 
+	 * execution times in the log window */
+	protected boolean verbose = true;
+	
 	
 	/**
 	 * Construct a watershed transform
@@ -114,6 +118,14 @@ public class WatershedTransform3D
 	 */
 	public void setConnectivity(int conn) {
 		this.connectivity = conn;
+	}
+	
+	/**
+	 * Set verbose flag
+	 * @param verbose new verbose flag
+	 */
+	public void setVerbose( boolean verbose ){
+		this.verbose = verbose;
 	}
 	
 	/**
@@ -206,19 +218,19 @@ public class WatershedTransform3D
 	    
 	    // Make list of voxels and sort it in ascending order
 	    IJ.showStatus( "Extracting voxel values..." );
-	    IJ.log("  Extracting voxel values (h_min = " + hMin + ", h_max = " + hMax + ")..." );
+	    if( verbose ) IJ.log("  Extracting voxel values (h_min = " + hMin + ", h_max = " + hMax + ")..." );
 	    final long t0 = System.currentTimeMillis();
 
 	    // list of original voxels values and corresponding coordinates
 	    ArrayList<VoxelRecord> voxelList = extractVoxelValues( inputStack, hMin, hMax );
 
 	    final long t1 = System.currentTimeMillis();		
-	    IJ.log("  Extraction took " + (t1-t0) + " ms.");
-	    IJ.log("  Sorting voxels by value..." );
+	    if( verbose ) IJ.log("  Extraction took " + (t1-t0) + " ms.");
+	    if( verbose ) IJ.log("  Sorting voxels by value..." );
 	    IJ.showStatus("Sorting voxels by value...");
 	    Collections.sort( voxelList );
 	    final long t2 = System.currentTimeMillis();
-	    IJ.log("  Sorting took " + (t2-t1) + " ms.");
+	    if( verbose ) IJ.log("  Sorting took " + (t2-t1) + " ms.");
 	    
 	    IJ.log( "  Flooding..." );
 	    IJ.showStatus( "Flooding..." );
@@ -394,7 +406,7 @@ public class WatershedTransform3D
 	    IJ.showProgress( 1.0 );
 	    
 	    final long end = System.currentTimeMillis();
-		IJ.log("  Flooding took: " + (end-start) + " ms");
+		if( verbose ) IJ.log("  Flooding took: " + (end-start) + " ms");
 	    
 	    // Create result label image
 	    ImageStack labelStack = new ImageStack( size1, size2 );
@@ -467,19 +479,19 @@ public class WatershedTransform3D
 	    
 	    // Make list of voxels and sort it in ascending order
 	    IJ.showStatus( "Extracting voxel values..." );
-	    IJ.log("  Extracting voxel values (h_min = " + hMin + ", h_max = " + hMax + ")..." );
+	    if( verbose ) IJ.log("  Extracting voxel values (h_min = " + hMin + ", h_max = " + hMax + ")..." );
 	    final long t0 = System.currentTimeMillis();
 
 	    // list of original voxels values and corresponding coordinates
 	    ArrayList<VoxelRecord> voxelList = extractVoxelValues( inputStack, hMin, hMax );
 
 	    final long t1 = System.currentTimeMillis();		
-	    IJ.log("  Extraction took " + (t1-t0) + " ms.");
-	    IJ.log("  Sorting voxels by value..." );
+	    if( verbose ) IJ.log("  Extraction took " + (t1-t0) + " ms.");
+	    if( verbose ) IJ.log("  Sorting voxels by value..." );
 	    IJ.showStatus("Sorting voxels by value...");
 	    Collections.sort( voxelList );
 	    final long t2 = System.currentTimeMillis();
-	    IJ.log("  Sorting took " + (t2-t1) + " ms.");
+	    if( verbose ) IJ.log("  Sorting took " + (t2-t1) + " ms.");
 	    
 	    IJ.log( "  Flooding..." );
 	    IJ.showStatus( "Flooding..." );
@@ -652,7 +664,7 @@ public class WatershedTransform3D
 	    IJ.showProgress( 1.0 );
 	    
 	    final long end = System.currentTimeMillis();
-		IJ.log("  Flooding took: " + (end-start) + " ms");
+		if( verbose ) IJ.log("  Flooding took: " + (end-start) + " ms");
 	    
 		// Create result label image
 	    ImageStack labelStack = new ImageStack( size1, size2 );

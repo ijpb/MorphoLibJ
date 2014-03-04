@@ -98,18 +98,18 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 		
 		// Make list of voxels and sort it in ascending order
 		IJ.showStatus( "Extracting voxel values..." );
-		IJ.log("  Extracting voxel values..." );
+		if( verbose ) IJ.log("  Extracting voxel values..." );
 		final long t0 = System.currentTimeMillis();
 		
 		voxelList = extractVoxelValues( inputStack, markerImage.getStack(), tabLabels );
 						
 		final long t1 = System.currentTimeMillis();		
-		IJ.log("  Extraction took " + (t1-t0) + " ms.");
-		IJ.log("  Sorting voxels by value..." );
+		if( verbose ) IJ.log("  Extraction took " + (t1-t0) + " ms.");
+		if( verbose ) IJ.log("  Sorting voxels by value..." );
 		IJ.showStatus("Sorting voxels by value...");
 		Collections.sort( voxelList );
 		final long t2 = System.currentTimeMillis();
-		IJ.log("  Sorting took " + (t2-t1) + " ms.");
+		if( verbose ) IJ.log("  Sorting took " + (t2-t1) + " ms.");
 			    
 		// Watershed
 	    boolean found = false;	    
@@ -178,7 +178,7 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 		}
 
 		final long end = System.currentTimeMillis();
-		IJ.log("  Flooding took: " + (end-start) + " ms");
+		if( verbose ) IJ.log("  Flooding took: " + (end-start) + " ms");
 		
 		// Create result label image
 		ImageStack labelStack = markerImage.duplicate().getStack();
@@ -225,7 +225,7 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 		
 		// Make list of all voxels and sort it in ascending order
 		IJ.showStatus( "Extracting voxel values..." );
-		IJ.log("  Extracting voxel values..." );
+		if( verbose ) IJ.log("  Extracting voxel values..." );
 		final long t0 = System.currentTimeMillis();
 		
 		// extract list of original voxels values and corresponding coordinates
@@ -233,12 +233,12 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 		LinkedList<VoxelRecord> voxelList = extractVoxelValues( inputStack, markerImage.getStack(), tabLabels );
 						
 		final long t1 = System.currentTimeMillis();		
-		IJ.log("  Extraction took " + (t1-t0) + " ms.");
-		IJ.log("  Sorting voxels by value..." );
+		if( verbose ) IJ.log("  Extraction took " + (t1-t0) + " ms.");
+		if( verbose ) IJ.log("  Sorting voxels by value..." );
 		IJ.showStatus("Sorting voxels by value...");
 		Collections.sort( voxelList );
 		final long t2 = System.currentTimeMillis();
-		IJ.log("  Sorting took " + (t2-t1) + " ms.");
+		if( verbose ) IJ.log("  Sorting took " + (t2-t1) + " ms.");
 			    
 		// Watershed
 	    boolean found = false;	    
@@ -315,7 +315,7 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 		}
 
 		final long end = System.currentTimeMillis();
-		IJ.log("  Flooding took: " + (end-start) + " ms");
+		if( verbose ) IJ.log("  Flooding took: " + (end-start) + " ms");
 		
 		// Create result label image
 		ImageStack labelStack = markerImage.duplicate().getStack();
@@ -365,13 +365,13 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 		
 		// Make list of voxels and sort it in ascending order
 		IJ.showStatus( "Extracting voxel values..." );
-		IJ.log("  Extracting voxel values..." );
+		if( verbose ) IJ.log("  Extracting voxel values..." );
 		final long t0 = System.currentTimeMillis();
 		
 		voxelList = extractVoxelValuesPriorityQueue( inputStack, markerImage.getStack(), tabLabels );
 						
 		final long t1 = System.currentTimeMillis();		
-		IJ.log("  Extraction took " + (t1-t0) + " ms.");
+		if( verbose ) IJ.log("  Extraction took " + (t1-t0) + " ms.");
 					    
 		// Watershed
 	    final long start = System.currentTimeMillis();
@@ -479,7 +479,7 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
       	}
 
 		final long end = System.currentTimeMillis();
-		IJ.log("  Flooding took: " + (end-start) + " ms");
+		if( verbose ) IJ.log("  Flooding took: " + (end-start) + " ms");
 		
 		// Create result label image
 		ImageStack labelStack = markerImage.duplicate().getStack();
@@ -534,13 +534,13 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 		
 		// Make list of voxels and sort it in ascending order
 		IJ.showStatus( "Extracting voxel values..." );
-		IJ.log("  Extracting voxel values..." );
+		if( verbose ) IJ.log("  Extracting voxel values..." );
 		final long t0 = System.currentTimeMillis();
 		
 		voxelList = extractVoxelValuesPriorityQueue( inputStack, markerImage.getStack(), tabLabels );
 						
 		final long t1 = System.currentTimeMillis();		
-		IJ.log("  Extraction took " + (t1-t0) + " ms.");
+		if( verbose ) IJ.log("  Extraction took " + (t1-t0) + " ms.");
 					    
 		// Watershed
 	    final long start = System.currentTimeMillis();
@@ -665,7 +665,7 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
       	}
 
 		final long end = System.currentTimeMillis();
-		IJ.log("  Flooding took: " + (end-start) + " ms");
+		if( verbose ) IJ.log("  Flooding took: " + (end-start) + " ms");
 		
 		// Create result label image
 		ImageStack labelStack = markerImage.duplicate().getStack();
