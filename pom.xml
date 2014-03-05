@@ -26,6 +26,13 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 			<artifactId>ij</artifactId>
 			<version>${imagej1.version}</version>
 		</dependency>
+	
+		<!-- Jama (Java Matrix package) is used for computing inertia ellipsoid --> 
+		<dependency>
+			<groupId>gov.nist.math</groupId>
+			<artifactId>jama</artifactId>
+			<version>1.0.3</version>
+		</dependency>
 		
 		<!-- Add a dependency to JUnit for unit tests --> 
         <dependency>
@@ -34,6 +41,7 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
             <version>4.8.1</version>
             <scope>test</scope>
         </dependency>
+        
 	</dependencies>
     
     
