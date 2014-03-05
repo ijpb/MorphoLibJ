@@ -462,9 +462,11 @@ public class GeometricMeasures3D {
         
         // Create data table
         ResultsTable table = new ResultsTable();
-
+        
+//        System.out.println("create matrix");
     	Matrix matrix = new Matrix(3, 3);
-    	
+//        System.out.println("matrix ok");
+
         // compute ellipse parameters for each region
         for (int i = 0; i < nLabels; i++) {
         	// fill up the 3x3 inertia matrix
@@ -481,9 +483,9 @@ public class GeometricMeasures3D {
 			SingularValueDecomposition svd = new SingularValueDecomposition(matrix);
 			
 			Matrix values = svd.getS();
-			double r1 = 2 * sqrt(values.get(0, 0));
-			double r2 = 2 * sqrt(values.get(1, 1));
-			double r3 = 2 * sqrt(values.get(2, 2));
+			double r1 = sqrt(5) * sqrt(values.get(0, 0));
+			double r2 = sqrt(5) * sqrt(values.get(1, 1));
+			double r3 = sqrt(5) * sqrt(values.get(2, 2));
 			
 			// extract |cos(theta)|
 			Matrix mat = svd.getU();
