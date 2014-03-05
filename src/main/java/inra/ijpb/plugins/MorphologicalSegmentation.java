@@ -488,12 +488,19 @@ public class MorphologicalSegmentation implements PlugIn {
 		}
 		
 		/**
-		 * Overwrite windowClosing to display the input image after closing GUI
+		 * Overwrite windowClosing to display the input image after closing 
+		 * the GUI and shut down the executor service
 		 */
+		@Override
 		public void windowClosing( WindowEvent e ) 
-		{		
-			inputImage.getWindow().setVisible( true );			
-			super.windowClosing(e);		
+		{							
+			super.windowClosing( e );
+			
+			// display input image
+			inputImage.getWindow().setVisible( true );
+			
+			// shut down executor service
+			exec.shutdownNow();
 		}
 		
 		
@@ -541,24 +548,24 @@ public class MorphologicalSegmentation implements PlugIn {
 			if( displayOption.equals( "Catchment basins" ) )
 			{			
 				ImagePlus watershedResult = resultImage.duplicate();
-				watershedResult.setTitle( "Catchment-basins-" + this.inputImage.getTitle() );
-				watershedResult.setSlice( this.displayImage.getSlice() );
+				watershedResult.setTitle( "Catchment-basins-" + this.inputImage.getTitle() );				
 				watershedResult.show();
+				watershedResult.setSlice( this.displayImage.getSlice() );
 			}
 			else if( displayOption.equals( "Overlayed dams" ) )
 			{
 				final ImagePlus lines = getWatershedLines( resultImage );
 				final ImagePlus overlayed = BinaryOverlayPlugin.binaryOverlay( inputImage, lines, Color.red ) ;
-				overlayed.setTitle( "Overlayed-dams" + this.inputImage.getTitle() );
-				overlayed.setSlice( this.displayImage.getSlice() );
+				overlayed.setTitle( "Overlayed-dams" + this.inputImage.getTitle() );				
 				overlayed.show();
+				overlayed.setSlice( this.displayImage.getSlice() );
 			}
 			else if( displayOption.equals( "Watershed lines" ) )
 			{
 				final ImagePlus lines = getWatershedLines( resultImage );
-				lines.setTitle( "Watershed-lines-" + this.inputImage.getTitle() );
-				lines.setSlice( this.displayImage.getSlice() );
+				lines.setTitle( "Watershed-lines-" + this.inputImage.getTitle() );				
 				lines.show();
+				lines.setSlice( this.displayImage.getSlice() );
 			}
 		}
 	}
@@ -700,6 +707,7 @@ public class MorphologicalSegmentation implements PlugIn {
 	void setParamsEnabled( boolean enabled )
 	{
 		this.dynamicText.setEnabled( enabled );
+		this.dynamicLabel.setEnabled( enabled );
 		this.advancedOptionsCheckBox.setEnabled( enabled );
 		this.segmentButton.setEnabled( enabled );
 		this.overlayButton.setEnabled( enabled );
