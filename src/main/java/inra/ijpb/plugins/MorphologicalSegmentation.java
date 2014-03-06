@@ -142,9 +142,13 @@ public class MorphologicalSegmentation implements PlugIn {
 	/** thread to run the segmentation */
 	private Thread segmentationThread = null;
 	
+	/** text of the segmentation button when segmentation not running */
 	private String segmentText = "Segment";
+	/** tip text of the segmentation button when segmentation not running */
 	private String segmentTip = "Run the morphological segmentation";
+	/** text of the segmentation button when segmentation running */
 	private String stopText = "STOP";
+	/** tip text of the segmentation button when segmentation running */
 	private String stopTip = "Click to abort segmentation";
 	
 	/**
