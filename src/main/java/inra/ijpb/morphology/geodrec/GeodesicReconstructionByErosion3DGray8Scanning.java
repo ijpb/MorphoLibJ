@@ -72,6 +72,10 @@ public class GeodesicReconstructionByErosion3DGray8Scanning implements GeodesicR
 	 * as argument.
 	 */
 	public ImageStack applyTo(ImageStack marker, ImageStack mask) {
+		
+		if ( Thread.currentThread().isInterrupted() )					
+			return null;
+		
 		// Keep references to input images
 		this.marker = marker;
 		this.mask = mask;
@@ -108,6 +112,10 @@ public class GeodesicReconstructionByErosion3DGray8Scanning implements GeodesicR
 		
 		// Iterate forward and backward propagations until no more pixel have been modified
 		do {
+			
+			if ( Thread.currentThread().isInterrupted() )					
+				return null;
+			
 			modif = false;
 
 			// Display current status
@@ -146,7 +154,7 @@ public class GeodesicReconstructionByErosion3DGray8Scanning implements GeodesicR
 				break;
 			}
 
-			iter++;
+			iter++;			
 		} while (modif);
 	
 		return this.result;

@@ -101,7 +101,9 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 		if( verbose ) IJ.log("  Extracting voxel values..." );
 		final long t0 = System.currentTimeMillis();
 		
-		voxelList = extractVoxelValues( inputStack, markerImage.getStack(), tabLabels );
+		voxelList = extractVoxelValues( inputStack, markerImage.getStack(), tabLabels );		
+		if ( null == voxelList )
+			return null;
 						
 		final long t1 = System.currentTimeMillis();		
 		if( verbose ) IJ.log("  Extraction took " + (t1-t0) + " ms.");
@@ -126,6 +128,9 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 	    boolean change = true;
 	    while ( voxelList.isEmpty() == false && change )
 	    {
+	    	if ( Thread.currentThread().isInterrupted() )
+				return null;	
+	    	
 	    	change = false;
 			final int count = voxelList.size();
 	      	IJ.log( "  Flooding " + count + " voxels..." );
@@ -231,6 +236,8 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 		// extract list of original voxels values and corresponding coordinates
 		// and at the same time, fill the label image
 		LinkedList<VoxelRecord> voxelList = extractVoxelValues( inputStack, markerImage.getStack(), tabLabels );
+		if ( null == voxelList )
+			return null;
 						
 		final long t1 = System.currentTimeMillis();		
 		if( verbose ) IJ.log("  Extraction took " + (t1-t0) + " ms.");
@@ -255,6 +262,9 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 	    boolean change = true;
 	    while ( voxelList.isEmpty() == false && change )
 	    {
+	    	if ( Thread.currentThread().isInterrupted() )
+				return null;	
+	    	
 	    	change = false;
 			final int count = voxelList.size();
 	      	IJ.log( "  Flooding " + count + " voxels..." );
@@ -369,6 +379,8 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 		final long t0 = System.currentTimeMillis();
 		
 		voxelList = extractVoxelValuesPriorityQueue( inputStack, markerImage.getStack(), tabLabels );
+		if ( null == voxelList )
+			return null;
 						
 		final long t1 = System.currentTimeMillis();		
 		if( verbose ) IJ.log("  Extraction took " + (t1-t0) + " ms.");
@@ -393,6 +405,9 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
       		
       		while ( voxelList.isEmpty() == false )
       		{
+      			if ( Thread.currentThread().isInterrupted() )
+    				return null;	
+      			
       			IJ.showProgress( numVoxels-voxelList.size(), numVoxels );
 
       			final VoxelRecord voxelRecord = voxelList.poll();
@@ -437,6 +452,9 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
       	{
       		while ( voxelList.isEmpty() == false )
       		{
+      			if ( Thread.currentThread().isInterrupted() )
+    				return null;	
+      			
       			IJ.showProgress( numVoxels-voxelList.size(), numVoxels );
 
       			final VoxelRecord voxelRecord = voxelList.poll();
@@ -503,6 +521,9 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 	 */
 	public ImagePlus applyWithPriorityQueueAndDams()
 	{
+		if ( Thread.currentThread().isInterrupted() )					
+			return null;
+		
 		final ImageStack inputStack = inputImage.getStack();
 	    final int size1 = inputStack.getWidth();
 	    final int size2 = inputStack.getHeight();
@@ -537,7 +558,9 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 		if( verbose ) IJ.log("  Extracting voxel values..." );
 		final long t0 = System.currentTimeMillis();
 		
-		voxelList = extractVoxelValuesPriorityQueue( inputStack, markerImage.getStack(), tabLabels );
+		voxelList = extractVoxelValuesPriorityQueue( inputStack, markerImage.getStack(), tabLabels );		
+		if( null == voxelList )
+			return null;
 						
 		final long t1 = System.currentTimeMillis();		
 		if( verbose ) IJ.log("  Extraction took " + (t1-t0) + " ms.");
@@ -561,10 +584,15 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
       	// with mask
       	if ( null != maskImage )
       	{
+      		if ( Thread.currentThread().isInterrupted() )
+				return null;	
       		final ImageStack maskStack = maskImage.getStack();
       		
       		while ( voxelList.isEmpty() == false )
       		{
+      			if ( Thread.currentThread().isInterrupted() )
+    				return null;	
+      			
       			IJ.showProgress( numVoxels-voxelList.size(), numVoxels );
 
       			final VoxelRecord voxelRecord = voxelList.poll();
@@ -617,6 +645,9 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
       	{
       		while ( voxelList.isEmpty() == false )
       		{
+      			if ( Thread.currentThread().isInterrupted() )
+    				return null;	
+      			
       			IJ.showProgress( numVoxels-voxelList.size(), numVoxels );
 
       			final VoxelRecord voxelRecord = voxelList.poll();
@@ -672,6 +703,9 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 	    
 		for (int k = 0; k < size3; ++k)
 		{
+			if ( Thread.currentThread().isInterrupted() )
+				return null;	
+			
 			ImageProcessor labelProcessor = labelStack.getProcessor( k+1 );
 			for (int i = 0; i < size1; ++i)
 				for (int j = 0; j < size2; ++j)
@@ -701,7 +735,9 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 			final ImageStack seedStack,
 			final int[][][] tabLabels) 
 	{
-		
+		if ( Thread.currentThread().isInterrupted() )					
+			return null;
+				
 		final int size1 = inputStack.getWidth();
 	    final int size2 = inputStack.getHeight();
 	    final int size3 = inputStack.getSize();
@@ -723,6 +759,12 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 			for (int z = 0; z < size3; ++z)	
 			{
 				IJ.showProgress( z+1, size3 );
+				
+				if ( Thread.currentThread().isInterrupted() )
+				{
+					IJ.showProgress( 1.0 );
+					return null;
+				}
 
 				final ImageProcessor ipMask = mask.getProcessor( z+1 );
 				final ImageProcessor ipSeed = seedStack.getProcessor( z+1 );
@@ -756,13 +798,19 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 								}
 								tabLabels[x][y][z] = label;
 							}
-						}
+						}								
 			}
 		}							
 		else // without mask
 		{
 			for (int z = 0; z < size3; ++z)	
 			{
+				if ( Thread.currentThread().isInterrupted() )
+				{
+					IJ.showProgress( 1.0 );
+					return null;
+				}
+				
 				IJ.showProgress( z+1, size3 );
 
 				final ImageProcessor ipSeed = seedStack.getProcessor( z+1 );
@@ -854,6 +902,9 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 
 							for (int z = zmin; z < zmax; ++z)	
 							{
+								if ( Thread.currentThread().isInterrupted() )
+									return;	
+								
 								if (zmin==0) 
 									IJ.showProgress(z+1, zmax);
 
@@ -867,9 +918,8 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 										{
 											lists[k].addLast( new VoxelRecord( x, y, z, ipInput.getf( x, y )));
 											tabLabels[x][y][z] = (int) ipSeed.getf( x, y );
-										}
+										}														
 							}
-
 						}
 					}
 				};
@@ -895,6 +945,9 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 
 							for (int z = zmin; z < zmax; ++z)	
 							{
+								if ( Thread.currentThread().isInterrupted() )
+									return;								
+								
 								if (zmin==0) 
 									IJ.showProgress(z+1, zmax);
 

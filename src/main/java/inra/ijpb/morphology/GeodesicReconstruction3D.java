@@ -3,6 +3,7 @@
  */
 package inra.ijpb.morphology;
 
+import ij.IJ;
 import ij.ImageStack;
 import inra.ijpb.morphology.geodrec.GeodesicReconstruction3DAlgo;
 import inra.ijpb.morphology.geodrec.GeodesicReconstructionByDilation3DGray8Scanning;
@@ -160,6 +161,10 @@ public abstract class GeodesicReconstruction3D {
 	 */
 	public final static ImageStack reconstructByErosion(ImageStack marker,
 			ImageStack mask, int connectivity) {
+		
+		if ( Thread.currentThread().isInterrupted() )					
+			return null;
+		
 		GeodesicReconstruction3DAlgo algo;
 		if (marker.getBitDepth() == 8 && mask.getBitDepth() == 8) {
 			algo = new GeodesicReconstructionByErosion3DGray8Scanning(connectivity);

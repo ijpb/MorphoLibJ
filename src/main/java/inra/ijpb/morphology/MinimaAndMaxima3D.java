@@ -120,6 +120,10 @@ public class MinimaAndMaxima3D {
 	 */
 	public final static ImageStack regionalMinima(ImageStack image,
 			int conn) {
+		
+		if ( Thread.currentThread().isInterrupted() )					
+			return null;
+		
 		RegionalExtrema3DAlgo algo = new RegionalExtrema3DByFlooding();
 		algo.setConnectivity(conn);
 		algo.setExtremaType(ExtremaType.MINIMA);
@@ -269,6 +273,9 @@ public class MinimaAndMaxima3D {
 //		ImageStack rec = algo.applyTo(marker, stack);
 		ImageStack rec = GeodesicReconstruction3D.reconstructByErosion(marker, stack, conn);
 
+		if( null == rec )
+			return null;
+		
 		return regionalMinima(rec, conn);
 	}
 
@@ -327,6 +334,9 @@ public class MinimaAndMaxima3D {
 	 */
 	public final static ImageStack imposeMinima(ImageStack stack,
 			ImageStack minima, int conn) {
+		
+		if ( Thread.currentThread().isInterrupted() )					
+			return null;
 
 		ImageStack marker = stack.duplicate();
 		ImageStack mask = stack.duplicate();
