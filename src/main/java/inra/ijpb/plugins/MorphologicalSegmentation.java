@@ -542,13 +542,22 @@ public class MorphologicalSegmentation implements PlugIn {
 	{
 		if( null != this.resultImage )
 		{
+			String title = inputImage.getTitle();
+			String ext = "";
+			int index = title.lastIndexOf( "." );
+			if( index != -1 )
+			{
+				ext = title.substring( index );
+				title = title.substring( 0, index );				
+			}
+			
 			final String displayOption = (String) resultDisplayList.getSelectedItem();
 			
 			// options: "Catchment basins", "Overlayed dams", "Watershed lines"
 			if( displayOption.equals( "Catchment basins" ) )
 			{			
 				ImagePlus watershedResult = resultImage.duplicate();
-				watershedResult.setTitle( "Catchment-basins-" + this.inputImage.getTitle() );				
+				watershedResult.setTitle( title + "-catchment-basins" + ext );				
 				watershedResult.show();
 				watershedResult.setSlice( this.displayImage.getSlice() );
 			}
@@ -556,14 +565,14 @@ public class MorphologicalSegmentation implements PlugIn {
 			{
 				final ImagePlus lines = getWatershedLines( resultImage );
 				final ImagePlus overlayed = BinaryOverlayPlugin.binaryOverlay( inputImage, lines, Color.red ) ;
-				overlayed.setTitle( "Overlayed-dams" + this.inputImage.getTitle() );				
+				overlayed.setTitle( title + "-overlayed-dams" + ext );				
 				overlayed.show();
 				overlayed.setSlice( this.displayImage.getSlice() );
 			}
 			else if( displayOption.equals( "Watershed lines" ) )
 			{
 				final ImagePlus lines = getWatershedLines( resultImage );
-				lines.setTitle( "Watershed-lines-" + this.inputImage.getTitle() );				
+				lines.setTitle( title + "-watershed-lines" + ext );				
 				lines.show();
 				lines.setSlice( this.displayImage.getSlice() );
 			}
