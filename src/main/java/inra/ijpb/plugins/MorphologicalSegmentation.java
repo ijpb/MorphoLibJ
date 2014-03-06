@@ -255,10 +255,10 @@ public class MorphologicalSegmentation implements PlugIn {
 			enableAdvancedOptions( selectAdvancedOptions );
 			
 			// add components to advanced options panel
+			
 			GridBagLayout advancedOptionsLayout = new GridBagLayout();
 			GridBagConstraints advancedOptoinsConstraints = new GridBagConstraints();
-			advancedOptoinsConstraints.anchor = GridBagConstraints.NORTHEAST;
-			advancedOptoinsConstraints.fill = GridBagConstraints.HORIZONTAL;
+			advancedOptoinsConstraints.anchor = GridBagConstraints.WEST;
 			advancedOptoinsConstraints.gridwidth = 1;
 			advancedOptoinsConstraints.gridheight = 1;
 			advancedOptoinsConstraints.gridx = 0;
@@ -316,11 +316,12 @@ public class MorphologicalSegmentation implements PlugIn {
 			segmentationPanel.add( dynamicPanel, segmentationConstraints );
 			segmentationConstraints.gridy++;
 			segmentationPanel.add( advancedOptionsCheckBox, segmentationConstraints );
-			segmentationConstraints.gridy++;
+			segmentationConstraints.gridy++;			
 			segmentationPanel.add( advancedOptionsPanel, segmentationConstraints );			
 			segmentationConstraints.gridy++;
+			segmentationConstraints.anchor = GridBagConstraints.CENTER;
+			segmentationConstraints.fill = GridBagConstraints.NONE;
 			segmentationPanel.add( segmentButton, segmentationConstraints );
-			segmentationConstraints.gridy++;
 			
 			// Display panel
 			displayPanel.setBorder( BorderFactory.createTitledBorder( "Display" ) );
