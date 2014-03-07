@@ -272,24 +272,34 @@ public class Watershed
 			boolean usePriorityQueue,
 			boolean getDams )
 	{		
+		if ( Thread.currentThread().isInterrupted() )					
+			return null;
+		
 		final ImagePlus inputIP = new ImagePlus( "input", input );
 		final ImagePlus markerIP = new ImagePlus( "marker", marker );	
 		
 		MarkerControlledWatershedTransform3D wt = new MarkerControlledWatershedTransform3D( inputIP, markerIP, null, connectivity );
+		
+		ImagePlus ws = null;
+		
 		if( usePriorityQueue )
 		{
-			if( getDams )
-				return wt.applyWithPriorityQueueAndDams().getImageStack();
-			else 
-				return wt.applyWithPriorityQueue().getImageStack();
+			if( getDams )			
+				ws = wt.applyWithPriorityQueueAndDams();							
+			else			
+				ws = wt.applyWithPriorityQueue();			
 		}
 		else
 		{
-			if( getDams )
-				return wt.applyWithSortedListAndDams().getImageStack();
-			else
-				return wt.applyWithSortedList().getImageStack();			
+			if( getDams )			
+				ws = wt.applyWithSortedListAndDams();			
+			else			
+				ws = wt.applyWithSortedList();			
 		}
+		
+		if( null == ws )
+			return null;
+		return ws.getImageStack();
 	}
 	
 	/**
@@ -315,20 +325,27 @@ public class Watershed
 		final int conn3d = connectivity == 4 ? 6 : 26;
 									
 		MarkerControlledWatershedTransform3D wt = new MarkerControlledWatershedTransform3D( inputIP, markerIP, null, conn3d );
+		
+		ImagePlus ws = null;
+		
 		if( usePriorityQueue )
 		{
-			if( getDams )
-				return wt.applyWithPriorityQueueAndDams().getProcessor();
-			else 
-				return wt.applyWithPriorityQueue().getProcessor();
+			if( getDams )			
+				ws = wt.applyWithPriorityQueueAndDams();							
+			else			
+				ws = wt.applyWithPriorityQueue();			
 		}
 		else
 		{
-			if( getDams )
-				return wt.applyWithSortedListAndDams().getProcessor();
-			else
-				return wt.applyWithSortedList().getProcessor();			
+			if( getDams )			
+				ws = wt.applyWithSortedListAndDams();			
+			else			
+				ws = wt.applyWithSortedList();			
 		}
+		
+		if( null == ws )
+			return null;
+		return ws.getProcessor();
 	}
 
 }

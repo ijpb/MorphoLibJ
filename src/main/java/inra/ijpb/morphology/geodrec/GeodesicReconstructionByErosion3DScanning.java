@@ -5,7 +5,6 @@ package inra.ijpb.morphology.geodrec;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-
 import ij.IJ;
 import ij.ImageStack;
 import inra.ijpb.data.image.Image3D;
@@ -90,6 +89,10 @@ public class GeodesicReconstructionByErosion3DScanning implements
 	 * as argument.
 	 */
 	public ImageStack applyTo(ImageStack marker, ImageStack mask) {
+		
+		if ( Thread.currentThread().isInterrupted() )					
+			return null;
+		
 		// Keep references to input images
 		this.markerStack = marker;
 		this.maskStack = mask;

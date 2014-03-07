@@ -91,6 +91,9 @@ public class ConnectedComponents {
 	 * image. The type of result is controlled by the bitDepth option.
 	 */
 	public final static ImageStack computeLabels(ImageStack image, int conn, int bitDepth) {
+		if ( Thread.currentThread().isInterrupted() )					
+			return null;
+		
 		// get image size
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();

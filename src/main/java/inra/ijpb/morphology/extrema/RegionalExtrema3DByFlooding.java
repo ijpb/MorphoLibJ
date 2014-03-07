@@ -174,6 +174,9 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo {
 	 * flood-filling-like algorithm with 6 connectivity.
 	 */
 	ImageStack regionalExtremaFloatC6(ImageStack image, ImageStack mask) {
+		if ( Thread.currentThread().isInterrupted() )					
+			return null;
+		
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		int sizeZ = image.getSize();
@@ -238,6 +241,9 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo {
 	 * flood-filling-like algorithm with 26 connectivity.
 	 */
 	ImageStack regionalExtremaFloatC26(ImageStack image, ImageStack mask) {
+		if ( Thread.currentThread().isInterrupted() )					
+			return null;
+		
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		int sizeZ = image.getSize();
