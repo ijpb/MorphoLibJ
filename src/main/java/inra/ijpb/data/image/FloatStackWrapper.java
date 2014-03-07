@@ -9,6 +9,8 @@ import static java.lang.Math.min;
 import static java.lang.Math.max;
 
 /**
+ * Access the data of a 3D image containing intensity values stored as float.
+ * 
  * @author David Legland
  *
  */

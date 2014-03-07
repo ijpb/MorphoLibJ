@@ -27,12 +27,39 @@ public abstract class RegionalExtrema3DAlgo {
 	// ==============================================================
 	// class variables
 	
+	/** Choose between minima or maxima */
 	ExtremaType extremaType = ExtremaType.MINIMA;
 	
+	/** The value of connectivity, either 4 or 8 */
 	int connectivity = 6;
 	
 	boolean progressVisible = true;
 	
+	
+	// ==============================================================
+	// Constructors
+	
+	/**
+	 * Creates a new algorithm for computing regional extrema, that computes
+	 * regional minima with connectivity 6.
+	 */
+	public RegionalExtrema3DAlgo() {
+	}
+	
+	/**
+	 * Creates a new algorithm for computing regional extrema, by choosing type
+	 * of minima and connectivity.
+	 * 
+	 * @param extremaType
+	 *            the type of extrema (minima or maxima)
+	 * @param connectivity
+	 *            should be 6 or 26
+	 */
+	public RegionalExtrema3DAlgo(ExtremaType extremaType, int connectivity) {
+		this.extremaType = extremaType;
+		this.connectivity = connectivity;
+	}
+
 	// ==============================================================
 	// getter and setters
 	

@@ -6,7 +6,7 @@ package inra.ijpb.morphology.extrema;
 import ij.process.ImageProcessor;
 
 /**
- * Interface for appying regional extrema (regional mininma and regional maxima).
+ * Interface for appying regional extrema (regional minima and maxima).
  * 
  * Example of use:
  * <code><pre>
@@ -27,11 +27,34 @@ public abstract class RegionalExtremaAlgo {
 	// ==============================================================
 	// class variables
 	
-	int connectivity = 4;
-	
+	/** Choose between minima or maxima */
 	ExtremaType extremaType = ExtremaType.MINIMA;
 	
+	/** The value of connectivity, either 4 or 8 */
+	int connectivity = 4;
+	
 	boolean progressVisible = true;
+	
+	// ==============================================================
+	// Constructors
+	
+	/**
+	 * Creates a new algorithm for computing regional extrema, that computes
+	 * regional minima with connectivity 4.
+	 */
+	public RegionalExtremaAlgo() {
+	}
+	
+	/**
+	 * Creates a new algorithm for computing regional extrema, by choosing type of minima and connectivity.
+	 * @param extremaType the type of extrema (minima or maxima)
+	 * @param connectivity should be 4 or 8
+	 */
+	public RegionalExtremaAlgo(ExtremaType extremaType, int connectivity) {
+		this.extremaType = extremaType;
+		this.connectivity = connectivity;
+	}
+
 	
 	// ==============================================================
 	// getter and setters

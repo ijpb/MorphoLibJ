@@ -4,8 +4,12 @@
 package inra.ijpb.data.image;
 
 /**
+ * Interface for accessing the values of a 3D stack. Implementations should
+ * provide efficient access to the inner data, without checking coordinate
+ * bounds. Data can be accessed either as integer or as double. 
+ * 
  * @author David Legland
- *
+ * 
  */
 public interface Image3D {
 

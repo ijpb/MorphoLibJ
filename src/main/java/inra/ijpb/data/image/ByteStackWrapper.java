@@ -6,6 +6,8 @@ package inra.ijpb.data.image;
 import ij.ImageStack;
 
 /**
+ * Access the data of a 3D image containing gray8 values stored as bytes.
+ * 
  * @author David Legland
  *
  */
