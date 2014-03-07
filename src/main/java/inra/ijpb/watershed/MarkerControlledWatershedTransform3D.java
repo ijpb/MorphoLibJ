@@ -855,27 +855,29 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 	}
 
 	/**
-	 * Extract voxel values from input and seed images
+	 * Extract voxel values from input and labeled marker images. The
+	 * input grayscale values will be return in a list of VoxelRecrod 
+	 * and the markers will be stored in <code>tabLabels</code>.
 	 * 
-	 * @param inputStack input stack
-	 * @param seedStack seed stack
+	 * @param inputStack input grayscale stack (usually a gradient image)
+	 * @param markerStack labeled marker stack
 	 * @param tabLabels output label array
 	 * @return list of input voxel values
 	 */
 	public LinkedList<VoxelRecord> extractVoxelValues(
 			final ImageStack inputStack,
-			final ImageStack seedStack,
+			final ImageStack markerStack,
 			final int[][][] tabLabels) 
 	{
 		
 		final int size1 = inputStack.getWidth();
 	    final int size2 = inputStack.getHeight();
 	    final int size3 = inputStack.getSize();
-		
+			    
 	    final AtomicInteger ai = new AtomicInteger(0);
         final int n_cpus = Prefs.getThreads();
         
-        final int dec = (int) Math.ceil((double) size3 / (double) n_cpus);
+        final int dec = (int) Math.ceil( (double) size3 / (double) n_cpus );
         
         Thread[] threads = ThreadUtil.createThreadArray( n_cpus );
         
@@ -910,14 +912,14 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 
 								final ImageProcessor ipMask = mask.getProcessor( z+1 );
 								final ImageProcessor ipInput = inputStack.getProcessor( z+1 );
-								final ImageProcessor ipSeed = seedStack.getProcessor( z+1 );
+								final ImageProcessor ipMarker = markerStack.getProcessor( z+1 );
 
 								for( int x = 0; x < size1; ++x )
 									for( int y = 0; y < size2; ++y )
 										if( ipMask.getf( x, y ) > 0 )
 										{
 											lists[k].addLast( new VoxelRecord( x, y, z, ipInput.getf( x, y )));
-											tabLabels[x][y][z] = (int) ipSeed.getf( x, y );
+											tabLabels[x][y][z] = (int) ipMarker.getf( x, y );
 										}														
 							}
 						}
@@ -927,7 +929,8 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 			ThreadUtil.startAndJoin(threads);			
 		}
 		else
-		{
+		{										       					
+
 			for (int ithread = 0; ithread < threads.length; ithread++) 
 			{
 				lists[ ithread ] = new LinkedList<VoxelRecord>();
@@ -941,8 +944,8 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 							if (zmin<0)
 								zmin = 0;
 							if (zmax > size3)
-								zmax = size3;
-
+								zmax = size3;							
+							
 							for (int z = zmin; z < zmax; ++z)	
 							{
 								if ( Thread.currentThread().isInterrupted() )
@@ -952,13 +955,13 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 									IJ.showProgress(z+1, zmax);
 
 								final ImageProcessor ipInput = inputStack.getProcessor( z+1 );
-								final ImageProcessor ipSeed = seedStack.getProcessor( z+1 );
+								final ImageProcessor ipMarker = markerStack.getProcessor( z+1 );
 
-								for( int x = 0; x < size1; ++x )
-									for( int y = 0; y < size2; ++y )
+								for( int x = 0, v=0; x < size1; ++x )
+									for( int y = 0; y < size2; ++y, ++v )
 									{
 										lists[k].addLast( new VoxelRecord( x, y, z, ipInput.getf( x, y )));
-										tabLabels[x][y][z] = (int) ipSeed.getf( x, y );
+										tabLabels[x][y][z] = (int) ipMarker.getf( x, y );
 									}
 							}
 
@@ -966,8 +969,9 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 					}
 				};
 			}
-			ThreadUtil.startAndJoin(threads);			
-		}
+			ThreadUtil.startAndJoin(threads);									
+			
+		}// end else
 		
 		final LinkedList<VoxelRecord> voxelList = lists[ 0 ];
 		for (int ithread = 1; ithread < threads.length; ithread++)
