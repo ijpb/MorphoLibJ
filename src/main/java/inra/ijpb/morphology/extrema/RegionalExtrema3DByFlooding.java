@@ -170,8 +170,8 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo {
 	}
 	
 	/**
-	 * Computes regional minima in float image <code>image</code>, using
-	 * flood-filling-like algorithm with 4 connectivity.
+	 * Computes regional extrema in float 3D image <code>image</code>, using
+	 * flood-filling-like algorithm with 6 connectivity.
 	 */
 	ImageStack regionalExtremaFloatC6(ImageStack image, ImageStack mask) {
 		int sizeX = image.getWidth();
@@ -233,6 +233,10 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo {
 		return result;
 	}
 
+	/**
+	 * Computes regional extrema in float 3D image <code>image</code>, using
+	 * flood-filling-like algorithm with 26 connectivity.
+	 */
 	ImageStack regionalExtremaFloatC26(ImageStack image, ImageStack mask) {
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
@@ -283,6 +287,9 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo {
 		return result;
 	}
 	
+	/**
+	 * Fills the 3D image with the given value.
+	 */
 	private void fillStack(ImageStack image, double value) {
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();

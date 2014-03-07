@@ -4,8 +4,17 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ImageProcessor;
 
+/**
+ * A collection of static methods for working on 3D images. 
+ * @author David Legland
+ *
+ */
 public class Images3D {
 
+	/**
+	 * Converts the input ImageStack into an instance of Image3D, depending
+	 * on the data type stored in the stack.
+	 */
 	public final static Image3D createWrapper(ImageStack stack) {
 		switch(stack.getBitDepth()) {
 		case 8:

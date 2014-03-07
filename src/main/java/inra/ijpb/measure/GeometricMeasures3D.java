@@ -21,6 +21,8 @@ import static java.lang.Math.atan2;
 import static java.lang.Math.toDegrees;
 
 /**
+ * Provides a set of static methods to compute geometric measures in 3D binary
+ * or label images.
  * @author David Legland
  *
  */

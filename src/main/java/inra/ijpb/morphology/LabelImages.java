@@ -18,6 +18,10 @@ import java.awt.Color;
  */
 public class LabelImages {
 	
+	/**
+	 * Creates a binary 3D image that contains 255 for voxels that are 
+	 * boundaries between two labels.
+	 */
 	public final static ImageStack labelBoundaries(ImageStack stack) {
 		int sizeX = stack.getWidth();
 		int sizeY = stack.getHeight();

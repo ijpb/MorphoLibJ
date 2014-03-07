@@ -10,13 +10,16 @@ import inra.ijpb.morphology.FloodFill;
 import static java.lang.Math.min;
 
 /**
+ * Computes regional extrema in planar images using flooding algorithm. 
+ * This class manages 4 and 8 connectivities. All computations are performed
+ * using double, making it generic for 8-, 16- or 32-bit images.
  *
  * Example of use:
  * <code><pre>
  * ImageProcessor image = IJ.getImage().getProcessor();
  * RegionalExtremaAlgo algo = new RegionalExtremaByFlooding(); 
- * algo.setConnectivity(4);
  * algo.setExtremaType(ExtremaType.MAXIMA);
+ * algo.setConnectivity(4);
  * ImageProcessor result = algo.applyTo(image);
  * ImagePlus resPlus = new ImagePlus("Regional Extrema", result); 
  * resPlus.show(); 
