@@ -106,6 +106,13 @@ public class MorphologicalSegmentation implements PlugIn {
 	/** extended regional minima dynamic text field */
 	JTextField dynamicText;
 	
+	/** dams panel */
+	JPanel damsPanel = new JPanel();
+	/** checkbox to enable/disable the calculation of watershed dams */
+	JCheckBox damsCheckBox;
+	/** flag to select/deselect the calculation of watershed dams */
+	private boolean calculateDams = true;
+	
 	/** advanced options panel */
 	JPanel advancedOptionsPanel = new JPanel();
 	/** checkbox to enable/disable the advanced options */
@@ -227,8 +234,13 @@ public class MorphologicalSegmentation implements PlugIn {
 			dynamicText = new JTextField( "10", 5 );
 			dynamicPanel.add( dynamicLabel );
 			dynamicPanel.add( dynamicText );
-			dynamicPanel.setToolTipText( "Extended minima dynamic" );				
-				
+			dynamicPanel.setToolTipText( "Extended minima dynamic" );	
+			
+			// dams option
+			damsCheckBox = new JCheckBox( "Calculate dams", calculateDams );
+			damsCheckBox.setToolTipText( "Calculate watershed dams" );
+			damsPanel.add( damsCheckBox );
+							
 			// advanced options (connectivity + priority queue choices)
 			advancedOptionsCheckBox = new JCheckBox( "Advanced options", selectAdvancedOptions );
 			advancedOptionsCheckBox.setToolTipText( "Enable advanced options" );
@@ -314,6 +326,8 @@ public class MorphologicalSegmentation implements PlugIn {
 			segmentationPanel.setLayout( segmentationLayout );						
 						
 			segmentationPanel.add( dynamicPanel, segmentationConstraints );
+			segmentationConstraints.gridy++;
+			segmentationPanel.add( damsPanel, segmentationConstraints );
 			segmentationConstraints.gridy++;
 			segmentationPanel.add( advancedOptionsCheckBox, segmentationConstraints );
 			segmentationConstraints.gridy++;			
@@ -668,6 +682,9 @@ public class MorphologicalSegmentation implements PlugIn {
 						catch (InterruptedException ie)	{ /*IJ.log("interrupted");*/ }
 					}
 
+					// read dams flag
+					calculateDams = damsCheckBox.isSelected();
+					
 					// read gradient flag
 					applyGradient = gradientCheckBox.isSelected();
 
@@ -745,7 +762,8 @@ public class MorphologicalSegmentation implements PlugIn {
 					// Apply watershed		
 					IJ.log("Running watershed...");
 
-					ImageStack resultStack = Watershed.computeWatershed( imposedMinima, labeledMinima, connectivity, usePriorityQueue, true );
+					ImageStack resultStack = Watershed.computeWatershed( imposedMinima, labeledMinima, 
+							connectivity, usePriorityQueue, calculateDams );
 					if( null == resultStack )
 					{
 						IJ.log( "The segmentation was interrupted!" );
@@ -811,6 +829,7 @@ public class MorphologicalSegmentation implements PlugIn {
 	{
 		this.dynamicText.setEnabled( enabled );
 		this.dynamicLabel.setEnabled( enabled );
+		this.damsCheckBox.setEnabled( enabled );
 		this.advancedOptionsCheckBox.setEnabled( enabled );
 		//this.segmentButton.setEnabled( enabled );
 		this.overlayButton.setEnabled( enabled );
