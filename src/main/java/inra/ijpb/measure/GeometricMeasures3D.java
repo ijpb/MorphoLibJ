@@ -566,7 +566,7 @@ public class GeometricMeasures3D {
     // ====================================================
     // Utilitary functions 
 
-    private static int[] findAllLabels(ImageStack image) {
+    protected static int[] findAllLabels(ImageStack image) {
         int sizeX = image.getWidth();
         int sizeY = image.getHeight();
         int sizeZ = image.getSize();
