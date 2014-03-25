@@ -97,6 +97,14 @@ public class ExtendedMinAndMax3DPlugin implements PlugIn {
 
 	@Override
 	public void run(String arg) {
+		
+		if ( IJ.getVersion().compareTo("1.48a") < 0 )
+		{
+			IJ.error( "Regional Minima and Maxima", "ERROR: detected ImageJ version " + IJ.getVersion()  
+					+ ".\nThis plugin requires version 1.48a or superior, please update ImageJ!" );
+			return;
+		}
+		
 		ImagePlus imagePlus = IJ.getImage();
 		
 		if (imagePlus.getStackSize() == 1) {

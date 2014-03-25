@@ -39,6 +39,14 @@ implements PlugIn, ProgressListener, StatusListener {
 	 */
 	@Override
 	public void run(String arg) {
+		
+		if ( IJ.getVersion().compareTo("1.48a") < 0 )
+		{
+			IJ.error( "Morphological Filter 3D", "ERROR: detected ImageJ version " + IJ.getVersion()  
+					+ ".\nThis plugin requires version 1.48a or superior, please update ImageJ!" );
+			return;
+		}
+		
 		ImagePlus imagePlus = WindowManager.getCurrentImage();
 		if (imagePlus == null) {
 			IJ.error("No image", "Need at least one image to work");
