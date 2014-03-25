@@ -855,6 +855,13 @@ public class MorphologicalSegmentation implements PlugIn {
 	@Override
 	public void run(String arg0) 
 	{
+		if ( IJ.getVersion().compareTo("1.48a") < 0 )
+		{
+			IJ.error( "Morphological Segmentation", "ERROR: detected ImageJ version " + IJ.getVersion()  
+					+ ".\nMorphological Segmentation requires version 1.48a or superior, please update ImageJ!" );
+			return;
+		}
+			
 		// get current image
 		if (null == WindowManager.getCurrentImage())
 		{

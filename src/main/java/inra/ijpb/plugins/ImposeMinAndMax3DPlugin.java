@@ -93,6 +93,14 @@ public class ImposeMinAndMax3DPlugin implements PlugIn {
 	 */
 	@Override
 	public void run(String arg) {
+		
+		if ( IJ.getVersion().compareTo("1.48a") < 0 )
+		{
+			IJ.error( "Impose Min and Max 3D", "ERROR: detected ImageJ version " + IJ.getVersion()  
+					+ ".\nThis plugin requires version 1.48a or superior, please update ImageJ!" );
+			return;
+		}
+		
 		// Open a dialog to choose:
 		// - mask image
 		// - marker image
@@ -130,7 +138,7 @@ public class ImposeMinAndMax3DPlugin implements PlugIn {
 		Operation op = Operation.fromLabel(gd.getNextChoice());
 		int conn = connectivityValues[gd.getNextChoiceIndex()];
 		
-		// Extract image procesors
+		// Extract image processors
 		ImageStack refStack = refImage.getStack();
 		ImageStack markerStack = markerImage.getStack();
 		
