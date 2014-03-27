@@ -528,6 +528,8 @@ public class MorphologicalSegmentation implements PlugIn {
 			// display input image
 			inputImage.getWindow().setVisible( true );
 			
+			inputImage.setSlice( displayImage.getCurrentSlice() );
+			
 			// shut down executor service
 			exec.shutdownNow();
 		}
