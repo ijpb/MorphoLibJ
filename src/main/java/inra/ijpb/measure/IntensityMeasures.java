@@ -1,11 +1,8 @@
 package inra.ijpb.measure;
 
-import java.util.ArrayList;
-
-import ij.IJ;
 import ij.ImagePlus;
 import ij.measure.ResultsTable;
-import ij.process.ImageProcessor;
+
 
 /**
  * Class to facilitate the calculation of intensity measures by
@@ -14,10 +11,9 @@ import ij.process.ImageProcessor;
  * @author Ignacio Arganda-Carreras
  *
  */
-public class IntensityMeasures {
+public class IntensityMeasures extends LabeledVoxelsMeasure{
 
-	ArrayList<Double>[] objectVoxels;
-	int[] labels;
+	
 	
 	/**
 	 * Initialize the measurements by reading the input (grayscale) 
@@ -30,31 +26,7 @@ public class IntensityMeasures {
 			ImagePlus inputImage,
 			ImagePlus labelImage )
 	{
-		final int width = inputImage.getWidth();
-		final int height = inputImage.getHeight();
-
-		this.labels = GeometricMeasures3D.findAllLabels( labelImage.getImageStack() );
-		int numLabels = labels.length;
-
-		// initialize lists of voxels per object
-		objectVoxels = new ArrayList[ numLabels ];
-
-		for( int i=0; i<numLabels; i++ )
-			objectVoxels[ i ] = new ArrayList<Double>();
-		final long start = System.currentTimeMillis();		
-		
-		// read voxel intensities for each object
-		for( int z=1; z <= inputImage.getImageStackSize(); z++ )
-		{
-			final ImageProcessor grayIP = inputImage.getImageStack().getProcessor( z );
-			final ImageProcessor labelsIP = labelImage.getImageStack().getProcessor( z );
-
-			for( int x = 0; x<width; x++ )
-				for( int y = 0; y<height; y++ )
-					objectVoxels[(int) labelsIP.getf(x, y) ].add( (double) grayIP.getf(x, y) );
-		}
-		final long end = System.currentTimeMillis();
-		IJ.log("Reading voxels took " + (end-start) + " ms.");
+		super( inputImage, labelImage );
 	}
 	
 	/**
