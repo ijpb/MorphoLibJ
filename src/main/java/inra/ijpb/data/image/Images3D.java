@@ -66,4 +66,36 @@ public class Images3D {
 		image.updateAndDraw();
 	}
 	
+	public static final void replaceValue(ImagePlus image, double initialValue, double finalValue) 
+	{ 
+		if (image.getStackSize() == 1) 
+		{
+			ImageProcessor img = image.getProcessor();
+			for (int y = 0; y < img.getHeight(); y++)
+			{
+				for (int x = 0; x < img.getWidth(); x++)
+				{
+					if (img.getf(x, y) == initialValue) 
+					{
+						img.setf(x, y, (float) finalValue);
+					}
+				}
+			}
+		} else {
+			ImageStack img = image.getStack();
+			for (int z = 0; z < img.getSize(); z++)
+			{
+				for (int y = 0; y < img.getHeight(); y++)
+				{
+					for (int x = 0; x < img.getWidth(); x++)
+					{
+						if (img.getVoxel(x, y, z) == initialValue) 
+						{
+							img.setVoxel(x, y, z, finalValue);
+						}
+					}
+				}
+			}
+		}
+	}	
 }
