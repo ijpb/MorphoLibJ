@@ -23,11 +23,90 @@ import static java.lang.Math.toDegrees;
 /**
  * Provides a set of static methods to compute geometric measures in 3D binary
  * or label images.
+ * 
  * @author David Legland
  *
  */
 public class GeometricMeasures3D {
 
+	public final static ResultsTable volume(ImageStack labelImage, double[] resol) {
+		IJ.showStatus("Compute volume...");
+		int[] labels = findAllLabels(labelImage);
+		int nbLabels = labels.length;
+
+		double[] volumes = volume(labelImage, labels, resol);
+
+		// Create data table
+		ResultsTable table = new ResultsTable();
+		for (int i = 0; i < nbLabels; i++) {
+			table.incrementCounter();
+			table.addLabel(Integer.toString(labels[i]));
+			table.addValue("Volume", volumes[i]);
+		}
+
+		return table;
+	}
+	
+	public final static double[] volume(ImageStack labelImage, int[] labels, double[] resol) {
+        // create associative array to know index of each label
+		int nLabels = labels.length;
+        HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
+        for (int i = 0; i < nLabels; i++) {
+        	labelIndices.put(labels[i], i);
+        }
+
+        // pre-compute the volume of individual voxel
+        if (resol == null || resol.length < 3) {
+        	throw new IllegalArgumentException("Resolution must be a double array of length 3");
+        }
+        double voxelVolume = resol[0] * resol[1] * resol[2];
+        
+        // initialize result
+		double[] volumes = new double[nLabels];
+
+		// size of image
+		int sizeX = labelImage.getWidth();
+		int sizeY = labelImage.getHeight();
+		int sizeZ = labelImage.getSize();
+
+		// iterate on image voxel configurations
+		IJ.showStatus("Measure Volume...");
+        for (int z = 0; z < sizeZ; z++) {
+        	IJ.showProgress(z, sizeZ);
+        	for (int y = 0; y < sizeY; y++) {
+        		for (int x = 0; x < sizeX; x++) {
+        			int label = (int) labelImage.getVoxel(x, y, z);
+					// do not consider background
+					if (label == 0)
+						continue;
+					int labelIndex = labelIndices.get(label);
+        			volumes[labelIndex] += voxelVolume;
+        		}
+        	}
+        }
+        
+        return volumes;
+	}
+	
+	public final static double[] computeSphericity(double[] volumes, double[] surfaces) {
+		int n = volumes.length;
+		if (surfaces.length != n) {
+			throw new IllegalArgumentException("Volume and surface arrays must have the same length");
+		}
+		
+		// normalization constant such that sphere has sphericity equal to 1 
+		double c = 36 * Math.PI;
+
+		double[] sphericities = new double[n];
+		for (int i = 0; i < n; i++) {
+			double v = volumes[i];
+			double s = surfaces[i];
+			sphericities[i] = c * v * v / (s * s * s);
+		}
+		
+		return sphericities;
+	}
+	
 	/**
 	 * Computes the surface area of each label in the 3D image, using the
 	 * specified resolution, and the number of directions.
@@ -51,8 +130,7 @@ public class GeometricMeasures3D {
 	}
 
 	/**
-	 * Compute surface area for a each of the labels given in the "labels"
-	 * argument.
+	 * Compute surface area for each label given in the "labels" argument.
 	 */
 	public final static double[] surfaceAreaByLut(ImageStack image, int[] labels, double[] resol, int nDirs) {
         
@@ -568,7 +646,7 @@ public class GeometricMeasures3D {
     // ====================================================
     // Utilitary functions 
 
-    protected static int[] findAllLabels(ImageStack image) {
+    public final static int[] findAllLabels(ImageStack image) {
         int sizeX = image.getWidth();
         int sizeY = image.getHeight();
         int sizeZ = image.getSize();
