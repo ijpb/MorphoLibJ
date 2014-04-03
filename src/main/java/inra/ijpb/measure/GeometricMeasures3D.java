@@ -19,6 +19,8 @@ import static java.lang.Math.sqrt;
 import static java.lang.Math.hypot;
 import static java.lang.Math.atan2;
 import static java.lang.Math.toDegrees;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 
 /**
  * Provides a set of static methods to compute geometric measures in 3D binary
@@ -28,6 +30,90 @@ import static java.lang.Math.toDegrees;
  *
  */
 public class GeometricMeasures3D {
+
+	/**
+	 * Compute bounding box of each label in input stack and returns the result
+	 * as a ResultsTable.
+	 */
+	public final static ResultsTable boundingBox(ImageStack labelImage) {
+		int[] labels = findAllLabels(labelImage);
+		int nbLabels = labels.length;
+
+		double[][] boxes = boundingBox(labelImage, labels);
+
+		// Create data table
+		ResultsTable table = new ResultsTable();
+		for (int i = 0; i < nbLabels; i++) {
+			table.incrementCounter();
+			table.addLabel(Integer.toString(labels[i]));
+			table.addValue("XMin", boxes[i][0]);
+			table.addValue("XMax", boxes[i][1]);
+			table.addValue("YMin", boxes[i][2]);
+			table.addValue("YMax", boxes[i][3]);
+			table.addValue("ZMin", boxes[i][4]);
+			table.addValue("ZMax", boxes[i][5]);
+		}
+
+		return table;
+	}
+	
+	/**
+	 * Compute bounding box of each label in input stack and returns the result
+	 * as an array of double for each label.
+	 */
+	public final static double[][] boundingBox(ImageStack labelImage, int[] labels) {
+        // create associative array to know index of each label
+		int nLabels = labels.length;
+        HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
+        for (int i = 0; i < nLabels; i++) {
+        	labelIndices.put(labels[i], i);
+        }
+
+        // initialize result
+		double[][] boxes = new double[nLabels][6];
+		for (int i = 0; i < nLabels; i++) {
+			boxes[i][0] = Double.POSITIVE_INFINITY;
+			boxes[i][1] = Double.NEGATIVE_INFINITY;
+			boxes[i][2] = Double.POSITIVE_INFINITY;
+			boxes[i][3] = Double.NEGATIVE_INFINITY;
+			boxes[i][4] = Double.POSITIVE_INFINITY;
+			boxes[i][5] = Double.NEGATIVE_INFINITY;
+		}
+
+		
+		// size of image
+		int sizeX = labelImage.getWidth();
+		int sizeY = labelImage.getHeight();
+		int sizeZ = labelImage.getSize();
+
+		// iterate on image voxels to update bounding boxes
+		IJ.showStatus("Compute Bounding boxes");
+        for (int z = 0; z < sizeZ; z++) {
+        	IJ.showProgress(z, sizeZ);
+        	for (int y = 0; y < sizeY; y++) {
+        		for (int x = 0; x < sizeX; x++) {
+        			int label = (int) labelImage.getVoxel(x, y, z);
+					// do not consider background
+					if (label == 0)
+						continue;
+					int labelIndex = labelIndices.get(label);
+
+					// update bounding box of current label
+					boxes[labelIndex][0] = min(boxes[labelIndex][0], x);
+					boxes[labelIndex][1] = max(boxes[labelIndex][1], x);
+					boxes[labelIndex][2] = min(boxes[labelIndex][2], y);
+					boxes[labelIndex][3] = max(boxes[labelIndex][3], y);
+					boxes[labelIndex][4] = min(boxes[labelIndex][4], z);
+					boxes[labelIndex][5] = max(boxes[labelIndex][5], z);
+        		}
+        	}
+        }
+        
+		IJ.showStatus("");
+        return boxes;
+
+	}
+	
 
 	public final static ResultsTable volume(ImageStack labelImage, double[] resol) {
 		IJ.showStatus("Compute volume...");
@@ -44,6 +130,7 @@ public class GeometricMeasures3D {
 			table.addValue("Volume", volumes[i]);
 		}
 
+		IJ.showStatus("");
 		return table;
 	}
 	
@@ -69,7 +156,7 @@ public class GeometricMeasures3D {
 		int sizeY = labelImage.getHeight();
 		int sizeZ = labelImage.getSize();
 
-		// iterate on image voxel configurations
+		// iterate on image voxels
 		IJ.showStatus("Measure Volume...");
         for (int z = 0; z < sizeZ; z++) {
         	IJ.showProgress(z, sizeZ);
@@ -85,6 +172,7 @@ public class GeometricMeasures3D {
         	}
         }
         
+		IJ.showStatus("");
         return volumes;
 	}
 	
@@ -97,6 +185,7 @@ public class GeometricMeasures3D {
 		// normalization constant such that sphere has sphericity equal to 1 
 		double c = 36 * Math.PI;
 
+		// Compute sphericity of each label
 		double[] sphericities = new double[n];
 		for (int i = 0; i < n; i++) {
 			double v = volumes[i];
@@ -126,6 +215,7 @@ public class GeometricMeasures3D {
 			table.addValue("Surface", surfaces[i]);
 		}
 
+		IJ.showStatus("");
 		return table;
 	}
 
@@ -204,6 +294,7 @@ public class GeometricMeasures3D {
         	}
         }
         
+		IJ.showStatus("");
     	IJ.showProgress(1);
         return surfaces;
 	}
