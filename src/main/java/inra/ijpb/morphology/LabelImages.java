@@ -9,6 +9,7 @@ import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
 
 import java.awt.Color;
+import java.util.TreeSet;
 
 /**
  * Utility methods for label images (stored as 8-, 16- or 32-bits).
@@ -22,7 +23,7 @@ public class LabelImages {
 	 * Creates a binary 3D image that contains 255 for voxels that are 
 	 * boundaries between two labels.
 	 */
-	public final static ImageStack labelBoundaries(ImageStack stack) {
+	public static final ImageStack labelBoundaries(ImageStack stack) {
 		int sizeX = stack.getWidth();
 		int sizeY = stack.getHeight();
 		int sizeZ = stack.getSize();
@@ -56,7 +57,7 @@ public class LabelImages {
 	 * @param bgColor the background color
 	 * @return a new Color image
 	 */
-	public final static ImagePlus labelToRgb(ImagePlus imagePlus, byte[][] lut, Color bgColor) {
+	public static final ImagePlus labelToRgb(ImagePlus imagePlus, byte[][] lut, Color bgColor) {
 		ImagePlus resultPlus;
 		String newName = imagePlus.getShortTitle() + "-rgb";
 		
@@ -86,7 +87,7 @@ public class LabelImages {
 	 * @param bgColor the background color
 	 * @return a new instance of ColorProcessor
 	 */
-	public final static ColorProcessor labelToRgb(ImageProcessor image, byte[][] lut, Color bgColor) {
+	public static final ColorProcessor labelToRgb(ImageProcessor image, byte[][] lut, Color bgColor) {
 		int width = image.getWidth();
 		int height = image.getHeight();
 		
@@ -119,7 +120,7 @@ public class LabelImages {
 	 * @param bgColor the background color
 	 * @return a new instance of ImageStack containing color processors
 	 */
-	public final static ImageStack labelToRgb(ImageStack image, byte[][] lut, Color bgColor) {
+	public static final ImageStack labelToRgb(ImageStack image, byte[][] lut, Color bgColor) {
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		int sizeZ = image.getSize();
@@ -145,5 +146,42 @@ public class LabelImages {
 		}
 		
 		return result;
+	}
+	
+	/**
+	 * Replace all values specified in label array by the value 0. 
+	 * @param image a label 3D image
+	 * @param labels the list of values to remove 
+	 */
+	public static final void removeLabels(ImagePlus image, int[] labels) {
+		removeLabels(image.getStack(), labels);
+	}
+	
+	/**
+	 * Replace all values specified in label array by the value 0. 
+	 * @param image a label 3D image
+	 * @param labels the list of values to remove 
+	 */
+	public static final void removeLabels(ImageStack image, int[] labels) {
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		int sizeZ = image.getSize();
+		
+		TreeSet<Integer> labelSet = new TreeSet<Integer>();
+		for (int i = 0; i < labels.length; i++) {
+			labelSet.add(labels[i]);
+		}
+		
+		for (int z = 0; z < sizeZ; z++) {
+			for (int y = 0; y < sizeY; y++) {
+				for (int x = 0; x < sizeX; x++) {
+					int value = (int) image.getVoxel(x, y, z); 
+					if (value == 0)
+						continue;
+					if (labelSet.contains(value)) 
+						image.setVoxel(x, y, z, 0);
+				}
+			}
+		}
 	}
 }
