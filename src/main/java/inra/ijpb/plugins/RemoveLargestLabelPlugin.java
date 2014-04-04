@@ -5,7 +5,6 @@ package inra.ijpb.plugins;
 
 import ij.IJ;
 import ij.ImagePlus;
-import ij.ImageStack;
 import ij.plugin.PlugIn;
 import inra.ijpb.morphology.LabelImages;
 
@@ -23,9 +22,7 @@ public class RemoveLargestLabelPlugin implements PlugIn {
 		ImagePlus imagePlus = IJ.getImage();
 		
 		ImagePlus resultPlus = imagePlus.duplicate();
-		ImageStack stack = resultPlus.getStack();
-
-		LabelImages.removeLargestLabel(stack);
+		LabelImages.removeLargestLabel(resultPlus);
 		
 		// Display with same settings as original image
 		resultPlus.show();

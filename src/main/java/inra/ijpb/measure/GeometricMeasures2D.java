@@ -3,14 +3,13 @@
  */
 package inra.ijpb.measure;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.TreeSet;
-
+import static java.lang.Math.sqrt;
+import ij.IJ;
 import ij.measure.ResultsTable;
 import ij.process.ImageProcessor;
+import inra.ijpb.morphology.LabelImages;
 
-import static java.lang.Math.sqrt;
+import java.util.HashMap;
 
 /**
  * Provides a set of static methods to compute geometric measures such as area,
@@ -29,6 +28,48 @@ public class GeometricMeasures2D {
 
 	// ====================================================
     // Main processing functions 
+
+    /**
+	 * Computes the area for each particle in the label image. 
+	 */
+    public static double[] area(ImageProcessor image, int[] labels, double[] resol) {
+	    int width 	= image.getWidth();
+	    int height 	= image.getHeight();
+	
+        // create associative array to know index of each label
+		int nLabels = labels.length;
+        HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
+        for (int i = 0; i < nLabels; i++) {
+        	labelIndices.put(labels[i], i);
+        }
+
+        // pre-compute the area of individual voxel
+        if (resol == null || resol.length != 2) {
+        	throw new IllegalArgumentException("Resolution must be a double array of length 2");
+        }
+        double pixelArea = resol[0] * resol[1];
+        
+        // initialize result
+		double[] areas = new double[nLabels];
+	
+		// count all pixels belonging to the particle
+	    for (int y = 0; y < height; y++) {
+	        for (int x = 0; x < width; x++) {
+	        	int label = image.get(x, y);
+	        	if (label == 0)
+					continue;
+				int labelIndex = labelIndices.get(label);
+    			areas[labelIndex] ++;
+	        }
+	    }	
+	    
+	    // convert pixel count to areas
+	    for (int i = 0; i < areas.length; i++) {
+	    	areas[i] *= pixelArea;
+	    }
+	    
+	    return areas;
+	}
 
 	/**
 	 * Counts the number of pixel that composes the particle with given label. 
@@ -86,7 +127,7 @@ public class GeometricMeasures2D {
         // Check validity of parameters
         if (labelImage==null) return null;
         
-        int[] labels = findAllLabels(labelImage);
+        int[] labels = LabelImages.findAllLabels(labelImage);
         int nbLabels = labels.length;
 
         // Create data table
@@ -98,6 +139,7 @@ public class GeometricMeasures2D {
 
         for (int i = 0; i < nbLabels; i++) {
         	int label = labels[i];
+        	IJ.showStatus("Compute perimeter of label: " + label);
 
         	int area = particleArea(labelImage, label);
 
@@ -123,6 +165,7 @@ public class GeometricMeasures2D {
         	table.addValue("Circularity", circu);
         	table.addValue("Elong.", 1./circu);
         }
+    	IJ.showStatus("");
 
         return table;
     }
@@ -136,7 +179,7 @@ public class GeometricMeasures2D {
         // Check validity of parameters
         if (labelImage==null) return null;
         
-        int[] labels = findAllLabels(labelImage);
+        int[] labels = LabelImages.findAllLabels(labelImage);
         int nbLabels = labels.length;
 
         // Create data table
@@ -155,6 +198,7 @@ public class GeometricMeasures2D {
 
     	for (int i = 0; i < nbLabels; i++) {
         	int label = labels[i];
+        	IJ.showStatus("Compute perimeter of label: " + label);
         	
         	int area = particleArea(labelImage, label);
 
@@ -197,6 +241,7 @@ public class GeometricMeasures2D {
         	table.addValue("Circularity", circu);
         	table.addValue("Elong.", 1./circu);
         }
+    	IJ.showStatus("");
 
         return table;
     }
@@ -533,7 +578,7 @@ public class GeometricMeasures2D {
         int height = image.getHeight();
         
         // extract particle labels
-        int[] labels = findAllLabels(image);
+        int[] labels = LabelImages.findAllLabels(image);
         int nLabels = labels.length;
 
         // create associative array to know index of each label
@@ -628,32 +673,32 @@ public class GeometricMeasures2D {
     // ====================================================
     // Utility functions 
 
-    /**
-     * Computes all the unique labels existing in the image, excluding label 0
-     * (used for background). The result is sorted in ascend order.
-     */
-    private static int[] findAllLabels(ImageProcessor image) {
-        int width 	= image.getWidth();
-        int height 	= image.getHeight();
-        
-        TreeSet<Integer> labels = new TreeSet<Integer> ();
-        
-        // iterate on image pixels
-        for (int y = 0; y < height; y++) 
-            for (int x = 0; x < width; x++) 
-                labels.add(image.get(x, y));
-        
-        // remove 0 if it exists
-        if (labels.contains(0))
-            labels.remove(0);
-        
-        // convert to an array of integers
-        int[] array = new int[labels.size()];
-        Iterator<Integer> iterator = labels.iterator();
-        for (int i = 0; i < labels.size(); i++) 
-            array[i] = iterator.next();
-        
-        return array;
-    }
+//    /**
+//     * Computes all the unique labels existing in the image, excluding label 0
+//     * (used for background). The result is sorted in ascend order.
+//     */
+//    private static int[] findAllLabels(ImageProcessor image) {
+//        int width 	= image.getWidth();
+//        int height 	= image.getHeight();
+//        
+//        TreeSet<Integer> labels = new TreeSet<Integer> ();
+//        
+//        // iterate on image pixels
+//        for (int y = 0; y < height; y++) 
+//            for (int x = 0; x < width; x++) 
+//                labels.add(image.get(x, y));
+//        
+//        // remove 0 if it exists
+//        if (labels.contains(0))
+//            labels.remove(0);
+//        
+//        // convert to an array of integers
+//        int[] array = new int[labels.size()];
+//        Iterator<Integer> iterator = labels.iterator();
+//        for (int i = 0; i < labels.size(); i++) 
+//            array[i] = iterator.next();
+//        
+//        return array;
+//    }
 
 }

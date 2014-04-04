@@ -5,7 +5,6 @@ package inra.ijpb.plugins;
 
 import ij.IJ;
 import ij.ImagePlus;
-import ij.ImageStack;
 import ij.plugin.PlugIn;
 import inra.ijpb.morphology.LabelImages;
 
@@ -22,14 +21,7 @@ public class KeepLargestLabelPlugin implements PlugIn {
 	public void run(String arg0) {
 		ImagePlus imagePlus = IJ.getImage();
 		
-		ImagePlus resultPlus = imagePlus.duplicate();
-		
-		ImageStack result = LabelImages.keepLargestLabel(imagePlus.getStack());
-		
-		// create image plus for storing the result
-		String newName = imagePlus.getShortTitle() + "-largest";
-		resultPlus = new ImagePlus(newName, result);
-		resultPlus.copyScale(imagePlus);
+		ImagePlus resultPlus = LabelImages.keepLargestLabel(imagePlus);
 		
 		// Display with same settings as original image
 		resultPlus.show();

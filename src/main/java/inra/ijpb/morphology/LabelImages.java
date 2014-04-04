@@ -6,8 +6,10 @@ package inra.ijpb.morphology;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
+import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
+import inra.ijpb.measure.GeometricMeasures2D;
 import inra.ijpb.measure.GeometricMeasures3D;
 
 import java.awt.Color;
@@ -71,7 +73,7 @@ public class LabelImages {
 			ImageProcessor result = labelToRgb(image, lut, bgColor);
 			resultPlus = new ImagePlus(newName, result);
 		} else {
-			// process imaeg stack
+			// process image stack
 			ImageStack image = imagePlus.getStack();
 			ImageStack result = labelToRgb(image, lut, bgColor);
 			resultPlus = new ImagePlus(newName, result);
@@ -162,6 +164,32 @@ public class LabelImages {
 	
 	/**
 	 * Replace all values specified in label array by the value 0. 
+	 * @param image a label planar image
+	 * @param labels the list of values to remove 
+	 */
+	public static final void removeLabels(ImageProcessor image, int[] labels) {
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		
+		TreeSet<Integer> labelSet = new TreeSet<Integer>();
+		for (int i = 0; i < labels.length; i++) {
+			labelSet.add(labels[i]);
+		}
+		
+		for (int y = 0; y < sizeY; y++) {
+			for (int x = 0; x < sizeX; x++) {
+				int value = image.get(x, y); 
+				if (value == 0)
+					continue;
+				if (labelSet.contains(value)) 
+					image.set(x, y, 0);
+			}
+		}
+	}
+
+
+	/**
+	 * Replace all values specified in label array by the value 0. 
 	 * @param image a label 3D image
 	 * @param labels the list of values to remove 
 	 */
@@ -188,6 +216,56 @@ public class LabelImages {
 		}
 	}
 	
+	public static final ImagePlus keepLargestLabel(ImagePlus imagePlus) {
+		ImagePlus resultPlus;
+		String newName = imagePlus.getShortTitle() + "-largest";
+		
+		// Dispatch to appropriate function depending on dimension
+		if (imagePlus.getStackSize() == 1) {
+			// process planar image
+			ImageProcessor image = imagePlus.getProcessor();
+			ImageProcessor result = keepLargestLabel(image);
+			resultPlus = new ImagePlus(newName, result);
+		} else {
+			// process image stack
+			ImageStack image = imagePlus.getStack();
+			ImageStack result = keepLargestLabel(image);
+			resultPlus = new ImagePlus(newName, result);
+		}
+		
+		resultPlus.copyScale(imagePlus);
+		return resultPlus;
+	}
+	
+	/**
+	 * Returns a binary image that contains only the largest label.
+	 * @param image a binary image
+	 */
+	public static final ImageProcessor keepLargestLabel(ImageProcessor image) {
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+
+		ImageProcessor result = new ByteProcessor(sizeX, sizeY);
+		
+		// find the label of the largest particle
+		int[] labels = findAllLabels(image);
+		double[] areas = GeometricMeasures2D.area(image, labels, new double[]{1, 1});
+		int indMax = labels[indexOfMax(areas)];
+
+		// convert label image to binary image
+		for (int y = 0; y < sizeY; y++) {
+			for (int x = 0; x < sizeX; x++) {
+				int value = image.get(x, y); 
+				if (value == indMax)
+					result.set(x, y, 255);
+				else
+					result.set(x, y, 0);
+			}
+		}
+		
+		return result;
+	}
+	
 	/**
 	 * Returns a binary image that contains only the largest label.
 	 * @param image a binary image
@@ -199,11 +277,12 @@ public class LabelImages {
 		
 		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
 				
+		// find the label of the largest particle
 		int[] labels = findAllLabels(image);
-		double[] volumes = GeometricMeasures3D.volume(image, labels, new double[]{1, 1, 1});
-		
+		double[] volumes = GeometricMeasures3D.volume(image, labels, new double[]{1, 1, 1});		
 		int indMax = indexOfMax(volumes);
 		
+		// convert label image to binary image
 		for (int z = 0; z < sizeZ; z++) {
 			for (int y = 0; y < sizeY; y++) {
 				for (int x = 0; x < sizeX; x++) {
@@ -219,16 +298,44 @@ public class LabelImages {
 		return result;
 	}
 
+
+	public static final void removeLargestLabel(ImagePlus imagePlus) {
+		// Dispatch to appropriate function depending on dimension
+		if (imagePlus.getStackSize() == 1) {
+			removeLargestLabel(imagePlus.getProcessor());
+		} else {
+			removeLargestLabel(imagePlus.getStack());
+		}
+	}
+
+	public static final void removeLargestLabel(ImageProcessor image) {
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+
+		// find the label of the largest particle
+		int[] labels = findAllLabels(image);
+		double[] areas = GeometricMeasures2D.area(image, labels, new double[]{1, 1});
+		int indMax = labels[indexOfMax(areas)];
+		
+		// remove voxels belonging to the largest label
+		for (int y = 0; y < sizeY; y++) {
+			for (int x = 0; x < sizeX; x++) {
+				int value = image.get(x, y); 
+				if (value == indMax)
+					image.set(x, y, 0);
+			}
+		}
+	}
+
 	public static final void removeLargestLabel(ImageStack image) {
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		int sizeZ = image.getSize();
 		
+		// find the label of the largest particle
 		int[] labels = findAllLabels(image);
 		double[] volumes = GeometricMeasures3D.volume(image, labels, new double[]{1, 1, 1});
-		
 		int indMax = labels[indexOfMax(volumes)];
-		System.out.println("remove label: " + indMax);
 		
 		for (int z = 0; z < sizeZ; z++) {
 			for (int y = 0; y < sizeY; y++) {
@@ -282,4 +389,30 @@ public class LabelImages {
         return array;
     }
 
+    public final static int[] findAllLabels(ImageProcessor image) {
+        int sizeX = image.getWidth();
+        int sizeY = image.getHeight();
+        
+        TreeSet<Integer> labels = new TreeSet<Integer> ();
+        
+        // iterate on image pixels
+        for (int y = 0; y < sizeY; y++)  {
+        	IJ.showProgress(y, sizeY);
+        	for (int x = 0; x < sizeX; x++) 
+        		labels.add(image.get(x, y));
+        }
+        IJ.showProgress(1);
+        
+        // remove 0 if it exists
+        if (labels.contains(0))
+            labels.remove(0);
+        
+        // convert to array of integers
+        int[] array = new int[labels.size()];
+        Iterator<Integer> iterator = labels.iterator();
+        for (int i = 0; i < labels.size(); i++) 
+            array[i] = iterator.next();
+        
+        return array;
+    }
 }
