@@ -3,12 +3,15 @@
  */
 package inra.ijpb.morphology;
 
+import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
+import inra.ijpb.measure.GeometricMeasures3D;
 
 import java.awt.Color;
+import java.util.Iterator;
 import java.util.TreeSet;
 
 /**
@@ -184,4 +187,99 @@ public class LabelImages {
 			}
 		}
 	}
+	
+	/**
+	 * Returns a binary image that contains only the largest label.
+	 * @param image a binary image
+	 */
+	public static final ImageStack keepLargestLabel(ImageStack image) {
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		int sizeZ = image.getSize();
+		
+		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
+				
+		int[] labels = findAllLabels(image);
+		double[] volumes = GeometricMeasures3D.volume(image, labels, new double[]{1, 1, 1});
+		
+		int indMax = indexOfMax(volumes);
+		
+		for (int z = 0; z < sizeZ; z++) {
+			for (int y = 0; y < sizeY; y++) {
+				for (int x = 0; x < sizeX; x++) {
+					int value = (int) image.getVoxel(x, y, z); 
+					if (value == indMax)
+						result.setVoxel(x, y, z, 255);
+					else
+						result.setVoxel(x, y,  z, 0);
+				}
+			}
+		}
+		
+		return result;
+	}
+
+	public static final void removeLargestLabel(ImageStack image) {
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		int sizeZ = image.getSize();
+		
+		int[] labels = findAllLabels(image);
+		double[] volumes = GeometricMeasures3D.volume(image, labels, new double[]{1, 1, 1});
+		
+		int indMax = labels[indexOfMax(volumes)];
+		System.out.println("remove label: " + indMax);
+		
+		for (int z = 0; z < sizeZ; z++) {
+			for (int y = 0; y < sizeY; y++) {
+				for (int x = 0; x < sizeX; x++) {
+					int value = (int) image.getVoxel(x, y, z); 
+					if (value == indMax)
+						image.setVoxel(x, y, z, 0);
+				}
+			}
+		}
+	}
+
+	private static final int indexOfMax(double[] values) {
+		int indMax = -1;
+		double volumeMax = 0;
+		for (int i = 0; i < values.length; i++) {
+			if (values[i] > volumeMax) {
+				volumeMax = values[i];
+				indMax = i;
+			}
+		}
+		return indMax;
+	}
+	
+    public final static int[] findAllLabels(ImageStack image) {
+        int sizeX = image.getWidth();
+        int sizeY = image.getHeight();
+        int sizeZ = image.getSize();
+        
+        TreeSet<Integer> labels = new TreeSet<Integer> ();
+        
+        // iterate on image pixels
+        for (int z = 0; z < sizeZ; z++) {
+        	IJ.showProgress(z, sizeZ);
+        	for (int y = 0; y < sizeY; y++) 
+        		for (int x = 0; x < sizeX; x++) 
+        			labels.add((int) image.getVoxel(x, y, z));
+        }
+        IJ.showProgress(1);
+        
+        // remove 0 if it exists
+        if (labels.contains(0))
+            labels.remove(0);
+        
+        // convert to array of integers
+        int[] array = new int[labels.size()];
+        Iterator<Integer> iterator = labels.iterator();
+        for (int i = 0; i < labels.size(); i++) 
+            array[i] = iterator.next();
+        
+        return array;
+    }
+
 }

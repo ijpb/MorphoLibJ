@@ -5,6 +5,7 @@ import ij.ImagePlus;
 import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.process.ImageProcessor;
+import inra.ijpb.morphology.LabelImages;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,7 +44,7 @@ public class LabeledVoxelsMeasure {
 		
 		this.calibration = inputImage.getCalibration();
 
-		this.labels = GeometricMeasures3D.findAllLabels( labelImage.getImageStack() );
+		this.labels = LabelImages.findAllLabels( labelImage.getImageStack() );
 		int numLabels = labels.length;
 		
 		// create associative hash table to know the index of each label

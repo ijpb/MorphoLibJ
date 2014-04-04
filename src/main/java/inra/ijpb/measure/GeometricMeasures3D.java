@@ -3,24 +3,22 @@
  */
 package inra.ijpb.measure;
 
+import static java.lang.Math.atan2;
+import static java.lang.Math.hypot;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static java.lang.Math.sqrt;
+import static java.lang.Math.toDegrees;
 import ij.IJ;
 import ij.ImageStack;
 import ij.measure.ResultsTable;
+import inra.ijpb.morphology.LabelImages;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.TreeSet;
 
 import Jama.Matrix;
 import Jama.SingularValueDecomposition;
-
-import static java.lang.Math.sqrt;
-import static java.lang.Math.hypot;
-import static java.lang.Math.atan2;
-import static java.lang.Math.toDegrees;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
 
 /**
  * Provides a set of static methods to compute geometric measures in 3D binary
@@ -36,7 +34,7 @@ public class GeometricMeasures3D {
 	 * as a ResultsTable.
 	 */
 	public final static ResultsTable boundingBox(ImageStack labelImage) {
-		int[] labels = findAllLabels(labelImage);
+		int[] labels = LabelImages.findAllLabels(labelImage);
 		int nbLabels = labels.length;
 
 		double[][] boxes = boundingBox(labelImage, labels);
@@ -117,7 +115,7 @@ public class GeometricMeasures3D {
 
 	public final static ResultsTable volume(ImageStack labelImage, double[] resol) {
 		IJ.showStatus("Compute volume...");
-		int[] labels = findAllLabels(labelImage);
+		int[] labels = LabelImages.findAllLabels(labelImage);
 		int nbLabels = labels.length;
 
 		double[] volumes = volume(labelImage, labels, resol);
@@ -202,7 +200,7 @@ public class GeometricMeasures3D {
 	 */
 	public final static ResultsTable surfaceArea(ImageStack labelImage, double[] resol, int nDirs) {
 		IJ.showStatus("Count labels...");
-		int[] labels = findAllLabels(labelImage);
+		int[] labels = LabelImages.findAllLabels(labelImage);
 		int nbLabels = labels.length;
 
 		double[] surfaces = surfaceAreaByLut(labelImage, labels, resol, nDirs);
@@ -555,7 +553,7 @@ public class GeometricMeasures3D {
         int sizeZ = image.getSize();
         
         // extract particle labels
-        int[] labels = findAllLabels(image);
+        int[] labels = LabelImages.findAllLabels(image);
         int nLabels = labels.length;
         
         // create associative array to know index of each label
@@ -737,32 +735,4 @@ public class GeometricMeasures3D {
     // ====================================================
     // Utilitary functions 
 
-    public final static int[] findAllLabels(ImageStack image) {
-        int sizeX = image.getWidth();
-        int sizeY = image.getHeight();
-        int sizeZ = image.getSize();
-        
-        TreeSet<Integer> labels = new TreeSet<Integer> ();
-        
-        // iterate on image pixels
-        for (int z = 0; z < sizeZ; z++) {
-        	IJ.showProgress(z, sizeZ);
-        	for (int y = 0; y < sizeY; y++) 
-        		for (int x = 0; x < sizeX; x++) 
-        			labels.add((int) image.getVoxel(x, y, z));
-        }
-        IJ.showProgress(1);
-        
-        // remove 0 if it exists
-        if (labels.contains(0))
-            labels.remove(0);
-        
-        // convert to array of integers
-        int[] array = new int[labels.size()];
-        Iterator<Integer> iterator = labels.iterator();
-        for (int i = 0; i < labels.size(); i++) 
-            array[i] = iterator.next();
-        
-        return array;
-    }
 }

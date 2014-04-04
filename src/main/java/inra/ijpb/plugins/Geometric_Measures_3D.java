@@ -9,6 +9,7 @@ import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
 import inra.ijpb.measure.GeometricMeasures3D;
+import inra.ijpb.morphology.LabelImages;
 
 /**
  * Plugin for measuring geometric quantities such as volume, surface area 
@@ -102,7 +103,7 @@ public class Geometric_Measures_3D implements PlugIn {
         	resol[2] = cal.pixelDepth;
         }
         
-        int[] labels = GeometricMeasures3D.findAllLabels(image);
+        int[] labels = LabelImages.findAllLabels(image);
         double[] volumes = GeometricMeasures3D.volume(image, labels, resol);
         double[] surfaces = GeometricMeasures3D.surfaceAreaByLut(image, labels, resol, nDirs);
         double[] sphericities = GeometricMeasures3D.computeSphericity(volumes, surfaces);
