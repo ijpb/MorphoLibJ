@@ -5,45 +5,40 @@ package inra.ijpb.plugins;
 
 import ij.IJ;
 import ij.ImagePlus;
-import ij.plugin.filter.PlugInFilter;
+import ij.ImageStack;
+import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
 import inra.ijpb.morphology.GeodesicReconstruction;
+import inra.ijpb.morphology.GeodesicReconstruction3D;
 
 /**
- * Plugin for removing borders in 8-bits grayscale or binary image.
+ * Plugin for removing borders in 8-bits grayscale or binary 2D or 3D image.
  */
-public class KillBordersPlugin implements PlugInFilter {
+public class KillBordersPlugin implements PlugIn {
 
-	ImagePlus imagePlus;
-	
-	/* (non-Javadoc)
-	 * @see ij.plugin.filter.PlugInFilter#setup(java.lang.String, ij.ImagePlus)
-	 */
 	@Override
-	public int setup(String arg, ImagePlus imp) {
-		if (imp == null) {
-			IJ.noImage();
-			return DONE;
+	public void run(String arg0) {
+		ImagePlus imagePlus = IJ.getImage();
+		
+		String newName = imagePlus.getShortTitle() + "-killBorders";
+		
+		ImagePlus resultPlus;
+		if (imagePlus.getStackSize() > 1) {
+			ImageStack stack = imagePlus.getStack();
+			ImageStack result = GeodesicReconstruction3D.killBorders(stack);
+			resultPlus = new ImagePlus(newName, result);
+			
+		} else {
+			ImageProcessor image = imagePlus.getProcessor();
+			ImageProcessor result = GeodesicReconstruction.killBorders(image);
+			resultPlus = new ImagePlus(newName, result);
 		}
 		
-		this.imagePlus = imp;
-		return DOES_ALL;
-	}
-
-	/* (non-Javadoc)
-	 * @see ij.plugin.filter.PlugInFilter#run(ij.process.ImageProcessor)
-	 */
-	@Override
-	public void run(ImageProcessor ip) {
-		ImageProcessor recProc = GeodesicReconstruction.killBorders(ip);
-		String newName = createResultImageName(imagePlus);
-		
-		ImagePlus resultPlus = new ImagePlus(newName, recProc);
 		resultPlus.copyScale(imagePlus);
 		resultPlus.show();
-	}
-
-	private static String createResultImageName(ImagePlus baseImage) {
-		return baseImage.getShortTitle() + "-killBorders";
+		
+		if (imagePlus.getStackSize() > 1) {
+			resultPlus.setSlice(imagePlus.getSlice());
+		}
 	}
 }
