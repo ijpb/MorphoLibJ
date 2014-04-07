@@ -50,7 +50,9 @@ public class BinaryImages {
 	 */
 	public static final ImageProcessor keepLargestRegion(ImageProcessor image) {
 		ImageProcessor labelImage = ConnectedComponents.computeLabels(image, 4, 16);
-		return binarize(LabelImages.keepLargestLabel(labelImage));
+		ImageProcessor result = binarize(LabelImages.keepLargestLabel(labelImage));
+		result.setLut(image.getLut());
+		return result;
 	}
 	
 	/**
@@ -59,7 +61,9 @@ public class BinaryImages {
 	 */
 	public static final ImageStack keepLargestRegion(ImageStack image) {
 		ImageStack labelImage = ConnectedComponents.computeLabels(image, 6, 16);
-		return binarize(LabelImages.keepLargestLabel(labelImage));
+		ImageStack result = binarize(LabelImages.keepLargestLabel(labelImage));
+		result.setColorModel(image.getColorModel());
+		return result;
 	}
 
 
@@ -86,7 +90,10 @@ public class BinaryImages {
 	public static final ImageProcessor removeLargestRegion(ImageProcessor image) {
 		ImageProcessor labelImage = ConnectedComponents.computeLabels(image, 4, 16);
 		LabelImages.removeLargestLabel(labelImage);
-		return binarize(labelImage);
+		ImageProcessor result = binarize(labelImage);
+		result.setLut(image.getLut());
+		return result;
+
 	}
 
 	/**
@@ -96,7 +103,9 @@ public class BinaryImages {
 	public static final ImageStack removeLargestRegion(ImageStack image) {
 		ImageStack labelImage = ConnectedComponents.computeLabels(image, 6, 16);
 		LabelImages.removeLargestLabel(labelImage);
-		return binarize(labelImage);
+		ImageStack result = binarize(labelImage);
+		result.setColorModel(image.getColorModel());
+		return result;
 	}
 	
 	/**

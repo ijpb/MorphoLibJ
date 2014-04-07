@@ -136,7 +136,7 @@ implements ExtendedPlugInFilter, DialogListener, ProgressListener, StatusListene
 		// Create structuring element of the given size
 		Strel strel = shape.fromRadius(radius);
 		
-//		strel.showProgress(true);
+		// add some listeners
 		strel.addProgressListener(this);
 		strel.addStatusListener(this);
 		
@@ -147,6 +147,7 @@ implements ExtendedPlugInFilter, DialogListener, ProgressListener, StatusListene
 		
 		// Execute core of the plugin
 		result = op.apply(image, strel);
+		result.setLut(image.getLut());
 
     	if (previewing) {
     		// Fill up the values of original image with values of the result
@@ -156,8 +157,6 @@ implements ExtendedPlugInFilter, DialogListener, ProgressListener, StatusListene
     			image.setf(i, result.getf(i));
     		}
     		image.resetMinAndMax();
-    		if (image.isInvertedLut())
-    			image.invertLut();
         }
 	}
 	
