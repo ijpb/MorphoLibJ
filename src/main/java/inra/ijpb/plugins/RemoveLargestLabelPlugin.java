@@ -9,6 +9,11 @@ import ij.plugin.PlugIn;
 import inra.ijpb.morphology.LabelImages;
 
 /**
+ * Removes all the labels in a 2D/3D image but the largest one. 
+ * The result is displayed in a new ImagePlus. 
+ * This can be used to automatically remove regions that are assumed to be
+ * irrelevant (e.g. background label).
+ * 
  * @author David Legland
  *
  */

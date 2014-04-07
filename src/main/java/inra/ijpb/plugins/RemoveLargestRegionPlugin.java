@@ -9,6 +9,9 @@ import ij.plugin.PlugIn;
 import inra.ijpb.binary.BinaryImages;
 
 /**
+ * Removes the largest region of a binary 2D or 3D image. 
+ * Displays the result in a new ImagePlus.
+ * 
  * @author David Legland
  *
  */

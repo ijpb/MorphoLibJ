@@ -11,12 +11,18 @@ import inra.ijpb.morphology.LabelImages;
 
 /**
  * A collection of static methods for operating on binary images (2D/3D).
+ * Some of the methods need the LabelImages class. 
  * 
  * @author David Legland
  *
  */
 public class BinaryImages {
 
+	/**
+	 * Returns a binary image that contains only the largest region.
+	 * 
+	 * @param imagePlus an instance of imagePlus that contains a binary image
+	 */
 	public static final ImagePlus keepLargestRegion(ImagePlus imagePlus) {
 		ImagePlus resultPlus;
 		String newName = imagePlus.getShortTitle() + "-largest";
@@ -57,6 +63,12 @@ public class BinaryImages {
 	}
 
 
+	/**
+	 * Returns a binary image in which the largest region has been replaced by
+	 * background. Works for both 2D and 3D images.
+	 * 
+	 * @param imagePlus an instance of imagePlus that contains a binary image
+	 */
 	public static final void removeLargestRegion(ImagePlus imagePlus) {
 		// Dispatch to appropriate function depending on dimension
 		if (imagePlus.getStackSize() == 1) {
@@ -67,12 +79,20 @@ public class BinaryImages {
 		
 	}
 
+	/**
+	 * Returns a binary image in which the largest region has been replaced by
+	 * the background value.
+	 */
 	public static final ImageProcessor removeLargestRegion(ImageProcessor image) {
 		ImageProcessor labelImage = ConnectedComponents.computeLabels(image, 4, 16);
 		LabelImages.removeLargestLabel(labelImage);
 		return binarize(labelImage);
 	}
 
+	/**
+	 * Returns a binary image in which the largest region has been replaced by
+	 * the background value.
+	 */
 	public static final ImageStack removeLargestRegion(ImageStack image) {
 		ImageStack labelImage = ConnectedComponents.computeLabels(image, 6, 16);
 		LabelImages.removeLargestLabel(labelImage);

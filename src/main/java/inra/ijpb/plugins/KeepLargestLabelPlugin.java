@@ -9,6 +9,10 @@ import ij.plugin.PlugIn;
 import inra.ijpb.morphology.LabelImages;
 
 /**
+ * Removes all the labels in a 2D/3D image but the largest one. 
+ * The result is displayed in a new ImagePlus.
+ * This can be used to automatically select the region of interest within the image. 
+ * 
  * @author David Legland
  *
  */

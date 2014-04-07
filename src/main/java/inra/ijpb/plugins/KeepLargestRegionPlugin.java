@@ -9,7 +9,10 @@ import ij.plugin.PlugIn;
 import inra.ijpb.binary.BinaryImages;
 
 /**
- * @author David Legland
+ * Removes all the regions in a binary 2D or 3D image but the largest one. 
+ * This can be used to automatically select the main structure of interest
+ * in the image. 
+ * Displays the result in a new ImagePlus.
  *
  */
 public class KeepLargestRegionPlugin implements PlugIn {

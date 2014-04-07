@@ -13,6 +13,8 @@ import ij.plugin.PlugIn;
 import inra.ijpb.morphology.LabelImages;
 
 /**
+ * Removes all labels that touch the border, and replace them with value 0.
+ * 
  * @author David Legland
  *
  */
