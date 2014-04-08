@@ -3,10 +3,13 @@
  */
 package inra.ijpb.binary;
 
+import java.util.ArrayList;
+
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
+import inra.ijpb.measure.GeometricMeasures2D;
 import inra.ijpb.morphology.LabelImages;
 
 /**
@@ -18,6 +21,33 @@ import inra.ijpb.morphology.LabelImages;
  */
 public class BinaryImages {
 
+	public static final ImageProcessor areaOpening(ImageProcessor image, int nPixelMin) {
+		// Labeling
+		ImageProcessor labelImage = ConnectedComponents.computeLabels(image, 4, 16);
+		
+		// compute area of each label
+		int[] labels = LabelImages.findAllLabels(labelImage);
+		int[] areas = GeometricMeasures2D.pixelCount(labelImage, labels);
+		
+		// find labels with sufficient area
+		ArrayList<Integer> labelsToKeep = new ArrayList<Integer>(labels.length);
+		for (int i = 0; i < labels.length; i++) {
+			if (areas[i] >= nPixelMin) {
+				labelsToKeep.add(labels[i]);
+			}
+		}
+		
+		// Convert array list into int array
+		int[] labels2 = new int[labelsToKeep.size()];
+		for (int i = 0; i < labelsToKeep.size(); i++) {
+			labels2[i] = labelsToKeep.get(i);
+		}
+		
+		// keep only necessary labels and binarize
+		return binarize(LabelImages.keepLabels(labelImage, labels2));
+	}
+	
+	
 	/**
 	 * Returns a binary image that contains only the largest region.
 	 * 

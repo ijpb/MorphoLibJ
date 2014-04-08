@@ -155,11 +155,22 @@ public class LabelImages {
 	
 	/**
 	 * Replace all values specified in label array by the value 0. 
+	 * This method changes directly the values within the image.
+	 * 
 	 * @param image a label 3D image
 	 * @param labels the list of values to remove 
 	 */
-	public static final void removeLabels(ImagePlus image, int[] labels) {
-		removeLabels(image.getStack(), labels);
+	public static final void removeLabels(ImagePlus imagePlus, int[] labels) {
+		// Dispatch to appropriate function depending on dimension
+		if (imagePlus.getStackSize() == 1) {
+			// process planar image
+			ImageProcessor image = imagePlus.getProcessor();
+			removeLabels(image, labels);
+		} else {
+			// process image stack
+			ImageStack image = imagePlus.getStack();
+			removeLabels(image, labels);
+		}
 	}
 	
 	/**
@@ -216,6 +227,102 @@ public class LabelImages {
 		}
 	}
 	
+	/**
+	 * Creates a new image containing only the specified labels.
+	 *  
+	 * @param image a label planar image
+	 * @param labels the list of values to keep 
+	 */
+	public static final ImagePlus keepLabels(ImagePlus imagePlus, int[] labels) {
+		ImagePlus resultPlus;
+		String newName = imagePlus.getShortTitle() + "-keepLabels";
+		
+		// Dispatch to appropriate function depending on dimension
+		if (imagePlus.getStackSize() == 1) {
+			// process planar image
+			ImageProcessor image = imagePlus.getProcessor();
+			ImageProcessor result = keepLabels(image, labels);
+			resultPlus = new ImagePlus(newName, result);
+		} else {
+			// process image stack
+			ImageStack image = imagePlus.getStack();
+			ImageStack result = keepLabels(image, labels);
+			resultPlus = new ImagePlus(newName, result);
+		}
+		
+		resultPlus.copyScale(imagePlus);
+		return resultPlus;
+	}
+
+	/**
+	 * Creates a new image containing only the specified labels.
+	 *  
+	 * @param image a label planar image
+	 * @param labels the list of values to keep 
+	 */
+	public static final ImageProcessor keepLabels(ImageProcessor image, int[] labels) {
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		
+		ImageProcessor result = image.createProcessor(sizeX,  sizeY);
+		
+		TreeSet<Integer> labelSet = new TreeSet<Integer>();
+		for (int i = 0; i < labels.length; i++) {
+			labelSet.add(labels[i]);
+		}
+		
+		for (int y = 0; y < sizeY; y++) {
+			for (int x = 0; x < sizeX; x++) {
+				int value = image.get(x, y); 
+				if (value == 0)
+					continue;
+				if (labelSet.contains(value)) 
+					result.set(x, y, value);
+			}
+		}
+		
+		return result;
+	}
+
+
+	/**
+	 * Creates a new image containing only the specified labels.
+	 *  
+	 * @param image a label 3D image
+	 * @param labels the list of values to keep 
+	 */
+	public static final ImageStack keepLabels(ImageStack image, int[] labels) {
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		int sizeZ = image.getSize();
+		
+		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, image.getBitDepth());
+		
+		TreeSet<Integer> labelSet = new TreeSet<Integer>();
+		for (int i = 0; i < labels.length; i++) {
+			labelSet.add(labels[i]);
+		}
+		
+		for (int z = 0; z < sizeZ; z++) {
+			for (int y = 0; y < sizeY; y++) {
+				for (int x = 0; x < sizeX; x++) {
+					int value = (int) image.getVoxel(x, y, z); 
+					if (value == 0)
+						continue;
+					if (labelSet.contains(value)) 
+						result.setVoxel(x, y, z, value);
+				}
+			}
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Returns a binary image that contains only the largest label.
+	 * 
+	 * @param image an instance if ImagePlus containing a binary image
+	 */
 	public static final ImagePlus keepLargestLabel(ImagePlus imagePlus) {
 		ImagePlus resultPlus;
 		String newName = imagePlus.getShortTitle() + "-largest";

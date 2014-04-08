@@ -30,9 +30,37 @@ public class GeometricMeasures2D {
     // Main processing functions 
 
     /**
-	 * Computes the area for each particle in the label image. 
+	 * Computes the area for each particle in the label image, taking into account image resolution.
+	 * @see pixelCount(ij.process.ImageProcessor, int[])
 	 */
-    public static double[] area(ImageProcessor image, int[] labels, double[] resol) {
+    public static final double[] area(ImageProcessor image, int[] labels, double[] resol) {
+        // pre-compute the area of individual voxel
+        if (resol == null || resol.length != 2) {
+        	throw new IllegalArgumentException("Resolution must be a double array of length 2");
+        }
+        double pixelArea = resol[0] * resol[1];
+        
+        // initialize result
+		int nLabels = labels.length;
+		double[] areas = new double[nLabels];
+
+		// First count the number of pixels in each region
+	    int[] counts = pixelCount(image, labels);
+
+	    // convert pixel count to areas
+	    for (int i = 0; i < areas.length; i++) {
+	    	areas[i] = counts[i] * pixelArea;
+	    }
+	    
+	    return areas;
+	}
+
+    /**
+	 * Computes the number of pixels composing each particle in the label image.
+	 * @see area(ij.process.ImageProcessor, int[], double[])
+	 */
+    public static final int[] pixelCount(ImageProcessor image, int[] labels) {
+    	// image size
 	    int width 	= image.getWidth();
 	    int height 	= image.getHeight();
 	
@@ -43,14 +71,8 @@ public class GeometricMeasures2D {
         	labelIndices.put(labels[i], i);
         }
 
-        // pre-compute the area of individual voxel
-        if (resol == null || resol.length != 2) {
-        	throw new IllegalArgumentException("Resolution must be a double array of length 2");
-        }
-        double pixelArea = resol[0] * resol[1];
-        
         // initialize result
-		double[] areas = new double[nLabels];
+		int[] counts = new int[nLabels];
 	
 		// count all pixels belonging to the particle
 	    for (int y = 0; y < height; y++) {
@@ -59,22 +81,18 @@ public class GeometricMeasures2D {
 	        	if (label == 0)
 					continue;
 				int labelIndex = labelIndices.get(label);
-    			areas[labelIndex] ++;
+				counts[labelIndex]++;
 	        }
 	    }	
 	    
-	    // convert pixel count to areas
-	    for (int i = 0; i < areas.length; i++) {
-	    	areas[i] *= pixelArea;
-	    }
-	    
-	    return areas;
+	    return counts;
 	}
+
 
 	/**
 	 * Counts the number of pixel that composes the particle with given label. 
 	 */
-    public static int particleArea(ImageProcessor image, int label) {
+    public static final int particleArea(ImageProcessor image, int label) {
 	    int width 	= image.getWidth();
 	    int height 	= image.getHeight();
 	
@@ -97,7 +115,7 @@ public class GeometricMeasures2D {
      * @param resol the spatial resolution
      * @return a data table containing the perimeter of each labeled particle 
      */
-	public static ResultsTable croftonPerimeter(ImageProcessor labelImage,
+	public static final ResultsTable croftonPerimeter(ImageProcessor labelImage,
 			double[] resol, int nDirs) {
         if (nDirs == 2)
         	return croftonPerimeter_D2(labelImage, resol);
@@ -111,7 +129,7 @@ public class GeometricMeasures2D {
      * Computes porosity and perimeter density of binary image.  
      * 
      */
-	public static ResultsTable perimeterDensity(ImageProcessor image,
+	public static final ResultsTable perimeterDensity(ImageProcessor image,
 			double[] resol, int nDirs) {
         if (nDirs == 2)
         	return perimeterDensity_D2(image, resol);
@@ -122,7 +140,7 @@ public class GeometricMeasures2D {
     /**
      * Computes perimeter of each label using Crofton method with 2 directions.  
      */
-    private static ResultsTable croftonPerimeter_D2(ImageProcessor labelImage, 
+    private static final ResultsTable croftonPerimeter_D2(ImageProcessor labelImage, 
     		double[] resol) {
         // Check validity of parameters
         if (labelImage==null) return null;
@@ -174,7 +192,7 @@ public class GeometricMeasures2D {
      * Computes perimeter of each label using Crofton method with 4 directions
      * (orthogonal and diagonal).  
      */
-    private static ResultsTable croftonPerimeter_D4(ImageProcessor labelImage, 
+    private static final ResultsTable croftonPerimeter_D4(ImageProcessor labelImage, 
     		double[] resol) {
         // Check validity of parameters
         if (labelImage==null) return null;
@@ -250,7 +268,7 @@ public class GeometricMeasures2D {
 	 * Computes perimeter density of the binary image using Crofton method with 2
 	 * directions (horizontal and vertical).
 	 */
-    private static ResultsTable perimeterDensity_D2(ImageProcessor image, 
+    private static final ResultsTable perimeterDensity_D2(ImageProcessor image, 
     		double[] resol) {
 
         // Create data table
@@ -313,7 +331,7 @@ public class GeometricMeasures2D {
 	 * Computes perimeter density of the binary image using Crofton method with 4
 	 * directions (orthogonal and diagonal).
 	 */
-    private static ResultsTable perimeterDensity_D4(ImageProcessor image, 
+    private static final ResultsTable perimeterDensity_D4(ImageProcessor image, 
     		double[] resol) {
 
         // Create data table
@@ -383,7 +401,7 @@ public class GeometricMeasures2D {
      * Counts the number of transitions in the horizontal direction, by counting
      * +1 when the structure touches image edges.
      */
-    private static int countTransitionsD00(ImageProcessor image, int label, boolean countBorder) {
+    private static final int countTransitionsD00(ImageProcessor image, int label, boolean countBorder) {
         int width 	= image.getWidth();
         int height 	= image.getHeight();
     
@@ -420,7 +438,7 @@ public class GeometricMeasures2D {
      * Counts the number of transitions in the horizontal direction, by counting
      * 1 when structure touches image edges.
      */
-    private static int countTransitionsD90(ImageProcessor image, int label, boolean countBorder) {
+    private static final int countTransitionsD90(ImageProcessor image, int label, boolean countBorder) {
         int width 	= image.getWidth();
         int height 	= image.getHeight();
     
@@ -455,7 +473,7 @@ public class GeometricMeasures2D {
      * Counts the number of transitions in the upper diagonal direction, by counting
      * 1 when structure touches image edges.
      */
-    private static int countTransitionsD45(ImageProcessor image, int label, boolean countBorder) {
+    private static final int countTransitionsD45(ImageProcessor image, int label, boolean countBorder) {
         int width 	= image.getWidth();
         int height 	= image.getHeight();
         int nDiags 	= width + height - 1;
@@ -502,7 +520,7 @@ public class GeometricMeasures2D {
      * Counts the number of transitions in the lower diagonal direction, by counting
      * 1 when structure touches image edges.
      */
-    private static int countTransitionsD135(ImageProcessor image, int label, boolean countBorder) {
+    private static final int countTransitionsD135(ImageProcessor image, int label, boolean countBorder) {
         int width 	= image.getWidth();
         int height 	= image.getHeight();
         int nDiags 	= width + height - 1;
@@ -544,7 +562,7 @@ public class GeometricMeasures2D {
         return count;
     }
     
-    private static double[] computeDirectionWeightsD4(double[] resol) {
+    private static final double[] computeDirectionWeightsD4(double[] resol) {
     	
     	// resolution in each direction
     	double d1 = resol[0];
