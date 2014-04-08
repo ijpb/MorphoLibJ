@@ -478,11 +478,11 @@ public class GeodesicReconstructionByErosion3DGray8Scanning implements GeodesicR
 					minValue = currentValue;
 					
 					// Iterate over the 3 'lower' neighbors of current voxel
-					if (x < sizeX - 2) 
+					if (x < sizeX - 1) 
 						minValue = min(minValue, slice[y * sizeX + x + 1] & 0x00FF);
-					if (y < sizeY - 2) 
+					if (y < sizeY - 1) 
 						minValue = min(minValue, slice[(y + 1) * sizeX + x] & 0x00FF);
-					if (z < sizeZ - 2) {
+					if (z < sizeZ - 1) {
 						slice2 = (byte[]) stack[z + 1];
 						minValue = min(minValue, slice2[y * sizeX + x] & 0x00FF);
 					}
@@ -588,11 +588,11 @@ public class GeodesicReconstructionByErosion3DGray8Scanning implements GeodesicR
 					minValue = currentValue;
 					
 					// Iterate over the 3 'lower' neighbors of current voxel
-					if (x < sizeX - 2) 
+					if (x < sizeX - 1) 
 						minValue = min(minValue, slice[y * sizeX + x + 1] & 0x00FF);
-					if (y < sizeY - 2) 
+					if (y < sizeY - 1) 
 						minValue = min(minValue, slice[(y + 1) * sizeX + x] & 0x00FF);
-					if (z < sizeZ - 2) {
+					if (z < sizeZ - 1) {
 						slice2 = (byte[]) stack[z + 1];
 						minValue = min(minValue, slice2[y * sizeX + x] & 0x00FF);
 					}

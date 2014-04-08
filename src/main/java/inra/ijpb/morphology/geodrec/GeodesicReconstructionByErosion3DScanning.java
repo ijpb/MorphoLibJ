@@ -435,11 +435,11 @@ public class GeodesicReconstructionByErosion3DScanning implements
 					minValue = currentValue;
 					
 					// Iterate over the 3 'lower' neighbors of current voxel
-					if (x < sizeX - 2) 
+					if (x < sizeX - 1) 
 						minValue = min(minValue, result.get(x + 1, y, z));
-					if (y < sizeY - 2) 
+					if (y < sizeY - 1) 
 						minValue = min(minValue, result.get(x, y + 1, z));
-					if (z < sizeZ - 2) {
+					if (z < sizeZ - 1) {
 						minValue = min(minValue, result.get(x, y, z + 1));
 					}
 
@@ -535,11 +535,11 @@ public class GeodesicReconstructionByErosion3DScanning implements
 					minValue = currentValue;
 					
 					// Iterate over the 3 'lower' neighbors of current voxel
-					if (x < sizeX - 2) 
+					if (x < sizeX - 1) 
 						minValue = min(minValue, result.getValue(x + 1, y, z));
-					if (y < sizeY - 2) 
+					if (y < sizeY - 1) 
 						minValue = min(minValue, result.getValue(x, y + 1, z));
-					if (z < sizeZ - 2) {
+					if (z < sizeZ - 1) {
 						minValue = min(minValue, result.getValue(x, y, z + 1));
 					}
 

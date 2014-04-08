@@ -49,7 +49,7 @@ public abstract class GeodesicReconstruction3D {
 		ImageStack result = reconstructByDilation(markers, stack);
 		
 		// removes result from original image
-		for (int z = 1; z < depth-1; z++) {
+		for (int z = 0; z < depth; z++) {
 			for (int y = 0; y < height; y++) {
 				for (int x = 0; x < width; x++) {
 					double val = stack.getVoxel(x, y, z)-result.getVoxel(x, y, z);
