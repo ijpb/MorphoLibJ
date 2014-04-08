@@ -54,6 +54,11 @@ public class Surface_Area implements PlugIn {
     public void run(String args) {
         ImagePlus imagePlus = IJ.getImage();
         
+		if (imagePlus.getStackSize() == 1) {
+			IJ.error("Requires a Stack");
+			return;
+		}
+		
         // create the dialog, with operator options
         GenericDialog gd = new GenericDialog("Surface Area");
         gd.addChoice("Number of Directions:", dirNumberLabels, dirNumberLabels[1]);

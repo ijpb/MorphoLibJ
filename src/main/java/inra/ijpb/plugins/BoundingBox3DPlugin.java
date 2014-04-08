@@ -23,6 +23,11 @@ public class BoundingBox3DPlugin implements PlugIn {
     public void run(String args) {
         ImagePlus imagePlus = IJ.getImage();
 
+		if (imagePlus.getStackSize() == 1) {
+			IJ.error("Requires a Stack");
+			return;
+		}
+		
         ResultsTable table = GeometricMeasures3D.boundingBox(imagePlus.getStack());
         
  		// create string for indexing results

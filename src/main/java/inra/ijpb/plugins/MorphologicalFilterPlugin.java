@@ -8,6 +8,7 @@ import ij.gui.GenericDialog;
 import ij.plugin.filter.ExtendedPlugInFilter;
 import ij.plugin.filter.PlugInFilterRunner;
 import ij.process.ByteProcessor;
+import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.event.ProgressEvent;
 import inra.ijpb.event.ProgressListener;
@@ -147,7 +148,8 @@ implements ExtendedPlugInFilter, DialogListener, ProgressListener, StatusListene
 		
 		// Execute core of the plugin
 		result = op.apply(image, strel);
-		result.setLut(image.getLut());
+		if (!(result instanceof ColorProcessor))
+			result.setLut(image.getLut());
 
     	if (previewing) {
     		// Fill up the values of original image with values of the result

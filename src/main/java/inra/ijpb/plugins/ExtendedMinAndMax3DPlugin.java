@@ -109,6 +109,7 @@ public class ExtendedMinAndMax3DPlugin implements PlugIn {
 		
 		if (imagePlus.getStackSize() == 1) {
 			IJ.error("Requires a Stack");
+			return;
 		}
 		
 		ImageStack stack = imagePlus.getStack();

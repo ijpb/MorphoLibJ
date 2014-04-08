@@ -34,7 +34,12 @@ public class InertiaEllipsoidPlugin implements PlugIn {
      */
     public void run(String args) {
         ImagePlus imagePlus = IJ.getImage();
-        
+    
+		if (imagePlus.getStackSize() == 1) {
+			IJ.error("Requires a Stack");
+			return;
+		}
+		
 //        System.out.println("start inertia ellipsoid plugin");
         ImageStack image = imagePlus.getStack();
         ResultsTable table;
