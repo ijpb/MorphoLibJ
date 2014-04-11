@@ -9,6 +9,11 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
+import inra.ijpb.binary.distmap.ChamferDistance;
+import inra.ijpb.binary.distmap.ChamferDistance3x3Float;
+import inra.ijpb.binary.distmap.ChamferDistance3x3Short;
+import inra.ijpb.binary.distmap.ChamferDistance5x5Float;
+import inra.ijpb.binary.distmap.ChamferDistance5x5Short;
 import inra.ijpb.measure.GeometricMeasures2D;
 import inra.ijpb.morphology.LabelImages;
 
@@ -21,6 +26,71 @@ import inra.ijpb.morphology.LabelImages;
  */
 public class BinaryImages {
 
+	/**
+	 * Computes the distance map from a binary image processor. Distance is
+	 * computed for each foreground (white) pixel, as the chamfer distance to
+	 * the nearest background (black) pixel. This method uses default 5x5
+	 * weights, and normalizes the resulting map. Result is given in a new
+	 * instance of ShortProcessor.
+	 */
+	public static final ImageProcessor distanceMap(ImageProcessor image) {
+		return distanceMap(image, new short[]{5, 7, 11}, true);
+	}
+	
+	/**
+	 * Computes the distance map from a binary image processor, by specifying
+	 * weights and normalization.
+	 *  
+	 * Distance is computed for each foreground (white) pixel, as the 
+	 * chamfer distance to the nearest background (black) pixel.
+	 * Result is given in a new instance of ShortProcessor.
+	 */
+	public static final ImageProcessor distanceMap(ImageProcessor image, short[] weights, boolean normalize) {
+		ChamferDistance algo;
+		switch (weights.length) {
+		case 2:
+			algo = new ChamferDistance3x3Short(weights, normalize);
+			break;
+		case 3:
+			algo = new ChamferDistance5x5Short(weights, normalize);
+			break;
+		default:
+			throw new IllegalArgumentException(
+					"Requires weight array with 2 or 3 elements");
+		}
+		
+		return algo.distanceMap(image);
+	}
+	
+	/**
+	 * Computes the distance map from a binary image processor, by specifying
+	 * weights and normalization. 
+	 * 
+	 * Distance is computed for each foreground (white) pixel, as the 
+	 * chamfer distance to the nearest background (black) pixel.
+	 * Result is given in a new instance of FloatProcessor.
+	 */
+	public static final ImageProcessor distanceMap(ImageProcessor image, float[] weights, boolean normalize) {
+		ChamferDistance algo;
+		switch (weights.length) {
+		case 2:
+			algo = new ChamferDistance3x3Float(weights, normalize);
+			break;
+		case 3:
+			algo = new ChamferDistance5x5Float(weights, normalize);
+			break;
+		default:
+			throw new IllegalArgumentException(
+					"Requires weight array with 2 or 3 elements");
+		}
+		
+		return algo.distanceMap(image);
+	}
+
+	/**
+	 * Applies area opening on a binary image: creates a new binary image that
+	 * contains only particle with at least the specified number of pixels.
+	 */
 	public static final ImageProcessor areaOpening(ImageProcessor image, int nPixelMin) {
 		// Labeling
 		ImageProcessor labelImage = ConnectedComponents.computeLabels(image, 4, 16);

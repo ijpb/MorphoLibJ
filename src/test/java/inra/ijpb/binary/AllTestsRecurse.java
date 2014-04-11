@@ -1,4 +1,4 @@
-package inra.ijpb;
+package inra.ijpb.binary;
 
 
 import org.junit.runner.RunWith;
@@ -7,9 +7,8 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	// generic classes
-	inra.ijpb.binary.AllTestsRecurse.class,
-	inra.ijpb.measure.AllTests.class,
-	inra.ijpb.morphology.AllTestsRecurse.class,
+	AllTests.class,
+	inra.ijpb.binary.distmap.AllTests.class,
 	})
 public class AllTestsRecurse {
   //nothing
