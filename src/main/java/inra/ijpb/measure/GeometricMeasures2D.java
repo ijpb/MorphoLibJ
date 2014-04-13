@@ -9,7 +9,9 @@ import ij.measure.ResultsTable;
 import ij.process.ImageProcessor;
 import inra.ijpb.morphology.LabelImages;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * Provides a set of static methods to compute geometric measures such as area,
@@ -117,69 +119,29 @@ public class GeometricMeasures2D {
      */
 	public static final ResultsTable croftonPerimeter(ImageProcessor labelImage,
 			double[] resol, int nDirs) {
-        if (nDirs == 2)
-        	return croftonPerimeter_D2(labelImage, resol);
-        else if (nDirs == 4)
-        	return croftonPerimeter_D4(labelImage, resol);
-        else
-        	throw new IllegalArgumentException("Number of directions must be 2 or 4");
-    }
-    
-    /**
-     * Computes porosity and perimeter density of binary image.  
-     * 
-     */
-	public static final ResultsTable perimeterDensity(ImageProcessor image,
-			double[] resol, int nDirs) {
-        if (nDirs == 2)
-        	return perimeterDensity_D2(image, resol);
-        else 
-        	return perimeterDensity_D4(image, resol);
-    }
-
-    /**
-     * Computes perimeter of each label using Crofton method with 2 directions.  
-     */
-    private static final ResultsTable croftonPerimeter_D2(ImageProcessor labelImage, 
-    		double[] resol) {
         // Check validity of parameters
         if (labelImage==null) return null;
         
         int[] labels = LabelImages.findAllLabels(labelImage);
         int nbLabels = labels.length;
 
+        double[] areas = area(labelImage, labels, resol);
+        double[] perims = croftonPerimeter(labelImage, labels, resol, nDirs);
+        
         // Create data table
         ResultsTable table = new ResultsTable();
-        double perim;
-                                     
-        double d1  = resol[0];
-        double d2  = resol[1];
-
         for (int i = 0; i < nbLabels; i++) {
         	int label = labels[i];
-        	IJ.showStatus("Compute perimeter of label: " + label);
-
-        	int area = particleArea(labelImage, label);
-
-        	// Count number of transitions in each direction
-        	int n1 = countTransitionsD00(labelImage, label, true); 
-        	int n2 = countTransitionsD90(labelImage, label, true);
-        	
-        	// Compute perimeter
-        	perim = (n1 * d2 + n2 * d1) * Math.PI / 4.0;
         	
         	table.incrementCounter();
-        	table.addValue("Label", label);
+        	table.addLabel(Integer.toString(label));
         	
-        	if (debug) {
-        		table.addValue("N1", n1);
-        		table.addValue("N2", n2);
-        	}
-        	
-        	table.addValue("Perimeter", perim);
+        	table.addValue("Area", areas[i]);
+        	table.addValue("Perimeter", perims[i]);
 
         	// Also compute circularity (ensure value is between 0 and 1)
-        	double circu = Math.min(4 * Math.PI * area / (perim * perim), 1);
+        	double p = perims[i];
+        	double circu = Math.min(4 * Math.PI * areas[i] / (p * p), 1);
         	table.addValue("Circularity", circu);
         	table.addValue("Elong.", 1./circu);
         }
@@ -188,22 +150,201 @@ public class GeometricMeasures2D {
         return table;
     }
     
+	/**
+	 * Compute surface area for each label given in the "labels" argument.
+	 */
+	public final static double[] croftonPerimeter(ImageProcessor image, int[] labels, double[] resol, int nDirs) {
+        
+        // create associative array to know index of each label
+		int nLabels = labels.length;
+        HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
+        for (int i = 0; i < nLabels; i++) {
+        	labelIndices.put(labels[i], i);
+        }
+
+        // pre-compute LUT corresponding to resolution and number of directions
+		IJ.showStatus("Compute LUT...");
+		double[] lut = computePerimeterLut(resol, nDirs);
+
+		// initialize result
+		double[] perimeters = new double[nLabels];
+
+		// size of image
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		
+		// for each configuration of 2x2 pixels, we identify the labels
+		ArrayList<Integer> localLabels = new ArrayList<Integer>(8);
+		
+		// iterate on image pixel configurations
+		IJ.showStatus("Measure perimeter...");
+		for (int y = 0; y < sizeY - 1; y++) {
+			IJ.showProgress(y, sizeY);
+			for (int x = 0; x < sizeX - 1; x++) {
+
+				// identify labels in current config
+				localLabels.clear();
+				for (int y2 = y; y2 <= y + 1; y2++) {
+					for (int x2 = x; x2 <= x + 1; x2++) {
+						int label = image.get(x2, y2);
+						// do not consider background
+						if (label == 0)
+							continue;
+						// keep only one instance of each label
+						if (!localLabels.contains(label))
+							localLabels.add(label);
+					}
+				}
+
+				// if no label in local configuration contribution is zero
+				if (localLabels.size() == 0) {
+					continue;
+				}
+
+				// For each label, compute binary confi
+				for (int label : localLabels) {
+					// Compute index of local configuration
+					int index = 0;
+					index += image.get(x, y) == label ? 1 : 0;
+					index += image.get(x + 1, y) == label ? 2 : 0;
+					index += image.get(x, y + 1) == label ? 4 : 0;
+					index += image.get(x + 1, y + 1) == label ? 8 : 0;
+
+					// retriev label index from label value
+					int labelIndex = labelIndices.get(label);
+					
+					// update measure for current label
+					perimeters[labelIndex] += lut[index];
+				}
+			}
+		}
+        
+		IJ.showStatus("");
+    	IJ.showProgress(1);
+        return perimeters;
+	}
+	
+	/**
+	 * Computes the Look-up table that is used to compute perimeter.
+	 */
+	private final static double[] computePerimeterLut(double[] resol, int nDirs) {
+		// distances between a pixel and its neighbors.
+		// di refer to orthogonal neighbors
+		// dij refer to diagonal neighbors 
+		double d1 = resol[0];
+		double d2 = resol[1];
+		double d12 = Math.hypot(resol[0], resol[1]);
+		double area = d1 * d2;
+
+    	// weights associated to each direction, computed only for four directions
+    	double[] weights = null;
+    	if (nDirs == 4)
+    		weights = computeDirectionWeightsD4(resol);
+ 
+		// initialize output array (16 configurations in 2D)
+		final int nConfigs = 16;
+		double[] tab = new double[nConfigs];
+
+		// loop for each tile configuration
+		for (int i = 0; i < nConfigs; i++) {
+		    // create the binary image representing the 2x2 tile
+		    boolean[][] im = new boolean[2][2];
+		    im[0][0] = (i & 1) > 0;
+		    im[0][1] = (i & 2) > 0;
+		    im[1][0] = (i & 4) > 0;
+		    im[1][1] = (i & 8) > 0;
+		    
+	        // contributions for isothetic directions
+		    double ke1, ke2;
+		    
+		    // contributions for diagonal directions
+            double ke12;
+            
+            // iterate over the 4 pixels within the configuration
+		    for (int y = 0; y < 2; y++) {
+			    for (int x = 0; x < 2; x++) {
+			    	if (!im[y][x])
+			    		continue;
+			    	
+			    	// divides by two to convert intersection count to diameter
+					ke1 = im[y][1 - x] ? 0 : (area / d1) / 2;
+					ke2 = im[1 - y][x] ? 0 : (area / d2) / 2;
+				    
+				    if (nDirs == 2) {
+				    	// Count only orthogonal directions
+				    	// divides by two for average, and by two for multiplicity
+			            tab[i] += (ke1 + ke2) / 4;
+			            
+				    } else if (nDirs == 4) {
+				    	// compute contribution of diagonal directions
+						ke12 = im[1 - y][1 - x] ? 0 : (area / d12) / 2;
+			            
+			            // Decomposition of Crofton formula on 4 directions, 
+						// taking into account multiplicities
+						tab[i] += ((ke1 / 2) * weights[0] 
+								+ (ke2 / 2) * weights[1]
+								+ ke12 * weights[2]);
+				    } 
+			    }
+			    
+		    }
+		    
+		    // Add a normalisation constant
+		    tab[i] *= Math.PI;
+		}
+		
+		return tab;		
+	}
+	 
+    /**
+     * Computes perimeter of each label using Crofton method with 2 directions.  
+     */
+    public static final double[] croftonPerimeterD2(ImageProcessor labelImage, 
+    		int[] labels, double[] resol) {
+        // Check validity of parameters
+        if (labelImage==null) return null;
+        
+        int nbLabels = labels.length;
+
+        // initialize result
+        double[] perimeters = new double[nbLabels];
+                            
+        // image resolution in each orthogonal and diagonal directions
+        double d1  = resol[0];
+        double d2  = resol[1];
+
+        for (int i = 0; i < nbLabels; i++) {
+        	int label = labels[i];
+        	IJ.showStatus("Compute perimeter of label: " + label);
+
+        	// Count number of transitions in each direction
+        	int n1 = countTransitionsD00(labelImage, label, true); 
+        	int n2 = countTransitionsD90(labelImage, label, true);
+        	
+        	// Compute perimeter
+        	perimeters[i] = (n1 * d2 + n2 * d1) * Math.PI / 4.0;
+        	
+        }
+    	IJ.showStatus("");
+
+        return perimeters;
+    }
+    
     /**
      * Computes perimeter of each label using Crofton method with 4 directions
      * (orthogonal and diagonal).  
      */
-    private static final ResultsTable croftonPerimeter_D4(ImageProcessor labelImage, 
-    		double[] resol) {
+    public static final double[] croftonPerimeterD4(ImageProcessor labelImage, 
+    		int[] labels,  double[] resol) {
         // Check validity of parameters
         if (labelImage==null) return null;
         
-        int[] labels = LabelImages.findAllLabels(labelImage);
         int nbLabels = labels.length;
 
-        // Create data table
-        ResultsTable table = new ResultsTable();
-        double perim;
-                                     
+        // initialize result
+        double[] perimeters = new double[nbLabels];
+                            
+        // image resolution in each orthogonal and diagonal directions
         double d1  = resol[0];
         double d2  = resol[1];
         double d12 = Math.hypot(d1, d2);
@@ -218,8 +359,6 @@ public class GeometricMeasures2D {
         	int label = labels[i];
         	IJ.showStatus("Compute perimeter of label: " + label);
         	
-        	int area = particleArea(labelImage, label);
-
         	// Count number of transitions in each direction
         	int n1 = countTransitionsD00(labelImage, label, true); 
         	int n2 = countTransitionsD90(labelImage, label, true);
@@ -228,41 +367,38 @@ public class GeometricMeasures2D {
         	
         	// Compute weighted diameters and multiplies by associated
         	// direction weights 
-        	double wd1 = n1 / d1  * weights[0];
-        	double wd2 = n2 / d2  * weights[1];
-        	double wd3 = n3 / d12 * weights[2];
-        	double wd4 = n4 / d12 * weights[3];
+        	double wd1 = n1 * (vol / d1) * weights[0];
+        	double wd2 = n2 * (vol / d2) * weights[1];
+        	double wd3 = n3 * (vol / d12) * weights[2];
+        	double wd4 = n4 * (vol / d12) * weights[3];
 
         	// Compute perimeter
-        	perim = (wd1 + wd2 + wd3 + wd4) * vol * Math.PI / 2;
-        	
-        	// Add new row in table
-        	table.incrementCounter();
-        	table.addValue("Label", label);
-        	
-        	// area
-        	table.addValue("Area", area);
+        	perimeters[i] = (wd1 + wd2 + wd3 + wd4) * Math.PI / 2;
         	
         	if (debug) {
         		// Display individual counts
-        		table.addValue("N1", n1);
-        		table.addValue("N2", n2);
-        		table.addValue("N3", n3);
-        		table.addValue("N4", n4);
+        		System.out.println(String.format(Locale.ENGLISH, "dir 1, n=%d, wd=%5.2f", n1, wd1));
+        		System.out.println(String.format(Locale.ENGLISH, "dir 2, n=%d, wd=%5.2f", n2, wd2));
+        		System.out.println(String.format(Locale.ENGLISH, "dir 3, n=%d, wd=%5.2f", n3, wd3));
+        		System.out.println(String.format(Locale.ENGLISH, "dir 4, n=%d, wd=%5.2f", n4, wd4));
         	}
-        	
-        	// Display perimeter value
-        	table.addValue("Perimeter", perim);
-        	
-        	// Also compute circularity (ensure value is between 0 and 1)
-        	double circu = Math.min(4 * Math.PI * area / (perim * perim), 1);
-        	table.addValue("Circularity", circu);
-        	table.addValue("Elong.", 1./circu);
         }
     	IJ.showStatus("");
 
-        return table;
+        return perimeters;
     }
+
+	/**
+	 * Computes porosity and perimeter density of binary image.  
+	 * 
+	 */
+	public static final ResultsTable perimeterDensity(ImageProcessor image,
+			double[] resol, int nDirs) {
+	    if (nDirs == 2)
+	    	return perimeterDensity_D2(image, resol);
+	    else 
+	    	return perimeterDensity_D4(image, resol);
+	}
 
 	/**
 	 * Computes perimeter density of the binary image using Crofton method with 2
@@ -358,10 +494,10 @@ public class GeometricMeasures2D {
 
     	// Compute weighted diameters and multiplies by associated
     	// direction weights 
-    	double wd1 = n1 / d1  * weights[0];
-    	double wd2 = n2 / d2  * weights[1];
-    	double wd3 = n3 / d12 * weights[2];
-    	double wd4 = n4 / d12 * weights[3];
+    	double wd1 = (n1 / d1)  * weights[0];
+    	double wd2 = (n2 / d2)  * weights[1];
+    	double wd3 = (n3 / d12) * weights[2];
+    	double wd4 = (n4 / d12) * weights[3];
 
     	// Compute perimeter
     	perim = (wd1 + wd2 + wd3 + wd4) * pixelArea * Math.PI / 2;
@@ -562,6 +698,13 @@ public class GeometricMeasures2D {
         return count;
     }
     
+    /**
+     * Computes a set of weights for the four main directions (orthogonal plus
+     * diagonal) in discrete image. The sum of the weights equals 1.
+     * 
+     * @param resol an array with the resolution in x and y directions
+     * @return the set of normalized weights
+     */
     private static final double[] computeDirectionWeightsD4(double[] resol) {
     	
     	// resolution in each direction

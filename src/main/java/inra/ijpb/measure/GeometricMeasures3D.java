@@ -381,14 +381,12 @@ public class GeometricMeasures3D {
 //		    c7 = areas(10) * 2;
 //		end
 
-		// Create Look-up Table
-	
 		// initialize output array (256 configurations in 3D)
-		double[] tab = new double[256];
-
+		int nbConfigs = 256;
+		double[] tab = new double[nbConfigs];
 
 		// loop for each tile configuration
-		for (int i = 0; i < 256; i++) {
+		for (int i = 0; i < nbConfigs; i++) {
 		    // create the binary image representing the 2x2x2 tile
 		    boolean[][][] im = new boolean[2][2][2];
 		    im[0][0][0] = (i & 1) > 0;
@@ -412,9 +410,6 @@ public class GeometricMeasures3D {
 				    for (int x = 0; x < 2; x++) {
 				    	if (!im[z][y][x])
 				    		continue;
-//					    if (!im[z][y][1-x]) ke1 += vol/d1/2;
-//					    if (!im[z][1-y][x]) ke2 += vol/d2/2;
-//					    if (!im[1-z][y][x]) ke3 += vol/d3/2;
 					    ke1 = im[z][y][1-x] ? 0 : vol/d1/2;
 					    ke2 = im[z][1-y][x] ? 0 : vol/d2/2;
 					    ke3 = im[1-z][y][x] ? 0 : vol/d3/2;
@@ -426,16 +421,12 @@ public class GeometricMeasures3D {
 				            tab[i] += (ke1 + ke2 + ke3) / 3;
 				            
 					    } else if (nDirs == 13) {
-//						    if (!im[z][1-y][1-x]) ke4 += vol/d12/2;
-//						    if (!im[1-z][y][1-x]) ke5 += vol/d13/2;
-//						    if (!im[1-z][1-y][x]) ke6 += vol/d23/2;
+					    	// diagonals that share a square face
 						    ke4 = im[z][1-y][1-x] ? 0 : vol/d12/2;
 						    ke5 = im[1-z][y][1-x] ? 0 : vol/d13/2;
 						    ke6 = im[1-z][1-y][x] ? 0 : vol/d23/2;
 				            
-				            // diagonals of cube
-
-//				            if (!im[1-z][1-y][1-x]) ke7 += 1./2*vol/d123; 
+				            // diagonal with opposite vertex of the cube
 				            ke7 = im[1-z][1-y][1-x] ? 0 : vol/d123/2; 
 				            
 				            // Decomposition of Crofton formula on 13 directions
