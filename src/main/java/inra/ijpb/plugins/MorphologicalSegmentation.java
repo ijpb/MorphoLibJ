@@ -37,6 +37,7 @@ import ij.gui.Overlay;
 import ij.gui.StackWindow;
 import ij.plugin.PlugIn;
 import inra.ijpb.binary.ConnectedComponents;
+import inra.ijpb.data.image.ColorImages;
 import inra.ijpb.data.image.Images3D;
 import inra.ijpb.morphology.MinimaAndMaxima3D;
 import inra.ijpb.morphology.Morphology;
@@ -595,7 +596,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			else if( displayOption.equals( "Overlayed dams" ) )
 			{
 				final ImagePlus lines = getWatershedLines( resultImage );
-				final ImagePlus overlayed = BinaryOverlayPlugin.binaryOverlay( inputImage, lines, Color.red ) ;
+				final ImagePlus overlayed = ColorImages.binaryOverlay( inputImage, lines, Color.red ) ;
 				overlayed.setTitle( title + "-overlayed-dams" + ext );				
 				overlayed.show();
 				overlayed.setSlice( this.displayImage.getSlice() );

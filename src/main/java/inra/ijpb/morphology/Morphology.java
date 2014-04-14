@@ -9,10 +9,10 @@ import ij.ImageStack;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
+import inra.ijpb.data.image.ColorImages;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * Collection of static methods for morphological filters,
@@ -172,7 +172,7 @@ public class Morphology {
 	 */
 	private static ImageProcessor dilationRGB(ImageProcessor image, Strel strel) {
 		// extract channels and allocate memory for result
-		Collection<ByteProcessor> channels = splitChannels(image);
+		Collection<ByteProcessor> channels = ColorImages.splitChannels(image);
 		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
 		
 		// Process each channel individually
@@ -180,7 +180,7 @@ public class Morphology {
 			res.add(strel.dilation(channel));
 		}
 		
-		return mergeChannels(res);
+		return ColorImages.mergeChannels(res);
 	}
 
 	public static ImageStack dilation(ImageStack stack, Strel3D strel) {
@@ -215,7 +215,7 @@ public class Morphology {
 	 */
 	private static ImageProcessor erosionRGB(ImageProcessor image, Strel strel) {
 		// extract channels and allocate memory for result
-		Collection<ByteProcessor> channels = splitChannels(image);
+		Collection<ByteProcessor> channels = ColorImages.splitChannels(image);
 		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
 		
 		// Process each channel individually
@@ -223,7 +223,7 @@ public class Morphology {
 			res.add(strel.erosion(channel));
 		}
 		
-		return mergeChannels(res);
+		return ColorImages.mergeChannels(res);
 	}
 	
 	public static ImageStack erosion(ImageStack stack, Strel3D strel) {
@@ -255,7 +255,7 @@ public class Morphology {
 	 */
 	private static ImageProcessor openingRGB(ImageProcessor image, Strel strel) {
 		// extract channels and allocate memory for result
-		Collection<ByteProcessor> channels = splitChannels(image);
+		Collection<ByteProcessor> channels = ColorImages.splitChannels(image);
 		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
 		
 		// Process each channel individually
@@ -263,7 +263,7 @@ public class Morphology {
 			res.add(strel.opening(channel));
 		}
 		
-		return mergeChannels(res);
+		return ColorImages.mergeChannels(res);
 	}
 	
 	public static ImageStack opening(ImageStack stack, Strel3D strel) {
@@ -295,7 +295,7 @@ public class Morphology {
 	 */
 	private static ImageProcessor closingRGB(ImageProcessor image, Strel strel) {
 		// extract channels and allocate memory for result
-		Collection<ByteProcessor> channels = splitChannels(image);
+		Collection<ByteProcessor> channels = ColorImages.splitChannels(image);
 		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
 		
 		// Process each channel individually
@@ -303,7 +303,7 @@ public class Morphology {
 			res.add(strel.closing(channel));
 		}
 		
-		return mergeChannels(res);
+		return ColorImages.mergeChannels(res);
 	}
 	
 	public static ImageStack closing(ImageStack stack, Strel3D strel) {
@@ -363,7 +363,7 @@ public class Morphology {
 	 */
 	private static ImageProcessor whiteTopHatRGB(ImageProcessor image, Strel strel) {
 		// extract channels and allocate memory for result
-		Collection<ByteProcessor> channels = splitChannels(image);
+		Collection<ByteProcessor> channels = ColorImages.splitChannels(image);
 		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
 		
 		// Process each channel individually
@@ -371,7 +371,7 @@ public class Morphology {
 			res.add(whiteTopHat(channel, strel));
 		}
 		
-		return mergeChannels(res);
+		return ColorImages.mergeChannels(res);
 	}
 	
 	public static ImageStack whiteTopHat(ImageStack stack, Strel3D strel) {
@@ -449,7 +449,7 @@ public class Morphology {
 	 */
 	private static ImageProcessor blackTopHatRGB(ImageProcessor image, Strel strel) {
 		// extract channels and allocate memory for result
-		Collection<ByteProcessor> channels = splitChannels(image);
+		Collection<ByteProcessor> channels = ColorImages.splitChannels(image);
 		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
 		
 		// Process each channel individually
@@ -457,7 +457,7 @@ public class Morphology {
 			res.add(blackTopHat(channel, strel));
 		}
 		
-		return mergeChannels(res);
+		return ColorImages.mergeChannels(res);
 	}
 	
 	public static ImageStack blackTopHat(ImageStack stack, Strel3D strel) {
@@ -537,7 +537,7 @@ public class Morphology {
 	 */
 	private static ImageProcessor gradientRGB(ImageProcessor image, Strel strel) {
 		// extract channels and allocate memory for result
-		Collection<ByteProcessor> channels = splitChannels(image);
+		Collection<ByteProcessor> channels = ColorImages.splitChannels(image);
 		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
 		
 		// Process each channel individually
@@ -545,7 +545,7 @@ public class Morphology {
 			res.add(gradient(channel, strel));
 		}
 		
-		return mergeChannels(res);
+		return ColorImages.mergeChannels(res);
 	}
 
 	public static ImageStack gradient(ImageStack stack, Strel3D strel) {
@@ -627,7 +627,7 @@ public class Morphology {
 	 */
 	private static ImageProcessor laplacianRGB(ImageProcessor image, Strel strel) {
 		// extract channels and allocate memory for result
-		Collection<ByteProcessor> channels = splitChannels(image);
+		Collection<ByteProcessor> channels = ColorImages.splitChannels(image);
 		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
 		
 		// Process each channel individually
@@ -635,7 +635,7 @@ public class Morphology {
 			res.add(laplacian(channel, strel));
 		}
 		
-		return mergeChannels(res);
+		return ColorImages.mergeChannels(res);
 	}
 
 	public static ImageStack laplacian(ImageStack stack, Strel3D strel) {
@@ -701,7 +701,7 @@ public class Morphology {
 
 	private static ImageProcessor internalGradientRGB(ImageProcessor image, Strel strel) {
 		// extract channels and allocate memory for result
-		Collection<ByteProcessor> channels = splitChannels(image);
+		Collection<ByteProcessor> channels = ColorImages.splitChannels(image);
 		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
 		
 		// Process each channel individually
@@ -709,7 +709,7 @@ public class Morphology {
 			res.add(internalGradient(channel, strel));
 		}
 		
-		return mergeChannels(res);
+		return ColorImages.mergeChannels(res);
 	}
 
 	public static ImageStack internalGradient(ImageStack stack, Strel3D strel) {
@@ -773,7 +773,7 @@ public class Morphology {
 
 	private static ImageProcessor externalGradientRGB(ImageProcessor image, Strel strel) {
 		// extract channels and allocate memory for result
-		Collection<ByteProcessor> channels = splitChannels(image);
+		Collection<ByteProcessor> channels = ColorImages.splitChannels(image);
 		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
 		
 		// Process each channel individually
@@ -781,7 +781,7 @@ public class Morphology {
 			res.add(externalGradient(channel, strel));
 		}
 		
-		return mergeChannels(res);
+		return ColorImages.mergeChannels(res);
 	}
 
 	public static ImageStack externalGradient(ImageStack stack, Strel3D strel) {
@@ -836,92 +836,6 @@ public class Morphology {
 //		if ((image instanceof FloatProcessor) || (image instanceof ShortProcessor)) {
 //			throw new IllegalArgumentException("Input image must be a ByteProcessor or a ColorProcessor");
 //		}
-	}
-	
-	private static Collection<ByteProcessor> splitChannels(ImageProcessor image) {
-		// size of input image
-		int width = image.getWidth();
-		int height = image.getHeight();
-		int size = width * height;
-
-		// Extract red, green and blue components
-		byte[] redArray = new byte[size];
-		byte[] greenArray = new byte[size];
-		byte[] blueArray = new byte[size];
-		((ColorProcessor) image).getRGB(redArray, greenArray, blueArray);
-
-		// create image processor for each channel
-		ByteProcessor red = new ByteProcessor(width, height, redArray, null);
-		ByteProcessor green = new ByteProcessor(width, height, greenArray, null);
-		ByteProcessor blue  = new ByteProcessor(width, height, blueArray, null);
-
-		// concatenate channels into a new collection
-		ArrayList<ByteProcessor> result = new ArrayList<ByteProcessor>(3);
-		result.add(red);
-		result.add(green);
-		result.add(blue);
-		
-		return result;
-	}
-
-	/**
-	 * Creates a new ColorProcessor from a collection of three channels.
-	 * 
-	 * @param channels
-	 *            a collection containing the red, green and blue channels
-	 * @return the color image corresponding to the concatenation of the three
-	 *         channels
-	 * @throws IllegalArgumentException
-	 *             if the collection contains less than three channels
-	 */
-	private static ColorProcessor mergeChannels(Collection<ImageProcessor> channels) {
-		// check validity of input
-		if (channels.size() < 3)
-			throw new IllegalArgumentException("Requires at least three channels in the collection");
-		
-		// extract each individual channel
-		Iterator<ImageProcessor> iterator = channels.iterator();
-		ImageProcessor red = iterator.next();
-		ImageProcessor green = iterator.next();
-		ImageProcessor blue = iterator.next();
-
-		// call helper function
-		return mergeChannels(red, green, blue);
-	}
-
-	/**
-	 * Creates a new ColorProcessor from the red, green and blue channels.
-	 * Each channel must be an instance of ByteProcessor.
-	 *  
-	 * @return the color image corresponding to the concatenation of the three
-	 *         channels
-	 * @throws IllegalArgumentException
-	 *             if one of the channel is not an instance of ByteProcessor
-	 */
-	private static ColorProcessor mergeChannels(ImageProcessor red, 
-			ImageProcessor green, ImageProcessor blue) {
-		// check validity of input
-		if (!(red instanceof ByteProcessor))
-			throw new IllegalArgumentException("Input channels must be instances of ByteProcessor");
-		if (!(green instanceof ByteProcessor))
-			throw new IllegalArgumentException("Input channels must be instances of ByteProcessor");
-		if (!(blue instanceof ByteProcessor))
-			throw new IllegalArgumentException("Input channels must be instances of ByteProcessor");
-		
-		// Extract byte array of each channel
-		byte[] redArray 	= (byte[]) red.getPixels();
-		byte[] greenArray 	= (byte[]) green.getPixels();
-		byte[] blueArray 	= (byte[]) blue.getPixels();
-		
-		// get image size
-		int width = red.getWidth();
-		int height = red.getHeight();
-
-		// create result color image
-		ColorProcessor result = new ColorProcessor(width, height);
-		result.setRGB(redArray, greenArray, blueArray);
-		
-		return result;	
 	}
 	
 	private final static int clamp(int value, int min, int max) {

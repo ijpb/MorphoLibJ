@@ -2,12 +2,10 @@ package inra.ijpb.plugins;
 
 import ij.IJ;
 import ij.ImagePlus;
-import ij.ImageStack;
 import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
-import ij.process.ColorProcessor;
-import ij.process.ImageProcessor;
+import inra.ijpb.data.image.ColorImages;
 
 import java.awt.Color;
 
@@ -106,204 +104,11 @@ public class BinaryOverlayPlugin implements PlugIn {
 			return;
 		}
 		
-		ImagePlus resultPlus = binaryOverlay(refImage, maskImage, color);
+		ImagePlus resultPlus = ColorImages.binaryOverlay(refImage, maskImage, color);
 		resultPlus.show();
 		
 		if (refImage.getStackSize() > 1) {
 			resultPlus.setSlice(refImage.getSlice());
 		}
-	}
-
-	public Object[] exec(ImagePlus refImage, ImagePlus maskImage, 
-			String resultName, Color overlayColor) {
-		
-		// Check validity of parameters
-		if (refImage==null) {
-			System.err.println("Reference image not specified");
-			return null;
-		}
-		if (maskImage==null) {
-			System.err.println("Mask image not specified");
-			return null;
-		}
-		if (resultName==null) 
-			resultName = createResultImageName(refImage);
-		if (overlayColor==null) {
-			System.err.println("Color not specified");
-			return null;
-		}
-		
-		// size of image
-		int width 	= refImage.getWidth();
-		int height 	= refImage.getHeight();
-		
-		// check input and mask have the same size
-		if(maskImage.getWidth()!=width || maskImage.getHeight()!=height) {
-			IJ.showMessage("Error", 
-					"Input and mask images\nshould have the same size");
-			return null;
-		}
-
-		ImageProcessor result;
-		
-		// Control reference image type
-		int type = refImage.getType();
-		if (type == ImagePlus.GRAY8) {
-			// Call method for grayscale images
-			result = createOverlayOverGray8(refImage.getProcessor(),
-					maskImage.getProcessor(), overlayColor);
-			
-		} else if (type == ImagePlus.COLOR_RGB) {
-			// Call method for RGB images
-			result = createOverlayOverRGB(refImage.getProcessor(),
-					maskImage.getProcessor(), overlayColor);
-			
-		} else {
-			return null;
-		}
-		
-		
-		ImagePlus resultImage = new ImagePlus(resultName, result);
-				
-		// create result array
-		return new Object[]{resultName, resultImage};
-	}
-
-	public final static ImagePlus binaryOverlay(ImagePlus imagePlus, 
-			ImagePlus maskPlus, Color color) {
-		
-		String newName = createResultImageName(imagePlus);
-		ImagePlus resultPlus;
-		
-		if (imagePlus.getStackSize() == 1) {
-			ImageProcessor image = imagePlus.getProcessor();
-			ImageProcessor mask = maskPlus.getProcessor();
-			ImageProcessor result = binaryOverlay(image, mask, color);
-			resultPlus = new ImagePlus(newName, result);
-		} else {
-			ImageStack image = imagePlus.getStack();
-			ImageStack mask = maskPlus.getStack();
-			ImageStack result = binaryOverlay(image, mask, color);
-			resultPlus = new ImagePlus(newName, result);
-		}
-		
-		// keep calibration of parent image
-		resultPlus.copyScale(imagePlus);
-		return resultPlus;
-	}
-	
-	public final static ImageProcessor binaryOverlay(ImageProcessor refImage, 
-			ImageProcessor mask, Color color) {
-		if (refImage instanceof ColorProcessor) 
-			return createOverlayOverRGB(refImage, mask, color);
-		else
-			return createOverlayOverGray8(refImage, mask, color);
-	}
-	
-	public final static ImageStack binaryOverlay(ImageStack refImage, 
-			ImageStack mask, Color color) {
-		int sizeX = refImage.getWidth(); 
-		int sizeY = refImage.getHeight(); 
-		int sizeZ = refImage.getSize();
-		
-		int bitDepth = refImage.getBitDepth();
-		
-		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 24);
-
-		int value;
-		int rgbValue = color.getRGB();
-		
-		// Iterate on image voxels, and choose result value depending on mask
-		for (int z = 0; z < sizeZ; z++) {
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
-					if (mask.getVoxel(x, y, z) > 0) {
-						// Apply the color code of chosen color
-						result.setVoxel(x, y, z, rgbValue);
-						continue;
-					}
-					
-					if (bitDepth == 8 || bitDepth == 16 || bitDepth == 32) {
-						// convert grayscale to equivalent color
-						value = (int) refImage.getVoxel(x, y, z);
-						value = (value & 0x00FF) << 16 | (value & 0x00FF) << 8 | (value & 0x00FF);
-						result.setVoxel(x, y, z, value);
-					} else if (bitDepth == 24) {
-						// directly copy color code (after double conversion through double...)
-						result.setVoxel(x, y, z, refImage.getVoxel(x, y, z));
-					} 
-				}
-			}
-		}
-		
-		return result;
-	}
-	
-	/**
-	 * Assumes reference image contains a GRAY Processor.
-	 */
-	private final static ImageProcessor createOverlayOverGray8(ImageProcessor refImage, 
-			ImageProcessor mask, Color color) {
-		
-		int width = refImage.getWidth(); 
-		int height = refImage.getHeight(); 
-		ColorProcessor result = new ColorProcessor(width, height);
-		
-		int value;
-		int rgbValue = color.getRGB();
-		
-		// Iterate on image pixels, and choose result value depending on mask
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				if(mask.get(x, y) == 0) {
-					// choose value from reference image
-					value = refImage.get(x, y);
-					// convert grayscale to equivalent color
-					value = (value & 0x00FF) << 16 | (value & 0x00FF) << 8 | (value & 0x00FF);
-					result.set(x, y, value);
-
-				} else {
-					// set value to chosen color
-					result.set(x, y, rgbValue);
-				}
-			}
-		}
-		
-		return result;
-	}
-	
-	/**
-	 * Assumes reference image contains a ColorProcessor.
-	 */
-	private final static ImageProcessor createOverlayOverRGB(ImageProcessor refImage, 
-			ImageProcessor mask, Color color) {
-		
-		int width = refImage.getWidth(); 
-		int height = refImage.getHeight(); 
-		ColorProcessor result = new ColorProcessor(width, height);
-		
-		int value;
-		int rgbValue = color.getRGB();
-		
-		// Iterate on image pixels, and choose result value depending on mask
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				if(mask.get(x, y) == 0) {
-					// choose RGB value directly from reference image
-					value = refImage.get(x, y);
-					result.set(x, y, value);
-
-				} else {
-					// set value to chosen color
-					result.set(x, y, rgbValue);
-				}
-			}
-		}
-		
-		return result;
-	}
-	
-	private static String createResultImageName(ImagePlus baseImage) {
-		return baseImage.getShortTitle()+"-ovr";
 	}
 }
