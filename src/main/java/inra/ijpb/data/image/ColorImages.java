@@ -12,6 +12,7 @@ import ij.process.ImageProcessor;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 
 /**
@@ -57,6 +58,51 @@ public class ColorImages
 		result.add(blue);
 		
 		return result;
+	}
+
+	/**
+	 * Splits the channels of the color image and returns the new ByteImages
+	 * into a Map, using channel names as key. 
+	 *  
+	 * Example:
+	 * <code><pre>
+	 * ColorProcessor colorImage = ...
+	 * HashMap&lt;String, ByteProcessor&gt; channels = mapChannels(colorImage);
+	 * ByteProcessor blue = channels.get("blue");
+	 * </pre></code>
+	 * 
+	 * @param image the original image, assumed to be a ColorProcessor
+	 * @return a hashmap indexing the three channels by their names
+	 */
+	public static final HashMap<String, ByteProcessor> mapChannels(ImageProcessor image) {
+		if (!(image instanceof ColorProcessor)) 
+		{
+			throw new IllegalArgumentException("Requires an instance of ColorProcessor");
+		}
+		
+		// size of input image
+		int width = image.getWidth();
+		int height = image.getHeight();
+		int size = width * height;
+
+		// Extract red, green and blue components
+		byte[] redArray = new byte[size];
+		byte[] greenArray = new byte[size];
+		byte[] blueArray = new byte[size];
+		((ColorProcessor) image).getRGB(redArray, greenArray, blueArray);
+
+		// create image processor for each channel
+		ByteProcessor red = new ByteProcessor(width, height, redArray, null);
+		ByteProcessor green = new ByteProcessor(width, height, greenArray, null);
+		ByteProcessor blue  = new ByteProcessor(width, height, blueArray, null);
+
+		// concatenate channels into a new collection
+		HashMap<String, ByteProcessor> map = new HashMap<String, ByteProcessor>(3);
+		map.put("red", red);
+		map.put("red", green);
+		map.put("red", blue);
+		
+		return map;
 	}
 
 	/**

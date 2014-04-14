@@ -33,7 +33,7 @@ public class GeometricMeasures2D {
 
     /**
 	 * Computes the area for each particle in the label image, taking into account image resolution.
-	 * @see pixelCount(ij.process.ImageProcessor, int[])
+	 * @see #pixelCount(ij.process.ImageProcessor, int[])
 	 */
     public static final double[] area(ImageProcessor image, int[] labels, double[] resol) {
         // pre-compute the area of individual voxel
@@ -59,7 +59,7 @@ public class GeometricMeasures2D {
 
     /**
 	 * Computes the number of pixels composing each particle in the label image.
-	 * @see area(ij.process.ImageProcessor, int[], double[])
+	 * @see #area(ij.process.ImageProcessor, int[], double[])
 	 */
     public static final int[] pixelCount(ImageProcessor image, int[] labels) {
     	// image size

@@ -157,7 +157,7 @@ public class LabelImages {
 	 * Replace all values specified in label array by the value 0. 
 	 * This method changes directly the values within the image.
 	 * 
-	 * @param image a label 3D image
+	 * @param imagePlus an ImagePlus containing a 3D label image
 	 * @param labels the list of values to remove 
 	 */
 	public static final void removeLabels(ImagePlus imagePlus, int[] labels) {
@@ -230,7 +230,7 @@ public class LabelImages {
 	/**
 	 * Creates a new image containing only the specified labels.
 	 *  
-	 * @param image a label planar image
+	 * @param imagePlus an ImagePlus containing a planar label image
 	 * @param labels the list of values to keep 
 	 */
 	public static final ImagePlus keepLabels(ImagePlus imagePlus, int[] labels) {
@@ -321,7 +321,7 @@ public class LabelImages {
 	/**
 	 * Returns a binary image that contains only the largest label.
 	 * 
-	 * @param image an instance if ImagePlus containing a binary image
+	 * @param imagePlus an instance if ImagePlus containing a binary image
 	 */
 	public static final ImagePlus keepLargestLabel(ImagePlus imagePlus) {
 		ImagePlus resultPlus;
