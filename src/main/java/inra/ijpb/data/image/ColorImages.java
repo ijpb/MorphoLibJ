@@ -99,8 +99,8 @@ public class ColorImages
 		// concatenate channels into a new collection
 		HashMap<String, ByteProcessor> map = new HashMap<String, ByteProcessor>(3);
 		map.put("red", red);
-		map.put("red", green);
-		map.put("red", blue);
+		map.put("green", green);
+		map.put("blue", blue);
 		
 		return map;
 	}

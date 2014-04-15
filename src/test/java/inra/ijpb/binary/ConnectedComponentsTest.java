@@ -1,4 +1,4 @@
-package inra.ijpb.morphology;
+package inra.ijpb.binary;
 
 import static org.junit.Assert.*;
 import ij.IJ;
@@ -8,7 +8,7 @@ import inra.ijpb.binary.ConnectedComponents;
 
 import org.junit.Test;
 
-public class LabelingPluginTest {
+public class ConnectedComponentsTest {
 
 	@Test
 	public final void testComputeLabelsByteImageStack() {

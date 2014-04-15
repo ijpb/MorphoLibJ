@@ -8,6 +8,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
 	// generic classes
 	BinaryImagesTest.class,
+	ConnectedComponentsTest.class, 
 	})
 public class AllTests {
   //nothing

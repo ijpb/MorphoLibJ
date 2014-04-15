@@ -99,7 +99,8 @@ public class GeodesicReconstruction3DTest {
 
 	@Test
 	public final void test_reconstructByDilation_CochleaVolumeC26() {
-		ImagePlus imagePlus = IJ.openImage("files/bat-cochlea-volume.tif");
+		String fileName = getClass().getResource("/files/bat-cochlea-volume.tif").getFile();
+		ImagePlus imagePlus = IJ.openImage(fileName);
 		assertNotNull(imagePlus);
 
 		assertTrue(imagePlus.getStackSize() > 0);
@@ -128,7 +129,8 @@ public class GeodesicReconstruction3DTest {
 	
 	@Test
 	public final void test_reconstructByDilation_CochleaVolumeC6() {
-		ImagePlus imagePlus = IJ.openImage("files/bat-cochlea-volume.tif");
+		String fileName = getClass().getResource("/files/bat-cochlea-volume.tif").getFile();
+		ImagePlus imagePlus = IJ.openImage(fileName);
 		assertNotNull(imagePlus);
 
 		assertTrue(imagePlus.getStackSize() > 0);
@@ -199,7 +201,8 @@ public class GeodesicReconstruction3DTest {
 	@Test
 	public final void test_reconstructByErosion_CochleaVolumeC6() {
 		// Open test image
-		ImagePlus imagePlus = IJ.openImage("files/bat-cochlea-volume.tif");
+		String fileName = getClass().getResource("/files/bat-cochlea-volume.tif").getFile();
+		ImagePlus imagePlus = IJ.openImage(fileName);
 		assertNotNull(imagePlus);
 		assertTrue(imagePlus.getStackSize() > 0);
 		ImageStack mask = imagePlus.getStack();
@@ -250,7 +253,8 @@ public class GeodesicReconstruction3DTest {
 	@Test
 	public final void test_reconstructByErosion_CochleaVolumeC26() {
 		// Open test image
-		ImagePlus imagePlus = IJ.openImage("files/bat-cochlea-volume.tif");
+		String fileName = getClass().getResource("/files/bat-cochlea-volume.tif").getFile();
+		ImagePlus imagePlus = IJ.openImage(fileName);
 		assertNotNull(imagePlus);
 		assertTrue(imagePlus.getStackSize() > 0);
 		ImageStack mask = imagePlus.getStack();
@@ -295,6 +299,73 @@ public class GeodesicReconstruction3DTest {
 		
 	}
 
+	@Test
+	public final void testKillBorders3D() {
+		int sizeX = 10;
+		int sizeY = 10;
+		int sizeZ = 10;
+		int bitDepth = 8;
+		
+		// create empty stack
+		ImageStack stack = ImageStack.create(sizeX, sizeY, sizeZ, bitDepth);
+		
+		for (int z2 = 0; z2 <= 2; z2++) 
+		{
+			for (int y2 = 0; y2 <= 2; y2++) 
+			{
+				for (int x2 = 0; x2 <= 2; x2++) 
+				{
+					stack.setVoxel(x2 + 0, y2 + 0, z2 + 0, 1);
+					stack.setVoxel(x2 + 4, y2 + 0, z2 + 0, 2);
+					stack.setVoxel(x2 + 8, y2 + 0, z2 + 0, 3);
+					stack.setVoxel(x2 + 0, y2 + 4, z2 + 0, 4);
+					stack.setVoxel(x2 + 4, y2 + 4, z2 + 0, 5);
+					stack.setVoxel(x2 + 8, y2 + 4, z2 + 0, 6);
+					stack.setVoxel(x2 + 0, y2 + 8, z2 + 0, 7);
+					stack.setVoxel(x2 + 4, y2 + 8, z2 + 0, 8);
+					stack.setVoxel(x2 + 8, y2 + 8, z2 + 0, 9);
+
+					stack.setVoxel(x2 + 0, y2 + 0, z2 + 4, 10);
+					stack.setVoxel(x2 + 4, y2 + 0, z2 + 4, 11);
+					stack.setVoxel(x2 + 8, y2 + 0, z2 + 4, 12);
+					stack.setVoxel(x2 + 0, y2 + 4, z2 + 4, 13);
+					stack.setVoxel(x2 + 4, y2 + 4, z2 + 4, 14);
+					stack.setVoxel(x2 + 8, y2 + 4, z2 + 4, 15);
+					stack.setVoxel(x2 + 0, y2 + 8, z2 + 4, 16);
+					stack.setVoxel(x2 + 4, y2 + 8, z2 + 4, 17);
+					stack.setVoxel(x2 + 8, y2 + 8, z2 + 4, 18);
+
+					stack.setVoxel(x2 + 0, y2 + 0, z2 + 8, 19);
+					stack.setVoxel(x2 + 4, y2 + 0, z2 + 8, 20);
+					stack.setVoxel(x2 + 8, y2 + 0, z2 + 8, 21);
+					stack.setVoxel(x2 + 0, y2 + 4, z2 + 8, 22);
+					stack.setVoxel(x2 + 4, y2 + 4, z2 + 8, 23);
+					stack.setVoxel(x2 + 8, y2 + 4, z2 + 8, 24);
+					stack.setVoxel(x2 + 0, y2 + 8, z2 + 8, 25);
+					stack.setVoxel(x2 + 4, y2 + 8, z2 + 8, 26);
+					stack.setVoxel(x2 + 8, y2 + 8, z2 + 8, 27);
+				}
+			}
+		}
+		
+		ImageStack result = GeodesicReconstruction3D.killBorders(stack);
+		
+		for (int y = 0; y < sizeY; y++) 
+		{
+			for (int x = 0; x < sizeX; x++) 
+			{
+				assertEquals(0, result.getVoxel(x, y, 0), 1e-10);
+				assertEquals(0, result.getVoxel(x, y, sizeZ-1), 1e-10);
+				
+				assertEquals(0, result.getVoxel(x, 0, y), 1e-10);
+				assertEquals(0, result.getVoxel(x, sizeY-1, y), 1e-10);
+
+				assertEquals(0, result.getVoxel(0, x, y), 1e-10);
+				assertEquals(0, result.getVoxel(sizeX - 1, x, y), 1e-10);
+			}	
+		}
+	}
+	
 	private ImageStack createCubicMeshImage() {
 		int sizeX = 20;
 		int sizeY = 20;

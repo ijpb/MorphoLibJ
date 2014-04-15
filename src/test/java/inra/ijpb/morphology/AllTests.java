@@ -10,8 +10,9 @@ import org.junit.runners.Suite;
 	StrelTest.class,
 	MorphologyTest.class,
 	FloodFillTest.class,
-	LabelingPluginTest.class, 
+	LabelImagesTest.class, 
 	GeodesicReconstructionTest.class,
+	GeodesicReconstruction3DTest.class,
 	MinimaAndMaximaTest.class,
 	MinimaAndMaxima3DTest.class
 	})
