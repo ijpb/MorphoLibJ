@@ -124,18 +124,17 @@ public class ImageCalculator
 
 	public static final ImagePlus combineImages(ImagePlus image1, ImagePlus image2, Operation op)  
 	{
-		ImagePlus resPlus;
+		String newName = "result of " + image1.getShortTitle();
 		if (image1.getStackSize() == 1) 
 		{
 			ImageProcessor result = combineImages(image1.getProcessor(), image2.getProcessor(), op);
-			resPlus = new ImagePlus("result", result);
+			return new ImagePlus(newName, result);
 		} 
 		else
 		{
 			ImageStack result = combineImages(image1.getStack(), image2.getStack(), op);
-			resPlus = new ImagePlus("result", result);
+			return new ImagePlus(newName, result);
 		}
-		return resPlus;
 	}
 
 	/**
@@ -194,6 +193,60 @@ public class ImageCalculator
 		return result;
 	}
 	 
+	public static final ImagePlus not(ImagePlus image) 
+	{
+		String newName = image.getShortTitle() + "-not";
+		if (image.getStackSize() == 1) 
+		{
+			ImageProcessor result = not(image.getProcessor());
+			return new ImagePlus(newName, result);
+		} 
+		else
+		{
+			ImageStack result = not(image.getStack());
+			return new ImagePlus(newName, result);
+		}
+	}
+	
+	public static final ImageProcessor not(ImageProcessor image)
+	{
+		int width = image.getWidth();
+		int height = image.getHeight();
+
+		ImageProcessor result = image.duplicate();
+		
+		for (int y = 0; y < height; y++)
+		{
+			for (int x = 0; x < width; x++)
+			{
+				result.set(x, y, ~image.get(x, y));
+			}
+		}
+		return result;
+	}
+	
+	public static final ImageStack not(ImageStack image)
+	{
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		int sizeZ = image.getHeight();
+
+		ImageStack result = image.duplicate();
+		
+		for (int z = 0; z < sizeZ; z++)
+		{
+			for (int y = 0; y < sizeY; y++)
+			{
+				for (int x = 0; x < sizeX; x++)
+				{
+					result.setVoxel(x, y, z, ~((int) image.getVoxel(x, y, z)));
+				}
+			}
+		}
+		return result;
+	}
+	
+
 	public static final void main(String[] args)
 	{
 		int width = 255;
