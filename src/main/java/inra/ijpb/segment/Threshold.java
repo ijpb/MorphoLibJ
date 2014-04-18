@@ -4,6 +4,7 @@
 package inra.ijpb.segment;
 
 import ij.ImagePlus;
+import ij.ImageStack;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
@@ -19,8 +20,16 @@ public class Threshold
 	public static final ImagePlus threshold(ImagePlus image, double lower, double upper)
 	{
 		String newName = image.getShortTitle() + "-bin";
-		ImageProcessor result = threshold(image.getProcessor(), lower, upper);
-		return new ImagePlus(newName, result);
+		if (image.getStackSize() == 1) 
+		{
+			ImageProcessor result = threshold(image.getProcessor(), lower, upper);
+			return new ImagePlus(newName, result);
+		} 
+		else
+		{
+			ImageStack result = threshold(image.getStack(), lower, upper);
+			return new ImagePlus(newName, result);
+		}
 	}
 	
 	/**
@@ -51,6 +60,29 @@ public class Threshold
 					result.set(x, y, 255);
 			}
 
+		}
+
+		return result;
+	}
+
+	public static final ImageStack threshold(ImageStack image, double lower, double upper)
+	{
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		int sizeZ = image.getSize();
+
+		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
+		for (int z = 0; z < sizeZ; z++)
+		{
+			for (int y = 0; y < sizeY; y++)
+			{
+				for (int x = 0; x < sizeX; x++)
+				{
+					double value = image.getVoxel(x, y, z);
+					if (value >= lower && value <= upper)
+						result.setVoxel(x, y, z, 255);
+				}
+			}
 		}
 
 		return result;
