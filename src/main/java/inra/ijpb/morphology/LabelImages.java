@@ -15,6 +15,8 @@ import inra.ijpb.measure.GeometricMeasures3D;
 import java.awt.Color;
 import java.util.Iterator;
 import java.util.TreeSet;
+import static java.lang.Math.min;
+import static java.lang.Math.max;
 
 /**
  * Utility methods for label images (stored as 8-, 16- or 32-bits).
@@ -52,6 +54,64 @@ public class LabelImages {
 		return result;
 	}
 	
+	public static final ImageStack cropLabel(ImageStack image, int label, int border) 
+	{
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		int sizeZ = image.getSize();
+		
+		// Determine label bounds
+		int xmin = Integer.MAX_VALUE;
+		int xmax = Integer.MIN_VALUE;
+		int ymin = Integer.MAX_VALUE;
+		int ymax = Integer.MIN_VALUE;
+		int zmin = Integer.MAX_VALUE;
+		int zmax = Integer.MIN_VALUE;
+		for (int z = 0; z < sizeZ; z++)
+		{
+			for (int y = 0; y < sizeY; y++)
+			{
+				for (int x = 0; x < sizeX; x++)
+				{
+					int val = (int) image.getVoxel(x, y, z);
+					if (val != label)
+					{
+						continue;
+					}
+					
+					xmin = min(xmin, x);
+					xmax = max(xmax, x);
+					ymin = min(ymin, y);
+					ymax = max(ymax, y);
+					zmin = min(zmin, z);
+					zmax = max(zmax, z);
+				}
+			}
+		}
+		
+		// Compute siez of result
+		int sizeX2 = (xmax - xmin + 1 + 2 * border);
+		int sizeY2 = (ymax - ymin + 1 + 2 * border);
+		int sizeZ2 = (zmax - zmin + 1 + 2 * border);
+
+		// allocate memory for result image
+		ImageStack result = ImageStack.create(sizeX2, sizeY2, sizeZ2, 8);
+		
+		// fill result with binary label
+		for (int z = zmin, z2 = border; z <= zmax; z++, z2++) {
+			for (int y = ymin, y2 = border; y <= ymax; y++, y2++) {
+				for (int x = xmin, x2 = border; x <= xmax; x++, x2++) {
+					if (((int) image.getVoxel(x, y, z)) == label)
+					{
+						result.setVoxel(x2, y2, z2, 255);
+					}
+				}
+			}
+		}
+		
+		return result;
+
+	}
 	
 	/**
 	 * Creates a new Color image from a label image, a LUT, and a
@@ -467,6 +527,11 @@ public class LabelImages {
 		return indMax;
 	}
 	
+    public final static int[] findAllLabels(ImagePlus image) {
+		return image.getStackSize() == 1 ? findAllLabels(image.getProcessor())
+				: findAllLabels(image.getStack());
+    }
+
     public final static int[] findAllLabels(ImageStack image) {
         int sizeX = image.getWidth();
         int sizeY = image.getHeight();
