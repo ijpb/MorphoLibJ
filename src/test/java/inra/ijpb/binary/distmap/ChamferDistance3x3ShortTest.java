@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
+import inra.ijpb.binary.ChamferWeights;
 
 import org.junit.Test;
 
@@ -20,7 +21,7 @@ public class ChamferDistance3x3ShortTest {
 			}
 		}
 		
-		short[] weights = ChamferDistance.Weights.CHESSBOARD.getShortWeights();
+		short[] weights = ChamferWeights.CHESSBOARD.getShortWeights();
 		ChamferDistance3x3Short algo = new ChamferDistance3x3Short(weights, true);
 		ImageProcessor result = algo.distanceMap(image);
 		

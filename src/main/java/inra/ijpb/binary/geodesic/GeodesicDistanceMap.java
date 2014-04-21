@@ -16,7 +16,9 @@ public interface GeodesicDistanceMap {
 	/**
 	 * A pre-defined set of weigths that can be used to compute distance maps.
 	 * 
+	 * @deprecated use inra.ijpb.binary.ChamferWeights instead
 	 */
+	@Deprecated
 	public enum Weights {
 		CHESSBOARD("Chessboard (1,1)", new short[]{1,1}),
 		CITY_BLOCK("City-Block (1,2)", new short[]{1, 2}),

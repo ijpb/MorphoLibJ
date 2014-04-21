@@ -14,7 +14,7 @@ import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
 import inra.ijpb.binary.geodesic.GeodesicDiameterFloat;
 import inra.ijpb.binary.geodesic.GeodesicDiameterShort;
-import inra.ijpb.binary.geodesic.GeodesicDistanceMap.Weights;
+import inra.ijpb.binary.ChamferWeights;
 
 import java.awt.Color;
 
@@ -61,8 +61,8 @@ public class GeodesicDiameterPlugin implements PlugIn {
 		GenericDialog gd = new GenericDialog("Geodesic Lengths");
 		gd.addChoice("Label Image:", imageNames, selectedImageName);
 		// Set Chessknight weights as default
-		gd.addChoice("Distances", Weights.getAllLabels(), 
-    			Weights.CHESSKNIGHT.toString());
+		gd.addChoice("Distances", ChamferWeights.getAllLabels(), 
+				ChamferWeights.CHESSKNIGHT.toString());
 		gd.addCheckbox("Show Overlay Result", true);
 		gd.addChoice("Image to overlay:", imageNames, selectedImageName);
 		gd.showDialog();
@@ -73,7 +73,7 @@ public class GeodesicDiameterPlugin implements PlugIn {
 		// set up current parameters
 		int labelImageIndex = gd.getNextChoiceIndex();
 		ImagePlus labelImage = WindowManager.getImage(labelImageIndex+1);
-		Weights weights = Weights.fromLabel(gd.getNextChoice());
+		ChamferWeights weights = ChamferWeights.fromLabel(gd.getNextChoice());
 		// check image types
 		if (labelImage.getType() != ImagePlus.GRAY8
 				&& labelImage.getType() != ImagePlus.GRAY16) {

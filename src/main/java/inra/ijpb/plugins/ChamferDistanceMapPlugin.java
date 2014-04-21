@@ -6,6 +6,7 @@ import ij.gui.GenericDialog;
 import ij.plugin.filter.ExtendedPlugInFilter;
 import ij.plugin.filter.PlugInFilterRunner;
 import ij.process.ImageProcessor;
+import inra.ijpb.binary.ChamferWeights;
 import inra.ijpb.binary.distmap.ChamferDistance;
 import inra.ijpb.binary.distmap.ChamferDistance3x3Float;
 import inra.ijpb.binary.distmap.ChamferDistance3x3Short;
@@ -13,8 +14,6 @@ import inra.ijpb.binary.distmap.ChamferDistance5x5Float;
 import inra.ijpb.binary.distmap.ChamferDistance5x5Short;
 
 import java.awt.AWTEvent;
-
-import static inra.ijpb.binary.distmap.ChamferDistance.Weights;
 
 /**
  * Compute distance map, with possibility to choose chamfer weights, result 
@@ -39,7 +38,7 @@ public class ChamferDistanceMapPlugin implements ExtendedPlugInFilter, DialogLis
 	private ImageProcessor baseImage;
 	
 	/** the different weights */
-	private Weights weights; 
+	private ChamferWeights weights; 
 	private boolean floatProcessing 	= false;
 	private boolean normalize 	= false;
 	
@@ -76,8 +75,8 @@ public class ChamferDistanceMapPlugin implements ExtendedPlugInFilter, DialogLis
 
     	// Create a new generic dialog with appropriate options
     	GenericDialog gd = new GenericDialog("Distance Map");
-    	gd.addChoice("Distances", Weights.getAllLabels(), 
-    			Weights.BORGEFORS.toString());			
+    	gd.addChoice("Distances", ChamferWeights.getAllLabels(), 
+    			ChamferWeights.BORGEFORS.toString());			
     	String[] outputTypes = new String[]{"32 bits", "16 bits"};
     	gd.addChoice("Output Type", outputTypes, outputTypes[0]);
     	gd.addCheckbox("Normalize weights", true);	
@@ -98,7 +97,7 @@ public class ChamferDistanceMapPlugin implements ExtendedPlugInFilter, DialogLis
     	normalize = gd.getNextBoolean();
 
     	// identify which weights should be used
-    	weights = Weights.fromLabel(weightLabel);
+    	weights = ChamferWeights.fromLabel(weightLabel);
 
     	return flags;
     }
@@ -114,7 +113,7 @@ public class ChamferDistanceMapPlugin implements ExtendedPlugInFilter, DialogLis
     	normalize = gd.getNextBoolean();
 
     	// identify which weights should be used
-    	weights = Weights.fromLabel(weightLabel);
+    	weights = ChamferWeights.fromLabel(weightLabel);
         return true;
     }
 

@@ -40,12 +40,14 @@ public class BinaryImages {
 	/**
 	 * Computes the distance map from a binary image processor, by specifying
 	 * weights and normalization.
-	 *  
-	 * Distance is computed for each foreground (white) pixel, as the 
-	 * chamfer distance to the nearest background (black) pixel.
-	 * Result is given in a new instance of ShortProcessor.
+	 * 
+	 * Distance is computed for each foreground (white) pixel, as the chamfer
+	 * distance to the nearest background (black) pixel. Result is given as a
+	 * new instance of ShortProcessor.
 	 */
-	public static final ImageProcessor distanceMap(ImageProcessor image, short[] weights, boolean normalize) {
+	public static final ImageProcessor distanceMap(ImageProcessor image,
+			short[] weights, boolean normalize)
+	{
 		ChamferDistance algo;
 		switch (weights.length) {
 		case 2:
@@ -58,10 +60,10 @@ public class BinaryImages {
 			throw new IllegalArgumentException(
 					"Requires weight array with 2 or 3 elements");
 		}
-		
+
 		return algo.distanceMap(image);
 	}
-	
+
 	/**
 	 * Computes the distance map from a binary image processor, by specifying
 	 * weights and normalization. 

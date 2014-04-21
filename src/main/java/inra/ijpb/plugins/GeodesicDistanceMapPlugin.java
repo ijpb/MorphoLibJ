@@ -5,13 +5,12 @@ import ij.ImagePlus;
 import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
-
+import inra.ijpb.binary.ChamferWeights;
 import inra.ijpb.binary.geodesic.GeodesicDistanceMap;
 import inra.ijpb.binary.geodesic.GeodesicDistanceMapFloat;
 import inra.ijpb.binary.geodesic.GeodesicDistanceMapFloat5x5;
 import inra.ijpb.binary.geodesic.GeodesicDistanceMapShort;
 import inra.ijpb.binary.geodesic.GeodesicDistanceMapShort5x5;
-import inra.ijpb.binary.geodesic.GeodesicDistanceMap.Weights;
 
 /**
  * Plugin for computing geodesic distances using chamfer weights.
@@ -49,8 +48,8 @@ public class GeodesicDistanceMapPlugin implements PlugIn {
 		gd.addChoice("Mask Image", imageNames, IJ.getImage().getTitle());
 		gd.addChoice("Marker Image", imageNames, IJ.getImage().getTitle());
 		// Set Chessknight weights as default
-		gd.addChoice("Distances", Weights.getAllLabels(), 
-    			Weights.CHESSKNIGHT.toString());
+		gd.addChoice("Distances", ChamferWeights.getAllLabels(), 
+				ChamferWeights.CHESSKNIGHT.toString());
 		String[] outputTypes = new String[]{"32 bits", "16 bits"};
 		gd.addChoice("Output Type", outputTypes, outputTypes[0]);
 		gd.addCheckbox("Normalize weights", true);	
@@ -67,7 +66,7 @@ public class GeodesicDistanceMapPlugin implements PlugIn {
 		ImagePlus markerImage = WindowManager.getImage(markerImageIndex + 1);
 		String weightLabel = gd.getNextChoice();
 		// identify which weights should be used
-    	Weights weights = Weights.fromLabel(weightLabel);
+		ChamferWeights weights = ChamferWeights.fromLabel(weightLabel);
 //		float[] weights = weightValues[weightIndex];
 		boolean resultAsFloat = gd.getNextChoiceIndex() == 0;
 		boolean normalizeWeights = gd.getNextBoolean();
