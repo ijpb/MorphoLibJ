@@ -33,9 +33,11 @@ import ij.ImageStack;
 import ij.WindowManager;
 import ij.gui.ImageCanvas;
 import ij.gui.ImageRoi;
+import ij.gui.ImageWindow;
 import ij.gui.Overlay;
 import ij.gui.StackWindow;
 import ij.plugin.PlugIn;
+import ij.plugin.frame.Recorder;
 import inra.ijpb.binary.ConnectedComponents;
 import inra.ijpb.data.image.ColorImages;
 import inra.ijpb.data.image.Images3D;
@@ -158,6 +160,11 @@ public class MorphologicalSegmentation implements PlugIn {
 	private String stopText = "STOP";
 	/** tip text of the segmentation button when segmentation running */
 	private String stopTip = "Click to abort segmentation";
+	
+	// Macro recording constants (corresponding to  
+	// the static method names to be called)
+	
+	public static String SEGMENT = "segment";
 	
 	/**
 	 * Custom window to define the plugin GUI
@@ -535,6 +542,245 @@ public class MorphologicalSegmentation implements PlugIn {
 			exec.shutdownNow();
 		}
 		
+		void setDynamic( int dynamic )
+		{
+			dynamicText.setText( Integer.toString(dynamic) );
+		}
+		
+		void setCalculateDams( boolean b )
+		{
+			calculateDams = b;
+			damsCheckBox.setEnabled( b );
+		}
+		
+		void setApplyGradient( boolean b )
+		{
+			applyGradient = b;
+			gradientCheckBox.setEnabled( b );
+		}
+		
+		void setConnectivity( int connectivity )
+		{
+			if( connectivity == 6  || connectivity == 26 )
+				connectivityList.setSelectedItem( Integer.toString(connectivity) );									
+		}
+		
+		void setUsePriorityQueue( boolean b )
+		{
+			usePriorityQueue = b;
+			queueCheckBox.setEnabled( b );
+		}
+		
+		/**
+		 * Run morphological segmentation pipeline
+		 */
+		private void runSegmentation( String command ) 
+		{
+			// If the command is "segment"
+			if ( command.equals( segmentText ) ) 
+			{			
+				// read connectivity
+				final int connectivity = Integer.parseInt( (String) connectivityList.getSelectedItem() );
+
+				// read dynamic
+				final double dynamic;
+				try{
+					dynamic = Double.parseDouble( dynamicText.getText() );
+				}
+				catch( NullPointerException ex )
+				{
+					IJ.error( "Morphological Sementation", "ERROR: missing dynamic value" );
+					return;
+				}
+				catch( NumberFormatException ex )
+				{
+					IJ.error( "Morphological Sementation", "ERROR: dynamic value must be a number" );
+					return;
+				}
+
+				double max = 255;
+				int bitDepth = inputImage.getBitDepth();
+				if( bitDepth == 16 )
+					max = 65535;
+				else if( bitDepth == 32 )
+					max = Float.MAX_VALUE;
+
+				if( dynamic < 0 || dynamic > max )
+				{
+					IJ.error( "Morphological Sementation", "ERROR: the dynamic value must be a number between 0 and " + max );
+					return;
+				}
+
+				// Set button text to "STOP"
+				segmentButton.setText( stopText );
+				segmentButton.setToolTipText( stopTip );
+				
+				final Thread oldThread = segmentationThread;
+				
+				// Thread to run the segmentation
+				Thread newThread = new Thread() {								 
+
+					public void run()
+					{
+						// Wait for the old task to finish
+						if (null != oldThread) 
+						{
+							try { 
+								IJ.log("Waiting for old task to finish...");
+								oldThread.join(); 
+							} 
+							catch (InterruptedException ie)	{ /*IJ.log("interrupted");*/ }
+						}
+
+						// read dams flag
+						calculateDams = damsCheckBox.isSelected();
+						
+						// read gradient flag
+						applyGradient = gradientCheckBox.isSelected();
+
+						// read priority queue flag
+						usePriorityQueue = queueCheckBox.isSelected();
+
+						// disable parameter panel
+						setParamsEnabled( false );
+
+						ImageStack image = inputImage.getImageStack();
+
+						final long start = System.currentTimeMillis();
+
+						if( applyGradient )
+						{
+							final long t1 = System.currentTimeMillis();
+							IJ.log( "Applying morphological gradient to input image..." );
+
+							Strel3D strel = Strel3D.Shape.CUBE.fromRadius( 1 );
+							image = Morphology.gradient( image, strel );
+							//(new ImagePlus("gradient", image) ).show();
+
+							final long t2 = System.currentTimeMillis();
+							IJ.log( "Morphological gradient took " + (t2-t1) + " ms.");
+						}
+
+						IJ.log( "Running extended minima with dynamic value " + (int)dynamic + "..." );
+						final long step0 = System.currentTimeMillis();				
+
+						// Run extended minima
+						ImageStack regionalMinima = MinimaAndMaxima3D.extendedMinima( image, (int)dynamic, connectivity );
+						
+						if( null == regionalMinima )
+						{
+							IJ.log( "The segmentation was interrupted!" );
+							IJ.showStatus( "The segmentation was interrupted!" );
+							IJ.showProgress( 1.0 );
+							return;
+						}
+						
+						final long step1 = System.currentTimeMillis();		
+						IJ.log( "Regional minima took " + (step1-step0) + " ms.");
+
+						IJ.log( "Imposing regional minima on original image (connectivity = " + connectivity + ")..." );
+
+						// Impose regional minima over the original image
+						ImageStack imposedMinima = MinimaAndMaxima3D.imposeMinima( image, regionalMinima, connectivity );
+
+						if( null == imposedMinima )
+						{
+							IJ.log( "The segmentation was interrupted!" );
+							IJ.showStatus( "The segmentation was interrupted!" );
+							IJ.showProgress( 1.0 );
+							return;
+						}
+						
+						final long step2 = System.currentTimeMillis();
+						IJ.log( "Imposition took " + (step2-step1) + " ms." );
+
+						IJ.log( "Labeling regional minima..." );
+
+						// Label regional minima
+						ImageStack labeledMinima = ConnectedComponents.computeLabels( regionalMinima, connectivity, 32 );
+						if( null == labeledMinima )
+						{
+							IJ.log( "The segmentation was interrupted!" );
+							IJ.showStatus( "The segmentation was interrupted!" );
+							IJ.showProgress( 1.0 );
+							return;
+						}
+
+						final long step3 = System.currentTimeMillis();
+						IJ.log( "Connected components took " + (step3-step2) + " ms." );
+
+						// Apply watershed		
+						IJ.log("Running watershed...");
+
+						ImageStack resultStack = Watershed.computeWatershed( imposedMinima, labeledMinima, 
+								connectivity, usePriorityQueue, calculateDams );
+						if( null == resultStack )
+						{
+							IJ.log( "The segmentation was interrupted!" );
+							IJ.showStatus( "The segmentation was interrupted!" );
+							IJ.showProgress( 1.0 );
+							return;
+						}
+						
+						resultImage = new ImagePlus( "watershed", resultStack );
+						resultImage.setCalibration( inputImage.getCalibration() );
+
+						final long end = System.currentTimeMillis();
+						IJ.log( "Watershed 3d took " + (end-step3) + " ms.");
+						IJ.log( "Whole plugin took " + (end-start) + " ms.");
+
+						// Adjust min and max values to display
+						Images3D.optimizeDisplayRange( resultImage );
+
+						byte[][] colorMap = CommonLabelMaps.fromLabel( CommonLabelMaps.SPECTRUM.getLabel() ).computeLut(255, true);;
+						ColorModel cm = ColorMaps.createColorModel(colorMap, Color.BLACK);
+						resultImage.getProcessor().setColorModel(cm);
+						resultImage.getImageStack().setColorModel(cm);
+						resultImage.updateAndDraw();
+
+						// display result overlaying the input image
+						updateResultOverlay();
+						showColorOverlay = true;
+
+						// enable parameter panel
+						setParamsEnabled( true );
+						// set button back to "Segment"
+						segmentButton.setText( "Segment" );
+						// set thread to null					
+						segmentationThread = null;
+						
+						// Record
+						String[] arg = new String[] {
+							Integer.toString( (int) dynamic ),
+							"calculateDams=" + calculateDams,
+							"applyGradient=" + applyGradient,
+							Integer.toString( connectivity ),
+							"usePriorityQueue=" + usePriorityQueue };
+						record( SEGMENT, arg );
+						
+					}
+				};
+				
+				segmentationThread = newThread;
+				newThread.start();
+				
+			}
+			else if( command.equals( stopText ) ) 							  
+			{
+				if( null != segmentationThread )
+					segmentationThread.interrupt();
+				else
+					IJ.log("Error: interrupting segmentation failed becaused the thread is null!");
+				
+				// set button back to "Segment"
+				segmentButton.setText( segmentText );
+				segmentButton.setToolTipText( segmentTip );
+				// enable parameter panel
+				setParamsEnabled( true );			
+			}
+		}
+		
+		
 		
 	}// end class CustomWindow
 	
@@ -624,204 +870,6 @@ public class MorphologicalSegmentation implements PlugIn {
 		return lines;
 	}
 	
-	/**
-	 * Run morphological segmentation pipeline
-	 */
-	private void runSegmentation( String command ) 
-	{
-		// If the command is "segment"
-		if ( command.equals( segmentText ) ) 
-		{			
-			// read connectivity
-			final int connectivity = Integer.parseInt( (String) connectivityList.getSelectedItem() );
-
-			// read dynamic
-			final double dynamic;
-			try{
-				dynamic = Double.parseDouble( this.dynamicText.getText() );
-			}
-			catch( NullPointerException ex )
-			{
-				IJ.error( "Morphological Sementation", "ERROR: missing dynamic value" );
-				return;
-			}
-			catch( NumberFormatException ex )
-			{
-				IJ.error( "Morphological Sementation", "ERROR: dynamic value must be a number" );
-				return;
-			}
-
-			double max = 255;
-			int bitDepth = inputImage.getBitDepth();
-			if( bitDepth == 16 )
-				max = 65535;
-			else if( bitDepth == 32 )
-				max = Float.MAX_VALUE;
-
-			if( dynamic < 0 || dynamic > max )
-			{
-				IJ.error( "Morphological Sementation", "ERROR: the dynamic value must be a number between 0 and " + max );
-				return;
-			}
-
-			// Set button text to "STOP"
-			segmentButton.setText( stopText );
-			segmentButton.setToolTipText( stopTip );
-			
-			final Thread oldThread = segmentationThread;
-			
-			// Thread to run the segmentation
-			Thread newThread = new Thread() {								 
-
-				public void run()
-				{
-					// Wait for the old task to finish
-					if (null != oldThread) 
-					{
-						try { 
-							IJ.log("Waiting for old task to finish...");
-							oldThread.join(); 
-						} 
-						catch (InterruptedException ie)	{ /*IJ.log("interrupted");*/ }
-					}
-
-					// read dams flag
-					calculateDams = damsCheckBox.isSelected();
-					
-					// read gradient flag
-					applyGradient = gradientCheckBox.isSelected();
-
-					// read priority queue flag
-					usePriorityQueue = queueCheckBox.isSelected();
-
-					// disable parameter panel
-					setParamsEnabled( false );
-
-					ImageStack image = inputImage.getImageStack();
-
-					final long start = System.currentTimeMillis();
-
-					if( applyGradient )
-					{
-						final long t1 = System.currentTimeMillis();
-						IJ.log( "Applying morphological gradient to input image..." );
-
-						Strel3D strel = Strel3D.Shape.CUBE.fromRadius( 1 );
-						image = Morphology.gradient( image, strel );
-						//(new ImagePlus("gradient", image) ).show();
-
-						final long t2 = System.currentTimeMillis();
-						IJ.log( "Morphological gradient took " + (t2-t1) + " ms.");
-					}
-
-					IJ.log( "Running extended minima with dynamic value " + (int)dynamic + "..." );
-					final long step0 = System.currentTimeMillis();				
-
-					// Run extended minima
-					ImageStack regionalMinima = MinimaAndMaxima3D.extendedMinima( image, (int)dynamic, connectivity );
-					
-					if( null == regionalMinima )
-					{
-						IJ.log( "The segmentation was interrupted!" );
-						IJ.showStatus( "The segmentation was interrupted!" );
-						IJ.showProgress( 1.0 );
-						return;
-					}
-					
-					final long step1 = System.currentTimeMillis();		
-					IJ.log( "Regional minima took " + (step1-step0) + " ms.");
-
-					IJ.log( "Imposing regional minima on original image (connectivity = " + connectivity + ")..." );
-
-					// Impose regional minima over the original image
-					ImageStack imposedMinima = MinimaAndMaxima3D.imposeMinima( image, regionalMinima, connectivity );
-
-					if( null == imposedMinima )
-					{
-						IJ.log( "The segmentation was interrupted!" );
-						IJ.showStatus( "The segmentation was interrupted!" );
-						IJ.showProgress( 1.0 );
-						return;
-					}
-					
-					final long step2 = System.currentTimeMillis();
-					IJ.log( "Imposition took " + (step2-step1) + " ms." );
-
-					IJ.log( "Labeling regional minima..." );
-
-					// Label regional minima
-					ImageStack labeledMinima = ConnectedComponents.computeLabels( regionalMinima, connectivity, 32 );
-					if( null == labeledMinima )
-					{
-						IJ.log( "The segmentation was interrupted!" );
-						IJ.showStatus( "The segmentation was interrupted!" );
-						IJ.showProgress( 1.0 );
-						return;
-					}
-
-					final long step3 = System.currentTimeMillis();
-					IJ.log( "Connected components took " + (step3-step2) + " ms." );
-
-					// Apply watershed		
-					IJ.log("Running watershed...");
-
-					ImageStack resultStack = Watershed.computeWatershed( imposedMinima, labeledMinima, 
-							connectivity, usePriorityQueue, calculateDams );
-					if( null == resultStack )
-					{
-						IJ.log( "The segmentation was interrupted!" );
-						IJ.showStatus( "The segmentation was interrupted!" );
-						IJ.showProgress( 1.0 );
-						return;
-					}
-					
-					resultImage = new ImagePlus( "watershed", resultStack );
-					resultImage.setCalibration( inputImage.getCalibration() );
-
-					final long end = System.currentTimeMillis();
-					IJ.log( "Watershed 3d took " + (end-step3) + " ms.");
-					IJ.log( "Whole plugin took " + (end-start) + " ms.");
-
-					// Adjust min and max values to display
-					Images3D.optimizeDisplayRange( resultImage );
-
-					byte[][] colorMap = CommonLabelMaps.fromLabel( CommonLabelMaps.SPECTRUM.getLabel() ).computeLut(255, true);;
-					ColorModel cm = ColorMaps.createColorModel(colorMap, Color.BLACK);
-					resultImage.getProcessor().setColorModel(cm);
-					resultImage.getImageStack().setColorModel(cm);
-					resultImage.updateAndDraw();
-
-					// display result overlaying the input image
-					updateResultOverlay();
-					showColorOverlay = true;
-
-					// enable parameter panel
-					setParamsEnabled( true );
-					// set button back to "Segment"
-					segmentButton.setText( "Segment" );
-					// set thread to null					
-					segmentationThread = null;
-				}
-			};
-			
-			segmentationThread = newThread;
-			newThread.start();
-			
-		}
-		else if( command.equals( stopText ) ) 							  
-		{
-			if( null != segmentationThread )
-				segmentationThread.interrupt();
-			else
-				IJ.log("Error: interrupting segmentation failed becaused the thread is null!");
-			
-			// set button back to "Segment"
-			segmentButton.setText( segmentText );
-			segmentButton.setToolTipText( segmentTip );
-			// enable parameter panel
-			setParamsEnabled( true );			
-		}
-	}
 	
 	/**
 	 * Enable/disable all components in the parameter panel
@@ -898,5 +946,47 @@ public class MorphologicalSegmentation implements PlugIn {
 				});
 		
 	}
+	
+	/* **********************************************************
+	 * Macro recording related methods
+	 * *********************************************************/
+
+	/**
+	 * Macro-record a specific command. The command names match the static 
+	 * methods that reproduce that part of the code.
+	 * 
+	 * @param command name of the command including package info
+	 * @param args set of arguments for the command
+	 */
+	public static void record(String command, String... args) 
+	{
+		command = "call(\"inra.ijpb.plugins.Morphological_Segmentation." + command;
+		for(int i = 0; i < args.length; i++)
+			command += "\", \"" + args[i];
+		command += "\");\n";
+		if(Recorder.record)
+			Recorder.recordString(command);
+	}
+	
+	public static void segment(
+			String dynamic,
+			String calculateDams,
+			String applyGradient,
+			String connectivity,
+			String usePriorityQueue )
+	{
+		final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
+		if( iw instanceof CustomWindow )
+		{
+			final CustomWindow win = (CustomWindow) iw;
+			win.setDynamic( Integer.parseInt( dynamic ) );
+			win.setCalculateDams( calculateDams.contains( "true" ) );
+			win.setApplyGradient( applyGradient.contains( "true" ) );
+			win.setConnectivity( Integer.parseInt( connectivity ) );
+			win.setUsePriorityQueue( usePriorityQueue.contains( "true" ) );
+			win.runSegmentation("segment");			
+		}
+	}
+	
 
 }
