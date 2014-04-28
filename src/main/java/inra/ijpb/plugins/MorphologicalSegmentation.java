@@ -550,13 +550,13 @@ public class MorphologicalSegmentation implements PlugIn {
 		void setCalculateDams( boolean b )
 		{
 			calculateDams = b;
-			damsCheckBox.setEnabled( b );
+			damsCheckBox.setSelected( b );
 		}
 		
 		void setApplyGradient( boolean b )
 		{
 			applyGradient = b;
-			gradientCheckBox.setEnabled( b );
+			gradientCheckBox.setSelected( b );
 		}
 		
 		void setConnectivity( int connectivity )
@@ -568,7 +568,11 @@ public class MorphologicalSegmentation implements PlugIn {
 		void setUsePriorityQueue( boolean b )
 		{
 			usePriorityQueue = b;
-			queueCheckBox.setEnabled( b );
+			queueCheckBox.setSelected( b );
+		}
+		
+		String getSegmentText(){
+			return segmentText;
 		}
 		
 		/**
@@ -751,10 +755,10 @@ public class MorphologicalSegmentation implements PlugIn {
 						
 						// Record
 						String[] arg = new String[] {
-							Integer.toString( (int) dynamic ),
+							"dynamic=" + Integer.toString( (int) dynamic ),
 							"calculateDams=" + calculateDams,
 							"applyGradient=" + applyGradient,
-							Integer.toString( connectivity ),
+							"connectivity=" + Integer.toString( connectivity ),
 							"usePriorityQueue=" + usePriorityQueue };
 						record( SEGMENT, arg );
 						
@@ -960,7 +964,7 @@ public class MorphologicalSegmentation implements PlugIn {
 	 */
 	public static void record(String command, String... args) 
 	{
-		command = "call(\"inra.ijpb.plugins.Morphological_Segmentation." + command;
+		command = "call(\"inra.ijpb.plugins.MorphologicalSegmentation." + command;
 		for(int i = 0; i < args.length; i++)
 			command += "\", \"" + args[i];
 		command += "\");\n";
@@ -968,24 +972,36 @@ public class MorphologicalSegmentation implements PlugIn {
 			Recorder.recordString(command);
 	}
 	
+	/**
+	 * Segment current image (GUI needs to be running)
+	 * 
+	 * @param dynamic string containing dynamic value (format: "dynamic=[integer value]")
+	 * @param calculateDams string containing boolean flag to create dams (format: "calculateDams=[boolean])
+	 * @param applyGradient string containing boolean flag to apply morphological gradient (format: "applyGradient=[boolean])
+	 * @param connectivity string containing connectivity value (format: "connectivity=[6 or 26])
+	 * @param usePriorityQueue string containing boolean flag to use priority queue (format: "usePriorityQueue=[boolean])
+	 */
 	public static void segment(
 			String dynamic,
 			String calculateDams,
 			String applyGradient,
 			String connectivity,
 			String usePriorityQueue )
-	{
+	{		
 		final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
 		if( iw instanceof CustomWindow )
 		{
+			//IJ.log( "GUI detected" );			
 			final CustomWindow win = (CustomWindow) iw;
-			win.setDynamic( Integer.parseInt( dynamic ) );
+			win.setDynamic( Integer.parseInt( dynamic.replace( "dynamic=", "" ) ) );
 			win.setCalculateDams( calculateDams.contains( "true" ) );
 			win.setApplyGradient( applyGradient.contains( "true" ) );
-			win.setConnectivity( Integer.parseInt( connectivity ) );
+			win.setConnectivity( Integer.parseInt( connectivity.replace( "connectivity=", "" ) ) );
 			win.setUsePriorityQueue( usePriorityQueue.contains( "true" ) );
-			win.runSegmentation("segment");			
+			win.runSegmentation( win.getSegmentText() );			
 		}
+		else
+			IJ.log( "Error: Morphological Segmentation GUI not detected." );
 	}
 	
 
