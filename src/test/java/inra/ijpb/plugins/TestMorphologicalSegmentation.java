@@ -1,5 +1,6 @@
 package inra.ijpb.plugins;
 
+import ij.IJ;
 import ij.ImageJ;
 
 public class TestMorphologicalSegmentation {
@@ -13,6 +14,9 @@ public class TestMorphologicalSegmentation {
 	public static void main( final String[] args )
 	{
 		ImageJ.main( args );
+		
+		IJ.open( TestMorphologicalSegmentation.class.getResource( "/files/grains.tif" ).getFile() );
+		
 		new MorphologicalSegmentation().run( null );
 	}
 
