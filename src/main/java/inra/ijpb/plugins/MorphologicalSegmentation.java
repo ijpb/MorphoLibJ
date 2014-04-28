@@ -161,6 +161,9 @@ public class MorphologicalSegmentation implements PlugIn {
 	/** tip text of the segmentation button when segmentation running */
 	private String stopTip = "Click to abort segmentation";
 	
+	/** enumeration of result modes */
+	public static enum ResultMode { BASINS, DAMS, LINES };
+		
 	// Macro recording constants (corresponding to  
 	// the static method names to be called)
 	/** name of the macro method to segment the 
@@ -168,6 +171,8 @@ public class MorphologicalSegmentation implements PlugIn {
 	public static String SEGMENT = "segment";
 	/** name of the macro method to toggle the current overlay */
 	public static String TOGGLE_OVERLAY = "toggleOverlay";
+	/** name of the macro method to show current segmentation result */
+	public static String SHOW_RESULT = "showResult";
 	
 	/**
 	 * Custom window to define the plugin GUI
@@ -833,8 +838,92 @@ public class MorphologicalSegmentation implements PlugIn {
 			displayImage.updateAndDraw();
 		}
 		
+		/**
+		 * Show segmentation result in a new window (it exists)
+		 */
+		void showResult()
+		{
+			if( null != resultImage )
+			{
+				
+				
+				final String displayOption = (String) resultDisplayList.getSelectedItem();
+				
+				String[] arg = null;
+				
+				ImagePlus watershedResult = null;
+				
+				// options: "Catchment basins", "Overlayed dams", "Watershed lines"
+				if( displayOption.equals( "Catchment basins" ) )
+				{			
+					watershedResult = getResult( ResultMode.BASINS );									
+					arg = new String[] { "mode=basins" };
+				}
+				else if( displayOption.equals( "Overlayed dams" ) )
+				{
+					watershedResult = getResult( ResultMode.DAMS );
+					arg = new String[] { "mode=dams" };
+				}
+				else if( displayOption.equals( "Watershed lines" ) )
+				{
+					watershedResult = getResult( ResultMode.LINES );
+					arg = new String[] { "mode=lines" };
+				}
+				
+				if( null != watershedResult )
+				{
+					watershedResult.show();
+					watershedResult.setSlice( displayImage.getSlice() );
+				}
+				
+				// Macro recording	
+				if( null != arg )
+					record( SHOW_RESULT, arg );
+			}
+		}
+		
+		/**
+		 * Get current segmentation results based on selected mode
+		 * @param mode selected result mode ("Catchment basins", "Overlayed dams", "Watershed lines") 
+		 * @return result image
+		 */
+		ImagePlus getResult( ResultMode mode )
+		{
+			String title = inputImage.getTitle();
+			String ext = "";
+			int index = title.lastIndexOf( "." );
+			if( index != -1 )
+			{
+				ext = title.substring( index );
+				title = title.substring( 0, index );				
+			}
+			
+			ImagePlus result = null;
+			
+			switch( mode ){
+				case BASINS:
+					result = resultImage.duplicate();
+					result.setTitle( title + "-catchment-basins" + ext );				
+					result.setSlice( displayImage.getSlice() );
+					
+					break;
+				case DAMS:
+					result = getWatershedLines( resultImage );
+					result = ColorImages.binaryOverlay( inputImage, result, Color.red ) ;
+					result.setTitle( title + "-overlayed-dams" + ext );				
+					break;
+				case LINES:
+					result = getWatershedLines( resultImage );
+					result.setTitle( title + "-watershed-lines" + ext );								
+					break;
+			}
+			
+			return result;
+		}
 		
 	}// end class CustomWindow
+	
+
 	
 	/**
 	 * Update the overlay in the display image based on 
@@ -851,49 +940,6 @@ public class MorphologicalSegmentation implements PlugIn {
 		}
 	}
 			
-	/**
-	 * Show segmentation result in a new window (it exists)
-	 */
-	void showResult()
-	{
-		if( null != this.resultImage )
-		{
-			String title = inputImage.getTitle();
-			String ext = "";
-			int index = title.lastIndexOf( "." );
-			if( index != -1 )
-			{
-				ext = title.substring( index );
-				title = title.substring( 0, index );				
-			}
-			
-			final String displayOption = (String) resultDisplayList.getSelectedItem();
-			
-			// options: "Catchment basins", "Overlayed dams", "Watershed lines"
-			if( displayOption.equals( "Catchment basins" ) )
-			{			
-				ImagePlus watershedResult = resultImage.duplicate();
-				watershedResult.setTitle( title + "-catchment-basins" + ext );				
-				watershedResult.show();
-				watershedResult.setSlice( this.displayImage.getSlice() );
-			}
-			else if( displayOption.equals( "Overlayed dams" ) )
-			{
-				final ImagePlus lines = getWatershedLines( resultImage );
-				final ImagePlus overlayed = ColorImages.binaryOverlay( inputImage, lines, Color.red ) ;
-				overlayed.setTitle( title + "-overlayed-dams" + ext );				
-				overlayed.show();
-				overlayed.setSlice( this.displayImage.getSlice() );
-			}
-			else if( displayOption.equals( "Watershed lines" ) )
-			{
-				final ImagePlus lines = getWatershedLines( resultImage );
-				lines.setTitle( title + "-watershed-lines" + ext );				
-				lines.show();
-				lines.setSlice( this.displayImage.getSlice() );
-			}
-		}
-	}
 	
 	/**
 	 * Get the watershed lines out of the result catchment basins image
@@ -1051,5 +1097,32 @@ public class MorphologicalSegmentation implements PlugIn {
 		}
 	}
 	
+	/**
+	 * Show current result in a new image
+	 */
+	public static void showResult( String modeText )
+	{
+		final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
+		if( iw instanceof CustomWindow )
+		{
+			final CustomWindow win = (CustomWindow) iw;
+			String mode = modeText.replace( "mode=", "" );
+			
+			ImagePlus result = null;
+			
+			if( mode.equals( "basins") )
+				result = win.getResult( ResultMode.BASINS );
+			else if( mode.equals( "lines" ) )
+				result = win.getResult( ResultMode.LINES );
+			else if( mode.equals( "dams" ))
+				result = win.getResult( ResultMode.DAMS );
+			
+			if( null != result )
+			{
+				result.show();
+				result.setSlice( win.getImagePlus().getSlice() );
+			}
+		}
+	}
 
-}
+}// end MorphologicalSegmentation class
