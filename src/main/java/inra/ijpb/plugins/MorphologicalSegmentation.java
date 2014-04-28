@@ -542,35 +542,64 @@ public class MorphologicalSegmentation implements PlugIn {
 			exec.shutdownNow();
 		}
 		
+		/**
+		 * Set dynamic value in the GUI
+		 * 
+		 * @param dynamic dynamic value
+		 */
 		void setDynamic( int dynamic )
 		{
 			dynamicText.setText( Integer.toString(dynamic) );
 		}
 		
+		/**
+		 * Set flag and GUI checkbox to calculate watershed dams
+		 * 
+		 * @param b boolean flag
+		 */
 		void setCalculateDams( boolean b )
 		{
 			calculateDams = b;
 			damsCheckBox.setSelected( b );
 		}
 		
+		/**
+		 * Set flag and GUI checkbox to apply morphological gradient
+		 * 
+		 * @param b boolean flag
+		 */
 		void setApplyGradient( boolean b )
 		{
 			applyGradient = b;
 			gradientCheckBox.setSelected( b );
 		}
 		
+		/**
+		 * Set connectivity value in the GUI
+		 * 
+		 * @param connectivity 6-26 neighbor connectivity
+		 */
 		void setConnectivity( int connectivity )
 		{
 			if( connectivity == 6  || connectivity == 26 )
 				connectivityList.setSelectedItem( Integer.toString(connectivity) );									
 		}
 		
+		/**
+		 * Set flag and GUI checkbox to use priority queue
+		 * 
+		 * @param b boolean flag
+		 */
 		void setUsePriorityQueue( boolean b )
 		{
 			usePriorityQueue = b;
 			queueCheckBox.setSelected( b );
 		}
 		
+		/**
+		 * Get segmentation command (text on the segment button)
+		 * @return text on the segment button when segmentation is not running
+		 */		
 		String getSegmentText(){
 			return segmentText;
 		}
