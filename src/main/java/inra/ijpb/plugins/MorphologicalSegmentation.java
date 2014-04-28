@@ -163,8 +163,11 @@ public class MorphologicalSegmentation implements PlugIn {
 	
 	// Macro recording constants (corresponding to  
 	// the static method names to be called)
-	
+	/** name of the macro method to segment the 
+	 * current image based on the current parameters */
 	public static String SEGMENT = "segment";
+	/** name of the macro method to toggle the current overlay */
+	public static String TOGGLE_OVERLAY = "toggleOverlay";
 	
 	/**
 	 * Custom window to define the plugin GUI
@@ -199,7 +202,10 @@ public class MorphologicalSegmentation implements PlugIn {
 						}						
 						else if( e.getSource() == overlayButton )
 						{
-							toggleOverlay();						
+							toggleOverlay();
+							// Macro recording
+							String[] arg = new String[] {};
+							record( TOGGLE_OVERLAY, arg );
 						}
 						else if( e.getSource() == resultButton )
 						{
@@ -813,6 +819,19 @@ public class MorphologicalSegmentation implements PlugIn {
 			}
 		}
 		
+		/**
+		 * Toggle overlay with segmentation results (if any)
+		 */
+		void toggleOverlay()
+		{
+			showColorOverlay = !showColorOverlay;
+
+			if ( showColorOverlay )		
+				updateResultOverlay();
+			else
+				displayImage.setOverlay( null );
+			displayImage.updateAndDraw();
+		}
 		
 		
 	}// end class CustomWindow
@@ -831,21 +850,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			displayImage.setOverlay( new Overlay( roi ) );
 		}
 	}
-	
-	/**
-	 * Toggle overlay with segmentation results (if any)
-	 */
-	void toggleOverlay()
-	{
-		showColorOverlay = !showColorOverlay;
-
-		if ( showColorOverlay )		
-			updateResultOverlay();
-		else
-			displayImage.setOverlay( null );
-		displayImage.updateAndDraw();
-	}
-	
+			
 	/**
 	 * Show segmentation result in a new window (it exists)
 	 */
@@ -1031,6 +1036,19 @@ public class MorphologicalSegmentation implements PlugIn {
 		}
 		else
 			IJ.log( "Error: Morphological Segmentation GUI not detected." );
+	}
+	
+	/**
+	 * Toggle current result overlay image
+	 */
+	public static void toggleOverlay()
+	{
+		final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
+		if( iw instanceof CustomWindow )
+		{
+			final CustomWindow win = (CustomWindow) iw;
+			win.toggleOverlay();
+		}
 	}
 	
 
