@@ -161,10 +161,18 @@ public class MorphologicalSegmentation implements PlugIn {
 	/** tip text of the segmentation button when segmentation running */
 	private String stopTip = "Click to abort segmentation";
 	
+	/** enumeration of result modes */
+	public static enum ResultMode { BASINS, DAMS, LINES };
+		
 	// Macro recording constants (corresponding to  
 	// the static method names to be called)
-	
+	/** name of the macro method to segment the 
+	 * current image based on the current parameters */
 	public static String SEGMENT = "segment";
+	/** name of the macro method to toggle the current overlay */
+	public static String TOGGLE_OVERLAY = "toggleOverlay";
+	/** name of the macro method to show current segmentation result */
+	public static String SHOW_RESULT = "showResult";
 	
 	/**
 	 * Custom window to define the plugin GUI
@@ -199,7 +207,10 @@ public class MorphologicalSegmentation implements PlugIn {
 						}						
 						else if( e.getSource() == overlayButton )
 						{
-							toggleOverlay();						
+							toggleOverlay();
+							// Macro recording
+							String[] arg = new String[] {};
+							record( TOGGLE_OVERLAY, arg );
 						}
 						else if( e.getSource() == resultButton )
 						{
@@ -542,33 +553,66 @@ public class MorphologicalSegmentation implements PlugIn {
 			exec.shutdownNow();
 		}
 		
+		/**
+		 * Set dynamic value in the GUI
+		 * 
+		 * @param dynamic dynamic value
+		 */
 		void setDynamic( int dynamic )
 		{
 			dynamicText.setText( Integer.toString(dynamic) );
 		}
 		
+		/**
+		 * Set flag and GUI checkbox to calculate watershed dams
+		 * 
+		 * @param b boolean flag
+		 */
 		void setCalculateDams( boolean b )
 		{
 			calculateDams = b;
-			damsCheckBox.setEnabled( b );
+			damsCheckBox.setSelected( b );
 		}
 		
+		/**
+		 * Set flag and GUI checkbox to apply morphological gradient
+		 * 
+		 * @param b boolean flag
+		 */
 		void setApplyGradient( boolean b )
 		{
 			applyGradient = b;
-			gradientCheckBox.setEnabled( b );
+			gradientCheckBox.setSelected( b );
 		}
 		
+		/**
+		 * Set connectivity value in the GUI
+		 * 
+		 * @param connectivity 6-26 neighbor connectivity
+		 */
 		void setConnectivity( int connectivity )
 		{
 			if( connectivity == 6  || connectivity == 26 )
 				connectivityList.setSelectedItem( Integer.toString(connectivity) );									
 		}
 		
+		/**
+		 * Set flag and GUI checkbox to use priority queue
+		 * 
+		 * @param b boolean flag
+		 */
 		void setUsePriorityQueue( boolean b )
 		{
 			usePriorityQueue = b;
-			queueCheckBox.setEnabled( b );
+			queueCheckBox.setSelected( b );
+		}
+		
+		/**
+		 * Get segmentation command (text on the segment button)
+		 * @return text on the segment button when segmentation is not running
+		 */		
+		String getSegmentText(){
+			return segmentText;
 		}
 		
 		/**
@@ -751,10 +795,10 @@ public class MorphologicalSegmentation implements PlugIn {
 						
 						// Record
 						String[] arg = new String[] {
-							Integer.toString( (int) dynamic ),
+							"dynamic=" + Integer.toString( (int) dynamic ),
 							"calculateDams=" + calculateDams,
 							"applyGradient=" + applyGradient,
-							Integer.toString( connectivity ),
+							"connectivity=" + Integer.toString( connectivity ),
 							"usePriorityQueue=" + usePriorityQueue };
 						record( SEGMENT, arg );
 						
@@ -780,9 +824,106 @@ public class MorphologicalSegmentation implements PlugIn {
 			}
 		}
 		
+		/**
+		 * Toggle overlay with segmentation results (if any)
+		 */
+		void toggleOverlay()
+		{
+			showColorOverlay = !showColorOverlay;
+
+			if ( showColorOverlay )		
+				updateResultOverlay();
+			else
+				displayImage.setOverlay( null );
+			displayImage.updateAndDraw();
+		}
 		
+		/**
+		 * Show segmentation result in a new window (it exists)
+		 */
+		void showResult()
+		{
+			if( null != resultImage )
+			{
+				
+				
+				final String displayOption = (String) resultDisplayList.getSelectedItem();
+				
+				String[] arg = null;
+				
+				ImagePlus watershedResult = null;
+				
+				// options: "Catchment basins", "Overlayed dams", "Watershed lines"
+				if( displayOption.equals( "Catchment basins" ) )
+				{			
+					watershedResult = getResult( ResultMode.BASINS );									
+					arg = new String[] { "mode=basins" };
+				}
+				else if( displayOption.equals( "Overlayed dams" ) )
+				{
+					watershedResult = getResult( ResultMode.DAMS );
+					arg = new String[] { "mode=dams" };
+				}
+				else if( displayOption.equals( "Watershed lines" ) )
+				{
+					watershedResult = getResult( ResultMode.LINES );
+					arg = new String[] { "mode=lines" };
+				}
+				
+				if( null != watershedResult )
+				{
+					watershedResult.show();
+					watershedResult.setSlice( displayImage.getSlice() );
+				}
+				
+				// Macro recording	
+				if( null != arg )
+					record( SHOW_RESULT, arg );
+			}
+		}
+		
+		/**
+		 * Get current segmentation results based on selected mode
+		 * @param mode selected result mode ("Catchment basins", "Overlayed dams", "Watershed lines") 
+		 * @return result image
+		 */
+		ImagePlus getResult( ResultMode mode )
+		{
+			String title = inputImage.getTitle();
+			String ext = "";
+			int index = title.lastIndexOf( "." );
+			if( index != -1 )
+			{
+				ext = title.substring( index );
+				title = title.substring( 0, index );				
+			}
+			
+			ImagePlus result = null;
+			
+			switch( mode ){
+				case BASINS:
+					result = resultImage.duplicate();
+					result.setTitle( title + "-catchment-basins" + ext );				
+					result.setSlice( displayImage.getSlice() );
+					
+					break;
+				case DAMS:
+					result = getWatershedLines( resultImage );
+					result = ColorImages.binaryOverlay( inputImage, result, Color.red ) ;
+					result.setTitle( title + "-overlayed-dams" + ext );				
+					break;
+				case LINES:
+					result = getWatershedLines( resultImage );
+					result.setTitle( title + "-watershed-lines" + ext );								
+					break;
+			}
+			
+			return result;
+		}
 		
 	}// end class CustomWindow
+	
+
 	
 	/**
 	 * Update the overlay in the display image based on 
@@ -798,64 +939,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			displayImage.setOverlay( new Overlay( roi ) );
 		}
 	}
-	
-	/**
-	 * Toggle overlay with segmentation results (if any)
-	 */
-	void toggleOverlay()
-	{
-		showColorOverlay = !showColorOverlay;
-
-		if ( showColorOverlay )		
-			updateResultOverlay();
-		else
-			displayImage.setOverlay( null );
-		displayImage.updateAndDraw();
-	}
-	
-	/**
-	 * Show segmentation result in a new window (it exists)
-	 */
-	void showResult()
-	{
-		if( null != this.resultImage )
-		{
-			String title = inputImage.getTitle();
-			String ext = "";
-			int index = title.lastIndexOf( "." );
-			if( index != -1 )
-			{
-				ext = title.substring( index );
-				title = title.substring( 0, index );				
-			}
 			
-			final String displayOption = (String) resultDisplayList.getSelectedItem();
-			
-			// options: "Catchment basins", "Overlayed dams", "Watershed lines"
-			if( displayOption.equals( "Catchment basins" ) )
-			{			
-				ImagePlus watershedResult = resultImage.duplicate();
-				watershedResult.setTitle( title + "-catchment-basins" + ext );				
-				watershedResult.show();
-				watershedResult.setSlice( this.displayImage.getSlice() );
-			}
-			else if( displayOption.equals( "Overlayed dams" ) )
-			{
-				final ImagePlus lines = getWatershedLines( resultImage );
-				final ImagePlus overlayed = ColorImages.binaryOverlay( inputImage, lines, Color.red ) ;
-				overlayed.setTitle( title + "-overlayed-dams" + ext );				
-				overlayed.show();
-				overlayed.setSlice( this.displayImage.getSlice() );
-			}
-			else if( displayOption.equals( "Watershed lines" ) )
-			{
-				final ImagePlus lines = getWatershedLines( resultImage );
-				lines.setTitle( title + "-watershed-lines" + ext );				
-				lines.show();
-				lines.setSlice( this.displayImage.getSlice() );
-			}
-		}
-	}
 	
 	/**
 	 * Get the watershed lines out of the result catchment basins image
@@ -960,7 +1044,7 @@ public class MorphologicalSegmentation implements PlugIn {
 	 */
 	public static void record(String command, String... args) 
 	{
-		command = "call(\"inra.ijpb.plugins.Morphological_Segmentation." + command;
+		command = "call(\"inra.ijpb.plugins.MorphologicalSegmentation." + command;
 		for(int i = 0; i < args.length; i++)
 			command += "\", \"" + args[i];
 		command += "\");\n";
@@ -968,25 +1052,77 @@ public class MorphologicalSegmentation implements PlugIn {
 			Recorder.recordString(command);
 	}
 	
+	/**
+	 * Segment current image (GUI needs to be running)
+	 * 
+	 * @param dynamic string containing dynamic value (format: "dynamic=[integer value]")
+	 * @param calculateDams string containing boolean flag to create dams (format: "calculateDams=[boolean])
+	 * @param applyGradient string containing boolean flag to apply morphological gradient (format: "applyGradient=[boolean])
+	 * @param connectivity string containing connectivity value (format: "connectivity=[6 or 26])
+	 * @param usePriorityQueue string containing boolean flag to use priority queue (format: "usePriorityQueue=[boolean])
+	 */
 	public static void segment(
 			String dynamic,
 			String calculateDams,
 			String applyGradient,
 			String connectivity,
 			String usePriorityQueue )
+	{		
+		final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
+		if( iw instanceof CustomWindow )
+		{
+			//IJ.log( "GUI detected" );			
+			final CustomWindow win = (CustomWindow) iw;
+			win.setDynamic( Integer.parseInt( dynamic.replace( "dynamic=", "" ) ) );
+			win.setCalculateDams( calculateDams.contains( "true" ) );
+			win.setApplyGradient( applyGradient.contains( "true" ) );
+			win.setConnectivity( Integer.parseInt( connectivity.replace( "connectivity=", "" ) ) );
+			win.setUsePriorityQueue( usePriorityQueue.contains( "true" ) );
+			win.runSegmentation( win.getSegmentText() );			
+		}
+		else
+			IJ.log( "Error: Morphological Segmentation GUI not detected." );
+	}
+	
+	/**
+	 * Toggle current result overlay image
+	 */
+	public static void toggleOverlay()
 	{
 		final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
 		if( iw instanceof CustomWindow )
 		{
 			final CustomWindow win = (CustomWindow) iw;
-			win.setDynamic( Integer.parseInt( dynamic ) );
-			win.setCalculateDams( calculateDams.contains( "true" ) );
-			win.setApplyGradient( applyGradient.contains( "true" ) );
-			win.setConnectivity( Integer.parseInt( connectivity ) );
-			win.setUsePriorityQueue( usePriorityQueue.contains( "true" ) );
-			win.runSegmentation("segment");			
+			win.toggleOverlay();
 		}
 	}
 	
+	/**
+	 * Show current result in a new image
+	 */
+	public static void showResult( String modeText )
+	{
+		final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
+		if( iw instanceof CustomWindow )
+		{
+			final CustomWindow win = (CustomWindow) iw;
+			String mode = modeText.replace( "mode=", "" );
+			
+			ImagePlus result = null;
+			
+			if( mode.equals( "basins") )
+				result = win.getResult( ResultMode.BASINS );
+			else if( mode.equals( "lines" ) )
+				result = win.getResult( ResultMode.LINES );
+			else if( mode.equals( "dams" ))
+				result = win.getResult( ResultMode.DAMS );
+			
+			if( null != result )
+			{
+				result.show();
+				result.setSlice( win.getImagePlus().getSlice() );
+			}
+		}
+	}
 
-}
+}// end MorphologicalSegmentation class
