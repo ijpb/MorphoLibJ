@@ -97,5 +97,44 @@ public class Images3D {
 				}
 			}
 		}
-	}	
+	}
+	
+	/**
+	 * Fills the input 3D image with the given value.
+	 */ 
+	public static final void fill(ImageStack image, double value) 
+	{
+		for (int z = 0; z < image.getSize(); z++)
+		{
+			for (int y = 0; y < image.getHeight(); y++)
+			{
+				for (int x = 0; x < image.getWidth(); x++)
+				{
+					image.setVoxel(x, y, z, value);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Prints the content of the given 3D image on the console. This can be used
+	 * for debugging (small) images.
+	 */
+	public static final void print(ImageStack image) 
+	{
+		int nSlices = image.getSize();
+		for (int z = 0; z < nSlices; z++)
+		{
+			System.out.println(String.format("slice %d/%d", z, nSlices - 1));
+			for (int y = 0; y < image.getHeight(); y++)
+			{
+				for (int x = 0; x < image.getWidth(); x++)
+				{
+					System.out.println(String.format("%3d ", (int) image.getVoxel(x, y, z)));
+				}
+				System.out.println("");
+			}
+		}
+	}
+	
 }
