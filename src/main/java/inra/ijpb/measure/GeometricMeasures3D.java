@@ -132,14 +132,18 @@ public class GeometricMeasures3D {
 		return table;
 	}
 	
+	/**
+	 * Measures the volume of each particle in the 3D label image.
+	 * 
+	 * @param labelImage image containing the label of each particle
+	 * @param labels the set of labels for which volume has to be computed
+	 * @param resol image resolution, as a double array with 3 elements
+	 * @return the volume of each particle in the image
+	 */
 	public final static double[] volume(ImageStack labelImage, int[] labels, double[] resol) {
         // create associative array to know index of each label
 		int nLabels = labels.length;
-        HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
-        for (int i = 0; i < nLabels; i++) {
-        	labelIndices.put(labels[i], i);
-        }
-
+        
         // pre-compute the volume of individual voxel
         if (resol == null || resol.length < 3) {
         	throw new IllegalArgumentException("Resolution must be a double array of length 3");
@@ -147,32 +151,17 @@ public class GeometricMeasures3D {
         double voxelVolume = resol[0] * resol[1] * resol[2];
         
         // initialize result
+		int[] voxelCounts = LabelImages.voxelCount(labelImage, labels);
+
+		// convert voxel counts to particle volumes
 		double[] volumes = new double[nLabels];
-
-		// size of image
-		int sizeX = labelImage.getWidth();
-		int sizeY = labelImage.getHeight();
-		int sizeZ = labelImage.getSize();
-
-		// iterate on image voxels
-		IJ.showStatus("Measure Volume...");
-        for (int z = 0; z < sizeZ; z++) {
-        	IJ.showProgress(z, sizeZ);
-        	for (int y = 0; y < sizeY; y++) {
-        		for (int x = 0; x < sizeX; x++) {
-        			int label = (int) labelImage.getVoxel(x, y, z);
-					// do not consider background
-					if (label == 0)
-						continue;
-					int labelIndex = labelIndices.get(label);
-        			volumes[labelIndex] += voxelVolume;
-        		}
-        	}
-        }
-        
-		IJ.showStatus("");
+		for (int i = 0; i < nLabels; i++) 
+		{
+			volumes[i] = voxelCounts[i] * voxelVolume;
+		}
         return volumes;
 	}
+	
 	
 	public final static double[] computeSphericity(double[] volumes, double[] surfaces) {
 		int n = volumes.length;

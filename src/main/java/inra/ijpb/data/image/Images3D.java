@@ -130,7 +130,7 @@ public class Images3D {
 			{
 				for (int x = 0; x < image.getWidth(); x++)
 				{
-					System.out.println(String.format("%3d ", (int) image.getVoxel(x, y, z)));
+					System.out.print(String.format("%3d ", (int) image.getVoxel(x, y, z)));
 				}
 				System.out.println("");
 			}

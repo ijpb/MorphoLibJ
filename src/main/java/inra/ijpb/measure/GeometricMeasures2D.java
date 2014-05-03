@@ -47,7 +47,7 @@ public class GeometricMeasures2D {
 		double[] areas = new double[nLabels];
 
 		// First count the number of pixels in each region
-	    int[] counts = pixelCount(image, labels);
+	    int[] counts = LabelImages.pixelCount(image, labels);
 
 	    // convert pixel count to areas
 	    for (int i = 0; i < areas.length; i++) {
@@ -56,40 +56,6 @@ public class GeometricMeasures2D {
 	    
 	    return areas;
 	}
-
-    /**
-	 * Computes the number of pixels composing each particle in the label image.
-	 * @see #area(ij.process.ImageProcessor, int[], double[])
-	 */
-    public static final int[] pixelCount(ImageProcessor image, int[] labels) {
-    	// image size
-	    int width 	= image.getWidth();
-	    int height 	= image.getHeight();
-	
-        // create associative array to know index of each label
-		int nLabels = labels.length;
-        HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
-        for (int i = 0; i < nLabels; i++) {
-        	labelIndices.put(labels[i], i);
-        }
-
-        // initialize result
-		int[] counts = new int[nLabels];
-	
-		// count all pixels belonging to the particle
-	    for (int y = 0; y < height; y++) {
-	        for (int x = 0; x < width; x++) {
-	        	int label = image.get(x, y);
-	        	if (label == 0)
-					continue;
-				int labelIndex = labelIndices.get(label);
-				counts[labelIndex]++;
-	        }
-	    }	
-	    
-	    return counts;
-	}
-
 
 	/**
 	 * Counts the number of pixel that composes the particle with given label. 

@@ -14,12 +14,13 @@ import inra.ijpb.binary.distmap.ChamferDistance3x3Float;
 import inra.ijpb.binary.distmap.ChamferDistance3x3Short;
 import inra.ijpb.binary.distmap.ChamferDistance5x5Float;
 import inra.ijpb.binary.distmap.ChamferDistance5x5Short;
-import inra.ijpb.measure.GeometricMeasures2D;
 import inra.ijpb.morphology.LabelImages;
 
 /**
  * A collection of static methods for operating on binary images (2D/3D).
  * Some of the methods need the LabelImages class. 
+ * 
+ * @see inra.ijpb.morphology.LabelImages
  * 
  * @author David Legland
  *
@@ -99,12 +100,43 @@ public class BinaryImages {
 		
 		// compute area of each label
 		int[] labels = LabelImages.findAllLabels(labelImage);
-		int[] areas = GeometricMeasures2D.pixelCount(labelImage, labels);
+		int[] areas = LabelImages.pixelCount(labelImage, labels);
 		
 		// find labels with sufficient area
 		ArrayList<Integer> labelsToKeep = new ArrayList<Integer>(labels.length);
 		for (int i = 0; i < labels.length; i++) {
 			if (areas[i] >= nPixelMin) {
+				labelsToKeep.add(labels[i]);
+			}
+		}
+		
+		// Convert array list into int array
+		int[] labels2 = new int[labelsToKeep.size()];
+		for (int i = 0; i < labelsToKeep.size(); i++) {
+			labels2[i] = labelsToKeep.get(i);
+		}
+		
+		// keep only necessary labels and binarize
+		return binarize(LabelImages.keepLabels(labelImage, labels2));
+	}
+	
+	
+	/**
+	 * Applies area opening on a binary image: creates a new binary image that
+	 * contains only particle with at least the specified number of pixels.
+	 */
+	public static final ImageStack volumeOpening(ImageStack image, int nVoxelMin) {
+		// Labeling
+		ImageStack labelImage = ConnectedComponents.computeLabels(image, 6, 16);
+		
+		// compute area of each label
+		int[] labels = LabelImages.findAllLabels(labelImage);
+		int[] vols = LabelImages.voxelCount(labelImage, labels);
+		
+		// find labels with sufficient area
+		ArrayList<Integer> labelsToKeep = new ArrayList<Integer>(labels.length);
+		for (int i = 0; i < labels.length; i++) {
+			if (vols[i] >= nVoxelMin) {
 				labelsToKeep.add(labels[i]);
 			}
 		}
@@ -211,7 +243,26 @@ public class BinaryImages {
 	}
 	
 	/**
-	 * Converts a grayscale 2D image into a binary 2D image.
+	 * Converts a grayscale 2D or 3D image into a binary image by setting 
+	 * non-zero elements to 255.
+	 */
+	public static final ImagePlus binarize(ImagePlus imagePlus) {
+		// Dispatch to appropriate function depending on dimension
+		ImagePlus resultPlus;
+		String title = imagePlus.getShortTitle() + "-bin";
+		if (imagePlus.getStackSize() == 1) {
+			ImageProcessor result = binarize(imagePlus.getProcessor());
+			resultPlus = new ImagePlus(title, result);
+		} else {
+			ImageStack result = binarize(imagePlus.getStack());
+			resultPlus = new ImagePlus(title, result);
+		}
+		return resultPlus;
+	}
+
+	/**
+	 * Converts a grayscale 2D image into a binary 2D image by setting non-zero
+	 * pixels to 255.
 	 */
 	public static final ImageProcessor binarize(ImageProcessor image) {
 		int width = image.getWidth();
@@ -229,7 +280,8 @@ public class BinaryImages {
 	}
 	
 	/**
-	 * Converts a grayscale 3D image into a binary 3D image.
+	 * Converts a grayscale 3D image into a binary 3D image by setting non-zero
+	 * voxels to 255.
 	 */
 	public static final ImageStack binarize(ImageStack image) {
 		int sizeX = image.getWidth();

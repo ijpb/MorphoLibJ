@@ -13,6 +13,7 @@ import inra.ijpb.measure.GeometricMeasures2D;
 import inra.ijpb.measure.GeometricMeasures3D;
 
 import java.awt.Color;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeSet;
 import static java.lang.Math.min;
@@ -54,6 +55,16 @@ public class LabelImages {
 		return result;
 	}
 	
+	/**
+	 * Returns a binary image that contains only the selected particle or
+	 * region, by automatically cropping the image and eventually addind some
+	 * borders.
+	 * 
+	 * @param image a 3D image containing label of particles
+	 * @param label the label of the particle to select
+	 * @param border the number of voxel to add to each side of the particle
+	 * @return a smaller binary image containing only the selected particle
+	 */
 	public static final ImageStack cropLabel(ImageStack image, int label, int border) 
 	{
 		int sizeX = image.getWidth();
@@ -525,6 +536,80 @@ public class LabelImages {
 			}
 		}
 		return indMax;
+	}
+	
+    /**
+	 * Computes the number of pixels composing each particle in the label image.
+	 * @see inra.ijpb.measure.GeometricMeasures2D#area(ij.process.ImageProcessor, int[], double[])
+	 */
+    public static final int[] pixelCount(ImageProcessor image, int[] labels) {
+    	// image size
+	    int width 	= image.getWidth();
+	    int height 	= image.getHeight();
+	
+        // create associative array to know index of each label
+		int nLabels = labels.length;
+        HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
+        for (int i = 0; i < nLabels; i++) {
+        	labelIndices.put(labels[i], i);
+        }
+
+        // initialize result
+		int[] counts = new int[nLabels];
+	
+		// count all pixels belonging to the particle
+	    for (int y = 0; y < height; y++) {
+	        for (int x = 0; x < width; x++) {
+	        	int label = image.get(x, y);
+	        	if (label == 0)
+					continue;
+				int labelIndex = labelIndices.get(label);
+				counts[labelIndex]++;
+	        }
+	    }	
+	    
+	    return counts;
+	}
+
+	/**
+	 * Counts the number of voxels that compose each labeled particle in 3D 
+	 * image.
+	 * @see inra.ijpb.measure.GeometricMeasures3D#volume(ij.ImageStack, int[], double[])
+	*/
+	public final static int[] voxelCount(ImageStack labelImage, int[] labels) {
+        // create associative array to know index of each label
+		int nLabels = labels.length;
+        HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
+        for (int i = 0; i < nLabels; i++) {
+        	labelIndices.put(labels[i], i);
+        }
+
+        // initialize result
+		int[] counts = new int[nLabels];
+
+		// size of image
+		int sizeX = labelImage.getWidth();
+		int sizeY = labelImage.getHeight();
+		int sizeZ = labelImage.getSize();
+
+		// iterate on image voxels
+		IJ.showStatus("Count label voxels...");
+        for (int z = 0; z < sizeZ; z++) {
+        	IJ.showProgress(z, sizeZ);
+        	for (int y = 0; y < sizeY; y++) {
+        		for (int x = 0; x < sizeX; x++) {
+        			int label = (int) labelImage.getVoxel(x, y, z);
+					// do not consider background
+					if (label == 0)
+						continue;
+					int labelIndex = labelIndices.get(label);
+					counts[labelIndex]++;
+        		}
+        	}
+        }
+        
+		IJ.showStatus("");
+        return counts;
 	}
 	
     public final static int[] findAllLabels(ImagePlus image) {
