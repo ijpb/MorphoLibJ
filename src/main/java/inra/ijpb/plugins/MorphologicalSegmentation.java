@@ -75,9 +75,7 @@ public class MorphologicalSegmentation implements PlugIn {
 	
 	/** segmentation result image */
 	ImagePlus resultImage = null;		
-		
-	/** segmentation panel */
-	JPanel segmentationPanel = new JPanel();
+			
 	/** display panel */
 	JPanel displayPanel = new JPanel();
 	
@@ -159,7 +157,23 @@ public class MorphologicalSegmentation implements PlugIn {
 	/** flag to apply gradient to the input image */
 	private boolean applyGradient = false;
 	
+//	 Watershed segmentation panel design:
+//
+//	 __ Watershed Segmentation___
+//	| Tolerance: [10]            |	
+//	| x - Advanced options       |
+//	|  ------------------------- |
+//	| | x - Use dams            ||
+//	| | Connectivity: [6/26]    ||
+//	| | x - Use priority queue  ||
+//	|  ------------------------- |
+//  |          -----             |
+//  |         | Run |	         |
+//  |          -----             |	
+//	|____________________________| 
 	
+	/** watershed segmentation panel */
+	JPanel segmentationPanel = new JPanel();
 	
 	/** extended regional minima dynamic panel */
 	JPanel dynamicPanel = new JPanel();
@@ -167,22 +181,20 @@ public class MorphologicalSegmentation implements PlugIn {
 	JLabel dynamicLabel;
 	/** extended regional minima dynamic text field */
 	JTextField dynamicText;
-	
+		
+	/** advanced options panel */
+	JPanel advancedOptionsPanel = new JPanel();
+	/** checkbox to enable/disable the advanced options */
+	JCheckBox advancedOptionsCheckBox;
+	/** flag to select/deselect the advanced options */
+	private boolean selectAdvancedOptions = false;	
+
 	/** dams panel */
 	JPanel damsPanel = new JPanel();
 	/** checkbox to enable/disable the calculation of watershed dams */
 	JCheckBox damsCheckBox;
 	/** flag to select/deselect the calculation of watershed dams */
 	private boolean calculateDams = true;
-	
-	/** advanced options panel */
-	JPanel advancedOptionsPanel = new JPanel();
-	/** checkbox to enable/disable the advanced options */
-	JCheckBox advancedOptionsCheckBox;
-	/** flag to select/deselect the advanced options */
-	private boolean selectAdvancedOptions = false;
-	
-	
 	
 	/** connectivity choice */
 	JPanel connectivityPanel = new JPanel();
@@ -199,6 +211,8 @@ public class MorphologicalSegmentation implements PlugIn {
 	private boolean usePriorityQueue = true;
 	/** priority queue panel */
 	JPanel queuePanel = new JPanel();
+
+	
 	
 	/** executor service to launch threads for the plugin methods and events */
 	final ExecutorService exec = Executors.newFixedThreadPool(1);
@@ -368,31 +382,28 @@ public class MorphologicalSegmentation implements PlugIn {
 			inputImageConstraints.gridy++;
 			
 			
-				
-			
-			
-			
-			
-	/*		
-			// regional minima dynamic value
-			dynamicLabel = new JLabel( "Dynamic" );
-			dynamicLabel.setToolTipText( "Extended minima dynamic" );
+			// === Watershed Segmentation panel ===
+
+			// regional minima dynamic value ("Tolerance")
+			dynamicLabel = new JLabel( "Tolerance" );
+			dynamicLabel.setToolTipText( "Tolerance in the search of local minima" );
 			dynamicText = new JTextField( "10", 5 );
 			dynamicPanel.add( dynamicLabel );
 			dynamicPanel.add( dynamicText );
-			dynamicPanel.setToolTipText( "Extended minima dynamic" );	
+			dynamicPanel.setToolTipText( "Tolerance in the search of local minima" );	
 			
-			// dams option
-			damsCheckBox = new JCheckBox( "Calculate dams", calculateDams );
-			damsCheckBox.setToolTipText( "Calculate watershed dams" );
-			damsPanel.add( damsCheckBox );
+			
 							
 			// advanced options (connectivity + priority queue choices)
 			advancedOptionsCheckBox = new JCheckBox( "Advanced options", selectAdvancedOptions );
 			advancedOptionsCheckBox.setToolTipText( "Enable advanced options" );
 			advancedOptionsCheckBox.addActionListener( listener );
 			
-			
+			// dams option
+			damsCheckBox = new JCheckBox( "Calculate dams", calculateDams );
+			damsCheckBox.setToolTipText( "Calculate watershed dams" );
+			damsPanel.add( damsCheckBox );
+
 			// connectivity
 			connectivityList = new JComboBox( connectivityOptions );
 			connectivityList.setToolTipText( "Voxel connectivity to use" );
@@ -419,43 +430,21 @@ public class MorphologicalSegmentation implements PlugIn {
 			advancedOptoinsConstraints.gridy = 0;
 			advancedOptionsPanel.setLayout( advancedOptionsLayout );
 			
-			advancedOptionsPanel.add( gradientOptionsPanel, advancedOptoinsConstraints );
-			advancedOptoinsConstraints.gridy++;
+			advancedOptionsPanel.add( damsPanel, advancedOptoinsConstraints );
+			advancedOptoinsConstraints.gridy++;			
 			advancedOptionsPanel.add( connectivityPanel, advancedOptoinsConstraints );
 			advancedOptoinsConstraints.gridy++;			
 			advancedOptionsPanel.add( queuePanel, advancedOptoinsConstraints );
 			
 			advancedOptionsPanel.setBorder(BorderFactory.createTitledBorder(""));
-			
-			
+						
 			// Segmentation button
 			segmentButton = new JButton( segmentText );
 			segmentButton.setToolTipText( segmentTip );
 			segmentButton.addActionListener( listener );
-		*/	
-			// Overlay button
-			overlayButton = new JButton( "Toggle overlay" );
-			overlayButton.setEnabled( false );
-			overlayButton.setToolTipText( "Toggle overlay with segmentation result" );
-			overlayButton.addActionListener( listener );
-			overlayPanel.add( overlayButton );
-			
-			showColorOverlay = false;
-			
-			// Result pannel
-			resultDisplayList = new JComboBox( resultDisplayOption );
-			resultDisplayList.setEnabled( false );
-			resultDisplayList.setToolTipText( "Select how to display segmentation results" );
-			resultButton = new JButton( "Show" );
-			resultButton.setEnabled( false );
-			resultButton.setToolTipText( "Show segmentation result in new window" );
-			resultButton.addActionListener( listener );
-			resultDisplayPanel.add( resultDisplayList );
-			resultDisplayPanel.add( resultButton );
-			
-/*
+
 			// Segmentation panel
-			segmentationPanel.setBorder( BorderFactory.createTitledBorder( "Segmentation" ) );
+			segmentationPanel.setBorder( BorderFactory.createTitledBorder( "Watershed Segmentation" ) );
 			GridBagLayout segmentationLayout = new GridBagLayout();
 			GridBagConstraints segmentationConstraints = new GridBagConstraints();
 			segmentationConstraints.anchor = GridBagConstraints.NORTHWEST;
@@ -469,8 +458,6 @@ public class MorphologicalSegmentation implements PlugIn {
 						
 			segmentationPanel.add( dynamicPanel, segmentationConstraints );
 			segmentationConstraints.gridy++;
-			segmentationPanel.add( damsPanel, segmentationConstraints );
-			segmentationConstraints.gridy++;
 			segmentationPanel.add( advancedOptionsCheckBox, segmentationConstraints );
 			segmentationConstraints.gridy++;			
 			segmentationPanel.add( advancedOptionsPanel, segmentationConstraints );			
@@ -478,7 +465,28 @@ public class MorphologicalSegmentation implements PlugIn {
 			segmentationConstraints.anchor = GridBagConstraints.CENTER;
 			segmentationConstraints.fill = GridBagConstraints.NONE;
 			segmentationPanel.add( segmentButton, segmentationConstraints );
-	*/		
+			
+			
+			// Overlay button
+			overlayButton = new JButton( "Toggle overlay" );
+			overlayButton.setEnabled( false );
+			overlayButton.setToolTipText( "Toggle overlay with segmentation result" );
+			overlayButton.addActionListener( listener );
+			overlayPanel.add( overlayButton );
+
+			showColorOverlay = false;
+
+			// Result panel
+			resultDisplayList = new JComboBox( resultDisplayOption );
+			resultDisplayList.setEnabled( false );
+			resultDisplayList.setToolTipText( "Select how to display segmentation results" );
+			resultButton = new JButton( "Show" );
+			resultButton.setEnabled( false );
+			resultButton.setToolTipText( "Show segmentation result in new window" );
+			resultButton.addActionListener( listener );
+			resultDisplayPanel.add( resultDisplayList );
+			resultDisplayPanel.add( resultButton );
+
 			// Display panel
 			displayPanel.setBorder( BorderFactory.createTitledBorder( "Display" ) );
 			GridBagLayout displayLayout = new GridBagLayout();
@@ -509,6 +517,8 @@ public class MorphologicalSegmentation implements PlugIn {
 			paramsConstraints.gridx = 0;
 			paramsConstraints.gridy = 0;
 			paramsPanel.add( inputImagePanel, paramsConstraints);
+			paramsConstraints.gridy++;
+			paramsPanel.add( segmentationPanel, paramsConstraints);
 			paramsConstraints.gridy++;
 			paramsPanel.add( displayPanel, paramsConstraints);
 			paramsConstraints.gridy++;
@@ -1105,10 +1115,11 @@ public class MorphologicalSegmentation implements PlugIn {
 	 */
 	void enableAdvancedOptions( boolean enabled )
 	{
-		this.connectivityLabel.setEnabled( enabled );
-		this.connectivityList.setEnabled( enabled );
-		this.queueCheckBox.setEnabled( enabled );
-		this.gradientCheckBox.setEnabled( enabled );
+		damsCheckBox.setEnabled( enabled );
+		connectivityLabel.setEnabled( enabled );
+		connectivityList.setEnabled( enabled );
+		queueCheckBox.setEnabled( enabled );
+		gradientCheckBox.setEnabled( enabled );
 	}
 	
 	@Override
