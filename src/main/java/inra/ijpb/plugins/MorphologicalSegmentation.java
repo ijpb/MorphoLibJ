@@ -221,7 +221,7 @@ public class MorphologicalSegmentation implements PlugIn {
 	private Thread segmentationThread = null;
 	
 	/** text of the segmentation button when segmentation not running */
-	private String segmentText = "Segment";
+	private String segmentText = "Run";
 	/** tip text of the segmentation button when segmentation not running */
 	private String segmentTip = "Run the morphological segmentation";
 	/** text of the segmentation button when segmentation running */
@@ -939,8 +939,8 @@ public class MorphologicalSegmentation implements PlugIn {
 
 						// enable parameter panel
 						setParamsEnabled( true );
-						// set button back to "Segment"
-						segmentButton.setText( "Segment" );
+						// set button back to initial text
+						segmentButton.setText( segmentText );
 						// set thread to null					
 						segmentationThread = null;
 						
@@ -967,7 +967,7 @@ public class MorphologicalSegmentation implements PlugIn {
 				else
 					IJ.log("Error: interrupting segmentation failed becaused the thread is null!");
 				
-				// set button back to "Segment"
+				// set button back to initial text
 				segmentButton.setText( segmentText );
 				segmentButton.setToolTipText( segmentTip );
 				// enable parameter panel
