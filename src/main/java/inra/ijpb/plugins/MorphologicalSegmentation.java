@@ -3,6 +3,7 @@ package inra.ijpb.plugins;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
@@ -19,11 +20,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
@@ -102,6 +105,62 @@ public class MorphologicalSegmentation implements PlugIn {
 	/** flag to display the overlay image */
 	private boolean showColorOverlay;
 	
+	
+//	 input panel design:
+//	 __ Input Image ____________
+//	| o Border Image            |
+//	| o Object Image            |
+//	|---------------------------|
+//	|| Gradient type: [options]||
+//	|| Gradient size: [3]      ||
+//	|| x - show gradient       ||
+//	| --------------------------|
+//	|___________________________| 
+	
+	
+	/** input image panel */
+	JPanel inputImagePanel = new JPanel();
+	/** input image options */
+	ButtonGroup inputImageButtons;
+	/** radio button to specify input image has borders already highlighted */
+	JRadioButton borderButton;
+	/** radio button to specify input image has highlighted objects and not borders */
+	JRadioButton objectButton;
+	/** text for border image type radio button */
+	static String borderImageText = "Border Image";
+	/** text for object image type radio button */
+	static String objectImageText = "Object Image";
+	/** panel to store the radio buttons with the image type options */
+	JPanel radioPanel = new JPanel( new GridLayout(0, 1) );
+	
+	/** gradient options panel */
+	JPanel gradientOptionsPanel = new JPanel();	
+	/** gradient type panel */
+	JPanel gradientTypePanel = new JPanel();
+	/** gradient type label */
+	JLabel gradientTypeLabel;
+	/** gradient list of options */
+	String[] gradientOptions = new String[]{ "Morphological" };
+	/** gradient combo box */
+	JComboBox gradientList;		
+	/** gradient radius size panel */
+	JPanel gradientSizePanel = new JPanel();
+	/** gradient size label */
+	JLabel gradientRadiusSizeLabel;
+	/** gradient size text field */
+	JTextField gradientRadiusSizeText;
+	/** gradient radius */
+	int gradientRadius = 3;
+	
+	/** checkbox to enable/disable the display of the gradient image */
+	JCheckBox gradientCheckBox;
+	/** gradient checkbox panel */
+	JPanel showGradientPanel = new JPanel();
+	/** flag to apply gradient to the input image */
+	private boolean applyGradient = false;
+	
+	
+	
 	/** extended regional minima dynamic panel */
 	JPanel dynamicPanel = new JPanel();
 	/** extended regional minima dynamic label */
@@ -123,12 +182,7 @@ public class MorphologicalSegmentation implements PlugIn {
 	/** flag to select/deselect the advanced options */
 	private boolean selectAdvancedOptions = false;
 	
-	/** checkbox to select the use of morphological gradient */
-	JCheckBox gradientCheckBox;
-	/** flag to apply morphological gradient to the input image */
-	private boolean applyGradient = false;
-	/** gradient panel */
-	JPanel gradientPanel = new JPanel();
+	
 	
 	/** connectivity choice */
 	JPanel connectivityPanel = new JPanel();
@@ -247,6 +301,79 @@ public class MorphologicalSegmentation implements PlugIn {
 			
 			setTitle( "Morphological Segmentation" );
 			
+			// === Input Image panel ===
+			
+			// input image options (border or object types)
+			borderButton = new JRadioButton( borderImageText );
+			borderButton.setSelected( !applyGradient );
+			objectButton = new JRadioButton( objectImageText );
+			inputImageButtons = new ButtonGroup();
+			inputImageButtons.add( borderButton );
+			inputImageButtons.add( objectButton );
+			radioPanel.add( borderButton );
+			radioPanel.add( objectButton );
+			
+			// gradient options panel (activated when selecting object image)
+			gradientTypeLabel = new JLabel( "Gradient type " );			
+			gradientTypeLabel.setToolTipText( "type of gradient filter to apply" );		
+			gradientList = new JComboBox( gradientOptions );			
+			gradientTypePanel.add( gradientTypeLabel );
+			gradientTypePanel.add( gradientList );			
+			gradientTypePanel.setToolTipText( "type of gradient filter to apply" );	
+			
+			gradientRadiusSizeLabel = new JLabel( "Gradient radius" );
+			gradientRadiusSizeLabel.setToolTipText( "radius in pixels of the gradient filter");			
+			gradientRadiusSizeText = new JTextField( String.valueOf( gradientRadius ), 5 );
+			gradientRadiusSizeText.setToolTipText( "radius in pixels of the gradient filter");
+			gradientSizePanel.add( gradientRadiusSizeLabel );
+			gradientSizePanel.add( gradientRadiusSizeText );
+			
+			gradientCheckBox = new JCheckBox( "Show gradient", false );
+			showGradientPanel.add( gradientCheckBox );
+			
+			GridBagLayout gradientOptionsLayout = new GridBagLayout();
+			GridBagConstraints gradientOptionsConstraints = new GridBagConstraints();
+			gradientOptionsConstraints.anchor = GridBagConstraints.WEST;
+			gradientOptionsConstraints.gridwidth = 1;
+			gradientOptionsConstraints.gridheight = 1;
+			gradientOptionsConstraints.gridx = 0;
+			gradientOptionsConstraints.gridy = 0;
+			gradientOptionsPanel.setLayout( gradientOptionsLayout );
+			
+			gradientOptionsPanel.add( gradientTypePanel, gradientOptionsConstraints );
+			gradientOptionsConstraints.gridy++;
+			gradientOptionsPanel.add( gradientSizePanel, gradientOptionsConstraints );
+			gradientOptionsConstraints.gridy++;			
+			gradientOptionsPanel.add( showGradientPanel, gradientOptionsConstraints );
+			gradientOptionsConstraints.gridy++;
+			
+			gradientOptionsPanel.setBorder( BorderFactory.createTitledBorder("") );
+			
+			// add components to input image panel
+			inputImagePanel.setBorder( BorderFactory.createTitledBorder( "Input Image" ) );
+			GridBagLayout inputImageLayout = new GridBagLayout();
+			GridBagConstraints inputImageConstraints = new GridBagConstraints();
+			inputImageConstraints.anchor = GridBagConstraints.NORTHWEST;
+			inputImageConstraints.fill = GridBagConstraints.HORIZONTAL;
+			inputImageConstraints.gridwidth = 1;
+			inputImageConstraints.gridheight = 1;
+			inputImageConstraints.gridx = 0;
+			inputImageConstraints.gridy = 0;
+			inputImageConstraints.insets = new Insets(5, 5, 6, 6);
+			inputImagePanel.setLayout( inputImageLayout );						
+						
+			inputImagePanel.add( radioPanel, inputImageConstraints );
+			inputImageConstraints.gridy++;
+			inputImagePanel.add( gradientOptionsPanel, inputImageConstraints );			
+			inputImageConstraints.gridy++;
+			
+			
+				
+			
+			
+			
+			
+	/*		
 			// regional minima dynamic value
 			dynamicLabel = new JLabel( "Dynamic" );
 			dynamicLabel.setToolTipText( "Extended minima dynamic" );
@@ -265,10 +392,6 @@ public class MorphologicalSegmentation implements PlugIn {
 			advancedOptionsCheckBox.setToolTipText( "Enable advanced options" );
 			advancedOptionsCheckBox.addActionListener( listener );
 			
-			// gradient
-			gradientCheckBox = new JCheckBox( "Apply morphological gradient", applyGradient );
-			gradientCheckBox.setToolTipText( "Select to apply morphological gradient to input image");
-			gradientPanel.add( gradientCheckBox );
 			
 			// connectivity
 			connectivityList = new JComboBox( connectivityOptions );
@@ -296,7 +419,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			advancedOptoinsConstraints.gridy = 0;
 			advancedOptionsPanel.setLayout( advancedOptionsLayout );
 			
-			advancedOptionsPanel.add( gradientPanel, advancedOptoinsConstraints );
+			advancedOptionsPanel.add( gradientOptionsPanel, advancedOptoinsConstraints );
 			advancedOptoinsConstraints.gridy++;
 			advancedOptionsPanel.add( connectivityPanel, advancedOptoinsConstraints );
 			advancedOptoinsConstraints.gridy++;			
@@ -309,7 +432,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			segmentButton = new JButton( segmentText );
 			segmentButton.setToolTipText( segmentTip );
 			segmentButton.addActionListener( listener );
-			
+		*/	
 			// Overlay button
 			overlayButton = new JButton( "Toggle overlay" );
 			overlayButton.setEnabled( false );
@@ -330,7 +453,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			resultDisplayPanel.add( resultDisplayList );
 			resultDisplayPanel.add( resultButton );
 			
-
+/*
 			// Segmentation panel
 			segmentationPanel.setBorder( BorderFactory.createTitledBorder( "Segmentation" ) );
 			GridBagLayout segmentationLayout = new GridBagLayout();
@@ -355,7 +478,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			segmentationConstraints.anchor = GridBagConstraints.CENTER;
 			segmentationConstraints.fill = GridBagConstraints.NONE;
 			segmentationPanel.add( segmentButton, segmentationConstraints );
-			
+	*/		
 			// Display panel
 			displayPanel.setBorder( BorderFactory.createTitledBorder( "Display" ) );
 			GridBagLayout displayLayout = new GridBagLayout();
@@ -377,6 +500,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			// Parameter panel (left side of the GUI, including training and options)
 			GridBagLayout paramsLayout = new GridBagLayout();
 			GridBagConstraints paramsConstraints = new GridBagConstraints();
+			paramsConstraints.insets = new Insets( 5, 5, 6, 6 );
 			paramsPanel.setLayout( paramsLayout );
 			paramsConstraints.anchor = GridBagConstraints.NORTHWEST;
 			paramsConstraints.fill = GridBagConstraints.HORIZONTAL;
@@ -384,11 +508,11 @@ public class MorphologicalSegmentation implements PlugIn {
 			paramsConstraints.gridheight = 1;
 			paramsConstraints.gridx = 0;
 			paramsConstraints.gridy = 0;
-			paramsPanel.add( segmentationPanel, paramsConstraints);
+			paramsPanel.add( inputImagePanel, paramsConstraints);
 			paramsConstraints.gridy++;
 			paramsPanel.add( displayPanel, paramsConstraints);
 			paramsConstraints.gridy++;
-			paramsConstraints.insets = new Insets( 5, 5, 6, 6 );
+			
 			
 			// main panel (including parameters panel and canvas)
 			GridBagLayout layout = new GridBagLayout();
