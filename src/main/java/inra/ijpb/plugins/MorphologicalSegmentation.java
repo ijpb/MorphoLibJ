@@ -829,9 +829,6 @@ public class MorphologicalSegmentation implements PlugIn {
 
 						// read dams flag
 						calculateDams = damsCheckBox.isSelected();
-						
-						// read gradient flag
-						applyGradient = gradientCheckBox.isSelected();
 
 						// read priority queue flag
 						usePriorityQueue = queueCheckBox.isSelected();
@@ -1114,15 +1111,15 @@ public class MorphologicalSegmentation implements PlugIn {
 	void setParamsEnabled( boolean enabled )
 	{
 		this.dynamicText.setEnabled( enabled );
-		this.dynamicLabel.setEnabled( enabled );
-		this.damsCheckBox.setEnabled( enabled );
+		this.dynamicLabel.setEnabled( enabled );		
 		this.advancedOptionsCheckBox.setEnabled( enabled );
-		//this.segmentButton.setEnabled( enabled );
 		this.overlayButton.setEnabled( enabled );
 		this.resultButton.setEnabled( enabled );
 		this.resultDisplayList.setEnabled( enabled );
 		if( selectAdvancedOptions )
 			enableAdvancedOptions( enabled );
+		if( applyGradient )
+			enableGradientOptions( enabled );
 	}
 	
 	/**
