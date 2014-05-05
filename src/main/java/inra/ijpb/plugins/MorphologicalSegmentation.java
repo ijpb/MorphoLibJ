@@ -333,9 +333,13 @@ public class MorphologicalSegmentation implements PlugIn {
 			borderButton.setSelected( !applyGradient );
 			borderButton.setActionCommand( borderImageText );
 			borderButton.addActionListener( listener );
+			borderButton.setToolTipText( "input image has object borders already highlighted" );
+			
 			objectButton = new JRadioButton( objectImageText );
 			objectButton.setActionCommand( objectImageText );
 			objectButton.addActionListener( listener );
+			objectButton.setToolTipText( "input image has highlighted objects but not borders" );
+			
 			inputImageButtons = new ButtonGroup();
 			inputImageButtons.add( borderButton );
 			inputImageButtons.add( objectButton );
