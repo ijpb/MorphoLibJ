@@ -846,10 +846,25 @@ public class MorphologicalSegmentation implements PlugIn {
 
 						if( applyGradient )
 						{
+							// read radius to use
+							try{
+								gradientRadius = Integer.parseInt( gradientRadiusSizeText.getText() );
+							}
+							catch( NullPointerException ex )
+							{
+								IJ.error( "Morphological Sementation", "ERROR: missing gradient radius value" );
+								return;
+							}
+							catch( NumberFormatException ex )
+							{
+								IJ.error( "Morphological Sementation", "ERROR: radius value must be an integer number" );
+								return;
+							}
+							
 							final long t1 = System.currentTimeMillis();
 							IJ.log( "Applying morphological gradient to input image..." );
 
-							Strel3D strel = Strel3D.Shape.CUBE.fromRadius( 1 );
+							Strel3D strel = Strel3D.Shape.CUBE.fromRadius( gradientRadius );
 							image = Morphology.gradient( image, strel );
 							//(new ImagePlus("gradient", image) ).show();
 
