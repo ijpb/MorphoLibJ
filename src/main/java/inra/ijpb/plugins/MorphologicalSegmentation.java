@@ -269,6 +269,7 @@ public class MorphologicalSegmentation implements PlugIn {
 													
 					public void run()
 					{
+												
 						if( e.getSource() == segmentButton )
 						{
 							runSegmentation( command );						
@@ -288,6 +289,16 @@ public class MorphologicalSegmentation implements PlugIn {
 						{
 							selectAdvancedOptions = !selectAdvancedOptions;
 							enableAdvancedOptions( selectAdvancedOptions );
+						}
+						else if( command == objectImageText )
+						{
+							applyGradient = true;
+							enableGradientOptions( applyGradient );
+						}
+						else if( command == borderImageText )
+						{
+							applyGradient = false;
+							enableGradientOptions( applyGradient );
 						}
 					}
 
@@ -320,7 +331,11 @@ public class MorphologicalSegmentation implements PlugIn {
 			// input image options (border or object types)
 			borderButton = new JRadioButton( borderImageText );
 			borderButton.setSelected( !applyGradient );
+			borderButton.setActionCommand( borderImageText );
+			borderButton.addActionListener( listener );
 			objectButton = new JRadioButton( objectImageText );
+			objectButton.setActionCommand( objectImageText );
+			objectButton.addActionListener( listener );
 			inputImageButtons = new ButtonGroup();
 			inputImageButtons.add( borderButton );
 			inputImageButtons.add( objectButton );
@@ -362,6 +377,8 @@ public class MorphologicalSegmentation implements PlugIn {
 			gradientOptionsConstraints.gridy++;
 			
 			gradientOptionsPanel.setBorder( BorderFactory.createTitledBorder("") );
+			
+			enableGradientOptions( applyGradient );
 			
 			// add components to input image panel
 			inputImagePanel.setBorder( BorderFactory.createTitledBorder( "Input Image" ) );
@@ -1119,7 +1136,21 @@ public class MorphologicalSegmentation implements PlugIn {
 		connectivityLabel.setEnabled( enabled );
 		connectivityList.setEnabled( enabled );
 		queueCheckBox.setEnabled( enabled );
+	}
+	
+	/**
+	 * Enable/disable gradient options components
+	 * 
+	 * @param enabled flag to enable/disable components
+	 */
+	void enableGradientOptions( boolean enabled )
+	{
+		gradientList.setEnabled( enabled );
+		gradientList.setEnabled( enabled );
+		gradientRadiusSizeLabel.setEnabled( enabled );
+		gradientRadiusSizeText.setEnabled( enabled );
 		gradientCheckBox.setEnabled( enabled );
+		gradientTypeLabel.setEnabled( enabled );
 	}
 	
 	@Override
