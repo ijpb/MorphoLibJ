@@ -300,11 +300,12 @@ public class MorphologicalSegmentation implements PlugIn {
 													
 					public void run()
 					{
-												
+						// "Run" segmentation button		
 						if( e.getSource() == segmentButton )
 						{
 							runSegmentation( command );						
 						}						
+						// "Show result overlay" check box
 						else if( e.getSource() == toggleOverlayCheckBox )
 						{
 							toggleOverlay();
@@ -312,31 +313,37 @@ public class MorphologicalSegmentation implements PlugIn {
 							String[] arg = new String[] {};
 							record( TOGGLE_OVERLAY, arg );
 						}
+						// "Create Image" button
 						else if( e.getSource() == resultButton )
 						{
 							showResult();						
 						}
+						// "Advanced options" check box
 						else if( e.getSource() == advancedOptionsCheckBox )
 						{
 							selectAdvancedOptions = !selectAdvancedOptions;
 							enableAdvancedOptions( selectAdvancedOptions );
 						}
+						// "Show gradient" check box
 						else if ( e.getSource() == gradientCheckBox )
 						{
 							showGradient = !showGradient;
 							updateDisplayImage();
 						}
+						// "Display" result combo box
 						else if ( e.getSource() == resultDisplayList )
 						{
 							updateOutput();
 							if( showColorOverlay )
 								updateResultOverlay();
 						}
+						// "Object Image" radio button 
 						else if( command == objectImageText )
 						{
 							applyGradient = true;
 							enableGradientOptions( applyGradient );
 						}
+						// "Border Image" radio button
 						else if( command == borderImageText )
 						{
 							applyGradient = false;
