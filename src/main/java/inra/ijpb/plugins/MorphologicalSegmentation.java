@@ -328,6 +328,7 @@ public class MorphologicalSegmentation implements PlugIn {
 						{
 							showGradient = !showGradient;
 							updateDisplayImage();
+							updateResultOverlay();
 						}
 						// "Display" result combo box
 						else if ( e.getSource() == resultDisplayList )
@@ -348,6 +349,7 @@ public class MorphologicalSegmentation implements PlugIn {
 							enableGradientOptions( applyGradient );
 							// update display image (so gradient image is not shown)
 							updateDisplayImage();
+							updateResultOverlay();
 						}
 					}
 
@@ -1200,6 +1202,7 @@ public class MorphologicalSegmentation implements PlugIn {
 	{
 		if( null != resultImage )
 		{
+			displayImage.deleteRoi();
 			int slice = displayImage.getCurrentSlice();
 			
 			final String displayOption = (String) resultDisplayList.getSelectedItem();							
