@@ -556,6 +556,8 @@ public class MorphologicalSegmentation implements PlugIn {
 			displayConstraints.gridy++;
 			displayPanel.add( overlayPanel, displayConstraints );
 			displayConstraints.gridy++;
+			displayConstraints.anchor = GridBagConstraints.CENTER;
+			displayConstraints.fill = GridBagConstraints.NONE;
 			displayPanel.add( resultButton, displayConstraints );
 			
 			
