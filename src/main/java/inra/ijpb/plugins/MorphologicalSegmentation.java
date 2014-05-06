@@ -73,6 +73,9 @@ public class MorphologicalSegmentation implements PlugIn {
 	/** image to be displayed in the GUI */
 	ImagePlus displayImage = null;
 	
+	/** gradient image stack */
+	ImageStack gradientStack = null;
+	
 	/** segmentation result image */
 	ImagePlus resultImage = null;		
 			
@@ -149,6 +152,8 @@ public class MorphologicalSegmentation implements PlugIn {
 	JTextField gradientRadiusSizeText;
 	/** gradient radius */
 	int gradientRadius = 3;
+	/** flag to show the gradient result in the displayed canvas */
+	boolean showGradient = false;
 	
 	/** checkbox to enable/disable the display of the gradient image */
 	JCheckBox gradientCheckBox;
@@ -290,6 +295,11 @@ public class MorphologicalSegmentation implements PlugIn {
 							selectAdvancedOptions = !selectAdvancedOptions;
 							enableAdvancedOptions( selectAdvancedOptions );
 						}
+						else if ( e.getSource() == gradientCheckBox )
+						{
+							showGradient = !showGradient;
+							updateDisplayImage();
+						}
 						else if( command == objectImageText )
 						{
 							applyGradient = true;
@@ -362,6 +372,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			gradientSizePanel.add( gradientRadiusSizeText );
 			
 			gradientCheckBox = new JCheckBox( "Show gradient", false );
+			gradientCheckBox.addActionListener( listener );
 			showGradientPanel.add( gradientCheckBox );
 			
 			GridBagLayout gradientOptionsLayout = new GridBagLayout();
@@ -868,6 +879,9 @@ public class MorphologicalSegmentation implements PlugIn {
 							image = Morphology.gradient( image, strel );
 							//(new ImagePlus("gradient", image) ).show();
 
+							// store gradient image
+							gradientStack = image;
+							
 							final long t2 = System.currentTimeMillis();
 							IJ.log( "Morphological gradient took " + (t2-t1) + " ms.");
 						}
@@ -950,6 +964,7 @@ public class MorphologicalSegmentation implements PlugIn {
 						resultImage.updateAndDraw();
 
 						// display result overlaying the input image
+						updateDisplayImage();
 						updateResultOverlay();
 						showColorOverlay = true;
 
@@ -989,6 +1004,18 @@ public class MorphologicalSegmentation implements PlugIn {
 				// enable parameter panel
 				setParamsEnabled( true );			
 			}
+		}
+		
+		/**
+		 * Update the display image with the gradient or the input image voxels.
+		 */
+		void updateDisplayImage()
+		{
+			if( showGradient && null != gradientStack )			
+				displayImage.setStack(gradientStack);
+			else
+				displayImage.setStack( inputImage.getImageStack() );	
+			displayImage.updateAndDraw();
 		}
 		
 		/**
@@ -1089,9 +1116,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		}
 		
 	}// end class CustomWindow
-	
 
-	
 	/**
 	 * Update the overlay in the display image based on 
 	 * the current result and slice
