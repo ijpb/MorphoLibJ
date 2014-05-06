@@ -70,13 +70,17 @@ public class MorphologicalSegmentation implements PlugIn {
 	
 	/** original input image */
 	ImagePlus inputImage = null;
+	
 	/** image to be displayed in the GUI */
 	ImagePlus displayImage = null;
+	
+	/** image with the current result given the user-selected output type */
+	ImagePlus outputImage = null;
 	
 	/** gradient image stack */
 	ImageStack gradientStack = null;
 	
-	/** segmentation result image */
+	/** image containing the final results of the watershed segmentation (basins with or without dams) */
 	ImagePlus resultImage = null;		
 				
 	/** parameters panel (segmentation + display options) */
@@ -213,8 +217,15 @@ public class MorphologicalSegmentation implements PlugIn {
 	
 	/** label for the display combo box */
 	JLabel displayLabel = null;
+	
+	static String overlayedBasinsText = "Overlayed basins";
+	static String overlayedDamsText = "Overlayed dams";
+	static String catchmentBasinsText = "Catchment basins";
+	static String watershedLinesText = "Watershed lines";
+	
 	/** list of result display options (to show in the GUI canvas) */
-	String[] resultDisplayOption = new String[]{ "Catchment basins", "Overlayed dams", "Watershed lines" };
+	String[] resultDisplayOption = new String[]{ overlayedBasinsText, 
+			overlayedDamsText, catchmentBasinsText, watershedLinesText };
 	/** result display combo box */
 	JComboBox resultDisplayList = null;
 	/** panel to store the combo box with the display options */
@@ -230,9 +241,6 @@ public class MorphologicalSegmentation implements PlugIn {
 					
 	/** flag to display the result overlay in the canvas */
 	private boolean showColorOverlay = false;
-	
-	
-	
 	
 	/** executor service to launch threads for the plugin methods and events */
 	final ExecutorService exec = Executors.newFixedThreadPool(1);
@@ -250,7 +258,7 @@ public class MorphologicalSegmentation implements PlugIn {
 	private String stopTip = "Click to abort segmentation";
 	
 	/** enumeration of result modes */
-	public static enum ResultMode { BASINS, DAMS, LINES };
+	public static enum ResultMode { OVERLAYED_BASINS, OVERLAYED_DAMS, BASINS, LINES };
 		
 	// Macro recording constants (corresponding to  
 	// the static method names to be called)
@@ -261,6 +269,9 @@ public class MorphologicalSegmentation implements PlugIn {
 	public static String TOGGLE_OVERLAY = "toggleOverlay";
 	/** name of the macro method to show current segmentation result */
 	public static String SHOW_RESULT = "showResult";
+	
+	/** opacity to display overlays */
+	double opacity = 1.0/3.0;
 	
 	/**
 	 * Custom window to define the plugin GUI
@@ -314,6 +325,12 @@ public class MorphologicalSegmentation implements PlugIn {
 						{
 							showGradient = !showGradient;
 							updateDisplayImage();
+						}
+						else if ( e.getSource() == resultDisplayList )
+						{
+							updateOutput();
+							if( showColorOverlay )
+								updateResultOverlay();
 						}
 						else if( command == objectImageText )
 						{
@@ -520,6 +537,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			resultDisplayList = new JComboBox( resultDisplayOption );
 			resultDisplayList.setEnabled( false );
 			resultDisplayList.setToolTipText( "Select how to display segmentation results" );
+			resultDisplayList.addActionListener( listener );
 						
 			resultDisplayPanel.add( displayLabel );
 			resultDisplayPanel.add( resultDisplayList );
@@ -988,8 +1006,9 @@ public class MorphologicalSegmentation implements PlugIn {
 						resultImage.getImageStack().setColorModel(cm);
 						resultImage.updateAndDraw();
 
-						// display result overlaying the input image
+						// display result overlaying the input image						
 						updateDisplayImage();
+						updateOutput();
 						updateResultOverlay();
 						showColorOverlay = true;
 						toggleOverlayCheckBox.setSelected( true );
@@ -1038,7 +1057,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		void updateDisplayImage()
 		{
 			if( showGradient && null != gradientStack )			
-				displayImage.setStack(gradientStack);
+				displayImage.setStack( gradientStack );
 			else
 				displayImage.setStack( inputImage.getImageStack() );	
 			displayImage.updateAndDraw();
@@ -1065,8 +1084,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		{
 			if( null != resultImage )
 			{
-				
-				
+								
 				final String displayOption = (String) resultDisplayList.getSelectedItem();
 				
 				String[] arg = null;
@@ -1074,20 +1092,25 @@ public class MorphologicalSegmentation implements PlugIn {
 				ImagePlus watershedResult = null;
 				
 				// options: "Catchment basins", "Overlayed dams", "Watershed lines"
-				if( displayOption.equals( "Catchment basins" ) )
+				if( displayOption.equals( catchmentBasinsText ) )
 				{			
 					watershedResult = getResult( ResultMode.BASINS );									
 					arg = new String[] { "mode=basins" };
 				}
-				else if( displayOption.equals( "Overlayed dams" ) )
+				else if( displayOption.equals( overlayedDamsText ) )
 				{
-					watershedResult = getResult( ResultMode.DAMS );
-					arg = new String[] { "mode=dams" };
+					watershedResult = getResult( ResultMode.OVERLAYED_DAMS );
+					arg = new String[] { "mode=overlayed_dams" };
 				}
-				else if( displayOption.equals( "Watershed lines" ) )
+				else if( displayOption.equals( watershedLinesText ) )
 				{
 					watershedResult = getResult( ResultMode.LINES );
 					arg = new String[] { "mode=lines" };
+				}
+				else if ( displayOption.equals( overlayedBasinsText ) )
+				{
+					watershedResult = getResult( ResultMode.OVERLAYED_BASINS );									
+					arg = new String[] { "mode=overlayed_basins" };
 				}
 				
 				if( null != watershedResult )
@@ -1104,7 +1127,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		
 		/**
 		 * Get current segmentation results based on selected mode
-		 * @param mode selected result mode ("Catchment basins", "Overlayed dams", "Watershed lines") 
+		 * @param mode selected result mode ("Overlayed basins", "Overlayed dams", "Catchment basins", "Watershed lines") 
 		 * @return result image
 		 */
 		ImagePlus getResult( ResultMode mode )
@@ -1121,13 +1144,27 @@ public class MorphologicalSegmentation implements PlugIn {
 			ImagePlus result = null;
 			
 			switch( mode ){
+				case OVERLAYED_BASINS:
+					result = inputImage.duplicate();
+					ImageStack is = new ImageStack( inputImage.getWidth(), inputImage.getHeight() );
+					
+					for( slice=1; slice<=result.getImageStackSize(); slice++ )
+					{
+						ImagePlus aux = new ImagePlus( "", result.getImageStack().getProcessor( slice ) );
+						ImageRoi roi = new ImageRoi(0, 0, resultImage.getImageStack().getProcessor( slice ) );
+						roi.setOpacity( opacity );
+						aux.setOverlay( new Overlay( roi ) );
+						aux = aux.flatten();
+						is.addSlice( aux.getProcessor() );
+					}
+					result.setStack( is );
+					break;
 				case BASINS:
 					result = resultImage.duplicate();
 					result.setTitle( title + "-catchment-basins" + ext );				
-					result.setSlice( displayImage.getSlice() );
-					
+					result.setSlice( displayImage.getSlice() );					
 					break;
-				case DAMS:
+				case OVERLAYED_DAMS:
 					result = getWatershedLines( resultImage );
 					result = ColorImages.binaryOverlay( inputImage, result, Color.red ) ;
 					result.setTitle( title + "-overlayed-dams" + ext );				
@@ -1141,6 +1178,27 @@ public class MorphologicalSegmentation implements PlugIn {
 			return result;
 		}
 		
+		/**
+		 * Update the output image based on the selected display option
+		 */
+		void updateOutput() 
+		{
+			if( null != resultImage )
+			{				
+				final String displayOption = (String) resultDisplayList.getSelectedItem();							
+				
+				if( displayOption.equals( catchmentBasinsText ) )					
+					outputImage = getResult( ResultMode.BASINS );							
+				else if( displayOption.equals( overlayedDamsText ) )				
+					outputImage = getResult( ResultMode.OVERLAYED_DAMS );				
+				else if( displayOption.equals( watershedLinesText ) )
+					outputImage = getResult( ResultMode.LINES );
+				else 				
+					outputImage = getResult( ResultMode.OVERLAYED_BASINS );									
+	
+			}
+		}
+		
 	}// end class CustomWindow
 
 	/**
@@ -1149,11 +1207,11 @@ public class MorphologicalSegmentation implements PlugIn {
 	 */
 	void updateResultOverlay() 
 	{
-		if( null != resultImage )
+		if( null != outputImage )
 		{
 			int slice = displayImage.getCurrentSlice();
-			ImageRoi roi = new ImageRoi(0, 0, resultImage.getImageStack().getProcessor( slice ) );
-			roi.setOpacity( 1.0/3.0 );
+			ImageRoi roi = new ImageRoi(0, 0, outputImage.getImageStack().getProcessor( slice ) );
+			roi.setOpacity( 1.0 );
 			displayImage.setOverlay( new Overlay( roi ) );
 		}
 	}
@@ -1349,7 +1407,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			else if( mode.equals( "lines" ) )
 				result = win.getResult( ResultMode.LINES );
 			else if( mode.equals( "dams" ))
-				result = win.getResult( ResultMode.DAMS );
+				result = win.getResult( ResultMode.OVERLAYED_DAMS );
 			
 			if( null != result )
 			{
