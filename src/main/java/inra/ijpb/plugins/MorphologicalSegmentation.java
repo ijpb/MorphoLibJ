@@ -41,6 +41,8 @@ import ij.gui.Overlay;
 import ij.gui.StackWindow;
 import ij.plugin.PlugIn;
 import ij.plugin.frame.Recorder;
+import ij.process.ImageProcessor;
+import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.binary.ConnectedComponents;
 import inra.ijpb.data.image.ColorImages;
 import inra.ijpb.data.image.Images3D;
@@ -1220,11 +1222,38 @@ public class MorphologicalSegmentation implements PlugIn {
 	 */
 	void updateResultOverlay() 
 	{
-		if( null != outputImage )
+		if( null != resultImage )
 		{
 			int slice = displayImage.getCurrentSlice();
-			ImageRoi roi = new ImageRoi(0, 0, outputImage.getImageStack().getProcessor( slice ) );
-			roi.setOpacity( 1.0 );
+			
+			final String displayOption = (String) resultDisplayList.getSelectedItem();							
+
+			ImageRoi roi = null;
+			
+			if( displayOption.equals( catchmentBasinsText ) )
+			{
+				roi = new ImageRoi(0, 0, resultImage.getImageStack().getProcessor( slice ) );
+				roi.setOpacity( 1.0 );
+			}
+			else if( displayOption.equals( overlayedDamsText ) )				
+			{
+				ImageProcessor lines = BinaryImages.binarize( resultImage.getImageStack().getProcessor( slice ) );
+				lines.invert();
+				ImageProcessor gray = displayImage.getImageStack().getProcessor( slice );
+				roi = new ImageRoi(0, 0, ColorImages.binaryOverlay( gray, lines, Color.red ) ) ;
+				roi.setOpacity( 1.0 );
+			}
+			else if( displayOption.equals( watershedLinesText ) )
+			{
+				roi = new ImageRoi(0, 0, BinaryImages.binarize( resultImage.getImageStack().getProcessor( slice ) ) );
+				roi.setOpacity( 1.0 );
+			}
+			else if( displayOption.equals( overlayedBasinsText ) )	
+			{
+				roi = new ImageRoi(0, 0, resultImage.getImageStack().getProcessor( slice ) );
+				roi.setOpacity( opacity );
+			}
+											
 			displayImage.setOverlay( new Overlay( roi ) );
 		}
 	}
