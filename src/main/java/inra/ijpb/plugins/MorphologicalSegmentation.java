@@ -76,9 +76,6 @@ public class MorphologicalSegmentation implements PlugIn {
 	/** image to be displayed in the GUI */
 	ImagePlus displayImage = null;
 
-	/** image with the current result given the user-selected output type */
-	ImagePlus outputImage = null;
-
 	/** gradient image stack */
 	ImageStack gradientStack = null;
 
@@ -335,7 +332,6 @@ public class MorphologicalSegmentation implements PlugIn {
 						// "Display" result combo box
 						else if ( e.getSource() == resultDisplayList )
 						{
-							updateOutput();
 							if( showColorOverlay )
 								updateResultOverlay();
 						}
@@ -1019,7 +1015,6 @@ public class MorphologicalSegmentation implements PlugIn {
 
 						// display result overlaying the input image						
 						updateDisplayImage();
-						updateOutput();
 						updateResultOverlay();
 						showColorOverlay = true;
 						toggleOverlayCheckBox.setSelected( true );
@@ -1191,27 +1186,6 @@ public class MorphologicalSegmentation implements PlugIn {
 			}
 
 			return result;
-		}
-
-		/**
-		 * Update the output image based on the selected display option
-		 */
-		void updateOutput() 
-		{
-			if( null != resultImage )
-			{				
-				final String displayOption = (String) resultDisplayList.getSelectedItem();							
-
-				if( displayOption.equals( catchmentBasinsText ) )					
-					outputImage = getResult( ResultMode.BASINS );							
-				else if( displayOption.equals( overlayedDamsText ) )				
-					outputImage = getResult( ResultMode.OVERLAYED_DAMS );				
-				else if( displayOption.equals( watershedLinesText ) )
-					outputImage = getResult( ResultMode.LINES );
-				else 				
-					outputImage = getResult( ResultMode.OVERLAYED_BASINS );									
-
-			}
 		}
 
 	}// end class CustomWindow
