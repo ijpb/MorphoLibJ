@@ -78,35 +78,13 @@ public class MorphologicalSegmentation implements PlugIn {
 	
 	/** segmentation result image */
 	ImagePlus resultImage = null;		
-			
-	/** display panel */
-	JPanel displayPanel = new JPanel();
-	
+				
 	/** parameters panel (segmentation + display options) */
 	JPanel paramsPanel = new JPanel();
 	
 	/** main panel */
 	Panel all = new Panel();
-	
-	/** segmentation button */
-	JButton segmentButton;
-	/** toggle overlay button */
-	JButton overlayButton;
-	JPanel overlayPanel = new JPanel();
-	
-	/** display segmentation result button */
-	JButton resultButton;	
-	/** result display options */
-	String[] resultDisplayOption = new String[]{ "Catchment basins", "Overlayed dams", "Watershed lines" };
-	/** result display combo box */
-	JComboBox resultDisplayList;
-	/** result display panel */
-	JPanel resultDisplayPanel = new JPanel();
-	
-	/** flag to display the overlay image */
-	private boolean showColorOverlay;
-	
-	
+					
 //	 input panel design:
 //	 __ Input Image ____________
 //	| o Border Image            |
@@ -151,7 +129,7 @@ public class MorphologicalSegmentation implements PlugIn {
 	/** gradient size text field */
 	JTextField gradientRadiusSizeText;
 	/** gradient radius */
-	int gradientRadius = 3;
+	int gradientRadius = 1;
 	/** flag to show the gradient result in the displayed canvas */
 	boolean showGradient = false;
 	
@@ -216,7 +194,44 @@ public class MorphologicalSegmentation implements PlugIn {
 	private boolean usePriorityQueue = true;
 	/** priority queue panel */
 	JPanel queuePanel = new JPanel();
+	
+	/** segmentation button (Run) */
+	JButton segmentButton;
 
+//	Results panel design:
+//
+//	 __ Results__________________
+//	| Display: [Overlay basins]  |	
+//	| x - Overlay results        |
+//  |      --------------        |
+//  |     | Create Image |       |
+//  |      --------------        |	
+//	|____________________________| 
+	
+	/** main Results panel */
+	JPanel displayPanel = new JPanel();
+	
+	/** label for the display combo box */
+	JLabel displayLabel = null;
+	/** list of result display options (to show in the GUI canvas) */
+	String[] resultDisplayOption = new String[]{ "Catchment basins", "Overlayed dams", "Watershed lines" };
+	/** result display combo box */
+	JComboBox resultDisplayList = null;
+	/** panel to store the combo box with the display options */
+	JPanel resultDisplayPanel = new JPanel();
+	
+	/** check box to toggle the result overlay */
+	JCheckBox toggleOverlayCheckBox = null;
+	/** panel to store the check box to toggle the result overlay */
+	JPanel overlayPanel = new JPanel();
+	
+	/** button to display the results in a new window ("Create Image") */
+	JButton resultButton = null;	
+					
+	/** flag to display the result overlay in the canvas */
+	private boolean showColorOverlay = false;
+	
+	
 	
 	
 	/** executor service to launch threads for the plugin methods and events */
@@ -279,7 +294,7 @@ public class MorphologicalSegmentation implements PlugIn {
 						{
 							runSegmentation( command );						
 						}						
-						else if( e.getSource() == overlayButton )
+						else if( e.getSource() == toggleOverlayCheckBox )
 						{
 							toggleOverlay();
 							// Macro recording
@@ -498,29 +513,34 @@ public class MorphologicalSegmentation implements PlugIn {
 			segmentationConstraints.fill = GridBagConstraints.NONE;
 			segmentationPanel.add( segmentButton, segmentationConstraints );
 			
+			// === Results panel ===
 			
-			// Overlay button
-			overlayButton = new JButton( "Toggle overlay" );
-			overlayButton.setEnabled( false );
-			overlayButton.setToolTipText( "Toggle overlay with segmentation result" );
-			overlayButton.addActionListener( listener );
-			overlayPanel.add( overlayButton );
-
-			showColorOverlay = false;
-
-			// Result panel
+			// Display result panel
+			displayLabel = new JLabel( "Display" );
+			displayLabel.setEnabled( false );
 			resultDisplayList = new JComboBox( resultDisplayOption );
 			resultDisplayList.setEnabled( false );
 			resultDisplayList.setToolTipText( "Select how to display segmentation results" );
-			resultButton = new JButton( "Show" );
+						
+			resultDisplayPanel.add( displayLabel );
+			resultDisplayPanel.add( resultDisplayList );
+			
+			// Toggle overlay check box
+			showColorOverlay = false;
+			toggleOverlayCheckBox = new JCheckBox( "Show result overlay" );
+			toggleOverlayCheckBox.setEnabled( showColorOverlay );
+			toggleOverlayCheckBox.setToolTipText( "Toggle overlay with segmentation result" );
+			toggleOverlayCheckBox.addActionListener( listener );
+			overlayPanel.add( toggleOverlayCheckBox );
+
+			// Create Image button
+			resultButton = new JButton( "Create Image" );
 			resultButton.setEnabled( false );
 			resultButton.setToolTipText( "Show segmentation result in new window" );
-			resultButton.addActionListener( listener );
-			resultDisplayPanel.add( resultDisplayList );
-			resultDisplayPanel.add( resultButton );
-
-			// Display panel
-			displayPanel.setBorder( BorderFactory.createTitledBorder( "Display" ) );
+			resultButton.addActionListener( listener );					
+			
+			// main Results panel
+			displayPanel.setBorder( BorderFactory.createTitledBorder( "Results" ) );
 			GridBagLayout displayLayout = new GridBagLayout();
 			GridBagConstraints displayConstraints = new GridBagConstraints();
 			displayConstraints.anchor = GridBagConstraints.NORTHWEST;
@@ -532,12 +552,16 @@ public class MorphologicalSegmentation implements PlugIn {
 			displayConstraints.insets = new Insets(5, 5, 6, 6);
 			displayPanel.setLayout( displayLayout );					
 			
-			displayPanel.add( overlayPanel, displayConstraints );
-			displayConstraints.gridy++;
 			displayPanel.add( resultDisplayPanel, displayConstraints );
 			displayConstraints.gridy++;
+			displayPanel.add( overlayPanel, displayConstraints );
+			displayConstraints.gridy++;
+			displayPanel.add( resultButton, displayConstraints );
 			
-			// Parameter panel (left side of the GUI, including training and options)
+			
+			// Parameter panel (left side of the GUI, it includes the 
+			// three main panels: Input Image, Watershed Segmentation
+			// and Results).
 			GridBagLayout paramsLayout = new GridBagLayout();
 			GridBagConstraints paramsConstraints = new GridBagConstraints();
 			paramsConstraints.insets = new Insets( 5, 5, 6, 6 );
@@ -967,6 +991,7 @@ public class MorphologicalSegmentation implements PlugIn {
 						updateDisplayImage();
 						updateResultOverlay();
 						showColorOverlay = true;
+						toggleOverlayCheckBox.setSelected( true );
 
 						// enable parameter panel
 						setParamsEnabled( true );
@@ -1157,9 +1182,10 @@ public class MorphologicalSegmentation implements PlugIn {
 		this.dynamicText.setEnabled( enabled );
 		this.dynamicLabel.setEnabled( enabled );		
 		this.advancedOptionsCheckBox.setEnabled( enabled );
-		this.overlayButton.setEnabled( enabled );
+		this.toggleOverlayCheckBox.setEnabled( enabled );
 		this.resultButton.setEnabled( enabled );
 		this.resultDisplayList.setEnabled( enabled );
+		displayLabel.setEnabled( enabled );
 		if( selectAdvancedOptions )
 			enableAdvancedOptions( enabled );
 		if( applyGradient )
