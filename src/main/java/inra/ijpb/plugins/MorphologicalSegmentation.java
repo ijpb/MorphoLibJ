@@ -786,7 +786,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		 */
 		private void runSegmentation( String command ) 
 		{
-			// If the command is "segment"
+			// If the command is the text on the run segmentation button
 			if ( command.equals( segmentText ) ) 
 			{			
 				// read connectivity
