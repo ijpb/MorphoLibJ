@@ -1148,12 +1148,15 @@ public class MorphologicalSegmentation implements PlugIn {
 				title = title.substring( 0, index );				
 			}
 			
+			if( showGradient )
+				title += "-gradient";
+			
 			ImagePlus result = null;
 			
 			switch( mode ){
 				case OVERLAYED_BASINS:
-					result = inputImage.duplicate();
-					ImageStack is = new ImageStack( inputImage.getWidth(), inputImage.getHeight() );
+					result = displayImage.duplicate();
+					ImageStack is = new ImageStack( displayImage.getWidth(), displayImage.getHeight() );
 					
 					for( slice=1; slice<=result.getImageStackSize(); slice++ )
 					{
@@ -1165,6 +1168,7 @@ public class MorphologicalSegmentation implements PlugIn {
 						is.addSlice( aux.getProcessor() );
 					}
 					result.setStack( is );
+					result.setTitle( title + "-overlayed-basins" + ext );
 					break;
 				case BASINS:
 					result = resultImage.duplicate();
@@ -1173,7 +1177,7 @@ public class MorphologicalSegmentation implements PlugIn {
 					break;
 				case OVERLAYED_DAMS:
 					result = getWatershedLines( resultImage );
-					result = ColorImages.binaryOverlay( inputImage, result, Color.red ) ;
+					result = ColorImages.binaryOverlay( displayImage, result, Color.red ) ;
 					result.setTitle( title + "-overlayed-dams" + ext );				
 					break;
 				case LINES:
