@@ -437,9 +437,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			dynamicText = new JTextField( "10", 5 );
 			dynamicPanel.add( dynamicLabel );
 			dynamicPanel.add( dynamicText );
-			dynamicPanel.setToolTipText( "Tolerance in the search of local minima" );	
-			
-			
+			dynamicPanel.setToolTipText( "Tolerance in the search of local minima" );							
 							
 			// advanced options (connectivity + priority queue choices)
 			advancedOptionsCheckBox = new JCheckBox( "Advanced options", selectAdvancedOptions );
@@ -466,8 +464,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			
 			enableAdvancedOptions( selectAdvancedOptions );
 			
-			// add components to advanced options panel
-			
+			// add components to advanced options panel			
 			GridBagLayout advancedOptionsLayout = new GridBagLayout();
 			GridBagConstraints advancedOptoinsConstraints = new GridBagConstraints();
 			advancedOptoinsConstraints.anchor = GridBagConstraints.WEST;
