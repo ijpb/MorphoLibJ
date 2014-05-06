@@ -874,6 +874,8 @@ public class MorphologicalSegmentation implements PlugIn {
 				// Set button text to "STOP"
 				segmentButton.setText( stopText );
 				segmentButton.setToolTipText( stopTip );
+				segmentButton.setSize( segmentButton.getMinimumSize() );
+				segmentButton.repaint();
 				
 				final Thread oldThread = segmentationThread;
 				
