@@ -414,8 +414,8 @@ public class MorphologicalSegmentation implements PlugIn {
 			inputImagePanel.setBorder( BorderFactory.createTitledBorder( "Input Image" ) );
 			GridBagLayout inputImageLayout = new GridBagLayout();
 			GridBagConstraints inputImageConstraints = new GridBagConstraints();
-			inputImageConstraints.anchor = GridBagConstraints.NORTHWEST;
-			inputImageConstraints.fill = GridBagConstraints.HORIZONTAL;
+			inputImageConstraints.anchor = GridBagConstraints.CENTER;
+			inputImageConstraints.fill = GridBagConstraints.NONE;
 			inputImageConstraints.gridwidth = 1;
 			inputImageConstraints.gridheight = 1;
 			inputImageConstraints.gridx = 0;
@@ -425,6 +425,8 @@ public class MorphologicalSegmentation implements PlugIn {
 						
 			inputImagePanel.add( radioPanel, inputImageConstraints );
 			inputImageConstraints.gridy++;
+			inputImageConstraints.anchor = GridBagConstraints.NORTHWEST;
+			inputImageConstraints.fill = GridBagConstraints.HORIZONTAL;
 			inputImagePanel.add( gradientOptionsPanel, inputImageConstraints );			
 			inputImageConstraints.gridy++;
 			
