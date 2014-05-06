@@ -346,6 +346,8 @@ public class MorphologicalSegmentation implements PlugIn {
 						{
 							applyGradient = false;
 							enableGradientOptions( applyGradient );
+							// update display image (so gradient image is not shown)
+							updateDisplayImage();
 						}
 					}
 
@@ -1062,7 +1064,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		 */
 		void updateDisplayImage()
 		{
-			if( showGradient && null != gradientStack )			
+			if( applyGradient && showGradient && null != gradientStack )			
 				displayImage.setStack( gradientStack );
 			else
 				displayImage.setStack( inputImage.getImageStack() );	
