@@ -563,7 +563,9 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 					"Connectivity for stacks must be either 6 or 26, not "
 							+ connectivity);
 		}	    
-	    
+inputImage.duplicate().show();
+markerImage.duplicate().show();
+
 		// list of original voxels values and corresponding coordinates
 		PriorityQueue<VoxelRecord> voxelList = null;
 		
@@ -656,6 +658,8 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 		       	// all have the same label, then the voxel is labeled with their label.
       			if( neighborLabels.size() == 1 )
       				tabLabels[ i ][ j ][ k ] = neighborLabels.get( 0 );
+      			else if( neighborLabels.size() > 1 )
+      				tabLabels[ i ][ j ][ k ] = WSHED;
       		}
       	}
       	else // without mask
@@ -706,6 +710,9 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
       			// all have the same label, then the voxel is labeled with their label
       			if( neighborLabels.size() == 1 )
       				tabLabels[ i ][ j ][ k ] = neighborLabels.get( 0 );
+      			else if( neighborLabels.size() > 1 )
+      				tabLabels[ i ][ j ][ k ] = WSHED;
+      				
       		}
       	}
 
