@@ -1117,7 +1117,7 @@ public class MorphologicalSegmentation implements PlugIn {
 
 				ImagePlus watershedResult = null;
 
-				// options: "Catchment basins", "Overlayed dams", "Watershed lines"
+				// options: "Catchment basins", "Overlayed dams", "Watershed lines", "Overlayed basins"
 				if( displayOption.equals( catchmentBasinsText ) )
 				{			
 					watershedResult = getResult( ResultMode.BASINS );									
