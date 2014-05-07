@@ -514,8 +514,29 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 	/**
 	 * Apply watershed transform on inputImage, using the labeled 
 	 * markers from markerImage and restricted to the white areas 
-	 * of maskImage. This implementation visits first the voxels 
-	 * on the surroundings of the labeled markers.
+	 * of maskImage (optionally). This implementation uses a priority
+	 * queue to visit first the voxels on the surroundings of the 
+	 * labeled markers (Meyer's flooding algorithm).
+	 * 
+	 * Algorithm:
+	 * 
+	 * 1. A set of markers, pixels where the flooding shall start, 
+	 *    are chosen. Each is given a different label.
+	 *    
+	 * 2. The neighboring pixels of each marked area are inserted into 
+	 *    a priority queue with a priority level corresponding to the
+	 *    gray level of the pixel.
+	 *    
+	 * 3. The pixel with the highest priority level is extracted from 
+	 *    the priority queue. If the neighbors of the extracted pixel 
+	 *    that have already been labeled all have the same label, then 
+	 *    the pixel is labeled with their label. All non-marked neighbors 
+	 *    that are not yet in the priority queue are put into the priority 
+	 *    queue.
+	 *    
+	 * 4. Redo step 3 until the priority queue is empty.
+	 * 
+	 * The non-labeled pixels are the watershed lines.
 	 * 
 	 * @return watershed domains image (with dams)
 	 */
@@ -633,12 +654,8 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
       			}
 		       	// if the neighbors of the extracted voxel that have already been labeled 
 		       	// all have the same label, then the voxel is labeled with their label.
-		       	// Otherwise is left as 0 to create a dam.
       			if( neighborLabels.size() == 1 )
       				tabLabels[ i ][ j ][ k ] = neighborLabels.get( 0 );
-      			else
-      				tabLabels[ i ][ j ][ k ] = WSHED;
-
       		}
       	}
       	else // without mask
@@ -685,13 +702,10 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
       					}
       				}
       			}
-      			//  if the neighbors of the extracted voxel that have already been labeled 
+      			// if the neighbors of the extracted voxel that have already been labeled 
       			// all have the same label, then the voxel is labeled with their label
       			if( neighborLabels.size() == 1 )
       				tabLabels[ i ][ j ][ k ] = neighborLabels.get( 0 );
-      			else
-      				tabLabels[ i ][ j ][ k ] = WSHED;
-
       		}
       	}
 
