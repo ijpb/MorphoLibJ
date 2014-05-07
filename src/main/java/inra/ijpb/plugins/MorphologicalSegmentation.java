@@ -1175,6 +1175,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			switch( mode ){
 				case OVERLAYED_BASINS:
 					result = displayImage.duplicate();
+					result.setOverlay( null ); // remove existing overlay
 					ImageStack is = new ImageStack( displayImage.getWidth(), displayImage.getHeight() );
 	
 					for( slice=1; slice<=result.getImageStackSize(); slice++ )
