@@ -1197,6 +1197,7 @@ public class MorphologicalSegmentation implements PlugIn {
 					break;
 				case LINES:
 					result = getWatershedLines( resultImage );
+					IJ.run( result, "Invert", "" );
 					result.setTitle( title + "-watershed-lines" + ext );								
 					break;
 			}
@@ -1253,13 +1254,12 @@ public class MorphologicalSegmentation implements PlugIn {
 	/**
 	 * Get the watershed lines out of the result catchment basins image
 	 * @param labels labeled catchment basins image
-	 * @return binary image with the watershed lines
+	 * @return binary image with the watershed lines in white
 	 */
 	ImagePlus getWatershedLines( ImagePlus labels )
 	{
-		final ImagePlus lines = labels.duplicate();
-		IJ.setThreshold( lines, 0, 0 );
-		IJ.run(lines, "Convert to Mask", "method=Default background=Light" );
+		final ImagePlus lines = BinaryImages.binarize( labels );
+		IJ.run( lines, "Invert", "" );
 		return lines;
 	}
 
