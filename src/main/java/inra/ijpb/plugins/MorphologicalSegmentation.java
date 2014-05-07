@@ -87,6 +87,9 @@ public class MorphologicalSegmentation implements PlugIn {
 
 	/** main panel */
 	Panel all = new Panel();
+	
+	/** flag to indicate 2D input image */
+	boolean inputIs2D = false;
 
 	//	 input panel design:
 	//	 __ Input Image ____________
@@ -478,6 +481,8 @@ public class MorphologicalSegmentation implements PlugIn {
 			damsPanel.add( damsCheckBox );
 
 			// connectivity
+			if( inputIs2D )
+				connectivityOptions = new String[]{ "4", "8" };
 			connectivityList = new JComboBox( connectivityOptions );
 			connectivityList.setToolTipText( "Voxel connectivity to use" );
 			connectivityLabel = new JLabel( "Connectivity" );
@@ -806,11 +811,12 @@ public class MorphologicalSegmentation implements PlugIn {
 		/**
 		 * Set connectivity value in the GUI
 		 * 
-		 * @param connectivity 6-26 neighbor connectivity
+		 * @param connectivity 4-8 or 6-26 neighbor connectivity
 		 */
 		void setConnectivity( int connectivity )
-		{
-			if( connectivity == 6  || connectivity == 26 )
+		{			
+			if( ( inputImage.getImageStackSize() > 1 && (connectivity == 6  || connectivity == 26 ) )
+				|| ( inputImage.getImageStackSize() == 1 && (connectivity == 4  || connectivity == 8 ) ) )
 				connectivityList.setSelectedItem( Integer.toString(connectivity) );									
 		}
 
@@ -842,8 +848,14 @@ public class MorphologicalSegmentation implements PlugIn {
 			if ( command.equals( segmentText ) ) 
 			{			
 				// read connectivity
-				final int connectivity = Integer.parseInt( (String) connectivityList.getSelectedItem() );
+				int readConn = Integer.parseInt( (String) connectivityList.getSelectedItem() );
 
+				// convert connectivity to 3D if needed (2D images are processed as 3D)
+				if( inputIs2D )
+					readConn = readConn == 4 ? 6 : 26;
+				
+				final int connectivity = readConn;
+				
 				// read dynamic
 				final double dynamic;
 				try{
@@ -1333,6 +1345,9 @@ public class MorphologicalSegmentation implements PlugIn {
 		// hide input image (to avoid accidental closing)
 		inputImage.getWindow().setVisible( false );
 
+		// set the 2D flag
+		inputIs2D = inputImage.getImageStackSize() == 1;
+		
 		// Build GUI
 		SwingUtilities.invokeLater(
 				new Runnable() {
@@ -1371,7 +1386,7 @@ public class MorphologicalSegmentation implements PlugIn {
 	 * @param dynamic string containing dynamic value (format: "dynamic=[integer value]")
 	 * @param calculateDams string containing boolean flag to create dams (format: "calculateDams=[boolean])
 	 * @param applyGradient string containing boolean flag to apply morphological gradient (format: "applyGradient=[boolean])
-	 * @param connectivity string containing connectivity value (format: "connectivity=[6 or 26])
+	 * @param connectivity string containing connectivity value (format: "connectivity=[4 or 8 / 6 or 26])
 	 * @param usePriorityQueue string containing boolean flag to use priority queue (format: "usePriorityQueue=[boolean])
 	 */
 	public static void segment(
