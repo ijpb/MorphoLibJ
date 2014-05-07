@@ -1169,36 +1169,36 @@ public class MorphologicalSegmentation implements PlugIn {
 			ImagePlus result = null;
 
 			switch( mode ){
-			case OVERLAYED_BASINS:
-				result = displayImage.duplicate();
-				ImageStack is = new ImageStack( displayImage.getWidth(), displayImage.getHeight() );
-
-				for( slice=1; slice<=result.getImageStackSize(); slice++ )
-				{
-					ImagePlus aux = new ImagePlus( "", result.getImageStack().getProcessor( slice ) );
-					ImageRoi roi = new ImageRoi(0, 0, resultImage.getImageStack().getProcessor( slice ) );
-					roi.setOpacity( opacity );
-					aux.setOverlay( new Overlay( roi ) );
-					aux = aux.flatten();
-					is.addSlice( aux.getProcessor() );
-				}
-				result.setStack( is );
-				result.setTitle( title + "-overlayed-basins" + ext );
-				break;
-			case BASINS:
-				result = resultImage.duplicate();
-				result.setTitle( title + "-catchment-basins" + ext );				
-				result.setSlice( displayImage.getSlice() );					
-				break;
-			case OVERLAYED_DAMS:
-				result = getWatershedLines( resultImage );
-				result = ColorImages.binaryOverlay( displayImage, result, Color.red ) ;
-				result.setTitle( title + "-overlayed-dams" + ext );				
-				break;
-			case LINES:
-				result = getWatershedLines( resultImage );
-				result.setTitle( title + "-watershed-lines" + ext );								
-				break;
+				case OVERLAYED_BASINS:
+					result = displayImage.duplicate();
+					ImageStack is = new ImageStack( displayImage.getWidth(), displayImage.getHeight() );
+	
+					for( slice=1; slice<=result.getImageStackSize(); slice++ )
+					{
+						ImagePlus aux = new ImagePlus( "", result.getImageStack().getProcessor( slice ) );
+						ImageRoi roi = new ImageRoi(0, 0, resultImage.getImageStack().getProcessor( slice ) );
+						roi.setOpacity( opacity );
+						aux.setOverlay( new Overlay( roi ) );
+						aux = aux.flatten();
+						is.addSlice( aux.getProcessor() );
+					}
+					result.setStack( is );
+					result.setTitle( title + "-overlayed-basins" + ext );
+					break;
+				case BASINS:
+					result = resultImage.duplicate();
+					result.setTitle( title + "-catchment-basins" + ext );				
+					result.setSlice( displayImage.getSlice() );					
+					break;
+				case OVERLAYED_DAMS:
+					result = getWatershedLines( resultImage );
+					result = ColorImages.binaryOverlay( displayImage, result, Color.red ) ;
+					result.setTitle( title + "-overlayed-dams" + ext );				
+					break;
+				case LINES:
+					result = getWatershedLines( resultImage );
+					result.setTitle( title + "-watershed-lines" + ext );								
+					break;
 			}
 
 			return result;
