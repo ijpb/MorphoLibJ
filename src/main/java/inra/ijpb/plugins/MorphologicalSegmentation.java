@@ -667,6 +667,10 @@ public class MorphologicalSegmentation implements PlugIn {
 			winc.weighty = 1;
 			setLayout( wingb );
 			add( all, winc );
+			
+			// Fix minimum size to the preferred size at this point
+			pack();
+			setMinimumSize( getPreferredSize() );
 
 			// add especial listener if the input image is a stack
 			if(null != sliceSelector)
