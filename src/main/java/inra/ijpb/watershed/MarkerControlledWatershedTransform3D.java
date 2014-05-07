@@ -971,8 +971,8 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 								final ImageProcessor ipInput = inputStack.getProcessor( z+1 );
 								final ImageProcessor ipMarker = markerStack.getProcessor( z+1 );
 
-								for( int x = 0, v=0; x < size1; ++x )
-									for( int y = 0; y < size2; ++y, ++v )
+								for( int x = 0; x < size1; ++x )
+									for( int y = 0; y < size2; ++y )
 									{
 										lists[k].addLast( new VoxelRecord( x, y, z, ipInput.getf( x, y )));
 										tabLabels[x][y][z] = (int) ipMarker.getf( x, y );
