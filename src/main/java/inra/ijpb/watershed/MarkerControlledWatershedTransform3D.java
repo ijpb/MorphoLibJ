@@ -532,7 +532,7 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 	 *    that have already been labeled all have the same label, then 
 	 *    the pixel is labeled with their label. All non-marked neighbors 
 	 *    that are not yet in the priority queue are put into the priority 
-	 *    queue.
+	 *    queue (only if the pixel has been labeled).
 	 *    
 	 * 4. Redo step 3 until the priority queue is empty.
 	 * 
