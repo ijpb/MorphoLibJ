@@ -563,8 +563,6 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 					"Connectivity for stacks must be either 6 or 26, not "
 							+ connectivity);
 		}	    
-inputImage.duplicate().show();
-markerImage.duplicate().show();
 
 		// list of original voxels values and corresponding coordinates
 		PriorityQueue<VoxelRecord> voxelList = null;
@@ -604,6 +602,8 @@ markerImage.duplicate().show();
       	// list to store neighbor labels
       	final ArrayList <Integer> neighborLabels = new ArrayList<Integer>();
       	
+      	final ArrayList <VoxelRecord> neighborVoxels = new ArrayList<VoxelRecord>();
+      	
       	// with mask
       	if ( null != maskImage )
       	{
@@ -630,6 +630,9 @@ markerImage.duplicate().show();
 		       	// reset list of neighbor labels
 		       	neighborLabels.clear();
 		       	
+		       	// reset list of neighbor voxels
+		       	neighborVoxels.clear();
+		       	
 		       	for( Cursor3D c : neigh.getNeighbors() )			       		
 		       	{
 		       		// Look in neighborhood for labeled voxels with
@@ -643,8 +646,9 @@ markerImage.duplicate().show();
 		       			// Unlabeled neighbors go into the queue if they are not there yet 
 		       			if ( tabLabels[u][v][w] == INIT && maskStack.getVoxel(u, v, w) > 0 )
 		       			{
-      						voxelList.add( new VoxelRecord( c, inputStack.getVoxel( u, v, w ) ));
-      						tabLabels[u][v][w] = INQUEUE;
+      						//voxelList.add( new VoxelRecord( c, inputStack.getVoxel( u, v, w ) ));
+      						//tabLabels[u][v][w] = INQUEUE;
+		       				neighborVoxels.add( new VoxelRecord( c, inputStack.getVoxel( u, v, w ) ) );
       					}
       					else if ( tabLabels[ u ][ v ][ w ] > 0 
       							&& neighborLabels.contains(tabLabels[ u ][ v ][ w ]) == false)
@@ -657,7 +661,15 @@ markerImage.duplicate().show();
 		       	// if the neighbors of the extracted voxel that have already been labeled 
 		       	// all have the same label, then the voxel is labeled with their label.
       			if( neighborLabels.size() == 1 )
+      			{
       				tabLabels[ i ][ j ][ k ] = neighborLabels.get( 0 );
+      				// now that we know the voxel is labeled, add neighbors to list
+      				for( VoxelRecord v : neighborVoxels )
+      				{      					
+      					tabLabels[ v.getCursor().getX() ][ v.getCursor().getY() ][ v.getCursor().getZ() ] = INQUEUE;
+      					voxelList.add( v );
+      				}
+      			}
       			else if( neighborLabels.size() > 1 )
       				tabLabels[ i ][ j ][ k ] = WSHED;
       		}
@@ -677,12 +689,16 @@ markerImage.duplicate().show();
 	    		final int j = p.getY();
 	    		final int k = p.getZ();
 
-      			// Read neighbor coordinates
+      			// Set cursor of neighborhood in voxel of interest
       			neigh.setCursor( p );
       			
       			// reset list of neighbor labels
-		       	neighborLabels.clear();      			
+		       	neighborLabels.clear();      
+		       	
+		       	// reset list of neighbor voxels
+		       	neighborVoxels.clear();
       			
+		       	// Read neighbor coordinates
       			for( Cursor3D c : neigh.getNeighbors() )			       		
       			{      				      				
       				// Look in neighborhood for labeled voxels with
@@ -695,8 +711,9 @@ markerImage.duplicate().show();
       					// Unlabeled neighbors go into the queue if they are not there yet 
       					if ( tabLabels[ u ][ v ][ w ] == INIT )
       					{
-      						voxelList.add( new VoxelRecord( c, inputStack.getVoxel( u, v, w ) ));
-      						tabLabels[u][v][w] = INQUEUE;
+      						//voxelList.add( new VoxelRecord( c, inputStack.getVoxel( u, v, w ) ));
+      						//tabLabels[u][v][w] = INQUEUE;
+		       				neighborVoxels.add( new VoxelRecord( c, inputStack.getVoxel( u, v, w ) ) );
       					}
       					else if ( tabLabels[ u ][ v ][ w ] > 0 
       							&& neighborLabels.contains(tabLabels[ u ][ v ][ w ]) == false)
@@ -709,7 +726,15 @@ markerImage.duplicate().show();
       			// if the neighbors of the extracted voxel that have already been labeled 
       			// all have the same label, then the voxel is labeled with their label
       			if( neighborLabels.size() == 1 )
+      			{
       				tabLabels[ i ][ j ][ k ] = neighborLabels.get( 0 );
+      				// now that we know the voxel is labeled, add neighbors to list
+      				for( VoxelRecord v : neighborVoxels )
+      				{      					
+      					tabLabels[ v.getCursor().getX() ][ v.getCursor().getY() ][ v.getCursor().getZ() ] = INQUEUE;
+      					voxelList.add( v );
+      				}
+      			}
       			else if( neighborLabels.size() > 1 )
       				tabLabels[ i ][ j ][ k ] = WSHED;
       				
