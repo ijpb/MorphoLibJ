@@ -331,7 +331,8 @@ public class MorphologicalSegmentation implements PlugIn {
 						{
 							showGradient = !showGradient;
 							updateDisplayImage();
-							updateResultOverlay();
+							if( showColorOverlay )
+								updateResultOverlay();
 						}
 						// "Display" result combo box
 						else if ( e.getSource() == resultDisplayList )
