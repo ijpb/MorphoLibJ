@@ -345,19 +345,15 @@ public class MorphologicalSegmentation implements PlugIn {
 								updateResultOverlay();
 						}
 						// "Object Image" radio button 
-						else if( command == objectImageText )
+						else if( command == objectImageText ||  command == borderImageText)
 						{
-							applyGradient = true;
+							// apply gradient only when using and object image
+							applyGradient = command == objectImageText;
 							enableGradientOptions( applyGradient );
-						}
-						// "Border Image" radio button
-						else if( command == borderImageText )
-						{
-							applyGradient = false;
-							enableGradientOptions( applyGradient );
-							// update display image (so gradient image is not shown)
+							// update display image (so gradient image is shown if needed)
 							updateDisplayImage();
-							updateResultOverlay();
+							if( showColorOverlay )
+								updateResultOverlay();
 						}
 					}
 
