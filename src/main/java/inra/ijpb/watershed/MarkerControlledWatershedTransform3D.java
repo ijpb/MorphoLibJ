@@ -751,8 +751,13 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 			
 			ImageProcessor labelProcessor = labelStack.getProcessor( k+1 );
 			for (int i = 0; i < size1; ++i)
-				for (int j = 0; j < size2; ++j)				
-					labelProcessor.setf( i,  j, tabLabels[ i ][ j ][ k ] );
+				for (int j = 0; j < size2; ++j)	
+				{					
+					if( tabLabels[ i ][ j ][ k ] == INIT ) // set unlabeled voxels to WSHED
+						labelProcessor.setf( i,  j, 0 );
+					else
+						labelProcessor.setf( i,  j, tabLabels[ i ][ j ][ k ] );
+				}
 				
 		}
 	    final ImagePlus ws = new ImagePlus( "watershed", labelStack );
