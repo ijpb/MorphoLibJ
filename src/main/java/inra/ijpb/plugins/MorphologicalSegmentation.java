@@ -22,6 +22,7 @@ import java.util.concurrent.Executors;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -397,13 +398,15 @@ public class MorphologicalSegmentation implements PlugIn {
 			// === Input Image panel ===
 
 			// input image options (border or object types)
-			borderButton = new JRadioButton( borderImageText );
+			ImageIcon borderIcon = new ImageIcon( MorphologicalSegmentation.class.getResource( "/gradient-icon.png" ));
+			borderButton = new JRadioButton( borderImageText, borderIcon );
 			borderButton.setSelected( !applyGradient );
 			borderButton.setActionCommand( borderImageText );
 			borderButton.addActionListener( listener );
 			borderButton.setToolTipText( "input image has object borders already highlighted" );
 
-			objectButton = new JRadioButton( objectImageText );
+			ImageIcon objectIcon = new ImageIcon( MorphologicalSegmentation.class.getResource( "/blobs-icon.png" ));
+			objectButton = new JRadioButton( objectImageText, objectIcon );
 			objectButton.setActionCommand( objectImageText );
 			objectButton.addActionListener( listener );
 			objectButton.setToolTipText( "input image has highlighted objects but not borders" );
