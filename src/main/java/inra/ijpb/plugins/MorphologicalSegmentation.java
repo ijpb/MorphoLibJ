@@ -1168,7 +1168,7 @@ public class MorphologicalSegmentation implements PlugIn {
 				title = title.substring( 0, index );				
 			}
 
-			if( showGradient )
+			if( applyGradient && showGradient )
 				title += "-gradient";
 
 			ImagePlus result = null;
