@@ -220,9 +220,13 @@ public class MorphologicalSegmentation implements PlugIn {
 	/** label for the display combo box */
 	JLabel displayLabel = null;
 
+	/** text of option to display results as overlayed catchment basins */
 	static String overlayedBasinsText = "Overlayed basins";
+	/** text of option to display results as overlayed dams (watershed lines) */
 	static String overlayedDamsText = "Overlayed dams";
+	/** text of option to display results as catchment basins */
 	static String catchmentBasinsText = "Catchment basins";
+	/** text of option to display results as binary watershed lines */
 	static String watershedLinesText = "Watershed lines";
 
 	/** list of result display options (to show in the GUI canvas) */
