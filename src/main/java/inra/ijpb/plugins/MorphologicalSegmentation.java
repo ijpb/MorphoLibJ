@@ -284,6 +284,9 @@ public class MorphologicalSegmentation implements PlugIn {
 	/** name of the macro method to set the output display format */
 	public static String SET_DISPLAY = "setDisplayFormat";
 
+	/** name of the macro method to set the gradient radius */
+	public static String SET_RADIUS = "setGradientRadius";
+	
 	/** opacity to display overlays */
 	double opacity = 1.0/3.0;
 
@@ -965,6 +968,10 @@ public class MorphologicalSegmentation implements PlugIn {
 
 							final long t2 = System.currentTimeMillis();
 							IJ.log( "Morphological gradient took " + (t2-t1) + " ms.");
+							
+							// macro recording
+							String[] arg = new String[] { gradientRadiusSizeText.getText() };
+							record( SET_RADIUS, arg );
 						}
 
 						IJ.log( "Running extended minima with dynamic value " + (int)dynamic + "..." );
@@ -1311,9 +1318,26 @@ public class MorphologicalSegmentation implements PlugIn {
 			}
 		}
 		
+		/**
+		 * Accessor to know if the result overlay needs to be displayed 
+		 * @return
+		 */
 		boolean isShowResultOverlaySelected()
 		{
 			return showColorOverlay;
+		}
+		
+		/**
+		 * Set the gradient radius
+		 * @param radius size of the radius
+		 */
+		void setGradientRadius( int radius )
+		{
+			if( radius > 0 )
+			{
+				gradientRadius = radius;
+				gradientRadiusSizeText.setText( String.valueOf( radius ) );
+			}
 		}
 		
 	}// end class CustomWindow
@@ -1568,6 +1592,20 @@ public class MorphologicalSegmentation implements PlugIn {
 			win.setResultDisplayOption( format );
 			if( win.isShowResultOverlaySelected() )
 				win.updateResultOverlay();
+		}
+	}
+
+	/**
+	 * Set the gradient radius
+	 * @param radius gradient radius size (in pixels)
+	 */
+	public static void setGradientRadius( String radius )
+	{
+		final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
+		if( iw instanceof CustomWindow )
+		{
+			final CustomWindow win = (CustomWindow) iw;
+			win.setGradientRadius( Integer.parseInt( radius ) );			
 		}
 	}
 	
