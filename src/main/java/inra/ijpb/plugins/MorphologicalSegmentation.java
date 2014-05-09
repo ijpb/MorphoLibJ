@@ -480,6 +480,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			dynamicLabel = new JLabel( "Tolerance" );
 			dynamicLabel.setToolTipText( "Tolerance in the search of local minima" );
 			dynamicText = new JTextField( "10", 5 );
+			dynamicText.setToolTipText( "Tolerance in the search of local minima" );
 			dynamicPanel.add( dynamicLabel );
 			dynamicPanel.add( dynamicText );
 			dynamicPanel.setToolTipText( "Tolerance in the search of local minima" );							
