@@ -322,7 +322,7 @@ public class MorphologicalSegmentation implements PlugIn {
 						// "Create Image" button
 						else if( e.getSource() == resultButton )
 						{
-							showResult();						
+							createResultImage();						
 						}
 						// "Advanced options" check box
 						else if( e.getSource() == advancedOptionsCheckBox )
@@ -1111,7 +1111,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		/**
 		 * Show segmentation result in a new window (it exists)
 		 */
-		void showResult()
+		void createResultImage()
 		{
 			if( null != resultImage )
 			{
