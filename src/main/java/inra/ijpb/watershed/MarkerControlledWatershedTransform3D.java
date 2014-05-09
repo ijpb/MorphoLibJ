@@ -518,25 +518,22 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 	 * queue to visit first the voxels on the surroundings of the 
 	 * labeled markers (Meyer's flooding algorithm).
 	 * 
-	 * Algorithm:
+	 * Meyer's flooding algorithm:
 	 * 
-	 * 1. A set of markers, pixels where the flooding shall start, 
-	 *    are chosen. Each is given a different label.
-	 *    
-	 * 2. The neighboring pixels of each marked area are inserted into 
-	 *    a priority queue with a priority level corresponding to the
-	 *    gray level of the pixel.
-	 *    
-	 * 3. The pixel with the highest priority level is extracted from 
-	 *    the priority queue. If the neighbors of the extracted pixel 
-	 *    that have already been labeled all have the same label, then 
-	 *    the pixel is labeled with their label. All non-marked neighbors 
-	 *    that are not yet in the priority queue are put into the priority 
-	 *    queue (only if the pixel has been labeled).
-	 *    
-	 * 4. Redo step 3 until the priority queue is empty.
+	 * Label the regional minima with different colors
+	 * Repeat
+	 * |	Select a pixel p, not colored, not watershed,
+	 * |	adjacent to some colored pixels,
+	 * |	and having the lowest possible gray level
+	 * |	If p is adjacent to exactly one color then
+	 * |	label p with this color
+	 * |	If p is adjacent to more than one color then
+	 * |	label p as watershed
+	 * Until no such pixel exists
 	 * 
-	 * The non-labeled pixels are the watershed lines.
+	 * More information at 
+	 * - Serge Beucher's site: http://cmm.ensmp.fr/~beucher/wtshed.html
+	 * - G. Bertrand's Topological Watershed site: http://www.esiee.fr/~info/tw/index.html
 	 * 
 	 * @return watershed domains image (with dams)
 	 */
