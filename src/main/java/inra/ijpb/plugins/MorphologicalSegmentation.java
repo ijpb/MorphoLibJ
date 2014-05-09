@@ -816,17 +816,6 @@ public class MorphologicalSegmentation implements PlugIn {
 		}
 
 		/**
-		 * Set flag and GUI checkbox to apply morphological gradient
-		 * 
-		 * @param b boolean flag
-		 */
-		void setApplyGradient( boolean b )
-		{
-			applyGradient = b;
-			gradientCheckBox.setSelected( b );
-		}
-
-		/**
 		 * Set connectivity value in the GUI
 		 * 
 		 * @param connectivity 4-8 or 6-26 neighbor connectivity
