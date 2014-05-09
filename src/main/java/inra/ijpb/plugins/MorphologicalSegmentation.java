@@ -1051,6 +1051,7 @@ public class MorphologicalSegmentation implements PlugIn {
 						setParamsEnabled( true );
 						// set button back to initial text
 						segmentButton.setText( segmentText );
+						segmentButton.setToolTipText( segmentTip );
 						// set thread to null					
 						segmentationThread = null;
 
