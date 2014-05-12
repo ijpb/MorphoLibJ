@@ -1254,7 +1254,7 @@ public class MorphologicalSegmentation implements PlugIn {
 					break;
 				case LINES:
 					result = getWatershedLines( resultImage );
-					IJ.run( result, "Invert", "" );
+					IJ.run( result, "Invert", "stack" );
 					result.setTitle( title + "-watershed-lines" + ext );								
 					break;
 			}
@@ -1362,7 +1362,7 @@ public class MorphologicalSegmentation implements PlugIn {
 	ImagePlus getWatershedLines( ImagePlus labels )
 	{
 		final ImagePlus lines = BinaryImages.binarize( labels );
-		IJ.run( lines, "Invert", "" );
+		IJ.run( lines, "Invert", "stack" );
 		return lines;
 	}
 
