@@ -681,6 +681,8 @@ public class MorphologicalSegmentation implements PlugIn {
 			// slice selectors in place
 			if( null != super.sliceSelector )
 			{
+				sliceSelector.setValue( inputImage.getCurrentSlice() );
+				
 				all.add( super.sliceSelector, allConstraints );
 
 				if( null != super.zSelector )
