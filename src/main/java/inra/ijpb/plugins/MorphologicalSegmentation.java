@@ -95,8 +95,9 @@ public class MorphologicalSegmentation implements PlugIn {
 
 	//	 input panel design:
 	//	 __ Input Image ____________
-	//	| o Border Image            |
-	//	| o Object Image            |
+	//  |                 _______   |
+	//	| o Border Image | icon  |  |
+	//	| o Object Image |_______|  |
 	//	|---------------------------|
 	//	|| Gradient type: [options]||
 	//	|| Gradient size: [3]      ||
@@ -119,6 +120,11 @@ public class MorphologicalSegmentation implements PlugIn {
 	static String objectImageText = "Object Image";
 	/** panel to store the radio buttons with the image type options */
 	JPanel radioPanel = new JPanel( new GridLayout(0, 1) );
+	
+	ImageIcon borderIcon = new ImageIcon( MorphologicalSegmentation.class.getResource( "/gradient-icon.png" ));
+	ImageIcon objectIcon = new ImageIcon( MorphologicalSegmentation.class.getResource( "/blobs-icon.png" ));
+	JLabel inputImagePicture;
+	JPanel buttonsAndPicPanel = new JPanel();
 
 	/** gradient options panel */
 	JPanel gradientOptionsPanel = new JPanel();	
@@ -359,10 +365,16 @@ public class MorphologicalSegmentation implements PlugIn {
 							String[] arg = new String[] { (String) resultDisplayList.getSelectedItem() };
 							record( SET_DISPLAY, arg );
 						}
-						// "Object Image" radio button 
+						// Input image radio buttons (object or border) 
 						else if( command == objectImageText ||  command == borderImageText)
 						{
 							setInputImageType( command );
+							
+							if ( command == objectImageText )
+								inputImagePicture.setIcon( objectIcon );
+							else
+								inputImagePicture.setIcon( borderIcon );
+							
 							String type = command == objectImageText ? "object" : "border";
 							// Macro recording
 							String[] arg = new String[] { type };
@@ -397,16 +409,16 @@ public class MorphologicalSegmentation implements PlugIn {
 
 			// === Input Image panel ===
 
-			// input image options (border or object types)
-			ImageIcon borderIcon = new ImageIcon( MorphologicalSegmentation.class.getResource( "/gradient-icon.png" ));
-			borderButton = new JRadioButton( borderImageText, borderIcon );
+			// input image options (border or object types)			
+			borderButton = new JRadioButton( borderImageText );
 			borderButton.setSelected( !applyGradient );
 			borderButton.setActionCommand( borderImageText );
 			borderButton.addActionListener( listener );
 			borderButton.setToolTipText( "input image has object borders already highlighted" );
-
-			ImageIcon objectIcon = new ImageIcon( MorphologicalSegmentation.class.getResource( "/blobs-icon.png" ));
-			objectButton = new JRadioButton( objectImageText, objectIcon );
+			
+			inputImagePicture = new JLabel( borderIcon );
+			
+			objectButton = new JRadioButton( objectImageText );
 			objectButton.setActionCommand( objectImageText );
 			objectButton.addActionListener( listener );
 			objectButton.setToolTipText( "input image has highlighted objects but not borders" );
@@ -417,6 +429,9 @@ public class MorphologicalSegmentation implements PlugIn {
 			radioPanel.add( borderButton );
 			radioPanel.add( objectButton );
 
+			buttonsAndPicPanel.add( radioPanel);
+	        buttonsAndPicPanel.add( inputImagePicture );
+			
 			// gradient options panel (activated when selecting object image)
 			gradientTypeLabel = new JLabel( "Gradient type " );			
 			gradientTypeLabel.setToolTipText( "type of gradient filter to apply" );		
@@ -469,7 +484,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			inputImageConstraints.insets = new Insets(5, 5, 6, 6);
 			inputImagePanel.setLayout( inputImageLayout );						
 
-			inputImagePanel.add( radioPanel, inputImageConstraints );
+			inputImagePanel.add( buttonsAndPicPanel, inputImageConstraints );
 			inputImageConstraints.gridy++;
 			inputImageConstraints.anchor = GridBagConstraints.NORTHWEST;
 			inputImageConstraints.fill = GridBagConstraints.HORIZONTAL;
