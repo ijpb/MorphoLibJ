@@ -417,11 +417,12 @@ public class MorphologicalSegmentation implements PlugIn {
 			borderButton.setToolTipText( "input image has object borders already highlighted" );
 			
 			inputImagePicture = new JLabel( borderIcon );
+			inputImagePicture.setToolTipText( "simplified model of your image" );
 			
 			objectButton = new JRadioButton( objectImageText );
 			objectButton.setActionCommand( objectImageText );
 			objectButton.addActionListener( listener );
-			objectButton.setToolTipText( "input image has highlighted objects but not borders" );
+			objectButton.setToolTipText( "input image has highlighted objects (dark or bright)" );
 
 			inputImageButtons = new ButtonGroup();
 			inputImageButtons.add( borderButton );
@@ -448,6 +449,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			gradientSizePanel.add( gradientRadiusSizeText );
 
 			gradientCheckBox = new JCheckBox( "Show gradient", false );
+			gradientCheckBox.setToolTipText( "display gradient image instead of input image" );
 			gradientCheckBox.addActionListener( listener );
 			showGradientPanel.add( gradientCheckBox );
 
