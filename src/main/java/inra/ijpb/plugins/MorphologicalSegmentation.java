@@ -674,8 +674,8 @@ public class MorphologicalSegmentation implements PlugIn {
 			all.add( canvas, allConstraints );
 
 			allConstraints.gridy++;
-			allConstraints.weightx = 1;
-			allConstraints.weighty = 1;
+			allConstraints.weightx = 0;
+			allConstraints.weighty = 0;
 
 			// if the input image is 3d, put the
 			// slice selectors in place
