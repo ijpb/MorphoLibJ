@@ -300,6 +300,116 @@ public class GeodesicReconstruction3DTest {
 	}
 
 	@Test
+	public final void test_reconstructByErosion_CochleaVolumeC6Float() {
+		// Open test image
+		String fileName = getClass().getResource("/files/bat-cochlea-volume.tif").getFile();
+		ImagePlus imagePlus = IJ.openImage(fileName);
+		assertNotNull(imagePlus);
+		assertTrue(imagePlus.getStackSize() > 0);
+		ImageStack mask = imagePlus.getStack();
+
+		// get image size
+		int width = mask.getWidth();
+		int height = mask.getHeight();
+		int depth = mask.getSize();
+		int bitDepth = mask.getBitDepth();
+
+		// Ensure regularity of the mask
+		mask = Morphology.opening(mask, CubeStrel.fromRadius(1));
+		
+		// invert stack image
+		for(int z = 0; z < depth; z++) {
+			for(int y = 0; y < height; y++) {
+				for(int x = 0; x < width; x++) {
+					mask.setVoxel(x, y, z, 255 - mask.getVoxel(x, y, z));
+				}
+			}
+		}
+		
+		// initialize marker image: 255 everywhere except a a given position (the germ)
+		ImageStack marker = ImageStack.create(width, height, depth, bitDepth);
+		for(int z = 0; z < depth; z++) {
+			for(int y = 0; y < height; y++) {
+				for(int x = 0; x < width; x++) {
+					marker.setVoxel(x, y, z, 255);
+				}
+			}
+		}
+		marker.setVoxel(20, 80, 50, 0);
+		
+		// convert to float
+		mask = mask.convertToFloat();
+		marker = marker.convertToFloat();
+
+
+		ImageStack result = GeodesicReconstruction3D.reconstructByErosion(marker, mask, 6);
+		
+		// Check images equality
+		for(int z = 0; z < depth; z++) {
+			for(int y = 0; y < height; y++) {
+				for(int x = 0; x < width; x++) {
+					assertEquals(result.getVoxel(x, y, z),
+							mask.getVoxel(x, y, z), .01);
+				}
+			}
+		}
+		
+	}
+
+	@Test
+	public final void test_reconstructByErosion_CochleaVolumeC26Float() {
+		// Open test image
+		String fileName = getClass().getResource("/files/bat-cochlea-volume.tif").getFile();
+		ImagePlus imagePlus = IJ.openImage(fileName);
+		assertNotNull(imagePlus);
+		assertTrue(imagePlus.getStackSize() > 0);
+		ImageStack mask = imagePlus.getStack();
+
+		// get image size
+		int width = mask.getWidth();
+		int height = mask.getHeight();
+		int depth = mask.getSize();
+		int bitDepth = mask.getBitDepth();
+
+		// invert stack image
+		for(int z = 0; z < depth; z++) {
+			for(int y = 0; y < height; y++) {
+				for(int x = 0; x < width; x++) {
+					mask.setVoxel(x, y, z, 255 - mask.getVoxel(x, y, z));
+				}
+			}
+		}
+
+		// initialize marker image: 255 everywhere except a a given position (the germ)
+		ImageStack marker = ImageStack.create(width, height, depth, bitDepth);
+		for(int z = 0; z < depth; z++) {
+			for(int y = 0; y < height; y++) {
+				for(int x = 0; x < width; x++) {
+					marker.setVoxel(x, y, z, 255);
+				}
+			}
+		}
+		marker.setVoxel(20, 80, 50, 0);
+		
+		// convert to float
+		mask = mask.convertToFloat();
+		marker = marker.convertToFloat();
+
+		ImageStack result = GeodesicReconstruction3D.reconstructByErosion(marker, mask, 26);
+		
+		// Check images equality
+		for(int z = 0; z < depth; z++) {
+			for(int y = 0; y < height; y++) {
+				for(int x = 0; x < width; x++) {
+					assertEquals(result.getVoxel(x, y, z),
+							mask.getVoxel(x, y, z), .01);
+				}
+			}
+		}
+		
+	}
+
+	@Test
 	public final void testKillBorders3D() {
 		int sizeX = 10;
 		int sizeY = 10;
