@@ -1136,7 +1136,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		}
 
 		/**
-		 * Show segmentation result in a new window (it exists)
+		 * Show segmentation result (if exists) in a new window
 		 */
 		void createResultImage()
 		{
@@ -1221,6 +1221,18 @@ public class MorphologicalSegmentation implements PlugIn {
 			}
 			
 			ImagePlus result = null;
+			
+			// if the overlay is not shown
+			if( showColorOverlay == false )
+			{
+				result = displayImage.duplicate();
+				
+				if ( applyGradient && showGradient )
+					title += "-gradient";
+				result.setTitle( title + ext );
+				return result;
+			}
+			
 
 			switch( mode ){
 				case OVERLAYED_BASINS:
