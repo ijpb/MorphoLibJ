@@ -3,9 +3,14 @@ package inra.ijpb.morphology.geodrec;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import java.util.Locale;
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
+import inra.ijpb.morphology.Morphology;
+import inra.ijpb.morphology.strel.CubeStrel;
 
 import org.junit.Test;
 
@@ -19,6 +24,7 @@ public class GeodesicReconstructionByErosion3DScanningTest {
 		assertNotNull(imagePlus);
 		assertTrue(imagePlus.getStackSize() > 0);
 		ImageStack mask = imagePlus.getStack();
+		mask = Morphology.opening(mask, CubeStrel.fromRadius(1));
 
 		// get image size
 		int width = mask.getWidth();
@@ -62,12 +68,12 @@ public class GeodesicReconstructionByErosion3DScanningTest {
 		for(int z = 0; z < depth; z++) {
 			for(int y = 0; y < height; y++) {
 				for(int x = 0; x < width; x++) {
-					assertEquals(result.getVoxel(x, y, z),
-							mask.getVoxel(x, y, z), .01);
-//					double vRes = result.getVoxel(x, y, z);
-//					double vMask = mask.getVoxel(x, y, z);
-//					assertEquals(String.format(Locale.ENGLISH, "At position (%d,%d;%d)", x, y, z), 
-//							vRes, vMask, .01);
+//					assertEquals(result.getVoxel(x, y, z),
+//							mask.getVoxel(x, y, z), .01);
+					double vRes = result.getVoxel(x, y, z);
+					double vMask = mask.getVoxel(x, y, z);
+					assertEquals(String.format(Locale.ENGLISH, "At position (%d,%d,%d)", x, y, z), 
+							vRes, vMask, .01);
 				}
 			}
 		}

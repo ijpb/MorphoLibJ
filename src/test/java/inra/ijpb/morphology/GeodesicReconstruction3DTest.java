@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
-import inra.ijpb.data.image.Images3D;
 import inra.ijpb.morphology.strel.CubeStrel;
 
 import org.junit.Test;
