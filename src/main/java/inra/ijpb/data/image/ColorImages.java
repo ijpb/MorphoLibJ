@@ -171,14 +171,28 @@ public class ColorImages
 		String newName = imagePlus.getShortTitle() + "-ovr";
 		ImagePlus resultPlus;
 		
-		if (imagePlus.getStackSize() == 1) {
+		if (imagePlus.getStackSize() == 1)
+		{
 			ImageProcessor image = imagePlus.getProcessor();
 			ImageProcessor mask = maskPlus.getProcessor();
 			ImageProcessor result = binaryOverlay(image, mask, color);
 			resultPlus = new ImagePlus(newName, result);
-		} else {
+		} else
+		{
+			// get reference image stack
 			ImageStack image = imagePlus.getStack();
+			
+			// convert image to gray8 if necessary
+			if (imagePlus.getBitDepth() != 24) {
+				double grayMin = imagePlus.getDisplayRangeMin();
+				double grayMax = imagePlus.getDisplayRangeMax();
+				image = adjustDynamic(image, grayMin, grayMax);
+			}
+			
+			// get binary mask
 			ImageStack mask = maskPlus.getStack();
+
+			// overlay binary mask on original image
 			ImageStack result = binaryOverlay(image, mask, color);
 			resultPlus = new ImagePlus(newName, result);
 		}
@@ -191,13 +205,21 @@ public class ColorImages
 	public final static ImageProcessor binaryOverlay(ImageProcessor refImage, 
 			ImageProcessor mask, Color color) {
 		if (refImage instanceof ColorProcessor) 
+		{
 			return binaryOverlayRGB(refImage, mask, color);
+		}
 		else
+		{
+			if (!(refImage instanceof ByteProcessor)) 
+			{
+				refImage = refImage.convertToByteProcessor();
+			}
 			return binaryOverlayGray8(refImage, mask, color);
+		}
 	}
 	
 	/**
-	 * Assumes reference image contains a GRAY Processor.
+	 * Assumes reference image contains a ByteProcessor.
 	 */
 	private final static ImageProcessor binaryOverlayGray8(ImageProcessor refImage, 
 			ImageProcessor mask, Color color) {
@@ -228,6 +250,7 @@ public class ColorImages
 		
 		return result;
 	}
+	
 	
 	/**
 	 * Assumes reference image contains a ColorProcessor.
@@ -270,28 +293,99 @@ public class ColorImages
 		
 		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 24);
 	
-		int value;
+		int intVal;
 		int rgbValue = color.getRGB();
+				
+		// for 16 and 32 bit images, compute gray level extent
+		double vmin = Double.MAX_VALUE, vmax = Double.MIN_VALUE;
+		if (bitDepth == 16 || bitDepth == 32) 
+		{
+			for (int z = 0; z < sizeZ; z++) {
+				for (int y = 0; y < sizeY; y++) {
+					for (int x = 0; x < sizeX; x++) {
+						double value = refImage.getVoxel(x, y, z);
+						vmin = Math.min(vmin, value);
+						vmax = Math.max(vmax, value);
+					}
+				}
+			}
+			System.out.println("vmin= " + vmin + "  vmax= " + vmax);
+		}
 		
 		// Iterate on image voxels, and choose result value depending on mask
 		for (int z = 0; z < sizeZ; z++) {
 			for (int y = 0; y < sizeY; y++) {
 				for (int x = 0; x < sizeX; x++) {
+					// For voxels in mask, apply the color of the background 
 					if (mask.getVoxel(x, y, z) > 0) {
-						// Apply the color code of chosen color
 						result.setVoxel(x, y, z, rgbValue);
 						continue;
 					}
 					
-					if (bitDepth == 8 || bitDepth == 16 || bitDepth == 32) {
+					switch (bitDepth) {
+					case 8:
 						// convert grayscale to equivalent color
-						value = (int) refImage.getVoxel(x, y, z);
-						value = (value & 0x00FF) << 16 | (value & 0x00FF) << 8 | (value & 0x00FF);
-						result.setVoxel(x, y, z, value);
-					} else if (bitDepth == 24) {
-						// directly copy color code (after double conversion through double...)
+						intVal = (int) refImage.getVoxel(x, y, z);
+						intVal = (intVal & 0x00FF) << 16 | (intVal & 0x00FF) << 8
+								| (intVal & 0x00FF);
+						result.setVoxel(x, y, z, intVal);
+						break;
+						
+					case 16:
+					case 32:
+						// convert grayscale to equivalent color
+						double value = refImage.getVoxel(x, y, z);
+						intVal = (int) (255 * (value - vmin) / (vmax - vmin));
+						intVal = (intVal & 0x00FF) << 16 | (intVal & 0x00FF) << 8
+								| (intVal & 0x00FF);
+						result.setVoxel(x, y, z, intVal);
+						break;
+
+					case 24:
+						// directly copy color code (after double conversion
+						// through double...)
 						result.setVoxel(x, y, z, refImage.getVoxel(x, y, z));
-					} 
+						break;
+
+					default:
+					}
+				}
+			}
+		}
+		
+		return result;
+	}
+
+	/**
+	 * Returns a new instance of ImageStack containing ByteProcessors such that
+	 * display range is specified by vmin and vmax.
+	 * 
+	 * @param image input image, that can be 8, 16 or 32 bits
+	 * @param vmin value that will correspond to 0 in new image
+	 * @param vmax value that will correspond to 255 in new image
+	 */
+	private static final ImageStack adjustDynamic(ImageStack image, double vmin, double vmax)
+	{
+		// get image size
+		int sizeX = image.getWidth(); 
+		int sizeY = image.getHeight(); 
+		int sizeZ = image.getSize();
+
+		// create result image
+		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
+
+		// Iterate on image voxels, and choose result value depending on mask
+		for (int z = 0; z < sizeZ; z++)
+		{
+			for (int y = 0; y < sizeY; y++)
+			{
+				for (int x = 0; x < sizeX; x++)
+				{
+					// linearly interpolates new value
+					double value = image.getVoxel(x, y, z);
+					value = 255 * (value - vmin) / (vmax - vmin);
+					value = Math.max(Math.min(value, 255), 0);
+					result.setVoxel(x, y, z, value);
 				}
 			}
 		}

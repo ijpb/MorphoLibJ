@@ -97,16 +97,11 @@ public class BinaryOverlayPlugin implements PlugIn {
 		int colorIndex = gd.getNextChoiceIndex();
 		Color color = colors[colorIndex];
 		
-		// Control reference image type
-		int type = refImage.getType();
-		if (type != ImagePlus.GRAY8 && type != ImagePlus.COLOR_RGB) {
-			IJ.showMessage("Input image should be \neither a GRAY8 image\n or a color image.");
-			return;
-		}
-		
+		// Call binary overlay conversion
 		ImagePlus resultPlus = ColorImages.binaryOverlay(refImage, maskImage, color);
 		resultPlus.show();
 		
+		// set up display 
 		if (refImage.getStackSize() > 1) {
 			resultPlus.setSlice(refImage.getSlice());
 		}
