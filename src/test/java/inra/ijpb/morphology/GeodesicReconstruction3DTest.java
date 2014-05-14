@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
+import inra.ijpb.data.image.Images3D;
 import inra.ijpb.morphology.strel.CubeStrel;
 
 import org.junit.Test;
@@ -49,10 +50,52 @@ public class GeodesicReconstruction3DTest {
 	}
 
 	@Test
+	public final void test_reconstructByDilation_LeveledCubeGraphC6Float() {
+		ImageStack mask = createLeveledCubeGraphImage();
+		mask = mask.convertToFloat();
+		
+		ImageStack marker = ImageStack.create(11, 11, 11, 8);
+		marker.setVoxel(1, 1, 1, 255);
+		marker = marker.convertToFloat();
+		
+		ImageStack result = GeodesicReconstruction3D.reconstructByDilation(marker, mask, 6);
+		
+		assertEquals(255, result.getVoxel(1, 1, 1), .01);
+		assertEquals(224, result.getVoxel(9, 1, 1), .01);
+		assertEquals(192, result.getVoxel(9, 9, 1), .01);
+		assertEquals(160, result.getVoxel(9, 9, 9), .01);
+		assertEquals(128, result.getVoxel(9, 1, 9), .01);
+		assertEquals( 96, result.getVoxel(1, 1, 9), .01);
+		assertEquals( 64, result.getVoxel(1, 9, 9), .01);
+		assertEquals( 32, result.getVoxel(1, 9, 1), .01);
+	}
+
+	@Test
 	public final void test_reconstructByDilation_LeveledCubeGraphC26() {
 		ImageStack mask = createLeveledCubeGraphImage();
 		ImageStack marker = ImageStack.create(11, 11, 11, 8);
 		marker.setVoxel(1, 1, 1, 255);
+		
+		ImageStack result = GeodesicReconstruction3D.reconstructByDilation(marker, mask, 26);
+		
+		assertEquals(255, result.getVoxel(1, 1, 1), .01);
+		assertEquals(224, result.getVoxel(9, 1, 1), .01);
+		assertEquals(192, result.getVoxel(9, 9, 1), .01);
+		assertEquals(160, result.getVoxel(9, 9, 9), .01);
+		assertEquals(128, result.getVoxel(9, 1, 9), .01);
+		assertEquals( 96, result.getVoxel(1, 1, 9), .01);
+		assertEquals( 64, result.getVoxel(1, 9, 9), .01);
+		assertEquals( 32, result.getVoxel(1, 9, 1), .01);
+	}
+
+	@Test
+	public final void test_reconstructByDilation_LeveledCubeGraphC26Float() {
+		ImageStack mask = createLeveledCubeGraphImage();
+		mask = mask.convertToFloat();
+		
+		ImageStack marker = ImageStack.create(11, 11, 11, 8);
+		marker.setVoxel(1, 1, 1, 255);
+		marker = marker.convertToFloat();
 		
 		ImageStack result = GeodesicReconstruction3D.reconstructByDilation(marker, mask, 26);
 		
@@ -180,11 +223,55 @@ public class GeodesicReconstruction3DTest {
 	}
 
 	@Test
+	public final void test_reconstructByErosion_LeveledCubeGraphC6Float() {
+		ImageStack mask = createInvertedLeveledCubeGraphImage();
+		mask = mask.convertToFloat();
+
+		ImageStack marker = ImageStack.create(11, 11, 11, 8);
+		fillStack(marker, 255);
+		marker.setVoxel(1, 1, 1, 0);
+		marker = marker.convertToFloat();
+		
+		ImageStack result = GeodesicReconstruction3D.reconstructByErosion(marker, mask, 6);
+		
+		assertEquals(  0, result.getVoxel(1, 1, 1), .01);
+		assertEquals( 32, result.getVoxel(9, 1, 1), .01);
+		assertEquals( 64, result.getVoxel(9, 9, 1), .01);
+		assertEquals( 96, result.getVoxel(9, 9, 9), .01);
+		assertEquals(128, result.getVoxel(9, 1, 9), .01);
+		assertEquals(160, result.getVoxel(1, 1, 9), .01);
+		assertEquals(192, result.getVoxel(1, 9, 9), .01);
+		assertEquals(224, result.getVoxel(1, 9, 1), .01);
+	}
+
+	@Test
 	public final void test_reconstructByErosion_LeveledCubeGraphC26() {
 		ImageStack mask = createInvertedLeveledCubeGraphImage();
 		ImageStack marker = ImageStack.create(11, 11, 11, 8);
 		fillStack(marker, 255);
 		marker.setVoxel(1, 1, 1, 0);
+		
+		ImageStack result = GeodesicReconstruction3D.reconstructByErosion(marker, mask, 26);
+		
+		assertEquals(  0, result.getVoxel(1, 1, 1), .01);
+		assertEquals( 32, result.getVoxel(9, 1, 1), .01);
+		assertEquals( 64, result.getVoxel(9, 9, 1), .01);
+		assertEquals( 96, result.getVoxel(9, 9, 9), .01);
+		assertEquals(128, result.getVoxel(9, 1, 9), .01);
+		assertEquals(160, result.getVoxel(1, 1, 9), .01);
+		assertEquals(192, result.getVoxel(1, 9, 9), .01);
+		assertEquals(224, result.getVoxel(1, 9, 1), .01);
+	}
+
+	@Test
+	public final void test_reconstructByErosion_LeveledCubeGraphC26Float() {
+		ImageStack mask = createInvertedLeveledCubeGraphImage();
+		mask = mask.convertToFloat();
+
+		ImageStack marker = ImageStack.create(11, 11, 11, 8);
+		fillStack(marker, 255);
+		marker.setVoxel(1, 1, 1, 0);
+		marker = marker.convertToFloat();
 		
 		ImageStack result = GeodesicReconstruction3D.reconstructByErosion(marker, mask, 26);
 		
