@@ -725,7 +725,7 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
       			if( neighborLabels.size() == 1 )
       			{
       				tabLabels[ i ][ j ][ k ] = neighborLabels.get( 0 );
-      				// now that we know the voxel is labeled, add neighbors to list
+      				// now that we know the voxel is labeled, add unlabeled neighbors to list
       				for( VoxelRecord v : neighborVoxels )
       				{      					
       					tabLabels[ v.getCursor().getX() ][ v.getCursor().getY() ][ v.getCursor().getZ() ] = INQUEUE;
