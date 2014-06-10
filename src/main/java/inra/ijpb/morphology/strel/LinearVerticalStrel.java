@@ -112,8 +112,11 @@ public class LinearVerticalStrel extends AbstractInPlaceStrel {
 		int shift = this.size - this.offset - 1;
 		
 		// local histogram
-		LocalBufferMax localMax = new LocalBufferMax(size);
-		
+//		LocalBufferMax localMax = new LocalBufferMax(size);
+//		LocalBufferGray8 localMax = new LocalBufferGray8(size);
+		LocalExtremaBufferGray8 localMax = new LocalExtremaBufferGray8(size);
+		localMax.setMinMaxSign(+1);
+
 		// Iterate on image columns
 		for (int x = 0; x < width; x++) {
 			fireProgressChange(this, x, width);
@@ -129,13 +132,13 @@ public class LinearVerticalStrel extends AbstractInPlaceStrel {
 			// iterate along "middle" values
 			for (int y = 0; y < height - shift; y++) {
 				localMax.add(image.get(x, y + shift));
-				image.set(x, y, localMax.getMax());
+				image.set(x, y, (int) localMax.getMax());
 			}
 			
 			// process pixels at the end of the line
 			for (int y = Math.max(0, height - shift); y < height; y++) {
 				localMax.add(Strel.BACKGROUND);
-				image.set(x, y, localMax.getMax());
+				image.set(x, y, (int) localMax.getMax());
 			}
 		}
 		
@@ -153,7 +156,8 @@ public class LinearVerticalStrel extends AbstractInPlaceStrel {
 		int shift = this.size - this.offset - 1;
 		
 		// local histogram
-		LocalBufferMaxFloat localMax = new LocalBufferMaxFloat(size);
+		LocalExtremaBufferDouble localMax = new LocalExtremaBufferDouble(size);
+		localMax.setMinMaxSign(+1);
 		
 		// Iterate on image columns
 		for (int x = 0; x < width; x++) {
@@ -170,13 +174,13 @@ public class LinearVerticalStrel extends AbstractInPlaceStrel {
 			// iterate along "middle" values
 			for (int y = 0; y < height - shift; y++) {
 				localMax.add(image.getf(x, y + shift));
-				image.setf(x, y, localMax.getMax());
+				image.setf(x, y, (float) localMax.getMax());
 			}
 			
 			// process pixels at the end of the line
 			for (int y = Math.max(0, height - shift); y < height; y++) {
 				localMax.add(Float.MIN_VALUE);
-				image.setf(x, y, localMax.getMax());
+				image.setf(x, y, (float) localMax.getMax());
 			}
 		}
 		
@@ -209,8 +213,11 @@ public class LinearVerticalStrel extends AbstractInPlaceStrel {
 		int shift = this.size - this.offset - 1;
 		
 		// local histogram
-		LocalBufferMin localMin = new LocalBufferMin(size);
-		
+//		LocalBufferMin localMin = new LocalBufferMin(size);
+//		LocalBufferGray8 localMin = new LocalBufferGray8(size);
+		LocalExtremaBufferGray8 localMin = new LocalExtremaBufferGray8(size);
+		localMin.setMinMaxSign(-1);
+
 		// Iterate on image columns
 		for (int x = 0; x < width; x++) {
 			fireProgressChange(this, x, width);
@@ -226,13 +233,13 @@ public class LinearVerticalStrel extends AbstractInPlaceStrel {
 			// iterate along "middle" values
 			for (int y = 0; y < height - shift; y++) {
 				localMin.add(image.get(x, y + shift));
-				image.set(x, y, localMin.getMin());
+				image.set(x, y, localMin.getMax());
 			}
 			
 			// process pixels at the end of the line
 			for (int y = Math.max(0, height - shift); y < height; y++) {
 				localMin.add(Strel.FOREGROUND);
-				image.set(x, y, localMin.getMin());
+				image.set(x, y, localMin.getMax());
 			}
 		}
 		

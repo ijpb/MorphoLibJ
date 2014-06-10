@@ -112,7 +112,11 @@ public class LinearHorizontalStrel extends AbstractInPlaceStrel  {
 		int shift = this.size - this.offset - 1;
 		
 		// local histogram
-		LocalBufferMax localMax = new LocalBufferMax(size);
+//		LocalBufferMax localMax = new LocalBufferMax(size);
+//		LocalBufferGray8 localMax = new LocalBufferGray8(size);
+//		localMax.setMinMaxSign(+1);
+		LocalExtremaBufferGray8 localMax = new LocalExtremaBufferGray8(size);
+		localMax.setMinMaxSign(+1);
 		
 		// Iterate on image rows
 		for (int y = 0; y < height; y++) {
@@ -152,7 +156,9 @@ public class LinearHorizontalStrel extends AbstractInPlaceStrel  {
 		int shift = this.size - this.offset - 1;
 		
 		// local histogram
-		LocalBufferMaxFloat localMax = new LocalBufferMaxFloat(size);
+//		LocalBufferMaxFloat localMax = new LocalBufferMaxFloat(size);
+		LocalExtremaBufferDouble localMax = new LocalExtremaBufferDouble(size);
+		localMax.setMinMaxSign(+1);
 		
 		// Iterate on image rows
 		for (int y = 0; y < height; y++) {
@@ -169,13 +175,13 @@ public class LinearHorizontalStrel extends AbstractInPlaceStrel  {
 			// iterate along "middle" values
 			for (int x = 0; x < width - shift; x++) {
 				localMax.add(image.getf(x + shift, y));
-				image.setf(x, y, localMax.getMax());
+				image.setf(x, y, (float) localMax.getMax());
 			}
 			
 			// process pixels at the end of the line
 			for (int x = Math.max(0, width - shift); x < width; x++) {
 				localMax.add(Strel.BACKGROUND);
-				image.setf(x, y, localMax.getMax());
+				image.setf(x, y, (float) localMax.getMax());
 			}
 		}
 		
@@ -209,7 +215,10 @@ public class LinearHorizontalStrel extends AbstractInPlaceStrel  {
 		int shift = this.size - this.offset - 1;
 		
 		// local histogram
-		LocalBufferMin localMin = new LocalBufferMin(size);
+//		LocalBufferMin localMin = new LocalBufferMin(size);
+//		LocalBufferGray8 localMin = new LocalBufferGray8(size);
+		LocalExtremaBufferGray8 localMin = new LocalExtremaBufferGray8(size);
+		localMin.setMinMaxSign(-1);
 		
 		// Iterate on image rows
 		for (int y = 0; y < height; y++) {
@@ -226,13 +235,13 @@ public class LinearHorizontalStrel extends AbstractInPlaceStrel  {
 			// iterate along "middle" values
 			for (int x = 0; x < width - shift; x++) {
 				localMin.add(image.get(x + shift, y));
-				image.set(x, y, localMin.getMin());
+				image.set(x, y, localMin.getMax());
 			}
 			
 			// process pixels at the end of the line
 			for (int x = Math.max(0, width - shift); x < width; x++) {
 				localMin.add(Strel.FOREGROUND);
-				image.set(x, y, localMin.getMin());
+				image.set(x, y, localMin.getMax());
 			}
 		}
 		
@@ -249,7 +258,9 @@ public class LinearHorizontalStrel extends AbstractInPlaceStrel  {
 		int shift = this.size - this.offset - 1;
 		
 		// local histogram
-		LocalBufferMinFloat localMin = new LocalBufferMinFloat(size);
+//		LocalBufferMinFloat localMin = new LocalBufferMinFloat(size);
+		LocalExtremaBufferFloat localMin = new LocalExtremaBufferFloat(size);
+		localMin.setMinMaxSign(-1);
 		
 		// Iterate on image rows
 		for (int y = 0; y < height; y++) {
@@ -266,13 +277,13 @@ public class LinearHorizontalStrel extends AbstractInPlaceStrel  {
 			// iterate along "middle" values
 			for (int x = 0; x < width - shift; x++) {
 				localMin.add(image.getf(x + shift, y));
-				image.setf(x, y, localMin.getMin());
+				image.setf(x, y, localMin.getMax());
 			}
 			
 			// process pixels at the end of the line
 			for (int x = Math.max(0, width - shift); x < width; x++) {
 				localMin.add(Float.MAX_VALUE);
-				image.setf(x, y, localMin.getMin());
+				image.setf(x, y, localMin.getMax());
 			}
 		}
 		
