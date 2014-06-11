@@ -5,21 +5,18 @@ package inra.ijpb.morphology.strel;
  * Computes the maximum in a local buffer around current point.
  * </p>
  * <p>
- * This implementation considers a circular buffer (when a value is added, 
- * it replaces the first value that was inserted) 
- * that makes it possible to update extrema if needed.
- * </p>
- * <p>
- * Works only for Grayscale images coded between 0 and 255.
+ * This implementation considers a circular buffer (when a value is added, it
+ * replaces the first value that was inserted) that makes it possible to update
+ * extremum if needed.
  * </p>
  * 
  * @see LocalBufferMax
  * @see LocalBufferMin
  * @see LocalBufferedHistogram
  * @author David Legland
- *
+ * 
  */
-public class LocalExtremaBufferDouble {
+public class LocalExtremumBufferDouble implements LocalExtremum {
 	
 	/**
 	 * Current max value
@@ -48,16 +45,28 @@ public class LocalExtremaBufferDouble {
 	/**
 	 * Main constructor.
 	 */
-	public LocalExtremaBufferDouble(int n) {
+	public LocalExtremumBufferDouble(int n) {
 		this.buffer = new double[n];
 		for (int i = 0; i < n; i++)
 			this.buffer[i] = 0;
 	}
 	
 	/**
+	 * Constructor from size and type of extremum (minimum or maximum).
+	 */
+	public LocalExtremumBufferDouble(int n, LocalExtremum.Type type)
+	{
+		this(n);
+		switch (type){
+		case MINIMUM: setMinMaxSign(-1); break;
+		case MAXIMUM: setMinMaxSign(+1); break;
+		}
+	}
+	
+	/**
 	 * Initializes an histogram filled with the given value.
 	 */
-	public LocalExtremaBufferDouble(int n, double value) {
+	public LocalExtremumBufferDouble(int n, double value) {
 		this.buffer = new double[n];
 		for (int i = 0; i < n; i++)
 			this.buffer[i] = value;

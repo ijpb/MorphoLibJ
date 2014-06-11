@@ -111,12 +111,9 @@ public class LinearHorizontalStrel extends AbstractInPlaceStrel  {
 		// shifts between reference position and last position
 		int shift = this.size - this.offset - 1;
 		
-		// local histogram
-//		LocalBufferMax localMax = new LocalBufferMax(size);
-//		LocalBufferGray8 localMax = new LocalBufferGray8(size);
-//		localMax.setMinMaxSign(+1);
-		LocalExtremaBufferGray8 localMax = new LocalExtremaBufferGray8(size);
-		localMax.setMinMaxSign(+1);
+		// create local histogram instance
+		LocalExtremumBufferGray8 localMax = new LocalExtremumBufferGray8(size,
+				LocalExtremum.Type.MAXIMUM);
 		
 		// Iterate on image rows
 		for (int y = 0; y < height; y++) {
@@ -155,10 +152,9 @@ public class LinearHorizontalStrel extends AbstractInPlaceStrel  {
 		// shifts between reference position and last position
 		int shift = this.size - this.offset - 1;
 		
-		// local histogram
-//		LocalBufferMaxFloat localMax = new LocalBufferMaxFloat(size);
-		LocalExtremaBufferDouble localMax = new LocalExtremaBufferDouble(size);
-		localMax.setMinMaxSign(+1);
+		// create local histogram instance
+		LocalExtremumBufferDouble localMax = new LocalExtremumBufferDouble(size,
+				LocalExtremum.Type.MAXIMUM);
 		
 		// Iterate on image rows
 		for (int y = 0; y < height; y++) {
@@ -214,11 +210,9 @@ public class LinearHorizontalStrel extends AbstractInPlaceStrel  {
 		// shifts between reference position and last position
 		int shift = this.size - this.offset - 1;
 		
-		// local histogram
-//		LocalBufferMin localMin = new LocalBufferMin(size);
-//		LocalBufferGray8 localMin = new LocalBufferGray8(size);
-		LocalExtremaBufferGray8 localMin = new LocalExtremaBufferGray8(size);
-		localMin.setMinMaxSign(-1);
+		// create local histogram instance
+		LocalExtremumBufferGray8 localMin = new LocalExtremumBufferGray8(size,
+				LocalExtremum.Type.MINIMUM);
 		
 		// Iterate on image rows
 		for (int y = 0; y < height; y++) {
@@ -257,10 +251,9 @@ public class LinearHorizontalStrel extends AbstractInPlaceStrel  {
 		// shifts between reference position and last position
 		int shift = this.size - this.offset - 1;
 		
-		// local histogram
-//		LocalBufferMinFloat localMin = new LocalBufferMinFloat(size);
-		LocalExtremaBufferFloat localMin = new LocalExtremaBufferFloat(size);
-		localMin.setMinMaxSign(-1);
+		// create local histogram instance
+		LocalExtremumBufferDouble localMin = new LocalExtremumBufferDouble(size,
+				LocalExtremum.Type.MAXIMUM);
 		
 		// Iterate on image rows
 		for (int y = 0; y < height; y++) {
@@ -277,13 +270,13 @@ public class LinearHorizontalStrel extends AbstractInPlaceStrel  {
 			// iterate along "middle" values
 			for (int x = 0; x < width - shift; x++) {
 				localMin.add(image.getf(x + shift, y));
-				image.setf(x, y, localMin.getMax());
+				image.setf(x, y, (float) localMin.getMax());
 			}
 			
 			// process pixels at the end of the line
 			for (int x = Math.max(0, width - shift); x < width; x++) {
 				localMin.add(Float.MAX_VALUE);
-				image.setf(x, y, localMin.getMax());
+				image.setf(x, y, (float) localMin.getMax());
 			}
 		}
 		

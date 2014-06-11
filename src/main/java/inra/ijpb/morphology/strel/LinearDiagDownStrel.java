@@ -117,8 +117,9 @@ public class LinearDiagDownStrel extends AbstractInPlaceStrel {
 		int dmin = -(width - 1);
 		int dmax = height - 1;
 	
-		// local histogram
-		LocalBufferMax localMax = new LocalBufferMax(size);
+		// create local histogram instance
+		LocalExtremumBufferGray8 localMax = new LocalExtremumBufferGray8(size,
+				LocalExtremum.Type.MAXIMUM);
 		
 		// Iterate on diagonal lines
 		for (int d = dmin; d < dmax; d++) {
@@ -179,8 +180,9 @@ public class LinearDiagDownStrel extends AbstractInPlaceStrel {
 		int dmin = -(width - 1);
 		int dmax = height - 1;
 	
-		// local histogram
-		LocalBufferMaxFloat localMax = new LocalBufferMaxFloat(size);
+		// create local histogram instance
+		LocalExtremumBufferDouble localMax = new LocalExtremumBufferDouble(size,
+				LocalExtremum.Type.MAXIMUM);
 		
 		// Iterate on diagonal lines
 		for (int d = dmin; d < dmax; d++) {
@@ -210,7 +212,7 @@ public class LinearDiagDownStrel extends AbstractInPlaceStrel {
 			while (t < tmax) {
 				localMax.add(image.getf(t, t + d));
 				int t2 = t - this.offset;
-				image.setf(t2, t2 + d, localMax.getMax());
+				image.setf(t2, t2 + d, (float) localMax.getMax());
 				t++;
 			}
 			
@@ -221,7 +223,7 @@ public class LinearDiagDownStrel extends AbstractInPlaceStrel {
 				int x = t - this.offset;
 				int y = t + d - this.offset;
 				if (x >= 0 && y >= 0 && x < width && y < height)
-					image.setf(x, y, localMax.getMax());
+					image.setf(x, y, (float) localMax.getMax());
 				t++;
 			}
 		}
@@ -260,9 +262,10 @@ public class LinearDiagDownStrel extends AbstractInPlaceStrel {
 		// compute shifts
 		int dt0 = this.offset;
 		
-		// local histogram
-		LocalBufferMin localMin = new LocalBufferMin(size);
-		
+		// create local histogram instance
+		LocalExtremumBufferGray8 localMin = new LocalExtremumBufferGray8(size,
+				LocalExtremum.Type.MINIMUM);
+
 		// Iterate on diagonal lines
 		for (int d = dmin; d < dmax; d++) {
 			fireProgressChange(this, d - dmin, dmax - dmin);
@@ -290,7 +293,7 @@ public class LinearDiagDownStrel extends AbstractInPlaceStrel {
 			// process position that do not touch lower-right image boundary
 			while (t < tmax) {
 				localMin.add(image.get(t, t + d));
-				image.set(t - dt0, t + d - dt0, localMin.getMin());
+				image.set(t - dt0, t + d - dt0, localMin.getMax());
 				t++;
 			}
 			
@@ -301,7 +304,7 @@ public class LinearDiagDownStrel extends AbstractInPlaceStrel {
 				int x = t - dt0;
 				int y = t + d - dt0;
 				if (x >= 0 && y >= 0 && x < width && y < height)
-					image.set(x, y, localMin.getMin());
+					image.set(x, y, localMin.getMax());
 				t++;
 			}
 		}
@@ -324,9 +327,10 @@ public class LinearDiagDownStrel extends AbstractInPlaceStrel {
 		// compute shifts
 		int dt0 = this.offset;
 		
-		// local histogram
-		LocalBufferMinFloat localMin = new LocalBufferMinFloat(size);
-		
+		// create local histogram instance
+		LocalExtremumBufferDouble localMin = new LocalExtremumBufferDouble(size,
+				LocalExtremum.Type.MINIMUM);
+
 		// Iterate on diagonal lines
 		for (int d = dmin; d < dmax; d++) {
 			fireProgressChange(this, d - dmin, dmax - dmin);
@@ -354,7 +358,7 @@ public class LinearDiagDownStrel extends AbstractInPlaceStrel {
 			// process position that do not touch lower-right image boundary
 			while (t < tmax) {
 				localMin.add(image.getf(t, t + d));
-				image.setf(t - dt0, t + d - dt0, localMin.getMin());
+				image.setf(t - dt0, t + d - dt0, (float) localMin.getMax());
 				t++;
 			}
 			
@@ -365,7 +369,7 @@ public class LinearDiagDownStrel extends AbstractInPlaceStrel {
 				int x = t - dt0;
 				int y = t + d - dt0;
 				if (x >= 0 && y >= 0 && x < width && y < height)
-					image.setf(x, y, localMin.getMin());
+					image.setf(x, y, (float) localMin.getMax());
 				t++;
 			}
 		}

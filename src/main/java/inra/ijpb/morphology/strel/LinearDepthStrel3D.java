@@ -114,8 +114,9 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 		// shifts between reference position and last position
 		int shift = this.length - this.offset - 1;
 		
-		// local histogram
-		LocalBufferMax localMax = new LocalBufferMax(length);
+		// create local histogram instance
+		LocalExtremumBufferGray8 localMax = new LocalExtremumBufferGray8(
+				this.length, LocalExtremum.Type.MAXIMUM);		
 		
 		// Iterate on image z-columns
 		for (int y = 0; y < height; y++) {
@@ -160,8 +161,9 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 		// shifts between reference position and last position
 		int shift = this.length - this.offset - 1;
 		
-		// local histogram
-		LocalBufferMaxFloat localMax = new LocalBufferMaxFloat(length);
+		// create local histogram instance
+		LocalExtremumBufferDouble localMax = new LocalExtremumBufferDouble(
+				this.length, LocalExtremum.Type.MAXIMUM);		
 		
 		// Iterate on image z-columns
 		for (int y = 0; y < height; y++) {
@@ -223,8 +225,10 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 		// shifts between reference position and last position
 		int shift = this.length - this.offset - 1;
 		
-		// local histogram
-		LocalBufferMin localMin = new LocalBufferMin(length);
+		// create local histogram instance
+		LocalExtremumBufferDouble localMin = new LocalExtremumBufferDouble(this.length,
+				LocalExtremum.Type.MINIMUM);
+		
 		
 		// Iterate on image z-columns
 		for (int y = 0; y < height; y++) {
@@ -242,13 +246,13 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 				// iterate along "middle" values
 				for (int z = 0; z < depth - shift; z++) {
 					localMin.add((int) stack.getVoxel(x, y, z + shift));
-					stack.setVoxel(x, y, z, localMin.getMin());
+					stack.setVoxel(x, y, z, localMin.getMax());
 				}
 
 				// process pixels at the end of the line
 				for (int z = Math.max(0, depth - shift); z < depth; z++) {
 					localMin.add(Strel.FOREGROUND);
-					stack.setVoxel(x, y, z, localMin.getMin());
+					stack.setVoxel(x, y, z, localMin.getMax());
 				}
 			}
 		}
@@ -269,8 +273,9 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 		// shifts between reference position and last position
 		int shift = this.length - this.offset - 1;
 		
-		// local histogram
-		LocalBufferMinFloat localMin = new LocalBufferMinFloat(length);
+		// create local histogram instance
+		LocalExtremumBufferDouble localMin = new LocalExtremumBufferDouble(
+				this.length, LocalExtremum.Type.MAXIMUM);
 		
 		// Iterate on image z-columns
 		for (int y = 0; y < height; y++) {
@@ -288,13 +293,13 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 				// iterate along "middle" values
 				for (int z = 0; z < depth - shift; z++) {
 					localMin.add((float) stack.getVoxel(x, y, z + shift));
-					stack.setVoxel(x, y, z, localMin.getMin());
+					stack.setVoxel(x, y, z, localMin.getMax());
 				}
 
 				// process pixels at the end of the line
 				for (int z = Math.max(0, depth - shift); z < depth; z++) {
 					localMin.add(Float.MAX_VALUE);
-					stack.setVoxel(x, y, z, localMin.getMin());
+					stack.setVoxel(x, y, z, localMin.getMax());
 				}
 			}
 		}

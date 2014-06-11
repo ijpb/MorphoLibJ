@@ -6,10 +6,8 @@ package inra.ijpb.morphology.strel;
  * </p>
  * <p>
  * This implementation considers a circular buffer (when a value is added, 
- * it replaces the first value that was inserted) and a local histogram.
- * The local histogram makes it possible to quickly find the maximum.
- * The circular buffer makes it possible to keep the local histogram 
- * up-to-date.
+ * it replaces the first value that was inserted) 
+ * that makes it possible to update extrema if needed.
  * </p>
  * <p>
  * Works only for Grayscale images coded between 0 and 255.
@@ -21,18 +19,15 @@ package inra.ijpb.morphology.strel;
  * @author David Legland
  *
  */
-public class LocalBufferGray8 {
-	
-	/**
-	 * The count of values for each gray level
-	 */
-	int[] counts = new int[256];
+public class LocalExtremumBufferGray8 implements LocalExtremum {
 	
 	/**
 	 * Current max value
 	 */
 	int maxValue = Integer.MIN_VALUE;
 
+	boolean updateNeeded = false;
+	
 	/**
 	 * Use a sign flag for managing both min and max.
 	 * sign = +1 -> compute max values
@@ -53,23 +48,33 @@ public class LocalBufferGray8 {
 	/**
 	 * Main constructor.
 	 */
-	public LocalBufferGray8(int n) {
-		this.counts[0] = n;
-		
+	public LocalExtremumBufferGray8(int n)
+	{
 		this.buffer = new int[n];
 		for (int i = 0; i < n; i++)
 			this.buffer[i] = 0;
 	}
 	
 	/**
+	 * Constructor from size and type of extremum (minimum or maximum).
+	 */
+	public LocalExtremumBufferGray8(int n, LocalExtremum.Type type)
+	{
+		this(n);
+		switch (type){
+		case MINIMUM: setMinMaxSign(-1); break;
+		case MAXIMUM: setMinMaxSign(+1); break;
+		}
+	}
+	
+	/**
 	 * Initializes an histogram filled with the given value.
 	 */
-	public LocalBufferGray8(int n, int value) {
-		this.counts[n] = value;
-		
+	public LocalExtremumBufferGray8(int n, int value) {
 		this.buffer = new int[n];
 		for (int i = 0; i < n; i++)
 			this.buffer[i] = value;
+		this.maxValue = value;
 	}
 
 	public void setMinMaxSign(int sign) 
@@ -84,7 +89,6 @@ public class LocalBufferGray8 {
 	 * @param value the value to add
 	 */
 	public void add(int value) {
-
 		// add the new value, and remove the oldest one
 		addValue(value);
 		removeValue(this.buffer[this.bufferIndex]);
@@ -95,52 +99,38 @@ public class LocalBufferGray8 {
 	}
 	
 	private void addValue(int value) {
-		// update counts
-		this.counts[value]++;
-		
 		// update max value
 		if (value * sign > this.maxValue * sign) {
-			this.maxValue = value;
+			updateNeeded = true;
 		}
 	}
 	
 	private void removeValue(int value) {
-		// Check bounds
-		if (this.counts[value] <= 0) {
-			throw new IllegalArgumentException("Can not remove a value not present in histogram: " + value);
-		}
-		
-		// Update counts
-		this.counts[value]--;
-		
 		// update max value if needed
 		if (value == this.maxValue) {
-			updateMaxValue();
+			updateNeeded = true;
 		}
 	}
 	
 	private void updateMaxValue() {
 		if (sign == 1)
 		{
-			// find the maximum value from the end of the histogram
-			for (int i = 255; i >= 0; i--) {
-				if (counts[i] > 0) {
-					this.maxValue = i;
-					return;
-				}
+			// find the maximum value in the buffer
+			this.maxValue = Integer.MIN_VALUE;
+			for (int i = 0; i < buffer.length; i++) {
+				this.maxValue = Math.max(this.maxValue, this.buffer[i]);
 			}
 		}
 		else
 		{
-			// find the minimum value from the beginning of the histogram
-			for (int i = 0; i < 256; i++) {
-				if (counts[i] > 0) {
-					this.maxValue = i;
-					return;
-				}
+			// find the maximum value in the buffer
+			this.maxValue = Integer.MAX_VALUE;
+			for (int i = 0; i < buffer.length; i++) {
+				this.maxValue = Math.min(this.maxValue, this.buffer[i]);
 			}
 		}
-		throw new RuntimeException("Can not find maximum value in an empty histogram");
+		
+		updateNeeded = false;
 	}
 	
 	/**
@@ -158,15 +148,9 @@ public class LocalBufferGray8 {
 	 * Update max and max accordingly.
 	 */
 	public void fill(int value) {
-		// get histogram size
+		// get buffer size
 		int n = this.buffer.length;
 
-		// reset the histogram count
-		for (int i = 0; i < 256; i++) {
-			this.counts[i] = 0;
-		}		
-		this.counts[value] = n;
-		
 		// Clear the circular buffer
 		for (int i = 0; i < n; i++)
 			buffer[i] = value;
@@ -180,6 +164,10 @@ public class LocalBufferGray8 {
 	 * @return the maximum value in neighborhood
 	 */
 	public int getMax() {
+		if (updateNeeded) {
+			updateMaxValue();
+		}
+		
 		return this.maxValue;
 	}
 }

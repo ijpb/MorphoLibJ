@@ -111,11 +111,9 @@ public class LinearVerticalStrel extends AbstractInPlaceStrel {
 		// shifts between reference position and last position
 		int shift = this.size - this.offset - 1;
 		
-		// local histogram
-//		LocalBufferMax localMax = new LocalBufferMax(size);
-//		LocalBufferGray8 localMax = new LocalBufferGray8(size);
-		LocalExtremaBufferGray8 localMax = new LocalExtremaBufferGray8(size);
-		localMax.setMinMaxSign(+1);
+		// create local histogram instance
+		LocalExtremumBufferGray8 localMax = new LocalExtremumBufferGray8(size,
+				LocalExtremum.Type.MAXIMUM);
 
 		// Iterate on image columns
 		for (int x = 0; x < width; x++) {
@@ -155,9 +153,9 @@ public class LinearVerticalStrel extends AbstractInPlaceStrel {
 		// shifts between reference position and last position
 		int shift = this.size - this.offset - 1;
 		
-		// local histogram
-		LocalExtremaBufferDouble localMax = new LocalExtremaBufferDouble(size);
-		localMax.setMinMaxSign(+1);
+		// create local histogram instance
+		LocalExtremumBufferDouble localMax = new LocalExtremumBufferDouble(size,
+				LocalExtremum.Type.MAXIMUM);
 		
 		// Iterate on image columns
 		for (int x = 0; x < width; x++) {
@@ -212,11 +210,10 @@ public class LinearVerticalStrel extends AbstractInPlaceStrel {
 		// shifts between reference position and last position
 		int shift = this.size - this.offset - 1;
 		
-		// local histogram
-//		LocalBufferMin localMin = new LocalBufferMin(size);
-//		LocalBufferGray8 localMin = new LocalBufferGray8(size);
-		LocalExtremaBufferGray8 localMin = new LocalExtremaBufferGray8(size);
-		localMin.setMinMaxSign(-1);
+		// create local histogram instance
+		LocalExtremumBufferGray8 localMin = new LocalExtremumBufferGray8(size,
+				LocalExtremum.Type.MINIMUM);
+
 
 		// Iterate on image columns
 		for (int x = 0; x < width; x++) {
@@ -255,8 +252,10 @@ public class LinearVerticalStrel extends AbstractInPlaceStrel {
 		// shifts between reference position and last position
 		int shift = this.size - this.offset - 1;
 		
-		// local histogram
-		LocalBufferMinFloat localMin = new LocalBufferMinFloat(size);
+		// create local histogram instance
+		LocalExtremumBufferDouble localMin = new LocalExtremumBufferDouble(size,
+				LocalExtremum.Type.MINIMUM);
+
 		
 		// Iterate on image columns
 		for (int x = 0; x < width; x++) {
@@ -273,13 +272,13 @@ public class LinearVerticalStrel extends AbstractInPlaceStrel {
 			// iterate along "middle" values
 			for (int y = 0; y < height - shift; y++) {
 				localMin.add(image.getf(x, y + shift));
-				image.setf(x, y, localMin.getMin());
+				image.setf(x, y, (float) localMin.getMax());
 			}
 			
 			// process pixels at the end of the line
 			for (int y = Math.max(0, height - shift); y < height; y++) {
 				localMin.add(Float.MAX_VALUE);
-				image.setf(x, y, localMin.getMin());
+				image.setf(x, y, (float) localMin.getMax());
 			}
 		}
 		
