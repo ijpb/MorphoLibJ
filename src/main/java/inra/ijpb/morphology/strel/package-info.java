@@ -16,8 +16,9 @@
  * <li>Final Strel implementations: {@link inra.ijpb.morphology.strel.SquareStrel}, 
  * 	{@link inra.ijpb.morphology.strel.OctagonStrel}, {@link inra.ijpb.morphology.strel.DiamondStrel}, 
  * 	{@link inra.ijpb.morphology.strel.Cross3x3Strel}...</li>
- * <li>Utility classes that manage local histograms: {@link inra.ijpb.morphology.strel.LocalBufferMin}, 
- * 	{@link inra.ijpb.morphology.strel.LocalBufferMax}</li> 
+ * <li>Utility classes that manage local extremum: {@link inra.ijpb.morphology.strel.LocalExtremum}, 
+ * 	{@link inra.ijpb.morphology.strel.LocalExtremumBufferGray8},
+ * {@link inra.ijpb.morphology.strel.LocalExtremumBufferDouble}</li> 
  * </ul>
  * </p>
  * 

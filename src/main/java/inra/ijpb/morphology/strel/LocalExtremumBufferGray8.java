@@ -13,9 +13,6 @@ package inra.ijpb.morphology.strel;
  * Works only for Grayscale images coded between 0 and 255.
  * </p>
  * 
- * @see LocalBufferMax
- * @see LocalBufferMin
- * @see LocalBufferedHistogram
  * @author David Legland
  *
  */

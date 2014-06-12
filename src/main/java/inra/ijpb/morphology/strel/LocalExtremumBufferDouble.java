@@ -10,9 +10,6 @@ package inra.ijpb.morphology.strel;
  * extremum if needed.
  * </p>
  * 
- * @see LocalBufferMax
- * @see LocalBufferMin
- * @see LocalBufferedHistogram
  * @author David Legland
  * 
  */

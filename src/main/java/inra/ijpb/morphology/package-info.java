@@ -18,7 +18,7 @@
  * {@link inra.ijpb.plugins.FillHolesPlugin}
  * and {@link inra.ijpb.plugins.KillBordersPlugin}. 
  * More specialized algorithms are provided in the 
- * {@link inra.ijpb.morphology.geodrec} package</p>
+ * <code><a href="{@docRoot}/inra/ijpb/morphology/geodrec/package-summary.html">geodrec</a></code> package</p>
  * 
  * <p>Another common task is the detection of regional minima or maxima. 
  * A more powerful approach is to use extended minima or maxima, by specifying
