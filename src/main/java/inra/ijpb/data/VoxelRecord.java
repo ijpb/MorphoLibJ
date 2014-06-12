@@ -1,5 +1,7 @@
 package inra.ijpb.data;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 
 /**
  *
@@ -31,6 +33,8 @@ public class VoxelRecord implements Comparable<VoxelRecord>{
 
 		Cursor3D cursor = null;
 		double value = 0;
+		final static AtomicLong seq = new AtomicLong();
+		final long seqNum;
 		
 		public VoxelRecord(
 				final Cursor3D cursor,
@@ -38,6 +42,7 @@ public class VoxelRecord implements Comparable<VoxelRecord>{
 		{
 			this.cursor = cursor;
 			this.value = value;
+			seqNum = seq.getAndIncrement();
 		}
 		
 		public VoxelRecord(
@@ -48,6 +53,7 @@ public class VoxelRecord implements Comparable<VoxelRecord>{
 		{
 			this.cursor = new Cursor3D(x, y, z);
 			this.value = value;
+			seqNum = seq.getAndIncrement();
 		}
 		
 		
@@ -61,9 +67,22 @@ public class VoxelRecord implements Comparable<VoxelRecord>{
 			return value;
 		}
 
+		/**
+		 * Compare with a voxel record based on its value and
+		 * timestamp
+		 * @param v2 voxel record to compare with
+		 * @return a value smaller than 0 if the v2 voxel value is 
+		 * 			larger this record voxel value, a value larger
+		 * 			than 0 if it is lower. If equal, the records
+		 * 			created before are set as smaller.  
+		 */
 		@Override
-		public int compareTo(VoxelRecord voxelRecord) 
+		public int compareTo( VoxelRecord v2 ) 
 		{
-			return Double.compare( value, voxelRecord.value );	    		   
+			int res = Double.compare( value, v2.value );
+			if( res == 0 )
+				res = (seqNum < v2.seqNum ? -1 : 1);
+			
+			return res;
 		}
 }

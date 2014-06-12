@@ -3,6 +3,7 @@ package inra.ijpb.plugins;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
@@ -15,15 +16,19 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowEvent;
 import java.awt.image.ColorModel;
+import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
@@ -38,6 +43,8 @@ import ij.gui.Overlay;
 import ij.gui.StackWindow;
 import ij.plugin.PlugIn;
 import ij.plugin.frame.Recorder;
+import ij.process.ImageProcessor;
+import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.binary.ConnectedComponents;
 import inra.ijpb.data.image.ColorImages;
 import inra.ijpb.data.image.Images3D;
@@ -64,72 +71,128 @@ public class MorphologicalSegmentation implements PlugIn {
 
 	/** main GUI window */
 	private CustomWindow win;
-	
+
 	/** original input image */
 	ImagePlus inputImage = null;
+
 	/** image to be displayed in the GUI */
 	ImagePlus displayImage = null;
-	
-	/** segmentation result image */
+
+	/** gradient image stack */
+	ImageStack gradientStack = null;
+
+	/** image containing the final results of the watershed segmentation (basins with or without dams) */
 	ImagePlus resultImage = null;		
-		
-	/** segmentation panel */
-	JPanel segmentationPanel = new JPanel();
-	/** display panel */
-	JPanel displayPanel = new JPanel();
-	
+
 	/** parameters panel (segmentation + display options) */
 	JPanel paramsPanel = new JPanel();
-	
+
 	/** main panel */
 	Panel all = new Panel();
 	
-	/** segmentation button */
-	JButton segmentButton;
-	/** toggle overlay button */
-	JButton overlayButton;
-	JPanel overlayPanel = new JPanel();
+	/** flag to indicate 2D input image */
+	boolean inputIs2D = false;
+
+	//	 input panel design:
+	//	 __ Input Image ____________
+	//  |                 _______   |
+	//	| o Border Image | icon  |  |
+	//	| o Object Image |_______|  |
+	//	|---------------------------|
+	//	|| Gradient type: [options]||
+	//	|| Gradient size: [3]      ||
+	//	|| x - show gradient       ||
+	//	| --------------------------|
+	//	|___________________________| 
+
+
+	/** input image panel */
+	JPanel inputImagePanel = new JPanel();
+	/** input image options */
+	ButtonGroup inputImageButtons;
+	/** radio button to specify input image has borders already highlighted */
+	JRadioButton borderButton;
+	/** radio button to specify input image has highlighted objects and not borders */
+	JRadioButton objectButton;
+	/** text for border image type radio button */
+	static String borderImageText = "Border Image";
+	/** text for object image type radio button */
+	static String objectImageText = "Object Image";
+	/** panel to store the radio buttons with the image type options */
+	JPanel radioPanel = new JPanel( new GridLayout(0, 1) );
 	
-	/** display segmentation result button */
-	JButton resultButton;	
-	/** result display options */
-	String[] resultDisplayOption = new String[]{ "Catchment basins", "Overlayed dams", "Watershed lines" };
-	/** result display combo box */
-	JComboBox resultDisplayList;
-	/** result display panel */
-	JPanel resultDisplayPanel = new JPanel();
-	
-	/** flag to display the overlay image */
-	private boolean showColorOverlay;
-	
+	ImageIcon borderIcon = new ImageIcon( MorphologicalSegmentation.class.getResource( "/gradient-icon.png" ));
+	ImageIcon objectIcon = new ImageIcon( MorphologicalSegmentation.class.getResource( "/blobs-icon.png" ));
+	JLabel inputImagePicture;
+	JPanel buttonsAndPicPanel = new JPanel();
+
+	/** gradient options panel */
+	JPanel gradientOptionsPanel = new JPanel();	
+	/** gradient type panel */
+	JPanel gradientTypePanel = new JPanel();
+	/** gradient type label */
+	JLabel gradientTypeLabel;
+	/** gradient list of options */
+	String[] gradientOptions = new String[]{ "Morphological" };
+	/** gradient combo box */
+	JComboBox gradientList;		
+	/** gradient radius size panel */
+	JPanel gradientSizePanel = new JPanel();
+	/** gradient size label */
+	JLabel gradientRadiusSizeLabel;
+	/** gradient size text field */
+	JTextField gradientRadiusSizeText;
+	/** gradient radius */
+	int gradientRadius = 1;
+	/** flag to show the gradient result in the displayed canvas */
+	boolean showGradient = false;
+
+	/** checkbox to enable/disable the display of the gradient image */
+	JCheckBox gradientCheckBox;
+	/** gradient checkbox panel */
+	JPanel showGradientPanel = new JPanel();
+	/** flag to apply gradient to the input image */
+	private boolean applyGradient = false;
+
+	//	 Watershed segmentation panel design:
+	//
+	//	 __ Watershed Segmentation___
+	//	| Tolerance: [10]            |	
+	//	| x - Advanced options       |
+	//	|  ------------------------- |
+	//	| | x - Use dams            ||
+	//	| | Connectivity: [6/26]    ||
+	//	| | x - Use priority queue  ||
+	//	|  ------------------------- |
+	//  |          -----             |
+	//  |         | Run |	         |
+	//  |          -----             |	
+	//	|____________________________| 
+
+	/** watershed segmentation panel */
+	JPanel segmentationPanel = new JPanel();
+
 	/** extended regional minima dynamic panel */
 	JPanel dynamicPanel = new JPanel();
 	/** extended regional minima dynamic label */
 	JLabel dynamicLabel;
 	/** extended regional minima dynamic text field */
 	JTextField dynamicText;
-	
+
+	/** advanced options panel */
+	JPanel advancedOptionsPanel = new JPanel();
+	/** checkbox to enable/disable the advanced options */
+	JCheckBox advancedOptionsCheckBox;
+	/** flag to select/deselect the advanced options */
+	private boolean selectAdvancedOptions = false;	
+
 	/** dams panel */
 	JPanel damsPanel = new JPanel();
 	/** checkbox to enable/disable the calculation of watershed dams */
 	JCheckBox damsCheckBox;
 	/** flag to select/deselect the calculation of watershed dams */
 	private boolean calculateDams = true;
-	
-	/** advanced options panel */
-	JPanel advancedOptionsPanel = new JPanel();
-	/** checkbox to enable/disable the advanced options */
-	JCheckBox advancedOptionsCheckBox;
-	/** flag to select/deselect the advanced options */
-	private boolean selectAdvancedOptions = false;
-	
-	/** checkbox to select the use of morphological gradient */
-	JCheckBox gradientCheckBox;
-	/** flag to apply morphological gradient to the input image */
-	private boolean applyGradient = false;
-	/** gradient panel */
-	JPanel gradientPanel = new JPanel();
-	
+
 	/** connectivity choice */
 	JPanel connectivityPanel = new JPanel();
 	/** connectivity label */
@@ -138,42 +201,102 @@ public class MorphologicalSegmentation implements PlugIn {
 	String[] connectivityOptions = new String[]{ "6", "26" };
 	/** connectivity combo box */
 	JComboBox connectivityList;
-	
+
 	/** checkbox to choose the priority queue watershed method */
 	JCheckBox queueCheckBox;
 	/** flag to use a priority queue in the watershed transform */
 	private boolean usePriorityQueue = true;
 	/** priority queue panel */
 	JPanel queuePanel = new JPanel();
-	
+
+	/** segmentation button (Run) */
+	JButton segmentButton;
+
+	//	Results panel design:
+	//
+	//	 __ Results__________________
+	//	| Display: [Overlay basins]  |	
+	//	| x - Overlay results        |
+	//  |      --------------        |
+	//  |     | Create Image |       |
+	//  |      --------------        |	
+	//	|____________________________| 
+
+	/** main Results panel */
+	JPanel displayPanel = new JPanel();
+
+	/** label for the display combo box */
+	JLabel displayLabel = null;
+
+	/** text of option to display results as overlayed catchment basins */
+	static String overlayedBasinsText = "Overlayed basins";
+	/** text of option to display results as overlayed dams (watershed lines) */
+	static String overlayedDamsText = "Overlayed dams";
+	/** text of option to display results as catchment basins */
+	static String catchmentBasinsText = "Catchment basins";
+	/** text of option to display results as binary watershed lines */
+	static String watershedLinesText = "Watershed lines";
+
+	/** list of result display options (to show in the GUI canvas) */
+	String[] resultDisplayOption = new String[]{ overlayedBasinsText, 
+			overlayedDamsText, catchmentBasinsText, watershedLinesText };
+	/** result display combo box */
+	JComboBox resultDisplayList = null;
+	/** panel to store the combo box with the display options */
+	JPanel resultDisplayPanel = new JPanel();
+
+	/** check box to toggle the result overlay */
+	JCheckBox toggleOverlayCheckBox = null;
+	/** panel to store the check box to toggle the result overlay */
+	JPanel overlayPanel = new JPanel();
+
+	/** button to display the results in a new window ("Create Image") */
+	JButton resultButton = null;	
+
+	/** flag to display the result overlay in the canvas */
+	private boolean showColorOverlay = false;
+
 	/** executor service to launch threads for the plugin methods and events */
 	final ExecutorService exec = Executors.newFixedThreadPool(1);
-	
+
 	/** thread to run the segmentation */
 	private Thread segmentationThread = null;
-	
+
 	/** text of the segmentation button when segmentation not running */
-	private String segmentText = "Segment";
+	private String segmentText = "Run";
 	/** tip text of the segmentation button when segmentation not running */
 	private String segmentTip = "Run the morphological segmentation";
 	/** text of the segmentation button when segmentation running */
 	private String stopText = "STOP";
 	/** tip text of the segmentation button when segmentation running */
 	private String stopTip = "Click to abort segmentation";
-	
+
 	/** enumeration of result modes */
-	public static enum ResultMode { BASINS, DAMS, LINES };
-		
+	public static enum ResultMode { OVERLAYED_BASINS, OVERLAYED_DAMS, BASINS, LINES };
+
 	// Macro recording constants (corresponding to  
 	// the static method names to be called)
 	/** name of the macro method to segment the 
 	 * current image based on the current parameters */
-	public static String SEGMENT = "segment";
+	public static String RUN_SEGMENTATION = "segment";
 	/** name of the macro method to toggle the current overlay */
-	public static String TOGGLE_OVERLAY = "toggleOverlay";
-	/** name of the macro method to show current segmentation result */
-	public static String SHOW_RESULT = "showResult";
+	public static String SHOW_RESULT_OVERLAY = "toggleOverlay";
+	/** name of the macro method to show current segmentation result in a new window */
+	public static String CREATE_IMAGE = "createResultImage";
 	
+	/** name of the macro method to set the input image type */
+	public static String SET_INPUT_TYPE = "setInputImageType";
+	/** name of the macro method to set the flag to show the gradient image */
+	public static String SHOW_GRADIENT = "setShowGradient";
+	/** name of the macro method to set the output display format */
+	public static String SET_DISPLAY = "setDisplayFormat";
+
+	/** name of the macro method to set the gradient radius */
+	public static String SET_RADIUS = "setGradientRadius";
+	
+	/** opacity to display overlays */
+	double opacity = 1.0/3.0;
+
 	/**
 	 * Custom window to define the plugin GUI
 	 */
@@ -183,7 +306,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		 * serial version uid
 		 */
 		private static final long serialVersionUID = -6201855439028581892L;
-						
+
 		/**
 		 * Listener for the GUI buttons
 		 */
@@ -192,44 +315,81 @@ public class MorphologicalSegmentation implements PlugIn {
 			@Override
 			public void actionPerformed( final ActionEvent e ) 
 			{
-				
+
 				final String command = e.getActionCommand();
-				
+
 				// listen to the buttons on separate threads not to block
 				// the event dispatch thread
 				exec.submit(new Runnable() {
-													
+
 					public void run()
 					{
+						// "Run" segmentation button		
 						if( e.getSource() == segmentButton )
 						{
 							runSegmentation( command );						
 						}						
-						else if( e.getSource() == overlayButton )
+						// "Show result overlay" check box
+						else if( e.getSource() == toggleOverlayCheckBox )
 						{
 							toggleOverlay();
 							// Macro recording
 							String[] arg = new String[] {};
-							record( TOGGLE_OVERLAY, arg );
+							record( SHOW_RESULT_OVERLAY, arg );
 						}
+						// "Create Image" button
 						else if( e.getSource() == resultButton )
 						{
-							showResult();						
+							createResultImage();						
 						}
+						// "Advanced options" check box
 						else if( e.getSource() == advancedOptionsCheckBox )
 						{
 							selectAdvancedOptions = !selectAdvancedOptions;
 							enableAdvancedOptions( selectAdvancedOptions );
 						}
+						// "Show gradient" check box
+						else if ( e.getSource() == gradientCheckBox )
+						{
+							setShowGradient( !showGradient );
+							// Macro recording
+							String[] arg = new String[] { String.valueOf( showGradient ) };
+							record( SHOW_GRADIENT, arg );
+						}
+						// "Display" result combo box
+						else if ( e.getSource() == resultDisplayList )
+						{
+							if( showColorOverlay )
+								updateResultOverlay();
+							// Macro recording
+							String[] arg = new String[] { (String) resultDisplayList.getSelectedItem() };
+							record( SET_DISPLAY, arg );
+						}
+						// Input image radio buttons (object or border) 
+						else if( command == objectImageText ||  command == borderImageText)
+						{
+							setInputImageType( command );
+							
+							if ( command == objectImageText )
+								inputImagePicture.setIcon( objectIcon );
+							else
+								inputImagePicture.setIcon( borderIcon );
+							
+							String type = command == objectImageText ? "object" : "border";
+							// Macro recording
+							String[] arg = new String[] { type };
+							record( SET_INPUT_TYPE, arg );
+						}
 					}
 
 					
+					
 				});
 			}
-			
+
 		};
-		
-		
+
+
 		/**
 		 * Construct the plugin window
 		 * 
@@ -238,55 +398,141 @@ public class MorphologicalSegmentation implements PlugIn {
 		CustomWindow( ImagePlus imp )
 		{
 			super(imp, new ImageCanvas(imp));
-			
+
 			final ImageCanvas canvas = (ImageCanvas) getCanvas();
-			
+
 			// Zoom in if image is too small
 			while(ic.getWidth() < 512 && ic.getHeight() < 512)
 				IJ.run( imp, "In","" );
-			
+
 			setTitle( "Morphological Segmentation" );
+
+			// === Input Image panel ===
+
+			// input image options (border or object types)			
+			borderButton = new JRadioButton( borderImageText );
+			borderButton.setSelected( !applyGradient );
+			borderButton.setActionCommand( borderImageText );
+			borderButton.addActionListener( listener );
+			borderButton.setToolTipText( "input image has object borders already highlighted" );
 			
-			// regional minima dynamic value
-			dynamicLabel = new JLabel( "Dynamic" );
-			dynamicLabel.setToolTipText( "Extended minima dynamic" );
+			inputImagePicture = new JLabel( borderIcon );
+			inputImagePicture.setToolTipText( "simplified model of your image" );
+			
+			objectButton = new JRadioButton( objectImageText );
+			objectButton.setActionCommand( objectImageText );
+			objectButton.addActionListener( listener );
+			objectButton.setToolTipText( "input image has highlighted objects (dark or bright)" );
+
+			inputImageButtons = new ButtonGroup();
+			inputImageButtons.add( borderButton );
+			inputImageButtons.add( objectButton );
+			radioPanel.add( borderButton );
+			radioPanel.add( objectButton );
+
+			buttonsAndPicPanel.add( radioPanel);
+	        buttonsAndPicPanel.add( inputImagePicture );
+			
+			// gradient options panel (activated when selecting object image)
+			gradientTypeLabel = new JLabel( "Gradient type " );			
+			gradientTypeLabel.setToolTipText( "type of gradient filter to apply" );		
+			gradientList = new JComboBox( gradientOptions );			
+			gradientTypePanel.add( gradientTypeLabel );
+			gradientTypePanel.add( gradientList );			
+			gradientTypePanel.setToolTipText( "type of gradient filter to apply" );	
+
+			gradientRadiusSizeLabel = new JLabel( "Gradient radius" );
+			gradientRadiusSizeLabel.setToolTipText( "radius in pixels of the gradient filter");			
+			gradientRadiusSizeText = new JTextField( String.valueOf( gradientRadius ), 5 );
+			gradientRadiusSizeText.setToolTipText( "radius in pixels of the gradient filter");
+			gradientSizePanel.add( gradientRadiusSizeLabel );
+			gradientSizePanel.add( gradientRadiusSizeText );
+
+			gradientCheckBox = new JCheckBox( "Show gradient", false );
+			gradientCheckBox.setToolTipText( "display gradient image instead of input image" );
+			gradientCheckBox.addActionListener( listener );
+			showGradientPanel.add( gradientCheckBox );
+
+			GridBagLayout gradientOptionsLayout = new GridBagLayout();
+			GridBagConstraints gradientOptionsConstraints = new GridBagConstraints();
+			gradientOptionsConstraints.anchor = GridBagConstraints.WEST;
+			gradientOptionsConstraints.gridwidth = 1;
+			gradientOptionsConstraints.gridheight = 1;
+			gradientOptionsConstraints.gridx = 0;
+			gradientOptionsConstraints.gridy = 0;
+			gradientOptionsPanel.setLayout( gradientOptionsLayout );
+
+			gradientOptionsPanel.add( gradientTypePanel, gradientOptionsConstraints );
+			gradientOptionsConstraints.gridy++;
+			gradientOptionsPanel.add( gradientSizePanel, gradientOptionsConstraints );
+			gradientOptionsConstraints.gridy++;			
+			gradientOptionsPanel.add( showGradientPanel, gradientOptionsConstraints );
+			gradientOptionsConstraints.gridy++;
+
+			gradientOptionsPanel.setBorder( BorderFactory.createTitledBorder("") );
+
+			enableGradientOptions( applyGradient );
+
+			// add components to input image panel
+			inputImagePanel.setBorder( BorderFactory.createTitledBorder( "Input Image" ) );
+			GridBagLayout inputImageLayout = new GridBagLayout();
+			GridBagConstraints inputImageConstraints = new GridBagConstraints();
+			inputImageConstraints.anchor = GridBagConstraints.CENTER;
+			inputImageConstraints.fill = GridBagConstraints.NONE;
+			inputImageConstraints.gridwidth = 1;
+			inputImageConstraints.gridheight = 1;
+			inputImageConstraints.gridx = 0;
+			inputImageConstraints.gridy = 0;
+			inputImageConstraints.insets = new Insets(5, 5, 6, 6);
+			inputImagePanel.setLayout( inputImageLayout );						
+
+			inputImagePanel.add( buttonsAndPicPanel, inputImageConstraints );
+			inputImageConstraints.gridy++;
+			inputImageConstraints.anchor = GridBagConstraints.NORTHWEST;
+			inputImageConstraints.fill = GridBagConstraints.HORIZONTAL;
+			inputImagePanel.add( gradientOptionsPanel, inputImageConstraints );			
+			inputImageConstraints.gridy++;
+
+
+			// === Watershed Segmentation panel ===
+
+			// regional minima dynamic value ("Tolerance")
+			dynamicLabel = new JLabel( "Tolerance" );
+			dynamicLabel.setToolTipText( "Tolerance in the search of local minima" );
 			dynamicText = new JTextField( "10", 5 );
+			dynamicText.setToolTipText( "Tolerance in the search of local minima" );
 			dynamicPanel.add( dynamicLabel );
 			dynamicPanel.add( dynamicText );
-			dynamicPanel.setToolTipText( "Extended minima dynamic" );	
-			
-			// dams option
-			damsCheckBox = new JCheckBox( "Calculate dams", calculateDams );
-			damsCheckBox.setToolTipText( "Calculate watershed dams" );
-			damsPanel.add( damsCheckBox );
-							
+			dynamicPanel.setToolTipText( "Tolerance in the search of local minima" );							
+
 			// advanced options (connectivity + priority queue choices)
 			advancedOptionsCheckBox = new JCheckBox( "Advanced options", selectAdvancedOptions );
 			advancedOptionsCheckBox.setToolTipText( "Enable advanced options" );
 			advancedOptionsCheckBox.addActionListener( listener );
-			
-			// gradient
-			gradientCheckBox = new JCheckBox( "Apply morphological gradient", applyGradient );
-			gradientCheckBox.setToolTipText( "Select to apply morphological gradient to input image");
-			gradientPanel.add( gradientCheckBox );
-			
+
+			// dams option
+			damsCheckBox = new JCheckBox( "Calculate dams", calculateDams );
+			damsCheckBox.setToolTipText( "Calculate watershed dams" );
+			damsPanel.add( damsCheckBox );
+
 			// connectivity
+			if( inputIs2D )
+				connectivityOptions = new String[]{ "4", "8" };
 			connectivityList = new JComboBox( connectivityOptions );
 			connectivityList.setToolTipText( "Voxel connectivity to use" );
 			connectivityLabel = new JLabel( "Connectivity" );
 			connectivityPanel.add( connectivityLabel );
 			connectivityPanel.add( connectivityList );
 			connectivityPanel.setToolTipText( "Voxel connectivity to use" );
-			
+
 			// use priority queue option
 			queueCheckBox = new JCheckBox( "Use priority queue", usePriorityQueue );
 			queueCheckBox.setToolTipText( "Check to use a priority queue in the watershed transform" );
 			queuePanel.add( queueCheckBox );
-			
+
 			enableAdvancedOptions( selectAdvancedOptions );
-			
-			// add components to advanced options panel
-			
+
+			// add components to advanced options panel			
 			GridBagLayout advancedOptionsLayout = new GridBagLayout();
 			GridBagConstraints advancedOptoinsConstraints = new GridBagConstraints();
 			advancedOptoinsConstraints.anchor = GridBagConstraints.WEST;
@@ -295,44 +541,22 @@ public class MorphologicalSegmentation implements PlugIn {
 			advancedOptoinsConstraints.gridx = 0;
 			advancedOptoinsConstraints.gridy = 0;
 			advancedOptionsPanel.setLayout( advancedOptionsLayout );
-			
-			advancedOptionsPanel.add( gradientPanel, advancedOptoinsConstraints );
-			advancedOptoinsConstraints.gridy++;
+
+			advancedOptionsPanel.add( damsPanel, advancedOptoinsConstraints );
+			advancedOptoinsConstraints.gridy++;			
 			advancedOptionsPanel.add( connectivityPanel, advancedOptoinsConstraints );
 			advancedOptoinsConstraints.gridy++;			
 			advancedOptionsPanel.add( queuePanel, advancedOptoinsConstraints );
-			
+
 			advancedOptionsPanel.setBorder(BorderFactory.createTitledBorder(""));
-			
-			
+
 			// Segmentation button
 			segmentButton = new JButton( segmentText );
 			segmentButton.setToolTipText( segmentTip );
 			segmentButton.addActionListener( listener );
-			
-			// Overlay button
-			overlayButton = new JButton( "Toggle overlay" );
-			overlayButton.setEnabled( false );
-			overlayButton.setToolTipText( "Toggle overlay with segmentation result" );
-			overlayButton.addActionListener( listener );
-			overlayPanel.add( overlayButton );
-			
-			showColorOverlay = false;
-			
-			// Result pannel
-			resultDisplayList = new JComboBox( resultDisplayOption );
-			resultDisplayList.setEnabled( false );
-			resultDisplayList.setToolTipText( "Select how to display segmentation results" );
-			resultButton = new JButton( "Show" );
-			resultButton.setEnabled( false );
-			resultButton.setToolTipText( "Show segmentation result in new window" );
-			resultButton.addActionListener( listener );
-			resultDisplayPanel.add( resultDisplayList );
-			resultDisplayPanel.add( resultButton );
-			
 
 			// Segmentation panel
-			segmentationPanel.setBorder( BorderFactory.createTitledBorder( "Segmentation" ) );
+			segmentationPanel.setBorder( BorderFactory.createTitledBorder( "Watershed Segmentation" ) );
 			GridBagLayout segmentationLayout = new GridBagLayout();
 			GridBagConstraints segmentationConstraints = new GridBagConstraints();
 			segmentationConstraints.anchor = GridBagConstraints.NORTHWEST;
@@ -343,10 +567,8 @@ public class MorphologicalSegmentation implements PlugIn {
 			segmentationConstraints.gridy = 0;
 			segmentationConstraints.insets = new Insets(5, 5, 6, 6);
 			segmentationPanel.setLayout( segmentationLayout );						
-						
+
 			segmentationPanel.add( dynamicPanel, segmentationConstraints );
-			segmentationConstraints.gridy++;
-			segmentationPanel.add( damsPanel, segmentationConstraints );
 			segmentationConstraints.gridy++;
 			segmentationPanel.add( advancedOptionsCheckBox, segmentationConstraints );
 			segmentationConstraints.gridy++;			
@@ -355,9 +577,36 @@ public class MorphologicalSegmentation implements PlugIn {
 			segmentationConstraints.anchor = GridBagConstraints.CENTER;
 			segmentationConstraints.fill = GridBagConstraints.NONE;
 			segmentationPanel.add( segmentButton, segmentationConstraints );
-			
-			// Display panel
-			displayPanel.setBorder( BorderFactory.createTitledBorder( "Display" ) );
+
+			// === Results panel ===
+
+			// Display result panel
+			displayLabel = new JLabel( "Display" );
+			displayLabel.setEnabled( false );
+			resultDisplayList = new JComboBox( resultDisplayOption );
+			resultDisplayList.setEnabled( false );
+			resultDisplayList.setToolTipText( "Select how to display segmentation results" );
+			resultDisplayList.addActionListener( listener );
+
+			resultDisplayPanel.add( displayLabel );
+			resultDisplayPanel.add( resultDisplayList );
+
+			// Toggle overlay check box
+			showColorOverlay = false;
+			toggleOverlayCheckBox = new JCheckBox( "Show result overlay" );
+			toggleOverlayCheckBox.setEnabled( showColorOverlay );
+			toggleOverlayCheckBox.setToolTipText( "Toggle overlay with segmentation result" );
+			toggleOverlayCheckBox.addActionListener( listener );
+			overlayPanel.add( toggleOverlayCheckBox );
+
+			// Create Image button
+			resultButton = new JButton( "Create Image" );
+			resultButton.setEnabled( false );
+			resultButton.setToolTipText( "Show segmentation result in new window" );
+			resultButton.addActionListener( listener );					
+
+			// main Results panel
+			displayPanel.setBorder( BorderFactory.createTitledBorder( "Results" ) );
 			GridBagLayout displayLayout = new GridBagLayout();
 			GridBagConstraints displayConstraints = new GridBagConstraints();
 			displayConstraints.anchor = GridBagConstraints.NORTHWEST;
@@ -368,15 +617,22 @@ public class MorphologicalSegmentation implements PlugIn {
 			displayConstraints.gridy = 0;
 			displayConstraints.insets = new Insets(5, 5, 6, 6);
 			displayPanel.setLayout( displayLayout );					
-			
-			displayPanel.add( overlayPanel, displayConstraints );
-			displayConstraints.gridy++;
+
 			displayPanel.add( resultDisplayPanel, displayConstraints );
 			displayConstraints.gridy++;
-			
-			// Parameter panel (left side of the GUI, including training and options)
+			displayPanel.add( overlayPanel, displayConstraints );
+			displayConstraints.gridy++;
+			displayConstraints.anchor = GridBagConstraints.CENTER;
+			displayConstraints.fill = GridBagConstraints.NONE;
+			displayPanel.add( resultButton, displayConstraints );
+
+
+			// Parameter panel (left side of the GUI, it includes the 
+			// three main panels: Input Image, Watershed Segmentation
+			// and Results).
 			GridBagLayout paramsLayout = new GridBagLayout();
 			GridBagConstraints paramsConstraints = new GridBagConstraints();
+			paramsConstraints.insets = new Insets( 5, 5, 6, 6 );
 			paramsPanel.setLayout( paramsLayout );
 			paramsConstraints.anchor = GridBagConstraints.NORTHWEST;
 			paramsConstraints.fill = GridBagConstraints.HORIZONTAL;
@@ -384,12 +640,14 @@ public class MorphologicalSegmentation implements PlugIn {
 			paramsConstraints.gridheight = 1;
 			paramsConstraints.gridx = 0;
 			paramsConstraints.gridy = 0;
+			paramsPanel.add( inputImagePanel, paramsConstraints);
+			paramsConstraints.gridy++;
 			paramsPanel.add( segmentationPanel, paramsConstraints);
 			paramsConstraints.gridy++;
 			paramsPanel.add( displayPanel, paramsConstraints);
 			paramsConstraints.gridy++;
-			paramsConstraints.insets = new Insets( 5, 5, 6, 6 );
-			
+
+
 			// main panel (including parameters panel and canvas)
 			GridBagLayout layout = new GridBagLayout();
 			GridBagConstraints allConstraints = new GridBagConstraints();
@@ -405,37 +663,39 @@ public class MorphologicalSegmentation implements PlugIn {
 			allConstraints.gridheight = 2;
 			allConstraints.weightx = 0;
 			allConstraints.weighty = 0;
-			
+
 			all.add( paramsPanel, allConstraints );
-									
+
 			// put canvas in place
 			allConstraints.gridx++;
 			allConstraints.weightx = 1;
 			allConstraints.weighty = 1;
 			allConstraints.gridheight = 1;
 			all.add( canvas, allConstraints );
-			
+
 			allConstraints.gridy++;
-			allConstraints.weightx = 1;
-			allConstraints.weighty = 1;
-			
+			allConstraints.weightx = 0;
+			allConstraints.weighty = 0;
+
 			// if the input image is 3d, put the
 			// slice selectors in place
 			if( null != super.sliceSelector )
 			{
-				all.add( super.sliceSelector, allConstraints );
+				sliceSelector.setValue( inputImage.getCurrentSlice() );
 				
+				all.add( super.sliceSelector, allConstraints );
+
 				if( null != super.zSelector )
 					all.add( super.zSelector, allConstraints );
 				if( null != super.tSelector )
 					all.add( super.tSelector, allConstraints );
 				if( null != super.cSelector )
 					all.add( super.cSelector, allConstraints );
-				
+
 			}
 			allConstraints.gridy--;
-				
-			
+
+
 			GridBagLayout wingb = new GridBagLayout();
 			GridBagConstraints winc = new GridBagConstraints();
 			winc.anchor = GridBagConstraints.NORTHWEST;
@@ -445,6 +705,10 @@ public class MorphologicalSegmentation implements PlugIn {
 			setLayout( wingb );
 			add( all, winc );
 			
+			// Fix minimum size to the preferred size at this point
+			pack();
+			setMinimumSize( getPreferredSize() );
+
 			// add especial listener if the input image is a stack
 			if(null != sliceSelector)
 			{
@@ -534,7 +798,7 @@ public class MorphologicalSegmentation implements PlugIn {
 
 			}		
 		}
-		
+
 		/**
 		 * Overwrite windowClosing to display the input image after closing 
 		 * the GUI and shut down the executor service
@@ -543,16 +807,16 @@ public class MorphologicalSegmentation implements PlugIn {
 		public void windowClosing( WindowEvent e ) 
 		{							
 			super.windowClosing( e );
-			
+
 			// display input image
 			inputImage.getWindow().setVisible( true );
-			
+
 			inputImage.setSlice( displayImage.getCurrentSlice() );
-			
+
 			// shut down executor service
 			exec.shutdownNow();
 		}
-		
+
 		/**
 		 * Set dynamic value in the GUI
 		 * 
@@ -562,7 +826,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		{
 			dynamicText.setText( Integer.toString(dynamic) );
 		}
-		
+
 		/**
 		 * Set flag and GUI checkbox to calculate watershed dams
 		 * 
@@ -573,29 +837,19 @@ public class MorphologicalSegmentation implements PlugIn {
 			calculateDams = b;
 			damsCheckBox.setSelected( b );
 		}
-		
-		/**
-		 * Set flag and GUI checkbox to apply morphological gradient
-		 * 
-		 * @param b boolean flag
-		 */
-		void setApplyGradient( boolean b )
-		{
-			applyGradient = b;
-			gradientCheckBox.setSelected( b );
-		}
-		
+
 		/**
 		 * Set connectivity value in the GUI
 		 * 
-		 * @param connectivity 6-26 neighbor connectivity
+		 * @param connectivity 4-8 or 6-26 neighbor connectivity
 		 */
 		void setConnectivity( int connectivity )
-		{
-			if( connectivity == 6  || connectivity == 26 )
+		{			
+			if( ( inputImage.getImageStackSize() > 1 && (connectivity == 6  || connectivity == 26 ) )
+				|| ( inputImage.getImageStackSize() == 1 && (connectivity == 4  || connectivity == 8 ) ) )
 				connectivityList.setSelectedItem( Integer.toString(connectivity) );									
 		}
-		
+
 		/**
 		 * Set flag and GUI checkbox to use priority queue
 		 * 
@@ -606,7 +860,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			usePriorityQueue = b;
 			queueCheckBox.setSelected( b );
 		}
-		
+
 		/**
 		 * Get segmentation command (text on the segment button)
 		 * @return text on the segment button when segmentation is not running
@@ -614,18 +868,24 @@ public class MorphologicalSegmentation implements PlugIn {
 		String getSegmentText(){
 			return segmentText;
 		}
-		
+
 		/**
 		 * Run morphological segmentation pipeline
 		 */
 		private void runSegmentation( String command ) 
 		{
-			// If the command is "segment"
+			// If the command is the text on the run segmentation button
 			if ( command.equals( segmentText ) ) 
 			{			
 				// read connectivity
-				final int connectivity = Integer.parseInt( (String) connectivityList.getSelectedItem() );
+				int readConn = Integer.parseInt( (String) connectivityList.getSelectedItem() );
 
+				// convert connectivity to 3D if needed (2D images are processed as 3D)
+				if( inputIs2D )
+					readConn = readConn == 4 ? 6 : 26;
+				
+				final int connectivity = readConn;
+				
 				// read dynamic
 				final double dynamic;
 				try{
@@ -658,9 +918,11 @@ public class MorphologicalSegmentation implements PlugIn {
 				// Set button text to "STOP"
 				segmentButton.setText( stopText );
 				segmentButton.setToolTipText( stopTip );
-				
+				segmentButton.setSize( segmentButton.getMinimumSize() );
+				segmentButton.repaint();
+
 				final Thread oldThread = segmentationThread;
-				
+
 				// Thread to run the segmentation
 				Thread newThread = new Thread() {								 
 
@@ -678,9 +940,6 @@ public class MorphologicalSegmentation implements PlugIn {
 
 						// read dams flag
 						calculateDams = damsCheckBox.isSelected();
-						
-						// read gradient flag
-						applyGradient = gradientCheckBox.isSelected();
 
 						// read priority queue flag
 						usePriorityQueue = queueCheckBox.isSelected();
@@ -694,15 +953,37 @@ public class MorphologicalSegmentation implements PlugIn {
 
 						if( applyGradient )
 						{
+							// read radius to use
+							try{
+								gradientRadius = Integer.parseInt( gradientRadiusSizeText.getText() );
+							}
+							catch( NullPointerException ex )
+							{
+								IJ.error( "Morphological Sementation", "ERROR: missing gradient radius value" );
+								return;
+							}
+							catch( NumberFormatException ex )
+							{
+								IJ.error( "Morphological Sementation", "ERROR: radius value must be an integer number" );
+								return;
+							}
+
 							final long t1 = System.currentTimeMillis();
 							IJ.log( "Applying morphological gradient to input image..." );
 
-							Strel3D strel = Strel3D.Shape.CUBE.fromRadius( 1 );
+							Strel3D strel = Strel3D.Shape.CUBE.fromRadius( gradientRadius );
 							image = Morphology.gradient( image, strel );
 							//(new ImagePlus("gradient", image) ).show();
 
+							// store gradient image
+							gradientStack = image;
+
 							final long t2 = System.currentTimeMillis();
 							IJ.log( "Morphological gradient took " + (t2-t1) + " ms.");
+							
+							// macro recording
+							String[] arg = new String[] { gradientRadiusSizeText.getText() };
+							record( SET_RADIUS, arg );
 						}
 
 						IJ.log( "Running extended minima with dynamic value " + (int)dynamic + "..." );
@@ -710,7 +991,7 @@ public class MorphologicalSegmentation implements PlugIn {
 
 						// Run extended minima
 						ImageStack regionalMinima = MinimaAndMaxima3D.extendedMinima( image, (int)dynamic, connectivity );
-						
+
 						if( null == regionalMinima )
 						{
 							IJ.log( "The segmentation was interrupted!" );
@@ -718,7 +999,7 @@ public class MorphologicalSegmentation implements PlugIn {
 							IJ.showProgress( 1.0 );
 							return;
 						}
-						
+
 						final long step1 = System.currentTimeMillis();		
 						IJ.log( "Regional minima took " + (step1-step0) + " ms.");
 
@@ -734,7 +1015,7 @@ public class MorphologicalSegmentation implements PlugIn {
 							IJ.showProgress( 1.0 );
 							return;
 						}
-						
+
 						final long step2 = System.currentTimeMillis();
 						IJ.log( "Imposition took " + (step2-step1) + " ms." );
 
@@ -765,7 +1046,7 @@ public class MorphologicalSegmentation implements PlugIn {
 							IJ.showProgress( 1.0 );
 							return;
 						}
-						
+
 						resultImage = new ImagePlus( "watershed", resultStack );
 						resultImage.setCalibration( inputImage.getCalibration() );
 
@@ -782,32 +1063,34 @@ public class MorphologicalSegmentation implements PlugIn {
 						resultImage.getImageStack().setColorModel(cm);
 						resultImage.updateAndDraw();
 
-						// display result overlaying the input image
+						// display result overlaying the input image						
+						updateDisplayImage();
 						updateResultOverlay();
 						showColorOverlay = true;
+						toggleOverlayCheckBox.setSelected( true );
 
 						// enable parameter panel
 						setParamsEnabled( true );
-						// set button back to "Segment"
-						segmentButton.setText( "Segment" );
+						// set button back to initial text
+						segmentButton.setText( segmentText );
+						segmentButton.setToolTipText( segmentTip );
 						// set thread to null					
 						segmentationThread = null;
-						
+
 						// Record
 						String[] arg = new String[] {
-							"dynamic=" + Integer.toString( (int) dynamic ),
-							"calculateDams=" + calculateDams,
-							"applyGradient=" + applyGradient,
-							"connectivity=" + Integer.toString( connectivity ),
-							"usePriorityQueue=" + usePriorityQueue };
-						record( SEGMENT, arg );
-						
+								"tolerance=" + Integer.toString( (int) dynamic ),
+								"calculateDams=" + calculateDams,
+								"connectivity=" + Integer.toString( connectivity ),
+								"usePriorityQueue=" + usePriorityQueue };
+						record( RUN_SEGMENTATION, arg );
+
 					}
 				};
-				
+
 				segmentationThread = newThread;
 				newThread.start();
-				
+
 			}
 			else if( command.equals( stopText ) ) 							  
 			{
@@ -815,21 +1098,35 @@ public class MorphologicalSegmentation implements PlugIn {
 					segmentationThread.interrupt();
 				else
 					IJ.log("Error: interrupting segmentation failed becaused the thread is null!");
-				
-				// set button back to "Segment"
+
+				// set button back to initial text
 				segmentButton.setText( segmentText );
 				segmentButton.setToolTipText( segmentTip );
 				// enable parameter panel
 				setParamsEnabled( true );			
 			}
 		}
-		
+
+		/**
+		 * Update the display image with the gradient or the input image voxels.
+		 */
+		void updateDisplayImage()
+		{
+			if( applyGradient && showGradient && null != gradientStack )			
+				displayImage.setStack( gradientStack );
+			else
+				displayImage.setStack( inputImage.getImageStack() );	
+			displayImage.updateAndDraw();
+		}
+
 		/**
 		 * Toggle overlay with segmentation results (if any)
 		 */
 		void toggleOverlay()
 		{
 			showColorOverlay = !showColorOverlay;
+			
+			toggleOverlayCheckBox.setSelected( showColorOverlay );
 
 			if ( showColorOverlay )		
 				updateResultOverlay();
@@ -837,54 +1134,79 @@ public class MorphologicalSegmentation implements PlugIn {
 				displayImage.setOverlay( null );
 			displayImage.updateAndDraw();
 		}
-		
+
 		/**
-		 * Show segmentation result in a new window (it exists)
+		 * Show segmentation result (if exists) in a new window
 		 */
-		void showResult()
+		void createResultImage()
 		{
 			if( null != resultImage )
 			{
-				
-				
+
 				final String displayOption = (String) resultDisplayList.getSelectedItem();
-				
+
 				String[] arg = null;
-				
+
 				ImagePlus watershedResult = null;
-				
-				// options: "Catchment basins", "Overlayed dams", "Watershed lines"
-				if( displayOption.equals( "Catchment basins" ) )
+
+				// options: "Catchment basins", "Overlayed dams", "Watershed lines", "Overlayed basins"
+				if( displayOption.equals( catchmentBasinsText ) )
 				{			
 					watershedResult = getResult( ResultMode.BASINS );									
 					arg = new String[] { "mode=basins" };
 				}
-				else if( displayOption.equals( "Overlayed dams" ) )
+				else if( displayOption.equals( overlayedDamsText ) )
 				{
-					watershedResult = getResult( ResultMode.DAMS );
-					arg = new String[] { "mode=dams" };
+					watershedResult = getResult( ResultMode.OVERLAYED_DAMS );
+					arg = new String[] { "mode=overlayed_dams" };
 				}
-				else if( displayOption.equals( "Watershed lines" ) )
+				else if( displayOption.equals( watershedLinesText ) )
 				{
 					watershedResult = getResult( ResultMode.LINES );
 					arg = new String[] { "mode=lines" };
 				}
-				
+				else if ( displayOption.equals( overlayedBasinsText ) )
+				{
+					watershedResult = getResult( ResultMode.OVERLAYED_BASINS );									
+					arg = new String[] { "mode=overlayed_basins" };
+				}
+
 				if( null != watershedResult )
 				{
 					watershedResult.show();
 					watershedResult.setSlice( displayImage.getSlice() );
 				}
-				
+
 				// Macro recording	
 				if( null != arg )
-					record( SHOW_RESULT, arg );
+					record( CREATE_IMAGE, arg );
 			}
+		}
+
+		/**
+		 * Set input image type depending on the button that is selected
+		 *  
+		 * @param command text of the radio button of input image 
+		 */
+		void setInputImageType(final String command) 
+		{
+			// apply gradient only when using and object image
+			applyGradient = command == objectImageText;
+			enableGradientOptions( applyGradient );
+			// update display image (so gradient image is shown if needed)
+			updateDisplayImage();
+			if( showColorOverlay )
+				updateResultOverlay();
+			// update radio buttons (needed to call this method from macro)
+			if( applyGradient )
+				objectButton.setSelected( true );
+			else
+				borderButton.setSelected( true );
 		}
 		
 		/**
 		 * Get current segmentation results based on selected mode
-		 * @param mode selected result mode ("Catchment basins", "Overlayed dams", "Watershed lines") 
+		 * @param mode selected result mode ("Overlayed basins", "Overlayed dams", "Catchment basins", "Watershed lines") 
 		 * @return result image
 		 */
 		ImagePlus getResult( ResultMode mode )
@@ -900,61 +1222,165 @@ public class MorphologicalSegmentation implements PlugIn {
 			
 			ImagePlus result = null;
 			
+			// if the overlay is not shown
+			if( showColorOverlay == false )
+			{
+				result = displayImage.duplicate();
+				
+				if ( applyGradient && showGradient )
+					title += "-gradient";
+				result.setTitle( title + ext );
+				return result;
+			}
+			
+
 			switch( mode ){
+				case OVERLAYED_BASINS:
+					result = displayImage.duplicate();
+					result.setOverlay( null ); // remove existing overlay
+					ImageStack is = new ImageStack( displayImage.getWidth(), displayImage.getHeight() );
+	
+					for( slice=1; slice<=result.getImageStackSize(); slice++ )
+					{
+						ImagePlus aux = new ImagePlus( "", result.getImageStack().getProcessor( slice ) );
+						ImageRoi roi = new ImageRoi(0, 0, resultImage.getImageStack().getProcessor( slice ) );
+						roi.setOpacity( opacity );
+						aux.setOverlay( new Overlay( roi ) );
+						aux = aux.flatten();
+						is.addSlice( aux.getProcessor() );
+					}
+					result.setStack( is );
+					if( applyGradient && showGradient )
+						title += "-gradient";
+					result.setTitle( title + "-overlayed-basins" + ext );
+					break;
 				case BASINS:
 					result = resultImage.duplicate();
 					result.setTitle( title + "-catchment-basins" + ext );				
-					result.setSlice( displayImage.getSlice() );
-					
+					result.setSlice( displayImage.getSlice() );					
 					break;
-				case DAMS:
+				case OVERLAYED_DAMS:
 					result = getWatershedLines( resultImage );
-					result = ColorImages.binaryOverlay( inputImage, result, Color.red ) ;
+					result = ColorImages.binaryOverlay( displayImage, result, Color.red ) ;
+					if( applyGradient && showGradient )
+						title += "-gradient";
 					result.setTitle( title + "-overlayed-dams" + ext );				
 					break;
 				case LINES:
 					result = getWatershedLines( resultImage );
+					IJ.run( result, "Invert", "stack" );
 					result.setTitle( title + "-watershed-lines" + ext );								
 					break;
 			}
-			
+
 			return result;
 		}
 		
-	}// end class CustomWindow
-	
-
-	
-	/**
-	 * Update the overlay in the display image based on 
-	 * the current result and slice
-	 */
-	void updateResultOverlay() 
-	{
-		if( null != resultImage )
+		/**
+		 * Set "show gradient" flag and update GUI accordingly
+		 * @param bool flag to display the gradient image in the GUI
+		 */
+		void setShowGradient( boolean bool ) 
 		{
-			int slice = displayImage.getCurrentSlice();
-			ImageRoi roi = new ImageRoi(0, 0, resultImage.getImageStack().getProcessor( slice ) );
-			roi.setOpacity( 1.0/3.0 );
-			displayImage.setOverlay( new Overlay( roi ) );
+			showGradient = bool;
+			gradientCheckBox.setSelected( bool );
+			updateDisplayImage();
+			if( showColorOverlay )
+				updateResultOverlay();
 		}
-	}
-			
-	
+
+		/**
+		 * Set the result display option in the GUI
+		 * @param option output format
+		 */
+		void setResultDisplayOption( String option )
+		{
+			if( Arrays.asList( resultDisplayOption ).contains( option ) )
+				resultDisplayList.setSelectedItem( option );
+		}
+
+		
+		/**
+		 * Update the overlay in the display image based on 
+		 * the current result and slice
+		 */
+		void updateResultOverlay() 
+		{
+			if( null != resultImage )
+			{
+				displayImage.deleteRoi();
+				int slice = displayImage.getCurrentSlice();
+				
+				final String displayOption = (String) resultDisplayList.getSelectedItem();							
+
+				ImageRoi roi = null;
+				
+				if( displayOption.equals( catchmentBasinsText ) )
+				{
+					roi = new ImageRoi(0, 0, resultImage.getImageStack().getProcessor( slice ) );
+					roi.setOpacity( 1.0 );
+				}
+				else if( displayOption.equals( overlayedDamsText ) )				
+				{
+					ImageProcessor lines = BinaryImages.binarize( resultImage.getImageStack().getProcessor( slice ) );
+					lines.invert();
+					ImageProcessor gray = displayImage.getImageStack().getProcessor( slice );
+					roi = new ImageRoi(0, 0, ColorImages.binaryOverlay( gray, lines, Color.red ) ) ;
+					roi.setOpacity( 1.0 );
+				}
+				else if( displayOption.equals( watershedLinesText ) )
+				{
+					roi = new ImageRoi(0, 0, BinaryImages.binarize( resultImage.getImageStack().getProcessor( slice ) ) );
+					roi.setOpacity( 1.0 );
+				}
+				else if( displayOption.equals( overlayedBasinsText ) )	
+				{
+					roi = new ImageRoi(0, 0, resultImage.getImageStack().getProcessor( slice ) );
+					roi.setOpacity( opacity );
+				}
+												
+				displayImage.setOverlay( new Overlay( roi ) );
+			}
+		}
+		
+		/**
+		 * Accessor to know if the result overlay needs to be displayed 
+		 * @return
+		 */
+		boolean isShowResultOverlaySelected()
+		{
+			return showColorOverlay;
+		}
+		
+		/**
+		 * Set the gradient radius
+		 * @param radius size of the radius
+		 */
+		void setGradientRadius( int radius )
+		{
+			if( radius > 0 )
+			{
+				gradientRadius = radius;
+				gradientRadiusSizeText.setText( String.valueOf( radius ) );
+			}
+		}
+		
+	}// end class CustomWindow
+
+
 	/**
 	 * Get the watershed lines out of the result catchment basins image
 	 * @param labels labeled catchment basins image
-	 * @return binary image with the watershed lines
+	 * @return binary image with the watershed lines in white
 	 */
 	ImagePlus getWatershedLines( ImagePlus labels )
 	{
-		final ImagePlus lines = labels.duplicate();
-		IJ.setThreshold( lines, 0, 0 );
-		IJ.run(lines, "Convert to Mask", "method=Default background=Light" );
+		final ImagePlus lines = BinaryImages.binarize( labels );
+		IJ.run( lines, "Invert", "stack" );
 		return lines;
 	}
-	
-	
+
+
 	/**
 	 * Enable/disable all components in the parameter panel
 	 * 
@@ -963,17 +1389,18 @@ public class MorphologicalSegmentation implements PlugIn {
 	void setParamsEnabled( boolean enabled )
 	{
 		this.dynamicText.setEnabled( enabled );
-		this.dynamicLabel.setEnabled( enabled );
-		this.damsCheckBox.setEnabled( enabled );
+		this.dynamicLabel.setEnabled( enabled );		
 		this.advancedOptionsCheckBox.setEnabled( enabled );
-		//this.segmentButton.setEnabled( enabled );
-		this.overlayButton.setEnabled( enabled );
+		this.toggleOverlayCheckBox.setEnabled( enabled );
 		this.resultButton.setEnabled( enabled );
 		this.resultDisplayList.setEnabled( enabled );
+		displayLabel.setEnabled( enabled );
 		if( selectAdvancedOptions )
 			enableAdvancedOptions( enabled );
+		if( applyGradient )
+			enableGradientOptions( enabled );
 	}
-	
+
 	/**
 	 * Enable/disable advanced options components
 	 * 
@@ -981,12 +1408,27 @@ public class MorphologicalSegmentation implements PlugIn {
 	 */
 	void enableAdvancedOptions( boolean enabled )
 	{
-		this.connectivityLabel.setEnabled( enabled );
-		this.connectivityList.setEnabled( enabled );
-		this.queueCheckBox.setEnabled( enabled );
-		this.gradientCheckBox.setEnabled( enabled );
+		damsCheckBox.setEnabled( enabled );
+		connectivityLabel.setEnabled( enabled );
+		connectivityList.setEnabled( enabled );
+		queueCheckBox.setEnabled( enabled );
 	}
-	
+
+	/**
+	 * Enable/disable gradient options components
+	 * 
+	 * @param enabled flag to enable/disable components
+	 */
+	void enableGradientOptions( boolean enabled )
+	{
+		gradientList.setEnabled( enabled );
+		gradientList.setEnabled( enabled );
+		gradientRadiusSizeLabel.setEnabled( enabled );
+		gradientRadiusSizeText.setEnabled( enabled );
+		gradientCheckBox.setEnabled( enabled );
+		gradientTypeLabel.setEnabled( enabled );
+	}
+
 	@Override
 	public void run(String arg0) 
 	{
@@ -996,7 +1438,7 @@ public class MorphologicalSegmentation implements PlugIn {
 					+ ".\nMorphological Segmentation requires version 1.48a or superior, please update ImageJ!" );
 			return;
 		}
-			
+
 		// get current image
 		if (null == WindowManager.getCurrentImage())
 		{
@@ -1005,20 +1447,23 @@ public class MorphologicalSegmentation implements PlugIn {
 		}
 		else
 			inputImage = WindowManager.getCurrentImage();
-		
+
 		if( inputImage.getType() == ImagePlus.COLOR_256 || 
-			inputImage.getType() == ImagePlus.COLOR_RGB )
+				inputImage.getType() == ImagePlus.COLOR_RGB )
 		{
 			IJ.error( "Morphological Segmentation", "This plugin only works on grayscale images.\nPlease convert it to 8, 16 or 32-bit." );
 			return;
 		}
-		
+
 		displayImage = inputImage.duplicate();
 		displayImage.setTitle("Morphological Segmentation");
 		displayImage.setSlice( inputImage.getSlice() );
-		
+
 		// hide input image (to avoid accidental closing)
 		inputImage.getWindow().setVisible( false );
+
+		// set the 2D flag
+		inputIs2D = inputImage.getImageStackSize() == 1;
 		
 		// Build GUI
 		SwingUtilities.invokeLater(
@@ -1028,9 +1473,9 @@ public class MorphologicalSegmentation implements PlugIn {
 						win.pack();
 					}
 				});
-		
+
 	}
-	
+
 	/* **********************************************************
 	 * Macro recording related methods
 	 * *********************************************************/
@@ -1051,20 +1496,18 @@ public class MorphologicalSegmentation implements PlugIn {
 		if(Recorder.record)
 			Recorder.recordString(command);
 	}
-	
+
 	/**
 	 * Segment current image (GUI needs to be running)
 	 * 
 	 * @param dynamic string containing dynamic value (format: "dynamic=[integer value]")
 	 * @param calculateDams string containing boolean flag to create dams (format: "calculateDams=[boolean])
-	 * @param applyGradient string containing boolean flag to apply morphological gradient (format: "applyGradient=[boolean])
-	 * @param connectivity string containing connectivity value (format: "connectivity=[6 or 26])
+	 * @param connectivity string containing connectivity value (format: "connectivity=[4 or 8 / 6 or 26])
 	 * @param usePriorityQueue string containing boolean flag to use priority queue (format: "usePriorityQueue=[boolean])
 	 */
 	public static void segment(
 			String dynamic,
 			String calculateDams,
-			String applyGradient,
 			String connectivity,
 			String usePriorityQueue )
 	{		
@@ -1073,9 +1516,8 @@ public class MorphologicalSegmentation implements PlugIn {
 		{
 			//IJ.log( "GUI detected" );			
 			final CustomWindow win = (CustomWindow) iw;
-			win.setDynamic( Integer.parseInt( dynamic.replace( "dynamic=", "" ) ) );
+			win.setDynamic( Integer.parseInt( dynamic.replace( "tolerance=", "" ) ) );
 			win.setCalculateDams( calculateDams.contains( "true" ) );
-			win.setApplyGradient( applyGradient.contains( "true" ) );
 			win.setConnectivity( Integer.parseInt( connectivity.replace( "connectivity=", "" ) ) );
 			win.setUsePriorityQueue( usePriorityQueue.contains( "true" ) );
 			win.runSegmentation( win.getSegmentText() );			
@@ -1083,7 +1525,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		else
 			IJ.log( "Error: Morphological Segmentation GUI not detected." );
 	}
-	
+
 	/**
 	 * Toggle current result overlay image
 	 */
@@ -1096,27 +1538,29 @@ public class MorphologicalSegmentation implements PlugIn {
 			win.toggleOverlay();
 		}
 	}
-	
+
 	/**
 	 * Show current result in a new image
 	 */
-	public static void showResult( String modeText )
+	public static void createResultImage( String modeText )
 	{
 		final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
 		if( iw instanceof CustomWindow )
 		{
 			final CustomWindow win = (CustomWindow) iw;
 			String mode = modeText.replace( "mode=", "" );
-			
+
 			ImagePlus result = null;
-			
+
 			if( mode.equals( "basins") )
 				result = win.getResult( ResultMode.BASINS );
+			else if( mode.equals( "overlayed_basins") )
+				result = win.getResult( ResultMode.OVERLAYED_BASINS );
 			else if( mode.equals( "lines" ) )
 				result = win.getResult( ResultMode.LINES );
-			else if( mode.equals( "dams" ))
-				result = win.getResult( ResultMode.DAMS );
-			
+			else if( mode.equals( "overlayed_dams" ))
+				result = win.getResult( ResultMode.OVERLAYED_DAMS );
+
 			if( null != result )
 			{
 				result.show();
@@ -1124,5 +1568,70 @@ public class MorphologicalSegmentation implements PlugIn {
 			}
 		}
 	}
+	
+	/**
+	 * Set input image type 
+	 * @param type input image type (border or object)
+	 */
+	public static void setInputImageType( String type )
+	{
+		final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
+		if( iw instanceof CustomWindow )
+		{
+			final CustomWindow win = (CustomWindow) iw;
+			
+			if( type.equals( "object" ) )
+				win.setInputImageType( objectImageText );
+			else if( type.equals( "border" ) )
+				win.setInputImageType( borderImageText );
+		}			
+	}
 
+	/**
+	 * Set GUI to show gradient image in the main canvas
+	 * @param bool true to display gradient image and false to display input image
+	 */
+	public static void setShowGradient( String bool )
+	{
+		final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
+		if( iw instanceof CustomWindow )
+		{
+			final CustomWindow win = (CustomWindow) iw;
+			if( bool.equals( "true" ) )
+				win.setShowGradient( true );
+			else if( bool.equals( "false" ) )
+				win.setShowGradient( false );	
+		}
+	}
+
+	/**
+	 * Set the display format in the GUI
+	 * @param format output mode ("Overlayed basins", "Overlayed dams", "Catchment basins", "Watershed lines")
+	 */
+	public static void setDisplayFormat( String format )
+	{
+		final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
+		if( iw instanceof CustomWindow )
+		{
+			final CustomWindow win = (CustomWindow) iw;
+			win.setResultDisplayOption( format );
+			if( win.isShowResultOverlaySelected() )
+				win.updateResultOverlay();
+		}
+	}
+
+	/**
+	 * Set the gradient radius
+	 * @param radius gradient radius size (in pixels)
+	 */
+	public static void setGradientRadius( String radius )
+	{
+		final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
+		if( iw instanceof CustomWindow )
+		{
+			final CustomWindow win = (CustomWindow) iw;
+			win.setGradientRadius( Integer.parseInt( radius ) );			
+		}
+	}
+	
 }// end MorphologicalSegmentation class

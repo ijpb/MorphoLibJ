@@ -123,7 +123,7 @@ public class ExtendedMinAndMax3DPlugin implements PlugIn {
 			maxValue = 255;
 		} else {
 			minValue = Double.MAX_VALUE;
-			maxValue = Double.MAX_VALUE;
+			maxValue = Double.MIN_VALUE;
 			for (int z = 0; z < sizeZ; z++) {
 				for (int y = 0; y < sizeY; y++) {
 					for (int x = 0; x < sizeX; x++) {

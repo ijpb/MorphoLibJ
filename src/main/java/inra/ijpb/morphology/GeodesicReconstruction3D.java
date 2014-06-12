@@ -3,13 +3,14 @@
  */
 package inra.ijpb.morphology;
 
-import ij.IJ;
 import ij.ImageStack;
 import inra.ijpb.morphology.geodrec.GeodesicReconstruction3DAlgo;
+import inra.ijpb.morphology.geodrec.GeodesicReconstruction3DHybrid0Float;
+import inra.ijpb.morphology.geodrec.GeodesicReconstruction3DHybrid0Gray8;
 import inra.ijpb.morphology.geodrec.GeodesicReconstructionByDilation3DGray8Scanning;
 import inra.ijpb.morphology.geodrec.GeodesicReconstructionByDilation3DScanning;
-import inra.ijpb.morphology.geodrec.GeodesicReconstructionByErosion3DGray8Scanning;
 import inra.ijpb.morphology.geodrec.GeodesicReconstructionByErosion3DScanning;
+import inra.ijpb.morphology.geodrec.GeodesicReconstructionType;
 
 
 /**
@@ -30,34 +31,41 @@ public abstract class GeodesicReconstruction3D {
 	 * reconstruction initialized with image boundary. 
 	 * @see #fillHoles(ImageStack)
 	 */
-	public final static ImageStack killBorders(ImageStack stack) {
+	public final static ImageStack killBorders(ImageStack stack)
+	{
 		// Image size
 		int width = stack.getWidth();
 		int height = stack.getHeight();
 		int depth = stack.getSize();
-		
+
 		// Initialize marker image zeros everywhere except at borders
 		ImageStack markers = stack.duplicate();
-		for (int z = 1; z < depth-1; z++) {
-			for (int y = 1; y < height-1; y++) {
-				for (int x = 1; x < width-1; x++) {
+		for (int z = 1; z < depth - 1; z++)
+		{
+			for (int y = 1; y < height - 1; y++)
+			{
+				for (int x = 1; x < width - 1; x++)
+				{
 					markers.setVoxel(x, y, z, 0);
 				}
 			}
 		}
 		// Reconstruct image from borders to find touching structures
 		ImageStack result = reconstructByDilation(markers, stack);
-		
+
 		// removes result from original image
-		for (int z = 0; z < depth; z++) {
-			for (int y = 0; y < height; y++) {
-				for (int x = 0; x < width; x++) {
-					double val = stack.getVoxel(x, y, z)-result.getVoxel(x, y, z);
+		for (int z = 0; z < depth; z++)
+		{
+			for (int y = 0; y < height; y++)
+			{
+				for (int x = 0; x < width; x++)
+				{
+					double val = stack.getVoxel(x, y, z) - result.getVoxel(x, y, z);
 					result.setVoxel(x, y, z, Math.max(val, 0));
 				}
 			}
 		}
-		
+
 		return result;
 	}
 
@@ -92,11 +100,21 @@ public abstract class GeodesicReconstruction3D {
 	 * the marker image under the mask image.
 	 */
 	public final static ImageStack reconstructByDilation(ImageStack marker,
-			ImageStack mask) {
+			ImageStack mask)
+	{
 		GeodesicReconstruction3DAlgo algo;
-		if (marker.getBitDepth() == 8 && mask.getBitDepth() == 8) {
-			algo = new GeodesicReconstructionByDilation3DGray8Scanning();
-		} else {
+		if (marker.getBitDepth() == 8 && mask.getBitDepth() == 8)
+		{
+			algo = new GeodesicReconstruction3DHybrid0Gray8(
+					GeodesicReconstructionType.BY_DILATION);
+		} 
+		else if (marker.getBitDepth() == 32 && mask.getBitDepth() == 32)
+		{
+			algo = new GeodesicReconstruction3DHybrid0Float(
+					GeodesicReconstructionType.BY_DILATION);
+		} 
+		else
+		{
 			algo = new GeodesicReconstructionByDilation3DScanning();
 		}
 		return algo.applyTo(marker, mask);
@@ -107,11 +125,21 @@ public abstract class GeodesicReconstruction3D {
 	 * the marker image under the mask image.
 	 */
 	public final static ImageStack reconstructByDilation(ImageStack marker,
-			ImageStack mask, int connectivity) {
+			ImageStack mask, int connectivity)
+	{
 		GeodesicReconstruction3DAlgo algo;
-		if (marker.getBitDepth() == 8 && mask.getBitDepth() == 8) {
-			algo = new GeodesicReconstructionByDilation3DGray8Scanning(connectivity);
-		} else {
+		if (marker.getBitDepth() == 8 && mask.getBitDepth() == 8)
+		{
+			algo = new GeodesicReconstruction3DHybrid0Gray8(
+					GeodesicReconstructionType.BY_DILATION, connectivity);
+		} 
+		else if (marker.getBitDepth() == 32 && mask.getBitDepth() == 32)
+		{
+			algo = new GeodesicReconstruction3DHybrid0Float(
+					GeodesicReconstructionType.BY_DILATION, connectivity);
+		} 
+		else
+		{
 			algo = new GeodesicReconstructionByDilation3DScanning(connectivity);
 		}
 		return algo.applyTo(marker, mask);
@@ -145,11 +173,22 @@ public abstract class GeodesicReconstruction3D {
 	 * marker image over the mask image.
 	 */
 	public final static ImageStack reconstructByErosion(ImageStack marker,
-			ImageStack mask) {
+			ImageStack mask)
+	{
 		GeodesicReconstruction3DAlgo algo;
-		if (marker.getBitDepth() == 8 && mask.getBitDepth() == 8) {
-			algo = new GeodesicReconstructionByErosion3DGray8Scanning();
-		} else {
+		if (marker.getBitDepth() == 8 && mask.getBitDepth() == 8)
+		{
+			algo = new GeodesicReconstruction3DHybrid0Gray8(
+					GeodesicReconstructionType.BY_EROSION);
+
+		} 
+		else if (marker.getBitDepth() == 32 && mask.getBitDepth() == 32)
+		{
+			algo = new GeodesicReconstruction3DHybrid0Float(
+					GeodesicReconstructionType.BY_EROSION);
+		} 
+		else
+		{
 			algo = new GeodesicReconstructionByErosion3DScanning();
 		}
 		return algo.applyTo(marker, mask);
@@ -166,9 +205,18 @@ public abstract class GeodesicReconstruction3D {
 			return null;
 		
 		GeodesicReconstruction3DAlgo algo;
-		if (marker.getBitDepth() == 8 && mask.getBitDepth() == 8) {
-			algo = new GeodesicReconstructionByErosion3DGray8Scanning(connectivity);
-		} else {
+		if (marker.getBitDepth() == 8 && mask.getBitDepth() == 8)
+		{
+			algo = new GeodesicReconstruction3DHybrid0Gray8(
+					GeodesicReconstructionType.BY_EROSION, connectivity);
+		}
+		else if (marker.getBitDepth() == 32 && mask.getBitDepth() == 32)
+		{
+			algo = new GeodesicReconstruction3DHybrid0Float(
+					GeodesicReconstructionType.BY_EROSION, connectivity);
+		} 
+		else
+		{
 			algo = new GeodesicReconstructionByErosion3DScanning(connectivity);
 		}
 		return algo.applyTo(marker, mask);

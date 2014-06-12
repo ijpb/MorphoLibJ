@@ -5,9 +5,6 @@ package inra.ijpb.data.image;
 
 import ij.ImageStack;
 
-import static java.lang.Math.min;
-import static java.lang.Math.max;
-
 /**
  * Access the data of a 3D image containing intensity values stored as float.
  * 
@@ -54,7 +51,7 @@ public class FloatStackWrapper implements Image3D {
 	 */
 	@Override
 	public void set(int x, int y, int z, int value) {
-		slices[z][y * sizeX + x] = (float) max(min(value, 65535), 0);
+		slices[z][y * sizeX + x] = (float) value;
 	}
 
 	/* (non-Javadoc)
