@@ -22,13 +22,8 @@ public class GeodesicReconstructionByDilation3DGray8ScanningTest {
 		
 		GeodesicReconstructionByDilation3DGray8Scanning algo = new GeodesicReconstructionByDilation3DGray8Scanning();
 		algo.setConnectivity(26);
-//		algo.verbose = true;
 		
-		long t0 = System.currentTimeMillis();
 		ImageStack result = algo.applyTo(marker, mask);
-		long t1 = System.currentTimeMillis();
-		double dt = (t1 - t0) / 1000.0;
-		System.out.println("Elapsed time: " + dt + " s");
 		
 		assertEquals(255, result.getVoxel(5, 15, 5), .01);
 	}
@@ -42,13 +37,8 @@ public class GeodesicReconstructionByDilation3DGray8ScanningTest {
 		
 		GeodesicReconstructionByDilation3DGray8Scanning algo = new GeodesicReconstructionByDilation3DGray8Scanning();
 		algo.setConnectivity(6);
-//		algo.verbose = true;
-		
-		long t0 = System.currentTimeMillis();
+
 		ImageStack result = algo.applyTo(marker, mask);
-		long t1 = System.currentTimeMillis();
-		double dt = (t1 - t0) / 1000.0;
-		System.out.println("Elapsed time: " + dt + " s");
 		
 		assertEquals(255, result.getVoxel(5, 15, 5), .01);
 	}
@@ -68,13 +58,8 @@ public class GeodesicReconstructionByDilation3DGray8ScanningTest {
 		marker.setVoxel(5, 5, 5, 0);
 		
 		GeodesicReconstructionByErosion3DGray8Scanning algo = new GeodesicReconstructionByErosion3DGray8Scanning();
-//		algo.verbose = true;
-		
-		long t0 = System.currentTimeMillis();
+
 		ImageStack result = algo.applyTo(marker, mask);
-		long t1 = System.currentTimeMillis();
-		double dt = (t1 - t0) / 1000.0;
-		System.out.println("Elapsed time: " + dt + " s");
 		
 		assertEquals(0, result.getVoxel(5, 15, 5), .01);
 	}
@@ -100,12 +85,7 @@ public class GeodesicReconstructionByDilation3DGray8ScanningTest {
 		algo.setConnectivity(26);
 		algo.verbose = false;
 
-		long t0 = System.currentTimeMillis();
 		ImageStack result = algo.applyTo(marker, mask);
-		long t1 = System.currentTimeMillis();
-
-		double dt = (t1 - t0) / 1000.0;
-		System.out.println("Elapsed time: " + dt + " s");
 		
 		for(int z = 0; z < depth; z++) {
 			for(int y = 0; y < height; y++) {
@@ -143,12 +123,7 @@ public class GeodesicReconstructionByDilation3DGray8ScanningTest {
 		algo.setConnectivity(6);
 		algo.verbose = false;
 
-		long t0 = System.currentTimeMillis();
 		ImageStack result = algo.applyTo(marker, mask);
-		long t1 = System.currentTimeMillis();
-
-		double dt = (t1 - t0) / 1000.0;
-		System.out.println("Elapsed time: " + dt + " s");
 		
 		for(int z = 0; z < depth; z++) {
 			for(int y = 0; y < height; y++) {

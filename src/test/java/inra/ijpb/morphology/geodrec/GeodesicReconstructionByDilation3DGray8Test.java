@@ -29,14 +29,7 @@ public class GeodesicReconstructionByDilation3DGray8Test {
 
 		marker.setVoxel(20, 80, 50, 255);
 
-		algo.verbose = false;
-
-		long t0 = System.currentTimeMillis();
 		ImageStack result = algo.applyTo(marker, mask);
-		long t1 = System.currentTimeMillis();
-
-		double dt = (t1 - t0) / 1000.0;
-		System.out.println("Elapsed time: " + dt + " s");
 		
 		for(int z = 0; z < depth; z++) {
 			for(int y = 0; y < height; y++) {

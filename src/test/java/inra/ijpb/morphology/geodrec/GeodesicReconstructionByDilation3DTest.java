@@ -31,12 +31,11 @@ public class GeodesicReconstructionByDilation3DTest {
 
 		algo.verbose = false;
 
-		long t0 = System.currentTimeMillis();
+//		long t0 = System.currentTimeMillis();
 		ImageStack result = algo.applyTo(marker, mask);
-		long t1 = System.currentTimeMillis();
-
-		double dt = (t1 - t0) / 1000.0;
-		System.out.println("Elapsed time: " + dt + " s");
+//		long t1 = System.currentTimeMillis();
+//		double dt = (t1 - t0) / 1000.0;
+//		System.out.println("Elapsed time: " + dt + " s");
 		
 		for(int z = 0; z < depth; z++) {
 			for(int y = 0; y < height; y++) {

@@ -22,13 +22,8 @@ public class GeodesicReconstruction3DHybrid1DoubleTest {
 		
 		GeodesicReconstruction3DHybrid1Double algo = new GeodesicReconstruction3DHybrid1Double();
 		algo.setConnectivity(6);
-//		algo.verbose = true;
-		
-		long t0 = System.currentTimeMillis();
+
 		ImageStack result = algo.applyTo(marker, mask);
-		long t1 = System.currentTimeMillis();
-		double dt = (t1 - t0) / 1000.0;
-		System.out.println("Elapsed time: " + dt + " s");
 		
 		assertEquals(255, result.getVoxel(5, 15, 5), .01);
 	}
@@ -45,13 +40,8 @@ public class GeodesicReconstruction3DHybrid1DoubleTest {
 		GeodesicReconstruction3DHybrid1Double algo = new GeodesicReconstruction3DHybrid1Double();
 		algo.setReconstructionType(GeodesicReconstructionType.BY_EROSION);
 		algo.setConnectivity(6);
-//		algo.verbose = true;
-		
-		long t0 = System.currentTimeMillis();
+
 		ImageStack result = algo.applyTo(marker, mask);
-		long t1 = System.currentTimeMillis();
-		double dt = (t1 - t0) / 1000.0;
-		System.out.println("Elapsed time: " + dt + " s");
 		
 		assertEquals(0, result.getVoxel(5, 15, 5), .01);
 		assertEquals(255, result.getVoxel(0, 0, 0), .01);
@@ -80,13 +70,8 @@ public class GeodesicReconstruction3DHybrid1DoubleTest {
 		
 		GeodesicReconstruction3DHybrid1Double algo = new GeodesicReconstruction3DHybrid1Double();
 		algo.setConnectivity(26);
-//		algo.verbose = true;
-		
-		long t0 = System.currentTimeMillis();
+
 		ImageStack result = algo.applyTo(marker, mask);
-		long t1 = System.currentTimeMillis();
-		double dt = (t1 - t0) / 1000.0;
-		System.out.println("Elapsed time: " + dt + " s");
 		
 		assertEquals(255, result.getVoxel(5, 15, 5), .01);
 	}
@@ -100,15 +85,8 @@ public class GeodesicReconstruction3DHybrid1DoubleTest {
 		
 		GeodesicReconstruction3DHybrid1Double algo = new GeodesicReconstruction3DHybrid1Double();
 		algo.setConnectivity(26);
-		algo.verbose = true;
 		
-		System.out.println("geod rec by dilation of thin cubic mesh C26");
-		
-		long t0 = System.currentTimeMillis();
 		ImageStack result = algo.applyTo(marker, mask);
-		long t1 = System.currentTimeMillis();
-		double dt = (t1 - t0) / 1000.0;
-		System.out.println("Elapsed time: " + dt + " s");
 		
 		assertEquals(255, result.getVoxel(5, 15, 5), .01);
 	}
@@ -128,13 +106,8 @@ public class GeodesicReconstruction3DHybrid1DoubleTest {
 		marker.setVoxel(5, 5, 5, 0);
 		
 		GeodesicReconstruction3DHybrid1Double algo = new GeodesicReconstruction3DHybrid1Double();
-//		algo.verbose = true;
 		
-		long t0 = System.currentTimeMillis();
 		ImageStack result = algo.applyTo(marker, mask);
-		long t1 = System.currentTimeMillis();
-		double dt = (t1 - t0) / 1000.0;
-		System.out.println("Elapsed time: " + dt + " s");
 		
 		assertEquals(0, result.getVoxel(5, 15, 5), .01);
 		assertStackEquals(mask, result);
@@ -163,14 +136,8 @@ public class GeodesicReconstruction3DHybrid1DoubleTest {
 	
 		GeodesicReconstruction3DHybrid1Double algo = new GeodesicReconstruction3DHybrid1Double();
 		algo.setConnectivity(6);
-		algo.verbose = false;
 	
-		long t0 = System.currentTimeMillis();
 		ImageStack result = algo.applyTo(marker, mask);
-		long t1 = System.currentTimeMillis();
-	
-		double dt = (t1 - t0) / 1000.0;
-		System.out.println("Elapsed time: " + dt + " s");
 		
 		for(int z = 0; z < depth; z++) {
 			for(int y = 0; y < height; y++) {
@@ -201,14 +168,8 @@ public class GeodesicReconstruction3DHybrid1DoubleTest {
 
 		GeodesicReconstruction3DHybrid1Double algo = new GeodesicReconstruction3DHybrid1Double();
 		algo.setConnectivity(26);
-		algo.verbose = true;
 
-		long t0 = System.currentTimeMillis();
 		ImageStack result = algo.applyTo(marker, mask);
-		long t1 = System.currentTimeMillis();
-
-		double dt = (t1 - t0) / 1000.0;
-		System.out.println("Elapsed time: " + dt + " s");
 		
 		for(int z = 0; z < depth; z++) {
 			for(int y = 0; y < height; y++) {

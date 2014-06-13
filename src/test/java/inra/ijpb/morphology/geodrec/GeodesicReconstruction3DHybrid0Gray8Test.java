@@ -23,13 +23,8 @@ public class GeodesicReconstruction3DHybrid0Gray8Test {
 		
 		GeodesicReconstruction3DHybrid0Gray8 algo = new GeodesicReconstruction3DHybrid0Gray8();
 		algo.setConnectivity(6);
-//		algo.verbose = true;
-		
-		long t0 = System.currentTimeMillis();
+
 		ImageStack result = algo.applyTo(marker, mask);
-		long t1 = System.currentTimeMillis();
-		double dt = (t1 - t0) / 1000.0;
-		System.out.println("Geod Rec By Dil on cubic mesh, C6: " + dt + " s");
 		
 		assertEquals(255, result.getVoxel(5, 15, 5), .01);
 		assertEquals(255, result.getVoxel(15, 15, 15), .01);
@@ -47,13 +42,8 @@ public class GeodesicReconstruction3DHybrid0Gray8Test {
 		GeodesicReconstruction3DHybrid0Gray8 algo = new GeodesicReconstruction3DHybrid0Gray8();
 		algo.setReconstructionType(GeodesicReconstructionType.BY_EROSION);
 		algo.setConnectivity(6);
-//		algo.verbose = true;
 		
-		long t0 = System.currentTimeMillis();
 		ImageStack result = algo.applyTo(marker, mask);
-		long t1 = System.currentTimeMillis();
-		double dt = (t1 - t0) / 1000.0;
-		System.out.println("Geod Rec By Ero on cubic mesh, C6: " + dt + " s");
 		
 		assertEquals(0, result.getVoxel(5, 15, 5), .01);
 		assertEquals(255, result.getVoxel(0, 0, 0), .01);
@@ -82,13 +72,8 @@ public class GeodesicReconstruction3DHybrid0Gray8Test {
 		
 		GeodesicReconstruction3DHybrid0Gray8 algo = new GeodesicReconstruction3DHybrid0Gray8();
 		algo.setConnectivity(26);
-//		algo.verbose = true;
 		
-		long t0 = System.currentTimeMillis();
 		ImageStack result = algo.applyTo(marker, mask);
-		long t1 = System.currentTimeMillis();
-		double dt = (t1 - t0) / 1000.0;
-		System.out.println("Geod Rec By Dil on cubic mesh, C26: " + dt + " s");
 		
 		assertEquals(255, result.getVoxel(5, 15, 5), .01);
 	}
@@ -102,17 +87,8 @@ public class GeodesicReconstruction3DHybrid0Gray8Test {
 		
 		GeodesicReconstruction3DHybrid0Gray8 algo = new GeodesicReconstruction3DHybrid0Gray8();
 		algo.setConnectivity(6);
-		algo.verbose = true;
 		
-//		displayStack(mask);
-		
-		long t0 = System.currentTimeMillis();
 		ImageStack result = algo.applyTo(marker, mask);
-		long t1 = System.currentTimeMillis();
-		double dt = (t1 - t0) / 1000.0;
-		System.out.println("Geod Rec By Dil on thin cubic mesh, C6: " + dt + " s");
-		
-//		displayStack(result);
 		
 		assertEquals(255, result.getVoxel(0, 4, 0), .01);
 	}
@@ -126,16 +102,9 @@ public class GeodesicReconstruction3DHybrid0Gray8Test {
 		
 		GeodesicReconstruction3DHybrid0Gray8 algo = new GeodesicReconstruction3DHybrid0Gray8();
 		algo.setConnectivity(26);
-		algo.verbose = true;
-		
-		System.out.println("geod rec by dilation of thin cubic mesh C26");
-		
-		long t0 = System.currentTimeMillis();
+
 		ImageStack result = algo.applyTo(marker, mask);
-		long t1 = System.currentTimeMillis();
-		double dt = (t1 - t0) / 1000.0;
-		System.out.println("Geod Rec By Dil on thin cubic mesh, C26: " + dt + " s");
-		
+	
 		assertEquals(255, result.getVoxel(0, 4, 0), .01);
 	}
 
@@ -154,13 +123,8 @@ public class GeodesicReconstruction3DHybrid0Gray8Test {
 		marker.setVoxel(5, 5, 5, 0);
 		
 		GeodesicReconstruction3DHybrid0Gray8 algo = new GeodesicReconstruction3DHybrid0Gray8();
-//		algo.verbose = true;
-		
-		long t0 = System.currentTimeMillis();
+
 		ImageStack result = algo.applyTo(marker, mask);
-		long t1 = System.currentTimeMillis();
-		double dt = (t1 - t0) / 1000.0;
-		System.out.println("Geod Rec By Dil on cubic hollow mesh, C26: " + dt + " s");
 		
 		assertEquals(0, result.getVoxel(5, 15, 5), .01);
 		assertStackEquals(mask, result);
@@ -187,15 +151,9 @@ public class GeodesicReconstruction3DHybrid0Gray8Test {
 	
 		GeodesicReconstruction3DHybrid0Gray8 algo = new GeodesicReconstruction3DHybrid0Gray8();
 		algo.setConnectivity(6);
-		algo.verbose = false;
-	
-		long t0 = System.currentTimeMillis();
+
 		ImageStack result = algo.applyTo(marker, mask);
-		long t1 = System.currentTimeMillis();
-	
-		double dt = (t1 - t0) / 1000.0;
-		System.out.println("Geod Rec By Dil on Hilbert Curve, C6: " + dt + " s");
-		
+			
 		for(int z = 0; z < depth; z++) {
 			for(int y = 0; y < height; y++) {
 				for(int x = 0; x < width; x++) {
@@ -229,12 +187,7 @@ public class GeodesicReconstruction3DHybrid0Gray8Test {
 		algo.setConnectivity(26);
 		algo.verbose = false;
 	
-		long t0 = System.currentTimeMillis();
 		ImageStack result = algo.applyTo(marker, mask);
-		long t1 = System.currentTimeMillis();
-	
-		double dt = (t1 - t0) / 1000.0;
-		System.out.println("Geod Rec By Dil on Hilbert Curve, C26: " + dt + " s");
 		
 		for(int z = 0; z < depth; z++) {
 			for(int y = 0; y < height; y++) {
@@ -271,13 +224,8 @@ public class GeodesicReconstruction3DHybrid0Gray8Test {
 		algo.setConnectivity(6);
 		algo.verbose = false;
 	
-		long t0 = System.currentTimeMillis();
 		ImageStack result = algo.applyTo(marker, mask);
-		long t1 = System.currentTimeMillis();
-	
-		double dt = (t1 - t0) / 1000.0;
-		System.out.println("Geod Rec By Dil on bat cochlea, C6: " + dt + " s");
-		
+			
 		for(int z = 0; z < depth; z++) {
 			for(int y = 0; y < height; y++) {
 				for(int x = 0; x < width; x++) {
@@ -322,15 +270,9 @@ public class GeodesicReconstruction3DHybrid0Gray8Test {
 		GeodesicReconstruction3DHybrid0Gray8 algo = 
 				new GeodesicReconstruction3DHybrid0Gray8(GeodesicReconstructionType.BY_EROSION);
 		algo.setConnectivity(6);
-//		algo.verbose = false;
-	
-		long t0 = System.currentTimeMillis();
+
 		ImageStack result = algo.applyTo(marker, mask);
-		long t1 = System.currentTimeMillis();
-	
-		double dt = (t1 - t0) / 1000.0;
-		System.out.println("Geod Rec By Ero on bat cochlea, C6: " + dt + " s");
-		
+			
 		for(int z = 0; z < depth; z++) {
 			for(int y = 0; y < height; y++) {
 				for(int x = 0; x < width; x++) {
@@ -363,14 +305,8 @@ public class GeodesicReconstruction3DHybrid0Gray8Test {
 
 		GeodesicReconstruction3DHybrid0Gray8 algo = new GeodesicReconstruction3DHybrid0Gray8();
 		algo.setConnectivity(26);
-//		algo.verbose = true;
 
-		long t0 = System.currentTimeMillis();
 		ImageStack result = algo.applyTo(marker, mask);
-		long t1 = System.currentTimeMillis();
-
-		double dt = (t1 - t0) / 1000.0;
-		System.out.println("Geod Rec By Dil on bat cochlea, C26: " + dt + " s");
 		
 		for(int z = 0; z < depth; z++) {
 			for(int y = 0; y < height; y++) {
@@ -380,9 +316,8 @@ public class GeodesicReconstruction3DHybrid0Gray8Test {
 						System.out.println("x=" + x + " y=" + y + " z=" + z);
 						System.out.println("  mask = " + (int) mask.getVoxel(x, y, z));
 						System.out.println("  res  = " + (int) result.getVoxel(x, y, z));
+						assertTrue(false);
 					}
-//					assertEquals(result.getVoxel(x, y, z),
-//							mask.getVoxel(x, y, z), .01);
 				}
 			}
 		}
@@ -413,14 +348,8 @@ public class GeodesicReconstruction3DHybrid0Gray8Test {
 		GeodesicReconstruction3DHybrid0Gray8 algo = 
 				new GeodesicReconstruction3DHybrid0Gray8(GeodesicReconstructionType.BY_EROSION);
 		algo.setConnectivity(26);
-		algo.verbose = false;
-	
-		long t0 = System.currentTimeMillis();
+
 		ImageStack result = algo.applyTo(marker, mask);
-		long t1 = System.currentTimeMillis();
-	
-		double dt = (t1 - t0) / 1000.0;
-		System.out.println("Geod Rec By Ero on bat cochlea, C26: " + dt + " s");
 		
 		for(int z = 0; z < depth; z++) {
 			for(int y = 0; y < height; y++) {
@@ -430,9 +359,8 @@ public class GeodesicReconstruction3DHybrid0Gray8Test {
 						System.out.println("x=" + x + " y=" + y + " z=" + z);
 						System.out.println("  mask = " + (int) mask.getVoxel(x, y, z));
 						System.out.println("  res  = " + (int) result.getVoxel(x, y, z));
+						assertTrue(false);
 					}
-//					assertEquals(result.getVoxel(x, y, z),
-//							mask.getVoxel(x, y, z), .01);
 				}
 			}
 		}

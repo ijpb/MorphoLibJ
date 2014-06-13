@@ -160,8 +160,8 @@ public class GeodesicReconstructionByDilation3DGray8 extends AlgoStub implements
 		//			iter++;
 		//		} while (modif);
 
-//		forwardDilationC26InitQueue(); 
-		System.out.println("queue size: " + this.queue.size());
+		forwardDilationC26InitQueue(); 
+//		System.out.println("queue size: " + this.queue.size());
 
 		processQueueC26();
 		
@@ -241,7 +241,7 @@ public class GeodesicReconstructionByDilation3DGray8 extends AlgoStub implements
 		//		} while (modif);
 
 		forwardDilationC26InitQueue(); 
-		System.out.println("queue size: " + this.queue.size());
+//		System.out.println("queue size: " + this.queue.size());
 
 		processQueueC26();
 		
@@ -1105,7 +1105,7 @@ public class GeodesicReconstructionByDilation3DGray8 extends AlgoStub implements
 		//		} while (modif);
 
 		forwardDilationC26InitQueue(); 
-		System.out.println("queue size: " + this.queue.size());
+//		System.out.println("queue size: " + this.queue.size());
 
 		processQueueC26( binaryMask );
 

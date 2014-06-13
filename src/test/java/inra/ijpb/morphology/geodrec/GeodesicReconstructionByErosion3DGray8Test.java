@@ -52,12 +52,11 @@ public class GeodesicReconstructionByErosion3DGray8Test {
 		algo.verbose = false;
 
 		// run algo and compute elapsed time
-		long t0 = System.currentTimeMillis();
+//		long t0 = System.currentTimeMillis();
 		ImageStack result = algo.applyTo(marker, mask);
-		long t1 = System.currentTimeMillis();
-
-		double dt = (t1 - t0) / 1000.0;
-		System.out.println("Elapsed time: " + dt + " s");
+//		long t1 = System.currentTimeMillis();
+//		double dt = (t1 - t0) / 1000.0;
+//		System.out.println("Elapsed time: " + dt + " s");
 		
 		// Check images equality
 		for(int z = 0; z < depth; z++) {
