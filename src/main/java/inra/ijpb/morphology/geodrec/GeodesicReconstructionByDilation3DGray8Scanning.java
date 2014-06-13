@@ -7,6 +7,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import ij.IJ;
 import ij.ImageStack;
+import inra.ijpb.event.AlgoStub;
 
 
 /**
@@ -18,8 +19,9 @@ import ij.ImageStack;
  * @author David Legland
  * 
  */
-public class GeodesicReconstructionByDilation3DGray8Scanning implements
-		GeodesicReconstruction3DAlgo {
+public class GeodesicReconstructionByDilation3DGray8Scanning extends AlgoStub
+		implements GeodesicReconstruction3DAlgo
+{
 	ImageStack marker;
 	ImageStack mask;
 	

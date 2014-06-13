@@ -4,6 +4,12 @@
 package inra.ijpb.event;
 
 import ij.IJ;
+import ij.ImageJ;
+import ij.ImagePlus;
+import ij.process.ImageProcessor;
+import inra.ijpb.morphology.Morphology;
+import inra.ijpb.morphology.Strel;
+import inra.ijpb.morphology.strel.SquareStrel;
 
 /**
  * <p>Utility class that catches algorithm events and displays them either on ImageJ
@@ -29,7 +35,7 @@ import ij.IJ;
 public class DefaultAlgoListener implements ProgressListener, StatusListener
 {
 
-	public static final void monitor(AlgoStub algo)
+	public static final void monitor(Algo algo)
 	{
 		DefaultAlgoListener dal = new DefaultAlgoListener();
 		algo.addProgressListener(dal);
@@ -54,4 +60,27 @@ public class DefaultAlgoListener implements ProgressListener, StatusListener
 		IJ.showProgress(evt.getProgressRatio());
 	}
 
+	/**
+	 * Sample program demonstrating the use of DefaultAlgoListener.
+	 */
+	public static final void main(String[] args) 
+	{
+		new ImageJ();
+		
+//		ImagePlus imagePlus = IJ.openImage("./src/test/resources/files/2432a_corr.png");
+		ImagePlus imagePlus = IJ.openImage("http://imagej.nih.gov/ij/images/NileBend.jpg");
+		 
+		imagePlus.show("Input");
+		
+		ImageProcessor image = imagePlus.getProcessor();
+		
+		Strel strel = SquareStrel.fromDiameter(21);
+		DefaultAlgoListener.monitor(strel);
+		
+		ImageProcessor result = Morphology.dilation(image, strel);
+		ImagePlus resultPlus = new ImagePlus("Result", result);
+		resultPlus.show("Result");
+
+		System.out.println("done.");
+	}
 }

@@ -9,6 +9,7 @@ import ij.IJ;
 import ij.ImageStack;
 import inra.ijpb.data.Cursor3D;
 import inra.ijpb.data.image.Images3D;
+import inra.ijpb.event.AlgoStub;
 import inra.ijpb.morphology.GeodesicReconstruction3D;
 
 import java.util.ArrayDeque;
@@ -31,7 +32,7 @@ import java.util.Deque;
  * @author David Legland
  * 
  */
-public class GeodesicReconstruction3DHybrid0Float implements
+public class GeodesicReconstruction3DHybrid0Float extends AlgoStub implements
 		GeodesicReconstruction3DAlgo {
 
 	GeodesicReconstructionType reconstructionType = GeodesicReconstructionType.BY_DILATION;

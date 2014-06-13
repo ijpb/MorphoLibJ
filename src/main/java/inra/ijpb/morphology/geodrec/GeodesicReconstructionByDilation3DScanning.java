@@ -10,6 +10,7 @@ import ij.IJ;
 import ij.ImageStack;
 import inra.ijpb.data.image.Image3D;
 import inra.ijpb.data.image.Images3D;
+import inra.ijpb.event.AlgoStub;
 
 
 /**
@@ -26,8 +27,8 @@ import inra.ijpb.data.image.Images3D;
  * @author David Legland
  * 
  */
-public class GeodesicReconstructionByDilation3DScanning implements
-		GeodesicReconstruction3DAlgo {
+public class GeodesicReconstructionByDilation3DScanning extends AlgoStub
+		implements	GeodesicReconstruction3DAlgo {
 	ImageStack markerStack;
 	ImageStack maskStack;
 	

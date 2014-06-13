@@ -4,6 +4,7 @@
 package inra.ijpb.morphology.geodrec;
 
 import ij.ImageStack;
+import inra.ijpb.event.Algo;
 
 /**
  * Defines the interface for geodesic reconstructions algorithms applied to
@@ -11,7 +12,7 @@ import ij.ImageStack;
  * 
  * @author David Legland
  */
-public interface GeodesicReconstruction3DAlgo {
+public interface GeodesicReconstruction3DAlgo extends Algo {
 	
 	/**
 	 * Applies the geodesic reconstruction algorithm to the input marker and

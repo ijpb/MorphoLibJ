@@ -10,6 +10,7 @@ import java.util.LinkedList;
 
 import ij.IJ;
 import ij.ImageStack;
+import inra.ijpb.event.AlgoStub;
 
 
 /**
@@ -17,7 +18,9 @@ import ij.ImageStack;
  * @author David Legland
  *
  */
-public class GeodesicReconstructionByDilation3DGray8 implements GeodesicReconstruction3DAlgo {
+public class GeodesicReconstructionByDilation3DGray8 extends AlgoStub implements
+		GeodesicReconstruction3DAlgo
+{
 	ImageStack marker;
 	ImageStack mask;
 	

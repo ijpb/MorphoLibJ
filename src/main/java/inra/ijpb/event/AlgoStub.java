@@ -9,22 +9,26 @@ import java.util.ArrayList;
  * A minimal implementation of algorithm for managing progression listeners.
  * @author David Legland
  */
-public class AlgoStub {
+public class AlgoStub implements Algo {
 	private ArrayList<ProgressListener> progressListeners = new ArrayList<ProgressListener>();
 	private ArrayList<StatusListener> statusListeners = new ArrayList<StatusListener>();
 
+	@Override
 	public void addProgressListener(ProgressListener listener) {
 		this.progressListeners.add(listener);
 	}
 
+	@Override
 	public void removeProgressListener(ProgressListener listener) {
 		this.progressListeners.remove(listener);
 	}
 	
+	@Override
 	public void addStatusListener(StatusListener listener) {
 		this.statusListeners.add(listener);
 	}
 
+	@Override
 	public void removeStatusListener(StatusListener listener) {
 		this.statusListeners.remove(listener);
 	}

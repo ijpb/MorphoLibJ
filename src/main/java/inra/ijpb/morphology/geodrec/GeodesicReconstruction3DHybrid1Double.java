@@ -10,6 +10,7 @@ import ij.ImageStack;
 import inra.ijpb.data.Cursor3D;
 import inra.ijpb.data.image.Image3D;
 import inra.ijpb.data.image.Images3D;
+import inra.ijpb.event.AlgoStub;
 
 import java.util.ArrayDeque;
 
@@ -29,7 +30,7 @@ import java.util.ArrayDeque;
  * @author David Legland
  * 
  */
-public class GeodesicReconstruction3DHybrid1Double implements
+public class GeodesicReconstruction3DHybrid1Double extends AlgoStub implements
 		GeodesicReconstruction3DAlgo {
 
 	GeodesicReconstructionType reconstructionType = GeodesicReconstructionType.BY_DILATION;

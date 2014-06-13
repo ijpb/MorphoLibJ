@@ -7,13 +7,14 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import ij.IJ;
 import ij.ImageStack;
+import inra.ijpb.event.AlgoStub;
 
 
 /**
  * @author David Legland
  *
  */
-public class GeodesicReconstructionByDilation3D implements GeodesicReconstruction3DAlgo {
+public class GeodesicReconstructionByDilation3D extends AlgoStub implements GeodesicReconstruction3DAlgo {
 	ImageStack marker;
 	ImageStack mask;
 	
@@ -154,60 +155,60 @@ public class GeodesicReconstructionByDilation3D implements GeodesicReconstructio
 		return this.result;
 	}
 
-	/**
-	 * Run the reconstruction by dilation algorithm using the images specified
-	 * as argument.
-	 */
-	private ImageStack applyToGray8(ImageStack marker, ImageStack mask) {
-
-		// Count the number of iterations for eventually displaying progress
-		int iter = 0;
-		
-		// Iterate forward and backward propagations until no more pixel have been modified
-		do {
-			modif = false;
-
-			// Display current status
-			if (verbose) {
-				System.out.println("Forward iteration " + iter);
-			}
-			if (showStatus) {
-				IJ.showStatus("Geod. Rec. by Dil. Fwd " + (iter + 1));
-			}
-			
-			// forward iteration
-//			switch (connectivity) {
-//			case 6:
-//				forwardDilationC6(); 
-//				break;
-//			case 26:
-				forwardDilationC26(); 
-//				break;
+//	/**
+//	 * Run the reconstruction by dilation algorithm using the images specified
+//	 * as argument.
+//	 */
+//	private ImageStack applyToGray8(ImageStack marker, ImageStack mask) {
+//
+//		// Count the number of iterations for eventually displaying progress
+//		int iter = 0;
+//		
+//		// Iterate forward and backward propagations until no more pixel have been modified
+//		do {
+//			modif = false;
+//
+//			// Display current status
+//			if (verbose) {
+//				System.out.println("Forward iteration " + iter);
 //			}
-
-			// Display current status
-			if (verbose) {
-				System.out.println("Backward iteration " + iter);
-			}
-			if (showStatus) {
-				IJ.showStatus("Geod. Rec. by Dil. Bwd" + (iter + 1));
-			}
-			
-			// backward iteration
-//			switch (connectivity) {
-//			case 4:
-//				backwardDilationC6();
+//			if (showStatus) {
+//				IJ.showStatus("Geod. Rec. by Dil. Fwd " + (iter + 1));
+//			}
+//			
+//			// forward iteration
+////			switch (connectivity) {
+////			case 6:
+////				forwardDilationC6(); 
 ////				break;
-//			case 8:	
-				backwardDilationC26(); 
-//				break;
+////			case 26:
+//				forwardDilationC26(); 
+////				break;
+////			}
+//
+//			// Display current status
+//			if (verbose) {
+//				System.out.println("Backward iteration " + iter);
 //			}
-
-			iter++;
-		} while (modif);
-	
-		return this.result;
-	}
+//			if (showStatus) {
+//				IJ.showStatus("Geod. Rec. by Dil. Bwd" + (iter + 1));
+//			}
+//			
+//			// backward iteration
+////			switch (connectivity) {
+////			case 4:
+////				backwardDilationC6();
+//////				break;
+////			case 8:	
+//				backwardDilationC26(); 
+////				break;
+////			}
+//
+//			iter++;
+//		} while (modif);
+//	
+//		return this.result;
+//	}
 
 
 //	/**
@@ -386,55 +387,55 @@ public class GeodesicReconstructionByDilation3D implements GeodesicReconstructio
 		}
 	}
 
-	/**
-	 */
-	private void forwardDilationC26InitQueueGray8() {
-		// the maximal value around current pixel
-		int currentValue, maxValue;
-
-		Object[] stack = result.getImageArray();
-		byte[] slice;
-		
-		if (showProgress) {
-			IJ.showProgress(0, size3);
-		}
-
-		// Iterate over pixels
-		for (int z = 0; z < size3; z++) {
-//			IJ.showProgress(z + 1, size3);
-//			System.out.println("z = " + z);
-			for (int y = 0; y < size2; y++) {
-				for (int x = 0; x < size1; x++) {
-					currentValue = (int) result.getVoxel(x, y, z);
-					maxValue = currentValue;
-					
-					// Iterate over neighbors of current pixel
-					int zmax = min(z + 1, size3);
-					for (int z2 = max(z - 1, 0); z2 < zmax; z2++) {
-						slice = (byte[]) stack[z2];
-						
-						int ymax = z2 == z ? y : min(y + 2, size2); 
-						for (int y2 = max(y - 1, 0); y2 < ymax; y2++) {
-							int xmax = (z2 == z && y2 == y) ? x : min(x + 2, size1); 
-							for (int x2 = max(x - 1, 0); x2 < xmax; x2++) {
-								int neighborValue = slice[y2 * size1 + x2] & 0x00FF;
-								if (neighborValue > maxValue)
-									maxValue = neighborValue;
-							}
-						}
-					}
-
-//					geodesicDilationUpdate(x, y, z, maxValue);
-					// update current value only if clamped value is strictly greater
-					int value = Math.min(maxValue, (int) mask.getVoxel(x, y, z));
-					if (value > currentValue) {
-						result.setVoxel(x, y, z, value);
-						
-					}
-				}
-			}
-		}
-	}
+//	/**
+//	 */
+//	private void forwardDilationC26InitQueueGray8() {
+//		// the maximal value around current pixel
+//		int currentValue, maxValue;
+//
+//		Object[] stack = result.getImageArray();
+//		byte[] slice;
+//		
+//		if (showProgress) {
+//			IJ.showProgress(0, size3);
+//		}
+//
+//		// Iterate over pixels
+//		for (int z = 0; z < size3; z++) {
+////			IJ.showProgress(z + 1, size3);
+////			System.out.println("z = " + z);
+//			for (int y = 0; y < size2; y++) {
+//				for (int x = 0; x < size1; x++) {
+//					currentValue = (int) result.getVoxel(x, y, z);
+//					maxValue = currentValue;
+//					
+//					// Iterate over neighbors of current pixel
+//					int zmax = min(z + 1, size3);
+//					for (int z2 = max(z - 1, 0); z2 < zmax; z2++) {
+//						slice = (byte[]) stack[z2];
+//						
+//						int ymax = z2 == z ? y : min(y + 2, size2); 
+//						for (int y2 = max(y - 1, 0); y2 < ymax; y2++) {
+//							int xmax = (z2 == z && y2 == y) ? x : min(x + 2, size1); 
+//							for (int x2 = max(x - 1, 0); x2 < xmax; x2++) {
+//								int neighborValue = slice[y2 * size1 + x2] & 0x00FF;
+//								if (neighborValue > maxValue)
+//									maxValue = neighborValue;
+//							}
+//						}
+//					}
+//
+////					geodesicDilationUpdate(x, y, z, maxValue);
+//					// update current value only if clamped value is strictly greater
+//					int value = Math.min(maxValue, (int) mask.getVoxel(x, y, z));
+//					if (value > currentValue) {
+//						result.setVoxel(x, y, z, value);
+//						
+//					}
+//				}
+//			}
+//		}
+//	}
 	/**
 	 * Update result image using pixels in the upper left neighborhood, using
 	 * the 26-adjacency, assuming pixels are stored in bytes.
@@ -625,100 +626,100 @@ public class GeodesicReconstructionByDilation3D implements GeodesicReconstructio
 	}
 	
 
-	/**
-	 * Update result image using pixels in the upper left neighborhood, using
-	 * the 26-adjacency.
-	 */
-	private void forwardDilationC26Generic() {
-		// the maximal value around current pixel
-		double value;
+//	/**
+//	 * Update result image using pixels in the upper left neighborhood, using
+//	 * the 26-adjacency.
+//	 */
+//	private void forwardDilationC26Generic() {
+//		// the maximal value around current pixel
+//		double value;
+//
+//		if (showProgress) {
+//			IJ.showProgress(0, size3);
+//		}
+//		
+//		for (int z = 0; z < size3; z++) {
+//			IJ.showProgress(z + 1, size3);
+//			System.out.println("z = " + z);
+//			for (int y = 0; y < size2; y++) {
+//				for (int x = 0; x < size1; x++) {
+//					value = getMaxValueForward(x, y, z);
+//					geodesicDilationUpdate(x, y, z, value);
+//				}
+//			}
+//		}
+//	}
 
-		if (showProgress) {
-			IJ.showProgress(0, size3);
-		}
-		
-		for (int z = 0; z < size3; z++) {
-			IJ.showProgress(z + 1, size3);
-			System.out.println("z = " + z);
-			for (int y = 0; y < size2; y++) {
-				for (int x = 0; x < size1; x++) {
-					value = getMaxValueForward(x, y, z);
-					geodesicDilationUpdate(x, y, z, value);
-				}
-			}
-		}
-	}
 
+//	/**
+//	 * Return maximum value in forward neighborhood
+//	 */
+//	private double getMaxValueForward(final int x, final int y, final int z) {
+//		double max = result.getVoxel(x, y, z);
+//
+//		int zmax = min(z + 1, size3);
+//		for (int z2 = max(z - 1, 0); z2 < zmax; z2++) {
+////			ImageProcessor slice = result.getProcessor(z2 + 1);
+//			for (int y2 = max(y - 1, 0); y2 <= y; y2++) {
+//				int xmax = y2 == y ? x : min(x + 2, size1); 
+//				for (int x2 = max(x - 1, 0); x2 < xmax; x2++) {
+//					double neighborValue = result.getVoxel(x2, y2, z2);
+//					if (neighborValue > max)
+//						max = neighborValue;
+//				}
+//			}
+//		}
+//		return max;
+//	}
 
-	/**
-	 * Return maximum value in forward neighborhood
-	 */
-	private double getMaxValueForward(final int x, final int y, final int z) {
-		double max = result.getVoxel(x, y, z);
+//	/**
+//	 * Return maximum value in forward neighborhood
+//	 */
+//	private double getMaxValueForwardSave1(final int x, final int y, final int z) {
+//		double max = result.getVoxel(x, y, z);
+//
+//		int zmax = min(z + 1, size3);
+//		for (int z2 = max(z - 1, 0); z2 < zmax; z2++) {
+////			ImageProcessor slice = result.getProcessor(z2 + 1);
+//			for (int y2 = max(y - 1, 0); y2 <= y; y2++) {
+//				int xmax = y2 == y ? x : min(x + 2, size1); 
+//				for (int x2 = max(x - 1, 0); x2 < xmax; x2++) {
+//					double neighborValue = result.getVoxel(x2, y2, z2);
+//					if (neighborValue > max)
+//						max = neighborValue;
+//				}
+//			}
+//		}
+//		return max;
+//	}
 
-		int zmax = min(z + 1, size3);
-		for (int z2 = max(z - 1, 0); z2 < zmax; z2++) {
-//			ImageProcessor slice = result.getProcessor(z2 + 1);
-			for (int y2 = max(y - 1, 0); y2 <= y; y2++) {
-				int xmax = y2 == y ? x : min(x + 2, size1); 
-				for (int x2 = max(x - 1, 0); x2 < xmax; x2++) {
-					double neighborValue = result.getVoxel(x2, y2, z2);
-					if (neighborValue > max)
-						max = neighborValue;
-				}
-			}
-		}
-		return max;
-	}
-
-	/**
-	 * Return maximum value in forward neighborhood
-	 */
-	private double getMaxValueForwardSave1(final int x, final int y, final int z) {
-		double max = result.getVoxel(x, y, z);
-
-		int zmax = min(z + 1, size3);
-		for (int z2 = max(z - 1, 0); z2 < zmax; z2++) {
-//			ImageProcessor slice = result.getProcessor(z2 + 1);
-			for (int y2 = max(y - 1, 0); y2 <= y; y2++) {
-				int xmax = y2 == y ? x : min(x + 2, size1); 
-				for (int x2 = max(x - 1, 0); x2 < xmax; x2++) {
-					double neighborValue = result.getVoxel(x2, y2, z2);
-					if (neighborValue > max)
-						max = neighborValue;
-				}
-			}
-		}
-		return max;
-	}
-
-	/**
-	 * Return maximum value in forward neighborhood
-	 */
-	private double getMaxValueForwardOld(final int x, final int y, final int z) {
-		double max = result.getVoxel(x, y, z);
-
-		for (int w = -1; w <= 1; ++w) {
-			for (int v = -1; v <= 0; ++v) {
-				final int xMax = v < 0 ? 1 : (w < 0 ? 0 : -1);
-
-				for (int u = -1; u <= xMax; u++) {
-					final int x2 = x + u;
-					final int y2 = y + v;
-					final int z2 = z + w;
-
-					if (x2 >= 0 && x2 < size1 && y2 >= 0 && y2 < size2
-							&& z2 >= 0 && z2 < size3) {
-						double neighborValue = result.getVoxel(x2, y2, z2);
-						if (neighborValue > max)
-							max = neighborValue;
-					}
-				}
-			}
-		}
-
-		return max;
-	}
+//	/**
+//	 * Return maximum value in forward neighborhood
+//	 */
+//	private double getMaxValueForwardOld(final int x, final int y, final int z) {
+//		double max = result.getVoxel(x, y, z);
+//
+//		for (int w = -1; w <= 1; ++w) {
+//			for (int v = -1; v <= 0; ++v) {
+//				final int xMax = v < 0 ? 1 : (w < 0 ? 0 : -1);
+//
+//				for (int u = -1; u <= xMax; u++) {
+//					final int x2 = x + u;
+//					final int y2 = y + v;
+//					final int z2 = z + w;
+//
+//					if (x2 >= 0 && x2 < size1 && y2 >= 0 && y2 < size2
+//							&& z2 >= 0 && z2 < size3) {
+//						double neighborValue = result.getVoxel(x2, y2, z2);
+//						if (neighborValue > max)
+//							max = neighborValue;
+//					}
+//				}
+//			}
+//		}
+//
+//		return max;
+//	}
 
 	/**
 	 * Update result image using pixels in the upper left neighborhood, using

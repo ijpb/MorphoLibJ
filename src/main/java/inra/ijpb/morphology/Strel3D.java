@@ -4,8 +4,7 @@
 package inra.ijpb.morphology;
 
 import ij.ImageStack;
-import inra.ijpb.event.ProgressListener;
-import inra.ijpb.event.StatusListener;
+import inra.ijpb.event.Algo;
 import inra.ijpb.morphology.strel.Cross3x3Strel;
 import inra.ijpb.morphology.strel.CubeStrel;
 import inra.ijpb.morphology.strel.DiamondStrel;
@@ -21,7 +20,7 @@ import inra.ijpb.morphology.strel.SquareStrel;
  * @author David Legland
  *
  */
-public interface Strel3D {
+public interface Strel3D extends Algo {
 
 	/**
 	 * Default value for background pixels.
@@ -290,12 +289,4 @@ public interface Strel3D {
 	 * Specifies if this structuring element should display its progress.
 	 */
 	public void showProgress(boolean b);
-	
-	public void addProgressListener(ProgressListener listener);
-
-	public void removeProgressListener(ProgressListener listener);
-	
-	public void addStatusListener(StatusListener listener);
-
-	public void removeStatusListener(StatusListener listener);
 }

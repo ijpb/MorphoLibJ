@@ -7,6 +7,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import ij.IJ;
 import ij.ImageStack;
+import inra.ijpb.event.AlgoStub;
 
 
 /**
@@ -14,7 +15,9 @@ import ij.ImageStack;
  * @author David Legland
  *
  */
-public class GeodesicReconstructionByErosion3DGray8Scanning implements GeodesicReconstruction3DAlgo {
+public class GeodesicReconstructionByErosion3DGray8Scanning extends AlgoStub
+		implements GeodesicReconstruction3DAlgo
+{
 	ImageStack marker;
 	ImageStack mask;
 	
@@ -563,10 +566,10 @@ public class GeodesicReconstructionByErosion3DGray8Scanning implements GeodesicR
 		int minValue;
 
 		Object[] stack = result.getImageArray();
-		Object[] binaryStack = binaryMask.getImageArray();
+//		Object[] binaryStack = binaryMask.getImageArray();
 		byte[] slice;
 		byte[] slice2;
-		byte[] binarySlice;
+//		byte[] binarySlice;
 
 		if (showProgress) {
 			IJ.showProgress(0, sizeZ);
@@ -580,7 +583,7 @@ public class GeodesicReconstructionByErosion3DGray8Scanning implements GeodesicR
 			}
 
 			slice = (byte[]) stack[z];
-			binarySlice = (byte[]) binaryStack[ z ];
+//			binarySlice = (byte[]) binaryStack[ z ];
 						
 			for (int y = sizeY - 1; y >= 0; y--) {
 				for (int x = sizeX - 1; x >= 0; x--) {

@@ -77,16 +77,6 @@ public class SquareStrelTiming {
 		}
 	}
 
-
-	private ImageProcessor getRiceImage() {
-		String fileName = getClass().getResource("/files/grains.tif").getFile();
-		ImagePlus imagePlus = IJ.openImage(fileName);
-		
-		assertNotNull(imagePlus);
-
-		ImageProcessor image = imagePlus.getProcessor();
-		return image;
-	}
 	
 	private ImageProcessor getLeafImage() {
 		String fileName = getClass().getResource("/files/CA_QK_004_H1.tif").getFile();
