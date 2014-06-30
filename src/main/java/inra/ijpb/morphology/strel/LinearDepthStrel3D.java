@@ -275,7 +275,7 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 		
 		// create local histogram instance
 		LocalExtremumBufferDouble localMin = new LocalExtremumBufferDouble(
-				this.length, LocalExtremum.Type.MAXIMUM);
+				this.length, LocalExtremum.Type.MINIMUM);
 		
 		// Iterate on image z-columns
 		for (int y = 0; y < height; y++) {

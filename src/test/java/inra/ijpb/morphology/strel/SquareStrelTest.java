@@ -160,6 +160,59 @@ public class SquareStrelTest {
 		}
 	}
 	
+	@Test
+	public void testErosion_Square4x4_short() {
+		ImageProcessor image = createImage_Square4x4();
+		image = image.convertToShort(false);
+		Strel strel = new SquareStrel(3);
+		
+		ImageProcessor result = strel.erosion(image);
+
+		for (int y = 0; y < 4; y++) {
+			for (int x = 0; x < 10; x++) {
+				assertEquals(0, result.get(x, y));
+			}
+		}
+		for (int y = 4; y < 6; y++) {
+			assertEquals(0, result.get(3, y));
+			assertEquals(255, result.get(4, y));
+			assertEquals(255, result.get(5, y));
+			assertEquals(0, result.get(6, y));
+		}
+		for (int y = 6; y < 10; y++) {
+			for (int x = 0; x < 10; x++) {
+				assertEquals(0, result.get(x, y));
+			}
+		}
+	}
+
+	@Test
+	public void testDilation_Square4x4_short() {
+		ImageProcessor image = createImage_Square4x4();
+		image = image.convertToShort(false);
+		Strel strel = new SquareStrel(3);
+		
+		ImageProcessor result = strel.dilation(image);
+
+		for (int y = 0; y < 2; y++) {
+			for (int x = 0; x < 10; x++) {
+				assertEquals(0, result.get(x, y));
+			}
+		}
+		for (int y = 2; y < 8; y++) {
+			assertEquals(0, result.get(1, y));
+			assertEquals(255, result.get(2, y));
+			assertEquals(255, result.get(7, y));
+			assertEquals(0, result.get(8, y));
+		}
+		for (int y = 8; y < 10; y++) {
+			for (int x = 0; x < 10; x++) {
+				assertEquals(0, result.get(x, y));
+			}
+		}
+	}
+
+
 	/**
 	 * Creates a 10-by-10 image with a 4-by-4 square in the middle.
 	 */

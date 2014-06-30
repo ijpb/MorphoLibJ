@@ -124,8 +124,8 @@ public class ColorMaps {
 	
 	/**
 	 * Creates a Java.awt.image.ColorModel from a color map given as an triplet
-	 * of byte arrays, and a color for the background that will be asociated to
-	 * label 0.
+	 * of byte arrays, and a color for the background that will be associated 
+	 * to label 0.
 	 */
 	public final static ColorModel createColorModel(byte[][] cmap, Color bg) {
 		int n = cmap.length;

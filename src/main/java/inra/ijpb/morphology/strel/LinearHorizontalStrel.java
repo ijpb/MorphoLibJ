@@ -253,7 +253,7 @@ public class LinearHorizontalStrel extends AbstractInPlaceStrel  {
 		
 		// create local histogram instance
 		LocalExtremumBufferDouble localMin = new LocalExtremumBufferDouble(size,
-				LocalExtremum.Type.MAXIMUM);
+				LocalExtremum.Type.MINIMUM);
 		
 		// Iterate on image rows
 		for (int y = 0; y < height; y++) {
