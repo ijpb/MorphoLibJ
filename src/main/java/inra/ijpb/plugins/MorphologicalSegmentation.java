@@ -682,6 +682,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			if( null != super.sliceSelector )
 			{
 				sliceSelector.setValue( inputImage.getCurrentSlice() );
+				displayImage.setSlice( inputImage.getCurrentSlice() );
 				
 				all.add( super.sliceSelector, allConstraints );
 
@@ -808,10 +809,10 @@ public class MorphologicalSegmentation implements PlugIn {
 		{							
 			super.windowClosing( e );
 
-			// display input image
-			inputImage.getWindow().setVisible( true );
-
 			inputImage.setSlice( displayImage.getCurrentSlice() );
+			
+			// display input image
+			inputImage.getWindow().setVisible( true );			
 
 			// shut down executor service
 			exec.shutdownNow();
