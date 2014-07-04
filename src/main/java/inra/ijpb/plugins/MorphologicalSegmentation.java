@@ -1038,13 +1038,30 @@ public class MorphologicalSegmentation implements PlugIn {
 						// Apply watershed		
 						IJ.log("Running watershed...");
 
-						ImageStack resultStack = Watershed.computeWatershed( imposedMinima, labeledMinima, 
+						ImageStack resultStack = null;
+						
+						try{
+							resultStack = Watershed.computeWatershed( imposedMinima, labeledMinima, 
 								connectivity, usePriorityQueue, calculateDams );
+						}
+						catch( Exception ex )
+						{							
+							ex.printStackTrace();
+							IJ.log( "Error while runing watershed: " + ex.getMessage() );							
+						}
+						catch( OutOfMemoryError err )
+						{
+							err.printStackTrace();
+							IJ.log( "Error: the plugin run out of memory. Please use a smaller input image." );
+						}
 						if( null == resultStack )
 						{
 							IJ.log( "The segmentation was interrupted!" );
 							IJ.showStatus( "The segmentation was interrupted!" );
 							IJ.showProgress( 1.0 );
+							// set button back to initial text
+							segmentButton.setText( segmentText );
+							segmentButton.setToolTipText( segmentTip );
 							return;
 						}
 
@@ -1085,7 +1102,6 @@ public class MorphologicalSegmentation implements PlugIn {
 								"connectivity=" + Integer.toString( connectivity ),
 								"usePriorityQueue=" + usePriorityQueue };
 						record( RUN_SEGMENTATION, arg );
-
 					}
 				};
 
