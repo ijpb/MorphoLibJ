@@ -228,18 +228,18 @@ public class MorphologicalSegmentation implements PlugIn {
 	/** label for the display combo box */
 	JLabel displayLabel = null;
 
-	/** text of option to display results as overlayed catchment basins */
-	static String overlayedBasinsText = "Overlayed basins";
-	/** text of option to display results as overlayed dams (watershed lines) */
-	static String overlayedDamsText = "Overlayed dams";
+	/** text of option to display results as overlaid catchment basins */
+	static String overlaidBasinsText = "Overlaid basins";
+	/** text of option to display results as overlaid dams (watershed lines) */
+	static String overlaidDamsText = "Overlaid dams";
 	/** text of option to display results as catchment basins */
 	static String catchmentBasinsText = "Catchment basins";
 	/** text of option to display results as binary watershed lines */
 	static String watershedLinesText = "Watershed lines";
 
 	/** list of result display options (to show in the GUI canvas) */
-	String[] resultDisplayOption = new String[]{ overlayedBasinsText, 
-			overlayedDamsText, catchmentBasinsText, watershedLinesText };
+	String[] resultDisplayOption = new String[]{ overlaidBasinsText, 
+			overlaidDamsText, catchmentBasinsText, watershedLinesText };
 	/** result display combo box */
 	JComboBox resultDisplayList = null;
 	/** panel to store the combo box with the display options */
@@ -272,7 +272,7 @@ public class MorphologicalSegmentation implements PlugIn {
 	private String stopTip = "Click to abort segmentation";
 
 	/** enumeration of result modes */
-	public static enum ResultMode { OVERLAYED_BASINS, OVERLAYED_DAMS, BASINS, LINES };
+	public static enum ResultMode { OVERLAID_BASINS, OVERLAID_DAMS, BASINS, LINES };
 
 	// Macro recording constants (corresponding to  
 	// the static method names to be called)
@@ -1166,26 +1166,26 @@ public class MorphologicalSegmentation implements PlugIn {
 
 				ImagePlus watershedResult = null;
 
-				// options: "Catchment basins", "Overlayed dams", "Watershed lines", "Overlayed basins"
+				// options: "Catchment basins", "Overlaid dams", "Watershed lines", "Overlaid basins"
 				if( displayOption.equals( catchmentBasinsText ) )
 				{			
 					watershedResult = getResult( ResultMode.BASINS );									
 					arg = new String[] { "mode=basins" };
 				}
-				else if( displayOption.equals( overlayedDamsText ) )
+				else if( displayOption.equals( overlaidDamsText ) )
 				{
-					watershedResult = getResult( ResultMode.OVERLAYED_DAMS );
-					arg = new String[] { "mode=overlayed_dams" };
+					watershedResult = getResult( ResultMode.OVERLAID_DAMS );
+					arg = new String[] { "mode=overlaid_dams" };
 				}
 				else if( displayOption.equals( watershedLinesText ) )
 				{
 					watershedResult = getResult( ResultMode.LINES );
 					arg = new String[] { "mode=lines" };
 				}
-				else if ( displayOption.equals( overlayedBasinsText ) )
+				else if ( displayOption.equals( overlaidBasinsText ) )
 				{
-					watershedResult = getResult( ResultMode.OVERLAYED_BASINS );									
-					arg = new String[] { "mode=overlayed_basins" };
+					watershedResult = getResult( ResultMode.OVERLAID_BASINS );									
+					arg = new String[] { "mode=overlaid_basins" };
 				}
 
 				if( null != watershedResult )
@@ -1223,7 +1223,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		
 		/**
 		 * Get current segmentation results based on selected mode
-		 * @param mode selected result mode ("Overlayed basins", "Overlayed dams", "Catchment basins", "Watershed lines") 
+		 * @param mode selected result mode ("Overlaid basins", "Overlaid dams", "Catchment basins", "Watershed lines") 
 		 * @return result image
 		 */
 		ImagePlus getResult( ResultMode mode )
@@ -1252,7 +1252,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			
 
 			switch( mode ){
-				case OVERLAYED_BASINS:
+				case OVERLAID_BASINS:
 					result = displayImage.duplicate();
 					result.setOverlay( null ); // remove existing overlay
 					ImageStack is = new ImageStack( displayImage.getWidth(), displayImage.getHeight() );
@@ -1269,19 +1269,19 @@ public class MorphologicalSegmentation implements PlugIn {
 					result.setStack( is );
 					if( applyGradient && showGradient )
 						title += "-gradient";
-					result.setTitle( title + "-overlayed-basins" + ext );
+					result.setTitle( title + "-overlaid-basins" + ext );
 					break;
 				case BASINS:
 					result = resultImage.duplicate();
 					result.setTitle( title + "-catchment-basins" + ext );				
 					result.setSlice( displayImage.getSlice() );					
 					break;
-				case OVERLAYED_DAMS:
+				case OVERLAID_DAMS:
 					result = getWatershedLines( resultImage );
 					result = ColorImages.binaryOverlay( displayImage, result, Color.red ) ;
 					if( applyGradient && showGradient )
 						title += "-gradient";
-					result.setTitle( title + "-overlayed-dams" + ext );				
+					result.setTitle( title + "-overlaid-dams" + ext );				
 					break;
 				case LINES:
 					result = getWatershedLines( resultImage );
@@ -1337,7 +1337,7 @@ public class MorphologicalSegmentation implements PlugIn {
 					roi = new ImageRoi(0, 0, resultImage.getImageStack().getProcessor( slice ) );
 					roi.setOpacity( 1.0 );
 				}
-				else if( displayOption.equals( overlayedDamsText ) )				
+				else if( displayOption.equals( overlaidDamsText ) )				
 				{
 					ImageProcessor lines = BinaryImages.binarize( resultImage.getImageStack().getProcessor( slice ) );
 					lines.invert();
@@ -1350,7 +1350,7 @@ public class MorphologicalSegmentation implements PlugIn {
 					roi = new ImageRoi(0, 0, BinaryImages.binarize( resultImage.getImageStack().getProcessor( slice ) ) );
 					roi.setOpacity( 1.0 );
 				}
-				else if( displayOption.equals( overlayedBasinsText ) )	
+				else if( displayOption.equals( overlaidBasinsText ) )	
 				{
 					roi = new ImageRoi(0, 0, resultImage.getImageStack().getProcessor( slice ) );
 					roi.setOpacity( opacity );
@@ -1571,12 +1571,12 @@ public class MorphologicalSegmentation implements PlugIn {
 
 			if( mode.equals( "basins") )
 				result = win.getResult( ResultMode.BASINS );
-			else if( mode.equals( "overlayed_basins") )
-				result = win.getResult( ResultMode.OVERLAYED_BASINS );
+			else if( mode.equals( "overlaid_basins") )
+				result = win.getResult( ResultMode.OVERLAID_BASINS );
 			else if( mode.equals( "lines" ) )
 				result = win.getResult( ResultMode.LINES );
-			else if( mode.equals( "overlayed_dams" ))
-				result = win.getResult( ResultMode.OVERLAYED_DAMS );
+			else if( mode.equals( "overlaid_dams" ))
+				result = win.getResult( ResultMode.OVERLAID_DAMS );
 
 			if( null != result )
 			{
@@ -1623,7 +1623,7 @@ public class MorphologicalSegmentation implements PlugIn {
 
 	/**
 	 * Set the display format in the GUI
-	 * @param format output mode ("Overlayed basins", "Overlayed dams", "Catchment basins", "Watershed lines")
+	 * @param format output mode ("Overlaid basins", "Overlaid dams", "Catchment basins", "Watershed lines")
 	 */
 	public static void setDisplayFormat( String format )
 	{
