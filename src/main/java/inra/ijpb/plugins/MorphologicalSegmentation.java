@@ -798,7 +798,7 @@ public class MorphologicalSegmentation implements PlugIn {
 				canvas.addKeyListener(keyListener);
 
 			}		
-		}
+		}// end CustomWindow constructor
 
 		/**
 		 * Overwrite windowClosing to display the input image after closing 
