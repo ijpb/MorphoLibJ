@@ -1084,6 +1084,7 @@ public class MorphologicalSegmentation implements PlugIn {
 						// display result overlaying the input image						
 						updateDisplayImage();
 						updateResultOverlay();
+
 						showColorOverlay = true;
 						toggleOverlayCheckBox.setSelected( true );
 
@@ -1129,10 +1130,12 @@ public class MorphologicalSegmentation implements PlugIn {
 		 */
 		void updateDisplayImage()
 		{
+			int slice = displayImage.getCurrentSlice();
 			if( applyGradient && showGradient && null != gradientStack )			
 				displayImage.setStack( gradientStack );
 			else
-				displayImage.setStack( inputImage.getImageStack() );	
+				displayImage.setStack( inputImage.getImageStack() );
+			displayImage.setSlice( slice );
 			displayImage.updateAndDraw();
 		}
 
@@ -1327,7 +1330,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			{
 				displayImage.deleteRoi();
 				int slice = displayImage.getCurrentSlice();
-				
+
 				final String displayOption = (String) resultDisplayList.getSelectedItem();							
 
 				ImageRoi roi = null;
