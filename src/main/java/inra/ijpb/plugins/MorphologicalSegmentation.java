@@ -1277,7 +1277,6 @@ public class MorphologicalSegmentation implements PlugIn {
 				case BASINS:
 					result = resultImage.duplicate();
 					result.setTitle( title + "-catchment-basins" + ext );				
-					result.setSlice( displayImage.getSlice() );					
 					break;
 				case OVERLAID_DAMS:
 					result = getWatershedLines( resultImage );
