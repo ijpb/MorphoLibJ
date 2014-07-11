@@ -1483,6 +1483,15 @@ public class MorphologicalSegmentation implements PlugIn {
 
 		// set the 2D flag
 		inputIs2D = inputImage.getImageStackSize() == 1;
+
+		// correct Fiji error when the slices are read as frames
+		if ( inputIs2D == false && 
+				displayImage.isHyperStack() == false && 
+				displayImage.getNSlices() == 1 )
+		{
+			// correct stack by setting number of frames as slices
+			displayImage.setDimensions( 1, displayImage.getNFrames(), 1 );
+		}
 		
 		// Build GUI
 		SwingUtilities.invokeLater(
