@@ -814,6 +814,19 @@ public class MorphologicalSegmentation implements PlugIn {
 			// display input image
 			inputImage.getWindow().setVisible( true );			
 
+			// remove listeners
+			borderButton.removeActionListener( listener );
+			objectButton.removeActionListener( listener );
+			gradientCheckBox.removeActionListener( listener );
+			advancedOptionsCheckBox.removeActionListener( listener );
+			segmentButton.removeActionListener( listener );
+			resultDisplayList.removeActionListener( listener );
+			toggleOverlayCheckBox.removeActionListener( listener );
+			resultButton.removeActionListener( listener );
+			
+			displayImage.close();
+			displayImage = null;
+			
 			// shut down executor service
 			exec.shutdownNow();
 		}
