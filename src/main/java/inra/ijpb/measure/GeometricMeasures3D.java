@@ -185,7 +185,14 @@ public class GeometricMeasures3D {
 	
 	/**
 	 * Computes the surface area of each label in the 3D image, using the
-	 * specified resolution, and the number of directions.
+	 * specified resolution, and the given number of directions.
+	 * 
+	 * Current algorithms pre-computes a LUT, then iterate on 2-by-2-by-2 
+	 * configurations of voxels, and identifies the labels whose surface area
+	 * measure need to be updated.
+	 *  
+	 * For 3 directions, the surfaceAreaD3 function is analternative that does
+	 * not uses LUT. 
 	 */
 	public final static ResultsTable surfaceArea(ImageStack labelImage, double[] resol, int nDirs) {
 		IJ.showStatus("Count labels...");
@@ -521,11 +528,57 @@ public class GeometricMeasures3D {
 	}
 	
 	/**
+	 * Counts the number of binary transitions in the OZ direction.
+	 */
+	private static int countTransitionsD3(ImageStack image, int label, boolean countBorder) {
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		int sizeZ = image.getSize();
+	
+		int count = 0;
+	    double previous = 0;
+	    double current;
+	    
+	    // iterate on image voxels
+	    	for (int y = 0; y < sizeY; y++) {
+	    		for (int x = 0; x < sizeX; x++) {
+	
+	    		// Count border of image
+	    		previous = image.getVoxel(x, y, 0);
+	    		if (countBorder && previous == label)
+	    			count++;
+	
+	    		// count middle of image
+	            for (int z = 0; z < sizeZ; z++) {
+	        		current = image.getVoxel(x, y, z);
+	    			if (previous == label ^ current == label) // Exclusive or
+	    				count++;
+	    			previous = current;
+	    		}
+	
+	    		// Count border of image
+	    		if (countBorder && previous == label)
+	    			count++;
+	    	}
+	    }
+	    return count;
+	}
+
+	/**
      * Computes inertia ellipsoid of each 3D region in input 3D label image.
+     * 
+     * @throws a RuntimeException if jama package is not found.
      */
     public final static ResultsTable inertiaEllipsoid(ImageStack image) {
         // Check validity of parameters
         if (image==null) return null;
+        
+        // check if JAMA package is present
+        try {
+            Class.forName("Jama.Matrix");
+        } catch(Exception e) {
+        	throw new RuntimeException("Requires the JAMA package to work properly");
+        }
         
         // size of image
         int sizeX = image.getWidth();
@@ -569,7 +622,8 @@ public class GeometricMeasures3D {
         			counts[index]++;
         		}
         	}
-        }    	
+        }
+        
         // normalize by number of pixels in each region
         for (int i = 0; i < nLabels; i++) {
         	cx[i] = cx[i] / counts[i];
@@ -672,43 +726,6 @@ public class GeometricMeasures3D {
 
         return table;
     }
-
-    /**
-	 * Counts the number of binary transitions in the OZ direction.
-	 */
-	private static int countTransitionsD3(ImageStack image, int label, boolean countBorder) {
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-		int sizeZ = image.getSize();
-	
-		int count = 0;
-	    double previous = 0;
-	    double current;
-	    
-	    // iterate on image voxels
-	    	for (int y = 0; y < sizeY; y++) {
-	    		for (int x = 0; x < sizeX; x++) {
-	
-	    		// Count border of image
-	    		previous = image.getVoxel(x, y, 0);
-	    		if (countBorder && previous == label)
-	    			count++;
-	
-	    		// count middle of image
-	            for (int z = 0; z < sizeZ; z++) {
-	        		current = image.getVoxel(x, y, z);
-	    			if (previous == label ^ current == label) // Exclusive or
-	    				count++;
-	    			previous = current;
-	    		}
-	
-	    		// Count border of image
-	    		if (countBorder && previous == label)
-	    			count++;
-	    	}
-	    }
-	    return count;
-	}
 
 	
 	

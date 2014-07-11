@@ -46,6 +46,9 @@ public class InertiaEllipsoidPlugin implements PlugIn {
         try {
         	table = GeometricMeasures3D.inertiaEllipsoid(image);
         } catch (Exception ex) {
+        	String msg = ex.getMessage();
+        	IJ.log(msg);
+			IJ.error("Problem occured during Inertia Ellipsoid computation:\n" + msg);
         	ex.printStackTrace(System.err);
         	return;
         }
