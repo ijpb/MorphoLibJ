@@ -13,7 +13,7 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<groupId>sc.fiji</groupId>
 	<artifactId>ijpb_plugins</artifactId>
-	<version>1.0.3-SNAPSHOT</version>
+	<version>1.0.3</version>
 
 	<name>plugins/ijpb_plugins.jar</name>
 	<description>Plugins from the IJPB institute for morphology and segmentation</description>
