@@ -814,6 +814,19 @@ public class MorphologicalSegmentation implements PlugIn {
 			// display input image
 			inputImage.getWindow().setVisible( true );			
 
+			// remove listeners
+			borderButton.removeActionListener( listener );
+			objectButton.removeActionListener( listener );
+			gradientCheckBox.removeActionListener( listener );
+			advancedOptionsCheckBox.removeActionListener( listener );
+			segmentButton.removeActionListener( listener );
+			resultDisplayList.removeActionListener( listener );
+			toggleOverlayCheckBox.removeActionListener( listener );
+			resultButton.removeActionListener( listener );
+			
+			displayImage.close();
+			displayImage = null;
+			
 			// shut down executor service
 			exec.shutdownNow();
 		}
@@ -1164,32 +1177,18 @@ public class MorphologicalSegmentation implements PlugIn {
 			{
 
 				final String displayOption = (String) resultDisplayList.getSelectedItem();
-
-				String[] arg = null;
-
+				
 				ImagePlus watershedResult = null;
 
 				// options: "Catchment basins", "Overlaid dams", "Watershed lines", "Overlaid basins"
-				if( displayOption.equals( catchmentBasinsText ) )
-				{			
+				if( displayOption.equals( catchmentBasinsText ) )			
 					watershedResult = getResult( ResultMode.BASINS );									
-					arg = new String[] { "mode=basins" };
-				}
 				else if( displayOption.equals( overlaidDamsText ) )
-				{
 					watershedResult = getResult( ResultMode.OVERLAID_DAMS );
-					arg = new String[] { "mode=overlaid_dams" };
-				}
 				else if( displayOption.equals( watershedLinesText ) )
-				{
 					watershedResult = getResult( ResultMode.LINES );
-					arg = new String[] { "mode=lines" };
-				}
 				else if ( displayOption.equals( overlaidBasinsText ) )
-				{
 					watershedResult = getResult( ResultMode.OVERLAID_BASINS );									
-					arg = new String[] { "mode=overlaid_basins" };
-				}
 
 				if( null != watershedResult )
 				{
@@ -1198,8 +1197,7 @@ public class MorphologicalSegmentation implements PlugIn {
 				}
 
 				// Macro recording	
-				if( null != arg )
-					record( CREATE_IMAGE, arg );
+				record( CREATE_IMAGE );
 			}
 		}
 
@@ -1277,7 +1275,6 @@ public class MorphologicalSegmentation implements PlugIn {
 				case BASINS:
 					result = resultImage.duplicate();
 					result.setTitle( title + "-catchment-basins" + ext );				
-					result.setSlice( displayImage.getSlice() );					
 					break;
 				case OVERLAID_DAMS:
 					result = getWatershedLines( resultImage );
@@ -1319,6 +1316,14 @@ public class MorphologicalSegmentation implements PlugIn {
 				resultDisplayList.setSelectedItem( option );
 		}
 
+		/**
+		 * Get the selected display option
+		 * @return currently selected display option
+		 */
+		String getResultDisplayOption()
+		{
+			return (String) resultDisplayList.getSelectedItem();
+		}
 		
 		/**
 		 * Update the overlay in the display image based on 
@@ -1484,6 +1489,15 @@ public class MorphologicalSegmentation implements PlugIn {
 
 		// set the 2D flag
 		inputIs2D = inputImage.getImageStackSize() == 1;
+
+		// correct Fiji error when the slices are read as frames
+		if ( inputIs2D == false && 
+				displayImage.isHyperStack() == false && 
+				displayImage.getNSlices() == 1 )
+		{
+			// correct stack by setting number of frames as slices
+			displayImage.setDimensions( 1, displayImage.getNFrames(), 1 );
+		}
 		
 		// Build GUI
 		SwingUtilities.invokeLater(
@@ -1562,23 +1576,23 @@ public class MorphologicalSegmentation implements PlugIn {
 	/**
 	 * Show current result in a new image
 	 */
-	public static void createResultImage( String modeText )
+	public static void createResultImage()
 	{
 		final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
 		if( iw instanceof CustomWindow )
 		{
 			final CustomWindow win = (CustomWindow) iw;
-			String mode = modeText.replace( "mode=", "" );
-
+			String mode = win.getResultDisplayOption();
+			
 			ImagePlus result = null;
 
-			if( mode.equals( "basins") )
+			if( mode.equals( MorphologicalSegmentation.catchmentBasinsText) )
 				result = win.getResult( ResultMode.BASINS );
-			else if( mode.equals( "overlaid_basins") )
+			else if( mode.equals( MorphologicalSegmentation.overlaidBasinsText ) )
 				result = win.getResult( ResultMode.OVERLAID_BASINS );
-			else if( mode.equals( "lines" ) )
+			else if( mode.equals( MorphologicalSegmentation.watershedLinesText ) )
 				result = win.getResult( ResultMode.LINES );
-			else if( mode.equals( "overlaid_dams" ))
+			else if( mode.equals( MorphologicalSegmentation.overlaidDamsText ))
 				result = win.getResult( ResultMode.OVERLAID_DAMS );
 
 			if( null != result )
