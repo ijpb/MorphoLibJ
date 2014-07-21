@@ -6,6 +6,7 @@ package inra.ijpb.morphology;
 import ij.process.ImageProcessor;
 import inra.ijpb.morphology.strel.Cross3x3Strel;
 import inra.ijpb.morphology.strel.DiamondStrel;
+import inra.ijpb.morphology.strel.DiskStrel;
 import inra.ijpb.morphology.strel.LinearDiagDownStrel;
 import inra.ijpb.morphology.strel.LinearDiagUpStrel;
 import inra.ijpb.morphology.strel.LinearHorizontalStrel;
@@ -38,6 +39,12 @@ public interface Strel extends Strel3D {
 	 * class and of given size.
 	 */
 	public enum Shape {
+		/**
+		 * Disk of a given radius
+		 * @see DiskStrel 
+		 */
+		DISK("Disk"),
+		
 		/** 
 		 * Square of a given side
 		 * @see SquareStrel 
@@ -73,13 +80,13 @@ public interface Strel extends Strel3D {
 		 * Diagonal line of a given length 
 		 * @see LinearDiagUpStrel
 		 */
-		LINE_DIAG_UP("Line 45�"),
+		LINE_DIAG_UP("Line 45 degrees"),
 		
 		/** 
 		 * Diagonal line of a given length 
 		 * @see LinearDiagDownStrel
 		 */
-		LINE_DIAG_DOWN("Line 135�");
+		LINE_DIAG_DOWN("Line 135 degrees");
 		
 		private final String label;
 		
@@ -104,6 +111,8 @@ public interface Strel extends Strel3D {
 		 * 
 		 */
 		public Strel fromRadius(int radius) {
+			if (this == DISK) 
+				return DiskStrel.fromRadius(radius);
 			return fromDiameter(2 * radius + 1);
 		}
 		
@@ -114,6 +123,8 @@ public interface Strel extends Strel3D {
 		 * @return a new structuring element
 		 */
 		public Strel fromDiameter(int diam) {
+			if (this == DISK) 
+				return DiskStrel.fromRadius((diam - 1) / 2);
 			if (this == SQUARE) 
 				return new SquareStrel(diam);
 			if (this == DIAMOND) {
