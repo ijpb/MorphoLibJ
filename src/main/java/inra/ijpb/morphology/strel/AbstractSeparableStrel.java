@@ -25,11 +25,13 @@ implements SeparableStrel, ProgressListener {
 		Collection<InPlaceStrel> strels = this.decompose();
 		int n = strels.size();
 		
+		
 		// Dilation
 		int i = 1;
 		for (InPlaceStrel strel : strels) {
-			fireStatusChanged(this, "Dilation " + (i++) + "/" + n);
+			fireStatusChanged(this, createStatusMessage("Dilation", i, n));
 			runDilation(result, strel);
+			i++;
 		}
 		
 		// clear status bar
@@ -49,8 +51,9 @@ implements SeparableStrel, ProgressListener {
 		// Erosion
 		int i = 1;
 		for (InPlaceStrel strel : strels) {
-			fireStatusChanged(this, "Erosion " + (i++) + "/" + n);
+			fireStatusChanged(this, createStatusMessage("Erosion", i, n));
 			runErosion(result, strel);
+			i++;
 		}
 		
 		// clear status bar
@@ -70,16 +73,18 @@ implements SeparableStrel, ProgressListener {
 		// Dilation
 		int i = 1;
 		for (InPlaceStrel strel : strels) {
-			fireStatusChanged(this, "Dilation " + (i++) + "/" + n);
+			fireStatusChanged(this, createStatusMessage("Dilation", i, n));
 			runDilation(result, strel);
+			i++;
 		}
 		
 		// Erosion (with reversed strel)
 		i = 1;
 		strels = this.reverse().decompose();
 		for (InPlaceStrel strel : strels) {
-			fireStatusChanged(this, "Erosion " + (i++) + "/" + n);
+			fireStatusChanged(this, createStatusMessage("Erosion", i, n));
 			runErosion(result, strel);
+			i++;
 		}
 		
 		// clear status bar
@@ -99,16 +104,18 @@ implements SeparableStrel, ProgressListener {
 		// Erosion
 		int i = 1;
 		for (InPlaceStrel strel : strels) {
-			fireStatusChanged(this, "Erosion " + (i++) + "/" + n);
+			fireStatusChanged(this, createStatusMessage("Erosion", i, n));
 			runErosion(result, strel);
+			i++;
 		}
 		
 		// Dilation (with reversed strel)
 		i = 1;
 		strels = this.reverse().decompose();
 		for (InPlaceStrel strel : strels) {
-			fireStatusChanged(this, "Dilation " + (i++) + "/" + n);
+			fireStatusChanged(this, createStatusMessage("Dilation", i, n));
 			runDilation(result, strel);
+			i++;
 		}
 		
 		// clear status bar
@@ -129,6 +136,15 @@ implements SeparableStrel, ProgressListener {
 		strel.addProgressListener(this);
 		strel.inPlaceErosion(image);
 		strel.removeProgressListener(this);
+	}
+	
+	private String createStatusMessage(String opName, int i, int n)
+	{
+		String channel = this.getChannelName();
+		if (channel == null)
+			return opName + " " + i + "/" + n;
+		else
+			return opName + " " + channel + " " + i + "/" + n;
 	}
 	
 	/**

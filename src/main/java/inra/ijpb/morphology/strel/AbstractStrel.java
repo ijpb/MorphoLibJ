@@ -19,6 +19,8 @@ import inra.ijpb.morphology.Strel;
  */
 public abstract class AbstractStrel extends AbstractStrel3D implements Strel {
 	
+	private String channelName = null;
+	
 	public int[][][] getMask3D() {
 		int[][][] mask3d = new int[1][][];
 		mask3d[0] = getMask();
@@ -36,6 +38,21 @@ public abstract class AbstractStrel extends AbstractStrel3D implements Strel {
 		return shifts3d;
 	}
 	
+	/**
+	 * Sets the name of the currently processed channel.
+	 */
+	public void setChannelName(String channelName) 
+	{
+		this.channelName = channelName;
+	}
+
+	/**
+	 * Returns the name of the channel currently processed, or null by default.
+	 */
+	public String getChannelName() {
+		return this.channelName;
+		
+	}
 	public ImageStack dilation(ImageStack stack) {
 		boolean flag = this.showProgress();
 		this.showProgress(false);

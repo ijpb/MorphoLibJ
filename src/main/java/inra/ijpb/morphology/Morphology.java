@@ -13,6 +13,7 @@ import inra.ijpb.data.image.ColorImages;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * Collection of static methods for morphological filters,
@@ -172,12 +173,13 @@ public class Morphology {
 	 */
 	private static ImageProcessor dilationRGB(ImageProcessor image, Strel strel) {
 		// extract channels and allocate memory for result
-		Collection<ByteProcessor> channels = ColorImages.splitChannels(image);
+		Map<String, ByteProcessor> channels = ColorImages.mapChannels(image);
 		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
 		
 		// Process each channel individually
-		for(ByteProcessor channel : channels) {
-			res.add(strel.dilation(channel));
+		for (String name : new String[]{"red", "green", "blue"}) {
+			strel.setChannelName(name);
+			res.add(strel.dilation(channels.get(name)));
 		}
 		
 		return ColorImages.mergeChannels(res);
@@ -215,12 +217,13 @@ public class Morphology {
 	 */
 	private static ImageProcessor erosionRGB(ImageProcessor image, Strel strel) {
 		// extract channels and allocate memory for result
-		Collection<ByteProcessor> channels = ColorImages.splitChannels(image);
+		Map<String, ByteProcessor> channels = ColorImages.mapChannels(image);
 		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
 		
 		// Process each channel individually
-		for(ByteProcessor channel : channels) {
-			res.add(strel.erosion(channel));
+		for (String name : new String[]{"red", "green", "blue"}) {
+			strel.setChannelName(name);
+			res.add(strel.erosion(channels.get(name)));
 		}
 		
 		return ColorImages.mergeChannels(res);
@@ -255,12 +258,13 @@ public class Morphology {
 	 */
 	private static ImageProcessor openingRGB(ImageProcessor image, Strel strel) {
 		// extract channels and allocate memory for result
-		Collection<ByteProcessor> channels = ColorImages.splitChannels(image);
+		Map<String, ByteProcessor> channels = ColorImages.mapChannels(image);
 		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
 		
 		// Process each channel individually
-		for(ByteProcessor channel : channels) {
-			res.add(strel.opening(channel));
+		for (String name : new String[]{"red", "green", "blue"}) {
+			strel.setChannelName(name);
+			res.add(strel.opening(channels.get(name)));
 		}
 		
 		return ColorImages.mergeChannels(res);
@@ -295,12 +299,13 @@ public class Morphology {
 	 */
 	private static ImageProcessor closingRGB(ImageProcessor image, Strel strel) {
 		// extract channels and allocate memory for result
-		Collection<ByteProcessor> channels = ColorImages.splitChannels(image);
+		Map<String, ByteProcessor> channels = ColorImages.mapChannels(image);
 		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
 		
 		// Process each channel individually
-		for(ByteProcessor channel : channels) {
-			res.add(strel.closing(channel));
+		for (String name : new String[]{"red", "green", "blue"}) {
+			strel.setChannelName(name);
+			res.add(strel.closing(channels.get(name)));
 		}
 		
 		return ColorImages.mergeChannels(res);
@@ -363,12 +368,20 @@ public class Morphology {
 	 */
 	private static ImageProcessor whiteTopHatRGB(ImageProcessor image, Strel strel) {
 		// extract channels and allocate memory for result
-		Collection<ByteProcessor> channels = ColorImages.splitChannels(image);
+//		Collection<ByteProcessor> channels = ColorImages.splitChannels(image);
+//		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
+//		
+//		// Process each channel individually
+//		for(ByteProcessor channel : channels) {
+//			res.add(whiteTopHat(channel, strel));
+//		}
+		Map<String, ByteProcessor> channels = ColorImages.mapChannels(image);
 		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
 		
 		// Process each channel individually
-		for(ByteProcessor channel : channels) {
-			res.add(whiteTopHat(channel, strel));
+		for (String name : new String[]{"red", "green", "blue"}) {
+			strel.setChannelName(name);
+			res.add(whiteTopHat(channels.get(name), strel));
 		}
 		
 		return ColorImages.mergeChannels(res);
@@ -449,12 +462,13 @@ public class Morphology {
 	 */
 	private static ImageProcessor blackTopHatRGB(ImageProcessor image, Strel strel) {
 		// extract channels and allocate memory for result
-		Collection<ByteProcessor> channels = ColorImages.splitChannels(image);
+		Map<String, ByteProcessor> channels = ColorImages.mapChannels(image);
 		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
 		
 		// Process each channel individually
-		for(ByteProcessor channel : channels) {
-			res.add(blackTopHat(channel, strel));
+		for (String name : new String[]{"red", "green", "blue"}) {
+			strel.setChannelName(name);
+			res.add(blackTopHat(channels.get(name), strel));
 		}
 		
 		return ColorImages.mergeChannels(res);
@@ -537,12 +551,13 @@ public class Morphology {
 	 */
 	private static ImageProcessor gradientRGB(ImageProcessor image, Strel strel) {
 		// extract channels and allocate memory for result
-		Collection<ByteProcessor> channels = ColorImages.splitChannels(image);
+		Map<String, ByteProcessor> channels = ColorImages.mapChannels(image);
 		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
 		
 		// Process each channel individually
-		for(ByteProcessor channel : channels) {
-			res.add(gradient(channel, strel));
+		for (String name : new String[]{"red", "green", "blue"}) {
+			strel.setChannelName(name);
+			res.add(gradient(channels.get(name), strel));
 		}
 		
 		return ColorImages.mergeChannels(res);
@@ -627,12 +642,13 @@ public class Morphology {
 	 */
 	private static ImageProcessor laplacianRGB(ImageProcessor image, Strel strel) {
 		// extract channels and allocate memory for result
-		Collection<ByteProcessor> channels = ColorImages.splitChannels(image);
+		Map<String, ByteProcessor> channels = ColorImages.mapChannels(image);
 		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
 		
 		// Process each channel individually
-		for(ByteProcessor channel : channels) {
-			res.add(laplacian(channel, strel));
+		for (String name : new String[]{"red", "green", "blue"}) {
+			strel.setChannelName(name);
+			res.add(laplacian(channels.get(name), strel));
 		}
 		
 		return ColorImages.mergeChannels(res);
@@ -701,12 +717,13 @@ public class Morphology {
 
 	private static ImageProcessor internalGradientRGB(ImageProcessor image, Strel strel) {
 		// extract channels and allocate memory for result
-		Collection<ByteProcessor> channels = ColorImages.splitChannels(image);
+		Map<String, ByteProcessor> channels = ColorImages.mapChannels(image);
 		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
 		
 		// Process each channel individually
-		for(ByteProcessor channel : channels) {
-			res.add(internalGradient(channel, strel));
+		for (String name : new String[]{"red", "green", "blue"}) {
+			strel.setChannelName(name);
+			res.add(internalGradient(channels.get(name), strel));
 		}
 		
 		return ColorImages.mergeChannels(res);
@@ -773,12 +790,13 @@ public class Morphology {
 
 	private static ImageProcessor externalGradientRGB(ImageProcessor image, Strel strel) {
 		// extract channels and allocate memory for result
-		Collection<ByteProcessor> channels = ColorImages.splitChannels(image);
+		Map<String, ByteProcessor> channels = ColorImages.mapChannels(image);
 		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
 		
 		// Process each channel individually
-		for(ByteProcessor channel : channels) {
-			res.add(externalGradient(channel, strel));
+		for (String name : new String[]{"red", "green", "blue"}) {
+			strel.setChannelName(name);
+			res.add(externalGradient(channels.get(name), strel));
 		}
 		
 		return ColorImages.mergeChannels(res);
