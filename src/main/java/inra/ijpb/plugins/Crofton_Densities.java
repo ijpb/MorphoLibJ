@@ -57,7 +57,7 @@ public class Crofton_Densities implements PlugInFilter {
 		}
 		
 		this.imagePlus = imp;
-		return DOES_ALL;
+		return DOES_ALL | NO_CHANGES;
 	}
 	
     /* (non-Javadoc)

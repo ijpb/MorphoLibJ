@@ -98,7 +98,7 @@ public class ExtendedMinAndMaxPlugin implements ExtendedPlugInFilter, DialogList
 	
 	
 	/** Apparently, it's better to store flags in plugin */
-	private int flags = DOES_ALL | KEEP_PREVIEW | FINAL_PROCESSING;
+	private int flags = DOES_ALL | KEEP_PREVIEW | FINAL_PROCESSING | NO_CHANGES;
 	
 	PlugInFilterRunner pfr;
 	int nPasses;

@@ -42,7 +42,7 @@ public class InertiaEllipsePlugin implements PlugInFilter {
 		}
 		
 		this.imagePlus = imp;
-		return DOES_ALL;
+		return DOES_ALL | NO_CHANGES;
 	}
 
 	/* (non-Javadoc)
