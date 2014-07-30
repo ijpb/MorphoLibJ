@@ -196,7 +196,7 @@ public class LabelImages {
 	
 	/**
 	 * Applies area opening on a 3D label image: creates a new label image that
-	 * contains only particle with at least the specified number of pixels.
+	 * contains only particle with at least the specified number of voxels.
 	 * Keep original labels unchanged.
 	 */
 	public static final ImageStack volumeOpening(ImageStack labelImage, int nVoxelMin) {

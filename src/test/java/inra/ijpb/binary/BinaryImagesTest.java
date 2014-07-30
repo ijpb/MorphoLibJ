@@ -59,8 +59,42 @@ public class BinaryImagesTest {
 		assertEquals(3, result.getf(4, 4), 1e-12);
 	}
 
+	@Test
+	public final void testAreaOpeningImageProcessor() 
+	{
+		// Create input image: four regions, with sizes 1, 5, 5, and 25
+		ByteProcessor image = new ByteProcessor(10, 10);
+		image.set(1, 1, 255);
+		for (int i = 3; i < 8; i++) 
+		{
+			image.set(1, i, 255);
+			image.set(i, 1, 255);
+		}
+		for (int y = 3; y < 8; y++) 
+		{
+			for (int x = 3; x < 8; x++) 
+			{
+				image.set(x, y, 255);
+			}
+		}
+		
+		// Remove only the first region
+		ImageProcessor sizeOpen3 = BinaryImages.areaOpening(image, 3);
+		assertEquals(0, sizeOpen3.get(1, 1));
+		assertEquals(255, sizeOpen3.get(1, 5));
+		assertEquals(255, sizeOpen3.get(5, 1));
+		assertEquals(255, sizeOpen3.get(5, 5));
+		
+		// Remove the first 3 region
+		ImageProcessor sizeOpen10 = BinaryImages.areaOpening(image, 10);
+		assertEquals(0, sizeOpen10.get(1, 1));
+		assertEquals(0, sizeOpen10.get(1, 5));
+		assertEquals(0, sizeOpen10.get(5, 1));
+		assertEquals(255, sizeOpen10.get(5, 5));
+	}
+	
 	/**
-	 * Creates a new binary image of s
+	 * Creates a new binary image of a square.
 	 * @return
 	 */
 	private final ImageProcessor createBinarySquareImage() {
