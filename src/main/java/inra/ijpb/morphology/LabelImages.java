@@ -3,6 +3,8 @@
  */
 package inra.ijpb.morphology;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
@@ -13,11 +15,10 @@ import inra.ijpb.measure.GeometricMeasures2D;
 import inra.ijpb.measure.GeometricMeasures3D;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeSet;
-import static java.lang.Math.min;
-import static java.lang.Math.max;
 
 /**
  * Utility methods for label images (stored as 8-, 16- or 32-bits).
@@ -57,7 +58,7 @@ public class LabelImages {
 	
 	/**
 	 * Returns a binary image that contains only the selected particle or
-	 * region, by automatically cropping the image and eventually addind some
+	 * region, by automatically cropping the image and eventually adding some
 	 * borders.
 	 * 
 	 * @param image a 3D image containing label of particles
@@ -67,29 +68,34 @@ public class LabelImages {
 	 */
 	public static final ImageStack cropLabel(ImageStack image, int label, int border) 
 	{
+		// image size
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		int sizeZ = image.getSize();
 		
-		// Determine label bounds
+		// Initialize label bounds
 		int xmin = Integer.MAX_VALUE;
 		int xmax = Integer.MIN_VALUE;
 		int ymin = Integer.MAX_VALUE;
 		int ymax = Integer.MIN_VALUE;
 		int zmin = Integer.MAX_VALUE;
 		int zmax = Integer.MIN_VALUE;
+		
+		// update bounds by iterating on voxels 
 		for (int z = 0; z < sizeZ; z++)
 		{
 			for (int y = 0; y < sizeY; y++)
 			{
 				for (int x = 0; x < sizeX; x++)
 				{
+					// process only specified label
 					int val = (int) image.getVoxel(x, y, z);
 					if (val != label)
 					{
 						continue;
 					}
 					
+					// update bounds of current label
 					xmin = min(xmin, x);
 					xmax = max(xmax, x);
 					ymin = min(ymin, y);
@@ -100,7 +106,7 @@ public class LabelImages {
 			}
 		}
 		
-		// Compute siez of result
+		// Compute size of result, taking into account border
 		int sizeX2 = (xmax - xmin + 1 + 2 * border);
 		int sizeY2 = (ymax - ymin + 1 + 2 * border);
 		int sizeZ2 = (zmax - zmin + 1 + 2 * border);
@@ -122,6 +128,103 @@ public class LabelImages {
 		
 		return result;
 
+	}
+	
+	public static final ImagePlus sizeOpening(ImagePlus labelImage, int minElementCount) 
+	{
+		boolean isPlanar = labelImage.getStackSize() == 1;
+		
+		ImagePlus resultPlus;
+		String newName = labelImage.getShortTitle() + "-sizeOpening";
+        
+        if (isPlanar) 
+        {
+            ImageProcessor image = labelImage.getProcessor();
+            ImageProcessor result = LabelImages.areaOpening(image, minElementCount);
+            if (!(result instanceof ColorProcessor))
+    			result.setLut(image.getLut());
+            resultPlus = new ImagePlus(newName, result);    		
+        }
+        else
+        {
+            ImageStack image = labelImage.getStack();
+            ImageStack result = LabelImages.volumeOpening(image, minElementCount);
+        	result.setColorModel(image.getColorModel());
+            resultPlus = new ImagePlus(newName, result);
+        }
+        
+        // update display range
+    	double min = labelImage.getDisplayRangeMin();
+    	double max = labelImage.getDisplayRangeMax();
+    	resultPlus.setDisplayRange(min, max);
+        
+        // keep spatial calibration
+		resultPlus.copyScale(labelImage);
+		return resultPlus;
+	}
+	
+	/**
+	 * Applies area opening on a label image: creates a new label image that
+	 * contains only particles with at least the specified number of pixels.
+	 */
+	public static final ImageProcessor areaOpening(ImageProcessor labelImage, int nPixelMin) {
+		// compute area of each label
+		int[] labels = LabelImages.findAllLabels(labelImage);
+		int[] areas = LabelImages.pixelCount(labelImage, labels);
+		
+		// find labels with sufficient area
+		ArrayList<Integer> labelsToKeep = new ArrayList<Integer>(labels.length);
+		for (int i = 0; i < labels.length; i++) {
+			if (areas[i] >= nPixelMin) {
+				labelsToKeep.add(labels[i]);
+			}
+		}
+		
+		// Convert array list into int array
+		int[] labels2 = new int[labelsToKeep.size()];
+		for (int i = 0; i < labelsToKeep.size(); i++) {
+			labels2[i] = labelsToKeep.get(i);
+		}
+		
+		// keep only necessary labels
+		ImageProcessor result = LabelImages.keepLabels(labelImage, labels2);
+
+		if (!(result instanceof ColorProcessor))
+			result.setLut(labelImage.getLut());
+		return result;
+	}
+	
+	/**
+	 * Applies area opening on a 3D label image: creates a new label image that
+	 * contains only particle with at least the specified number of pixels.
+	 * Keep original labels unchanged.
+	 */
+	public static final ImageStack volumeOpening(ImageStack labelImage, int nVoxelMin) {
+		// compute area of each label
+		int[] labels = LabelImages.findAllLabels(labelImage);
+		int[] vols = LabelImages.voxelCount(labelImage, labels);
+		
+		// find labels with sufficient area
+		ArrayList<Integer> labelsToKeep = new ArrayList<Integer>(labels.length);
+		for (int i = 0; i < labels.length; i++) {
+			if (vols[i] >= nVoxelMin) {
+				labelsToKeep.add(labels[i]);
+			}
+		}
+		
+		// Convert array list into int array
+		int[] labels2 = new int[labelsToKeep.size()];
+		for (int i = 0; i < labelsToKeep.size(); i++) {
+			labels2[i] = labelsToKeep.get(i);
+		}
+		
+		// keep only necessary labels
+		ImageStack result = keepLabels(labelImage, labels2); 
+
+		// update display info
+		result.setColorModel(labelImage.getColorModel());
+    	
+		return result;
 	}
 	
 	/**

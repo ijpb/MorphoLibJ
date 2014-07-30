@@ -3,8 +3,6 @@
  */
 package inra.ijpb.binary;
 
-import java.util.ArrayList;
-
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ByteProcessor;
@@ -92,32 +90,35 @@ public class BinaryImages {
 
 	/**
 	 * Applies area opening on a binary image: creates a new binary image that
-	 * contains only particle with at least the specified number of pixels.
+	 * contains only particles with at least the specified number of pixels.
 	 */
 	public static final ImageProcessor areaOpening(ImageProcessor image, int nPixelMin) {
 		// Labeling
 		ImageProcessor labelImage = ConnectedComponents.computeLabels(image, 4, 16);
 		
-		// compute area of each label
-		int[] labels = LabelImages.findAllLabels(labelImage);
-		int[] areas = LabelImages.pixelCount(labelImage, labels);
-		
-		// find labels with sufficient area
-		ArrayList<Integer> labelsToKeep = new ArrayList<Integer>(labels.length);
-		for (int i = 0; i < labels.length; i++) {
-			if (areas[i] >= nPixelMin) {
-				labelsToKeep.add(labels[i]);
-			}
-		}
-		
-		// Convert array list into int array
-		int[] labels2 = new int[labelsToKeep.size()];
-		for (int i = 0; i < labelsToKeep.size(); i++) {
-			labels2[i] = labelsToKeep.get(i);
-		}
-		
+//		// compute area of each label
+//		int[] labels = LabelImages.findAllLabels(labelImage);
+//		int[] areas = LabelImages.pixelCount(labelImage, labels);
+//		
+//		// find labels with sufficient area
+//		ArrayList<Integer> labelsToKeep = new ArrayList<Integer>(labels.length);
+//		for (int i = 0; i < labels.length; i++) {
+//			if (areas[i] >= nPixelMin) {
+//				labelsToKeep.add(labels[i]);
+//			}
+//		}
+//		
+//		// Convert array list into int array
+//		int[] labels2 = new int[labelsToKeep.size()];
+//		for (int i = 0; i < labelsToKeep.size(); i++) {
+//			labels2[i] = labelsToKeep.get(i);
+//		}
+//		
+//		// keep only necessary labels and binarize
+//		return binarize(LabelImages.keepLabels(labelImage, labels2));
+
 		// keep only necessary labels and binarize
-		return binarize(LabelImages.keepLabels(labelImage, labels2));
+		return binarize(LabelImages.areaOpening(labelImage, nPixelMin));
 	}
 	
 	
@@ -129,26 +130,29 @@ public class BinaryImages {
 		// Labeling
 		ImageStack labelImage = ConnectedComponents.computeLabels(image, 6, 16);
 		
-		// compute area of each label
-		int[] labels = LabelImages.findAllLabels(labelImage);
-		int[] vols = LabelImages.voxelCount(labelImage, labels);
-		
-		// find labels with sufficient area
-		ArrayList<Integer> labelsToKeep = new ArrayList<Integer>(labels.length);
-		for (int i = 0; i < labels.length; i++) {
-			if (vols[i] >= nVoxelMin) {
-				labelsToKeep.add(labels[i]);
-			}
-		}
-		
-		// Convert array list into int array
-		int[] labels2 = new int[labelsToKeep.size()];
-		for (int i = 0; i < labelsToKeep.size(); i++) {
-			labels2[i] = labelsToKeep.get(i);
-		}
-		
+//		// compute area of each label
+//		int[] labels = LabelImages.findAllLabels(labelImage);
+//		int[] vols = LabelImages.voxelCount(labelImage, labels);
+//		
+//		// find labels with sufficient area
+//		ArrayList<Integer> labelsToKeep = new ArrayList<Integer>(labels.length);
+//		for (int i = 0; i < labels.length; i++) {
+//			if (vols[i] >= nVoxelMin) {
+//				labelsToKeep.add(labels[i]);
+//			}
+//		}
+//		
+//		// Convert array list into int array
+//		int[] labels2 = new int[labelsToKeep.size()];
+//		for (int i = 0; i < labelsToKeep.size(); i++) {
+//			labels2[i] = labelsToKeep.get(i);
+//		}
+//		
+//		// keep only necessary labels and binarize
+//		return binarize(LabelImages.keepLabels(labelImage, labels2));
+
 		// keep only necessary labels and binarize
-		return binarize(LabelImages.keepLabels(labelImage, labels2));
+		return binarize(LabelImages.volumeOpening(labelImage, nVoxelMin));
 	}
 	
 	
