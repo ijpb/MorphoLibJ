@@ -148,7 +148,7 @@ public class SetLabelMapPlugin implements PlugIn, DialogListener {
 		// Create a new generic dialog with appropriate options
     	GenericDialog gd = new GenericDialog("Choose Label Map");
     	gd.addChoice("Colormap", CommonLabelMaps.getAllLabels(), 
-    			CommonLabelMaps.SPECTRUM.getLabel());
+    			CommonLabelMaps.JET.getLabel());
     	gd.addChoice("Background", Colors.getAllLabels(), Colors.WHITE.label);
     	gd.addCheckbox("Shuffle", true);
     	

@@ -26,6 +26,7 @@ public class ColorMaps {
 		FIRE("Fire"),
 		ICE("Ice"), 
 		SPECTRUM("Spectrum"), 
+		JET("Jet"), 
 		RGB332("RGB 3-3-2"), 
 		MAIN_COLORS("Main Colors"), 
 		MIXED_COLORS("Mixed Colors"),
@@ -56,6 +57,8 @@ public class ColorMaps {
 				lut = ColorMaps.createIceLut(nValues);
 			} else if (this == SPECTRUM) {
 				lut = ColorMaps.createSpectrumLut();
+			} else if (this == JET) {
+				lut = ColorMaps.createJetLut(nValues);
 			} else if (this == RGB332) {
 				lut = ColorMaps.createRGB332Lut();
 			} else if (this == MAIN_COLORS) {
@@ -188,6 +191,40 @@ public class ColorMaps {
 			map[i][2] = (byte) i;
 		}
 		
+		return map;
+	}
+	
+	public final static byte[][] createJetLut(int nColors) {
+		byte[][] lut = createJetLut();
+		if (nColors != lut.length) 
+			lut = interpolateLut(lut, nColors);
+		return lut;
+	}
+
+	public final static byte[][] createJetLut()	{
+		// create map
+		byte[][] map = new byte[256][3];
+		
+		// shade of dark blue to blue
+		for (int i = 0; i < 32; i++) 
+			map[i][2] = (byte) (127 + i * 4);
+		for (int i = 32; i < 96; i++) { 
+			map[i][1] = (byte) ((i - 32) * 4);
+			map[i][2] = (byte) 255;
+		}
+		for (int i = 96; i < 160; i++) { 
+			map[i][0] = (byte) ((i - 96) * 4);
+			map[i][1] = (byte) 255;
+			map[i][2] = (byte) (255 - (i - 96) * 4);
+		}
+		for (int i = 160; i < 224; i++) { 
+			map[i][0] = (byte) 255;
+			map[i][1] = (byte) (255 - (i - 160) * 4);
+			map[i][2] = 0;
+		}
+		for (int i = 224; i < 256; i++) { 
+			map[i][0] = (byte) (255 - (i - 224) * 4);
+		}
 		return map;
 	}
 	
