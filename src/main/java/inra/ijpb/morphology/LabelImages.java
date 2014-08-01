@@ -328,170 +328,108 @@ public class LabelImages {
 	}
 	
 	/**
-	 * Replace all values specified in label array by the value 0. 
-	 * This method changes directly the values within the image.
-	 * 
-	 * @param imagePlus an ImagePlus containing a 3D label image
-	 * @param labels the list of values to remove 
+	 * Removes all regions that touch the borders of the image.
+	 * @param imagePlus a label image
 	 */
-	public static final void removeLabels(ImagePlus imagePlus, int[] labels) {
+	public static final void removeBorderLabels(ImagePlus imagePlus) {
 		// Dispatch to appropriate function depending on dimension
 		if (imagePlus.getStackSize() == 1) {
-			// process planar image
-			ImageProcessor image = imagePlus.getProcessor();
-			removeLabels(image, labels);
+			removeBorderLabels(imagePlus.getProcessor());
 		} else {
-			// process image stack
-			ImageStack image = imagePlus.getStack();
-			removeLabels(image, labels);
+			removeBorderLabels(imagePlus.getStack());
 		}
 	}
-	
+
 	/**
-	 * Replace all values specified in label array by the value 0. 
-	 * @param image a label planar image
-	 * @param labels the list of values to remove 
+	 * Removes all regions that touch the borders of the image.
+	 * @param imagePlus a label image
 	 */
-	public static final void removeLabels(ImageProcessor image, int[] labels) {
+	public static final void removeBorderLabels(ImageProcessor image) {
+		int[] labels = findBorderLabels(image);
+		removeLabels(image, labels);
+	}
+
+	private static final int[] findBorderLabels(ImageProcessor image) {
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		
 		TreeSet<Integer> labelSet = new TreeSet<Integer>();
-		for (int i = 0; i < labels.length; i++) {
-			labelSet.add(labels[i]);
+	
+		for (int x = 0; x < sizeX; x++) {
+			labelSet.add((int) image.get(x, 0));
+			labelSet.add((int) image.get(x, sizeY - 1));
+		}
+	
+		for (int y = 0; y < sizeY; y++) {
+			labelSet.add((int) image.get(0, y));
+			labelSet.add((int) image.get(sizeX - 1, y));
+		}
+	
+		// remove label for the background
+		labelSet.remove(0);
+		
+		// convert to an array of int
+		int[] labels = new int[labelSet.size()];
+		int i = 0 ;
+		Iterator<Integer> iter = labelSet.iterator();
+		while(iter.hasNext()) {
+			labels[i++] = (int) iter.next();
 		}
 		
-		for (int y = 0; y < sizeY; y++) {
-			for (int x = 0; x < sizeX; x++) {
-				int value = image.get(x, y); 
-				if (value == 0)
-					continue;
-				if (labelSet.contains(value)) 
-					image.set(x, y, 0);
-			}
-		}
+		return labels;
 	}
 
-
 	/**
-	 * Replace all values specified in label array by the value 0. 
-	 * @param image a label 3D image
-	 * @param labels the list of values to remove 
+	 * Removes all regions that touch the borders of the image.
+	 * @param imagePlus a label image
 	 */
-	public static final void removeLabels(ImageStack image, int[] labels) {
+	public static final void removeBorderLabels(ImageStack image) {
+		int[] labels = findBorderLabels(image);
+		removeLabels(image, labels);
+	}
+
+	private static final int[] findBorderLabels(ImageStack image) {
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		int sizeZ = image.getSize();
 		
 		TreeSet<Integer> labelSet = new TreeSet<Integer>();
-		for (int i = 0; i < labels.length; i++) {
-			labelSet.add(labels[i]);
-		}
-		
-		for (int z = 0; z < sizeZ; z++) {
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
-					int value = (int) image.getVoxel(x, y, z); 
-					if (value == 0)
-						continue;
-					if (labelSet.contains(value)) 
-						image.setVoxel(x, y, z, 0);
-				}
-			}
-		}
-	}
 	
-	/**
-	 * Creates a new image containing only the specified labels.
-	 *  
-	 * @param imagePlus an ImagePlus containing a planar label image
-	 * @param labels the list of values to keep 
-	 */
-	public static final ImagePlus keepLabels(ImagePlus imagePlus, int[] labels) {
-		ImagePlus resultPlus;
-		String newName = imagePlus.getShortTitle() + "-keepLabels";
-		
-		// Dispatch to appropriate function depending on dimension
-		if (imagePlus.getStackSize() == 1) {
-			// process planar image
-			ImageProcessor image = imagePlus.getProcessor();
-			ImageProcessor result = keepLabels(image, labels);
-			resultPlus = new ImagePlus(newName, result);
-		} else {
-			// process image stack
-			ImageStack image = imagePlus.getStack();
-			ImageStack result = keepLabels(image, labels);
-			resultPlus = new ImagePlus(newName, result);
-		}
-		
-		resultPlus.copyScale(imagePlus);
-		return resultPlus;
-	}
-
-	/**
-	 * Creates a new image containing only the specified labels.
-	 *  
-	 * @param image a label planar image
-	 * @param labels the list of values to keep 
-	 */
-	public static final ImageProcessor keepLabels(ImageProcessor image, int[] labels) {
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-		
-		ImageProcessor result = image.createProcessor(sizeX,  sizeY);
-		
-		TreeSet<Integer> labelSet = new TreeSet<Integer>();
-		for (int i = 0; i < labels.length; i++) {
-			labelSet.add(labels[i]);
-		}
-		
 		for (int y = 0; y < sizeY; y++) {
 			for (int x = 0; x < sizeX; x++) {
-				int value = image.get(x, y); 
-				if (value == 0)
-					continue;
-				if (labelSet.contains(value)) 
-					result.set(x, y, value);
+				labelSet.add((int) image.getVoxel(x, y, 0));
+				labelSet.add((int) image.getVoxel(x, y, sizeZ - 1));
 			}
 		}
 		
-		return result;
-	}
-
-
-	/**
-	 * Creates a new image containing only the specified labels.
-	 *  
-	 * @param image a label 3D image
-	 * @param labels the list of values to keep 
-	 */
-	public static final ImageStack keepLabels(ImageStack image, int[] labels) {
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-		int sizeZ = image.getSize();
-		
-		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, image.getBitDepth());
-		
-		TreeSet<Integer> labelSet = new TreeSet<Integer>();
-		for (int i = 0; i < labels.length; i++) {
-			labelSet.add(labels[i]);
+		for (int z = 0; z < sizeZ; z++) {
+			for (int x = 0; x < sizeX; x++) {
+				labelSet.add((int) image.getVoxel(x, 0, z));
+				labelSet.add((int) image.getVoxel(x, sizeY - 1, z));
+			}
 		}
 		
 		for (int z = 0; z < sizeZ; z++) {
 			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
-					int value = (int) image.getVoxel(x, y, z); 
-					if (value == 0)
-						continue;
-					if (labelSet.contains(value)) 
-						result.setVoxel(x, y, z, value);
-				}
+				labelSet.add((int) image.getVoxel(0, y, z));
+				labelSet.add((int) image.getVoxel(sizeX - 1, y, z));
 			}
 		}
-		
-		return result;
-	}
 	
+		// remove label for the background
+		labelSet.remove(0);
+		
+		// convert to an array of int
+		int[] labels = new int[labelSet.size()];
+		int i = 0 ;
+		Iterator<Integer> iter = labelSet.iterator();
+		while(iter.hasNext()) {
+			labels[i++] = (int) iter.next();
+		}
+		
+		return labels;
+	}
+
 	/**
 	 * Returns a binary image that contains only the largest label.
 	 * 
@@ -775,4 +713,167 @@ public class LabelImages {
         
         return array;
     }
+
+	/**
+	 * Replace all values specified in label array by the value 0. 
+	 * This method changes directly the values within the image.
+	 * 
+	 * @param imagePlus an ImagePlus containing a 3D label image
+	 * @param labels the list of values to remove 
+	 */
+	public static final void removeLabels(ImagePlus imagePlus, int[] labels) {
+		// Dispatch to appropriate function depending on dimension
+		if (imagePlus.getStackSize() == 1) {
+			// process planar image
+			ImageProcessor image = imagePlus.getProcessor();
+			removeLabels(image, labels);
+		} else {
+			// process image stack
+			ImageStack image = imagePlus.getStack();
+			removeLabels(image, labels);
+		}
+	}
+
+	/**
+	 * Replace all values specified in label array by the value 0. 
+	 * @param image a label planar image
+	 * @param labels the list of values to remove 
+	 */
+	public static final void removeLabels(ImageProcessor image, int[] labels) {
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		
+		TreeSet<Integer> labelSet = new TreeSet<Integer>();
+		for (int i = 0; i < labels.length; i++) {
+			labelSet.add(labels[i]);
+		}
+		
+		for (int y = 0; y < sizeY; y++) {
+			for (int x = 0; x < sizeX; x++) {
+				int value = image.get(x, y); 
+				if (value == 0)
+					continue;
+				if (labelSet.contains(value)) 
+					image.set(x, y, 0);
+			}
+		}
+	}
+
+	/**
+	 * Replace all values specified in label array by the value 0. 
+	 * @param image a label 3D image
+	 * @param labels the list of values to remove 
+	 */
+	public static final void removeLabels(ImageStack image, int[] labels) {
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		int sizeZ = image.getSize();
+		
+		TreeSet<Integer> labelSet = new TreeSet<Integer>();
+		for (int i = 0; i < labels.length; i++) {
+			labelSet.add(labels[i]);
+		}
+		
+		for (int z = 0; z < sizeZ; z++) {
+			for (int y = 0; y < sizeY; y++) {
+				for (int x = 0; x < sizeX; x++) {
+					int value = (int) image.getVoxel(x, y, z); 
+					if (value == 0)
+						continue;
+					if (labelSet.contains(value)) 
+						image.setVoxel(x, y, z, 0);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Creates a new image containing only the specified labels.
+	 *  
+	 * @param imagePlus an ImagePlus containing a planar label image
+	 * @param labels the list of values to keep 
+	 */
+	public static final ImagePlus keepLabels(ImagePlus imagePlus, int[] labels) {
+		ImagePlus resultPlus;
+		String newName = imagePlus.getShortTitle() + "-keepLabels";
+		
+		// Dispatch to appropriate function depending on dimension
+		if (imagePlus.getStackSize() == 1) {
+			// process planar image
+			ImageProcessor image = imagePlus.getProcessor();
+			ImageProcessor result = keepLabels(image, labels);
+			resultPlus = new ImagePlus(newName, result);
+		} else {
+			// process image stack
+			ImageStack image = imagePlus.getStack();
+			ImageStack result = keepLabels(image, labels);
+			resultPlus = new ImagePlus(newName, result);
+		}
+		
+		resultPlus.copyScale(imagePlus);
+		return resultPlus;
+	}
+
+	/**
+	 * Creates a new image containing only the specified labels.
+	 *  
+	 * @param image a label planar image
+	 * @param labels the list of values to keep 
+	 */
+	public static final ImageProcessor keepLabels(ImageProcessor image, int[] labels) {
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		
+		ImageProcessor result = image.createProcessor(sizeX,  sizeY);
+		
+		TreeSet<Integer> labelSet = new TreeSet<Integer>();
+		for (int i = 0; i < labels.length; i++) {
+			labelSet.add(labels[i]);
+		}
+		
+		for (int y = 0; y < sizeY; y++) {
+			for (int x = 0; x < sizeX; x++) {
+				int value = image.get(x, y); 
+				if (value == 0)
+					continue;
+				if (labelSet.contains(value)) 
+					result.set(x, y, value);
+			}
+		}
+		
+		return result;
+	}
+
+	/**
+	 * Creates a new image containing only the specified labels.
+	 *  
+	 * @param image a label 3D image
+	 * @param labels the list of values to keep 
+	 */
+	public static final ImageStack keepLabels(ImageStack image, int[] labels) {
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		int sizeZ = image.getSize();
+		
+		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, image.getBitDepth());
+		
+		TreeSet<Integer> labelSet = new TreeSet<Integer>();
+		for (int i = 0; i < labels.length; i++) {
+			labelSet.add(labels[i]);
+		}
+		
+		for (int z = 0; z < sizeZ; z++) {
+			for (int y = 0; y < sizeY; y++) {
+				for (int x = 0; x < sizeX; x++) {
+					int value = (int) image.getVoxel(x, y, z); 
+					if (value == 0)
+						continue;
+					if (labelSet.contains(value)) 
+						result.setVoxel(x, y, z, value);
+				}
+			}
+		}
+		
+		return result;
+	}
 }
