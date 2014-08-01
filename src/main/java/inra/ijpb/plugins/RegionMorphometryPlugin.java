@@ -3,20 +3,13 @@ package inra.ijpb.plugins;
 
 import ij.IJ;
 import ij.ImagePlus;
-import ij.gui.GenericDialog;
 import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
 import inra.ijpb.measure.GeometricMeasures2D;
 
-/**
- * 
- * @deprecated use RegionMorphometryPlugin instead
- *
- */
-@Deprecated
-public class Crofton_Perimeter implements PlugInFilter {
+public class RegionMorphometryPlugin implements PlugInFilter {
 
     // ====================================================
     // Global Constants
@@ -72,21 +65,8 @@ public class Crofton_Perimeter implements PlugInFilter {
      */
     public void run(ImageProcessor ip) {
         
-        // create the dialog, with operator options
-        GenericDialog gd = new GenericDialog("Crofton Perimeter");
-        gd.addChoice("Number of Directions:", dirNumberLabels, dirNumberLabels[1]);
-        gd.showDialog();
-        
-        // If cancel was clicked, do nothing
-        if (gd.wasCanceled())
-            return;
-        
-        // extract number of directions
-        int nDirsIndex = gd.getNextChoiceIndex();
-        int nDirs = dirNumbers[nDirsIndex];
-        
         // check if image is a label image
-        if(imagePlus.getType() == ImagePlus.GRAY8 && 
+        if(imagePlus.getType() != ImagePlus.GRAY8 && 
         		imagePlus.getType() != ImagePlus.GRAY16 && 
         		imagePlus.getType() != ImagePlus.GRAY32) {
             IJ.showMessage("Input image should be a label image");
@@ -94,7 +74,7 @@ public class Crofton_Perimeter implements PlugInFilter {
         }
         
         // Execute the plugin
-        exec(imagePlus, nDirs);
+        exec(imagePlus, 4);
     }
     
     /**
@@ -107,8 +87,7 @@ public class Crofton_Perimeter implements PlugInFilter {
 
         if (debug) {
         	System.out.println("Compute Crofton perimeter on image '" 
-        			+ inputImage.getTitle() + "' using " + nDirs 
-        			+ " directions.");
+        			+ inputImage.getTitle());
         }
         
         ImageProcessor proc = inputImage.getProcessor();
@@ -121,32 +100,15 @@ public class Crofton_Perimeter implements PlugInFilter {
         	resol[1] = cal.pixelHeight;
         }
 
-        ResultsTable results = GeometricMeasures2D.croftonPerimeter(proc, resol, nDirs);
+        ResultsTable results = GeometricMeasures2D.analyzeRegions(proc, resol);
         
 		// create string for indexing results
-		String tableName = removeImageExtension(inputImage.getTitle()) + "-Perimeter"; 
+		String tableName = inputImage.getShortTitle() + "-Morphometry"; 
     
 		// show result
 		results.show(tableName);
 		
 		// return the created array
-		return new Object[]{"Crofton Perimeter", results};
+		return new Object[]{"Morphometry", results};
     }
-
-
-    /**
-     * Remove the extension of the filename if it belongs to a set of known
-     * image formats.
-     */
-    private static String removeImageExtension(String name) {
-        if (name.endsWith(".tif"))
-            name = name.substring(0, name.length()-4);
-        if (name.endsWith(".png"))
-            name = name.substring(0, name.length()-4);
-        if (name.endsWith(".bmp"))
-            name = name.substring(0, name.length()-4);
-        if (name.endsWith(".mhd"))
-            name = name.substring(0, name.length()-4);
-        return name;
-    }    
 }

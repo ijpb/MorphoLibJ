@@ -32,6 +32,50 @@ public class GeometricMeasures2D {
     // Main processing functions 
 
     /**
+	 * Computes several morphometric features for each region in the input 
+	 * label image. 
+	 * 
+	 * @param labelImage the input image containing label of particles
+	 * @param nDirs the number of directions to process, either 2 or 4
+	 * @param resol the spatial resolution
+	 * @return a data table containing the perimeter of each labeled particle 
+	 */
+	public static final ResultsTable analyzeRegions(ImageProcessor labelImage,
+			double[] resol) {
+	    // Check validity of parameters
+	    if (labelImage==null) return null;
+	    
+	    // identify the labels 
+	    int[] labels = LabelImages.findAllLabels(labelImage);
+	    int nbLabels = labels.length;
+	
+	    // compute area and perimeter (use 4 directions by default)
+	    double[] areas = area(labelImage, labels, resol);
+	    double[] perims = croftonPerimeter(labelImage, labels, resol, 4);
+	    
+	    // Create data table, and add shape parameters
+	    ResultsTable table = new ResultsTable();
+	    for (int i = 0; i < nbLabels; i++) {
+	    	int label = labels[i];
+	    	
+	    	table.incrementCounter();
+	    	table.addLabel(Integer.toString(label));
+	    	
+	    	table.addValue("Area", areas[i]);
+	    	table.addValue("Perimeter", perims[i]);
+	
+	    	// Also compute circularity (ensure value is between 0 and 1)
+	    	double p = perims[i];
+	    	double circu = Math.min(4 * Math.PI * areas[i] / (p * p), 1);
+	    	table.addValue("Circularity", circu);
+	    	table.addValue("Elong.", 1./circu);
+	    }
+		IJ.showStatus("");
+	
+	    return table;
+	}
+
+	/**
 	 * Computes the area for each particle in the label image, taking into account image resolution.
 	 * @see inra.ijpb.morphology.LabelImages#pixelCount(ij.process.ImageProcessor, int[])
 	 */
@@ -78,11 +122,15 @@ public class GeometricMeasures2D {
 	/**
      * Computes perimeter of each label using Crofton method.  
      * 
+     * @deprecated use analyzeRegions instead
+     * @see #analyzeRegions(ImageProcessor, double[], int)
+     * 
      * @param labelImage the input image containing label of particles
      * @param nDirs the number of directions to process, either 2 or 4
      * @param resol the spatial resolution
      * @return a data table containing the perimeter of each labeled particle 
      */
+    @Deprecated
 	public static final ResultsTable croftonPerimeter(ImageProcessor labelImage,
 			double[] resol, int nDirs) {
         // Check validity of parameters
@@ -192,6 +240,8 @@ public class GeometricMeasures2D {
 	
 	/**
 	 * Computes the Look-up table that is used to compute perimeter.
+	 * The result is an array with 16 entries, each entry corresponding to a 
+	 * binary 2-by-2 configuration of pixels. 
 	 */
 	private final static double[] computePerimeterLut(double[] resol, int nDirs) {
 		// distances between a pixel and its neighbors.
@@ -207,7 +257,7 @@ public class GeometricMeasures2D {
     	if (nDirs == 4)
     		weights = computeDirectionWeightsD4(resol);
  
-		// initialize output array (16 configurations in 2D)
+		// initialize output array (2^(2*2) = 16 configurations in 2D)
 		final int nConfigs = 16;
 		double[] tab = new double[nConfigs];
 
@@ -232,7 +282,7 @@ public class GeometricMeasures2D {
 			    	if (!im[y][x])
 			    		continue;
 			    	
-			    	// divides by two to convert intersection count to diameter
+			    	// divides by two to convert intersection count to projected diameter
 					ke1 = im[y][1 - x] ? 0 : (area / d1) / 2;
 					ke2 = im[1 - y][x] ? 0 : (area / d2) / 2;
 				    
