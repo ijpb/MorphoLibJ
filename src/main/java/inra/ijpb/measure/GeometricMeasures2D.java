@@ -113,7 +113,7 @@ public class GeometricMeasures2D {
 	    // count all pixels belonging to the particle
 	    for (int y = 0; y < height; y++)
 	        for (int x = 0; x < width; x++)
-	            if (image.get(x, y) == label)
+	            if (((int) image.getf(x, y)) == label)
 	            	count++;
 	
 	    return count;
@@ -200,7 +200,7 @@ public class GeometricMeasures2D {
 				localLabels.clear();
 				for (int y2 = y; y2 <= y + 1; y2++) {
 					for (int x2 = x; x2 <= x + 1; x2++) {
-						int label = image.get(x2, y2);
+						int label = (int) image.getf(x2, y2);
 						// do not consider background
 						if (label == 0)
 							continue;
@@ -219,10 +219,10 @@ public class GeometricMeasures2D {
 				for (int label : localLabels) {
 					// Compute index of local configuration
 					int index = 0;
-					index += image.get(x, y) == label ? 1 : 0;
-					index += image.get(x + 1, y) == label ? 2 : 0;
-					index += image.get(x, y + 1) == label ? 4 : 0;
-					index += image.get(x + 1, y + 1) == label ? 8 : 0;
+					index += (int) image.getf(x, y) == label ? 1 : 0;
+					index += (int) image.getf(x + 1, y) == label ? 2 : 0;
+					index += (int) image.getf(x, y + 1) == label ? 4 : 0;
+					index += (int) image.getf(x + 1, y + 1) == label ? 8 : 0;
 
 					// retriev label index from label value
 					int labelIndex = labelIndices.get(label);
@@ -565,13 +565,13 @@ public class GeometricMeasures2D {
         for (int y = 0; y < height; y++) {
         	
         	// Count border of image
-        	previous = image.get(0, y);
+        	previous = (int) image.getf(0, y);
         	if (countBorder && previous == label)
         		count++;
         	
         	// count middle of image
             for (int x = 0; x < width; x++) {
-                current = image.get(x, y);
+                current = (int) image.getf(x, y);
                 if (previous == label ^ current == label) // Exclusive or
                 	count++;
                 previous = current;
@@ -602,13 +602,13 @@ public class GeometricMeasures2D {
         for (int x = 0; x < width; x++) {
         	
         	// Count border of image
-        	previous = image.get(x, 0);
+        	previous = (int) image.getf(x, 0);
         	if (countBorder && previous == label)
         		count++;
         	
         	// count middle of image
             for (int y = 0; y < height; y++) {
-                current = image.get(x, y);
+                current = (int) image.getf(x, y);
                 if (previous == label ^ current == label) // Exclusive or
                 	count++;
                 previous = current;
@@ -643,7 +643,7 @@ public class GeometricMeasures2D {
         	
         	
         	// Count first line border
-        	previous = image.get(x0, y0);
+        	previous = (int) image.getf(x0, y0);
         	if (countBorder && previous == label)
         		count++;
         	
@@ -654,7 +654,7 @@ public class GeometricMeasures2D {
         	
         	// count middle of line
             for (int j = 1; j < lineLength; j++) {
-                current = image.get(x0 + j, y0 + j);
+                current = (int) image.getf(x0 + j, y0 + j);
                 if (previous == label ^ current == label) // Exclusive or
                 	count++;
                 previous = current;
@@ -689,7 +689,7 @@ public class GeometricMeasures2D {
         	int y1 = Math.max(i + 1 - width, 0);
         	
         	// Count first line border
-        	previous = image.get(x0, y0);
+        	previous = (int) image.getf(x0, y0);
         	if (countBorder && previous == label)
         		count++;
         	
@@ -700,7 +700,7 @@ public class GeometricMeasures2D {
         	
         	// count middle of line
             for (int j = 1; j <= lineLength; j++) {
-                current = image.get(x0 + j, y0 - j);
+                current = (int) image.getf(x0 + j, y0 - j);
                 if (previous == label ^ current == label) // Exclusive or
                 	count++;
                 previous = current;
@@ -775,7 +775,7 @@ public class GeometricMeasures2D {
         // compute centroid of each region
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-            	int label = image.get(x, y);
+            	int label = (int) image.getf(x, y);
             	if (label == 0)
             		continue;
             	
@@ -845,37 +845,5 @@ public class GeometricMeasures2D {
 
         return table;
     }
-    
-    
-    // ====================================================
-    // Utility functions 
-
-//    /**
-//     * Computes all the unique labels existing in the image, excluding label 0
-//     * (used for background). The result is sorted in ascend order.
-//     */
-//    private static int[] findAllLabels(ImageProcessor image) {
-//        int width 	= image.getWidth();
-//        int height 	= image.getHeight();
-//        
-//        TreeSet<Integer> labels = new TreeSet<Integer> ();
-//        
-//        // iterate on image pixels
-//        for (int y = 0; y < height; y++) 
-//            for (int x = 0; x < width; x++) 
-//                labels.add(image.get(x, y));
-//        
-//        // remove 0 if it exists
-//        if (labels.contains(0))
-//            labels.remove(0);
-//        
-//        // convert to an array of integers
-//        int[] array = new int[labels.size()];
-//        Iterator<Integer> iterator = labels.iterator();
-//        for (int i = 0; i < labels.size(); i++) 
-//            array[i] = iterator.next();
-//        
-//        return array;
-//    }
 
 }

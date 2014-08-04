@@ -18,8 +18,23 @@ public class LabelImagesTest {
 		ImageProcessor image = imagePlus.getProcessor();
 		
 		int[] labels = LabelImages.findAllLabels(image);
-		for (int i = 0; i < labels.length; i++)
+		for (int i = 0; i < labels.length; i++) {
 			assertFalse(labels[i] == 0);
+			assertEquals(i + 1, labels[i]);
+		}
+	}
+
+	@Test
+	public final void testFindAllLabels_FloatProcessor() {
+		String fileName = getClass().getResource("/files/blobs-lbl32.tif").getFile();
+		ImagePlus imagePlus = IJ.openImage(fileName);
+		ImageProcessor image = imagePlus.getProcessor();
+		
+		int[] labels = LabelImages.findAllLabels(image);
+		for (int i = 0; i < labels.length; i++) {
+			assertFalse(labels[i] == 0);
+			assertEquals(i + 1, labels[i]);
+		}
 	}
 
 	@Test

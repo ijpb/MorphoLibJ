@@ -10,9 +10,8 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
+import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
-import inra.ijpb.measure.GeometricMeasures2D;
-import inra.ijpb.measure.GeometricMeasures3D;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -169,8 +168,8 @@ public class LabelImages {
 	 */
 	public static final ImageProcessor areaOpening(ImageProcessor labelImage, int nPixelMin) {
 		// compute area of each label
-		int[] labels = LabelImages.findAllLabels(labelImage);
-		int[] areas = LabelImages.pixelCount(labelImage, labels);
+		int[] labels = findAllLabels(labelImage);
+		int[] areas = pixelCount(labelImage, labels);
 		
 		// find labels with sufficient area
 		ArrayList<Integer> labelsToKeep = new ArrayList<Integer>(labels.length);
@@ -187,7 +186,7 @@ public class LabelImages {
 		}
 		
 		// keep only necessary labels
-		ImageProcessor result = LabelImages.keepLabels(labelImage, labels2);
+		ImageProcessor result = keepLabels(labelImage, labels2);
 
 		if (!(result instanceof ColorProcessor))
 			result.setLut(labelImage.getLut());
@@ -468,13 +467,13 @@ public class LabelImages {
 		
 		// find the label of the largest particle
 		int[] labels = findAllLabels(image);
-		double[] areas = GeometricMeasures2D.area(image, labels, new double[]{1, 1});
+		int[] areas = pixelCount(image, labels);
 		int indMax = labels[indexOfMax(areas)];
 
 		// convert label image to binary image
 		for (int y = 0; y < sizeY; y++) {
 			for (int x = 0; x < sizeX; x++) {
-				int value = image.get(x, y); 
+				int value = (int) image.getf(x, y); 
 				if (value == indMax)
 					result.set(x, y, 255);
 				else
@@ -498,7 +497,7 @@ public class LabelImages {
 				
 		// find the label of the largest particle
 		int[] labels = findAllLabels(image);
-		double[] volumes = GeometricMeasures3D.volume(image, labels, new double[]{1, 1, 1});		
+		int[] volumes = voxelCount(image, labels);		
 		int indMax = indexOfMax(volumes);
 		
 		// convert label image to binary image
@@ -533,15 +532,15 @@ public class LabelImages {
 
 		// find the label of the largest particle
 		int[] labels = findAllLabels(image);
-		double[] areas = GeometricMeasures2D.area(image, labels, new double[]{1, 1});
+		int[] areas = pixelCount(image, labels);
 		int indMax = labels[indexOfMax(areas)];
 		
 		// remove voxels belonging to the largest label
 		for (int y = 0; y < sizeY; y++) {
 			for (int x = 0; x < sizeX; x++) {
-				int value = image.get(x, y); 
+				int value = (int) image.getf(x, y); 
 				if (value == indMax)
-					image.set(x, y, 0);
+					image.setf(x, y, 0);
 			}
 		}
 	}
@@ -553,7 +552,7 @@ public class LabelImages {
 		
 		// find the label of the largest particle
 		int[] labels = findAllLabels(image);
-		double[] volumes = GeometricMeasures3D.volume(image, labels, new double[]{1, 1, 1});
+		int[] volumes = voxelCount(image, labels);
 		int indMax = labels[indexOfMax(volumes)];
 		
 		for (int z = 0; z < sizeZ; z++) {
@@ -567,9 +566,9 @@ public class LabelImages {
 		}
 	}
 
-	private static final int indexOfMax(double[] values) {
+	private static final int indexOfMax(int[] values) {
 		int indMax = -1;
-		double volumeMax = 0;
+		int volumeMax = Integer.MIN_VALUE;
 		for (int i = 0; i < values.length; i++) {
 			if (values[i] > volumeMax) {
 				volumeMax = values[i];
@@ -601,7 +600,7 @@ public class LabelImages {
 		// count all pixels belonging to the particle
 	    for (int y = 0; y < height; y++) {
 	        for (int x = 0; x < width; x++) {
-	        	int label = image.get(x, y);
+	        	int label = (int) image.getf(x, y);
 	        	if (label == 0)
 					continue;
 				int labelIndex = labelIndices.get(label);
@@ -694,10 +693,20 @@ public class LabelImages {
         TreeSet<Integer> labels = new TreeSet<Integer> ();
         
         // iterate on image pixels
-        for (int y = 0; y < sizeY; y++)  {
-        	IJ.showProgress(y, sizeY);
-        	for (int x = 0; x < sizeX; x++) 
-        		labels.add(image.get(x, y));
+        if (image instanceof FloatProcessor) {
+        	// For float processor, use explicit case to int from float value  
+        	for (int y = 0; y < sizeY; y++)  {
+        		IJ.showProgress(y, sizeY);
+        		for (int x = 0; x < sizeX; x++) 
+        			labels.add((int) image.getf(x, y));
+        	}
+        } else {
+        	// for integer-based images, simply use integer result
+        	for (int y = 0; y < sizeY; y++)  {
+        		IJ.showProgress(y, sizeY);
+        		for (int x = 0; x < sizeX; x++) 
+        			labels.add(image.get(x, y));
+        	}
         }
         IJ.showProgress(1);
         
@@ -750,11 +759,11 @@ public class LabelImages {
 		
 		for (int y = 0; y < sizeY; y++) {
 			for (int x = 0; x < sizeX; x++) {
-				int value = image.get(x, y); 
+				int value = (int) image.getf(x, y); 
 				if (value == 0)
 					continue;
 				if (labelSet.contains(value)) 
-					image.set(x, y, 0);
+					image.setf(x, y, 0);
 			}
 		}
 	}
@@ -833,11 +842,11 @@ public class LabelImages {
 		
 		for (int y = 0; y < sizeY; y++) {
 			for (int x = 0; x < sizeX; x++) {
-				int value = image.get(x, y); 
+				int value = (int) image.getf(x, y); 
 				if (value == 0)
 					continue;
 				if (labelSet.contains(value)) 
-					result.set(x, y, value);
+					result.setf(x, y, value);
 			}
 		}
 		

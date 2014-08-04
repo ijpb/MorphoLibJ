@@ -28,6 +28,8 @@ public class RemoveLargestLabelPlugin implements PlugIn {
 		
 		ImagePlus resultPlus = imagePlus.duplicate();
 		LabelImages.removeLargestLabel(resultPlus);
+		String newName = imagePlus.getShortTitle() + "-killLargest";
+		resultPlus.setTitle(newName);
 		
 		// Display with same settings as original image
 		resultPlus.show();
