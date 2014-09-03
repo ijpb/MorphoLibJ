@@ -18,6 +18,7 @@ import inra.ijpb.data.Neighborhood3D;
 import inra.ijpb.data.Neighborhood3DC26;
 import inra.ijpb.data.Neighborhood3DC6;
 import inra.ijpb.data.VoxelRecord;
+import inra.ijpb.data.image.Images3D;
 
 /**
  * Marker-controlled version of the watershed transform (works for 2D and 3D images)
@@ -596,6 +597,9 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 	    
       	final int numVoxels = size1 * size2 * size3;
       	
+      	final double[] extent = Images3D.findMinAndMax(inputImage);
+      	double maxValue = extent[1];
+      	
       	// list to store neighbor labels
       	final ArrayList <Integer> neighborLabels = new ArrayList<Integer>();
       	
@@ -613,14 +617,18 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
       			if ( Thread.currentThread().isInterrupted() )
     				return null;	
       			
-      			IJ.showProgress( numVoxels-voxelList.size(), numVoxels );
+//      			IJ.showProgress( numVoxels-voxelList.size(), numVoxels );
 
       			final VoxelRecord voxelRecord = voxelList.poll();
+      			// show progression along voxel values
+	    		IJ.showProgress( (voxelRecord.getValue() + 1) / (maxValue + 1));
+	    		
       			final Cursor3D p = voxelRecord.getCursor();
 	    		final int i = p.getX();
 	    		final int j = p.getY();
 	    		final int k = p.getZ();
       			
+
       			// Read neighbor coordinates		       	
 		       	neigh.setCursor( p );
 		       	 
@@ -678,9 +686,12 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
       			if ( Thread.currentThread().isInterrupted() )
     				return null;	
       			
-      			IJ.showProgress( numVoxels-voxelList.size(), numVoxels );
+//      			IJ.showProgress( numVoxels-voxelList.size(), numVoxels );
 
       			final VoxelRecord voxelRecord = voxelList.poll();
+      			// show progression along voxel values
+	    		IJ.showProgress( (voxelRecord.getValue() + 1) / (maxValue + 1));
+	    		
       			final Cursor3D p = voxelRecord.getCursor();
 	    		final int i = p.getX();
 	    		final int j = p.getY();
@@ -740,7 +751,8 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 
 		final long end = System.currentTimeMillis();
 		if( verbose ) IJ.log("  Flooding took: " + (end-start) + " ms");
-		
+		IJ.showStatus("");
+	    
 		// Create result label image
 		ImageStack labelStack = markerImage.duplicate().getStack();
 	    
