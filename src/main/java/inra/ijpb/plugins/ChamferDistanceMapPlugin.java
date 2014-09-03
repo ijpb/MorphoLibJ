@@ -26,7 +26,7 @@ public class ChamferDistanceMapPlugin implements ExtendedPlugInFilter, DialogLis
 
 	
 	/** Apparently, it's better to store flags in plugin */
-	private int flags = DOES_8G | KEEP_PREVIEW | FINAL_PROCESSING | NO_CHANGES;
+	private int flags = DOES_8G | KEEP_PREVIEW | FINAL_PROCESSING;
 	PlugInFilterRunner pfr;
 	int nPasses;
 	boolean previewing = false;

@@ -9,6 +9,7 @@ import ij.plugin.filter.ExtendedPlugInFilter;
 import ij.plugin.filter.PlugInFilterRunner;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
+import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.event.ProgressEvent;
 import inra.ijpb.event.ProgressListener;
@@ -49,15 +50,15 @@ implements ExtendedPlugInFilter, DialogListener, ProgressListener, StatusListene
 	/** an instance of ImagePlus to display the Strel */
 	private ImagePlus strelDisplay = null;
 	
-	
-	ImagePlus image = null;
 	Operation op = Operation.DILATION;
 	Strel.Shape shape = Strel.Shape.SQUARE;
 	int radius = 2;
 	boolean showStrel;
 	
 	/**
-	*/
+	 * Setup function is called in the beginning of the process, but also at the
+	 * end. It is also used for displaying "about" frame.
+	 */
 	public int setup(String arg, ImagePlus imp) {
 		
 		// about...
@@ -69,9 +70,9 @@ implements ExtendedPlugInFilter, DialogListener, ProgressListener, StatusListene
 		// Called at the end for cleaning the results
 		if (arg.equals("final")) {
 			// replace the preview image by the original image 
-			imagePlus.setProcessor(baseImage);
+			resetPreview();
 			imagePlus.updateAndDraw();
-			
+	    	
 			// Create a new ImagePlus with the filter result
 			String newName = createResultImageName(imagePlus);
 			ImagePlus resPlus = new ImagePlus(newName, result);
@@ -105,9 +106,12 @@ implements ExtendedPlugInFilter, DialogListener, ProgressListener, StatusListene
         gd.showDialog();
         previewing = false;
         
-        if (gd.wasCanceled())
+        if (gd.wasCanceled()) 
+        {
+        	resetPreview();
         	return DONE;
-			
+        }	
+        
     	parseDialogParameters(gd);
 			
 		// clean up an return 
@@ -116,7 +120,14 @@ implements ExtendedPlugInFilter, DialogListener, ProgressListener, StatusListene
 	}
 
     public boolean dialogItemChanged(GenericDialog gd, AWTEvent evt) {
+    	boolean wasPreview = this.previewing;
     	parseDialogParameters(gd);
+    	
+    	// if preview checkbox was unchecked, replace the preview image by the original image
+    	if (wasPreview && !this.previewing)
+    	{
+    		resetPreview();
+    	}
     	return true;
     }
 
@@ -126,8 +137,9 @@ implements ExtendedPlugInFilter, DialogListener, ProgressListener, StatusListene
 		this.shape 		= Strel.Shape.fromLabel(gd.getNextChoice());
 		this.radius 	= (int) gd.getNextNumber();		
 		this.showStrel 	= gd.getNextBoolean();
-
+		this.previewing = gd.getPreviewCheckbox().getState();
     }
+    
     public void setNPasses (int nPasses) {
     	this.nPasses = nPasses;
     }
@@ -142,20 +154,20 @@ implements ExtendedPlugInFilter, DialogListener, ProgressListener, StatusListene
 		strel.addStatusListener(this);
 		
 		// Eventually display the structuring element used for processing 
-		if (showStrel) {
+		if (showStrel) 
+		{
 			showStrelImage(strel);
 		}
 		
-		// Execute core of the plugin
-		result = op.apply(image, strel);
+		// Execute core of the plugin on the original image
+		result = op.apply(this.baseImage, strel);
 		if (!(result instanceof ColorProcessor))
-			result.setLut(image.getLut());
+			result.setLut(this.baseImage.getLut());
 
-    	if (previewing) {
+    	if (previewing) 
+    	{
     		// Fill up the values of original image with values of the result
-//    		double valMax = result.getMax();
     		for (int i = 0; i < image.getPixelCount(); i++) {
-//    			image.set(i, (int) (255 * result.getf(i) / valMax));
     			image.setf(i, result.getf(i));
     		}
     		image.resetMinAndMax();
@@ -172,6 +184,22 @@ implements ExtendedPlugInFilter, DialogListener, ProgressListener, StatusListene
 				"(david.legland@grignon.inra.fr)");
 	}
 
+	private void resetPreview()
+	{
+		ImageProcessor image = this.imagePlus.getProcessor();
+		if (image instanceof FloatProcessor)
+		{
+			for (int i = 0; i < image.getPixelCount(); i++)
+				image.setf(i, this.baseImage.getf(i));
+		}
+		else
+		{
+			for (int i = 0; i < image.getPixelCount(); i++)
+				image.set(i, this.baseImage.get(i));
+		}
+		imagePlus.updateAndDraw();
+	}
+	
 	/**
 	 * Displays the current structuring element in a new ImagePlus. 
 	 * @param strel the structuring element to display
