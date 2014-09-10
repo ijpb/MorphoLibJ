@@ -62,7 +62,16 @@ public class Watershed
 			final ImageProcessor ip = wt.apply( hMin, hMax );
 			if( null != ip )
 			{
-				final ImagePlus ws = new ImagePlus( input.getTitle() + "-watershed", ip );
+				String title = input.getTitle();
+				String ext = "";
+				int index = title.lastIndexOf( "." );
+				if( index != -1 )
+				{
+					ext = title.substring( index );
+					title = title.substring( 0, index );				
+				}
+				
+				final ImagePlus ws = new ImagePlus( title + "-watershed" + ext, ip );
 				ws.setCalibration( input.getCalibration() );
 				return ws;
 			}
