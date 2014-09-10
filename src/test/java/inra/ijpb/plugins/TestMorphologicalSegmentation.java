@@ -45,7 +45,7 @@ public class TestMorphologicalSegmentation {
 								+ usePriorityQueue + ", dams = " + calculateDams + ")", 0, diffImagePlus( result8bit, result16bit ) );
 				IJ.run( input.duplicate(), "32-bit", "" );
 				ImagePlus result32bit = segmentImage( input, dynamic, connectivity, gradientRadius, usePriorityQueue, calculateDams );
-				assertEquals( "Different results for 8 and 16 bit images (priority queue = " 
+				assertEquals( "Different results for 8 and 32 bit images (priority queue = " 
 						+ usePriorityQueue + ", dams = " + calculateDams + ")", 0, diffImagePlus( result8bit, result32bit ) );
 			}
 	}

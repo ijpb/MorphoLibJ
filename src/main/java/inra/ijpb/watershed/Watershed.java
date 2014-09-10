@@ -85,19 +85,16 @@ public class Watershed
 	 * 
 	 * @param input original grayscale image (usually a gradient image)
 	 * @param mask binary mask to restrict the regions of interest
-	 * @param connectivity voxel connectivity to define neighborhoods
+	 * @param connectivity pixel connectivity to define neighborhoods (4 or 8)
 	 * @return image of labeled catchment basins with dams (labels are 1, 2, ...)
 	 */
 	public static ImagePlus computeWatershed( 
 			ImageProcessor input,
 			ImageProcessor mask,
 			int connectivity )
-	{
-		final ImagePlus inputIP = new ImagePlus( "input", input );		
-		final ImagePlus binaryMaskIP = ( null != mask ) ? new ImagePlus( "binary mask", mask ) : null;
-		WatershedTransform3D wt = new WatershedTransform3D( inputIP, binaryMaskIP, connectivity );
-		
-		return wt.apply();		
+	{		
+		WatershedTransform2D wt = new WatershedTransform2D( input, mask, connectivity );
+		return new ImagePlus( "watershed", wt.apply() );		
 	}
 	
 	/**
