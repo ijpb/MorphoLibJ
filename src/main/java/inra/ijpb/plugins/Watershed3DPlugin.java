@@ -144,7 +144,11 @@ public class Watershed3DPlugin implements PlugIn
             }
             
             
-            final int connectivity = use26neighbors ? 26 : 6;
+            int connectivity = use26neighbors ? 26 : 6;
+            
+            // check if input image is 2d
+            if( inputImage.getImageStackSize() == 1 )
+            	connectivity = use26neighbors ? 8 : 4;
             
             ImagePlus result = process( inputImage, maskImage, connectivity, hMin, hMax );
             
