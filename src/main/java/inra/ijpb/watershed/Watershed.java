@@ -93,7 +93,7 @@ public class Watershed
 	 * @param connectivity voxel connectivity to define neighborhoods
 	 * @return image of labeled catchment basins with dams (labels are 1, 2, ...)
 	 */
-	public static ImagePlus computeWatershed( 
+	public static ImageStack computeWatershed( 
 			ImageStack input,
 			ImageStack mask,
 			int connectivity )
@@ -102,7 +102,11 @@ public class Watershed
 		final ImagePlus binaryMaskIP = ( null != mask ) ? new ImagePlus( "binary mask", mask ) : null;
 		WatershedTransform3D wt = new WatershedTransform3D( inputIP, binaryMaskIP, connectivity );
 		
-		return wt.apply();		
+		final ImagePlus ws = wt.apply();
+		if( null != ws )
+			return ws.getImageStack();
+		else 
+			return null;
 	}
 	
 	/**
@@ -116,17 +120,13 @@ public class Watershed
 	 * @param connectivity pixel connectivity to define neighborhoods (4 or 8)
 	 * @return image of labeled catchment basins with dams (labels are 1, 2, ...)
 	 */
-	public static ImagePlus computeWatershed( 
+	public static ImageProcessor computeWatershed( 
 			ImageProcessor input,
 			ImageProcessor mask,
 			int connectivity )
 	{		
 		WatershedTransform2D wt = new WatershedTransform2D( input, mask, connectivity );
-		final ImageProcessor ip = wt.apply();
-		if( null != ip )
-			return new ImagePlus( "watershed", ip );
-		else 
-			return null;
+		return wt.apply();
 	}
 	
 	/**
