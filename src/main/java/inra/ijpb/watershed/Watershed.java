@@ -122,7 +122,11 @@ public class Watershed
 			int connectivity )
 	{		
 		WatershedTransform2D wt = new WatershedTransform2D( input, mask, connectivity );
-		return new ImagePlus( "watershed", wt.apply() );		
+		final ImageProcessor ip = wt.apply();
+		if( null != ip )
+			return new ImagePlus( "watershed", ip );
+		else 
+			return null;
 	}
 	
 	/**
