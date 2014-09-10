@@ -136,7 +136,7 @@ public class Watershed
 	 * @param input original grayscale image (usually a gradient image)
 	 * @param marker image with labeled markers
 	 * @param binaryMask binary mask to restrict the regions of interest
-	 * @param connectivity voxel connectivity to define neighborhoods
+	 * @param connectivity voxel connectivity to define neighborhoods (4 or 8 for 2D, 6 or 26 for 3D)
 	 * @param usePriorityQueue select/deselect the use of the algorithm based on a priority queue
 	 * @param getDams select/deselect the calculation of dams
 	 * @return image of labeled catchment basins (labels are 1, 2, ...)
@@ -149,21 +149,65 @@ public class Watershed
 			boolean usePriorityQueue,
 			boolean getDams )
 	{
-		MarkerControlledWatershedTransform3D wt = new MarkerControlledWatershedTransform3D( input, marker, binaryMask, connectivity );
-		if( usePriorityQueue )
+		if( connectivity == 6 || connectivity == 26 )
 		{
-			if( getDams )
-				return wt.applyWithPriorityQueueAndDams();
-			else 
-				return wt.applyWithPriorityQueue();
+			MarkerControlledWatershedTransform3D wt = new MarkerControlledWatershedTransform3D( input, marker, binaryMask, connectivity );
+			if( usePriorityQueue )
+			{
+				if( getDams )
+					return wt.applyWithPriorityQueueAndDams();
+				else 
+					return wt.applyWithPriorityQueue();
+			}
+			else
+			{
+				if( getDams )
+					return wt.applyWithSortedListAndDams();
+				else
+					return wt.applyWithSortedList();			
+			}
+		}
+		else if( connectivity == 4 || connectivity == 8 )
+		{
+			MarkerControlledWatershedTransform2D wt = new MarkerControlledWatershedTransform2D( 
+					input.getProcessor(), marker.getProcessor(), 
+					null != binaryMask ? binaryMask.getProcessor() : null, connectivity );
+			ImageProcessor ip;
+			if( usePriorityQueue )
+			{
+				if( getDams )
+					ip = wt.applyWithPriorityQueueAndDams();
+				else 
+					ip = wt.applyWithPriorityQueue();
+			}
+			else
+			{
+				if( getDams )
+					ip = wt.applyWithSortedListAndDams();
+				else
+					ip = wt.applyWithSortedList();			
+			}
+			
+			if( null != ip )
+			{
+				String title = input.getTitle();
+				String ext = "";
+				int index = title.lastIndexOf( "." );
+				if( index != -1 )
+				{
+					ext = title.substring( index );
+					title = title.substring( 0, index );				
+				}
+				
+				final ImagePlus ws = new ImagePlus( title + "-watershed" + ext, ip );
+				ws.setCalibration( input.getCalibration() );
+				return ws;
+			}
+			else
+				return null;
 		}
 		else
-		{
-			if( getDams )
-				return wt.applyWithSortedListAndDams();
-			else
-				return wt.applyWithSortedList();			
-		}
+			return null;
 	}
 	
 	/**
