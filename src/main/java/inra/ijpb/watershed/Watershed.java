@@ -49,9 +49,28 @@ public class Watershed
 			double hMin,
 			double hMax )
 	{
-		WatershedTransform3D wt = new WatershedTransform3D( input, mask, connectivity );
-		
-		return wt.apply( hMin, hMax );		
+		if( connectivity == 6 || connectivity == 26 )
+		{
+			WatershedTransform3D wt = new WatershedTransform3D( input, mask, connectivity );
+			return wt.apply( hMin, hMax );
+		}
+		else if( connectivity == 4 || connectivity == 8 )
+		{
+			WatershedTransform2D wt = 
+					new WatershedTransform2D( input.getProcessor(), 
+							null != mask ? mask.getProcessor() : null, connectivity );
+			final ImageProcessor ip = wt.apply( hMin, hMax );
+			if( null != ip )
+			{
+				final ImagePlus ws = new ImagePlus( input.getTitle() + "-watershed", ip );
+				ws.setCalibration( input.getCalibration() );
+				return ws;
+			}
+			else
+				return null;
+		}
+		else
+			return null;
 	}
 	
 	/**
