@@ -15,6 +15,7 @@ import inra.ijpb.data.Neighborhood2D;
 import inra.ijpb.data.Neighborhood2DC4;
 import inra.ijpb.data.Neighborhood2DC8;
 import inra.ijpb.data.PixelRecord;
+import inra.ijpb.data.image.Images3D;
 
 /**
 *
@@ -772,8 +773,7 @@ public class WatershedTransform2D
         
         int heightIndex1 = currentIndex;
         int heightIndex2 = currentIndex;
-        
-        
+                
 	    // for h <- h_min to h_max; geodesic SKIZ of level h-1 inside level h
 	    while( currentIndex < pixelList.size() && h <= hMax )
 	    {	    	
@@ -805,14 +805,14 @@ public class WatershedTransform2D
 	    			int v = c.getY();
 
 	    			// initialize queue with neighbors at level h of current basins or watersheds
-	    			if ( u >= 0 && u < size1 && v >= 0 && v < size2 
-	    					&& tabLabels[ u ][ v ] >= WSHED 
-	    					&& useMask && maskImage.getf( u, v ) > 0 ) 
-	    				{
-	    					fifo.addLast( p );
-	    					tabLabels[ i ][ j ] = INQUEUE;
-	    					break;
-	    				}	    			
+	    			if( useMask == false || maskImage.getf( u, v ) > 0 )
+	    				if ( u >= 0 && u < size1 && v >= 0 && v < size2 
+	    					&& tabLabels[ u ][ v ] >= WSHED	) 
+	    					{
+	    						fifo.addLast( p );
+	    						tabLabels[ i ][ j ] = INQUEUE;
+	    						break;
+	    					}	    			
 	    		}// end for	    	
 	    	}// end for
 
@@ -832,32 +832,32 @@ public class WatershedTransform2D
 	    			int u = c.getX();
 	    			int v = c.getY();
 
-	    			if ( u >= 0 && u < size1 && v >= 0 && v < size2 && useMask && maskImage.getf( u, v ) > 0 )
-	    			{
-	    				if ( tabLabels[ u ][ v ] > 0 ) // i.e. the pixel belongs to an already labeled basin
+	    			if( useMask == false || maskImage.getf( u, v ) > 0 )
+	    				if ( u >= 0 && u < size1 && v >= 0 && v < size2 )
 	    				{
-	    					if ( tabLabels[ i ][ j ] == INQUEUE || (tabLabels[ i ][ j ] == WSHED && flag == true ) )
+	    					if ( tabLabels[ u ][ v ] > 0 ) // i.e. the pixel belongs to an already labeled basin
 	    					{
-	    						tabLabels[ i ][ j ] = tabLabels[ u ][ v ];
+	    						if ( tabLabels[ i ][ j ] == INQUEUE || (tabLabels[ i ][ j ] == WSHED && flag == true ) )
+	    						{
+	    							tabLabels[ i ][ j ] = tabLabels[ u ][ v ];
+	    						}
+	    						else if ( tabLabels[ i ][ j ] > 0 && tabLabels[ i ][ j ] != tabLabels[ u ][ v ] )
+	    						{
+	    							tabLabels[ i ][ j ] = WSHED;
+	    							flag = false;
+	    						}       					
 	    					}
-	    					else if ( tabLabels[ i ][ j ] > 0 && tabLabels[ i ][ j ] != tabLabels[ u ][ v ] )
+	    					else if ( tabLabels[ u ][ v ] == WSHED && tabLabels[ i ][ j ] == INQUEUE )
 	    					{
 	    						tabLabels[ i ][ j ] = WSHED;
-	    						flag = false;
-	    					}       					
-	    				}
-	    				else if ( tabLabels[ u ][ v ] == WSHED && tabLabels[ i ][ j ] == INQUEUE )
-	    				{
-	    					tabLabels[ i ][ j ] = WSHED;
-	    					flag = true;
-	    				}
-	    				else if ( tabLabels[ u ][ v ] == MASK )
-	    				{
-	    					tabLabels[ u ][ v ] = INQUEUE;
-	    					fifo.addLast( c );
-
-	    				}
-	    			}       			       			
+	    						flag = true;
+	    					}
+	    					else if ( tabLabels[ u ][ v ] == MASK )
+	    					{
+	    						tabLabels[ u ][ v ] = INQUEUE;
+	    						fifo.addLast( c );
+	    					}
+	    				}       			       			
 	    		}	    	
 	    	}
 
@@ -890,25 +890,25 @@ public class WatershedTransform2D
 
 	    	    		// read neighbor coordinates
 	    	    		neigh.setCursor( p2 );
-
+	    	    		
 	    	    		for( Cursor2D c : neigh.getNeighbors() ) // inspect neighbors of p2		       		
 	    	    		{       			
 	    	    			int u = c.getX();
 	    	    			int v = c.getY();
-	    	    			
-	    	    			if ( u >= 0 && u < size1 && v >= 0 && v < size2 
-	    	    					&& tabLabels[ u ][ v ] == MASK 
-	    	    					&& useMask && maskImage.getf( u, v ) > 0 )
-	    	    			{
-	    	    				fifo.addLast( c );
-	    	    				tabLabels[ u ][ v ] = currentLabel;
-	    	    			}	    	    				    	    			
+	    	    			if( useMask == false || maskImage.getf( u, v ) > 0 )
+	    	    				if ( u >= 0 && u < size1 && v >= 0 && v < size2 
+	    	    					&& tabLabels[ u ][ v ] == MASK )
+	    	    					{
+	    	    						fifo.addLast( c );
+	    	    						tabLabels[ u ][ v ] = currentLabel;
+	    	    					}	    	    				    	    			
 	    	    		}// end for
 	    	    	}// end while
 	    		}// end if	    		
 	    	}// end for
 	    		    	
 	    	// update animation
+	    	
 	    	animation.addSlice( "h = " + h, new FloatProcessor( tabLabels ) );
 	    	
 	    	IJ.showProgress( h / hMax );
@@ -920,7 +920,9 @@ public class WatershedTransform2D
 	    final long end = System.currentTimeMillis();
 		if( verbose ) IJ.log("  Flooding took: " + (end-start) + " ms");	    	   
 	    				    
-	    return new ImagePlus( "Watershed flooding", animation );
+	    ImagePlus result = new ImagePlus( "Watershed flooding", animation );
+	    Images3D.optimizeDisplayRange( result );
+	    return result;
 	}
 	
 	
