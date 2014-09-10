@@ -230,25 +230,16 @@ public class Watershed
 			boolean usePriorityQueue,
 			boolean getDams )
 	{		
+				
 		final ImagePlus inputIP = new ImagePlus( "input", input );
 		final ImagePlus markerIP = new ImagePlus( "marker", marker );
 		final ImagePlus binaryMaskIP = ( null != binaryMask ) ? new ImagePlus( "binary mask", binaryMask ) : null;
-		
-		MarkerControlledWatershedTransform3D wt = new MarkerControlledWatershedTransform3D( inputIP, markerIP, binaryMaskIP, connectivity );
-		if( usePriorityQueue )
-		{
-			if( getDams )
-				return wt.applyWithPriorityQueueAndDams().getImageStack();
-			else 
-				return wt.applyWithPriorityQueue().getImageStack();
-		}
-		else
-		{
-			if( getDams )
-				return wt.applyWithSortedListAndDams().getImageStack();
-			else
-				return wt.applyWithSortedList().getImageStack();			
-		}
+
+		ImagePlus ws = computeWatershed( inputIP, markerIP, binaryMaskIP, connectivity, usePriorityQueue, getDams );
+		if ( null != ws )
+			return ws.getImageStack();
+		else 
+			return null;
 	}
 	
 	/**
