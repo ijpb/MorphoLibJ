@@ -178,6 +178,7 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 
 		final long end = System.currentTimeMillis();
 		if( verbose ) IJ.log("  Flooding took: " + (end-start) + " ms");
+		IJ.showProgress( 1.0 );
 					
 	    return new FloatProcessor( tabLabels );
 	}
@@ -447,6 +448,7 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 
 		final long end = System.currentTimeMillis();
 		if( verbose ) IJ.log("  Flooding took: " + (end-start) + " ms");
+		IJ.showProgress( 1.0 );
 				
 		return new FloatProcessor( tabLabels );
 	}
@@ -751,6 +753,7 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 
 		final long end = System.currentTimeMillis();
 		if( verbose ) IJ.log("  Flooding took: " + (end-start) + " ms");
+		IJ.showProgress( 1.0 );
 		
 	    return new FloatProcessor( tabLabels );
 	}
@@ -1397,6 +1400,7 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 		final long end = System.currentTimeMillis();
 		if( verbose ) IJ.log("  Flooding took: " + (end-start) + " ms");
 		IJ.showStatus("");
+		IJ.showProgress( 1.0 );
 	    
 		// Create result label image
 		ImageProcessor labelProcessor = markerImage.duplicate();
