@@ -83,7 +83,7 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 		// Check connectivity has a correct value
 		if (connectivity != 4 && connectivity != 8) {
 			throw new RuntimeException(
-					"Connectivity for stacks must be either 4 or 8, not "
+					"Connectivity for 2D images must be either 4 or 8, not "
 							+ connectivity);
 		}
 	    
@@ -205,7 +205,7 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 		// Check connectivity has a correct value
 		if (connectivity != 4 && connectivity != 8) {
 			throw new RuntimeException(
-					"Connectivity for stacks must be either 4 or 8, not "
+					"Connectivity for 2D images must be either 4 or 8, not "
 							+ connectivity);
 		}
 	    
@@ -345,7 +345,7 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 		// Check connectivity has a correct value
 		if (connectivity != 4 && connectivity != 8) {
 			throw new RuntimeException(
-					"Connectivity for stacks must be either 4 or 8, not "
+					"Connectivity for 2D images must be either 4 or 8, not "
 							+ connectivity);
 		}
 	    
@@ -474,7 +474,7 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 		// Check connectivity has a correct value
 		if (connectivity != 4 && connectivity != 8) {
 			throw new RuntimeException(
-					"Connectivity for stacks must be either 4 or 8, not "
+					"Connectivity for 2D images must be either 4 or 8, not "
 							+ connectivity);
 		}
 	    
@@ -625,7 +625,7 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 		if ( connectivity != 4 && connectivity != 8 ) 
 		{
 			throw new RuntimeException(
-					"Connectivity for stacks must be either 4 or 8, not "
+					"Connectivity for 2D images must be either 4 or 8, not "
 							+ connectivity);
 		}	    
 	    
@@ -781,7 +781,7 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 		if ( connectivity != 4 && connectivity != 8 ) 
 		{
 			throw new RuntimeException(
-					"Connectivity for stacks must be either 4 or 8, not "
+					"Connectivity for 2D images must be either 4 or 8, not "
 							+ connectivity);
 		}	    
 	    
@@ -978,7 +978,7 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 		if ( connectivity != 4 && connectivity != 8 ) 
 		{
 			throw new RuntimeException(
-					"Connectivity for stacks must be either 4 or 8, not "
+					"Connectivity for 2D images must be either 4 or 8, not "
 							+ connectivity);
 		}	    
 
@@ -1224,7 +1224,7 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 		if ( connectivity != 4 && connectivity != 8 ) 
 		{
 			throw new RuntimeException(
-					"Connectivity for stacks must be either 4 or 8, not "
+					"Connectivity for 2D images must be either 4 or 8, not "
 							+ connectivity);
 		}	    
 
