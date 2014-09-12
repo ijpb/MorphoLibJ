@@ -97,6 +97,12 @@ public class WatershedTransform2D
 	{
 		this.inputImage = input;
 		this.maskImage = mask;
+		
+		if( connectivity != 4 && connectivity != 8 ) 
+	    {
+			throw new IllegalArgumentException("Marker and input images must have the same size");
+		}
+		
 		this.connectivity = connectivity;
 	}
 	
