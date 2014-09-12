@@ -809,10 +809,13 @@ public class MorphologicalSegmentation implements PlugIn {
 		{							
 			super.windowClosing( e );
 
-			inputImage.setSlice( displayImage.getCurrentSlice() );
-			
-			// display input image
-			inputImage.getWindow().setVisible( true );			
+			if( null != inputImage )
+			{
+				inputImage.setSlice( displayImage.getCurrentSlice() );
+
+				// display input image
+				inputImage.getWindow().setVisible( true );
+			}
 
 			// remove listeners
 			borderButton.removeActionListener( listener );
@@ -824,9 +827,11 @@ public class MorphologicalSegmentation implements PlugIn {
 			toggleOverlayCheckBox.removeActionListener( listener );
 			resultButton.removeActionListener( listener );
 			
-			displayImage.close();
-			displayImage = null;
-			
+			if( null != displayImage )
+			{
+				//displayImage.close();
+				displayImage = null;
+			}
 			// shut down executor service
 			exec.shutdownNow();
 		}
