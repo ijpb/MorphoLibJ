@@ -320,8 +320,20 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 		final long end = System.currentTimeMillis();
 		if( verbose ) IJ.log("  Flooding took: " + (end-start) + " ms");
 		IJ.showProgress( 1.0 );
+		
+		// Create result label image
+		FloatProcessor labelProcessor = new FloatProcessor(size1, size2);
+		for (int i = 0; i < size1; ++i)
+			for (int j = 0; j < size2; ++j)	
+			{					
+				if( tabLabels[ i ][ j ] == INIT ) // set unlabeled pixels to WSHED
+					labelProcessor.setf( i, j, 0 );
+				else
+					labelProcessor.setf( i, j, tabLabels[ i ][ j ] );
+			}
+		animation.addSlice( "h=" + h, labelProcessor );
 					
-	    return new ImagePlus( "Watersed flooding by sorted list", animation );
+	    return new ImagePlus( "Watersed flooding with sorted list", animation );
 	}
 	
 	
@@ -597,6 +609,18 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 		final long end = System.currentTimeMillis();
 		if( verbose ) IJ.log("  Flooding took: " + (end-start) + " ms");
 		IJ.showProgress( 1.0 );
+		
+		// Create result label image
+		FloatProcessor labelProcessor = new FloatProcessor(size1, size2);
+		for (int i = 0; i < size1; ++i)
+			for (int j = 0; j < size2; ++j)	
+			{					
+				if( tabLabels[ i ][ j ] == INIT ) // set unlabeled pixels to WSHED
+					labelProcessor.setf( i, j, 0 );
+				else
+					labelProcessor.setf( i, j, tabLabels[ i ][ j ] );
+			}
+		animation.addSlice( "h=" + h, labelProcessor );
 				
 		return new ImagePlus( "Watershed flooding with sorted list", animation );
 	}
@@ -931,6 +955,18 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 		if( verbose ) IJ.log("  Flooding took: " + (end-start) + " ms");
 		IJ.showProgress( 1.0 );
 		
+		// Create result label image
+		FloatProcessor labelProcessor = new FloatProcessor(size1, size2);
+		for (int i = 0; i < size1; ++i)
+			for (int j = 0; j < size2; ++j)	
+			{					
+				if( tabLabels[ i ][ j ] == INIT ) // set unlabeled pixels to WSHED
+					labelProcessor.setf( i, j, 0 );
+				else
+					labelProcessor.setf( i, j, tabLabels[ i ][ j ] );
+			}
+		animation.addSlice( "h=" + h, labelProcessor );		
+		
 	    return new ImagePlus( "Watershed flooding with priority queue", animation );
 	}// end getAnimationPriorityQueue
 	
@@ -1177,6 +1213,18 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 		if( verbose ) IJ.log("  Flooding took: " + (end-start) + " ms");
 		IJ.showStatus("");
 		IJ.showProgress( 1.0 );
+		
+		// Create result label image
+		FloatProcessor labelProcessor = new FloatProcessor(size1, size2);
+		for (int i = 0; i < size1; ++i)
+			for (int j = 0; j < size2; ++j)	
+			{					
+				if( tabLabels[ i ][ j ] == INIT ) // set unlabeled pixels to WSHED
+					labelProcessor.setf( i, j, 0 );
+				else
+					labelProcessor.setf( i, j, tabLabels[ i ][ j ] );
+			}
+		animation.addSlice( "h=" + h, labelProcessor );
 						
 	    return new ImagePlus( "Watershed flooding with priority queue", animation );
 	}
