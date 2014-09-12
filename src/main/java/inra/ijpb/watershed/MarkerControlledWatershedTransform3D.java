@@ -185,6 +185,7 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 
 		final long end = System.currentTimeMillis();
 		if( verbose ) IJ.log("  Flooding took: " + (end-start) + " ms");
+		IJ.showProgress( 1.0 );
 		
 		// Create result label image
 		ImageStack labelStack = markerImage.duplicate().getStack();
@@ -327,6 +328,7 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 
 		final long end = System.currentTimeMillis();
 		if( verbose ) IJ.log("  Flooding took: " + (end-start) + " ms");
+		IJ.showProgress( 1.0 );
 		
 		// Create result label image
 		ImageStack labelStack = markerImage.duplicate().getStack();
@@ -499,6 +501,7 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 
 		final long end = System.currentTimeMillis();
 		if( verbose ) IJ.log("  Flooding took: " + (end-start) + " ms");
+		IJ.showProgress( 1.0 );
 		
 		// Create result label image
 		ImageStack labelStack = markerImage.duplicate().getStack();
@@ -752,6 +755,7 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 		final long end = System.currentTimeMillis();
 		if( verbose ) IJ.log("  Flooding took: " + (end-start) + " ms");
 		IJ.showStatus("");
+		IJ.showProgress( 1.0 );
 	    
 		// Create result label image
 		ImageStack labelStack = markerImage.duplicate().getStack();
