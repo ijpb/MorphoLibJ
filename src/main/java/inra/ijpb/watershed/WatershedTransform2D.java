@@ -52,7 +52,7 @@ public class WatershedTransform2D
 	/** binary mask to restrict the region of interest */
 	ImageProcessor maskImage = null;
 	
-	/** pixel connectivity */
+	/** pixel connectivity (expected 4 or 8) */
 	int connectivity = 4;
 	
 	/** initial value of a threshold level */
