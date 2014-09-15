@@ -161,8 +161,7 @@ public class MorphologicalSegmentation implements PlugIn {
 	//	| x - Advanced options       |
 	//	|  ------------------------- |
 	//	| | x - Use dams            ||
-	//	| | Connectivity: [6/26]    ||
-	//	| | x - Use priority queue  ||
+	//	| | Connectivity: [6/26]    ||	
 	//	|  ------------------------- |
 	//  |          -----             |
 	//  |         | Run |	         |
@@ -201,13 +200,6 @@ public class MorphologicalSegmentation implements PlugIn {
 	String[] connectivityOptions = new String[]{ "6", "26" };
 	/** connectivity combo box */
 	JComboBox connectivityList;
-
-	/** checkbox to choose the priority queue watershed method */
-	JCheckBox queueCheckBox;
-	/** flag to use a priority queue in the watershed transform */
-	private boolean usePriorityQueue = true;
-	/** priority queue panel */
-	JPanel queuePanel = new JPanel();
 
 	/** segmentation button (Run) */
 	JButton segmentButton;
@@ -525,11 +517,6 @@ public class MorphologicalSegmentation implements PlugIn {
 			connectivityPanel.add( connectivityList );
 			connectivityPanel.setToolTipText( "Voxel connectivity to use" );
 
-			// use priority queue option
-			queueCheckBox = new JCheckBox( "Use priority queue", usePriorityQueue );
-			queueCheckBox.setToolTipText( "Check to use a priority queue in the watershed transform" );
-			queuePanel.add( queueCheckBox );
-
 			enableAdvancedOptions( selectAdvancedOptions );
 
 			// add components to advanced options panel			
@@ -545,8 +532,6 @@ public class MorphologicalSegmentation implements PlugIn {
 			advancedOptionsPanel.add( damsPanel, advancedOptoinsConstraints );
 			advancedOptoinsConstraints.gridy++;			
 			advancedOptionsPanel.add( connectivityPanel, advancedOptoinsConstraints );
-			advancedOptoinsConstraints.gridy++;			
-			advancedOptionsPanel.add( queuePanel, advancedOptoinsConstraints );
 
 			advancedOptionsPanel.setBorder(BorderFactory.createTitledBorder(""));
 
@@ -869,16 +854,6 @@ public class MorphologicalSegmentation implements PlugIn {
 				connectivityList.setSelectedItem( Integer.toString(connectivity) );									
 		}
 
-		/**
-		 * Set flag and GUI checkbox to use priority queue
-		 * 
-		 * @param b boolean flag
-		 */
-		void setUsePriorityQueue( boolean b )
-		{
-			usePriorityQueue = b;
-			queueCheckBox.setSelected( b );
-		}
 
 		/**
 		 * Get segmentation command (text on the segment button)
@@ -959,9 +934,6 @@ public class MorphologicalSegmentation implements PlugIn {
 
 						// read dams flag
 						calculateDams = damsCheckBox.isSelected();
-
-						// read priority queue flag
-						usePriorityQueue = queueCheckBox.isSelected();
 
 						// disable parameter panel
 						setParamsEnabled( false );
@@ -1060,7 +1032,7 @@ public class MorphologicalSegmentation implements PlugIn {
 						
 						try{
 							resultStack = Watershed.computeWatershed( imposedMinima, labeledMinima, 
-								connectivity, usePriorityQueue, calculateDams );
+								connectivity, calculateDams );
 						}
 						catch( Exception ex )
 						{							
@@ -1118,8 +1090,7 @@ public class MorphologicalSegmentation implements PlugIn {
 						String[] arg = new String[] {
 								"tolerance=" + Integer.toString( (int) dynamic ),
 								"calculateDams=" + calculateDams,
-								"connectivity=" + Integer.toString( connectivity ),
-								"usePriorityQueue=" + usePriorityQueue };
+								"connectivity=" + Integer.toString( connectivity ) };
 						record( RUN_SEGMENTATION, arg );
 					}
 				};
@@ -1441,7 +1412,6 @@ public class MorphologicalSegmentation implements PlugIn {
 		damsCheckBox.setEnabled( enabled );
 		connectivityLabel.setEnabled( enabled );
 		connectivityList.setEnabled( enabled );
-		queueCheckBox.setEnabled( enabled );
 	}
 
 	/**
@@ -1558,7 +1528,6 @@ public class MorphologicalSegmentation implements PlugIn {
 			win.setDynamic( Integer.parseInt( dynamic.replace( "tolerance=", "" ) ) );
 			win.setCalculateDams( calculateDams.contains( "true" ) );
 			win.setConnectivity( Integer.parseInt( connectivity.replace( "connectivity=", "" ) ) );
-			win.setUsePriorityQueue( usePriorityQueue.contains( "true" ) );
 			win.runSegmentation( win.getSegmentText() );			
 		}
 		else

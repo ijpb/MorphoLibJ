@@ -17,8 +17,6 @@ import inra.ijpb.watershed.Watershed;
  */
 public class MarkerControlledWatershed3DPlugin implements PlugIn 
 {
-	/** flag to use a priority queue */
-	public static boolean usePriorityQueue = true;
 	/** flag to calculate watershed dams */
 	public static boolean getDams = true;
 	/** flag to use 26-connectivity */
@@ -42,7 +40,7 @@ public class MarkerControlledWatershed3DPlugin implements PlugIn
 						
 		IJ.log("-> Running watershed...");
 								
-		ImagePlus resultImage = Watershed.computeWatershed(input, marker, mask, connectivity, usePriorityQueue, getDams );				
+		ImagePlus resultImage = Watershed.computeWatershed(input, marker, mask, connectivity, getDams );				
 		
 		final long end = System.currentTimeMillis();
 		IJ.log( "Watershed 3d took " + (end-start) + " ms.");		
@@ -82,7 +80,6 @@ public class MarkerControlledWatershed3DPlugin implements PlugIn
         gd.addChoice( "Input", names, names[ inputIndex ] );
         gd.addChoice( "Marker", names, names[ markerIndex ] );
         gd.addChoice( "Mask", namesMask, namesMask[ nbima > 2 ? 3 : 0 ] );
-        gd.addCheckbox( "Use priority queue", usePriorityQueue );
         gd.addCheckbox( "Calculate dams", getDams );
         gd.addCheckbox( "Use diagonal connectivity", use26neighbors );
 
@@ -93,7 +90,6 @@ public class MarkerControlledWatershed3DPlugin implements PlugIn
             inputIndex = gd.getNextChoiceIndex();
             markerIndex = gd.getNextChoiceIndex();
             int maskIndex = gd.getNextChoiceIndex();
-            usePriorityQueue = gd.getNextBoolean();
             getDams = gd.getNextBoolean();
             use26neighbors = gd.getNextBoolean();
 

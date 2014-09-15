@@ -69,7 +69,12 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 	 * ascending gray value.
 	 * 
 	 * @return watershed domains image (no dams)
+	 * @deprecated 
+	 * The algorithm with a sorted list does not visit the pixels
+	 * based on their h value and proximity to markers so it is 
+	 * not a true watershed method. 
 	 */
+	@Deprecated
 	public ImageProcessor applyWithSortedList()
 	{
 	    final int size1 = inputImage.getWidth();
@@ -191,7 +196,12 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 	 * ascending gray value.
 	 * 
 	 * @return animation of watershed domains image (no dams)
+	 * @deprecated 
+	 * The algorithm with a sorted list does not visit the pixels
+	 * based on their h value and proximity to markers so it is 
+	 * not a true watershed method. 
 	 */
+	@Deprecated
 	public ImagePlus getAnimationSortedList()
 	{
 	    final int size1 = inputImage.getWidth();
@@ -344,7 +354,12 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 	 * ascending gray value.
 	 * 
 	 * @return watershed domains image (with dams)
+	 * @deprecated 
+	 * The algorithm with a sorted list does not visit the pixels
+	 * based on their h value and proximity to markers so it is 
+	 * not a true watershed method. 
 	 */
+	@Deprecated
 	public ImageProcessor applyWithSortedListAndDams()
 	{
 	    final int size1 = inputImage.getWidth();
@@ -473,7 +488,12 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 	 * ascending gray value.
 	 * 
 	 * @return image stack with the steps of the watershed transform (with dams)
+	 * @deprecated 
+	 * The algorithm with a sorted list does not visit the pixels
+	 * based on their h value and proximity to markers so it is 
+	 * not a true watershed method. 
 	 */
+	@Deprecated
 	public ImagePlus getAnimationSortedListAndDams()
 	{
 	    final int size1 = inputImage.getWidth();

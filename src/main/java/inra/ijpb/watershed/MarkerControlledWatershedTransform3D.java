@@ -72,7 +72,12 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 	 * ascending gray value.
 	 * 
 	 * @return watershed domains image (no dams)
+	 * @deprecated 
+	 * The algorithm with a sorted list does not visit the voxels
+	 * based on their h value and proximity to markers so it is 
+	 * not a true watershed method. 
 	 */
+	@Deprecated
 	public ImagePlus applyWithSortedList()
 	{
 		final ImageStack inputStack = inputImage.getStack();
@@ -207,7 +212,12 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 	 * ascending gray value.
 	 * 
 	 * @return watershed domains image (with dams)
+	 * @deprecated 
+	 * The algorithm with a sorted list does not visit the voxels
+	 * based on their h value and proximity to markers so it is 
+	 * not a true watershed method. 
 	 */
+	@Deprecated
 	public ImagePlus applyWithSortedListAndDams()
 	{
 		final ImageStack inputStack = inputImage.getStack();
