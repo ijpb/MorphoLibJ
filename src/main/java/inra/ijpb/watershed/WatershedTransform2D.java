@@ -100,7 +100,7 @@ public class WatershedTransform2D
 		
 		if( connectivity != 4 && connectivity != 8 ) 
 	    {
-			throw new IllegalArgumentException("Marker and input images must have the same size");
+			throw new IllegalArgumentException("Illegal connectivity value: it must be 4 or 8!");
 		}
 		
 		this.connectivity = connectivity;

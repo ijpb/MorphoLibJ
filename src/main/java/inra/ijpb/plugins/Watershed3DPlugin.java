@@ -56,7 +56,9 @@ public class Watershed3DPlugin implements PlugIn
 			
 	}
 	
-
+	/**
+	 * Plugin run method, to be called from ImageJ.
+	 */
 	@Override
 	public void run(String arg) 
 	{
@@ -64,8 +66,8 @@ public class Watershed3DPlugin implements PlugIn
 		
 		if( nbima == 0 )
 		{
-			IJ.error( "Watershed 3D", 
-					"ERROR: At least one image needs to be open to run watershed in 3D");
+			IJ.error( "Classic Watershed", 
+					"ERROR: At least one image needs to be open to run watershed.");
 			return;
 		}
 		
@@ -80,7 +82,7 @@ public class Watershed3DPlugin implements PlugIn
             namesMask[ i + 1 ] = WindowManager.getImage(i + 1).getShortTitle();
         }
         
-        GenericDialog gd = new GenericDialog("Watershed 3D");
+        GenericDialog gd = new GenericDialog("Classic Watershed");
 
         int inputIndex = 0;
         int maskIndex = nbima > 1 ? 2 : 0;
@@ -139,7 +141,7 @@ public class Watershed3DPlugin implements PlugIn
             		hMax = Float.MAX_VALUE;
             	break;    
             default:
-            	IJ.error("Classic watershed", "Error: only grayscale images are valid input!");
+            	IJ.error("Classic Watershed", "Error: only grayscale images are valid input!");
             	return;
             }
             

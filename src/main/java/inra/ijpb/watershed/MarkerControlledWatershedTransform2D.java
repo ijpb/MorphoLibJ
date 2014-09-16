@@ -18,7 +18,10 @@ import inra.ijpb.data.Neighborhood2DC4;
 import inra.ijpb.data.PixelRecord;
 
 /**
- * Marker-controlled version of the watershed transform in 2D
+ * Marker-controlled version of the watershed transform in 2D.
+ * 
+ * Reference: Fernand Meyer and Serge Beucher. "Morphological segmentation." 
+ * Journal of visual communication and image representation 1.1 (1990): 21-46.
  * 
  * @author Ignacio Arganda-Carreras
  *
