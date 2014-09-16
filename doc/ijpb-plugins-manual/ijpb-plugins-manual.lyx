@@ -1,0 +1,686 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass scrartcl
+\use_default_options true
+\maintain_unincluded_children false
+\language american
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format pdf2
+\output_sync 0
+\bibtex_command default
+\index_command default
+\float_placement h
+\paperfontsize default
+\spacing single
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
+\papersize a4paper
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine natbib
+\cite_engine_type authoryear
+\biblio_style plainnat
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 2
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+IJPB Plugins user manual
+\end_layout
+
+\begin_layout Abstract
+The 
+\begin_inset Quotes fld
+\end_inset
+
+ijpb-plugins
+\begin_inset Quotes frd
+\end_inset
+
+ library for ImageJ/Fiji contains a variety of plugins for processing and
+ analysing 2D or 3D images.
+ It was originally designed for the study of plant cell images, but the
+ algorithms are generic and can be applied to any type of image.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+TODO:
+\end_layout
+
+\begin_layout Itemize
+finir de rédiger les paragraphes
+\end_layout
+
+\begin_layout Itemize
+ajouter illustrations 
+\end_layout
+
+\begin_layout Itemize
+peaufiner vocabulaire : regions / label, component / region...
+\end_layout
+
+\begin_layout Itemize
+ajouter une section 
+\begin_inset Quotes eld
+\end_inset
+
+developeur
+\begin_inset Quotes erd
+\end_inset
+
+, avec les différentes possibilités pour utiliser la bibliothèque dans un
+ plugin.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+runPlugin(
+\begin_inset Quotes eld
+\end_inset
+
+...
+\begin_inset Quotes erd
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Itemize
+MorphologicalFilter.gradient(image, se);
+\end_layout
+
+\begin_layout Itemize
+algo = new GeodesicReconstruction3DScanningGray8(); algo.setConnectivity(26);
+ result = algo.applyTo(marker, mask);
+\end_layout
+
+\end_deeper
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Key features
+\end_layout
+
+\begin_layout Standard
+The library implements several functionalities that were missing in the
+ ImageJ software, and that were not or only partially covered by other plugins.
+ 
+\end_layout
+
+\begin_layout Itemize
+morphological filtering: erosion & dilation, closing & opening, morphological
+ gradient & laplacian, top-hat...
+\end_layout
+
+\begin_layout Itemize
+morphological reconstruction, allowing fast detection of regional or extended
+ extrema, removing of borders, or hole filling
+\end_layout
+
+\begin_layout Itemize
+watershed segmentation + GUI, making it possible to segment 2D/3D images
+ of cell tissues
+\end_layout
+
+\begin_layout Itemize
+2D/3D measurements: volume, surface area, inertia ellipse/ellipsoid...
+\end_layout
+
+\begin_layout Itemize
+binary / label images utilities
+\end_layout
+
+\begin_layout Standard
+The home page of the project is 
+\begin_inset CommandInset href
+LatexCommand href
+target "http://fiji.sc/Morphological_Segmentation"
+
+\end_inset
+
+.
+ The project is hosted on GitHub: 
+\begin_inset CommandInset href
+LatexCommand href
+target "http://github.com/ijpb/ijpb-plugins"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Morphological filters
+\end_layout
+
+\begin_layout Standard
+Morphological filters consider the neighborhood of each pixel/voxel according
+ to a structuring element of a given size and shape.
+ The following filters are implemented both for 2D and 3D images, and work
+ for binary as well as grey level images:
+\end_layout
+
+\begin_layout Description
+erosion keeps the minimum value within the neighborhood defined by the structuri
+ng element.
+\end_layout
+
+\begin_layout Description
+dilation keeps the maximum value within the neighborhood defined by the
+ structuring element.
+\end_layout
+
+\begin_layout Description
+closing consists in the succession of a dilation with an erosion.
+ Morphological closing makes dark structures smaller than the structuring
+ element disappear.
+\end_layout
+
+\begin_layout Description
+opening consists in the succession of an erosion with a dilation.
+ Morphological opening makes bright structures smaller than the structuring
+ element disappear.
+\end_layout
+
+\begin_layout Description
+morphological
+\begin_inset space ~
+\end_inset
+
+gradient is defined as the difference of a morphological dilation and a
+ morphological erosion with the same structuring element, and enhances edges
+ of the original images.
+\end_layout
+
+\begin_layout Description
+morphological
+\begin_inset space ~
+\end_inset
+
+laplacien is defined as half the sum of a morphological dilation and a morpholog
+ical erosion with the same structuring element, minus the original image,
+ and enhances edges of the image.
+\end_layout
+
+\begin_layout Description
+black
+\begin_inset space ~
+\end_inset
+
+top-hat consists in subtracting the original image from the result of a
+ morphological closing, and results in the enhancement of dark structures
+ smaller than structuring element.
+\end_layout
+
+\begin_layout Description
+white
+\begin_inset space ~
+\end_inset
+
+top-hat consists in subtracting the result of a morphological opening from
+ the original image, and results in the enhancement of bright structures
+ smaller than structuring element.
+\end_layout
+
+\begin_layout Standard
+The following structuring elements can be used for 2D images:
+\end_layout
+
+\begin_layout Itemize
+disk
+\end_layout
+
+\begin_layout Itemize
+square
+\end_layout
+
+\begin_layout Itemize
+octagon
+\end_layout
+
+\begin_layout Itemize
+diamond
+\end_layout
+
+\begin_layout Itemize
+line with angle of 0, 90, 45 or 135 degrees
+\end_layout
+
+\begin_layout Section
+Morphological reconstruction
+\end_layout
+
+\begin_layout Standard
+The morphological reconstruction provides the basis for many useful algorithms:
+\end_layout
+
+\begin_layout Itemize
+detection of regional minima / maxima
+\end_layout
+
+\begin_layout Itemize
+detection of extended minima / maxima
+\end_layout
+
+\begin_layout Itemize
+area or volume reconstruction
+\end_layout
+
+\begin_layout Itemize
+removing of borders
+\end_layout
+
+\begin_layout Itemize
+hole filling
+\end_layout
+
+\begin_layout Section
+Watershed segmentation
+\end_layout
+
+\begin_layout Standard
+Watershed algorithm assimilates the grey level image to a digital elevation
+ model, and aims at detecting the different catchment basins.
+ In the grey-level image, the catchment basins correspond to dark regions
+ surrounded by bright structures (the 
+\begin_inset Quotes eld
+\end_inset
+
+crests
+\begin_inset Quotes erd
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+Morphological Segmentation plugin
+\series default
+ integrates into a single GUI the watershed algorithm together with the
+ detection and the imposition of extended minima.
+ For the user, the main parameter is the 
+\begin_inset Quotes eld
+\end_inset
+
+dynamic
+\begin_inset Quotes erd
+\end_inset
+
+, that allows to tune the number of regions at the end of the segmentation.
+\end_layout
+
+\begin_layout Section
+Measurements
+\end_layout
+
+\begin_layout Standard
+Several measurements are provided for binary or label 2D or 3D images.
+ The results are provided in a ResultsTable, whose name contains the name
+ of the original image.
+\end_layout
+
+\begin_layout Description
+Bounding
+\begin_inset space ~
+\end_inset
+
+box returns the minimal and maximal coordinates in each direction for each
+ label
+\end_layout
+
+\begin_layout Description
+Volume
+\begin_inset space ~
+\end_inset
+
+/
+\begin_inset space ~
+\end_inset
+
+surface
+\begin_inset space ~
+\end_inset
+
+area computes the volume, the surface area, and a sphericity index, defined
+ as 
+\begin_inset Formula $36\pi V^{2}/S^{3}$
+\end_inset
+
+.
+ Surface area is computed using a discretized version of the Crofton formula.
+\end_layout
+
+\begin_layout Description
+Inertia
+\begin_inset space ~
+\end_inset
+
+ellipse
+\begin_inset space ~
+\end_inset
+
+/
+\begin_inset space ~
+\end_inset
+
+ellipsoid returns the centroid (center of gravity) as well as the size and
+ the orientation of the inertia ellipse or ellipsoid of each particle.
+ Radiuses are sorted in decreasing order.
+ Angles are given in degrees, and correspond to the azimut (
+\begin_inset Quotes eld
+\end_inset
+
+yaw
+\begin_inset Quotes erd
+\end_inset
+
+), the elevation (
+\begin_inset Quotes eld
+\end_inset
+
+pitch
+\begin_inset Quotes erd
+\end_inset
+
+), and the roll around the main axis.
+\end_layout
+
+\begin_layout Section
+Binary image utilities
+\end_layout
+
+\begin_layout Standard
+Some functions specific for the processing of binary images:
+\end_layout
+
+\begin_layout Description
+Connected
+\begin_inset space ~
+\end_inset
+
+Components
+\begin_inset space ~
+\end_inset
+
+Labeling transforms the binary image into a label image by assigning a specific
+ number (label) to each connected component
+\end_layout
+
+\begin_layout Description
+Chamfer
+\begin_inset space ~
+\end_inset
+
+Distance
+\begin_inset space ~
+\end_inset
+
+Map computes an approximate distance map between each foregrond pixel to
+ the nearest background pixel
+\end_layout
+
+\begin_layout Description
+Keep
+\begin_inset space ~
+\end_inset
+
+/
+\begin_inset space ~
+\end_inset
+
+Remove
+\begin_inset space ~
+\end_inset
+
+Largest
+\begin_inset space ~
+\end_inset
+
+Region identifies the largest connected component, and keep it or remove
+ it
+\end_layout
+
+\begin_layout Description
+Size
+\begin_inset space ~
+\end_inset
+
+Opening computes the size (area in 2D, volume in 3D) of each connected component
+, and remove all particles whose size is below the value specified by the
+ user.
+\end_layout
+
+\begin_layout Standard
+Algorithms work for both 2D or 3D images.
+ Default connectivity 4 (resp.
+ 6) is used for 2D (resp.
+ 3D) images.
+\end_layout
+
+\begin_layout Section
+Label image utilities
+\end_layout
+
+\begin_layout Standard
+Some functions specific for the processing of label images, in which the
+ pixel/voxel values is used to identify the particle it belongs to.
+ The value 0 is assumed to correspond to the beackground.
+\end_layout
+
+\begin_layout Description
+Remove
+\begin_inset space ~
+\end_inset
+
+Border
+\begin_inset space ~
+\end_inset
+
+Labels similar to 
+\begin_inset Quotes eld
+\end_inset
+
+kill borders
+\begin_inset Quotes erd
+\end_inset
+
+ function, but operates faster as no morphological reconstruction is required.
+\end_layout
+
+\begin_layout Description
+Select
+\begin_inset space ~
+\end_inset
+
+Label(s) enters a set of labels, and creates a new label image containing
+ only the selected labels.
+\end_layout
+
+\begin_layout Description
+Crop
+\begin_inset space ~
+\end_inset
+
+Label creates a new binary image containing only the label specified by
+ the user.
+ The size of the new image is fitted to the region.
+\end_layout
+
+\begin_layout Description
+Replace
+\begin_inset space ~
+\end_inset
+
+Value replaces the value of a region by another value.
+ Can be used to 
+\begin_inset Quotes eld
+\end_inset
+
+clear
+\begin_inset Quotes erd
+\end_inset
+
+ a label, by replacing its value by 0, or to merge to adjacent regions.
+\end_layout
+
+\begin_layout Description
+Label
+\begin_inset space ~
+\end_inset
+
+Boundaries creates a new binary image containing value 255 for pixels/voxels
+ having a neighbour with a different value.
+\end_layout
+
+\begin_layout Description
+Keep
+\begin_inset space ~
+\end_inset
+
+/
+\begin_inset space ~
+\end_inset
+
+Remove
+\begin_inset space ~
+\end_inset
+
+Largest
+\begin_inset space ~
+\end_inset
+
+Label identifies the largest label, and keep it or remove it
+\end_layout
+
+\begin_layout Description
+Label
+\begin_inset space ~
+\end_inset
+
+Size
+\begin_inset space ~
+\end_inset
+
+Opening computes the size (area in 2D, volume in 3D) of each region, and
+ remove all labels whose size is below the value specified by the user.
+\end_layout
+
+\begin_layout Description
+Assign
+\begin_inset space ~
+\end_inset
+
+Measure
+\begin_inset space ~
+\end_inset
+
+To
+\begin_inset space ~
+\end_inset
+
+Label combines a label image with a results table, and creates a new image
+ for which each pixel/voxel is assigned the measurement value corresponding
+ to the label it belongs to.
+\end_layout
+
+\begin_layout Description
+Set
+\begin_inset space ~
+\end_inset
+
+Label
+\begin_inset space ~
+\end_inset
+
+Map allows to choose the color map used to display a label image.
+ In particular, suffling the color map and/or choosing a specific color
+ for background allows better visualisation that only grey levels
+\end_layout
+
+\begin_layout Description
+Label
+\begin_inset space ~
+\end_inset
+
+To
+\begin_inset space ~
+\end_inset
+
+RGB converts a label image to true RGB image.
+ Similar to ImageJ native conversion, but this plugin avoids confusion between
+ background pixels and regions with low labels.
+\end_layout
+
+\end_body
+\end_document
