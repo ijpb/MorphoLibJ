@@ -11,7 +11,10 @@ import inra.ijpb.watershed.Watershed;
 
 /**
  * 
- * A plugin to perform marker-controlled watershed on a 3D image.
+ * A plugin to perform marker-controlled watershed on a 2D or 3D image.
+ * 
+ * Reference: Fernand Meyer and Serge Beucher. "Morphological segmentation." 
+ * Journal of visual communication and image representation 1.1 (1990): 21-46.
  *
  * @author Ignacio Arganda-Carreras
  */
@@ -23,9 +26,9 @@ public class MarkerControlledWatershed3DPlugin implements PlugIn
 	public static boolean use26neighbors = true;
 		
 	/**
-	 * Apply marker controlled watershed to a 2D or 3D image (it does work for 2D images too).
+	 * Apply marker-controlled watershed to a grayscale 2D or 3D image.
 	 *	 
-	 * @param input the 2D or 3D image (in principle a "gradient" image)
+	 * @param input grayscale 2D or 3D image (in principle a "gradient" image)
 	 * @param marker the labeled marker image
 	 * @param mask binary mask to restrict region of interest
 	 * @param connectivity 6 or 26 voxel connectivity
@@ -49,15 +52,18 @@ public class MarkerControlledWatershed3DPlugin implements PlugIn
 	}
 	
 
+	/**
+	 * Plugin run method to be called from ImageJ
+	 */
 	@Override
 	public void run(String arg) 
 	{
 		int nbima = WindowManager.getImageCount();
 		
-		if( nbima == 0 )
+		if( nbima < 2 )
 		{
-			IJ.error( "Marker-controlled watershed 3D", 
-					"ERROR: At least one image needs to be open to run watershed in 3D");
+			IJ.error( "Marker-controlled Watershed", 
+					"ERROR: At least two images need to be open to run Marker-controlled Watershed.");
 			return;
 		}
 		
@@ -72,7 +78,7 @@ public class MarkerControlledWatershed3DPlugin implements PlugIn
             namesMask[ i + 1 ] = WindowManager.getImage(i + 1).getShortTitle();
         }
         
-        GenericDialog gd = new GenericDialog("Marker-controlled watershed 3D");
+        GenericDialog gd = new GenericDialog("Marker-controlled Watershed");
 
         int inputIndex = 0;
         int markerIndex = nbima > 1 ? 1 : 0;
@@ -97,6 +103,7 @@ public class MarkerControlledWatershed3DPlugin implements PlugIn
             ImagePlus markerImage = WindowManager.getImage( markerIndex + 1 );
             ImagePlus maskImage = maskIndex > 0 ? WindowManager.getImage( maskIndex ) : null;
             
+            // a 3D image is assumed but it will use 2D connectivity if the input is 2D
             final int connectivity = use26neighbors ? 26 : 6;
             
             ImagePlus result = process( inputImage, markerImage, maskImage, connectivity );
