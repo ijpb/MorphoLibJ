@@ -21,7 +21,10 @@ import inra.ijpb.data.VoxelRecord;
 import inra.ijpb.data.image.Images3D;
 
 /**
- * Marker-controlled version of the watershed transform (works for 2D and 3D images)
+ * Marker-controlled version of the watershed transform (works for 2D and 3D images).
+ * 
+ * Reference: Fernand Meyer and Serge Beucher. "Morphological segmentation." 
+ * Journal of visual communication and image representation 1.1 (1990): 21-46.
  * 
  * @author Ignacio Arganda-Carreras
  *
@@ -199,7 +202,17 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 	      for (int j = 0; j < size2; ++j)
 	        for (int k = 0; k < size3; ++k)
 	            labelStack.setVoxel( i, j, k, tabLabels[i][j][k] );
-	    final ImagePlus ws = new ImagePlus( "watershed", labelStack );
+	    
+	    String title = inputImage.getTitle();
+		String ext = "";
+		int index = title.lastIndexOf( "." );
+		if( index != -1 )
+		{
+			ext = title.substring( index );
+			title = title.substring( 0, index );				
+		}			
+		
+	    final ImagePlus ws = new ImagePlus( title + "-watershed" + ext, labelStack );
 	    ws.setCalibration( inputImage.getCalibration() );
 	    return ws;
 	}
@@ -347,7 +360,17 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 	      for (int j = 0; j < size2; ++j)
 	        for (int k = 0; k < size3; ++k)
 	            labelStack.setVoxel( i, j, k, tabLabels[i][j][k] );
-	    final ImagePlus ws = new ImagePlus( "watershed", labelStack );
+	    
+	    String title = inputImage.getTitle();
+		String ext = "";
+		int index = title.lastIndexOf( "." );
+		if( index != -1 )
+		{
+			ext = title.substring( index );
+			title = title.substring( 0, index );				
+		}			
+		
+	    final ImagePlus ws = new ImagePlus( title + "-watershed" + ext, labelStack );
 	    ws.setCalibration( inputImage.getCalibration() );
 	    return ws;
 	}
@@ -520,7 +543,18 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 	      for (int j = 0; j < size2; ++j)
 	        for (int k = 0; k < size3; ++k)
 	            labelStack.setVoxel( i, j, k, tabLabels[i][j][k] );
-	    final ImagePlus ws = new ImagePlus( "watershed", labelStack );
+	    
+	    
+	    String title = inputImage.getTitle();
+		String ext = "";
+		int index = title.lastIndexOf( "." );
+		if( index != -1 )
+		{
+			ext = title.substring( index );
+			title = title.substring( 0, index );				
+		}			
+		
+	    final ImagePlus ws = new ImagePlus( title + "-watershed" + ext, labelStack );
 	    ws.setCalibration( inputImage.getCalibration() );
 	    return ws;
 	}
@@ -786,7 +820,17 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 				}
 				
 		}
-	    final ImagePlus ws = new ImagePlus( "watershed", labelStack );
+		
+		String title = inputImage.getTitle();
+		String ext = "";
+		int index = title.lastIndexOf( "." );
+		if( index != -1 )
+		{
+			ext = title.substring( index );
+			title = title.substring( 0, index );				
+		}			
+		
+	    final ImagePlus ws = new ImagePlus( title + "-watershed" + ext, labelStack );
 	    ws.setCalibration( inputImage.getCalibration() );
 	    return ws;
 	}
