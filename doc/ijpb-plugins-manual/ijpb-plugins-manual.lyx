@@ -383,11 +383,11 @@ crests
  described in the following sections.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Classic Watershed plugin
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 Introduction
 \end_layout
 
@@ -487,7 +487,7 @@ Schematic overview of watershed flooding in 1D
 
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 Usage
 \end_layout
 
@@ -586,7 +586,7 @@ Labeled image
  and watershed lines (with 0 value).
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 Over-segmentation
 \end_layout
 
@@ -877,7 +877,7 @@ Input and result images from the macro example.
 
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Marker-controlled Watershed plugin
 \end_layout
 
@@ -900,11 +900,7 @@ key "meyer1990morphological"
  manually by the user or determined automatically by another algorithm.
 \end_layout
 
-\begin_layout Standard
-
-\end_layout
-
-\begin_layout Subsection
+\begin_layout Section
 Morphological Segmentation plugin
 \end_layout
 
