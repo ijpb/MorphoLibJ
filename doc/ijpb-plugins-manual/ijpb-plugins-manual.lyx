@@ -3,6 +3,11 @@
 \begin_document
 \begin_header
 \textclass scrartcl
+\begin_preamble
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\end_preamble
 \use_default_options true
 \maintain_unincluded_children false
 \language american
@@ -352,7 +357,7 @@ Watershed segmentation
 \end_layout
 
 \begin_layout Standard
-Watershed algorithm assimilates the grey level image to a digital elevation
+The watershed algorithm assimilates the grey level image to a digital elevation
  model, and aims at detecting the different catchment basins.
  In the grey-level image, the catchment basins correspond to dark regions
  surrounded by bright structures (the 
@@ -364,6 +369,511 @@ crests
 \end_inset
 
 ).
+ It is a very popular technique specially used to segment touching objects.
+ The IJPB-plugins suite contains several implementations of the algorithm,
+ described in the following sections.
+\end_layout
+
+\begin_layout Subsection
+Classic Watershed plugin
+\end_layout
+
+\begin_layout Subsubsection
+Introduction
+\end_layout
+
+\begin_layout Standard
+Classic Watershed is an ImageJ/Fiji plugin to perform watershed segmentation
+ of grayscale 2D/3D images using flooding simulations as described by 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "soille1990determining"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The basic idea consists of considering the input image as topographic surface
+ and placing a water source in each regional minimum of its relief.
+ Next the entire relief is flooded from the sources and dams are placed
+ where the different water sources meet.
+\end_layout
+
+\begin_layout Standard
+All points in the surface at a given minimum constitute the 
+\series bold
+catchment basin
+\series default
+ associated with that minimum.
+ The 
+\series bold
+watersheds
+\series default
+ are the zones dividing adjacent catchment basins.
+\end_layout
+
+\begin_layout Standard
+The first image points that are reached by water are the points at the lowest
+ grayscale value 
+\begin_inset Formula $h_{{min}}$
+\end_inset
+
+, then all image pixels are progressively reached up to the highest level
+ 
+\begin_inset Formula $h_{{max}}$
+\end_inset
+
+ (see Fig.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Schematic-overview-of-flooding"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/watershed-flooding-scheme.svg
+	lyxscale 50
+	width 40text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Schematic-overview-of-flooding"
+
+\end_inset
+
+Schematic overview of watershed flooding in 1D
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Usage
+\end_layout
+
+\begin_layout Standard
+The Classic Watershed plugin runs on any grayscale image (8, 16 and 32-bit)
+ in 2D and 3D.
+ At least one image needs to be open in order for the plugin to run.
+ If that's the case, a dialog like the following will pop up: 
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename images/Classic-Watershed-dialog.png
+	width 25text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Let's have a look at the different parameters:
+\end_layout
+
+\begin_layout Itemize
+Image parameters: 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\series bold
+Input image
+\series default
+: grayscale image to flood, usually the gradient of an image.
+ 
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Mask image
+\series default
+ (optional): binary image of the same dimensions as the input image which
+ can be used to restrict the areas of application of the algorithm.
+ Set to "None" to run the method on the whole input image.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Morphological parameters: 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\series bold
+Use diagonal connectivity
+\series default
+: select to allow the flooding in diagonal directions (8-connectivity in
+ 2D and 26-connectivity in 3D).
+ 
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Min h
+\series default
+: minimum grayscale value to start flooding from (by default, set to the
+ minimum value of the image type).
+ 
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Max h
+\series default
+: maximum grayscale value to reach with flooding (by default, set to the
+ maximum value of the image type).
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+Output: 
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Labeled image
+\series default
+ containing the resulting catchment basins (with integer values 1, 2, 3...)
+ and watershed lines (with 0 value).
+\end_layout
+
+\begin_layout Subsubsection
+Over-segmentation
+\end_layout
+
+\begin_layout Standard
+Normally, Classic Watershed will lead to an over-segmentation of the input
+ image, especially for noisy images with many regional minima.
+ In that case, it is recommended to either 
+\series bold
+pre-process the image before
+\series default
+ running the plugin, 
+\series bold
+or merge regions based on a similarity criterion afterwards
+\series default
+.
+ Several denoising methods are available in Fiji/ImageJ, namely: median
+ filtering, Gaussian blur, bilateral filtering, etc.
+\end_layout
+
+\begin_layout Paragraph
+
+\series bold
+Example:
+\end_layout
+
+\begin_layout Standard
+This short macro runs the plugin twice in the blobs sample, first without
+ pre-processing and then after applying a Gaussian blur of radius 3:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "backgroundcolor={\color{white}},basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},frame=TB,keywordstyle={\color{blue}},language=Java,numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+// load the Blobs sample image
+\end_layout
+
+\begin_layout Plain Layout
+
+run("Blobs (25K)"); 
+\end_layout
+
+\begin_layout Plain Layout
+
+// invert LUT and pixel values to have dark blobs 
+\end_layout
+
+\begin_layout Plain Layout
+
+run("Invert LUT"); 
+\end_layout
+
+\begin_layout Plain Layout
+
+run("Invert"); 
+\end_layout
+
+\begin_layout Plain Layout
+
+// run plugin on image 
+\end_layout
+
+\begin_layout Plain Layout
+
+run("Classic Watershed", "input=blobs mask=None use min=0 max=150"); 
+\end_layout
+
+\begin_layout Plain Layout
+
+// apply LUT to facilitate result visualization 
+\end_layout
+
+\begin_layout Plain Layout
+
+run("3-3-2 RGB"); 
+\end_layout
+
+\begin_layout Plain Layout
+
+// pre-process image with Gaussian blur selectWindow("blobs.gif"); 
+\end_layout
+
+\begin_layout Plain Layout
+
+run("Gaussian Blur...", "sigma=3"); 
+\end_layout
+
+\begin_layout Plain Layout
+
+rename("blobs-blur.gif"); 
+\end_layout
+
+\begin_layout Plain Layout
+
+// apply plugin on pre-processed image 
+\end_layout
+
+\begin_layout Plain Layout
+
+run("Classic Watershed", "input=blobs-blur mask=None use min=0 max=150");
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+// apply LUT to facilitate result visualization 
+\end_layout
+
+\begin_layout Plain Layout
+
+run("3-3-2 RGB");
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Tabular
+<lyxtabular version="3" rows="1" columns="3">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/blobs-blur.png
+	width 32text%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Gaussian-blurred blobs image used as input (radius = 3).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/blobs-watershed-no-preprocessing.png
+	width 32text%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Watershed segmentation on original image (
+\begin_inset Formula $h_{{min}}=0$
+\end_inset
+
+, 
+\begin_inset Formula $h_{{max}}=150$
+\end_inset
+
+).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/blobs-blur-watershed.png
+	width 32text%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Watershed segmentation on Gaussian-blurred original image (radius = 3, 
+\begin_inset Formula $h_{{min}}=0$
+\end_inset
+
+, 
+\begin_inset Formula $h_{{max}}=150$
+\end_inset
+
+).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Input and result images from the macro example.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Marker-controlled Watershed plugin
+\end_layout
+
+\begin_layout Subsection
+Morphological Segmentation plugin
 \end_layout
 
 \begin_layout Standard
@@ -684,6 +1194,14 @@ To
 RGB converts a label image to true RGB image.
  Similar to ImageJ native conversion, but this plugin avoids confusion between
  background pixels and regions with low labels.
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+bibfiles "bibliography"
+options "plainnat"
+
+\end_inset
+
+
 \end_layout
 
 \end_body
