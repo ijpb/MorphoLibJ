@@ -177,7 +177,7 @@ algo = new GeodesicReconstruction3DScanningGray8(); algo.setConnectivity(26);
 
 \end_layout
 
-\begin_layout Section
+\begin_layout Chapter
 Key features
 \end_layout
 
@@ -236,7 +236,7 @@ target "http://github.com/ijpb/ijpb-plugins"
 
 \end_layout
 
-\begin_layout Section
+\begin_layout Chapter
 Morphological filters
 \end_layout
 
@@ -333,7 +333,7 @@ diamond
 line with angle of 0, 90, 45 or 135 degrees
 \end_layout
 
-\begin_layout Section
+\begin_layout Chapter
 Morphological reconstruction
 \end_layout
 
@@ -361,7 +361,7 @@ removing of borders
 hole filling
 \end_layout
 
-\begin_layout Section
+\begin_layout Chapter
 Watershed segmentation
 \end_layout
 
@@ -903,7 +903,7 @@ dynamic
 , that allows to tune the number of regions at the end of the segmentation.
 \end_layout
 
-\begin_layout Section
+\begin_layout Chapter
 Measurements
 \end_layout
 
@@ -979,7 +979,7 @@ pitch
 ), and the roll around the main axis.
 \end_layout
 
-\begin_layout Section
+\begin_layout Chapter
 Binary image utilities
 \end_layout
 
@@ -1051,7 +1051,7 @@ Algorithms work for both 2D or 3D images.
  3D) images.
 \end_layout
 
-\begin_layout Section
+\begin_layout Chapter
 Label image utilities
 \end_layout
 
