@@ -552,8 +552,7 @@ public class WatershedTransform3D
 
 	    			// initialize queue with neighbors at level h of current basins or watersheds
 	    			if ( u >= 0 && u < size1 && v >= 0 && v < size2 && w >= 0 && w < size3
-	    					&&   tabLabels[ u ][ v ][ w ] >= WSHED ) 
-	    				//&&  ( tabLabels[ u ][ v ][ w ] > 0 || tabLabels[ u ][ v ][ w ] == WSHED ) )
+	    					&&   tabLabels[ u ][ v ][ w ] >= WSHED ) 	    				
 	    				{
 	    					fifo.addLast( p );
 	    					tabLabels[ i ][ j ][ k ] = INQUEUE;
@@ -609,8 +608,7 @@ public class WatershedTransform3D
 	    		}	    	
 	    	}
 
-	    	// check for new minima at level h
-	    		    	
+	    	// check for new minima at level h	    		    	
 	    	for(int voxelIndex = heightIndex2; voxelIndex < voxelList.size(); voxelIndex ++, currentIndex++)
 	    	{
 	    		final VoxelRecord voxelRecord = voxelList.get( voxelIndex );	    			    		
