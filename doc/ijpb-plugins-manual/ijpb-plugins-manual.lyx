@@ -2,7 +2,7 @@
 \lyxformat 474
 \begin_document
 \begin_header
-\textclass scrartcl
+\textclass report
 \begin_preamble
 \definecolor{mygreen}{rgb}{0,0.6,0}
 \definecolor{mygray}{rgb}{0.5,0.5,0.5}
@@ -90,6 +90,15 @@ IJPB Plugins user manual
 
 \begin_layout Author
 David Legland and Ignacio Arganda-Carreras
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Abstract
