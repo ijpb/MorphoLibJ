@@ -881,6 +881,29 @@ Input and result images from the macro example.
 Marker-controlled Watershed plugin
 \end_layout
 
+\begin_layout Standard
+Marker-controlled Watershed is an ImageJ/Fiji plugin to segment grayscale
+ images of any type (8, 16 and 32-bit) in 2D and 3D based on the marker-controll
+ed watershed algorithm by 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "meyer1990morphological"
+
+\end_inset
+
+.
+ This algorithm considers the input image as a topographic surface (where
+ higher pixel values mean higher altitude) and simulates its flooding from
+ specific seed points or markers.
+ A common choice for the markers are the local minima of the gradient of
+ the image, but the method works on any specific marker, either selected
+ manually by the user or determined automatically by another algorithm.
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
 \begin_layout Subsection
 Morphological Segmentation plugin
 \end_layout
