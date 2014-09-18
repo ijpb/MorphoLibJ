@@ -1628,6 +1628,106 @@ call("inra.ijpb.plugins.MorphologicalSegmentation.createResultImage");
 
 \end_layout
 
+\begin_layout Subsubsection*
+Complete macro example
+\end_layout
+
+\begin_layout Standard
+The following macro opens the Blobs sample image, applies the plugin with
+ a tolerance value of 32 and displays the result as overlaid dams.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+// load the Blobs sample image 
+\end_layout
+
+\begin_layout Plain Layout
+
+run("Blobs (25K)"); 
+\end_layout
+
+\begin_layout Plain Layout
+
+// run the plugin 
+\end_layout
+
+\begin_layout Plain Layout
+
+run("Morphological Segmentation"); 
+\end_layout
+
+\begin_layout Plain Layout
+
+// wait for the plugin GUI to load 
+\end_layout
+
+\begin_layout Plain Layout
+
+wait(1000); 
+\end_layout
+
+\begin_layout Plain Layout
+
+// select input image as "object" 
+\end_layout
+
+\begin_layout Plain Layout
+
+call("inra.ijpb.plugins.MorphologicalSegmentation.setInputImageType", "object");
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+// set gradient radius as 1 
+\end_layout
+
+\begin_layout Plain Layout
+
+call("inra.ijpb.plugins.MorphologicalSegmentation.setGradientRadius", "1");
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+// run segmentation with tolerance 32, calculating the watershed dams, 
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+// 4-connectivity  
+\end_layout
+
+\begin_layout Plain Layout
+
+call("inra.ijpb.plugins.MorphologicalSegmentation.segment", "tolerance=32",
+  "calculateDams=true", "connectivity=4"); 
+\end_layout
+
+\begin_layout Plain Layout
+
+// display the overlaid dams 
+\end_layout
+
+\begin_layout Plain Layout
+
+call("inra.ijpb.plugins.MorphologicalSegmentation.setDisplayFormat", "Overlaid
+ dams");
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Chapter
 Measurements
 \end_layout
