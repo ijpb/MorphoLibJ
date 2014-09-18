@@ -243,6 +243,102 @@ target "http://github.com/ijpb/ijpb-plugins"
 \end_layout
 
 \begin_layout Chapter
+Quick start guide
+\end_layout
+
+\begin_layout Section
+Installation in ImageJ
+\end_layout
+
+\begin_layout Section
+Installation in Fiji
+\end_layout
+
+\begin_layout Standard
+If you use Fiji, the IJPB-plugins toolkit can be easily installed by adding
+ its update site to Fiji's list of update sites:
+\end_layout
+
+\begin_layout Enumerate
+Open Fiji and select 
+\emph on
+Help > Update...
+
+\emph default
+ from the Fiji menu to start the updater.
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/Fiji-updater-menu.png
+	width 75text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+When the updater is open, click on 
+\emph on
+Manage update sites
+\emph default
+.
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/Fiji-updater-GUI.png
+	width 75text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+This brings up a dialog where you can activate additional update sites:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/Fiji-updater-sites-manager.png
+	width 75text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Activate the IJPB-plugins update site and close the dialog.
+ Now you should see an additional jar file for download:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/Fiji-updater-ijpb-jar.png
+	width 75text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Finally, click on 
+\emph on
+Apply changes
+\emph default
+ and restart Fiji.
+ All the plugins should be available after restarting.
+\end_layout
+
+\begin_layout Chapter
 Morphological filters
 \end_layout
 
