@@ -250,13 +250,44 @@ Quick start guide
 Installation in ImageJ
 \end_layout
 
+\begin_layout Standard
+To install the IJPB-plugins toolkit in ImageJ, you only need to download
+ the latest release (in the form of a JAR file) into ImageJ's plugins folder
+ and restart ImageJ.
+ 
+\end_layout
+
+\begin_layout Standard
+All released versions can be found at 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://sites.imagej.net/IJPB-plugins/plugins/
+\end_layout
+
+\end_inset
+
+.
+ Notice the jar files contain a time stamp at the end of their names that
+ need to be removed.
+\end_layout
+
 \begin_layout Section
 Installation in Fiji
 \end_layout
 
 \begin_layout Standard
-If you use Fiji, the IJPB-plugins toolkit can be easily installed by adding
- its update site to Fiji's list of update sites:
+If you use Fiji (
+\begin_inset CommandInset citation
+LatexCommand citet
+key "schindelin2012fiji"
+
+\end_inset
+
+), the IJPB-plugins toolkit can be easily installed by adding its update
+ site to Fiji's list of update sites:
 \end_layout
 
 \begin_layout Enumerate
