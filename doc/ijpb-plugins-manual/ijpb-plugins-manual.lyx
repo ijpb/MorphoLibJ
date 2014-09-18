@@ -189,7 +189,14 @@ Key features
 
 \begin_layout Standard
 The library implements several functionalities that were missing in the
- ImageJ software, and that were not or only partially covered by other plugins.
+ ImageJ software (
+\begin_inset CommandInset citation
+LatexCommand citet
+key "schneider2012671"
+
+\end_inset
+
+), and that were not or only partially covered by other plugins.
  
 \end_layout
 
