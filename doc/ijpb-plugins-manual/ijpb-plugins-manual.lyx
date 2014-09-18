@@ -1437,7 +1437,7 @@ Start the plugin:
 
 
 \begin_inset listings
-lstparams "backgroundcolor={\color{lightgray}},basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
 status open
 
@@ -1458,7 +1458,7 @@ Select input image:
 
 
 \begin_inset listings
-lstparams "backgroundcolor={\color{white}},basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,numbers=left,showstringspaces=false"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false"
 inline false
 status open
 
@@ -1494,14 +1494,14 @@ Run segmentation with specific options:
 
 
 \begin_inset listings
-lstparams "backgroundcolor={\color{white}},basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
 status open
 
 \begin_layout Plain Layout
 
-call("inra.ijpb.plugins.MorphologicalSegmentation.segment", "tolerance=10",
-  "calculateDams=true", "connectivity=6");
+call("inra.ijpb.plugins.MorphologicalSegmentation.segment","tolerance=10", "calculat
+eDams=true","connectivity=6");
 \end_layout
 
 \end_inset
@@ -1512,7 +1512,7 @@ call("inra.ijpb.plugins.MorphologicalSegmentation.segment", "tolerance=10",
 \begin_layout Itemize
 Toggle result overlay:
 \begin_inset listings
-lstparams "backgroundcolor={\color{white}},basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
 status open
 
@@ -1533,7 +1533,7 @@ Set option to display gradient image:
 
 
 \begin_inset listings
-lstparams "backgroundcolor={\color{white}},basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
 status open
 
@@ -1554,7 +1554,7 @@ Select display format:
 
 
 \begin_inset listings
-lstparams "backgroundcolor={\color{white}},basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
 status open
 
@@ -1614,7 +1614,7 @@ Create new image with the current result:
 
 
 \begin_inset listings
-lstparams "backgroundcolor={\color{white}},basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
 status open
 
