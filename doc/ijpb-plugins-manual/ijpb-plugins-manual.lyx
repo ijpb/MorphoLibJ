@@ -4,13 +4,15 @@
 \begin_header
 \textclass report
 \begin_preamble
-
+\usepackage{hyperref}
 \usepackage{lstlinebgrd}
 
 \definecolor{mygreen}{rgb}{0,0.6,0}
 \definecolor{mygray}{rgb}{0.5,0.5,0.5}
 \definecolor{lightgray}{rgb}{0.95,0.95,0.95}
 \definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\hypersetup{colorlinks=true, citecolor=blue}
 \end_preamble
 \use_default_options true
 \maintain_unincluded_children false
@@ -231,10 +233,6 @@ target "http://github.com/ijpb/ijpb-plugins"
 \end_inset
 
 .
-\end_layout
-
-\begin_layout Standard
-
 \end_layout
 
 \begin_layout Chapter
