@@ -264,14 +264,13 @@ status open
 
 \begin_layout Plain Layout
 
-http://sites.imagej.net/IJPB-plugins/plugins/
+https://github.com/ijpb/ijpb-plugins/releases
 \end_layout
 
 \end_inset
 
 .
- Notice the jar files contain a time stamp at the end of their names that
- need to be removed.
+ 
 \end_layout
 
 \begin_layout Section
