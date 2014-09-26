@@ -299,6 +299,14 @@ Help > Update...
 \end_inset
 
 
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newpage pagebreak
+\end_inset
+
+
 \end_layout
 
 \begin_layout Enumerate
@@ -330,6 +338,14 @@ This brings up a dialog where you can activate additional update sites:
 	filename images/Fiji-updater-sites-manager.png
 	width 75text%
 
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newpage pagebreak
 \end_inset
 
 
