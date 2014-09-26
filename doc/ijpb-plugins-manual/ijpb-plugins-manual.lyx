@@ -224,15 +224,7 @@ binary / label images utilities
 \end_layout
 
 \begin_layout Standard
-The home page of the project is 
-\begin_inset CommandInset href
-LatexCommand href
-target "http://fiji.sc/Morphological_Segmentation"
-
-\end_inset
-
-.
- The project is hosted on GitHub: 
+The home page of the project is hosted on GitHub: 
 \begin_inset CommandInset href
 LatexCommand href
 target "http://github.com/ijpb/ijpb-plugins"
