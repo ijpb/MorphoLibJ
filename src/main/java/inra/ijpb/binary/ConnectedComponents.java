@@ -14,29 +14,33 @@ import inra.ijpb.morphology.FloodFill;
 
 /**
  * Several static methods for computing connected components in binary images. 
- *
+ * Results are label images, whose bit-depth can be specified. 
  */
-public class ConnectedComponents {
+public class ConnectedComponents
+{
 	/**
 	 * Computes the labels in the binary 2D or 3D image contained in the given
 	 * ImagePlus, and computes the maximum label to set up the display range
 	 * of the resulting ImagePlus.  
 	 * 
 	 * @param imagePlus contains the 3D binary image stack
-	 * @param conn the connectivity, either 6 or 26
+	 * @param conn the connectivity, either 4 or 8 for planar images, or 6 or 26 for 3D images
 	 * @param bitDepth the number of bits used to create the result stack (8, 16 or 32)
-	 * @return a 3D ImageStack containing the label of each connected component.
+	 * @return an ImagePlus containing the label of each connected component.
 	 */
-	public final static ImagePlus computeLabels(ImagePlus imagePlus, int conn, int bitDepth) {
+	public final static ImagePlus computeLabels(ImagePlus imagePlus, int conn, int bitDepth)
+	{
 		ImagePlus labelPlus;
 		int nLabels;
 	
-		if (imagePlus.getStackSize() == 1) {
+		if (imagePlus.getStackSize() == 1)
+		{
 			ImageProcessor labels = computeLabels(imagePlus.getProcessor(),
 					conn, bitDepth);
 			labelPlus = new ImagePlus("Labels", labels);
 			nLabels = findMax(labels);
-		} else {
+		} else 
+		{
 			ImageStack labels = computeLabels(imagePlus.getStack(), conn,
 					bitDepth);
 			labelPlus = new ImagePlus("Labels", labels);
@@ -50,8 +54,15 @@ public class ConnectedComponents {
 	/**
 	 * Computes the labels of the connected components in the given planar binary 
 	 * image. The type of result is controlled by the bitDepth option.
+	 * 
+	 * @param image contains the binary image (any type is accepted) 
+	 * @param conn the connectivity, either 4 or 8 
+	 * @param bitDepth the number of bits used to create the result stack (8, 16 or 32)
+	 * @return a new instance of ImageProcessor containing the label of each connected component.
 	 */
-	public final static ImageProcessor computeLabels(ImageProcessor image, int conn, int bitDepth) {
+	public final static ImageProcessor computeLabels(ImageProcessor image,
+			int conn, int bitDepth) 
+	{
 		// get image size
 		int width = image.getWidth();
 		int height = image.getHeight();
@@ -68,9 +79,11 @@ public class ConnectedComponents {
 		int nLabels = 0;
 
 		// iterate on image pixels to fin new regions
-		for (int y = 0; y < height; y++) {
+		for (int y = 0; y < height; y++) 
+		{
 			IJ.showProgress(y, height);
-			for (int x = 0; x < width; x++) {
+			for (int x = 0; x < width; x++) 
+			{
 				if (image.get(x, y) == 0)
 					continue;
 				if (labels.get(x, y) > 0)
@@ -89,8 +102,15 @@ public class ConnectedComponents {
 	/**
 	 * Computes the labels of the connected components in the given 3D binary 
 	 * image. The type of result is controlled by the bitDepth option.
+	 * 
+	 * @param image contains the 3D binary image (any type is accepted) 
+	 * @param conn the connectivity, either 6 or 26 
+	 * @param bitDepth the number of bits used to create the result stack (8, 16 or 32)
+	 * @return a new instance of ImageStack containing the label of each connected component.
 	 */
-	public final static ImageStack computeLabels(ImageStack image, int conn, int bitDepth) {
+	public final static ImageStack computeLabels(ImageStack image, int conn,
+			int bitDepth) 
+	{
 		if ( Thread.currentThread().isInterrupted() )					
 			return null;
 		
@@ -105,10 +125,13 @@ public class ConnectedComponents {
 		int nLabels = 0;
 
 		IJ.showStatus("Compute Labels...");
-		for (int z = 0; z < sizeZ; z++) {
+		for (int z = 0; z < sizeZ; z++) 
+		{
 			IJ.showProgress(z, sizeZ);
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
+			for (int y = 0; y < sizeY; y++) 
+			{
+				for (int x = 0; x < sizeX; x++) 
+				{
 					// Do not process background voxels
 					if (image.getVoxel(x, y, z) == 0)
 						continue;
@@ -129,17 +152,21 @@ public class ConnectedComponents {
 
 	/**
 	 * Computes maximum value in the input 2D image.
+	 * This method is used to compute display range of result ImagePlus.
 	 */
-	private final static int findMax(ImageProcessor image) {
+	private final static int findMax(ImageProcessor image) 
+	{
 		// get image size
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		
 		// find maximum value over voxels
 		int maxVal = 0;
-		for (int y = 0; y < sizeY; y++) {
+		for (int y = 0; y < sizeY; y++) 
+		{
 			IJ.showProgress(y, sizeY);
-			for (int x = 0; x < sizeX; x++) {
+			for (int x = 0; x < sizeX; x++) 
+			{
 				maxVal = Math.max(maxVal, image.get(x, y));
 			}
 		}
@@ -150,8 +177,10 @@ public class ConnectedComponents {
 	
 	/**
 	 * Computes maximum value in the input 3D image.
+	 * This method is used to compute display range of result ImagePlus.
 	 */
-	private final static int findMax(ImageStack image) {
+	private final static int findMax(ImageStack image) 
+	{
 		// get image size
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
@@ -159,10 +188,13 @@ public class ConnectedComponents {
 
 		// find maximum value over voxels
 		int maxVal = 0;
-		for (int z = 0; z < sizeZ; z++) {
+		for (int z = 0; z < sizeZ; z++) 
+		{
 			IJ.showProgress(z, sizeZ);
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
+			for (int y = 0; y < sizeY; y++) 
+			{
+				for (int x = 0; x < sizeX; x++) 
+				{
 					maxVal = Math.max(maxVal, (int) image.getVoxel(x, y, z));
 				}
 			}

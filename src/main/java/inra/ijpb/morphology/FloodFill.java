@@ -28,7 +28,7 @@ public class FloodFill {
 
 	/**
 	 * Replaces all the neighbor pixels of (x,y) that have the same values
-	 * by the specified value.
+	 * by the specified integer value, using the 4-connectivity.
 	 */
 	public final static void floodFillC4(ImageProcessor image, int x, int y, int value) {
 		// get image size
@@ -105,7 +105,8 @@ public class FloodFill {
 
 	/**
 	 * Replaces all the pixels in the 4-neighborhood of (x,y) that have the 
-	 * same values as the pixel in (x,y) by the specified floating point value.
+	 * same values as the pixel in (x,y) by the specified floating point value,
+	 * using the 4-connectivity.
 	 * Should work the same way for all type of images.
 	 */
 	public final static void floodFillC4(ImageProcessor image, int x, int y, float value) {
@@ -938,7 +939,7 @@ public class FloodFill {
 	/**
 	 * Assign to all the neighbor voxels of (x,y,z) that have the same voxel value 
 	 * in <code>image</code>, the specified new label value (<code>value</code>) 
-	 * in <code>labelImage</code>, using the specified connectivity.
+	 * in <code>labelImage</code>, using the 6-connectivity.
 	 * 
 	 * @param inputImage original image to read the voxel values from
 	 * @param x x- coordinate of voxel of interest
@@ -1060,7 +1061,7 @@ public class FloodFill {
 	/**
 	 * Assign to all the neighbor voxels of (x,y,z) that have the same voxel value 
 	 * in <code>image</code>, the specified new label value (<code>value</code>) 
-	 * in <code>labelImage</code>, using the specified connectivity.
+	 * in <code>labelImage</code>, using the 26-connectivity.
 	 * 
 	 * @param inputImage original image to read the voxel values from
 	 * @param x x- coordinate of voxel of interest
@@ -1170,7 +1171,7 @@ public class FloodFill {
 	/**
 	 * Assign to all the neighbor voxels of (x,y,z) that have the same voxel value 
 	 * in <code>image</code>, the specified new label value (<code>value</code>) 
-	 * in <code>labelImage</code>, using the specified connectivity.
+	 * in <code>labelImage</code>, using the 6-connectivity.
 	 * 
 	 * @param inputImage original image to read the voxel values from
 	 * @param x x- coordinate of voxel of interest
@@ -1292,7 +1293,7 @@ public class FloodFill {
 	/**
 	 * Assign to all the neighbor voxels of (x,y,z) that have the same voxel value 
 	 * in <code>image</code>, the specified new label value (<code>value</code>) 
-	 * in <code>labelImage</code>, using the specified connectivity.
+	 * in <code>labelImage</code>, using the 26-connectivity.
 	 * 
 	 * @param inputImage original image to read the voxel values from
 	 * @param x x- coordinate of voxel of interest
