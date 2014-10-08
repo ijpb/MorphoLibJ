@@ -3,7 +3,6 @@ package inra.ijpb.plugins;
 
 import ij.IJ;
 import ij.ImagePlus;
-import ij.ImageStack;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import inra.ijpb.morphology.LabelImages;
@@ -41,13 +40,8 @@ public class SelectLabelsPlugin implements PlugIn {
     public void run(String args) {
         ImagePlus imagePlus = IJ.getImage();
         
-		if (imagePlus.getStackSize() == 1) {
-			IJ.error("Requires a Stack");
-			return;
-		}
-		
         // create the dialog, with operator options
-        GenericDialog gd = new GenericDialog("Crop Label");
+        GenericDialog gd = new GenericDialog("Select Label(s)");
         gd.addMessage("Add labels seperated by comma.\nEx: [1, 2, 6, 9]");
         gd.addStringField("Label(s)", "1");
         gd.showDialog();
@@ -60,16 +54,8 @@ public class SelectLabelsPlugin implements PlugIn {
         String labelString = (String) gd.getNextString();
       
         int[] labels = parseLabels(labelString);
-        
-        // Compute the image with selected labels
-        ImageStack stack = imagePlus.getStack();
-        ImageStack selected = LabelImages.keepLabels(stack, labels);
-        selected.setColorModel(stack.getColorModel());
-        
-        // put result stack into result ImagePlus
-        String newName = imagePlus.getShortTitle() + "-select"; 
-        ImagePlus selectedPlus = new ImagePlus(newName, selected);
-        
+        ImagePlus selectedPlus = LabelImages.keepLabels(imagePlus, labels);
+        		
         // copy settings
         selectedPlus.copyScale(imagePlus);
         selectedPlus.setDisplayRange(imagePlus.getDisplayRangeMin(), imagePlus.getDisplayRangeMax());

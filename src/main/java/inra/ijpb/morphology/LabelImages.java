@@ -60,9 +60,104 @@ public class LabelImages {
 	 * region, by automatically cropping the image and eventually adding some
 	 * borders.
 	 * 
+	 * @param image a, image containing label of particles
+	 * @param label the label of the particle to select
+	 * @param border the number of pixels to add to each side of the particle
+	 * @return a smaller binary image containing only the selected particle
+	 */
+	public static final ImagePlus cropLabel(ImagePlus imagePlus, int label, int border) {
+        String newName = imagePlus.getShortTitle() + "-crop"; 
+        ImagePlus croppedPlus;
+        
+        // Compute the cropped image
+        if (imagePlus.getStackSize() == 1) 
+        {
+            ImageProcessor image = imagePlus.getProcessor();
+            ImageProcessor cropped = LabelImages.cropLabel(image, label, border);
+            croppedPlus = new ImagePlus(newName, cropped);
+        }
+        else
+        {
+            ImageStack image = imagePlus.getStack();
+            ImageStack cropped = LabelImages.cropLabel(image, label, border);
+            croppedPlus = new ImagePlus(newName, cropped);
+        }
+
+        return croppedPlus;
+	}
+
+	/**
+	 * Returns a binary image that contains only the selected particle or
+	 * region, by automatically cropping the image and eventually adding some
+	 * borders.
+	 * 
+	 * @param image a, image containing label of particles
+	 * @param label the label of the particle to select
+	 * @param border the number of pixels to add to each side of the particle
+	 * @return a smaller binary image containing only the selected particle
+	 */
+	public static final ImageProcessor cropLabel(ImageProcessor image, int label, int border) 
+	{
+		// image size
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		
+		// Initialize label bounds
+		int xmin = Integer.MAX_VALUE;
+		int xmax = Integer.MIN_VALUE;
+		int ymin = Integer.MAX_VALUE;
+		int ymax = Integer.MIN_VALUE;
+		
+		// update bounds by iterating on voxels 
+		for (int y = 0; y < sizeY; y++)
+		{
+			for (int x = 0; x < sizeX; x++)
+			{
+				// process only specified label
+				int val = image.get(x, y);
+				if (val != label)
+				{
+					continue;
+				}
+
+				// update bounds of current label
+				xmin = min(xmin, x);
+				xmax = max(xmax, x);
+				ymin = min(ymin, y);
+				ymax = max(ymax, y);
+			}
+		}
+
+		// Compute size of result, taking into account border
+		int sizeX2 = (xmax - xmin + 1 + 2 * border);
+		int sizeY2 = (ymax - ymin + 1 + 2 * border);
+
+		// allocate memory for result image
+		ImageProcessor result = new ByteProcessor(sizeX2, sizeY2);
+		
+		// fill result with binary label
+		for (int y = ymin, y2 = border; y <= ymax; y++, y2++) {
+			for (int x = xmin, x2 = border; x <= xmax; x++, x2++) {
+				if ((image.get(x, y)) == label)
+				{
+					result.set(x2, y2, 255);
+				}
+			}
+		}
+
+		return result;
+
+	}
+	
+
+	/**
+	 * Returns a binary image that contains only the selected particle or
+	 * region, by automatically cropping the image and eventually adding some
+	 * borders.
+	 * 
 	 * @param image a 3D image containing label of particles
 	 * @param label the label of the particle to select
-	 * @param border the number of voxel to add to each side of the particle
+	 * @param border the number of voxels to add to each side of the particle
 	 * @return a smaller binary image containing only the selected particle
 	 */
 	public static final ImageStack cropLabel(ImageStack image, int label, int border) 
