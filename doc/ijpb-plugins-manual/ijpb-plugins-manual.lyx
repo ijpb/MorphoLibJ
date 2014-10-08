@@ -184,7 +184,7 @@ algo = new GeodesicReconstruction3DScanningGray8(); algo.setConnectivity(26);
 \end_layout
 
 \begin_layout Chapter
-Key features
+Overview
 \end_layout
 
 \begin_layout Standard
@@ -201,13 +201,14 @@ key "schneider2012671"
 \end_layout
 
 \begin_layout Itemize
-morphological filtering: erosion & dilation, closing & opening, morphological
- gradient & laplacian, top-hat...
+morphological filtering for 2D/3D and binary or grey level images: erosion
+ & dilation, closing & opening, morphological gradient & laplacian, top-hat...
 \end_layout
 
 \begin_layout Itemize
-morphological reconstruction, allowing fast detection of regional or extended
- extrema, removing of borders, or hole filling
+morphological reconstruction, for 2D/3D and binary or grey level images,
+ allowing fast detection of regional or extended extrema, removing of borders,
+ or hole filling
 \end_layout
 
 \begin_layout Itemize
@@ -220,7 +221,7 @@ watershed segmentation + GUI, making it possible to segment 2D/3D images
 \end_layout
 
 \begin_layout Itemize
-binary / label images utilities
+utilities for manipulation of binary and label images
 \end_layout
 
 \begin_layout Standard
@@ -235,7 +236,7 @@ target "http://github.com/ijpb/ijpb-plugins"
 \end_layout
 
 \begin_layout Chapter
-Quick start guide
+Installation instructions
 \end_layout
 
 \begin_layout Section
@@ -383,7 +384,115 @@ Morphological filters
 \begin_layout Standard
 Morphological filters consider the neighborhood of each pixel/voxel according
  to a structuring element of a given size and shape.
- The following filters are implemented both for 2D and 3D images, and work
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/binary/particles.tif
+	width 3.5cm
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/binary/particles-DilationSq3.png
+	width 3.5cm
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/binary/particles-ErosionSq3.png
+	width 3.5cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Some example of morphological filters.
+ Original image (black over white), result of dilation, result of erosion.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/binary/particles-GradientSq2.png
+	width 3.5cm
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/binary/particles-ClosingDsk6.png
+	width 3.5cm
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/binary/particles-OpeningDsk6.png
+	width 3.5cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Some example of composed morphological filters.
+ Result of morphological gradient, result of morphological closing, result
+ of morphological opening.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+The following filters are implemented both for 2D and 3D images, and work
  for binary as well as grey level images:
 \end_layout
 
@@ -473,32 +582,267 @@ diamond
 line with angle of 0, 90, 45 or 135 degrees
 \end_layout
 
+\begin_layout Standard
+For 3D images, the same structuring elements can be used (the operation
+ is simply repeated on each slice), as well as a cubic structuring element.
+\end_layout
+
 \begin_layout Chapter
 Morphological reconstruction
 \end_layout
 
 \begin_layout Standard
-The morphological reconstruction provides the basis for many useful algorithms:
+The morphological reconstruction is at the basis of many useful algorithms,
+ such as border remowing, hole filling, or detection of regional minima
+ or maxima in grey level images.
 \end_layout
 
-\begin_layout Itemize
-detection of regional minima / maxima
+\begin_layout Section
+Principle
 \end_layout
 
-\begin_layout Itemize
-detection of extended minima / maxima
+\begin_layout Standard
+The principle of geodesic reconstruction is to repeat conditional dilations
+ or erosions until idempotence.
+ Conditional dilation is the result of a dilation, combined with a mask
+ image using a logical operation.
+ Conditional dilations are repeated until no more modification occur (idenpotenc
+e condition).
 \end_layout
 
-\begin_layout Itemize
-area or volume reconstruction
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/binary/particles-Markers-ovr.png
+	width 2.4cm
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/binary/particles-condDil01-ovr.png
+	width 2.4cm
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/binary/particles-condDil02-ovr.png
+	width 2.4cm
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/binary/particles-condDil03-ovr.png
+	width 2.4cm
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/binary/particles-condDilIdemp-ovr.png
+	width 2.4cm
+
+\end_inset
+
+
 \end_layout
 
-\begin_layout Itemize
-removing of borders
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Geodesic-Reconstruction-Principle"
+
+\end_inset
+
+Principle of the geodesic reconstruction algorithm.
+ Original image in gray with marker superimposed in black, and result of
+ conditional dilations with increasing sizes.
 \end_layout
 
-\begin_layout Itemize
-hole filling
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Applications
+\end_layout
+
+\begin_layout Standard
+By choosing the marker image, several operations may be automatised.
+ For example, computing geodesic reconstruction with image of borders, and
+ combining with original image will remove particles or regions touching
+ the borders.
+ In a similar way, combuting geodesic reconstruction by using the border
+ of the complement of the image makes it possible to fill holes that may
+ appear in particles.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/binary/particles.tif
+	width 4cm
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/binary/particles-killBorders.png
+	width 4cm
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/binary/particles-fillHoles.png
+	width 4cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Geodesic-Reconstruction-Applications"
+
+\end_inset
+
+Some applications of geodesic reconstruction.
+ From left to right: original image, result of kill borders, result of fill
+ holes.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Usage
+\end_layout
+
+\begin_layout Standard
+The following operations are available in the 
+\begin_inset Quotes eld
+\end_inset
+
+Plugins->Fast Morphology
+\begin_inset Quotes erd
+\end_inset
+
+ menu:
+\end_layout
+
+\begin_layout Description
+Geodesic
+\begin_inset space ~
+\end_inset
+
+Reconstruction compute the geodesic reconstruction by erosion or dilation
+ using a marker image and a mask image, and a specified connectivity.
+ The same operation is available for 3D images.
+\end_layout
+
+\begin_layout Description
+Kill
+\begin_inset space ~
+\end_inset
+
+Borders remove the particles touching the border of a binary or grey level
+ image, in 2D or 3D
+\end_layout
+
+\begin_layout Description
+Fill
+\begin_inset space ~
+\end_inset
+
+Holes remove holes inside particles in binary images, or remove dark regions
+ surrounded by bright crests in grey level images.
+ Works for both 2D and 3D images.
+\end_layout
+
+\begin_layout Description
+Regional
+\begin_inset space ~
+\end_inset
+
+Min
+\begin_inset space ~
+\end_inset
+
+/
+\begin_inset space ~
+\end_inset
+
+Max compute regional minima or extrema in grey level image, with specified
+ connectivity
+\end_layout
+
+\begin_layout Description
+Extended
+\begin_inset space ~
+\end_inset
+
+Min
+\begin_inset space ~
+\end_inset
+
+/
+\begin_inset space ~
+\end_inset
+
+Max compute extended minima or extrema in grey level image, with specified
+ connectivity
+\end_layout
+
+\begin_layout Description
+Impose
+\begin_inset space ~
+\end_inset
+
+Min
+\begin_inset space ~
+\end_inset
+
+/
+\begin_inset space ~
+\end_inset
+
+Max impose minima or maxima on a grey level image.
 \end_layout
 
 \begin_layout Chapter
@@ -1945,7 +2289,49 @@ Binary image utilities
 \end_layout
 
 \begin_layout Standard
-Some functions specific for the processing of binary images:
+Some functions specific for the processing of binary images.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/binary/particles-lbl-rgb.png
+	width 4cm
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/binary/particles-dist-rgb.png
+	width 4cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Connected components labeling, and computation of distance maps for binary
+ image.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Description
@@ -1972,6 +2358,56 @@ Distance
 
 Map computes an approximate distance map between each foregrond pixel to
  the nearest background pixel
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/binary/particles-largest.png
+	width 4cm
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/binary/particles-killLargest.png
+	width 4cm
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/binary/particles-sizeOpen1000.png
+	width 4cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Utilities for binary images.
+ From left to right: keep largest region, remove largest region, apply size
+ opening for keeping only regions with at least 1000 pixels.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Description
@@ -2019,7 +2455,65 @@ Label image utilities
 \begin_layout Standard
 Some functions specific for the processing of label images, in which the
  pixel/voxel values is used to identify the particle it belongs to.
- The value 0 is assumed to correspond to the beackground.
+ The value 0 is assumed to correspond to the background.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/binary/particles-lbl-rgb.png
+	width 3cm
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/binary/particles-lbl-killBorders.png
+	width 3cm
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/binary/particles-lbl-killLargest.png
+	width 3cm
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/binary/particles-lbl-sizeOpening.png
+	width 3cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Utilities for label images.
+ From left to right: original label image, remove border labels, remove
+ largest region, apply size opening for keeping only regions with at least
+ 1000 pixels.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Description
@@ -2164,6 +2658,52 @@ To
 RGB converts a label image to true RGB image.
  Similar to ImageJ native conversion, but this plugin avoids confusion between
  background pixels and regions with low labels.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/binary/particles-lbl-rgb.png
+	width 4cm
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/binary/particles-lbl-Elong.png
+	width 4cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Assign result of a measurment to a label image.
+ In this example, the elongation is represented using a color code, between
+ dark purple (circular) to yellow (very elongated).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 \begin_inset CommandInset bibtex
 LatexCommand bibtex
 bibfiles "bibliography"
