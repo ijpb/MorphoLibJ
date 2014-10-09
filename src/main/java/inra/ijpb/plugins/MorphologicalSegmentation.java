@@ -1513,6 +1513,8 @@ public class MorphologicalSegmentation implements PlugIn {
 	 * @param calculateDams string containing boolean flag to create dams (format: "calculateDams=[boolean])
 	 * @param connectivity string containing connectivity value (format: "connectivity=[4 or 8 / 6 or 26])
 	 * @param usePriorityQueue string containing boolean flag to use priority queue (format: "usePriorityQueue=[boolean])
+	 * 
+	 * @deprecated the priority queue method is now the only one
 	 */
 	public static void segment(
 			String dynamic,
@@ -1533,7 +1535,32 @@ public class MorphologicalSegmentation implements PlugIn {
 		else
 			IJ.log( "Error: Morphological Segmentation GUI not detected." );
 	}
-
+	/**
+	 * Segment current image (GUI needs to be running)
+	 * 
+	 * @param dynamic string containing dynamic value (format: "dynamic=[integer value]")
+	 * @param calculateDams string containing boolean flag to create dams (format: "calculateDams=[boolean])
+	 * @param connectivity string containing connectivity value (format: "connectivity=[4 or 8 / 6 or 26])
+	 * @param usePriorityQueue string containing boolean flag to use priority queue (format: "usePriorityQueue=[boolean])
+	 */
+	public static void segment(
+			String dynamic,
+			String calculateDams,
+			String connectivity )
+	{		
+		final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
+		if( iw instanceof CustomWindow )
+		{
+			//IJ.log( "GUI detected" );			
+			final CustomWindow win = (CustomWindow) iw;
+			win.setDynamic( Integer.parseInt( dynamic.replace( "tolerance=", "" ) ) );
+			win.setCalculateDams( calculateDams.contains( "true" ) );
+			win.setConnectivity( Integer.parseInt( connectivity.replace( "connectivity=", "" ) ) );
+			win.runSegmentation( win.getSegmentText() );			
+		}
+		else
+			IJ.log( "Error: Morphological Segmentation GUI not detected." );
+	}
 	/**
 	 * Toggle current result overlay image
 	 */
