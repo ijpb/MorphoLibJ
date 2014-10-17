@@ -721,7 +721,7 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 	    		final int i = p.getX();
 	    		final int j = p.getY();
 
-      			double pixelValue = pixelRecord.getValue();
+      			double pixelValue = Double.MAX_VALUE;
 
       			// Read neighbor coordinates		       	
 		       	neigh.setCursor( p );

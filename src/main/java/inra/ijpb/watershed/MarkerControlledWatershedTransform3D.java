@@ -452,7 +452,7 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 	    		final int j = p.getY();
 	    		final int k = p.getZ();
 
-      			double voxelValue = voxelRecord.getValue();
+      			double voxelValue = Double.MAX_VALUE;
 
       			// Read neighbor coordinates		       	
 		       	neigh.setCursor( p );
