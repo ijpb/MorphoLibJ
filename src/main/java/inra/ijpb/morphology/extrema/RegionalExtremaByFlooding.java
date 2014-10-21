@@ -15,7 +15,7 @@ import static java.lang.Math.min;
  * using double, making it generic for 8-, 16- or 32-bit images.
  *
  * Example of use:
- * <code><pre>
+ * <pre><code>
  * ImageProcessor image = IJ.getImage().getProcessor();
  * RegionalExtremaAlgo algo = new RegionalExtremaByFlooding(); 
  * algo.setExtremaType(ExtremaType.MAXIMA);
@@ -23,7 +23,7 @@ import static java.lang.Math.min;
  * ImageProcessor result = algo.applyTo(image);
  * ImagePlus resPlus = new ImagePlus("Regional Extrema", result); 
  * resPlus.show(); 
- * </pre></code>
+ * </code></pre>
  */
 public class RegionalExtremaByFlooding extends RegionalExtremaAlgo {
 

@@ -567,7 +567,7 @@ public class GeometricMeasures3D {
 	/**
      * Computes inertia ellipsoid of each 3D region in input 3D label image.
      * 
-     * @throws a RuntimeException if jama package is not found.
+     * @throws RuntimeException if jama package is not found.
      */
     public final static ResultsTable inertiaEllipsoid(ImageStack image) {
         // Check validity of parameters

@@ -23,13 +23,13 @@ public class ShiftedCross3x3Strel {
 	 * 
 	 * The structuring has the following shape (x: neighbor, o: reference
 	 * pixel, .: irrelevant): 
-	 * <code><pre>
+s	 * <pre><code>
 	 *  . . . . . 
 	 *  . . x . . 
 	 *  . x x o . 
 	 *  . . x . . 
 	 *  . . . . . 
-	 * </pre></code>
+	 * </code></pre>
 	 */
 	public final static InPlaceStrel LEFT = new ShiftedCross3x3Strel.Left();
 	
@@ -39,13 +39,13 @@ public class ShiftedCross3x3Strel {
 	 * 
 	 * The structuring has the following shape (x: neighbor, o: reference
 	 * pixel, .: irrelevant): 
-	 * <code><pre>
+	 * <pre><code>
 	 *  . . . . . 
 	 *  . . x . . 
 	 *  . o x x . 
 	 *  . . x . . 
 	 *  . . . . . 
-	 * </pre></code>
+	 * </code></pre>
 	 */
 	public final static InPlaceStrel RIGHT = new ShiftedCross3x3Strel.Right();
 

@@ -11,7 +11,7 @@ import inra.ijpb.morphology.FloodFill;
  * floating-point images. 
  * 
  * Example of use:
- * <code><pre>
+ * <pre><code>
  * ImageStack image = IJ.getImage().getStack();
  * RegionalExtrema3DAlgo algo = new RegionalExtrema3DFlooding(); 
  * algo.setExtremaType(ExtremaType.MAXIMA);
@@ -19,7 +19,7 @@ import inra.ijpb.morphology.FloodFill;
  * ImageStack result = algo.applyTo(image);
  * ImagePlus resPlus = new ImagePlus("Regional Maxima", result); 
  * resPlus.show(); 
- * </pre></code>
+ * </code></pre>
  *
  * @see inra.ijpb.morphology.MinimaAndMaxima3D
  * @see inra.ijpb.morphology.FloodFill

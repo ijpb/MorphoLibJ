@@ -60,7 +60,7 @@ public class LabelImages {
 	 * region, by automatically cropping the image and eventually adding some
 	 * borders.
 	 * 
-	 * @param image a, image containing label of particles
+	 * @param imagePlus an image containing label of particles
 	 * @param label the label of the particle to select
 	 * @param border the number of pixels to add to each side of the particle
 	 * @return a smaller binary image containing only the selected particle
@@ -224,6 +224,12 @@ public class LabelImages {
 
 	}
 	
+	/**
+	 * Applies size opening on a label image: creates a new label image that
+	 * contains only particles with at least the specified number of pixels or voxels.
+	 * @see #areaOpening(ImageProcessor, int)
+	 * @see #volumeOpening(ImageStack, int)
+	 */
 	public static final ImagePlus sizeOpening(ImagePlus labelImage, int minElementCount) 
 	{
 		boolean isPlanar = labelImage.getStackSize() == 1;
@@ -436,7 +442,7 @@ public class LabelImages {
 
 	/**
 	 * Removes all regions that touch the borders of the image.
-	 * @param imagePlus a label image
+	 * @param image a label image
 	 */
 	public static final void removeBorderLabels(ImageProcessor image) {
 		int[] labels = findBorderLabels(image);
@@ -475,7 +481,7 @@ public class LabelImages {
 
 	/**
 	 * Removes all regions that touch the borders of the image.
-	 * @param imagePlus a label image
+	 * @param image a label image
 	 */
 	public static final void removeBorderLabels(ImageStack image) {
 		int[] labels = findBorderLabels(image);
@@ -747,11 +753,19 @@ public class LabelImages {
         return counts;
 	}
 	
+    /**
+     * Returns the set of unique labels existing in the given image, excluding 
+     * the value zero (used for background).
+     */
     public final static int[] findAllLabels(ImagePlus image) {
 		return image.getStackSize() == 1 ? findAllLabels(image.getProcessor())
 				: findAllLabels(image.getStack());
     }
 
+    /**
+     * Returns the set of unique labels existing in the given stack, excluding 
+     * the value zero (used for background).
+     */
     public final static int[] findAllLabels(ImageStack image) {
         int sizeX = image.getWidth();
         int sizeY = image.getHeight();
@@ -781,6 +795,10 @@ public class LabelImages {
         return array;
     }
 
+    /**
+     * Returns the set of unique labels existing in the given image, excluding 
+     * the value zero (used for background).
+     */
     public final static int[] findAllLabels(ImageProcessor image) {
         int sizeX = image.getWidth();
         int sizeY = image.getHeight();

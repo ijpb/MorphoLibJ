@@ -65,11 +65,11 @@ public class ColorImages
 	 * into a Map, using channel names as key. 
 	 *  
 	 * Example:
-	 * <code><pre>
+	 * <pre><code>
 	 * ColorProcessor colorImage = ...
 	 * HashMap&lt;String, ByteProcessor&gt; channels = mapChannels(colorImage);
 	 * ByteProcessor blue = channels.get("blue");
-	 * </pre></code>
+	 * </code></pre>
 	 * 
 	 * @param image the original image, assumed to be a ColorProcessor
 	 * @return a hashmap indexing the three channels by their names

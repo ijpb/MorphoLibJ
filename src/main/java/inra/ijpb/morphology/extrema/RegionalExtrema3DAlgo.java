@@ -9,7 +9,7 @@ import ij.ImageStack;
  * Interface for appying regional extrema (regional mininma and regional maxima).
  * 
  * Example of use:
- * <code><pre>
+ * <pre><code>
  * ImageStack image = IJ.getImage().getStack();
  * RegionalExtrema3DAlgo algo = new RegionalExtrema3DFlooding(); 
  * algo.setConnectivity(6);
@@ -17,7 +17,7 @@ import ij.ImageStack;
  * ImageStack result = algo.applyTo(image);
  * ImagePlus resPlus = new ImagePlus("Regional Extrema", result); 
  * resPlus.show(); 
- * </pre></code>
+ * </code></pre>
  *
  * @author David Legland
  *

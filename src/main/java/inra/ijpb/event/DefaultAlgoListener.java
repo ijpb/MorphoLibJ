@@ -17,7 +17,7 @@ import inra.ijpb.morphology.strel.SquareStrel;
  *  
  * <p>
  * Example of use:
- * <code><pre>
+ * <pre><code>
  * // init image and process 
  * ImageProcessor image = ...
  * Strel strel = SquareStrel.fromDiameter(15);
@@ -27,7 +27,7 @@ import inra.ijpb.morphology.strel.SquareStrel;
  * 
  * // run process. The IJ frame will display progress
  * strel.dilation(image);
- * </pre></code>
+ * </code></pre>
  * </p>
  * @author David Legland
  *

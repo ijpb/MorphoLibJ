@@ -9,7 +9,7 @@ import ij.process.ImageProcessor;
  * Interface for appying regional extrema (regional minima and maxima).
  * 
  * Example of use:
- * <code><pre>
+ * <pre><code>
  * ImageProcessor image = IJ.getImage().getProcessor();
  * RegionalExtremaAlgo algo = new RegionalExtremaByFlooding(); 
  * algo.setConnectivity(4);
@@ -17,7 +17,7 @@ import ij.process.ImageProcessor;
  * ImageProcessor result = algo.applyTo(image);
  * ImagePlus resPlus = new ImagePlus("Regional Extrema", result); 
  * resPlus.show(); 
- * </pre></code>
+ * </code></pre>
  *
  * @author David Legland
  *

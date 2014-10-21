@@ -9,6 +9,18 @@ import java.awt.Point;
 import java.util.Iterator;
 import java.util.TreeSet;
 
+/**
+ * Computes geodesic diameter of a set of labeled particles or regions, using 
+ * floating point values for propagating distances.
+ * 
+ * This version uses optimized algorithm, that propagates distances of all
+ * particles during each pass. This reduces computation overhead due to 
+ * iteration over particles.
+ * 
+ * @see inra.ijpb.binary.geodesic.GeodesicDiameterShort
+ * @author dlegland
+ *
+ */
 public class GeodesicDiameterFloat {
 
 	float[] weights;

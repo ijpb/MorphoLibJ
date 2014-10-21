@@ -19,8 +19,7 @@
  * <li>Utility classes that manage local extremum: {@link inra.ijpb.morphology.strel.LocalExtremum}, 
  * 	{@link inra.ijpb.morphology.strel.LocalExtremumBufferGray8},
  * {@link inra.ijpb.morphology.strel.LocalExtremumBufferDouble}</li> 
- * </ul>
- * </p>
+ * </ul></p>
  * 
  */
 package inra.ijpb.morphology.strel;

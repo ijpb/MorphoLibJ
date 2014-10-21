@@ -1541,7 +1541,6 @@ public class MorphologicalSegmentation implements PlugIn {
 	 * @param dynamic string containing dynamic value (format: "dynamic=[integer value]")
 	 * @param calculateDams string containing boolean flag to create dams (format: "calculateDams=[boolean])
 	 * @param connectivity string containing connectivity value (format: "connectivity=[4 or 8 / 6 or 26])
-	 * @param usePriorityQueue string containing boolean flag to use priority queue (format: "usePriorityQueue=[boolean])
 	 */
 	public static void segment(
 			String dynamic,

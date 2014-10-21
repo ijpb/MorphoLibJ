@@ -20,13 +20,13 @@ import java.util.Map;
  * as well as an enumeration of available methods.
  * 
  * Example of use:
- * <code><pre>
+ * <pre><code>
  * ImageProcessor ip = image.getProcessor();
  * Strel se = SquareStrel.fromDiameter(5);
  * ImageProcessor grad = Morphology.gradient(ip, se);
  * ImagePlus res = new ImagePlus("Gradient", grad);
  * res.show(); 
- * </pre></code>
+ * </code></pre>
  * @author David Legland
  *
  */

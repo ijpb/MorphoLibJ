@@ -10,9 +10,14 @@ import java.util.Iterator;
 import java.util.TreeSet;
 
 /**
- * This version uses optimised algorithm, that propagates distances of all
+ * Computes geodesic diameter of a set of labeled particles or regions, using 
+ * integer values coded as short (16 bits) for propagating distances.
+ * 
+ * This version uses optimized algorithm, that propagates distances of all
  * particles during each pass. This reduces computation overhead due to 
- * iteration over particles.  
+ * iteration over particles.
+ * 
+ * @see inra.ijpb.binary.geodesic.GeodesicDiameterFloat
  * @author David Legland
  *
  */
