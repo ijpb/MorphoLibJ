@@ -19,7 +19,6 @@ Installation
 ------------
 * In ImageJ, download the latest released jar into the _plugins_ folder.
 
-
 * In Fiji, you just need to add the IJPB-plugins update site:
 
 > 1. Select _Help > Update..._ from the Fiji menu to start the updater.
@@ -29,3 +28,12 @@ Installation
 > 3. Activate the IJPB-plugins update site and close the dialog. Now you should see an additional jar file for download.
 
 > 4. Click _Apply changes_ and restart Fiji.
+
+Documentation
+-------------
+
+A more detailed presentation of the plugin for the user is available on the 
+[ImageJ Wiki](http://imagejdocu.tudor.lu/doku.php?id=plugin:segmentation:morphological_segmentation:start), 
+as well as on the [Fiji Wiki](http://fiji.sc/Morphological_Segmentation).
+
+The main source code directory is [src/main/java/inra/ijpb](https://github.com/ijpb/ijpb-plugins/tree/master/src/main/java/inra/ijpb).
