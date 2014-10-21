@@ -221,7 +221,7 @@ public class ChamferDistance3x3Float implements ChamferDistance {
 		float newVal;
 
 		// Process last line: consider only the pixel just after (on the right)
-		for (int i = width - 2; i > 0; i--) {
+		for (int i = width - 2; i >= 0; i--) {
 			if (maskProc.getPixel(i, height - 1) != maskLabel)
 				continue;
 
