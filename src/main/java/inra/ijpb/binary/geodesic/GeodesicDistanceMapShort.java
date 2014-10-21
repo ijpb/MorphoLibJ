@@ -268,7 +268,7 @@ public class GeodesicDistanceMapShort implements GeodesicDistanceMap {
 		int diago;
 		
 		// Process last line: consider only the pixel just after (on the right)
-		for (int i = width - 2; i > 0; i--) {
+		for (int i = width - 2; i >= 0; i--) {
 			if (maskProc.get(i, height-1) != maskLabel)
 				continue;
 
@@ -304,7 +304,6 @@ public class GeodesicDistanceMapShort implements GeodesicDistanceMap {
 			// process first pixel of current line: consider pixels right,
 			// down-right and down
 			if (maskProc.get(0, j) == maskLabel) {
-				// curVal = array[0][j];
 				ortho = min(buffer.get(1, j), buffer.get(0, j+1));
 				diago = buffer.get(1, j+1);
 				updateIfNeeded(0, j, ortho, diago);
