@@ -74,6 +74,8 @@ public class MorphologicalSegmentation implements PlugIn {
 
 	/** original input image */
 	ImagePlus inputImage = null;
+	
+	ImageStack inputStackCopy = null;
 
 	/** image to be displayed in the GUI */
 	ImagePlus displayImage = null;
@@ -796,8 +798,9 @@ public class MorphologicalSegmentation implements PlugIn {
 
 			if( null != inputImage )
 			{
-				inputImage.setSlice( displayImage.getCurrentSlice() );
-
+				if( null != displayImage )
+					inputImage.setSlice( displayImage.getCurrentSlice() );
+				
 				// display input image
 				inputImage.getWindow().setVisible( true );
 			}
@@ -938,7 +941,8 @@ public class MorphologicalSegmentation implements PlugIn {
 						// disable parameter panel
 						setParamsEnabled( false );
 
-						ImageStack image = inputImage.getImageStack();
+						// get original image info
+						ImageStack image = inputStackCopy;
 
 						final long start = System.currentTimeMillis();
 
@@ -1123,7 +1127,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			if( applyGradient && showGradient && null != gradientStack )			
 				displayImage.setStack( gradientStack );
 			else
-				displayImage.setStack( inputImage.getImageStack() );
+				displayImage.setStack( inputStackCopy );
 			displayImage.setSlice( slice );
 			displayImage.updateAndDraw();
 		}
@@ -1455,7 +1459,9 @@ public class MorphologicalSegmentation implements PlugIn {
 			return;
 		}
 
-		displayImage = inputImage.duplicate();
+		inputStackCopy = inputImage.getImageStack().duplicate();
+		displayImage = new ImagePlus( inputImage.getTitle(), 
+				inputStackCopy );
 		displayImage.setTitle("Morphological Segmentation");
 		displayImage.setSlice( inputImage.getSlice() );
 
