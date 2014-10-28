@@ -9,6 +9,8 @@ import java.util.Locale;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
+import inra.ijpb.data.image.Images3D;
+import inra.ijpb.morphology.GeodesicReconstruction3D;
 import inra.ijpb.morphology.Morphology;
 import inra.ijpb.morphology.strel.CubeStrel;
 
@@ -77,6 +79,98 @@ public class GeodesicReconstructionByErosion3DScanningTest {
 			}
 		}
 		
+	}
+
+	@Test
+	public void testInvertedLeveledCubeGraph() {
+		ImageStack mask = createInvertedLeveledCubeGraphImage();
+		mask = mask.convertToFloat();
+
+		ImageStack marker = ImageStack.create(11, 11, 11, 8);
+		Images3D.fill(marker, 255);
+		marker.setVoxel(1, 1, 1, 0);
+		marker = marker.convertToFloat();
+
+		System.out.println("\n=== Mask Image ===");
+		Images3D.print(mask);
+		System.out.println("\n=== Marker Image ===");
+		Images3D.print(marker);
+
+		ImageStack result = GeodesicReconstruction3D.reconstructByErosion(marker, mask, 6);
+
+		System.out.println("\n=== Result Image ===");
+		Images3D.print(result);
+
+		assertEquals(  0, result.getVoxel(1, 1, 1), .01);
+		assertEquals( 32, result.getVoxel(9, 1, 1), .01);
+		assertEquals( 64, result.getVoxel(9, 9, 1), .01);
+		assertEquals( 96, result.getVoxel(9, 9, 9), .01);
+		assertEquals(128, result.getVoxel(9, 1, 9), .01);
+		assertEquals(160, result.getVoxel(1, 1, 9), .01);
+		assertEquals(192, result.getVoxel(1, 9, 9), .01);
+		assertEquals(224, result.getVoxel(1, 9, 1), .01);
+	}
+
+	private static final ImageStack createInvertedLeveledCubeGraphImage() {
+		ImageStack stack = createCubeGraphImage();
+		for (int z = 0; z < stack.getSize(); z++) {
+			for (int y = 0; y < stack.getHeight(); y++) {
+				for (int x = 0; x < stack.getWidth(); x++) {
+					stack.setVoxel(x, y, z, 255 - stack.getVoxel(x, y, z));
+				}
+			}
+		}
+		stack.setVoxel(5, 1, 1,  32);
+		stack.setVoxel(9, 5, 1,  64);
+		stack.setVoxel(9, 9, 5,  96);
+		stack.setVoxel(9, 5, 9, 128);
+		stack.setVoxel(5, 1, 9, 160);
+		stack.setVoxel(1, 5, 9, 192);
+		stack.setVoxel(1, 9, 5, 224);
+
+		return stack;
+	}
+
+	/**
+	 * Creates a 3D image containing thin cube mesh.
+	 */
+	private static final ImageStack createCubeGraphImage() {
+		int sizeX = 11;
+		int sizeY = 11;
+		int sizeZ = 11;
+		int bitDepth = 8;
+
+		// create empty stack
+		ImageStack stack = ImageStack.create(sizeX, sizeY, sizeZ, bitDepth);
+
+		// coordinates of the cube edges
+		int x1 = 1;
+		int x2 = 9;
+		int y1 = 1;
+		int y2 = 9;
+		int z1 = 1;
+		int z2 = 9;
+
+		// First, the edges in the x direction
+		for (int x = x1; x <= x2; x++) {
+			stack.setVoxel(x, y1, z1, 255);
+			stack.setVoxel(x, y1, z2, 255);
+		}
+
+		// then, the edges in the y direction
+		for (int y = y1; y <= y2; y++) {
+			stack.setVoxel(x2, y, z1, 255);
+			stack.setVoxel(x1, y, z2, 255);
+			stack.setVoxel(x2, y, z2, 255);
+		}
+
+		// Finally, the edges in the z direction
+		for (int z = z1; z <= z2; z++) {
+			stack.setVoxel(x1, y2, z, 255);
+			stack.setVoxel(x2, y2, z, 255);
+		}
+
+		return stack;
 	}
 
 }
