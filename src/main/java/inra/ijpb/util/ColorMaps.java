@@ -25,6 +25,7 @@ public class ColorMaps {
 		GRAYS("Grays"), 
 		FIRE("Fire"),
 		GLASBEY("Glasbey"),
+		GOLDEN_ANGLE( "Golden angle" ),
 		ICE("Ice"), 
 		SPECTRUM("Spectrum"), 
 		JET("Jet"), 
@@ -56,6 +57,8 @@ public class ColorMaps {
 				lut = ColorMaps.createFireLut(nValues);			
 			} else if (this == GLASBEY) {
 				lut = ColorMaps.createGlasbeyLut();
+			}else if (this == GOLDEN_ANGLE) {
+				lut = ColorMaps.createGoldenAngleLut( nValues );
 			}else if (this == ICE) {
 				lut = ColorMaps.createIceLut(nValues);
 			} else if (this == SPECTRUM) {
@@ -263,6 +266,55 @@ public class ColorMaps {
 		}
 
 		return  map;
+	}
+	
+	/**
+	 * Make lookup table with esthetically pleasing colors based on the golden
+	 * angle
+	 * 
+	 * @param nColors number of colors to generate
+	 * @return lookup table with golden-angled-based colors 
+	 */
+	public final static byte[][] createGoldenAngleLut( int nColors ) 
+	{
+		final byte[] red = new byte[ nColors ];
+		final byte[] green = new byte[ nColors ];
+		final byte[] blue = new byte[ nColors ];
+
+		// hue for assigning new color ([0.0-1.0])
+		float hue = 0.5f;
+		// saturation for assigning new color ([0.5-1.0]) 
+		float saturation = 0.75f; 
+		Color[] colors = new Color[ nColors ]; 
+		for(int i=0; i<nColors; i++)
+		{
+			colors[ i ] = Color.getHSBColor(hue, saturation, 1);
+
+			hue += 0.38197f; // golden angle
+			if (hue > 1) 
+				hue -= 1;
+			saturation += 0.38197f; // golden angle
+			if (saturation > 1)
+				saturation -= 1;
+			saturation = 0.5f * saturation + 0.5f;							
+		}
+							
+		for(int i = 1 ; i < nColors; i++)
+		{
+			red[i] = (byte) colors[ i-1 ].getRed();
+			green[i] = (byte) colors[ i-1 ].getGreen();
+			blue[i] = (byte) colors[ i-1 ].getBlue();
+		}
+		// create map
+		byte[][] map = new byte[ nColors ][3];
+
+		for (int i = 0; i < nColors; i++) {
+			map[i][0] = red[ i ];
+			map[i][1] = green[ i ];
+			map[i][2] = blue[ i ];
+		}
+
+		return map;		
 	}
 	
 	public final static byte[][] createGrayLut() {
