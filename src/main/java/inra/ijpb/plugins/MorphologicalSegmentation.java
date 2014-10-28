@@ -1069,7 +1069,7 @@ public class MorphologicalSegmentation implements PlugIn {
 						// Adjust min and max values to display
 						Images3D.optimizeDisplayRange( resultImage );
 
-						byte[][] colorMap = CommonLabelMaps.fromLabel( CommonLabelMaps.SPECTRUM.getLabel() ).computeLut(255, true);;
+						byte[][] colorMap = CommonLabelMaps.fromLabel( CommonLabelMaps.GOLDEN_ANGLE.getLabel() ).computeLut( 255, false );
 						ColorModel cm = ColorMaps.createColorModel(colorMap, Color.BLACK);
 						resultImage.getProcessor().setColorModel(cm);
 						resultImage.getImageStack().setColorModel(cm);
