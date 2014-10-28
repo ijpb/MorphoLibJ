@@ -90,17 +90,17 @@ public class GeodesicReconstructionByErosion3DScanningTest {
 		Images3D.fill(marker, 255);
 		marker.setVoxel(1, 1, 1, 0);
 		marker = marker.convertToFloat();
-
+		
 		System.out.println("\n=== Mask Image ===");
 		Images3D.print(mask);
 		System.out.println("\n=== Marker Image ===");
 		Images3D.print(marker);
-
+		
 		ImageStack result = GeodesicReconstruction3D.reconstructByErosion(marker, mask, 6);
-
+		
 		System.out.println("\n=== Result Image ===");
 		Images3D.print(result);
-
+		
 		assertEquals(  0, result.getVoxel(1, 1, 1), .01);
 		assertEquals( 32, result.getVoxel(9, 1, 1), .01);
 		assertEquals( 64, result.getVoxel(9, 9, 1), .01);
@@ -110,7 +110,7 @@ public class GeodesicReconstructionByErosion3DScanningTest {
 		assertEquals(192, result.getVoxel(1, 9, 9), .01);
 		assertEquals(224, result.getVoxel(1, 9, 1), .01);
 	}
-
+	
 	private static final ImageStack createInvertedLeveledCubeGraphImage() {
 		ImageStack stack = createCubeGraphImage();
 		for (int z = 0; z < stack.getSize(); z++) {
@@ -130,7 +130,7 @@ public class GeodesicReconstructionByErosion3DScanningTest {
 
 		return stack;
 	}
-
+	
 	/**
 	 * Creates a 3D image containing thin cube mesh.
 	 */
@@ -139,10 +139,10 @@ public class GeodesicReconstructionByErosion3DScanningTest {
 		int sizeY = 11;
 		int sizeZ = 11;
 		int bitDepth = 8;
-
+		
 		// create empty stack
 		ImageStack stack = ImageStack.create(sizeX, sizeY, sizeZ, bitDepth);
-
+		
 		// coordinates of the cube edges
 		int x1 = 1;
 		int x2 = 9;
@@ -150,27 +150,27 @@ public class GeodesicReconstructionByErosion3DScanningTest {
 		int y2 = 9;
 		int z1 = 1;
 		int z2 = 9;
-
+		
 		// First, the edges in the x direction
 		for (int x = x1; x <= x2; x++) {
 			stack.setVoxel(x, y1, z1, 255);
 			stack.setVoxel(x, y1, z2, 255);
-		}
-
+		}				
+		
 		// then, the edges in the y direction
 		for (int y = y1; y <= y2; y++) {
 			stack.setVoxel(x2, y, z1, 255);
 			stack.setVoxel(x1, y, z2, 255);
 			stack.setVoxel(x2, y, z2, 255);
-		}
+		}				
 
 		// Finally, the edges in the z direction
 		for (int z = z1; z <= z2; z++) {
 			stack.setVoxel(x1, y2, z, 255);
 			stack.setVoxel(x2, y2, z, 255);
-		}
-
+		}				
+		
 		return stack;
 	}
-
+	
 }
