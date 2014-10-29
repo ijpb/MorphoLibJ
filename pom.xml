@@ -11,7 +11,7 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 		<relativePath />
 	</parent>
 
-	<groupId>sc.fiji</groupId>
+	<groupId>fr.inra.ijpb</groupId>
 	<artifactId>ijpb_plugins</artifactId>
 	<version>1.0.6-SNAPSHOT</version>
 
