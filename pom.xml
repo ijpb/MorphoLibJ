@@ -16,7 +16,7 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<version>1.0.6-SNAPSHOT</version>
 
 	<name>plugins/Morpho_LibJ.jar</name>
-	<description>Plugins from the IJPB institute for morphology and segmentation</description>
+	<description>Mathematical morphology library and plugins for ImageJ/Fiji</description>
 
 	<dependencies>
 		<!-- When writing ImageJ/Fiji plugins, it is necessary to add a dependency 
