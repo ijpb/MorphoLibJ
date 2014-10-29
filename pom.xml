@@ -12,10 +12,10 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	</parent>
 
 	<groupId>fr.inra.ijpb</groupId>
-	<artifactId>MorphoLibJ</artifactId>
+	<artifactId>MorphoLibJ_</artifactId>
 	<version>1.0.6-SNAPSHOT</version>
 
-	<name>plugins/Morpho_LibJ.jar</name>
+	<name>plugins/MorphoLibJ_.jar</name>
 	<description>Mathematical morphology library and plugins for ImageJ/Fiji</description>
 
 	<dependencies>
