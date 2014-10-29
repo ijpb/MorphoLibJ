@@ -1,7 +1,7 @@
-ijpb-plugins
+MorphoLibJ
 ============
 
-Collection of ImageJ plugins created at INRA-IJPB Modeling and Digital Imaging lab
+Collection of mathematical morphology methods and plugins for ImageJ, created at INRA-IJPB Modeling and Digital Imaging lab.
 
 The library implements several functionalities that were missing in the ImageJ software, and that were not or only partially covered by other plugins. 
 
