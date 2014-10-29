@@ -12,10 +12,10 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	</parent>
 
 	<groupId>fr.inra.ijpb</groupId>
-	<artifactId>ijpb_plugins</artifactId>
+	<artifactId>MorphoLibJ</artifactId>
 	<version>1.0.6-SNAPSHOT</version>
 
-	<name>plugins/ijpb_plugins.jar</name>
+	<name>plugins/Morpho_LibJ.jar</name>
 	<description>Plugins from the IJPB institute for morphology and segmentation</description>
 
 	<dependencies>
