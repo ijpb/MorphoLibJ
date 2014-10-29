@@ -1,6 +1,3 @@
-ijpb-plugins
-============
-
 Contents of the src/main/java/inra/ijpb directory
 ------------
 
