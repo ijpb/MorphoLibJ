@@ -91,7 +91,7 @@
 \begin_body
 
 \begin_layout Title
-IJPB Plugins user manual
+MorphoLibJ user manual
 \end_layout
 
 \begin_layout Author
@@ -112,7 +112,7 @@ The
 \begin_inset Quotes fld
 \end_inset
 
-ijpb-plugins
+MorphoLibJ
 \begin_inset Quotes frd
 \end_inset
 
@@ -228,7 +228,7 @@ utilities for manipulation of binary and label images
 The home page of the project is hosted on GitHub: 
 \begin_inset CommandInset href
 LatexCommand href
-target "http://github.com/ijpb/ijpb-plugins"
+target "http://github.com/ijpb/MorphoLibJ"
 
 \end_inset
 
@@ -244,8 +244,8 @@ Installation in ImageJ
 \end_layout
 
 \begin_layout Standard
-To install the IJPB-plugins toolkit in ImageJ, you only need to download
- the latest release (in the form of a JAR file) into ImageJ's plugins folder
+To install the MorphoLibJ toolkit in ImageJ, you only need to download the
+ latest release (in the form of a JAR file) into ImageJ's plugins folder
  and restart ImageJ.
  
 \end_layout
@@ -257,7 +257,7 @@ status open
 
 \begin_layout Plain Layout
 
-https://github.com/ijpb/ijpb-plugins/releases
+https://github.com/ijpb/MorphoLibJ/releases
 \end_layout
 
 \end_inset
@@ -278,8 +278,8 @@ key "schindelin2012fiji"
 
 \end_inset
 
-), the IJPB-plugins toolkit can be easily installed by adding its update
- site to Fiji's list of update sites:
+), the MorphoLibJ toolkit can be easily installed by adding its update site
+ to Fiji's list of update sites:
 \end_layout
 
 \begin_layout Enumerate
@@ -353,7 +353,7 @@ This brings up a dialog where you can activate additional update sites:
 \end_layout
 
 \begin_layout Enumerate
-Activate the IJPB-plugins update site and close the dialog.
+Activate the MorphoLibJ update site and close the dialog.
  Now you should see an additional jar file for download:
 \begin_inset Newline newline
 \end_inset
@@ -863,7 +863,7 @@ crests
 
 ).
  It is a very popular technique specially used to segment touching objects.
- The IJPB-plugins suite contains several implementations of the algorithm,
+ The MorphoLibJ suite contains several implementations of the algorithm,
  described in the following sections.
 \end_layout
 
