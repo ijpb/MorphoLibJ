@@ -149,10 +149,10 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<!-- Synchronisation with GitHub source repository. -->
 	<scm>
-		<connection>scm:git:git://github.com/ijpb/ijpb-plugins</connection>
-		<developerConnection>scm:git:git@github.com:ijpb/ijpb-plugins</developerConnection>
+		<connection>scm:git:git://github.com/ijpb/MorphoLibJ</connection>
+		<developerConnection>scm:git:git@github.com:ijpb/MorphoLibJ</developerConnection>
 		<tag>HEAD</tag>
-		<url>https://github.com/ijpb/ijpb-plugins</url>
+		<url>https://github.com/ijpb/MorphoLibJ</url>
 	</scm>
 
 </project>
