@@ -599,7 +599,7 @@ public class LabelImages {
 		// find the label of the largest particle
 		int[] labels = findAllLabels(image);
 		int[] volumes = voxelCount(image, labels);		
-		int indMax = indexOfMax(volumes);
+		int indMax = labels[indexOfMax(volumes)];
 		
 		// convert label image to binary image
 		for (int z = 0; z < sizeZ; z++) {
@@ -609,7 +609,7 @@ public class LabelImages {
 					if (value == indMax)
 						result.setVoxel(x, y, z, 255);
 					else
-						result.setVoxel(x, y,  z, 0);
+						result.setVoxel(x, y, z, 0);
 				}
 			}
 		}
