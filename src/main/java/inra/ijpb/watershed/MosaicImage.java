@@ -1,12 +1,14 @@
 package inra.ijpb.watershed;
 
 import ij.ImagePlus;
+import ij.ImageStack;
 import ij.measure.ResultsTable;
 import ij.process.ImageProcessor;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.IntensityMeasures;
 import inra.ijpb.morphology.Morphology;
 import inra.ijpb.morphology.Strel;
+import inra.ijpb.morphology.Strel3D;
 
 public class MosaicImage {
 
@@ -19,7 +21,7 @@ public class MosaicImage {
 	 *       algorithm." Mathematical morphology and its applications to image 
 	 *       processing. Springer Netherlands, 1994. 69-76.
 	 * @param input grayscale input image
-	 * @return 
+	 * @return mosaic image
 	 */
 	public static ImageProcessor compute( ImageProcessor input )
 	{		
@@ -37,8 +39,7 @@ public class MosaicImage {
 		IntensityMeasures im = new IntensityMeasures( 
 				new ImagePlus( "input", input ), 
 				new ImagePlus( "label", watershedImage ) );
-		ResultsTable table = im.getMean();
-		
+		ResultsTable table = im.getMean();		
 
 		// extract array of numerical values
 		int index = table.getColumnIndex( IntensityMeasures.meanHeaderName );
@@ -48,5 +49,202 @@ public class MosaicImage {
 		return LabelImages.applyLut( watershedImage, values );		
 	}
 	
+	/**
+	 * Compute mosaic image: from the initial watershed transformation of the
+	 * gradient of the input image, substitute each catchment basin by the
+	 * average value of the region in the original image.
+	 * Reference:
+	 *   [1] Beucher, Serge. "Watershed, hierarchical segmentation and waterfall
+	 *       algorithm." Mathematical morphology and its applications to image 
+	 *       processing. Springer Netherlands, 1994. 69-76.
+	 * @param input grayscale input image
+	 * @param strel structural element to calculate gradient
+	 * @param connectivity pixel connectivity
+	 * @return mosaic image
+	 */
+	public static ImageProcessor compute( 
+			ImageProcessor input, 
+			Strel strel,
+			int connectivity )
+	{		
+		// calculate gradient image
+		ImageProcessor gradientImage = Morphology.gradient( input, strel );
+		
+		// apply classic watershed algorithm
+		ImageProcessor watershedImage = 
+				Watershed.computeWatershed( gradientImage, null, connectivity );
+		
+		// calculate mean value of each labeled region
+		IntensityMeasures im = new IntensityMeasures( 
+				new ImagePlus( "input", input ), 
+				new ImagePlus( "label", watershedImage ) );
+		ResultsTable table = im.getMean();
+		
+		// extract array of numerical values
+		int index = table.getColumnIndex( IntensityMeasures.meanHeaderName );
+		double[] values = table.getColumnAsDoubles( index );
+		
+		// apply mean values to each region
+		return LabelImages.applyLut( watershedImage, values );		
+	}
 	
+	/**
+	 * Compute mosaic image: from the initial watershed transformation of the
+	 * gradient of the input image, substitute each catchment basin by the
+	 * average value of the region in the original image.
+	 * Reference:
+	 *   [1] Beucher, Serge. "Watershed, hierarchical segmentation and waterfall
+	 *       algorithm." Mathematical morphology and its applications to image 
+	 *       processing. Springer Netherlands, 1994. 69-76.
+	 * @param input grayscale input image
+	 * @return mosaic image
+	 */
+	public static ImageStack compute( ImageStack input )
+	{		
+		// calculate gradient image
+		final int gradientRadius = 1;
+		Strel3D strel = Strel3D.Shape.CUBE.fromRadius( gradientRadius );
+		ImageStack gradientImage = Morphology.gradient( input, strel );
+		
+		// apply classic watershed algorithm
+		int connectivity = 6;
+		ImageStack watershedImage = 
+				Watershed.computeWatershed( gradientImage, null, connectivity );
+		
+		// calculate mean value of each labeled region
+		IntensityMeasures im = new IntensityMeasures( 
+				new ImagePlus( "input", input ), 
+				new ImagePlus( "label", watershedImage ) );
+		ResultsTable table = im.getMean();		
+
+		// extract array of numerical values
+		int index = table.getColumnIndex( IntensityMeasures.meanHeaderName );
+		double[] values = table.getColumnAsDoubles( index );
+		
+		// apply mean values to each region
+		return LabelImages.applyLut( watershedImage, values );		
+	}
+	
+	/**
+	 * Compute mosaic image: from the initial watershed transformation of the
+	 * gradient of the input image, substitute each catchment basin by the
+	 * average value of the region in the original image.
+	 * Reference:
+	 *   [1] Beucher, Serge. "Watershed, hierarchical segmentation and waterfall
+	 *       algorithm." Mathematical morphology and its applications to image 
+	 *       processing. Springer Netherlands, 1994. 69-76.
+	 * @param input grayscale input image
+	 * @param strel structural element to calculate gradient
+	 * @param connectivity pixel connectivity
+	 * @return mosaic image
+	 */
+	public static ImageStack compute( 
+			ImageStack input,
+			Strel3D strel, 
+			int connectivity )
+	{		
+		// calculate gradient image
+		ImageStack gradientImage = Morphology.gradient( input, strel );
+		
+		// apply classic watershed algorithm
+		ImageStack watershedImage = 
+				Watershed.computeWatershed( gradientImage, null, connectivity );
+		
+		// calculate mean value of each labeled region
+		IntensityMeasures im = new IntensityMeasures( 
+				new ImagePlus( "input", input ), 
+				new ImagePlus( "label", watershedImage ) );
+		ResultsTable table = im.getMean();		
+
+		// extract array of numerical values
+		int index = table.getColumnIndex( IntensityMeasures.meanHeaderName );
+		double[] values = table.getColumnAsDoubles( index );
+		
+		// apply mean values to each region
+		return LabelImages.applyLut( watershedImage, values );		
+	}
+	
+	/**
+	 * Compute mosaic image: from the initial watershed transformation of the
+	 * gradient of the input image, substitute each catchment basin by the
+	 * average value of the region in the original image.
+	 * Reference:
+	 *   [1] Beucher, Serge. "Watershed, hierarchical segmentation and waterfall
+	 *       algorithm." Mathematical morphology and its applications to image 
+	 *       processing. Springer Netherlands, 1994. 69-76.
+	 * @param input grayscale input image
+	 * @return mosaic image
+	 */
+	public static ImagePlus compute( ImagePlus input )
+	{		
+		// calculate gradient image
+		final int gradientRadius = 1;
+		Strel3D strel = Strel3D.Shape.CUBE.fromRadius( gradientRadius );
+		ImageStack gradientImage = 
+				Morphology.gradient( input.getImageStack(), strel );
+		
+		// apply classic watershed algorithm
+		int connectivity = 6;
+		ImageStack watershedImage = 
+				Watershed.computeWatershed( gradientImage, null, connectivity );
+		
+		// calculate mean value of each labeled region
+		IntensityMeasures im = new IntensityMeasures( 
+				input, 
+				new ImagePlus( "label", watershedImage ) );
+		ResultsTable table = im.getMean();		
+
+		// extract array of numerical values
+		int index = table.getColumnIndex( IntensityMeasures.meanHeaderName );
+		double[] values = table.getColumnAsDoubles( index );
+		
+		// apply mean values to each region
+		ImagePlus mosaicImage = new ImagePlus( input.getTitle() + "-mosaic",
+				LabelImages.applyLut( watershedImage, values ) );
+		mosaicImage.setCalibration( input.getCalibration() );
+		return mosaicImage;
+	}
+	
+	/**
+	 * Compute mosaic image: from the initial watershed transformation of the
+	 * gradient of the input image, substitute each catchment basin by the
+	 * average value of the region in the original image.
+	 * Reference:
+	 *   [1] Beucher, Serge. "Watershed, hierarchical segmentation and waterfall
+	 *       algorithm." Mathematical morphology and its applications to image 
+	 *       processing. Springer Netherlands, 1994. 69-76.
+	 * @param input grayscale input image
+	 * @param strel structural element to calculate gradient
+	 * @param connectivity pixel connectivity
+	 * @return mosaic image
+	 */
+	public static ImagePlus compute( 
+			ImagePlus input,
+			Strel3D strel,
+			int connectivity )
+	{		
+		// calculate gradient image
+		ImageStack gradientImage = 
+				Morphology.gradient( input.getImageStack(), strel );
+		
+		// apply classic watershed algorithm
+		ImageStack watershedImage = 
+				Watershed.computeWatershed( gradientImage, null, connectivity );
+		
+		// calculate mean value of each labeled region
+		IntensityMeasures im = new IntensityMeasures( 
+				input, 
+				new ImagePlus( "label", watershedImage ) );
+		ResultsTable table = im.getMean();		
+
+		// extract array of numerical values
+		int index = table.getColumnIndex( IntensityMeasures.meanHeaderName );
+		double[] values = table.getColumnAsDoubles( index );
+		
+		// apply mean values to each region
+		ImagePlus mosaicImage = new ImagePlus( input.getTitle() + "-mosaic",
+				LabelImages.applyLut( watershedImage, values ) );
+		mosaicImage.setCalibration( input.getCalibration() );
+		return mosaicImage;
+	}
 }
