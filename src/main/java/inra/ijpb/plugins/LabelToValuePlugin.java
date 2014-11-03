@@ -22,7 +22,6 @@ import java.awt.Choice;
 import java.awt.Frame;
 import java.awt.TextField;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Vector;
 
 /**
@@ -202,85 +201,16 @@ public class LabelToValuePlugin implements PlugIn, DialogListener {
 		
 		if (this.resultPlus.getStackSize() == 1) {
 			ImageProcessor labelImage = this.labelImagePlus.getProcessor();
-			ImageProcessor resultImage = this.resultPlus.getProcessor();
-			applyLut(labelImage, resultImage, values);
+			ImageProcessor resultImage = LabelImages.applyLut(labelImage, values);
+			this.resultPlus.setProcessor(resultImage);
 		} else {
 			ImageStack labelImage = this.labelImagePlus.getStack();
-			ImageStack resultImage = this.resultPlus.getStack();
-			applyLut(labelImage, resultImage, values);
+			ImageStack resultImage = LabelImages.applyLut(labelImage, values);
+			this.resultPlus.setStack(resultImage);
 		}
 
 		this.resultPlus.setDisplayRange(this.minValue, this.maxValue);
 		return this.resultPlus;
-	}
-	
-	private void applyLut(ImageProcessor labelImage, ImageProcessor resultImage, double[] values) {
-		int width = labelImage.getWidth(); 
-		int height = labelImage.getHeight(); 
-		
-        // extract particle labels
-        int[] labels = LabelImages.findAllLabels(labelImage);
-        int nLabels = labels.length;
-        
-        // create associative array to know index of each label
-        HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
-        for (int i = 0; i < nLabels; i++) {
-        	labelIndices.put(labels[i], i);
-        }
-
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				int label = labelImage.get(x, y);
-				if (label == 0) {
-					resultImage.setf(x, y, Float.NaN);
-					continue;
-				}
-				
-				int index = labelIndices.get(label);
-				
-				double value = values[index];
-				resultImage.setf(x, y, (float) value);
-			}
-		}
-	}
-	
-	private void applyLut(ImageStack labelImage, ImageStack resultImage, double[] values) {
-		int sizeX = labelImage.getWidth(); 
-		int sizeY = labelImage.getHeight(); 
-		int sizeZ = labelImage.getSize(); 
-		
-        // extract particle labels
-        int[] labels = LabelImages.findAllLabels(labelImage);
-        int nLabels = labels.length;
-        
-        // create associative array to know index of each label
-        HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
-        for (int i = 0; i < nLabels; i++) {
-        	labelIndices.put(labels[i], i);
-        }
-
-        for (int z = 0; z < sizeZ; z++) {
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
-					int label = (int) labelImage.getVoxel(x, y, z);
-					if (label == 0) {
-						resultImage.setVoxel(x, y, z, Double.NaN);
-						continue;
-					}
-
-					int index = labelIndices.get(label);
-					
-					if (index >= values.length) {
-						IJ.error("Try to access index " + index + 
-								" in array with " + values.length + " values");
-						return;
-					}
-					
-					double value = values[index];
-					resultImage.setVoxel(x, y, z, value);
-				}
-			}
-		}
 	}
 	
 	@Override

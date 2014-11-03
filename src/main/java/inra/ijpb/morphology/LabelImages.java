@@ -998,4 +998,86 @@ public class LabelImages {
 		
 		return result;
 	}
+	
+	public static final FloatProcessor applyLut(ImageProcessor labelImage, double[] values) {
+		int width = labelImage.getWidth(); 
+		int height = labelImage.getHeight(); 
+		
+		FloatProcessor resultImage = new FloatProcessor(width, height);
+		
+        // extract particle labels
+        int[] labels = LabelImages.findAllLabels(labelImage);
+        int nLabels = labels.length;
+        
+        // create associative array to know index of each label
+        HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
+        for (int i = 0; i < nLabels; i++) {
+        	labelIndices.put(labels[i], i);
+        }
+
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				int label = labelImage.get(x, y);
+				if (label == 0) {
+					resultImage.setf(x, y, Float.NaN);
+					continue;
+				}
+				
+				int index = labelIndices.get(label);
+				
+				if (index >= values.length) {
+					throw new RuntimeException("Try to access index " + index + 
+							" in array with " + values.length + " values");
+				}
+				
+				double value = values[index];
+				resultImage.setf(x, y, (float) value);
+			}
+		}
+		
+		return resultImage;
+	}
+	
+	public static final ImageStack applyLut(ImageStack labelImage, double[] values) {
+		int sizeX = labelImage.getWidth(); 
+		int sizeY = labelImage.getHeight(); 
+		int sizeZ = labelImage.getSize(); 
+		
+		ImageStack resultImage = ImageStack.create(sizeX, sizeY, sizeZ, 32);
+		
+        // extract particle labels
+        int[] labels = LabelImages.findAllLabels(labelImage);
+        int nLabels = labels.length;
+        
+        // create associative array to know index of each label
+        HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
+        for (int i = 0; i < nLabels; i++) {
+        	labelIndices.put(labels[i], i);
+        }
+
+        for (int z = 0; z < sizeZ; z++) {
+			for (int y = 0; y < sizeY; y++) {
+				for (int x = 0; x < sizeX; x++) {
+					int label = (int) labelImage.getVoxel(x, y, z);
+					if (label == 0) {
+						resultImage.setVoxel(x, y, z, Double.NaN);
+						continue;
+					}
+
+					int index = labelIndices.get(label);
+					
+					if (index >= values.length) {
+						throw new RuntimeException("Try to access index " + index + 
+								" in array with " + values.length + " values");
+					}
+					
+					double value = values[index];
+					resultImage.setVoxel(x, y, z, value);
+				}
+			}
+		}
+        
+        return resultImage;
+	}
+	
 }
