@@ -9,6 +9,7 @@ import org.junit.runners.Suite;
 	// generic classes
 	inra.ijpb.OpenResourceImage.class, 
 	inra.ijpb.binary.AllTestsRecurse.class,
+	inra.ijpb.label.AllTests.class,
 	inra.ijpb.measure.AllTests.class,
 	inra.ijpb.morphology.AllTestsRecurse.class,
 	})

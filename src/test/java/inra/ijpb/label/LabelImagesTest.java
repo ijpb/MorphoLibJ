@@ -1,4 +1,4 @@
-package inra.ijpb.morphology;
+package inra.ijpb.label;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
