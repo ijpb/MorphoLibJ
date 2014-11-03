@@ -19,7 +19,7 @@ public class ShiftedCross3x3Strel {
 	
 	/**
 	 * A cross-shaped structuring element located on the left of the reference
-	 * pixel.</p>
+	 * pixel.<p>
 	 * 
 	 * The structuring has the following shape (x: neighbor, o: reference
 	 * pixel, .: irrelevant): 
@@ -35,7 +35,7 @@ s	 * <pre><code>
 	
 	/**
 	 * A cross-shaped structuring element located on the right of the
-	 * reference pixel.</p>
+	 * reference pixel.<p>
 	 * 
 	 * The structuring has the following shape (x: neighbor, o: reference
 	 * pixel, .: irrelevant): 
