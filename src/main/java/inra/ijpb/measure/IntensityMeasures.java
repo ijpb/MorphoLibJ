@@ -13,7 +13,10 @@ import ij.measure.ResultsTable;
  */
 public class IntensityMeasures extends LabeledVoxelsMeasure{
 
-	
+	public static String meanHeaderName = "Mean";
+	public static String stdDevHeaderName = "StdDev";
+	public static String maxHeaderName = "Max";
+	public static String minHeaderName = "Min";
 	
 	/**
 	 * Initialize the measurements by reading the input (grayscale) 
@@ -55,7 +58,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 		for (int i = 0; i < numLabels; i++) {
 			table.incrementCounter();
 			table.addLabel(Integer.toString( labels[i] ));
-			table.addValue("Mean", mean[i]);
+			table.addValue( IntensityMeasures.meanHeaderName, mean[i] );
 		}
 
 		return table;
@@ -97,7 +100,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 		for (int i = 0; i < numLabels; i++) {
 			table.incrementCounter();
 			table.addLabel(Integer.toString( labels[i] ));
-			table.addValue("StdDev", sd[i]);
+			table.addValue( IntensityMeasures.stdDevHeaderName, sd[i] );
 		}
 
 		return table;
@@ -129,7 +132,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 		for (int i = 0; i < numLabels; i++) {
 			table.incrementCounter();
 			table.addLabel(Integer.toString( labels[i] ));
-			table.addValue("Max", max[i]);
+			table.addValue( IntensityMeasures.maxHeaderName, max[i] );
 		}
 
 		return table;
@@ -161,7 +164,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 		for (int i = 0; i < numLabels; i++) {
 			table.incrementCounter();
 			table.addLabel(Integer.toString( labels[i] ));
-			table.addValue("Min", min[i]);
+			table.addValue( IntensityMeasures.minHeaderName, min[i] );
 		}
 
 		return table;
