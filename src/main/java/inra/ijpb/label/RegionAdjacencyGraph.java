@@ -14,11 +14,35 @@ import java.util.TreeSet;
  * Contains several methods for extracting the set of adjacencies between
  * regions in a label image.
  * 
+ * The value zero is assumed to be background, and is not computed for
+ * adjacencies. Moreover, in order to take into account label images obtained
+ * after a watershed transform, adjacencies are computed by comparing label
+ * values with the values of neighbors shifted by two pixels in the X, Y or Z
+ * directions.
+ * 
  * Usage:
- * <pre><code>
- * Set<RegionAdjacencyGraph.LabelPair> adjList = 
- *     RegionAdjacencyGraph.computeAdjacencies(image);
- * </code></pre>
+ * 
+ * <pre>
+ * <code>
+ * // create demo image with four regions, and four adjacencies 
+ * byte[] data = new byte[]{
+ * 			1, 1, 1, 0, 2, 2, 
+ * 			1, 1, 1, 0, 2, 2, 
+ * 			0, 0, 0, 0, 2, 2, 
+ * 			3, 3, 0, 0, 0, 0,  
+ * 			3, 3, 0, 4, 4, 4,  
+ * 			3, 3, 0, 4, 4, 4};
+ * ImageProcessor image = new ByteProcessor(6, 6, data);
+ * 	
+ * // compute adjacencies, and return result as a set of label pairs
+ * Set&lt;RegionAdjacencyGraph.LabelPair&gt; adjacencies =
+ * 	RegionAdjacencyGraph.computeAdjacencies(image);
+ * 
+ * // display which regions are adjacent 
+ * for (RegionAdjacencyGraph.LabelPair pair : adjacencies)
+ * 	System.out.println("(" + pair.label1 + "," + pair.label2 + ")");
+ * </code>
+ * </pre>
  * 
  * @author dlegland
  *
@@ -208,9 +232,5 @@ public class RegionAdjacencyGraph
 				return +1;
 			return 0;
 		}
-		
-		
 	}
-
-
 }

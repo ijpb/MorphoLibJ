@@ -191,7 +191,7 @@ public class ColorMaps {
 	 * from Fiji's Glasbey LUT).
 	 * Reference: 
 	 * [1] Glasbey, Chris, Gerie van der Heijden, Vivian FK Toh, and Alision 
-	 *     Gray. "Colour displays for categorical images." Color Research & 
+	 *     Gray. "Colour displays for categorical images." Color Research &amp; 
 	 *     Application 32, no. 4 (2007): 304-309.
 	 * 
 	 * @return Glasbey lookup table

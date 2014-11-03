@@ -25,22 +25,27 @@ import java.util.TreeSet;
  * @author David Legland
  *
  */
-public class LabelImages {
+public class LabelImages 
+{
 	
 	/**
 	 * Creates a binary 3D image that contains 255 for voxels that are 
 	 * boundaries between two labels.
 	 */
-	public static final ImageStack labelBoundaries(ImageStack stack) {
+	public static final ImageStack labelBoundaries(ImageStack stack) 
+	{
 		int sizeX = stack.getWidth();
 		int sizeY = stack.getHeight();
 		int sizeZ = stack.getSize();
 		
 		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
 		
-		for (int z = 0; z < sizeZ - 1; z++) {
-			for (int y = 0; y < sizeY - 1; y++) {
-				for (int x = 0; x < sizeX - 1; x++) {
+		for (int z = 0; z < sizeZ - 1; z++) 
+		{
+			for (int y = 0; y < sizeY - 1; y++)
+			{
+				for (int x = 0; x < sizeX - 1; x++)
+				{
 					double value = stack.getVoxel(x, y, z);
 					if (stack.getVoxel(x+1, y, z) != value)
 						result.setVoxel(x, y, z, 255);
@@ -65,7 +70,8 @@ public class LabelImages {
 	 * @param border the number of pixels to add to each side of the particle
 	 * @return a smaller binary image containing only the selected particle
 	 */
-	public static final ImagePlus cropLabel(ImagePlus imagePlus, int label, int border) {
+	public static final ImagePlus cropLabel(ImagePlus imagePlus, int label,	int border) 
+	{
         String newName = imagePlus.getShortTitle() + "-crop"; 
         ImagePlus croppedPlus;
         
@@ -136,8 +142,10 @@ public class LabelImages {
 		ImageProcessor result = new ByteProcessor(sizeX2, sizeY2);
 		
 		// fill result with binary label
-		for (int y = ymin, y2 = border; y <= ymax; y++, y2++) {
-			for (int x = xmin, x2 = border; x <= xmax; x++, x2++) {
+		for (int y = ymin, y2 = border; y <= ymax; y++, y2++) 
+		{
+			for (int x = xmin, x2 = border; x <= xmax; x++, x2++) 
+			{
 				if ((image.get(x, y)) == label)
 				{
 					result.set(x2, y2, 255);
@@ -209,9 +217,12 @@ public class LabelImages {
 		ImageStack result = ImageStack.create(sizeX2, sizeY2, sizeZ2, 8);
 		
 		// fill result with binary label
-		for (int z = zmin, z2 = border; z <= zmax; z++, z2++) {
-			for (int y = ymin, y2 = border; y <= ymax; y++, y2++) {
-				for (int x = xmin, x2 = border; x <= xmax; x++, x2++) {
+		for (int z = zmin, z2 = border; z <= zmax; z++, z2++) 
+		{
+			for (int y = ymin, y2 = border; y <= ymax; y++, y2++) 
+			{
+				for (int x = xmin, x2 = border; x <= xmax; x++, x2++) 
+				{
 					if (((int) image.getVoxel(x, y, z)) == label)
 					{
 						result.setVoxel(x2, y2, z2, 255);
@@ -267,22 +278,26 @@ public class LabelImages {
 	 * Applies area opening on a label image: creates a new label image that
 	 * contains only particles with at least the specified number of pixels.
 	 */
-	public static final ImageProcessor areaOpening(ImageProcessor labelImage, int nPixelMin) {
+	public static final ImageProcessor areaOpening(ImageProcessor labelImage, int nPixelMin) 
+	{
 		// compute area of each label
 		int[] labels = findAllLabels(labelImage);
 		int[] areas = pixelCount(labelImage, labels);
 		
 		// find labels with sufficient area
 		ArrayList<Integer> labelsToKeep = new ArrayList<Integer>(labels.length);
-		for (int i = 0; i < labels.length; i++) {
-			if (areas[i] >= nPixelMin) {
+		for (int i = 0; i < labels.length; i++) 
+		{
+			if (areas[i] >= nPixelMin) 
+			{
 				labelsToKeep.add(labels[i]);
 			}
 		}
 		
 		// Convert array list into int array
 		int[] labels2 = new int[labelsToKeep.size()];
-		for (int i = 0; i < labelsToKeep.size(); i++) {
+		for (int i = 0; i < labelsToKeep.size(); i++) 
+		{
 			labels2[i] = labelsToKeep.get(i);
 		}
 		
@@ -299,22 +314,26 @@ public class LabelImages {
 	 * contains only particle with at least the specified number of voxels.
 	 * Keep original labels unchanged.
 	 */
-	public static final ImageStack volumeOpening(ImageStack labelImage, int nVoxelMin) {
+	public static final ImageStack volumeOpening(ImageStack labelImage, int nVoxelMin) 
+	{
 		// compute area of each label
 		int[] labels = LabelImages.findAllLabels(labelImage);
 		int[] vols = LabelImages.voxelCount(labelImage, labels);
 		
 		// find labels with sufficient area
 		ArrayList<Integer> labelsToKeep = new ArrayList<Integer>(labels.length);
-		for (int i = 0; i < labels.length; i++) {
-			if (vols[i] >= nVoxelMin) {
+		for (int i = 0; i < labels.length; i++)
+		{
+			if (vols[i] >= nVoxelMin)
+			{
 				labelsToKeep.add(labels[i]);
 			}
 		}
 		
 		// Convert array list into int array
 		int[] labels2 = new int[labelsToKeep.size()];
-		for (int i = 0; i < labelsToKeep.size(); i++) {
+		for (int i = 0; i < labelsToKeep.size(); i++)
+		{
 			labels2[i] = labelsToKeep.get(i);
 		}
 		
@@ -336,17 +355,21 @@ public class LabelImages {
 	 * @param bgColor the background color
 	 * @return a new Color image
 	 */
-	public static final ImagePlus labelToRgb(ImagePlus imagePlus, byte[][] lut, Color bgColor) {
+	public static final ImagePlus labelToRgb(ImagePlus imagePlus, byte[][] lut, Color bgColor)
+	{
 		ImagePlus resultPlus;
 		String newName = imagePlus.getShortTitle() + "-rgb";
 		
 		// Dispatch to appropriate function depending on dimension
-		if (imagePlus.getStackSize() == 1) {
+		if (imagePlus.getStackSize() == 1)
+		{
 			// process planar image
 			ImageProcessor image = imagePlus.getProcessor();
 			ImageProcessor result = labelToRgb(image, lut, bgColor);
 			resultPlus = new ImagePlus(newName, result);
-		} else {
+		} 
+		else 
+		{
 			// process image stack
 			ImageStack image = imagePlus.getStack();
 			ImageStack result = labelToRgb(image, lut, bgColor);
@@ -366,19 +389,25 @@ public class LabelImages {
 	 * @param bgColor the background color
 	 * @return a new instance of ColorProcessor
 	 */
-	public static final ColorProcessor labelToRgb(ImageProcessor image, byte[][] lut, Color bgColor) {
+	public static final ColorProcessor labelToRgb(ImageProcessor image, byte[][] lut, Color bgColor) 
+	{
 		int width = image.getWidth();
 		int height = image.getHeight();
 		
 		int bgColorCode = bgColor.getRGB();
 		
 		ColorProcessor result = new ColorProcessor(width, height);
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				int index = image.get(x, y);
-				if (index == 0) {
+		for (int y = 0; y < height; y++) 
+		{
+			for (int x = 0; x < width; x++) 
+			{
+				int index = (int) image.getf(x, y);
+				if (index == 0) 
+				{
 					result.set(x, y, bgColorCode);
-				} else {
+				} 
+				else 
+				{
 					byte[] rgb = lut[index - 1];
 					int color = (int) ((rgb[0] & 0xFF) << 16
 							| (rgb[1] & 0xFF) << 8 | (rgb[2] & 0xFF));
@@ -399,7 +428,8 @@ public class LabelImages {
 	 * @param bgColor the background color
 	 * @return a new instance of ImageStack containing color processors
 	 */
-	public static final ImageStack labelToRgb(ImageStack image, byte[][] lut, Color bgColor) {
+	public static final ImageStack labelToRgb(ImageStack image, byte[][] lut, Color bgColor)
+	{
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		int sizeZ = image.getSize();
@@ -408,13 +438,19 @@ public class LabelImages {
 		
 		int bgColorCode = bgColor.getRGB();
 		
-		for (int z = 0; z < sizeZ; z++) {
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
+		for (int z = 0; z < sizeZ; z++) 
+		{
+			for (int y = 0; y < sizeY; y++) 
+			{
+				for (int x = 0; x < sizeX; x++) 
+				{
 					int index = (int) image.getVoxel(x, y, z);
-					if (index == 0) {
+					if (index == 0) 
+					{
 						result.setVoxel(x, y, z, bgColorCode);
-					} else {
+					} 
+					else 
+					{
 						byte[] rgb = lut[index - 1];
 						int color = (int) ((rgb[0] & 0xFF) << 16
 								| (rgb[1] & 0xFF) << 8 | (rgb[2] & 0xFF));
@@ -431,9 +467,11 @@ public class LabelImages {
 	 * Removes all regions that touch the borders of the image.
 	 * @param imagePlus a label image
 	 */
-	public static final void removeBorderLabels(ImagePlus imagePlus) {
+	public static final void removeBorderLabels(ImagePlus imagePlus) 
+	{
 		// Dispatch to appropriate function depending on dimension
-		if (imagePlus.getStackSize() == 1) {
+		if (imagePlus.getStackSize() == 1) 
+		{
 			removeBorderLabels(imagePlus.getProcessor());
 		} else {
 			removeBorderLabels(imagePlus.getStack());
@@ -444,23 +482,27 @@ public class LabelImages {
 	 * Removes all regions that touch the borders of the image.
 	 * @param image a label image
 	 */
-	public static final void removeBorderLabels(ImageProcessor image) {
+	public static final void removeBorderLabels(ImageProcessor image) 
+	{
 		int[] labels = findBorderLabels(image);
 		removeLabels(image, labels);
 	}
 
-	private static final int[] findBorderLabels(ImageProcessor image) {
+	private static final int[] findBorderLabels(ImageProcessor image) 
+	{
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		
 		TreeSet<Integer> labelSet = new TreeSet<Integer>();
 	
-		for (int x = 0; x < sizeX; x++) {
+		for (int x = 0; x < sizeX; x++)
+		{
 			labelSet.add((int) image.get(x, 0));
 			labelSet.add((int) image.get(x, sizeY - 1));
 		}
 	
-		for (int y = 0; y < sizeY; y++) {
+		for (int y = 0; y < sizeY; y++) 
+		{
 			labelSet.add((int) image.get(0, y));
 			labelSet.add((int) image.get(sizeX - 1, y));
 		}
@@ -472,7 +514,8 @@ public class LabelImages {
 		int[] labels = new int[labelSet.size()];
 		int i = 0 ;
 		Iterator<Integer> iter = labelSet.iterator();
-		while(iter.hasNext()) {
+		while(iter.hasNext()) 
+		{
 			labels[i++] = (int) iter.next();
 		}
 		
@@ -483,34 +526,42 @@ public class LabelImages {
 	 * Removes all regions that touch the borders of the image.
 	 * @param image a label image
 	 */
-	public static final void removeBorderLabels(ImageStack image) {
+	public static final void removeBorderLabels(ImageStack image) 
+	{
 		int[] labels = findBorderLabels(image);
 		removeLabels(image, labels);
 	}
 
-	private static final int[] findBorderLabels(ImageStack image) {
+	private static final int[] findBorderLabels(ImageStack image) 
+	{
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		int sizeZ = image.getSize();
 		
 		TreeSet<Integer> labelSet = new TreeSet<Integer>();
 	
-		for (int y = 0; y < sizeY; y++) {
-			for (int x = 0; x < sizeX; x++) {
+		for (int y = 0; y < sizeY; y++) 
+		{
+			for (int x = 0; x < sizeX; x++) 
+			{
 				labelSet.add((int) image.getVoxel(x, y, 0));
 				labelSet.add((int) image.getVoxel(x, y, sizeZ - 1));
 			}
 		}
 		
-		for (int z = 0; z < sizeZ; z++) {
-			for (int x = 0; x < sizeX; x++) {
+		for (int z = 0; z < sizeZ; z++) 
+		{
+			for (int x = 0; x < sizeX; x++)
+{
 				labelSet.add((int) image.getVoxel(x, 0, z));
 				labelSet.add((int) image.getVoxel(x, sizeY - 1, z));
 			}
 		}
 		
-		for (int z = 0; z < sizeZ; z++) {
-			for (int y = 0; y < sizeY; y++) {
+		for (int z = 0; z < sizeZ; z++)
+		{
+			for (int y = 0; y < sizeY; y++) 
+			{
 				labelSet.add((int) image.getVoxel(0, y, z));
 				labelSet.add((int) image.getVoxel(sizeX - 1, y, z));
 			}
@@ -523,7 +574,8 @@ public class LabelImages {
 		int[] labels = new int[labelSet.size()];
 		int i = 0 ;
 		Iterator<Integer> iter = labelSet.iterator();
-		while(iter.hasNext()) {
+		while(iter.hasNext())
+		{
 			labels[i++] = (int) iter.next();
 		}
 		
@@ -535,17 +587,21 @@ public class LabelImages {
 	 * 
 	 * @param imagePlus an instance if ImagePlus containing a binary image
 	 */
-	public static final ImagePlus keepLargestLabel(ImagePlus imagePlus) {
+	public static final ImagePlus keepLargestLabel(ImagePlus imagePlus)
+	{
 		ImagePlus resultPlus;
 		String newName = imagePlus.getShortTitle() + "-largest";
 		
 		// Dispatch to appropriate function depending on dimension
-		if (imagePlus.getStackSize() == 1) {
+		if (imagePlus.getStackSize() == 1) 
+		{
 			// process planar image
 			ImageProcessor image = imagePlus.getProcessor();
 			ImageProcessor result = keepLargestLabel(image);
 			resultPlus = new ImagePlus(newName, result);
-		} else {
+		} 
+		else 
+		{
 			// process image stack
 			ImageStack image = imagePlus.getStack();
 			ImageStack result = keepLargestLabel(image);
@@ -560,7 +616,8 @@ public class LabelImages {
 	 * Returns a binary image that contains only the largest label.
 	 * @param image a binary image
 	 */
-	public static final ImageProcessor keepLargestLabel(ImageProcessor image) {
+	public static final ImageProcessor keepLargestLabel(ImageProcessor image)
+	{
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 
@@ -572,8 +629,10 @@ public class LabelImages {
 		int indMax = labels[indexOfMax(areas)];
 
 		// convert label image to binary image
-		for (int y = 0; y < sizeY; y++) {
-			for (int x = 0; x < sizeX; x++) {
+		for (int y = 0; y < sizeY; y++) 
+		{
+			for (int x = 0; x < sizeX; x++) 
+			{
 				int value = (int) image.getf(x, y); 
 				if (value == indMax)
 					result.set(x, y, 255);
@@ -589,7 +648,8 @@ public class LabelImages {
 	 * Returns a binary image that contains only the largest label.
 	 * @param image a binary image
 	 */
-	public static final ImageStack keepLargestLabel(ImageStack image) {
+	public static final ImageStack keepLargestLabel(ImageStack image) 
+	{
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		int sizeZ = image.getSize();
@@ -602,9 +662,12 @@ public class LabelImages {
 		int indMax = labels[indexOfMax(volumes)];
 		
 		// convert label image to binary image
-		for (int z = 0; z < sizeZ; z++) {
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
+		for (int z = 0; z < sizeZ; z++) 
+		{
+			for (int y = 0; y < sizeY; y++) 
+			{
+				for (int x = 0; x < sizeX; x++) 
+				{
 					int value = (int) image.getVoxel(x, y, z); 
 					if (value == indMax)
 						result.setVoxel(x, y, z, 255);
@@ -618,16 +681,19 @@ public class LabelImages {
 	}
 
 
-	public static final void removeLargestLabel(ImagePlus imagePlus) {
+	public static final void removeLargestLabel(ImagePlus imagePlus)
+	{
 		// Dispatch to appropriate function depending on dimension
-		if (imagePlus.getStackSize() == 1) {
+		if (imagePlus.getStackSize() == 1) 
+		{
 			removeLargestLabel(imagePlus.getProcessor());
 		} else {
 			removeLargestLabel(imagePlus.getStack());
 		}
 	}
 
-	public static final void removeLargestLabel(ImageProcessor image) {
+	public static final void removeLargestLabel(ImageProcessor image) 
+	{
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 
@@ -637,8 +703,10 @@ public class LabelImages {
 		int indMax = labels[indexOfMax(areas)];
 		
 		// remove voxels belonging to the largest label
-		for (int y = 0; y < sizeY; y++) {
-			for (int x = 0; x < sizeX; x++) {
+		for (int y = 0; y < sizeY; y++) 
+		{
+			for (int x = 0; x < sizeX; x++) 
+			{
 				int value = (int) image.getf(x, y); 
 				if (value == indMax)
 					image.setf(x, y, 0);
@@ -646,7 +714,8 @@ public class LabelImages {
 		}
 	}
 
-	public static final void removeLargestLabel(ImageStack image) {
+	public static final void removeLargestLabel(ImageStack image) 
+	{
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		int sizeZ = image.getSize();
@@ -656,9 +725,12 @@ public class LabelImages {
 		int[] volumes = voxelCount(image, labels);
 		int indMax = labels[indexOfMax(volumes)];
 		
-		for (int z = 0; z < sizeZ; z++) {
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
+		for (int z = 0; z < sizeZ; z++)
+		{
+			for (int y = 0; y < sizeY; y++)
+			{
+				for (int x = 0; x < sizeX; x++) 
+				{
 					int value = (int) image.getVoxel(x, y, z); 
 					if (value == indMax)
 						image.setVoxel(x, y, z, 0);
@@ -667,11 +739,14 @@ public class LabelImages {
 		}
 	}
 
-	private static final int indexOfMax(int[] values) {
+	private static final int indexOfMax(int[] values)
+	{
 		int indMax = -1;
 		int volumeMax = Integer.MIN_VALUE;
-		for (int i = 0; i < values.length; i++) {
-			if (values[i] > volumeMax) {
+		for (int i = 0; i < values.length; i++) 
+		{
+			if (values[i] > volumeMax) 
+			{
 				volumeMax = values[i];
 				indMax = i;
 			}
@@ -683,15 +758,17 @@ public class LabelImages {
 	 * Computes the number of pixels composing each particle in the label image.
 	 * @see inra.ijpb.measure.GeometricMeasures2D#area(ij.process.ImageProcessor, int[], double[])
 	 */
-    public static final int[] pixelCount(ImageProcessor image, int[] labels) {
+    public static final int[] pixelCount(ImageProcessor image, int[] labels) 
+    {
     	// image size
 	    int width 	= image.getWidth();
 	    int height 	= image.getHeight();
 	
-        // create associative array to know index of each label
+        // create associative array to identify the index of each label
 		int nLabels = labels.length;
         HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
-        for (int i = 0; i < nLabels; i++) {
+        for (int i = 0; i < nLabels; i++)
+        {
         	labelIndices.put(labels[i], i);
         }
 
@@ -699,8 +776,10 @@ public class LabelImages {
 		int[] counts = new int[nLabels];
 	
 		// count all pixels belonging to the particle
-	    for (int y = 0; y < height; y++) {
-	        for (int x = 0; x < width; x++) {
+	    for (int y = 0; y < height; y++) 
+	    {
+	        for (int x = 0; x < width; x++) 
+	        {
 	        	int label = (int) image.getf(x, y);
 	        	if (label == 0)
 					continue;
@@ -717,11 +796,13 @@ public class LabelImages {
 	 * image.
 	 * @see inra.ijpb.measure.GeometricMeasures3D#volume(ij.ImageStack, int[], double[])
 	*/
-	public final static int[] voxelCount(ImageStack labelImage, int[] labels) {
+	public final static int[] voxelCount(ImageStack labelImage, int[] labels) 
+	{
         // create associative array to know index of each label
 		int nLabels = labels.length;
         HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
-        for (int i = 0; i < nLabels; i++) {
+        for (int i = 0; i < nLabels; i++) 
+        {
         	labelIndices.put(labels[i], i);
         }
 
@@ -735,10 +816,13 @@ public class LabelImages {
 
 		// iterate on image voxels
 		IJ.showStatus("Count label voxels...");
-        for (int z = 0; z < sizeZ; z++) {
+        for (int z = 0; z < sizeZ; z++) 
+        {
         	IJ.showProgress(z, sizeZ);
-        	for (int y = 0; y < sizeY; y++) {
-        		for (int x = 0; x < sizeX; x++) {
+        	for (int y = 0; y < sizeY; y++)
+        	{
+        		for (int x = 0; x < sizeX; x++)
+        		{
         			int label = (int) labelImage.getVoxel(x, y, z);
 					// do not consider background
 					if (label == 0)
@@ -757,7 +841,8 @@ public class LabelImages {
      * Returns the set of unique labels existing in the given image, excluding 
      * the value zero (used for background).
      */
-    public final static int[] findAllLabels(ImagePlus image) {
+    public final static int[] findAllLabels(ImagePlus image) 
+    {
 		return image.getStackSize() == 1 ? findAllLabels(image.getProcessor())
 				: findAllLabels(image.getStack());
     }
@@ -766,7 +851,8 @@ public class LabelImages {
      * Returns the set of unique labels existing in the given stack, excluding 
      * the value zero (used for background).
      */
-    public final static int[] findAllLabels(ImageStack image) {
+    public final static int[] findAllLabels(ImageStack image) 
+    {
         int sizeX = image.getWidth();
         int sizeY = image.getHeight();
         int sizeZ = image.getSize();
@@ -774,11 +860,16 @@ public class LabelImages {
         TreeSet<Integer> labels = new TreeSet<Integer> ();
         
         // iterate on image pixels
-        for (int z = 0; z < sizeZ; z++) {
+        for (int z = 0; z < sizeZ; z++) 
+        {
         	IJ.showProgress(z, sizeZ);
-        	for (int y = 0; y < sizeY; y++) 
-        		for (int x = 0; x < sizeX; x++) 
+        	for (int y = 0; y < sizeY; y++)  
+        	{
+        		for (int x = 0; x < sizeX; x++)
+        		{
         			labels.add((int) image.getVoxel(x, y, z));
+        		}
+        	}
         }
         IJ.showProgress(1);
         
@@ -799,23 +890,29 @@ public class LabelImages {
      * Returns the set of unique labels existing in the given image, excluding 
      * the value zero (used for background).
      */
-    public final static int[] findAllLabels(ImageProcessor image) {
+    public final static int[] findAllLabels(ImageProcessor image)
+    {
         int sizeX = image.getWidth();
         int sizeY = image.getHeight();
         
         TreeSet<Integer> labels = new TreeSet<Integer> ();
         
         // iterate on image pixels
-        if (image instanceof FloatProcessor) {
+        if (image instanceof FloatProcessor) 
+        {
         	// For float processor, use explicit case to int from float value  
-        	for (int y = 0; y < sizeY; y++)  {
+        	for (int y = 0; y < sizeY; y++) 
+        	{
         		IJ.showProgress(y, sizeY);
         		for (int x = 0; x < sizeX; x++) 
         			labels.add((int) image.getf(x, y));
         	}
-        } else {
+        } 
+        else
+        {
         	// for integer-based images, simply use integer result
-        	for (int y = 0; y < sizeY; y++)  {
+        	for (int y = 0; y < sizeY; y++) 
+        	{
         		IJ.showProgress(y, sizeY);
         		for (int x = 0; x < sizeX; x++) 
         			labels.add(image.get(x, y));
@@ -843,13 +940,17 @@ public class LabelImages {
 	 * @param imagePlus an ImagePlus containing a 3D label image
 	 * @param labels the list of values to remove 
 	 */
-	public static final void removeLabels(ImagePlus imagePlus, int[] labels) {
+	public static final void removeLabels(ImagePlus imagePlus, int[] labels) 
+	{
 		// Dispatch to appropriate function depending on dimension
-		if (imagePlus.getStackSize() == 1) {
+		if (imagePlus.getStackSize() == 1) 
+		{
 			// process planar image
 			ImageProcessor image = imagePlus.getProcessor();
 			removeLabels(image, labels);
-		} else {
+		} 
+		else 
+		{
 			// process image stack
 			ImageStack image = imagePlus.getStack();
 			removeLabels(image, labels);
@@ -861,17 +962,21 @@ public class LabelImages {
 	 * @param image a label planar image
 	 * @param labels the list of values to remove 
 	 */
-	public static final void removeLabels(ImageProcessor image, int[] labels) {
+	public static final void removeLabels(ImageProcessor image, int[] labels)
+	{
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		
 		TreeSet<Integer> labelSet = new TreeSet<Integer>();
-		for (int i = 0; i < labels.length; i++) {
+		for (int i = 0; i < labels.length; i++)
+		{
 			labelSet.add(labels[i]);
 		}
 		
-		for (int y = 0; y < sizeY; y++) {
-			for (int x = 0; x < sizeX; x++) {
+		for (int y = 0; y < sizeY; y++)
+		{
+			for (int x = 0; x < sizeX; x++)
+			{
 				int value = (int) image.getf(x, y); 
 				if (value == 0)
 					continue;
@@ -886,19 +991,24 @@ public class LabelImages {
 	 * @param image a label 3D image
 	 * @param labels the list of values to remove 
 	 */
-	public static final void removeLabels(ImageStack image, int[] labels) {
+	public static final void removeLabels(ImageStack image, int[] labels)
+	{
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		int sizeZ = image.getSize();
 		
 		TreeSet<Integer> labelSet = new TreeSet<Integer>();
-		for (int i = 0; i < labels.length; i++) {
+		for (int i = 0; i < labels.length; i++) 
+		{
 			labelSet.add(labels[i]);
 		}
 		
-		for (int z = 0; z < sizeZ; z++) {
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
+		for (int z = 0; z < sizeZ; z++) 
+		{
+			for (int y = 0; y < sizeY; y++)
+			{
+				for (int x = 0; x < sizeX; x++) 
+				{
 					int value = (int) image.getVoxel(x, y, z); 
 					if (value == 0)
 						continue;
@@ -915,17 +1025,21 @@ public class LabelImages {
 	 * @param imagePlus an ImagePlus containing a planar label image
 	 * @param labels the list of values to keep 
 	 */
-	public static final ImagePlus keepLabels(ImagePlus imagePlus, int[] labels) {
+	public static final ImagePlus keepLabels(ImagePlus imagePlus, int[] labels) 
+	{
 		ImagePlus resultPlus;
 		String newName = imagePlus.getShortTitle() + "-keepLabels";
 		
 		// Dispatch to appropriate function depending on dimension
-		if (imagePlus.getStackSize() == 1) {
+		if (imagePlus.getStackSize() == 1) 
+		{
 			// process planar image
 			ImageProcessor image = imagePlus.getProcessor();
 			ImageProcessor result = keepLabels(image, labels);
 			resultPlus = new ImagePlus(newName, result);
-		} else {
+		}
+		else 
+		{
 			// process image stack
 			ImageStack image = imagePlus.getStack();
 			ImageStack result = keepLabels(image, labels);
@@ -942,19 +1056,23 @@ public class LabelImages {
 	 * @param image a label planar image
 	 * @param labels the list of values to keep 
 	 */
-	public static final ImageProcessor keepLabels(ImageProcessor image, int[] labels) {
+	public static final ImageProcessor keepLabels(ImageProcessor image, int[] labels) 
+	{
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		
 		ImageProcessor result = image.createProcessor(sizeX,  sizeY);
 		
 		TreeSet<Integer> labelSet = new TreeSet<Integer>();
-		for (int i = 0; i < labels.length; i++) {
+		for (int i = 0; i < labels.length; i++) 
+		{
 			labelSet.add(labels[i]);
 		}
 		
-		for (int y = 0; y < sizeY; y++) {
-			for (int x = 0; x < sizeX; x++) {
+		for (int y = 0; y < sizeY; y++) 
+		{
+			for (int x = 0; x < sizeX; x++)
+			{
 				int value = (int) image.getf(x, y); 
 				if (value == 0)
 					continue;
@@ -972,7 +1090,8 @@ public class LabelImages {
 	 * @param image a label 3D image
 	 * @param labels the list of values to keep 
 	 */
-	public static final ImageStack keepLabels(ImageStack image, int[] labels) {
+	public static final ImageStack keepLabels(ImageStack image, int[] labels) 
+	{
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		int sizeZ = image.getSize();
@@ -980,13 +1099,17 @@ public class LabelImages {
 		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, image.getBitDepth());
 		
 		TreeSet<Integer> labelSet = new TreeSet<Integer>();
-		for (int i = 0; i < labels.length; i++) {
+		for (int i = 0; i < labels.length; i++)
+		{
 			labelSet.add(labels[i]);
 		}
 		
-		for (int z = 0; z < sizeZ; z++) {
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
+		for (int z = 0; z < sizeZ; z++) 
+		{
+			for (int y = 0; y < sizeY; y++)
+			{
+				for (int x = 0; x < sizeX; x++)
+				{
 					int value = (int) image.getVoxel(x, y, z); 
 					if (value == 0)
 						continue;
@@ -999,7 +1122,8 @@ public class LabelImages {
 		return result;
 	}
 	
-	public static final FloatProcessor applyLut(ImageProcessor labelImage, double[] values) {
+	public static final FloatProcessor applyLut(ImageProcessor labelImage, double[] values) 
+	{
 		int width = labelImage.getWidth(); 
 		int height = labelImage.getHeight(); 
 		
@@ -1011,14 +1135,18 @@ public class LabelImages {
         
         // create associative array to know index of each label
         HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
-        for (int i = 0; i < nLabels; i++) {
+        for (int i = 0; i < nLabels; i++)
+        {
         	labelIndices.put(labels[i], i);
         }
 
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
+		for (int y = 0; y < height; y++) 
+		{
+			for (int x = 0; x < width; x++) 
+			{
 				int label = labelImage.get(x, y);
-				if (label == 0) {
+				if (label == 0)
+				{
 					resultImage.setf(x, y, Float.NaN);
 					continue;
 				}
@@ -1038,7 +1166,8 @@ public class LabelImages {
 		return resultImage;
 	}
 	
-	public static final ImageStack applyLut(ImageStack labelImage, double[] values) {
+	public static final ImageStack applyLut(ImageStack labelImage, double[] values) 
+	{
 		int sizeX = labelImage.getWidth(); 
 		int sizeY = labelImage.getHeight(); 
 		int sizeZ = labelImage.getSize(); 
@@ -1051,22 +1180,28 @@ public class LabelImages {
         
         // create associative array to know index of each label
         HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
-        for (int i = 0; i < nLabels; i++) {
+        for (int i = 0; i < nLabels; i++) 
+        {
         	labelIndices.put(labels[i], i);
         }
 
-        for (int z = 0; z < sizeZ; z++) {
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
+        for (int z = 0; z < sizeZ; z++) 
+        {
+			for (int y = 0; y < sizeY; y++) 
+			{
+				for (int x = 0; x < sizeX; x++)
+				{
 					int label = (int) labelImage.getVoxel(x, y, z);
-					if (label == 0) {
+					if (label == 0)
+					{
 						resultImage.setVoxel(x, y, z, Double.NaN);
 						continue;
 					}
 
 					int index = labelIndices.get(label);
 					
-					if (index >= values.length) {
+					if (index >= values.length) 
+					{
 						throw new RuntimeException("Try to access index " + index + 
 								" in array with " + values.length + " values");
 					}

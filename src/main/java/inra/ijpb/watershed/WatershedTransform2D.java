@@ -153,6 +153,7 @@ public class WatershedTransform2D
 	 * by Soille, Pierre, and Luc M. Vincent. "Determining watersheds 
 	 * in digital pictures via flooding simulations." Lausanne-DL 
 	 * tentative. International Society for Optics and Photonics, 1990.
+	 * NOTE: this algorithm may have plateaus in the dams.
 	 *
 	 * @return image of labeled catchment basins (with dams)
 	 */
@@ -174,6 +175,7 @@ public class WatershedTransform2D
 	 * tentative. International Society for Optics and Photonics, 1990.
 	 * This implementation restricts the watershed to the regions in
 	 * white in the binary mask.
+	 * NOTE: this algorithm may have plateaus in the dams.
 	 *
 	 * @return image of labeled catchment basins (with dams)
 	 */
@@ -204,6 +206,7 @@ public class WatershedTransform2D
 	 * tentative. International Society for Optics and Photonics, 1990.
 	 * This implementation uses a binary mask to restrict regions of
 	 * application.
+	 * NOTE: this algorithm may have plateaus in the dams.
 	 *
 	 * @param hMin minimum grayscale level height
 	 * @param hMax maximum grayscale level height
@@ -275,16 +278,16 @@ public class WatershedTransform2D
 	    		    		    		    	
 	    	for(int pixelIndex = heightIndex1; pixelIndex < pixelList.size(); pixelIndex ++)
 	    	{
-	    		final PixelRecord PixelRecord = pixelList.get( pixelIndex );
+	    		final PixelRecord pixelRecord = pixelList.get( pixelIndex );
 	    			    		
-	    		if( PixelRecord.getValue() != h )
+	    		if( pixelRecord.getValue() != h )
 	    		{
 	    			// this pixel is at level h+1
 	    			heightIndex1 = pixelIndex;
 	    			break;
 	    		}
 	    			    		
-	    		final Cursor2D p = PixelRecord.getCursor();
+	    		final Cursor2D p = pixelRecord.getCursor();
 	    		final int i = p.getX();
 	    		final int j = p.getY();
 	    			    		
@@ -341,16 +344,18 @@ public class WatershedTransform2D
 	    						flag = false;
 	    					}       					
 	    				}
-	    				else if ( tabLabels[ u ][ v ] == WSHED && tabLabels[ i ][ j ] == INQUEUE )
+	    				else if ( tabLabels[ u ][ v ] == WSHED )	    					
 	    				{
-	    					tabLabels[ i ][ j ] = WSHED;
-	    					flag = true;
+	    					if( tabLabels[ i ][ j ] == INQUEUE )
+	    					{
+	    						tabLabels[ i ][ j ] = WSHED;
+	    						flag = true;
+	    					}
 	    				}
 	    				else if ( tabLabels[ u ][ v ] == MASK )
 	    				{
 	    					tabLabels[ u ][ v ] = INQUEUE;
 	    					fifo.addLast( c );
-
 	    				}
 	    			}       			       			
 	    		}	    	
@@ -360,16 +365,16 @@ public class WatershedTransform2D
 	    		    	
 	    	for(int pixelIndex = heightIndex2; pixelIndex < pixelList.size(); pixelIndex ++, currentIndex++)
 	    	{
-	    		final PixelRecord PixelRecord = pixelList.get( pixelIndex );	    			    		
+	    		final PixelRecord pixelRecord = pixelList.get( pixelIndex );	    			    		
 	    		
-	    		if( PixelRecord.getValue() != h )
+	    		if( pixelRecord.getValue() != h )
 	    		{
 	    			// this pixel is at level h+1
 	    			heightIndex2 = pixelIndex;
 	    			break;
 	    		}
 	    			    		
-	    		final Cursor2D p = PixelRecord.getCursor();
+	    		final Cursor2D p = pixelRecord.getCursor();
 	    		final int i = p.getX();
 	    		final int j = p.getY();
 	    		
@@ -433,6 +438,7 @@ public class WatershedTransform2D
 	 * by Soille, Pierre, and Luc M. Vincent. "Determining watersheds 
 	 * in digital pictures via flooding simulations." Lausanne-DL 
 	 * tentative. International Society for Optics and Photonics, 1990.
+	 * NOTE: this algorithm may have plateaus in the dams.
 	 *
 	 * @param hMin minimum grayscale level height
 	 * @param hMax maximum grayscale level height
@@ -504,16 +510,16 @@ public class WatershedTransform2D
 	    		    		    		    	
 	    	for(int pixelIndex = heightIndex1; pixelIndex < pixelList.size(); pixelIndex ++)
 	    	{
-	    		final PixelRecord PixelRecord = pixelList.get( pixelIndex );
+	    		final PixelRecord pixelRecord = pixelList.get( pixelIndex );
 	    			    		
-	    		if( PixelRecord.getValue() != h )
+	    		if( pixelRecord.getValue() != h )
 	    		{
 	    			// this pixel is at level h+1
 	    			heightIndex1 = pixelIndex;
 	    			break;
 	    		}
 	    			    		
-	    		final Cursor2D p = PixelRecord.getCursor();
+	    		final Cursor2D p = pixelRecord.getCursor();
 	    		final int i = p.getX();
 	    		final int j = p.getY();
 	    			    		
@@ -569,16 +575,18 @@ public class WatershedTransform2D
 	    						flag = false;
 	    					}       					
 	    				}
-	    				else if ( tabLabels[ u ][ v ] == WSHED && tabLabels[ i ][ j ] == INQUEUE )
+	    				else if ( tabLabels[ u ][ v ] == WSHED )	    					
 	    				{
-	    					tabLabels[ i ][ j ] = WSHED;
-	    					flag = true;
+	    					if( tabLabels[ i ][ j ] == INQUEUE )
+	    					{
+	    						tabLabels[ i ][ j ] = WSHED;
+	    						flag = true;
+	    					}
 	    				}
 	    				else if ( tabLabels[ u ][ v ] == MASK )
 	    				{
 	    					tabLabels[ u ][ v ] = INQUEUE;
 	    					fifo.addLast( c );
-
 	    				}
 	    			}       			       			
 	    		}	    	
@@ -588,16 +596,16 @@ public class WatershedTransform2D
 	    		    	
 	    	for(int pixelIndex = heightIndex2; pixelIndex < pixelList.size(); pixelIndex ++, currentIndex++)
 	    	{
-	    		final PixelRecord PixelRecord = pixelList.get( pixelIndex );	    			    		
+	    		final PixelRecord pixelRecord = pixelList.get( pixelIndex );	    			    		
 	    		
-	    		if( PixelRecord.getValue() != h )
+	    		if( pixelRecord.getValue() != h )
 	    		{
 	    			// this pixel is at level h+1
 	    			heightIndex2 = pixelIndex;
 	    			break;
 	    		}
 	    			    		
-	    		final Cursor2D p = PixelRecord.getCursor();
+	    		final Cursor2D p = pixelRecord.getCursor();
 	    		final int i = p.getX();
 	    		final int j = p.getY();
 	    		
@@ -713,6 +721,7 @@ public class WatershedTransform2D
 	 * tentative. International Society for Optics and Photonics, 1990.
 	 * This implementation uses a binary mask to restrict regions of
 	 * application if the mask exists.
+	 * NOTE: this algorithm may have plateaus in the dams.
 	 *
 	 * @param hMin minimum grayscale level height
 	 * @param hMax maximum grayscale level height
@@ -787,16 +796,16 @@ public class WatershedTransform2D
 	    		    		    		    	
 	    	for(int pixelIndex = heightIndex1; pixelIndex < pixelList.size(); pixelIndex ++)
 	    	{
-	    		final PixelRecord PixelRecord = pixelList.get( pixelIndex );
+	    		final PixelRecord pixelRecord = pixelList.get( pixelIndex );
 	    			    		
-	    		if( PixelRecord.getValue() != h )
+	    		if( pixelRecord.getValue() != h )
 	    		{
 	    			// this pixel is at level h+1
 	    			heightIndex1 = pixelIndex;
 	    			break;
 	    		}
 	    			    		
-	    		final Cursor2D p = PixelRecord.getCursor();
+	    		final Cursor2D p = pixelRecord.getCursor();
 	    		final int i = p.getX();
 	    		final int j = p.getY();
 	    			    		
@@ -853,10 +862,13 @@ public class WatershedTransform2D
 	    							flag = false;
 	    						}       					
 	    					}
-	    					else if ( tabLabels[ u ][ v ] == WSHED && tabLabels[ i ][ j ] == INQUEUE )
+	    					else if ( tabLabels[ u ][ v ] == WSHED )
 	    					{
-	    						tabLabels[ i ][ j ] = WSHED;
-	    						flag = true;
+	    						if( tabLabels[ i ][ j ] == INQUEUE )	    					
+	    						{
+	    							tabLabels[ i ][ j ] = WSHED;
+	    							flag = true;
+	    						}
 	    					}
 	    					else if ( tabLabels[ u ][ v ] == MASK )
 	    					{
