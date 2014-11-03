@@ -153,6 +153,7 @@ public class WatershedTransform2D
 	 * by Soille, Pierre, and Luc M. Vincent. "Determining watersheds 
 	 * in digital pictures via flooding simulations." Lausanne-DL 
 	 * tentative. International Society for Optics and Photonics, 1990.
+	 * NOTE: this algorithm may have plateaus in the dams.
 	 *
 	 * @return image of labeled catchment basins (with dams)
 	 */
@@ -174,6 +175,7 @@ public class WatershedTransform2D
 	 * tentative. International Society for Optics and Photonics, 1990.
 	 * This implementation restricts the watershed to the regions in
 	 * white in the binary mask.
+	 * NOTE: this algorithm may have plateaus in the dams.
 	 *
 	 * @return image of labeled catchment basins (with dams)
 	 */
@@ -204,6 +206,7 @@ public class WatershedTransform2D
 	 * tentative. International Society for Optics and Photonics, 1990.
 	 * This implementation uses a binary mask to restrict regions of
 	 * application.
+	 * NOTE: this algorithm may have plateaus in the dams.
 	 *
 	 * @param hMin minimum grayscale level height
 	 * @param hMax maximum grayscale level height
@@ -435,6 +438,7 @@ public class WatershedTransform2D
 	 * by Soille, Pierre, and Luc M. Vincent. "Determining watersheds 
 	 * in digital pictures via flooding simulations." Lausanne-DL 
 	 * tentative. International Society for Optics and Photonics, 1990.
+	 * NOTE: this algorithm may have plateaus in the dams.
 	 *
 	 * @param hMin minimum grayscale level height
 	 * @param hMax maximum grayscale level height
@@ -717,6 +721,7 @@ public class WatershedTransform2D
 	 * tentative. International Society for Optics and Photonics, 1990.
 	 * This implementation uses a binary mask to restrict regions of
 	 * application if the mask exists.
+	 * NOTE: this algorithm may have plateaus in the dams.
 	 *
 	 * @param hMin minimum grayscale level height
 	 * @param hMax maximum grayscale level height
