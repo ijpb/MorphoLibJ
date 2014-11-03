@@ -91,15 +91,15 @@ public class GeodesicReconstructionByErosion3DScanningTest {
 		marker.setVoxel(1, 1, 1, 0);
 		marker = marker.convertToFloat();
 		
-		System.out.println("\n=== Mask Image ===");
-		Images3D.print(mask);
-		System.out.println("\n=== Marker Image ===");
-		Images3D.print(marker);
+//		System.out.println("\n=== Mask Image ===");
+//		Images3D.print(mask);
+//		System.out.println("\n=== Marker Image ===");
+//		Images3D.print(marker);
 		
 		ImageStack result = GeodesicReconstruction3D.reconstructByErosion(marker, mask, 6);
 		
-		System.out.println("\n=== Result Image ===");
-		Images3D.print(result);
+//		System.out.println("\n=== Result Image ===");
+//		Images3D.print(result);
 		
 		assertEquals(  0, result.getVoxel(1, 1, 1), .01);
 		assertEquals( 32, result.getVoxel(9, 1, 1), .01);

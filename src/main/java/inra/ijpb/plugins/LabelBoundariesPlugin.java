@@ -7,7 +7,7 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.plugin.PlugIn;
-import inra.ijpb.morphology.LabelImages;
+import inra.ijpb.label.LabelImages;
 
 /**
  * @author David Legland

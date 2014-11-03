@@ -15,7 +15,7 @@ import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.text.TextPanel;
 import ij.text.TextWindow;
-import inra.ijpb.morphology.LabelImages;
+import inra.ijpb.label.LabelImages;
 
 import java.awt.AWTEvent;
 import java.awt.Choice;

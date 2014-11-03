@@ -8,8 +8,8 @@ import ij.gui.GenericDialog;
 import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
+import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.GeometricMeasures3D;
-import inra.ijpb.morphology.LabelImages;
 
 /**
  * Plugin for measuring geometric quantities such as volume, surface area 

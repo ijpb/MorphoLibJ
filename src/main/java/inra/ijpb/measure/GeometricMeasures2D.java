@@ -7,7 +7,7 @@ import static java.lang.Math.sqrt;
 import ij.IJ;
 import ij.measure.ResultsTable;
 import ij.process.ImageProcessor;
-import inra.ijpb.morphology.LabelImages;
+import inra.ijpb.label.LabelImages;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,7 +76,7 @@ public class GeometricMeasures2D {
 
 	/**
 	 * Computes the area for each particle in the label image, taking into account image resolution.
-	 * @see inra.ijpb.morphology.LabelImages#pixelCount(ij.process.ImageProcessor, int[])
+	 * @see inra.ijpb.label.LabelImages#pixelCount(ij.process.ImageProcessor, int[])
 	 */
     public static final double[] area(ImageProcessor image, int[] labels, double[] resol) {
         // pre-compute the area of individual voxel

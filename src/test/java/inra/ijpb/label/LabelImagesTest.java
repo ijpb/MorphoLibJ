@@ -1,4 +1,4 @@
-package inra.ijpb.morphology;
+package inra.ijpb.label;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -6,6 +6,7 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
+import inra.ijpb.label.LabelImages;
 
 import org.junit.Test;
 

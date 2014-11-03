@@ -12,7 +12,7 @@ import static java.lang.Math.toDegrees;
 import ij.IJ;
 import ij.ImageStack;
 import ij.measure.ResultsTable;
-import inra.ijpb.morphology.LabelImages;
+import inra.ijpb.label.LabelImages;
 
 import java.util.ArrayList;
 import java.util.HashMap;

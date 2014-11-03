@@ -12,7 +12,7 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
-import inra.ijpb.morphology.LabelImages;
+import inra.ijpb.label.LabelImages;
 
 /**
  * Removes all labels that touch the selected border, and replace them with value 0.
@@ -22,7 +22,7 @@ import inra.ijpb.morphology.LabelImages;
  * Then the labels that touch at least one of the selected borders are replaced
  * by the value zero. The result is shown in a new ImagePlus.  
  * 
- * @see inra.ijpb.morphology.LabelImages
+ * @see inra.ijpb.label.LabelImages
  * 
  * @author David Legland
  *

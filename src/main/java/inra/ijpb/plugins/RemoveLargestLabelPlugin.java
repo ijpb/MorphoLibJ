@@ -6,7 +6,7 @@ package inra.ijpb.plugins;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.plugin.PlugIn;
-import inra.ijpb.morphology.LabelImages;
+import inra.ijpb.label.LabelImages;
 
 /**
  * Removes all the labels in a 2D/3D image but the largest one. 
