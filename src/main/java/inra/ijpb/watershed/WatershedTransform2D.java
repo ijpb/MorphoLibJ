@@ -353,7 +353,6 @@ public class WatershedTransform2D
 	    				{
 	    					tabLabels[ u ][ v ] = INQUEUE;
 	    					fifo.addLast( c );
-
 	    				}
 	    			}       			       			
 	    		}	    	
@@ -584,7 +583,6 @@ public class WatershedTransform2D
 	    				{
 	    					tabLabels[ u ][ v ] = INQUEUE;
 	    					fifo.addLast( c );
-
 	    				}
 	    			}       			       			
 	    		}	    	
