@@ -621,23 +621,14 @@ public class Watershed
 			ImageProcessor marker,
 			int connectivity,
 			boolean getDams )
-	{		
-		final ImagePlus inputIP = new ImagePlus( "input", input );
-		final ImagePlus markerIP = new ImagePlus( "marker", marker );
-		
-		final int conn3d = connectivity == 4 ? 6 : 26;
-									
-		MarkerControlledWatershedTransform3D wt = new MarkerControlledWatershedTransform3D( inputIP, markerIP, null, conn3d );
-		
-		ImagePlus ws = null;
-
+	{												
+		MarkerControlledWatershedTransform2D wt = 
+				new MarkerControlledWatershedTransform2D( input, marker, 
+														  null, connectivity );		
 		if( getDams )			
-			ws = wt.applyWithPriorityQueueAndDams();							
+			return wt.applyWithPriorityQueueAndDams();							
 		else			
-			ws = wt.applyWithPriorityQueue();			
-		if( null == ws )
-			return null;
-		return ws.getProcessor();
+			return wt.applyWithPriorityQueue();			
 	}
 	
 }
