@@ -12,13 +12,13 @@ import inra.ijpb.binary.distmap.ChamferDistance3x3Float;
 import inra.ijpb.binary.distmap.ChamferDistance3x3Short;
 import inra.ijpb.binary.distmap.ChamferDistance5x5Float;
 import inra.ijpb.binary.distmap.ChamferDistance5x5Short;
-import inra.ijpb.morphology.LabelImages;
+import inra.ijpb.label.LabelImages;
 
 /**
  * A collection of static methods for operating on binary images (2D/3D).
  * Some of the methods need the LabelImages class. 
  * 
- * @see inra.ijpb.morphology.LabelImages
+ * @see inra.ijpb.label.LabelImages
  * 
  * @author David Legland
  *
@@ -93,7 +93,7 @@ public class BinaryImages {
 	 * binary image that contains only particles with at least the specified
 	 * number of pixels.
 	 * 
-	 * @see inra.ijpb.morphology.LabelImages#sizeOpening(ImagePlus, int)
+	 * @see inra.ijpb.label.LabelImages#sizeOpening(ImagePlus, int)
 	 */
 	public static final ImagePlus sizeOpening(ImagePlus imagePlus, int minElementCount) 
 	{
@@ -123,7 +123,7 @@ public class BinaryImages {
 	 * Applies area opening on a binary image: creates a new binary image that
 	 * contains only particles with at least the specified number of pixels.
 	 * 
-	 * @see inra.ijpb.morphology.LabelImages#areaOpening(ImageProcessor, int)
+	 * @see inra.ijpb.label.LabelImages#areaOpening(ImageProcessor, int)
 	 */
 	public static final ImageProcessor areaOpening(ImageProcessor image, int nPixelMin) {
 		// Labeling
@@ -138,7 +138,7 @@ public class BinaryImages {
 	 * Applies area opening on a binary image: creates a new binary image that
 	 * contains only particle with at least the specified number of voxels.
 	 *
-	 * @see inra.ijpb.morphology.LabelImages#volumeOpening(ImageStack, int)
+	 * @see inra.ijpb.label.LabelImages#volumeOpening(ImageStack, int)
 	 */
 	public static final ImageStack volumeOpening(ImageStack image, int nVoxelMin) {
 		// Labeling

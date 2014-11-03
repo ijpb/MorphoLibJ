@@ -6,6 +6,7 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
+import inra.ijpb.label.LabelImages;
 
 import org.junit.Test;
 

@@ -8,7 +8,7 @@ import ij.ImagePlus;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
-import inra.ijpb.morphology.LabelImages;
+import inra.ijpb.label.LabelImages;
 import inra.ijpb.util.ColorMaps.CommonLabelMaps;
 
 import java.awt.Color;
