@@ -122,7 +122,7 @@ public class GeometricMeasures2D {
      * Computes perimeter of each label using Crofton method.  
      * 
      * @deprecated use analyzeRegions instead
-     * @see #analyzeRegions(ij.process.ImageProcessor, double[], int)
+     * @see #analyzeRegions(ij.process.ImageProcessor, double[])
      * 
      * @param labelImage the input image containing label of particles
      * @param nDirs the number of directions to process, either 2 or 4

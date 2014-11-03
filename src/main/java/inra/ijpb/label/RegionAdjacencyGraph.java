@@ -35,7 +35,7 @@ import java.util.TreeSet;
  * ImageProcessor image = new ByteProcessor(6, 6, data);
  * 	
  * // compute adjacencies, and return result as a set of label pairs
- * Set<RegionAdjacencyGraph.LabelPair> adjacencies =
+ * Set&lt;RegionAdjacencyGraph.LabelPair&gt; adjacencies =
  * 	RegionAdjacencyGraph.computeAdjacencies(image);
  * 
  * // display which regions are adjacent 

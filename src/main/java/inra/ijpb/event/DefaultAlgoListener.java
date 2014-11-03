@@ -12,10 +12,9 @@ import inra.ijpb.morphology.Strel;
 import inra.ijpb.morphology.strel.SquareStrel;
 
 /**
- * <p>Utility class that catches algorithm events and displays them either on ImageJ
- * main Frame.</p>
+ * Utility class that catches algorithm events and displays them either on ImageJ
+ * main Frame.<p>
  *  
- * <p>
  * Example of use:
  * <pre><code>
  * // init image and process 
@@ -28,7 +27,6 @@ import inra.ijpb.morphology.strel.SquareStrel;
  * // run process. The IJ frame will display progress
  * strel.dilation(image);
  * </code></pre>
- * </p>
  * @author David Legland
  *
  */
