@@ -335,10 +335,13 @@ public class WatershedTransform3D
 	    						flag = false;
 	    					}       					
 	    				}
-	    				else if ( tabLabels[ u ][ v ][ w ] == WSHED && tabLabels[ i ][ j ][ k ] == INQUEUE )
+	    				else if ( tabLabels[ u ][ v ][ w ] == WSHED )
 	    				{
-	    					tabLabels[ i ][ j ][ k ] = WSHED;
-	    					flag = true;
+	    					if( tabLabels[ i ][ j ][ k ] == INQUEUE )
+	    					{
+	    						tabLabels[ i ][ j ][ k ] = WSHED;
+	    						flag = true;
+	    					}
 	    				}
 	    				else if ( tabLabels[ u ][ v ][ w ] == MASK )
 	    				{
@@ -593,10 +596,13 @@ public class WatershedTransform3D
 	    						flag = false;
 	    					}       					
 	    				}
-	    				else if ( tabLabels[ u ][ v ][ w ] == WSHED && tabLabels[ i ][ j ][ k ] == INQUEUE )
+	    				else if ( tabLabels[ u ][ v ][ w ] == WSHED )
 	    				{
-	    					tabLabels[ i ][ j ][ k ] = WSHED;
-	    					flag = true;
+	    					if( tabLabels[ i ][ j ][ k ] == INQUEUE )
+	    					{
+	    						tabLabels[ i ][ j ][ k ] = WSHED;
+	    						flag = true;
+	    					}
 	    				}
 	    				else if ( tabLabels[ u ][ v ][ w ] == MASK )
 	    				{
