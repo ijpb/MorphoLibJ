@@ -5,8 +5,10 @@ package inra.ijpb.plugins;
 
 import ij.IJ;
 import ij.ImagePlus;
+import ij.ImageStack;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
+import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.util.ColorMaps.CommonLabelMaps;
@@ -22,9 +24,11 @@ import java.awt.Color;
  * @author David Legland
  *
  */
-public class LabelToRgbPlugin implements PlugIn {
+public class LabelToRgbPlugin implements PlugIn
+{
 	
-	public enum Colors {
+	public enum Colors
+	{
 		WHITE("White", 	Color.WHITE), 
 		BLACK("Black", 	Color.BLACK), 
 		RED("Red", 		Color.RED), 
@@ -34,20 +38,24 @@ public class LabelToRgbPlugin implements PlugIn {
 		private final String label;
 		private final Color color;
 
-		Colors(String label, Color color) {
+		Colors(String label, Color color)
+		{
 			this.label = label;
 			this.color = color;
 		}
 		
-		public String toString() {
+		public String toString() 
+		{
 			return label;
 		}
 		
-		public Color getColor() {
+		public Color getColor()
+		{
 			return color;
 		}
 		
-		public static String[] getAllLabels(){
+		public static String[] getAllLabels()
+		{
 			int n = Colors.values().length;
 			String[] result = new String[n];
 			
@@ -62,10 +70,12 @@ public class LabelToRgbPlugin implements PlugIn {
 		 * Determines the operation type from its label.
 		 * @throws IllegalArgumentException if label is not recognized.
 		 */
-		public static Colors fromLabel(String label) {
+		public static Colors fromLabel(String label) 
+		{
 			if (label != null)
 				label = label.toLowerCase();
-			for (Colors color : Colors.values()) {
+			for (Colors color : Colors.values()) 
+			{
 				String cmp = color.label.toLowerCase();
 				if (cmp.equals(label))
 					return color;
@@ -77,7 +87,8 @@ public class LabelToRgbPlugin implements PlugIn {
 
 
 	@Override
-	public void run(String arg) {
+	public void run(String arg)
+	{
 		ImagePlus imagePlus = IJ.getImage();
 
 		int maxLabel = computeMaxLabel(imagePlus);
@@ -108,7 +119,8 @@ public class LabelToRgbPlugin implements PlugIn {
 		// dispay result image
 		resPlus.copyScale(imagePlus);
 		resPlus.show();
-    	if (imagePlus.getStackSize() > 1) {
+    	if (imagePlus.getStackSize() > 1) 
+    	{
     		resPlus.setSlice(imagePlus.getSlice());
     	}
 	}
@@ -117,26 +129,48 @@ public class LabelToRgbPlugin implements PlugIn {
 	 * Computes the maximum value in the input image or stack, in order to 
 	 * initialize colormap with the appropriate number of colors. 
 	 */
-	private final static int computeMaxLabel(ImagePlus imagePlus) {
+	private final static int computeMaxLabel(ImagePlus imagePlus) 
+	{
+		if (imagePlus.getImageStackSize() == 1) 
+		{
+			return computeMaxLabel(imagePlus.getProcessor());
+		}
+		else 
+		{
+			 return computeMaxLabel(imagePlus.getStack());
+		}
+	}
+
+	private static final int computeMaxLabel(ImageProcessor image) 
+	{
 		int labelMax = 0;
-		int nSlices = imagePlus.getImageStackSize();
-		if (nSlices == 1) {
-			// process planar integer image
-			ImageProcessor baseImage = imagePlus.getProcessor();
-			for (int i = 0; i < baseImage.getPixelCount(); i++) {
-				labelMax = Math.max(labelMax, baseImage.get(i));
+		if (image instanceof FloatProcessor)
+		{
+			for (int i = 0; i < image.getPixelCount(); i++) 
+			{
+				labelMax = Math.max(labelMax, (int) image.getf(i));
 			}
-		} else {
-			// process 3D integer image
-			for (int i = 1; i <= nSlices; i++) {
-				ImageProcessor image = imagePlus.getStack().getProcessor(i);
-				for (int j = 0; j < image.getPixelCount(); j++) {
-					labelMax = Math.max(labelMax, image.get(j));
-				}
+		} 
+		else
+		{
+			for (int i = 0; i < image.getPixelCount(); i++) 
+			{
+				labelMax = Math.max(labelMax, image.get(i));
 			}
 		}
 		
 		return labelMax;
 	}
-
+	
+	private static final int computeMaxLabel(ImageStack image) 
+	{
+		int labelMax = 0;
+		for (int i = 1; i <= image.getSize(); i++) 
+		{
+			ImageProcessor slice = image.getProcessor(i);
+			labelMax = Math.max(labelMax, computeMaxLabel(slice));
+		}
+		
+		return labelMax;
+	}
 }
