@@ -3,8 +3,8 @@ package inra.ijpb.watershed;
 import ij.ImagePlus;
 import ij.measure.ResultsTable;
 import ij.process.ImageProcessor;
+import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.IntensityMeasures;
-import inra.ijpb.morphology.LabelImages;
 import inra.ijpb.morphology.Morphology;
 import inra.ijpb.morphology.Strel;
 
