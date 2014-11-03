@@ -4,8 +4,11 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.measure.ResultsTable;
 import ij.process.ImageProcessor;
+import inra.ijpb.binary.ConnectedComponents;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.IntensityMeasures;
+import inra.ijpb.morphology.MinimaAndMaxima;
+import inra.ijpb.morphology.MinimaAndMaxima3D;
 import inra.ijpb.morphology.Morphology;
 import inra.ijpb.morphology.Strel;
 import inra.ijpb.morphology.Strel3D;
@@ -30,10 +33,16 @@ public class MosaicImage {
 		Strel strel = Strel.Shape.SQUARE.fromRadius( gradientRadius );
 		ImageProcessor gradientImage = Morphology.gradient( input, strel );
 		
-		// apply classic watershed algorithm
+		// apply classic Meyer's watershed algorithm
 		int connectivity = 4;
+		
+		ImageProcessor minima = 
+				MinimaAndMaxima.regionalMinima( gradientImage, connectivity );
+		ImageProcessor labeledMinima = 
+				ConnectedComponents.computeLabels( minima, connectivity, 32 );
 		ImageProcessor watershedImage = 
-				Watershed.computeWatershed( gradientImage, null, connectivity );
+				Watershed.computeWatershed( gradientImage, 
+						labeledMinima, connectivity, true );
 		
 		// calculate mean value of each labeled region
 		IntensityMeasures im = new IntensityMeasures( 
@@ -71,8 +80,13 @@ public class MosaicImage {
 		ImageProcessor gradientImage = Morphology.gradient( input, strel );
 		
 		// apply classic watershed algorithm
+		ImageProcessor minima = 
+				MinimaAndMaxima.regionalMinima( gradientImage, connectivity );
+		ImageProcessor labeledMinima = 
+				ConnectedComponents.computeLabels( minima, connectivity, 32 );
 		ImageProcessor watershedImage = 
-				Watershed.computeWatershed( gradientImage, null, connectivity );
+				Watershed.computeWatershed( gradientImage, 
+						labeledMinima, connectivity, true );
 		
 		// calculate mean value of each labeled region
 		IntensityMeasures im = new IntensityMeasures( 
@@ -108,8 +122,13 @@ public class MosaicImage {
 		
 		// apply classic watershed algorithm
 		int connectivity = 6;
+		ImageStack minima = 
+				MinimaAndMaxima3D.regionalMinima( gradientImage, connectivity );
+		ImageStack labeledMinima = 
+				ConnectedComponents.computeLabels( minima, connectivity, 32 );
 		ImageStack watershedImage = 
-				Watershed.computeWatershed( gradientImage, null, connectivity );
+				Watershed.computeWatershed( gradientImage, 
+						labeledMinima, connectivity, true );
 		
 		// calculate mean value of each labeled region
 		IntensityMeasures im = new IntensityMeasures( 
@@ -147,8 +166,13 @@ public class MosaicImage {
 		ImageStack gradientImage = Morphology.gradient( input, strel );
 		
 		// apply classic watershed algorithm
+		ImageStack minima = 
+				MinimaAndMaxima3D.regionalMinima( gradientImage, connectivity );
+		ImageStack labeledMinima = 
+				ConnectedComponents.computeLabels( minima, connectivity, 32 );
 		ImageStack watershedImage = 
-				Watershed.computeWatershed( gradientImage, null, connectivity );
+				Watershed.computeWatershed( gradientImage, 
+						labeledMinima, connectivity, true );
 		
 		// calculate mean value of each labeled region
 		IntensityMeasures im = new IntensityMeasures( 
@@ -185,8 +209,13 @@ public class MosaicImage {
 		
 		// apply classic watershed algorithm
 		int connectivity = 6;
+		ImageStack minima = 
+				MinimaAndMaxima3D.regionalMinima( gradientImage, connectivity );
+		ImageStack labeledMinima = 
+				ConnectedComponents.computeLabels( minima, connectivity, 32 );
 		ImageStack watershedImage = 
-				Watershed.computeWatershed( gradientImage, null, connectivity );
+				Watershed.computeWatershed( gradientImage, 
+						labeledMinima, connectivity, true );
 		
 		// calculate mean value of each labeled region
 		IntensityMeasures im = new IntensityMeasures( 
@@ -228,8 +257,13 @@ public class MosaicImage {
 				Morphology.gradient( input.getImageStack(), strel );
 		
 		// apply classic watershed algorithm
+		ImageStack minima = 
+				MinimaAndMaxima3D.regionalMinima( gradientImage, connectivity );
+		ImageStack labeledMinima = 
+				ConnectedComponents.computeLabels( minima, connectivity, 32 );
 		ImageStack watershedImage = 
-				Watershed.computeWatershed( gradientImage, null, connectivity );
+				Watershed.computeWatershed( gradientImage, 
+						labeledMinima, connectivity, true );
 		
 		// calculate mean value of each labeled region
 		IntensityMeasures im = new IntensityMeasures( 
