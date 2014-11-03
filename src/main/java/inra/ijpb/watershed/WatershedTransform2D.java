@@ -275,16 +275,16 @@ public class WatershedTransform2D
 	    		    		    		    	
 	    	for(int pixelIndex = heightIndex1; pixelIndex < pixelList.size(); pixelIndex ++)
 	    	{
-	    		final PixelRecord PixelRecord = pixelList.get( pixelIndex );
+	    		final PixelRecord pixelRecord = pixelList.get( pixelIndex );
 	    			    		
-	    		if( PixelRecord.getValue() != h )
+	    		if( pixelRecord.getValue() != h )
 	    		{
 	    			// this pixel is at level h+1
 	    			heightIndex1 = pixelIndex;
 	    			break;
 	    		}
 	    			    		
-	    		final Cursor2D p = PixelRecord.getCursor();
+	    		final Cursor2D p = pixelRecord.getCursor();
 	    		final int i = p.getX();
 	    		final int j = p.getY();
 	    			    		
@@ -363,16 +363,16 @@ public class WatershedTransform2D
 	    		    	
 	    	for(int pixelIndex = heightIndex2; pixelIndex < pixelList.size(); pixelIndex ++, currentIndex++)
 	    	{
-	    		final PixelRecord PixelRecord = pixelList.get( pixelIndex );	    			    		
+	    		final PixelRecord pixelRecord = pixelList.get( pixelIndex );	    			    		
 	    		
-	    		if( PixelRecord.getValue() != h )
+	    		if( pixelRecord.getValue() != h )
 	    		{
 	    			// this pixel is at level h+1
 	    			heightIndex2 = pixelIndex;
 	    			break;
 	    		}
 	    			    		
-	    		final Cursor2D p = PixelRecord.getCursor();
+	    		final Cursor2D p = pixelRecord.getCursor();
 	    		final int i = p.getX();
 	    		final int j = p.getY();
 	    		
@@ -507,16 +507,16 @@ public class WatershedTransform2D
 	    		    		    		    	
 	    	for(int pixelIndex = heightIndex1; pixelIndex < pixelList.size(); pixelIndex ++)
 	    	{
-	    		final PixelRecord PixelRecord = pixelList.get( pixelIndex );
+	    		final PixelRecord pixelRecord = pixelList.get( pixelIndex );
 	    			    		
-	    		if( PixelRecord.getValue() != h )
+	    		if( pixelRecord.getValue() != h )
 	    		{
 	    			// this pixel is at level h+1
 	    			heightIndex1 = pixelIndex;
 	    			break;
 	    		}
 	    			    		
-	    		final Cursor2D p = PixelRecord.getCursor();
+	    		final Cursor2D p = pixelRecord.getCursor();
 	    		final int i = p.getX();
 	    		final int j = p.getY();
 	    			    		
@@ -594,16 +594,16 @@ public class WatershedTransform2D
 	    		    	
 	    	for(int pixelIndex = heightIndex2; pixelIndex < pixelList.size(); pixelIndex ++, currentIndex++)
 	    	{
-	    		final PixelRecord PixelRecord = pixelList.get( pixelIndex );	    			    		
+	    		final PixelRecord pixelRecord = pixelList.get( pixelIndex );	    			    		
 	    		
-	    		if( PixelRecord.getValue() != h )
+	    		if( pixelRecord.getValue() != h )
 	    		{
 	    			// this pixel is at level h+1
 	    			heightIndex2 = pixelIndex;
 	    			break;
 	    		}
 	    			    		
-	    		final Cursor2D p = PixelRecord.getCursor();
+	    		final Cursor2D p = pixelRecord.getCursor();
 	    		final int i = p.getX();
 	    		final int j = p.getY();
 	    		
