@@ -1144,7 +1144,7 @@ public class LabelImages
 		{
 			for (int x = 0; x < width; x++) 
 			{
-				int label = labelImage.get(x, y);
+				int label = (int) labelImage.getf(x, y);
 				if (label == 0)
 				{
 					resultImage.setf(x, y, Float.NaN);
