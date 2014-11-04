@@ -35,7 +35,7 @@ public class MosaicImage {
 		
 		// apply classic Meyer's watershed algorithm
 		int connectivity = 4;
-		boolean calculateDams = true;
+		boolean calculateDams = false;
 		
 		ImageProcessor minima = 
 				MinimaAndMaxima.regionalMinima( gradientImage, connectivity );
@@ -125,7 +125,7 @@ public class MosaicImage {
 		
 		// apply classic watershed algorithm
 		int connectivity = 6;
-		boolean calculateDams = true;
+		boolean calculateDams = false;
 		
 		ImageStack minima = 
 				MinimaAndMaxima3D.regionalMinima( gradientImage, connectivity );
@@ -216,7 +216,7 @@ public class MosaicImage {
 		
 		// apply classic watershed algorithm
 		int connectivity = 6;
-		boolean calculateDams = true;
+		boolean calculateDams = false;
 		
 		ImageStack minima = 
 				MinimaAndMaxima3D.regionalMinima( gradientImage, connectivity );
