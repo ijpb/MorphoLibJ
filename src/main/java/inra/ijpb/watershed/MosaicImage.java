@@ -237,7 +237,7 @@ public class MosaicImage {
 		double[] values = table.getColumnAsDoubles( index );
 		
 		// apply mean values to each region
-		ImagePlus mosaicImage = new ImagePlus( input.getTitle() + "-mosaic",
+		ImagePlus mosaicImage = new ImagePlus( input.getShortTitle() + "-mosaic",
 				LabelImages.applyLut( watershedImage, values ) );
 		mosaicImage.setCalibration( input.getCalibration() );
 		return mosaicImage;
@@ -287,7 +287,7 @@ public class MosaicImage {
 		double[] values = table.getColumnAsDoubles( index );
 		
 		// apply mean values to each region
-		ImagePlus mosaicImage = new ImagePlus( input.getTitle() + "-mosaic",
+		ImagePlus mosaicImage = new ImagePlus( input.getShortTitle() + "-mosaic",
 				LabelImages.applyLut( watershedImage, values ) );
 		mosaicImage.setCalibration( input.getCalibration() );
 		return mosaicImage;
