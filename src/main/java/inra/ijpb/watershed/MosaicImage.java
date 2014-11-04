@@ -35,6 +35,7 @@ public class MosaicImage {
 		
 		// apply classic Meyer's watershed algorithm
 		int connectivity = 4;
+		boolean calculateDams = true;
 		
 		ImageProcessor minima = 
 				MinimaAndMaxima.regionalMinima( gradientImage, connectivity );
@@ -42,7 +43,7 @@ public class MosaicImage {
 				ConnectedComponents.computeLabels( minima, connectivity, 32 );
 		ImageProcessor watershedImage = 
 				Watershed.computeWatershed( gradientImage, 
-						labeledMinima, connectivity, true );
+						labeledMinima, connectivity, calculateDams );
 		
 		// calculate mean value of each labeled region
 		IntensityMeasures im = new IntensityMeasures( 
@@ -69,12 +70,14 @@ public class MosaicImage {
 	 * @param input grayscale input image
 	 * @param strel structural element to calculate gradient
 	 * @param connectivity pixel connectivity
+	 * @param calculateDams flag to calculate watershed lines
 	 * @return mosaic image
 	 */
 	public static ImageProcessor compute( 
 			ImageProcessor input, 
 			Strel strel,
-			int connectivity )
+			int connectivity,
+			boolean calculateDams )
 	{		
 		// calculate gradient image
 		ImageProcessor gradientImage = Morphology.gradient( input, strel );
@@ -86,7 +89,7 @@ public class MosaicImage {
 				ConnectedComponents.computeLabels( minima, connectivity, 32 );
 		ImageProcessor watershedImage = 
 				Watershed.computeWatershed( gradientImage, 
-						labeledMinima, connectivity, true );
+						labeledMinima, connectivity, calculateDams );
 		
 		// calculate mean value of each labeled region
 		IntensityMeasures im = new IntensityMeasures( 
@@ -122,13 +125,15 @@ public class MosaicImage {
 		
 		// apply classic watershed algorithm
 		int connectivity = 6;
+		boolean calculateDams = true;
+		
 		ImageStack minima = 
 				MinimaAndMaxima3D.regionalMinima( gradientImage, connectivity );
 		ImageStack labeledMinima = 
 				ConnectedComponents.computeLabels( minima, connectivity, 32 );
 		ImageStack watershedImage = 
 				Watershed.computeWatershed( gradientImage, 
-						labeledMinima, connectivity, true );
+						labeledMinima, connectivity, calculateDams );
 		
 		// calculate mean value of each labeled region
 		IntensityMeasures im = new IntensityMeasures( 
@@ -155,12 +160,14 @@ public class MosaicImage {
 	 * @param input grayscale input image
 	 * @param strel structural element to calculate gradient
 	 * @param connectivity pixel connectivity
+	 * @param calculateDams flag to calculate watershed lines
 	 * @return mosaic image
 	 */
 	public static ImageStack compute( 
 			ImageStack input,
 			Strel3D strel, 
-			int connectivity )
+			int connectivity,
+			boolean calculateDams)
 	{		
 		// calculate gradient image
 		ImageStack gradientImage = Morphology.gradient( input, strel );
@@ -172,7 +179,7 @@ public class MosaicImage {
 				ConnectedComponents.computeLabels( minima, connectivity, 32 );
 		ImageStack watershedImage = 
 				Watershed.computeWatershed( gradientImage, 
-						labeledMinima, connectivity, true );
+						labeledMinima, connectivity, calculateDams );
 		
 		// calculate mean value of each labeled region
 		IntensityMeasures im = new IntensityMeasures( 
@@ -209,13 +216,15 @@ public class MosaicImage {
 		
 		// apply classic watershed algorithm
 		int connectivity = 6;
+		boolean calculateDams = true;
+		
 		ImageStack minima = 
 				MinimaAndMaxima3D.regionalMinima( gradientImage, connectivity );
 		ImageStack labeledMinima = 
 				ConnectedComponents.computeLabels( minima, connectivity, 32 );
 		ImageStack watershedImage = 
 				Watershed.computeWatershed( gradientImage, 
-						labeledMinima, connectivity, true );
+						labeledMinima, connectivity, calculateDams );
 		
 		// calculate mean value of each labeled region
 		IntensityMeasures im = new IntensityMeasures( 
@@ -245,12 +254,14 @@ public class MosaicImage {
 	 * @param input grayscale input image
 	 * @param strel structural element to calculate gradient
 	 * @param connectivity pixel connectivity
+	 * @param calculateDams flag to calculate watershed lines
 	 * @return mosaic image
 	 */
 	public static ImagePlus compute( 
 			ImagePlus input,
 			Strel3D strel,
-			int connectivity )
+			int connectivity,
+			boolean calculateDams )
 	{		
 		// calculate gradient image
 		ImageStack gradientImage = 
@@ -263,7 +274,7 @@ public class MosaicImage {
 				ConnectedComponents.computeLabels( minima, connectivity, 32 );
 		ImageStack watershedImage = 
 				Watershed.computeWatershed( gradientImage, 
-						labeledMinima, connectivity, true );
+						labeledMinima, connectivity, calculateDams );
 		
 		// calculate mean value of each labeled region
 		IntensityMeasures im = new IntensityMeasures( 
