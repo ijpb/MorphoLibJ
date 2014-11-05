@@ -84,10 +84,10 @@ public class RegionAdjacencyGraph
 		{
 			for (int x = 0; x < width - 2; x++)
 			{
-				int label = image.get(x, y);
+				int label = (int) image.getf(x, y);
 				if (label == 0)
 					continue;
-				int label2 = image.get(x + 2, y);
+				int label2 = (int) image.getf(x + 2, y);
 				if (label2 == 0 || label2 == label)
 					continue;
 				
@@ -101,10 +101,10 @@ public class RegionAdjacencyGraph
 		{
 			for (int x = 0; x < width; x++)
 			{
-				int label = image.get(x, y);
+				int label = (int) image.getf(x, y);
 				if (label == 0)
 					continue;
-				int label2 = image.get(x, y + 2);
+				int label2 = (int) image.getf(x, y + 2);
 				if (label2 == 0 || label2 == label)
 					continue;
 				
