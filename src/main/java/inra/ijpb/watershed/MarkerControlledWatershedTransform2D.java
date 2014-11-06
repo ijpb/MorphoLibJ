@@ -1479,7 +1479,7 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 			for (int j = 0; j < size2; ++j)	
 			{					
 				if( tabLabels[ i ][ j ] == INIT ) // set unlabeled pixels to WSHED
-					labelProcessor.setf( i, j, 0 );
+					labelProcessor.setf( i, j, WSHED );
 				else
 					labelProcessor.setf( i, j, tabLabels[ i ][ j ] );
 			}
