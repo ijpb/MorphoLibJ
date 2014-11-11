@@ -49,6 +49,7 @@ public class ChamferDistance5x5FloatTest {
 		assertEquals(6, result.getf(6, 0), .01);
 		assertEquals(6, result.getf(0, 6), .01);
 		assertEquals(4, result.getf(6, 6), .01);
+		assertEquals(5, result.getf(0, 5), .01);
 	}
 
 	@Test
@@ -69,6 +70,8 @@ public class ChamferDistance5x5FloatTest {
 		assertEquals(4, result.getf(6, 0), .01);
 		assertEquals(4, result.getf(0, 6), .01);
 		assertEquals(2, result.getf(6, 6), .01);
+		
+		assertEquals(4, result.getf(0, 5), .01);
 	}
 	
 	@Test
@@ -89,6 +92,8 @@ public class ChamferDistance5x5FloatTest {
 		assertEquals(10, result.getf(6, 0), .01);
 		assertEquals(10, result.getf(0, 6), .01);
 		assertEquals(6, result.getf(6, 6), .01);
+		
+		assertEquals(9, result.getf(0, 5), .01);
 	}
 	
 	@Test
@@ -109,5 +114,7 @@ public class ChamferDistance5x5FloatTest {
 		assertEquals(14, result.getf(6, 0), .01);
 		assertEquals(14, result.getf(0, 6), .01);
 		assertEquals(8, result.getf(6, 6), .01);
+		
+		assertEquals(13, result.getf(0, 5), .01);
 	}
 }

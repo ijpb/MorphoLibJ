@@ -9,6 +9,8 @@ import org.junit.runners.Suite;
 	// generic classes
 	ChamferDistance3x3FloatTest.class,
 	ChamferDistance3x3ShortTest.class,
+	ChamferDistance5x5FloatTest.class,
+	ChamferDistance5x5ShortTest.class,
 })
 public class AllTests {
   //nothing

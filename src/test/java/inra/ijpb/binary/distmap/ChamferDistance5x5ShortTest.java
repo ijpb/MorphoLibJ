@@ -51,6 +51,8 @@ public class ChamferDistance5x5ShortTest {
 		assertEquals(6, result.get(6, 0));
 		assertEquals(6, result.get(0, 6));
 		assertEquals(4, result.get(6, 6));
+		
+		assertEquals(5, result.get(0, 5));
 	}
 
 	@Test
@@ -72,6 +74,8 @@ public class ChamferDistance5x5ShortTest {
 		assertEquals(4, result.get(6, 0));
 		assertEquals(4, result.get(0, 6));
 		assertEquals(2, result.get(6, 6));
+		
+		assertEquals(4, result.get(0, 5));
 	}
 	
 	@Test
@@ -93,6 +97,8 @@ public class ChamferDistance5x5ShortTest {
 		assertEquals(10, result.get(6, 0));
 		assertEquals(10, result.get(0, 6));
 		assertEquals(6, result.get(6, 6));
+		
+		assertEquals(9, result.get(0, 5));
 	}
 	
 	@Test
@@ -114,5 +120,7 @@ public class ChamferDistance5x5ShortTest {
 		assertEquals(14, result.get(6, 0));
 		assertEquals(14, result.get(0, 6));
 		assertEquals(8, result.get(6, 6));
+		
+		assertEquals(13, result.get(0, 5));
 	}
 }

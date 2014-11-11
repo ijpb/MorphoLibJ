@@ -306,7 +306,7 @@ public class ChamferDistance5x5Float implements ChamferDistance {
 		float newVal;
 
 		// Process last line: consider only the pixel just after (on the right)
-		for (int i = width - 2; i > 0; i--) {
+		for (int i = width - 2; i >= 0; i--) {
 			if (maskProc.getPixel(i, height - 1) != maskLabel)
 				continue;
 
@@ -348,6 +348,35 @@ public class ChamferDistance5x5Float implements ChamferDistance {
 			// modify current pixel if needed
 			updateIfNeeded(i, height - 2, newVal);
 		}
+		
+		// Process second pixel of penultimate line
+		if (maskProc.getPixel(1, height - 2) == maskLabel) {
+			// minimum distance of neighbor pixels
+			ortho = min(buffer.getf(2, height - 2), buffer.getf(1, height - 1));
+			diago = min(buffer.getf(0, height - 1), buffer.getf(2, height - 1));
+			diag2 = buffer.getf(3, height - 1);
+
+			// compute new distance of current pixel
+			newVal = min3w(ortho, diago, diag2);
+
+			// modify current pixel if needed
+			updateIfNeeded(1, height - 2, newVal);
+		}
+
+		// Process first pixel of penultimate line
+		if (maskProc.getPixel(0, height - 2) == maskLabel) {
+			// minimum distance of neighbor pixels
+			ortho = min(buffer.getf(1, height - 2), buffer.getf(0, height - 1));
+			diago = buffer.getf(1, height - 1);
+			diag2 = buffer.getf(2, height - 1);
+
+			// compute new distance of current pixel
+			newVal = min3w(ortho, diago, diag2);
+
+			// modify current pixel if needed
+			updateIfNeeded(0, height - 2, newVal);
+		}
+			
 
 		// Process regular lines
 		for (int j = height - 3; j >= 0; j--) {
