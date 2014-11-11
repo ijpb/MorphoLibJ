@@ -117,4 +117,30 @@ public class ChamferDistance5x5FloatTest {
 		
 		assertEquals(13, result.getf(0, 5), .01);
 	}
+	
+	/**
+	 * Another test for chessknight weigths, to fix a bug that incorrectly
+	 * checked image bounds.
+	 */
+	@Test
+	public final void testDistanceMap_UntilCorners_ChessKnight2() {
+		ByteProcessor image = new ByteProcessor(9, 9);
+		image.setValue(255);
+		image.fill();
+		image.set(6, 6, 0);
+		
+		float[] weights = ChamferWeights.CHESSKNIGHT.getFloatWeights();
+		ChamferDistance5x5Float algo = new ChamferDistance5x5Float(weights, false);
+		ImageProcessor result = algo.distanceMap(image);
+		
+		assertNotNull(result);
+		assertEquals(image.getWidth(), result.getWidth());
+		assertEquals(image.getHeight(), result.getHeight());
+		assertEquals(42, result.getf(0, 0), .01);
+		assertEquals(32, result.getf(8, 0), .01);
+		assertEquals(32, result.getf(0, 8), .01);
+		assertEquals(14, result.getf(8, 8), .01);
+		
+		assertEquals(30, result.getf(0, 6), .01);
+	}
 }

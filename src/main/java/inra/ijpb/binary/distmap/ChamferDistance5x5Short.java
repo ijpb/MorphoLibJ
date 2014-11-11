@@ -333,7 +333,7 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 		}
 
 		// Process regular pixels of penultimate line
-		for (int i = width - 3; i > 0; i--) {
+		for (int i = width - 3; i > 1; i--) {
 			if (maskProc.getPixel(i, height - 2) != maskLabel)
 				continue;
 
@@ -385,7 +385,7 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 			if (maskProc.getPixel(width - 1, j) == maskLabel) {
 				ortho = buffer.get(width - 1, j + 1);
 				diago = buffer.get(width - 2, j + 1);
-				diag2 = buffer.get(width - 3, j + 1);
+				diag2 = min(buffer.get(width - 3, j + 1), buffer.get(width - 2, j + 2));
 				newVal = min3w(ortho, diago, diag2);
 				updateIfNeeded(width - 1, j, newVal);
 			}
