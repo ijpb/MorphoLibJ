@@ -40,7 +40,7 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 	
 	/**
 	 * Flag for dividing final distance map by the value first weight. 
-	 * This results in distance map values closer to euclidean, but with 
+	 * This results in distance map values closer to Euclidean, but with 
 	 * non integer values. 
 	 */
 	boolean normalizeMap = true;
@@ -63,7 +63,7 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 	 * @param weights an array of two weights for orthogonal and diagonal directions
 	 */
 	public ChamferDistance5x5Short(short[] weights) {
-		this.weights = weights;
+		this(weights, true);
 	}
 
 	/**
@@ -75,6 +75,14 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 	 *            normalized by the first weight
 	 */
 	public ChamferDistance5x5Short(short[] weights, boolean normalize) {
+		if (weights.length < 3) 
+		{
+			short[] newWeights = new short[3];
+			newWeights[0] = weights[0];
+			newWeights[1] = weights[1];
+			newWeights[2] =(short) (weights[0] + weights[1]);
+			weights = newWeights;
+		}
 		this.weights = weights;
 		this.normalizeMap = normalize;
 	}
@@ -398,7 +406,7 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 			if (maskProc.getPixel(1, j) == maskLabel) {
 				ortho = min(buffer.get(2, j), buffer.get(1, j + 1));
 				diago = min(buffer.get(0, j + 1), buffer.get(2, j + 1));
-				diag2 = min3(buffer.get(3, j + 2), buffer.get(2, j + 1), buffer.get(0, j + 1));
+				diag2 = min3(buffer.get(3, j + 1), buffer.get(2, j + 2), buffer.get(0, j + 2));
 				newVal = min3w(ortho, diago, diag2);
 				updateIfNeeded(1, j, newVal);
 			}
@@ -408,7 +416,7 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 			if (maskProc.getPixel(0, j) == maskLabel) {
 				ortho = min(buffer.get(1, j), buffer.get(0, j + 1));
 				diago = buffer.get(1, j + 1);
-				diag2 = min(buffer.get(2, j + 2), buffer.get(1, j + 1));
+				diag2 = min(buffer.get(2, j + 1), buffer.get(1, j + 2));
 				newVal = min3w(ortho, diago, diag2);
 				updateIfNeeded(0, j, newVal);
 			}
