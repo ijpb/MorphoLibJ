@@ -36,7 +36,15 @@ public class Morphology {
 	// Enumeration for operations
 	
 	/**
-	 * A pre-defined set of basis morphological operations.
+	 * A pre-defined set of basis morphological operations, that can be easily 
+	 * used with a GenericDialog. 
+	 * Example:
+	 * <pre><code>
+	 * GenericDialog gd = new GenericDialog();
+	 * gd.addChoice("Operation", Operation.getAllLabels();
+	 * gd.showDialog();
+	 * Operation op = Operation.fromLabel(gd.getNextChoice());
+	 * </code></pre>
 	 */
 	public enum Operation {
 		EROSION("Erosion"),
@@ -187,9 +195,6 @@ public class Morphology {
 
 	public static ImageStack dilation(ImageStack stack, Strel3D strel) {
 		checkImageType(stack);
-//		if (image instanceof ColorProcessor)
-//			return dilationRGB(image, strel);
-		
 		return strel.dilation(stack);
 	}
 	
@@ -368,13 +373,6 @@ public class Morphology {
 	 */
 	private static ImageProcessor whiteTopHatRGB(ImageProcessor image, Strel strel) {
 		// extract channels and allocate memory for result
-//		Collection<ByteProcessor> channels = ColorImages.splitChannels(image);
-//		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
-//		
-//		// Process each channel individually
-//		for(ByteProcessor channel : channels) {
-//			res.add(whiteTopHat(channel, strel));
-//		}
 		Map<String, ByteProcessor> channels = ColorImages.mapChannels(image);
 		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
 		
@@ -383,15 +381,19 @@ public class Morphology {
 			strel.setChannelName(name);
 			res.add(whiteTopHat(channels.get(name), strel));
 		}
-		
+
+		// create new color image
 		return ColorImages.mergeChannels(res);
 	}
 	
 	public static ImageStack whiteTopHat(ImageStack stack, Strel3D strel) {
 		checkImageType(stack);
 		
-		// First performs closing
+		// First performs opening
 		ImageStack result = strel.opening(stack);
+		
+		// compute max possible value
+		double maxVal = getMaxPossibleValue(stack);
 		
 		// Compute subtraction of result from original image
 		int nx = stack.getWidth();
@@ -402,7 +404,7 @@ public class Morphology {
 				for (int x = 0; x < nx; x++) {
 					double v1 = stack.getVoxel(x, y, z);
 					double v2 = result.getVoxel(x, y, z);
-					result.setVoxel(x, y, z, min(max(v1 - v2, 0), 255));
+					result.setVoxel(x, y, z, min(max(v1 - v2, 0), maxVal));
 				}
 			}
 		}
@@ -446,12 +448,6 @@ public class Morphology {
 				float v2 = image.getf(i);
 				result.setf(i, v1 - v2);
 			}
-//		for (int i = 0; i < count; i++) {
-//			// Forces computation using integers, because closing with 
-//			// octagons can lower than than original image (bug)
-//			int v1 = result.get(i);
-//			int v2 = image.get(i);
-//			result.set(i, min(max(v1 - v2, 0), 255));
 		}
 		return result;
 	}
@@ -531,12 +527,6 @@ public class Morphology {
 				float v2 = eroded.getf(i);
 				result.setf(i, v1 - v2);
 			}
-//		for (int i = 0; i < count; i++) {
-//			// Forces computation using integers, because opening with 
-//			// octagons can greater than original image (bug)
-//			int v1 = result.get(i);
-//			int v2 = eroded.get(i);
-//			result.set(i, min(max(v1 - v2, 0), 255));
 		}
 		// free memory
 		eroded = null;
@@ -570,14 +560,9 @@ public class Morphology {
 		ImageStack result = strel.dilation(stack);
 		ImageStack eroded = strel.erosion(stack);
 		
-		int maxInt = 255;
-		int bitDepth = stack.getBitDepth(); 
-		if (bitDepth == 16)
-		{
-			maxInt = 65535;
-		}
-		
-		
+		// Determine max possible value from bit depth
+		double maxVal = getMaxPossibleValue(stack);
+
 		// Compute subtraction of result from original image
 		int nx = stack.getWidth();
 		int ny = stack.getHeight();
@@ -587,7 +572,7 @@ public class Morphology {
 				for (int x = 0; x < nx; x++) {
 					double v1 = result.getVoxel(x, y, z);
 					double v2 = eroded.getVoxel(x, y, z);
-					result.setVoxel(x, y, z, min(max(v1 - v2, 0), maxInt));
+					result.setVoxel(x, y, z, min(max(v1 - v2, 0), maxVal));
 				}
 			}
 		}
@@ -669,6 +654,10 @@ public class Morphology {
 		ImageStack outer = externalGradient(stack, strel);
 		ImageStack inner = internalGradient(stack, strel);
 		
+		// Determine max possible value from bit depth
+		double maxVal = getMaxPossibleValue(stack);
+		double midVal = maxVal / 2;
+		
 		// Compute subtraction of result from original image
 		int nx = stack.getWidth();
 		int ny = stack.getHeight();
@@ -678,7 +667,7 @@ public class Morphology {
 				for (int x = 0; x < nx; x++) {
 					double v1 = outer.getVoxel(x, y, z);
 					double v2 = inner.getVoxel(x, y, z);
-					outer.setVoxel(x, y, z, min(max(v1 - v2 + 128, 0), 255));
+					outer.setVoxel(x, y, z, min(max(v1 - v2 + midVal, 0), maxVal));
 				}
 			}
 		}
@@ -702,7 +691,7 @@ public class Morphology {
 		// First performs erosion
 		ImageProcessor result = strel.erosion(image);
 
-		// Subtract erosion from dilation
+		// Subtract erosion result from original image
 		int count = image.getPixelCount();
 		if (image instanceof ByteProcessor) {
 			for (int i = 0; i < count; i++) {
@@ -740,9 +729,12 @@ public class Morphology {
 	public static ImageStack internalGradient(ImageStack stack, Strel3D strel) {
 		checkImageType(stack);
 		
-		// First performs dilation and erosion
+		// First performs erosion
 		ImageStack result = strel.erosion(stack);
 		
+		// Determine max possible value from bit depth
+		double maxVal = getMaxPossibleValue(stack);
+
 		// Compute subtraction of result from original image
 		int nx = stack.getWidth();
 		int ny = stack.getHeight();
@@ -752,7 +744,7 @@ public class Morphology {
 				for (int x = 0; x < nx; x++) {
 					double v1 = stack.getVoxel(x, y, z);
 					double v2 = result.getVoxel(x, y, z);
-					result.setVoxel(x, y, z, min(max(v1 - v2, 0), 255));
+					result.setVoxel(x, y, z, min(max(v1 - v2, 0), maxVal));
 				}
 			}
 		}
@@ -772,10 +764,10 @@ public class Morphology {
 		if (image instanceof ColorProcessor)
 			return externalGradientRGB(image, strel);
 
-		// First performs erosion
+		// First performs dilation
 		ImageProcessor result = strel.dilation(image);
 
-		// Subtract erosion from dilation
+		// Subtract original image from dilation
 		int count = image.getPixelCount();
 		if (image instanceof ByteProcessor) {
 			for (int i = 0; i < count; i++) {
@@ -813,8 +805,11 @@ public class Morphology {
 	public static ImageStack externalGradient(ImageStack stack, Strel3D strel) {
 		checkImageType(stack);
 		
-		// First performs dilation and erosion
+		// First performs dilation
 		ImageStack result = strel.dilation(stack);
+		
+		// Determine max possible value from bit depth
+		double maxVal = getMaxPossibleValue(stack);
 		
 		// Compute subtraction of result from original image
 		int nx = stack.getWidth();
@@ -825,7 +820,7 @@ public class Morphology {
 				for (int x = 0; x < nx; x++) {
 					double v1 = result.getVoxel(x, y, z);
 					double v2 = stack.getVoxel(x, y, z);
-					result.setVoxel(x, y, z, min(max(v1 - v2, 0), 255));
+					result.setVoxel(x, y, z, min(max(v1 - v2, 0), maxVal));
 				}
 			}
 		}
@@ -840,8 +835,7 @@ public class Morphology {
 	/**
 	 * Check that input image can be processed for classical algorithms, and throw an
 	 * exception if not the case.
-	 * An exception is thrown if image is 16 bits or floating point.
-	 * @param image
+	 * In the current version, accepts all image types.
 	 */
 	private final static void checkImageType(ImageProcessor image) {
 //		if ((image instanceof FloatProcessor)
@@ -854,8 +848,7 @@ public class Morphology {
 	/**
 	 * Check that input image can be processed for classical algorithms, and throw an
 	 * exception if not the case.
-	 * An exception is thrown if image is 3D or floating point.
-	 * @param image
+	 * In the current version, accepts all image types.
 	 */
 	private final static void checkImageType(ImageStack stack) {
 //		ImageProcessor image = stack.getProcessor(1);
@@ -863,8 +856,30 @@ public class Morphology {
 //			throw new IllegalArgumentException("Input image must be a ByteProcessor or a ColorProcessor");
 //		}
 	}
+
+	/**
+	 * Determine max possible value from bit depth.
+	 *  8 bits -> 255
+	 * 16 bits -> 65535
+	 * 32 bits -> Float.MAX_VALUE
+	 */
+	private static final double getMaxPossibleValue(ImageStack stack)
+	{
+		double maxVal = 255;
+		int bitDepth = stack.getBitDepth(); 
+		if (bitDepth == 16)
+		{
+			maxVal = 65535;
+		}
+		else if (bitDepth == 32)
+		{
+			maxVal = Float.MAX_VALUE;
+		}
+		return maxVal;
+	}
 	
-	private final static int clamp(int value, int min, int max) {
+	private final static int clamp(int value, int min, int max) 
+	{
 		return Math.min(Math.max(value, min), max);
 	}
 }
