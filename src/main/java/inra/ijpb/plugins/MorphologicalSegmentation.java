@@ -50,6 +50,7 @@ import inra.ijpb.data.image.ColorImages;
 import inra.ijpb.data.image.Images3D;
 import inra.ijpb.morphology.MinimaAndMaxima3D;
 import inra.ijpb.morphology.Morphology;
+import inra.ijpb.morphology.Strel;
 import inra.ijpb.morphology.Strel3D;
 import inra.ijpb.util.ColorMaps;
 import inra.ijpb.util.ColorMaps.CommonLabelMaps;
@@ -966,9 +967,20 @@ public class MorphologicalSegmentation implements PlugIn {
 							final long t1 = System.currentTimeMillis();
 							IJ.log( "Applying morphological gradient to input image..." );
 
-							Strel3D strel = Strel3D.Shape.CUBE.fromRadius( gradientRadius );
-							image = Morphology.gradient( image, strel );
-							//(new ImagePlus("gradient", image) ).show();
+							if ( image.getSize() > 1 )
+							{
+								Strel3D strel = Strel3D.Shape.CUBE.fromRadius( gradientRadius );
+								image = Morphology.gradient( image, strel );
+								//(new ImagePlus("gradient", image) ).show();
+							}
+							else
+							{
+								Strel strel = Strel.Shape.SQUARE.fromRadius( gradientRadius );
+								ImageProcessor gradient = 
+										Morphology.gradient( image.getProcessor( 1 ), strel );
+								image = new ImageStack(image.getWidth(), image.getHeight());
+								image.addSlice(gradient);								
+							}
 
 							// store gradient image
 							gradientStack = image;
