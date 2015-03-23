@@ -570,6 +570,14 @@ public class Morphology {
 		ImageStack result = strel.dilation(stack);
 		ImageStack eroded = strel.erosion(stack);
 		
+		int maxInt = 255;
+		int bitDepth = stack.getBitDepth(); 
+		if (bitDepth == 16)
+		{
+			maxInt = 65535;
+		}
+		
+		
 		// Compute subtraction of result from original image
 		int nx = stack.getWidth();
 		int ny = stack.getHeight();
@@ -579,7 +587,7 @@ public class Morphology {
 				for (int x = 0; x < nx; x++) {
 					double v1 = result.getVoxel(x, y, z);
 					double v2 = eroded.getVoxel(x, y, z);
-					result.setVoxel(x, y, z, min(max(v1 - v2, 0), 255));
+					result.setVoxel(x, y, z, min(max(v1 - v2, 0), maxInt));
 				}
 			}
 		}
