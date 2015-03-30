@@ -9,6 +9,7 @@ import org.junit.runners.Suite;
 	// generic classes
 	GeometricMeasures2DTest.class,
 	GeometricMeasures3DTest.class,
+	GeometryUtilsTest.class,
 	})
 public class AllTests {
   //nothing

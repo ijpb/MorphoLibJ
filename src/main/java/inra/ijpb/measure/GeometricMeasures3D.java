@@ -356,14 +356,26 @@ public class GeometricMeasures3D {
 		// unit sphere, when germs are the 26 directions on the unit cube
 		// Sum of (c1+c2+c3 + c4*2+c5*2+c6*2 + c7*4) equals 1.
 		// See function sphericalCapsAreaC26.m
-		double c1 = 0.04577789120476 * 2;  // Ox
-		double c2 = 0.04577789120476 * 2;  // Oy
-		double c3 = 0.04577789120476 * 2;  // Oz
-		double c4 = 0.03698062787608 * 2;  // Oxy
-		double c5 = 0.03698062787608 * 2;  // Oxz
-		double c6 = 0.03698062787608 * 2;  // Oyz
-		double c7 = 0.03519563978232 * 2;  // Oxyz
-	
+		double c1, c2, c3, c4, c5, c6, c7;
+		if (d1 == d2 && d2 == d3) {
+			c1 = 0.04577789120476 * 2;  // Ox
+			c2 = 0.04577789120476 * 2;  // Oy
+			c3 = 0.04577789120476 * 2;  // Oz
+			c4 = 0.03698062787608 * 2;  // Oxy
+			c5 = 0.03698062787608 * 2;  // Oxz
+			c6 = 0.03698062787608 * 2;  // Oyz
+			c7 = 0.03519563978232 * 2;  // Oxyz
+		} else {
+			double[] weights = computeDirectionWeights3d13(resol);
+			c1 = weights[0];
+			c2 = weights[1];
+			c3 = weights[2];
+			c4 = weights[3];
+			c5 = weights[4];
+			c6 = weights[5];
+			c7 = weights[6];
+		}
+		
 		// If resolution is not the same in each direction, recomputes the weights
 		// assigned to each direction
 //		if sum(abs(diff(delta)))~=0
@@ -565,6 +577,84 @@ public class GeometricMeasures3D {
 	}
 
 	/**
+	 * Return an array with seven values corresponding the unique direction 
+	 * vectors obtained with 13 directions.
+	 */
+	private static final double[] computeDirectionWeights3d13(double[] resol) 
+	{
+		// extract resolution as individual variables
+		double dx = resol[0];
+		double dy = resol[1];
+		double dz = resol[2];
+		
+		// allocate memory for resulting array
+		double[] weights = new double[7];
+		
+		// Create a set of reference vectors, named after their contribution to
+		// each direction: 'P' stands for positive, 'N' stands for negative, 
+		// and 'Z' stands for Zero. 
+		// Hence, vector vZPN has x-coordinate equal to zero, y-coordinate 
+		// equal to +dy, and z-coordinate equal to -dz. 
+			
+		// direction vectors pointing below the OXY plane
+		Vector3d vPNN = new Vector3d( dx, -dy, -dz).normalize(); 
+		Vector3d vPZN = new Vector3d( dx,   0, -dz).normalize(); 
+		Vector3d vNPN = new Vector3d(-dx,  dy, -dz).normalize(); 
+		Vector3d vZPN = new Vector3d(  0,  dy, -dz).normalize(); 
+		Vector3d vPPN = new Vector3d( dx,  dy, -dz).normalize(); 
+		
+		// direction vectors pointing belonging to the OXY plane
+		Vector3d vPNZ = new Vector3d( dx, -dy,   0).normalize();
+		Vector3d vPZZ = new Vector3d( dx,   0,   0).normalize();
+		Vector3d vNPZ = new Vector3d(-dx,  dy,   0).normalize();
+		Vector3d vZPZ = new Vector3d(  0,  dy,   0).normalize();
+		Vector3d vPPZ = new Vector3d( dx,  dy,   0).normalize();
+		
+		// direction vectors pointing above the OXY plane
+		Vector3d vNNP = new Vector3d(-dx, -dy,  dz).normalize(); 
+		Vector3d vZNP = new Vector3d(  0, -dy,  dz).normalize(); 
+		Vector3d vPNP = new Vector3d( dx, -dy,  dz).normalize(); 
+		Vector3d vNZP = new Vector3d(-dx,   0,  dz).normalize(); 
+		Vector3d vZZP = new Vector3d(  0,   0,  dz).normalize(); 
+		Vector3d vPZP = new Vector3d( dx,   0,  dz).normalize(); 
+		Vector3d vNPP = new Vector3d(-dx,  dy,  dz).normalize(); 
+		Vector3d vZPP = new Vector3d(  0,  dy,  dz).normalize(); 
+		Vector3d vPPP = new Vector3d( dx,  dy,  dz).normalize(); 
+
+		Vector3d[] neighbors;
+		
+		// Spherical cap type 1, direction [1 0 0]
+		neighbors = new Vector3d[]{vPNN, vPNZ, vPNP, vPZP, vPPP, vPPZ, vPPN, vPZN};
+		weights[0] = GeometryUtils.sphericalVoronoiDomainArea(vPZZ, neighbors) / (2 * Math. PI);
+		
+		// Spherical cap type 1, direction [0 1 0]
+		neighbors = new Vector3d[]{vPPZ, vPPP, vZPP, vNPP, vNPZ, vNPN, vZPN, vPPN};
+		weights[1] = GeometryUtils.sphericalVoronoiDomainArea(vZPZ, neighbors) / (2 * Math. PI);
+
+		// Spherical cap type 1, direction [0 0 1]
+		neighbors = new Vector3d[]{vPZP, vPPP, vZPP, vNPP, vNZP, vNNP, vZNP, vPNP};
+		weights[2] = GeometryUtils.sphericalVoronoiDomainArea(vZZP, neighbors) / (2 * Math. PI);
+
+		// Spherical cap type 2, direction [1 1 0]
+		neighbors = new Vector3d[]{vPZZ, vPPP, vZPZ, vPPN};
+		weights[3] = GeometryUtils.sphericalVoronoiDomainArea(vPPZ, neighbors) / (2 * Math. PI);
+
+		// Spherical cap type 2, direction [1 0 1]
+		neighbors = new Vector3d[]{vPZZ, vPPP, vZZP, vPNP};
+		weights[4] = GeometryUtils.sphericalVoronoiDomainArea(vPZP, neighbors) / (2 * Math. PI);
+
+		// Spherical cap type 2, direction [0 1 1]
+		neighbors = new Vector3d[]{vZPZ, vNPP, vZZP, vPPP};
+		weights[5] = GeometryUtils.sphericalVoronoiDomainArea(vZPP, neighbors) / (2 * Math. PI);
+
+		// Spherical cap type 2, direction [1 0 1]
+		neighbors = new Vector3d[]{vPZP, vZZP, vZPP, vZPZ, vPPZ, vPZZ};
+		weights[6] = GeometryUtils.sphericalVoronoiDomainArea(vPPP, neighbors) / (2 * Math. PI);
+		
+		return weights;
+	}
+	
+	/**
      * Computes inertia ellipsoid of each 3D region in input 3D label image.
      * 
      * @throws RuntimeException if jama package is not found.
@@ -726,10 +816,5 @@ public class GeometricMeasures3D {
 
         return table;
     }
-
-	
-	
-    // ====================================================
-    // Utilitary functions 
 
 }
