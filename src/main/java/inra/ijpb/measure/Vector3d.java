@@ -4,7 +4,10 @@
 package inra.ijpb.measure;
 
 /**
- * Represents a triplet of coordinates in linear space.
+ * Represents a triplet of coordinates in linear space, and provides some
+ * computing methods.
+ * 
+ * The class is immutable. 
  * 
  * @author dlegland
  *
@@ -15,14 +18,17 @@ public class Vector3d
 	// ===================================================================
 	// Class variables
 	
-	public final double x; 
-	public final double y; 
-	public final double z;
+	private final double x; 
+	private final double y; 
+	private final double z;
 	
 	
 	// ===================================================================
 	// Constructors
-	
+
+	/**
+	 * Empty constructor, with all coordinates initialized to zero. 
+	 */
 	public Vector3d()
 	{
 		this.x = 0;
@@ -30,6 +36,9 @@ public class Vector3d
 		this.z = 0;
 	}
 
+	/**
+	 * Initialization constructor.
+	 */
 	public Vector3d(double x, double y, double z)
 	{
 		this.x = x;
@@ -83,8 +92,29 @@ public class Vector3d
 	
 	
 	// ===================================================================
+	// Accessor methods
+	
+	public double getX()
+	{
+		return this.x;
+	}
+	
+	public double getY()
+	{
+		return this.y;
+	}
+	
+	public double getZ()
+	{
+		return this.z;
+	}
+	
+	// ===================================================================
 	// Computation methods
 	
+	/**
+	 * Returns the result of the addition of this vector with another vector. 
+	 */
 	public Vector3d plus(Vector3d v)
 	{
 		double x = this.x + v.x;
@@ -93,6 +123,9 @@ public class Vector3d
 		return new Vector3d(x, y, z);
 	}
 	
+	/**
+	 * Returns the result of the subtraction of this vector with another vector. 
+	 */
 	public Vector3d minus(Vector3d v)
 	{
 		double x = this.x - v.x;
@@ -101,6 +134,9 @@ public class Vector3d
 		return new Vector3d(x, y, z);
 	}
 	
+	/**
+	 * Returns the result of the multiplication of this vector with a scalar value. 
+	 */
 	public Vector3d times(double k)
 	{
 		double x = this.x * k;
@@ -117,7 +153,11 @@ public class Vector3d
 		double norm = this.getNorm();
 		return new Vector3d(this.x / norm, this.y / norm, this.z / norm);
 	}
-	
+
+	/**
+	 * Computes the norm of the vector, given as the square root of the sum
+	 * of squared coordinates.
+	 */
 	public double getNorm()
 	{
 		double norm = Math.hypot(this.x, this.y);
