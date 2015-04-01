@@ -164,4 +164,17 @@ public class Vector3d
 		norm = Math.hypot(norm, this.z);
 		return norm;
 	}
+	
+	/**
+	 * Checks if this vector is close to the given vector, by checking each
+	 * coordinate using the given threshold.  
+	 */
+	public boolean almostEquals(Vector3d v, double eps)
+	{
+		if (Math.abs(this.x - v.x) > eps) return false;
+		if (Math.abs(this.y - v.y) > eps) return false;
+		if (Math.abs(this.z - v.z) > eps) return false;
+		return true;
+	}
+	
 }
