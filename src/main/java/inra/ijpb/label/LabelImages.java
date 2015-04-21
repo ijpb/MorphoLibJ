@@ -12,6 +12,7 @@ import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
+import ij.process.ShortProcessor;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -27,6 +28,58 @@ import java.util.TreeSet;
  */
 public class LabelImages 
 {
+
+	/**
+	 * Creates a label image with the appropriate class to store the required
+	 * number of labels.
+	 */
+	public static final ImageProcessor createLabelImage(int width, int height,
+			int nLabels)	
+	{
+		if (nLabels < 256) 
+		{
+			return new ByteProcessor(width, height);
+		} 
+		else if (nLabels < 256 * 256) 
+		{
+			return new ShortProcessor(width, height);
+		} 
+		else if (nLabels < (0x01 << 23)) 
+		{
+			return new FloatProcessor(width, height);
+		} 
+		else 
+		{
+			IJ.error("Too many classes");
+			return null;
+		}
+	}
+	
+	/**
+	 * Creates a new image stack with the appropriate class to store the required
+	 * number of labels.
+	 */
+	public static final ImageStack createLabelStack(int width, int height,
+			int depth, int nLabels)
+	{
+		if (nLabels < 256) 
+		{
+			return ImageStack.create(width, height, depth, 8);
+		} 
+		else if (nLabels < 256 * 256) 
+		{
+			return ImageStack.create(width, height, depth, 16);
+		} 
+		else if (nLabels < (0x01 << 23)) 
+		{
+			return ImageStack.create(width, height, depth, 32);
+		} 
+		else 
+		{
+			IJ.error("Too many classes");
+			return null;
+		}
+	}
 	
 	/**
 	 * Creates a binary 3D image that contains 255 for voxels that are 
