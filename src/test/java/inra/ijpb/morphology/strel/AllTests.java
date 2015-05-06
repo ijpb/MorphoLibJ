@@ -19,8 +19,9 @@ import org.junit.runners.Suite;
 	ShiftedCross3x3Strel_LeftTest.class,
 	ShiftedCross3x3Strel_RightTest.class,
 	DiamondStrelTest.class,
-
-	})
+	// Also Disk strel, based on rank filters
+	DiskStrelTest.class,
+})
 public class AllTests {
   //nothing
 }

@@ -16,13 +16,26 @@ import ij.process.ImageProcessor;
  */
 public class DiskStrel extends AbstractInPlaceStrel implements InPlaceStrel {
 
-	int radius;
+	double radius;
 	
+	/**
+	 * Creates a structuring element with a circular shape of the given radius. 
+	 */
 	public final static DiskStrel fromRadius(int radius) {
 		return new DiskStrel(radius);
 	}
 	
-	private DiskStrel(int radius) {
+	/**
+	 * Creates a structuring element with a circular shape of the given diameter.
+	 * The diameter is converted to a radius with following relation:
+	 * radius = (diameter - 1) / 2.  
+	 */
+	public final static DiskStrel fromDiameter(int diam) {
+		double radius = ((double) diam - 1.0) / 2;
+		return new DiskStrel(radius);
+	}
+	
+	private DiskStrel(double radius) {
 		this.radius = radius;
 	}
 	
@@ -31,7 +44,8 @@ public class DiskStrel extends AbstractInPlaceStrel implements InPlaceStrel {
 	 */
 	@Override
 	public int[] getSize() {
-		int diam = 2 * radius + 1;
+		int radiusInt = (int) Math.round(radius);
+		int diam = 2 * radiusInt + 1;
 		return new int[]{diam, diam};
 	}
 
@@ -42,9 +56,10 @@ public class DiskStrel extends AbstractInPlaceStrel implements InPlaceStrel {
 	public int[][] getMask() 
 	{
 		// Create an empty image with just a white pixel in the middle
-		int size = 2 * radius + 1;
+		int intRadius = (int) Math.round(radius);
+		int size = 2 * intRadius + 1;
 		ImageProcessor img = new ByteProcessor(size, size);
-		img.set(radius, radius, 255);
+		img.set(intRadius, intRadius, 255);
 		
 		// apply dilation
 		this.inPlaceDilation(img);
@@ -67,7 +82,8 @@ public class DiskStrel extends AbstractInPlaceStrel implements InPlaceStrel {
 	 */
 	@Override
 	public int[] getOffset() {
-		return new int[]{radius, radius};
+		int intRadius = (int) Math.round(radius);
+		return new int[]{intRadius, intRadius};
 	}
 
 	/* (non-Javadoc)
@@ -75,8 +91,9 @@ public class DiskStrel extends AbstractInPlaceStrel implements InPlaceStrel {
 	 */
 	@Override
 	public int[][] getShifts() {
+		int intRadius = (int) Math.round(radius);
 		int[][] mask = getMask();
-		int size = 2 * radius + 1;
+		int size = 2 * intRadius + 1;
 		
 		int n = 0;
 		for (int y = 0; y < size; y++)

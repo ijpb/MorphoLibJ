@@ -124,7 +124,7 @@ public interface Strel extends Strel3D {
 		 */
 		public Strel fromDiameter(int diam) {
 			if (this == DISK) 
-				return DiskStrel.fromRadius((diam - 1) / 2);
+				return DiskStrel.fromDiameter(diam);
 			if (this == SQUARE) 
 				return new SquareStrel(diam);
 			if (this == DIAMOND) {
