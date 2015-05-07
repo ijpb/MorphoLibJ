@@ -1,0 +1,346 @@
+package inra.ijpb.morphology.geodrec;
+
+import static org.junit.Assert.*;
+import ij.process.ByteProcessor;
+import ij.process.FloatProcessor;
+import ij.process.ImageProcessor;
+
+import org.junit.Test;
+
+public class GeodesicReconstructionScanningTest {
+
+	/**
+	 * Test method for {@link ijt.filter.morphology.GeodesicReconstruction#reconstructByDilation()}.
+	 */
+	@Test
+	public void testReconstructByDilation_C4() {
+		int BG = 0;
+		int FG = 255;
+		int[][] data = new int[][]{
+				{BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG},   
+				{BG, FG, FG, BG, FG, FG, BG, FG, FG, FG, FG, FG, FG, FG, FG, BG},
+				{BG, FG, FG, BG, FG, FG, BG, FG, FG, FG, FG, FG, FG, FG, FG, BG},
+				{BG, FG, FG, BG, FG, FG, BG, FG, FG, BG, BG, BG, BG, FG, FG, BG},
+				{BG, FG, FG, BG, FG, FG, BG, FG, FG, BG, FG, FG, BG, FG, FG, BG},
+				{BG, FG, FG, BG, FG, FG, BG, FG, FG, BG, FG, FG, BG, FG, FG, BG},
+				{BG, FG, FG, BG, BG, BG, BG, FG, FG, BG, FG, FG, BG, FG, FG, BG},
+				{BG, FG, FG, FG, FG, FG, FG, FG, FG, BG, FG, FG, BG, FG, FG, BG},
+				{BG, FG, FG, FG, FG, FG, FG, FG, FG, BG, FG, FG, BG, FG, FG, BG},
+				{BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG},
+		};
+		int height = data.length;
+		int width = data[0].length;
+		ImageProcessor mask = new ByteProcessor(width, height);
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				mask.set(x, y, data[y][x]);
+			}
+		}
+		ImageProcessor marker = new ByteProcessor(width, height);
+		marker.set(2, 3, 255);
+		
+		GeodesicReconstructionScanning algo = new GeodesicReconstructionScanning(
+				GeodesicReconstructionType.BY_DILATION, 4);
+		
+		ImageProcessor result = algo.applyTo(marker, mask);
+//		printImage(result);
+		
+		assertEquals(16, result.getWidth());
+		assertEquals(10, result.getHeight());
+		assertEquals(255, result.get(2, 8));
+		assertEquals(255, result.get(8, 8));
+		assertEquals(255, result.get(8, 5));
+		assertEquals(255, result.get(14, 8));
+	}
+
+	/**
+	 * Test method for {@link ijt.filter.morphology.GeodesicReconstruction#reconstructByDilation()}.
+	 */
+	@Test
+	public void testReconstructByDilation_C8() {
+		int BG = 0;
+		int FG = 255;
+		int[][] data = new int[][]{
+				{BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG},   
+				{BG, FG, FG, BG, FG, FG, BG, BG, BG, FG, FG, FG, FG, BG, BG, BG},
+				{BG, FG, FG, BG, FG, FG, BG, BG, BG, FG, FG, FG, FG, BG, BG, BG},
+				{BG, FG, FG, BG, FG, FG, BG, FG, FG, BG, BG, BG, BG, FG, FG, BG},
+				{BG, FG, FG, BG, FG, FG, BG, FG, FG, BG, FG, FG, BG, FG, FG, BG},
+				{BG, FG, FG, BG, FG, FG, BG, FG, FG, BG, FG, FG, BG, FG, FG, BG},
+				{BG, FG, FG, BG, BG, BG, BG, FG, FG, BG, FG, FG, BG, FG, FG, BG},
+				{BG, BG, BG, FG, FG, FG, FG, BG, BG, BG, FG, FG, BG, FG, FG, BG},
+				{BG, BG, BG, FG, FG, FG, FG, BG, BG, BG, FG, FG, BG, FG, FG, BG},
+				{BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG},
+		};
+		int height = data.length;
+		int width = data[0].length;
+		ImageProcessor mask = new ByteProcessor(width, height);
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				mask.set(x, y, data[y][x]);
+			}
+		}
+		ImageProcessor marker = new ByteProcessor(width, height);
+		marker.set(2, 3, 255);
+		
+		GeodesicReconstructionScanning algo = new GeodesicReconstructionScanning(
+				GeodesicReconstructionType.BY_DILATION, 8);
+		ImageProcessor result = algo.applyTo(marker, mask);
+		
+		assertEquals(16, result.getWidth());
+		assertEquals(10, result.getHeight());
+		assertEquals(255, result.get(2, 6));
+		assertEquals(255, result.get(4, 8));
+		assertEquals(255, result.get(8, 4));
+		assertEquals(255, result.get(10, 2));
+		assertEquals(255, result.get(14, 8));
+	}
+
+	@Test
+	public void testReconstructByDilationGrayscaleC4() {
+		// size of images
+		int width = 16;
+		int height = 10;
+
+		ByteProcessor mask 		= new ByteProcessor(16, 10);
+		ByteProcessor marker 	= new ByteProcessor(16, 10);
+		ByteProcessor expected 	= new ByteProcessor(16, 10);
+
+		// initialize mask, marker, and expected images
+		int[] maskProfile = {10, 10, 40, 40, 40, 40, 20, 20, 30, 30, 10, 10, 30, 30, 0, 0};
+		int[] markerProfile = {0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		int[] expectedProfile = {10, 10, 30, 30, 30, 30, 20, 20, 20, 20, 10, 10, 10, 10, 0, 0};
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				mask.set(x, y, maskProfile[x]);
+				marker.set(x, y, markerProfile[x]);
+				expected.set(x, y, expectedProfile[x]);
+			}
+		}
+
+		// Compute geodesic reconstruction by dilation
+		GeodesicReconstructionScanning algo = new GeodesicReconstructionScanning(
+				GeodesicReconstructionType.BY_DILATION, 4);
+		ImageProcessor result = algo.applyTo(marker, mask);
+		//		printImage(result);
+
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				assertEquals(expectedProfile[x], result.get(x, y));
+			}
+		}
+
+	}
+
+	@Test
+	public void testReconstructByDilationGrayscaleC8() {
+		// size of images
+		int width = 16;
+		int height = 10;
+
+		ByteProcessor mask 		= new ByteProcessor(16, 10);
+		ByteProcessor marker 	= new ByteProcessor(16, 10);
+		ByteProcessor expected 	= new ByteProcessor(16, 10);
+
+		// initialize mask, marker, and expected images
+		int[] maskProfile = {10, 10, 40, 40, 40, 40, 20, 20, 30, 30, 10, 10, 30, 30, 0, 0};
+		int[] markerProfile = {0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		int[] expectedProfile = {10, 10, 30, 30, 30, 30, 20, 20, 20, 20, 10, 10, 10, 10, 0, 0};
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				mask.set(x, y, maskProfile[x]);
+				marker.set(x, y, markerProfile[x]);
+				expected.set(x, y, expectedProfile[x]);
+			}
+		}
+
+		// Compute geodesic reconstruction by dilation
+		GeodesicReconstructionScanning algo = new GeodesicReconstructionScanning(
+				GeodesicReconstructionType.BY_DILATION, 8);
+		ImageProcessor result = algo.applyTo(marker, mask);
+		//		printImage(result);
+
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				assertEquals(expectedProfile[x], result.get(x, y));
+			}
+		}
+
+	}
+
+	@Test
+	public void testReconstructByDilationFloatC4() {
+		// size of images
+		int width = 16;
+		int height = 10;
+
+		FloatProcessor mask 		= new FloatProcessor(16, 10);
+		FloatProcessor marker 		= new FloatProcessor(16, 10);
+		FloatProcessor expected 	= new FloatProcessor(16, 10);
+
+		// initialize mask, marker, and expected images
+		int[] maskProfile = {10, 10, 40, 40, 40, 40, 20, 20, 30, 30, 10, 10, 30, 30, 0, 0};
+		int[] markerProfile = {0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		int[] expectedProfile = {10, 10, 30, 30, 30, 30, 20, 20, 20, 20, 10, 10, 10, 10, 0, 0};
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				mask.setf(x, y, maskProfile[x]);
+				marker.setf(x, y, markerProfile[x]);
+				expected.setf(x, y, expectedProfile[x]);
+			}
+		}
+
+		// Compute geodesic reconstruction by dilation
+		GeodesicReconstructionScanning algo = new GeodesicReconstructionScanning(
+				GeodesicReconstructionType.BY_DILATION, 4);
+		ImageProcessor result = algo.applyTo(marker, mask);
+		//		printImage(result);
+
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				assertEquals(expectedProfile[x], result.getf(x, y), .01);
+			}
+		}
+
+	}
+
+	@Test
+	public void testReconstructByDilationFloatC8() {
+		// size of images
+		int width = 16;
+		int height = 10;
+
+		FloatProcessor mask 		= new FloatProcessor(16, 10);
+		FloatProcessor marker 		= new FloatProcessor(16, 10);
+		FloatProcessor expected 	= new FloatProcessor(16, 10);
+
+		// initialize mask, marker, and expected images
+		int[] maskProfile = {10, 10, 40, 40, 40, 40, 20, 20, 30, 30, 10, 10, 30, 30, 0, 0};
+		int[] markerProfile = {0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		int[] expectedProfile = {10, 10, 30, 30, 30, 30, 20, 20, 20, 20, 10, 10, 10, 10, 0, 0};
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				mask.setf(x, y, maskProfile[x]);
+				marker.setf(x, y, markerProfile[x]);
+				expected.setf(x, y, expectedProfile[x]);
+			}
+		}
+
+		// Compute geodesic reconstruction by dilation
+		GeodesicReconstructionScanning algo = new GeodesicReconstructionScanning(
+				GeodesicReconstructionType.BY_DILATION, 8);
+		ImageProcessor result = algo.applyTo(marker, mask);
+		//		printImage(result);
+
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				assertEquals(expectedProfile[x], result.getf(x, y), .01);
+			}
+		}
+
+	}
+
+	/**
+	 * Test method for {@link ijt.filter.morphology.GeodesicReconstruction#reconstructByErosion()}.
+	 */
+	@Test
+	public void testReconstructByErosion() {
+		int BG = 0;
+		int FG = 255;
+		int[][] data = new int[][]{
+				{BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG},   
+				{BG, FG, FG, BG, FG, FG, BG, FG, FG, FG, FG, FG, FG, FG, FG, BG},
+				{BG, FG, FG, BG, FG, FG, BG, FG, FG, FG, FG, FG, FG, FG, FG, BG},
+				{BG, FG, FG, BG, FG, FG, BG, FG, FG, BG, BG, BG, BG, FG, FG, BG},
+				{BG, FG, FG, BG, FG, FG, BG, FG, FG, BG, FG, FG, BG, FG, FG, BG},
+				{BG, FG, FG, BG, FG, FG, BG, FG, FG, BG, FG, FG, BG, FG, FG, BG},
+				{BG, FG, FG, BG, BG, BG, BG, FG, FG, BG, FG, FG, BG, FG, FG, BG},
+				{BG, FG, FG, FG, FG, FG, FG, FG, FG, BG, FG, FG, BG, FG, FG, BG},
+				{BG, FG, FG, FG, FG, FG, FG, FG, FG, BG, FG, FG, BG, FG, FG, BG},
+				{BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG},
+		};
+		int height = data.length;
+		int width = data[0].length;
+		ImageProcessor mask = new ByteProcessor(width, height);
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				mask.set(x, y, data[y][x]);
+			}
+		}
+		mask.invert();
+		
+		ImageProcessor marker = new ByteProcessor(width, height);
+		marker.setColor(255);
+		marker.fill();
+		marker.set(2, 3, 0);
+		
+		GeodesicReconstructionScanning algo = new GeodesicReconstructionScanning(
+				GeodesicReconstructionType.BY_EROSION, 4);
+		ImageProcessor result = algo.applyTo(marker, mask);
+		
+		assertEquals(16, result.getWidth());
+		assertEquals(10, result.getHeight());
+		assertEquals(0, result.get(2, 8));
+		assertEquals(0, result.get(8, 8));
+		assertEquals(0, result.get(8, 5));
+		assertEquals(0, result.get(14, 8));
+	}
+
+	/**
+	 * Test method for {@link ijt.filter.morphology.GeodesicReconstruction#reconstructByErosion()}.
+	 */
+	@Test
+	public void testReconstructByErosion_C8() {
+		int BG = 0;
+		int FG = 255;
+		int[][] data = new int[][]{
+				{BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG},   
+				{BG, FG, FG, BG, FG, FG, BG, BG, BG, FG, FG, FG, FG, BG, BG, BG},
+				{BG, FG, FG, BG, FG, FG, BG, BG, BG, FG, FG, FG, FG, BG, BG, BG},
+				{BG, FG, FG, BG, FG, FG, BG, FG, FG, BG, BG, BG, BG, FG, FG, BG},
+				{BG, FG, FG, BG, FG, FG, BG, FG, FG, BG, FG, FG, BG, FG, FG, BG},
+				{BG, FG, FG, BG, FG, FG, BG, FG, FG, BG, FG, FG, BG, FG, FG, BG},
+				{BG, FG, FG, BG, BG, BG, BG, FG, FG, BG, FG, FG, BG, FG, FG, BG},
+				{BG, BG, BG, FG, FG, FG, FG, BG, BG, BG, FG, FG, BG, FG, FG, BG},
+				{BG, BG, BG, FG, FG, FG, FG, BG, BG, BG, FG, FG, BG, FG, FG, BG},
+				{BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG},
+		};
+		int height = data.length;
+		int width = data[0].length;
+		ImageProcessor mask = new ByteProcessor(width, height);
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				mask.set(x, y, data[y][x]);
+			}
+		}
+		mask.invert();
+		
+		ImageProcessor marker = new ByteProcessor(width, height);
+		marker.setColor(255);
+		marker.fill();
+		marker.set(2, 3, 0);
+		
+		GeodesicReconstructionScanning algo = new GeodesicReconstructionScanning(
+				GeodesicReconstructionType.BY_EROSION, 8);
+		ImageProcessor result = algo.applyTo(marker, mask);
+		
+		assertEquals(16, result.getWidth());
+		assertEquals(10, result.getHeight());
+		assertEquals(0, result.get(2, 6));
+		assertEquals(0, result.get(4, 8));
+		assertEquals(0, result.get(8, 5));
+		assertEquals(0, result.get(14, 8));
+	}
+
+	public void printImage(ImageProcessor image) {
+		int width = image.getWidth();
+		int height = image.getHeight();
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				System.out.printf("%4d", image.get(x, y));
+			}
+			System.out.println("");			
+		}
+	}
+
+}
