@@ -5,15 +5,13 @@ package inra.ijpb.morphology;
 
 import ij.process.ImageProcessor;
 import inra.ijpb.morphology.geodrec.GeodesicReconstructionAlgo;
-import inra.ijpb.morphology.geodrec.GeodesicReconstructionByDilation;
-import inra.ijpb.morphology.geodrec.GeodesicReconstructionByErosion;
+import inra.ijpb.morphology.geodrec.GeodesicReconstructionScanning;
+import inra.ijpb.morphology.geodrec.GeodesicReconstructionType;
 
 /**
  * Geodesic reconstruction for 8-bits grayscale or binary images.
  * 
- * This class defines the interface for implementations of geodesic 
- * reconstruction algorithms,   
- * and provides a collection of static methods for commonly used 
+ * This class provides a collection of static methods for commonly used 
  * operations, such as border removal or holes filling. 
  * 
  * @author David Legland
@@ -21,7 +19,6 @@ import inra.ijpb.morphology.geodrec.GeodesicReconstructionByErosion;
  */
 public abstract class GeodesicReconstruction {
 
-	//TODO: split interface and static method collection
 	/**
 	 * Removes the border of the input image, by performing a geodesic 
 	 * reconstruction initialized with image boundary. 
@@ -46,7 +43,7 @@ public abstract class GeodesicReconstruction {
 		// removes result from original image
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
-				int val = image.get(x, y)-result.get(x, y);
+				int val = image.get(x, y) - result.get(x, y);
 				result.set(x, y, Math.max(val, 0));
 			}
 		}
@@ -83,7 +80,9 @@ public abstract class GeodesicReconstruction {
 	 */
 	public final static ImageProcessor reconstructByDilation(ImageProcessor marker,
 			ImageProcessor mask) {
-		GeodesicReconstructionAlgo algo = new GeodesicReconstructionByDilation();
+//		GeodesicReconstructionAlgo algo = new GeodesicReconstructionByDilation();
+		GeodesicReconstructionAlgo algo = new GeodesicReconstructionScanning(
+				GeodesicReconstructionType.BY_DILATION);
 		return algo.applyTo(marker, mask);
 	}
 
@@ -93,8 +92,10 @@ public abstract class GeodesicReconstruction {
 	 */
 	public final static ImageProcessor reconstructByDilation(ImageProcessor marker,
 			ImageProcessor mask, int connectivity) {
-		GeodesicReconstructionAlgo algo = new GeodesicReconstructionByDilation(
-				connectivity);
+//		GeodesicReconstructionAlgo algo = new GeodesicReconstructionByDilation(
+//				connectivity);
+		GeodesicReconstructionAlgo algo = new GeodesicReconstructionScanning(
+				GeodesicReconstructionType.BY_DILATION, connectivity);
 		return algo.applyTo(marker, mask);
 	}
 
@@ -104,7 +105,9 @@ public abstract class GeodesicReconstruction {
 	 */
 	public final static ImageProcessor reconstructByErosion(ImageProcessor marker,
 			ImageProcessor mask) {
-		GeodesicReconstructionAlgo algo = new GeodesicReconstructionByErosion();
+//		GeodesicReconstructionAlgo algo = new GeodesicReconstructionByErosion();
+		GeodesicReconstructionAlgo algo = new GeodesicReconstructionScanning(
+				GeodesicReconstructionType.BY_EROSION);
 		return algo.applyTo(marker, mask);
 	}
 
@@ -114,9 +117,10 @@ public abstract class GeodesicReconstruction {
 	 */
 	public final static ImageProcessor reconstructByErosion(ImageProcessor marker,
 			ImageProcessor mask, int connectivity) {
-		GeodesicReconstructionAlgo algo = new GeodesicReconstructionByErosion(
-				connectivity);
+//		GeodesicReconstructionAlgo algo = new GeodesicReconstructionByErosion(
+//				connectivity);
+		GeodesicReconstructionAlgo algo = new GeodesicReconstructionScanning(
+				GeodesicReconstructionType.BY_EROSION, connectivity);
 		return algo.applyTo(marker, mask);
 	}
-	
 }
