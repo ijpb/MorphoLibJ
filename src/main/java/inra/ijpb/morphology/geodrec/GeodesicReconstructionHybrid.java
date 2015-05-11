@@ -155,24 +155,22 @@ public class GeodesicReconstructionHybrid extends AlgoStub implements
 							+ connectivity);
 		}
 
-		// Create result image the same size as marker image
-		this.result = this.marker.createProcessor(this.sizeX, this.sizeY);
-	
-		// Initialize the result image with the minimum value of marker and mask
-		// images
-		for (int y = 0; y < this.sizeY; y++) 
-		{
-			for (int x = 0; x < this.sizeX; x++) 
-			{
-				this.result.set(x, y,
-						Math.min(this.marker.get(x, y), this.mask.get(x, y)));
-			}
-		}
-
 		queue = new ArrayDeque<Cursor2D>();
 		
 		boolean isInteger = !(mask instanceof FloatProcessor);
 
+		// Initialize the result image with the minimum value of marker and mask
+		// images
+		if (isInteger)
+		{
+			initializeResult();
+		}
+		else
+		{
+			initializeResultFloat();
+		}
+		
+		
 		// Display current status
 		if (verbose)
 		{
@@ -254,6 +252,40 @@ public class GeodesicReconstructionHybrid extends AlgoStub implements
 		return this.result;
 	}
 
+	private void initializeResult()
+	{
+		// Create result image the same size as marker image
+		this.result = this.marker.createProcessor(this.sizeX, this.sizeY);
+	
+		int sign = this.reconstructionType.getSign();
+		for (int y = 0; y < this.sizeY; y++) 
+		{
+			for (int x = 0; x < this.sizeX; x++) 
+			{
+				int v1 = this.marker.get(x, y) * sign; 
+				int v2 = this.mask.get(x, y) * sign; 
+				this.result.set(x, y, Math.min(v1, v2) * sign);
+			}
+		}		
+	}
+	
+	private void initializeResultFloat()
+	{
+		// Create result image the same size as marker image
+		this.result = this.marker.createProcessor(this.sizeX, this.sizeY);
+	
+		float sign = this.reconstructionType.getSign();
+		for (int y = 0; y < this.sizeY; y++) 
+		{
+			for (int x = 0; x < this.sizeX; x++) 
+			{
+				float v1 = this.marker.getf(x, y) * sign; 
+				float v2 = this.mask.getf(x, y) * sign; 
+				this.result.setf(x, y, Math.min(v1, v2) * sign);
+			}
+		}
+
+	}
 	/**
 	 * Update result image using pixels in the upper left neighborhood,
 	 * using the 4-adjacency.

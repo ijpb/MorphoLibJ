@@ -7,6 +7,8 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	// generic classes
+	GeodesicReconstructionHybridTest.class,
+	GeodesicReconstructionScanningTest.class,
 	GeodesicReconstruction3DHybrid0Gray8Test.class,
 	GeodesicReconstruction3DHybrid1DoubleTest.class,
 	GeodesicReconstructionByDilation3DGray8Test.class,

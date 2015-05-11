@@ -9,8 +9,8 @@ import inra.ijpb.morphology.extrema.ExtremaType;
 import inra.ijpb.morphology.extrema.RegionalExtremaAlgo;
 import inra.ijpb.morphology.extrema.RegionalExtremaByFlooding;
 import inra.ijpb.morphology.geodrec.GeodesicReconstructionAlgo;
-import inra.ijpb.morphology.geodrec.GeodesicReconstructionByDilation;
-import inra.ijpb.morphology.geodrec.GeodesicReconstructionByErosion;
+import inra.ijpb.morphology.geodrec.GeodesicReconstructionHybrid;
+import inra.ijpb.morphology.geodrec.GeodesicReconstructionType;
 
 /**
  * A collection of static methods for computing regional and extended minima
@@ -67,7 +67,9 @@ public class MinimaAndMaxima {
 		ImageProcessor mask = image.duplicate();
 		mask.add(1);
 		
-		GeodesicReconstructionAlgo algo = new GeodesicReconstructionByDilation(conn);
+//		GeodesicReconstructionAlgo algo = new GeodesicReconstructionByDilation(conn);
+		GeodesicReconstructionAlgo algo = new GeodesicReconstructionHybrid(
+				GeodesicReconstructionType.BY_DILATION, conn);
 		ImageProcessor rec = algo.applyTo(image, mask);
 		
 		int width = image.getWidth();
@@ -118,7 +120,9 @@ public class MinimaAndMaxima {
 		ImageProcessor marker = image.duplicate();
 		marker.add(1);
 		
-		GeodesicReconstructionAlgo algo = new GeodesicReconstructionByErosion(conn);
+//		GeodesicReconstructionAlgo algo = new GeodesicReconstructionByErosion(conn);
+		GeodesicReconstructionAlgo algo = new GeodesicReconstructionHybrid(
+				GeodesicReconstructionType.BY_EROSION, conn);
 		ImageProcessor rec = algo.applyTo(marker, image);
 		
 		int width = image.getWidth();
@@ -157,7 +161,9 @@ public class MinimaAndMaxima {
 		ImageProcessor mask = image.duplicate();
 		mask.add(dynamic);
 		
-		GeodesicReconstructionAlgo algo = new GeodesicReconstructionByDilation(conn);
+//		GeodesicReconstructionAlgo algo = new GeodesicReconstructionByDilation(conn);
+		GeodesicReconstructionAlgo algo = new GeodesicReconstructionHybrid(
+				GeodesicReconstructionType.BY_DILATION, conn);
 		ImageProcessor rec = algo.applyTo(image, mask);
 		
 		return regionalMaxima(rec, conn);
@@ -182,7 +188,9 @@ public class MinimaAndMaxima {
 		ImageProcessor marker = image.duplicate();
 		marker.add(dynamic);
 		
-		GeodesicReconstructionAlgo algo = new GeodesicReconstructionByErosion(conn);
+//		GeodesicReconstructionAlgo algo = new GeodesicReconstructionByErosion(conn);
+		GeodesicReconstructionAlgo algo = new GeodesicReconstructionHybrid(
+				GeodesicReconstructionType.BY_EROSION, conn);
 		ImageProcessor rec = algo.applyTo(marker, image);
 
 		return regionalMinima(rec, conn);

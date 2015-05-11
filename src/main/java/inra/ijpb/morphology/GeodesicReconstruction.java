@@ -5,7 +5,7 @@ package inra.ijpb.morphology;
 
 import ij.process.ImageProcessor;
 import inra.ijpb.morphology.geodrec.GeodesicReconstructionAlgo;
-import inra.ijpb.morphology.geodrec.GeodesicReconstructionScanning;
+import inra.ijpb.morphology.geodrec.GeodesicReconstructionHybrid;
 import inra.ijpb.morphology.geodrec.GeodesicReconstructionType;
 
 /**
@@ -80,8 +80,7 @@ public abstract class GeodesicReconstruction {
 	 */
 	public final static ImageProcessor reconstructByDilation(ImageProcessor marker,
 			ImageProcessor mask) {
-//		GeodesicReconstructionAlgo algo = new GeodesicReconstructionByDilation();
-		GeodesicReconstructionAlgo algo = new GeodesicReconstructionScanning(
+		GeodesicReconstructionAlgo algo = new GeodesicReconstructionHybrid(
 				GeodesicReconstructionType.BY_DILATION);
 		return algo.applyTo(marker, mask);
 	}
@@ -92,9 +91,7 @@ public abstract class GeodesicReconstruction {
 	 */
 	public final static ImageProcessor reconstructByDilation(ImageProcessor marker,
 			ImageProcessor mask, int connectivity) {
-//		GeodesicReconstructionAlgo algo = new GeodesicReconstructionByDilation(
-//				connectivity);
-		GeodesicReconstructionAlgo algo = new GeodesicReconstructionScanning(
+		GeodesicReconstructionAlgo algo = new GeodesicReconstructionHybrid(
 				GeodesicReconstructionType.BY_DILATION, connectivity);
 		return algo.applyTo(marker, mask);
 	}
@@ -105,8 +102,7 @@ public abstract class GeodesicReconstruction {
 	 */
 	public final static ImageProcessor reconstructByErosion(ImageProcessor marker,
 			ImageProcessor mask) {
-//		GeodesicReconstructionAlgo algo = new GeodesicReconstructionByErosion();
-		GeodesicReconstructionAlgo algo = new GeodesicReconstructionScanning(
+		GeodesicReconstructionAlgo algo = new GeodesicReconstructionHybrid(
 				GeodesicReconstructionType.BY_EROSION);
 		return algo.applyTo(marker, mask);
 	}
@@ -117,9 +113,7 @@ public abstract class GeodesicReconstruction {
 	 */
 	public final static ImageProcessor reconstructByErosion(ImageProcessor marker,
 			ImageProcessor mask, int connectivity) {
-//		GeodesicReconstructionAlgo algo = new GeodesicReconstructionByErosion(
-//				connectivity);
-		GeodesicReconstructionAlgo algo = new GeodesicReconstructionScanning(
+		GeodesicReconstructionAlgo algo = new GeodesicReconstructionHybrid(
 				GeodesicReconstructionType.BY_EROSION, connectivity);
 		return algo.applyTo(marker, mask);
 	}

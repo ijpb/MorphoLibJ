@@ -39,7 +39,7 @@ public class GeodesicReconstructionHybridTest {
 		ImageProcessor marker = new ByteProcessor(width, height);
 		marker.set(2, 3, 255);
 		
-		GeodesicReconstructionHybridInt algo = new GeodesicReconstructionHybridInt(
+		GeodesicReconstructionHybrid algo = new GeodesicReconstructionHybrid(
 				GeodesicReconstructionType.BY_DILATION, 4);
 		
 		ImageProcessor result = algo.applyTo(marker, mask);
@@ -83,7 +83,7 @@ public class GeodesicReconstructionHybridTest {
 		ImageProcessor marker = new ByteProcessor(width, height);
 		marker.set(2, 3, 255);
 		
-		GeodesicReconstructionHybridInt algo = new GeodesicReconstructionHybridInt(
+		GeodesicReconstructionHybrid algo = new GeodesicReconstructionHybrid(
 				GeodesicReconstructionType.BY_DILATION, 8);
 		ImageProcessor result = algo.applyTo(marker, mask);
 		
@@ -119,7 +119,7 @@ public class GeodesicReconstructionHybridTest {
 		}
 
 		// Compute geodesic reconstruction by dilation
-		GeodesicReconstructionHybridInt algo = new GeodesicReconstructionHybridInt(
+		GeodesicReconstructionHybrid algo = new GeodesicReconstructionHybrid(
 				GeodesicReconstructionType.BY_DILATION, 4);
 		ImageProcessor result = algo.applyTo(marker, mask);
 		//		printImage(result);
@@ -155,7 +155,7 @@ public class GeodesicReconstructionHybridTest {
 		}
 
 		// Compute geodesic reconstruction by dilation
-		GeodesicReconstructionHybridInt algo = new GeodesicReconstructionHybridInt(
+		GeodesicReconstructionHybrid algo = new GeodesicReconstructionHybrid(
 				GeodesicReconstructionType.BY_DILATION, 8);
 		ImageProcessor result = algo.applyTo(marker, mask);
 		//		printImage(result);
@@ -274,7 +274,7 @@ public class GeodesicReconstructionHybridTest {
 		marker.fill();
 		marker.set(2, 3, 0);
 		
-		GeodesicReconstructionHybridInt algo = new GeodesicReconstructionHybridInt(
+		GeodesicReconstructionHybrid algo = new GeodesicReconstructionHybrid(
 				GeodesicReconstructionType.BY_EROSION, 4);
 		ImageProcessor result = algo.applyTo(marker, mask);
 		
@@ -284,6 +284,8 @@ public class GeodesicReconstructionHybridTest {
 		assertEquals(0, result.get(8, 8));
 		assertEquals(0, result.get(8, 5));
 		assertEquals(0, result.get(14, 8));
+		assertEquals(255, result.get(15, 9));
+		assertEquals(255, result.get(0, 0));
 	}
 
 	/**
@@ -320,7 +322,7 @@ public class GeodesicReconstructionHybridTest {
 		marker.fill();
 		marker.set(2, 3, 0);
 		
-		GeodesicReconstructionHybridInt algo = new GeodesicReconstructionHybridInt(
+		GeodesicReconstructionHybrid algo = new GeodesicReconstructionHybrid(
 				GeodesicReconstructionType.BY_EROSION, 8);
 		ImageProcessor result = algo.applyTo(marker, mask);
 		
@@ -330,6 +332,8 @@ public class GeodesicReconstructionHybridTest {
 		assertEquals(0, result.get(4, 8));
 		assertEquals(0, result.get(8, 5));
 		assertEquals(0, result.get(14, 8));
+		assertEquals(255, result.get(15, 9));
+		assertEquals(255, result.get(0, 0));
 	}
 
 	/**
@@ -378,6 +382,8 @@ public class GeodesicReconstructionHybridTest {
 		assertEquals(BG, result.getf(8, 8), .01);
 		assertEquals(BG, result.getf(8, 5), .01);
 		assertEquals(BG, result.getf(14, 8), .01);
+		assertEquals(FG, result.getf(15, 9), .01);
+		assertEquals(FG, result.getf(0, 0), .01);
 	}
 
 	/**
@@ -426,6 +432,8 @@ public class GeodesicReconstructionHybridTest {
 		assertEquals(BG, result.getf(8, 8), .01);
 		assertEquals(BG, result.getf(8, 5), .01);
 		assertEquals(BG, result.getf(14, 8), .01);
+		assertEquals(FG, result.getf(15, 9), .01);
+		assertEquals(FG, result.getf(0, 0), .01);
 	}
 	
 	public void printImage(ImageProcessor image) {
