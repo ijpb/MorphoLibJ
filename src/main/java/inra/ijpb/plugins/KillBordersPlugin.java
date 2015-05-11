@@ -11,20 +11,25 @@ import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.morphology.GeodesicReconstruction;
 import inra.ijpb.morphology.GeodesicReconstruction3D;
+import inra.ijpb.util.IJUtils;
 
 /**
  * Plugin for removing borders in 8-bits grayscale or binary 2D or 3D image.
  */
-public class KillBordersPlugin implements PlugIn {
+public class KillBordersPlugin implements PlugIn
+{
 
 	@Override
-	public void run(String arg0) {
+	public void run(String arg0) 
+	{
 		ImagePlus imagePlus = IJ.getImage();
 		
 		String newName = imagePlus.getShortTitle() + "-killBorders";
 		
 		ImagePlus resultPlus;
-		if (imagePlus.getStackSize() == 1) {
+		long t0 = System.currentTimeMillis(); 
+		if (imagePlus.getStackSize() == 1) 
+		{
 			// Process planar images
 			ImageProcessor image = imagePlus.getProcessor();
 			ImageProcessor result = GeodesicReconstruction.killBorders(image);
@@ -32,19 +37,25 @@ public class KillBordersPlugin implements PlugIn {
 				result.setLut(image.getLut());
 			resultPlus = new ImagePlus(newName, result);
 			
-		} else {
+		}
+		else 
+		{
 			// Process 3D stack
 			ImageStack image = imagePlus.getStack();
 			ImageStack result = GeodesicReconstruction3D.killBorders(image);
 			result.setColorModel(image.getColorModel());
 			resultPlus = new ImagePlus(newName, result);
 		} 
+		long elapsedTime = System.currentTimeMillis() - t0;
 		
 		resultPlus.copyScale(imagePlus);
 		resultPlus.show();
 		
-		if (imagePlus.getStackSize() > 1) {
+		if (imagePlus.getStackSize() > 1) 
+		{
 			resultPlus.setSlice(imagePlus.getSlice());
 		}
+
+		IJUtils.showElapsedTime("Kill Borders", elapsedTime, imagePlus);
 	}
 }
