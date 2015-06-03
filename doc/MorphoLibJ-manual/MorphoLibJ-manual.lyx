@@ -2212,10 +2212,27 @@ call("inra.ijpb.plugins.MorphologicalSegmentation.setDisplayFormat", "Overlaid
 Measurements
 \end_layout
 
+\begin_layout Section
+Geometric measurements
+\end_layout
+
 \begin_layout Standard
-Several measurements are provided for binary or label 2D or 3D images.
+Several measurements are provided for 
+\series bold
+binary or label
+\series default
+ 2D or 3D images.
  The results are provided in a ResultsTable, whose name contains the name
  of the original image.
+ The plugin calculating these measurements is found under 
+\begin_inset Quotes eld
+\end_inset
+
+Plugins > Analyze > Geometric Measurements 3D
+\begin_inset Quotes erd
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Description
@@ -2282,6 +2299,26 @@ pitch
 \end_inset
 
 ), and the roll around the main axis.
+\end_layout
+
+\begin_layout Section
+Intensity measurements
+\end_layout
+
+\begin_layout Standard
+Other measurements are provided for pairs of grayscale and label 2D or 3D
+ images (
+\begin_inset Quotes eld
+\end_inset
+
+Plugins > Analyze > Measure 3D
+\begin_inset Quotes erd
+\end_inset
+
+).
+ The plugin calculates the mean, the standard deviation, the maximum and
+ the minimum intensity value of each labeled region in the grayscale image.
+ The results are displayed as well in a ResultsTable.
 \end_layout
 
 \begin_layout Chapter
