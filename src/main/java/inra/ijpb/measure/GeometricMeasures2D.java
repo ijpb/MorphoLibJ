@@ -3,6 +3,8 @@
  */
 package inra.ijpb.measure;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static java.lang.Math.sqrt;
 import ij.IJ;
 import ij.measure.ResultsTable;
@@ -20,7 +22,8 @@ import java.util.Locale;
  * @author David Legland
  *
  */
-public class GeometricMeasures2D {
+public class GeometricMeasures2D 
+{
 
 	// ====================================================
 	// Class constants
@@ -42,7 +45,8 @@ public class GeometricMeasures2D {
 	 *         "circularity" of each labeled particle
 	 */
 	public static final ResultsTable analyzeRegions(ImageProcessor labelImage,
-			double[] resol) {
+			double[] resol) 
+	{
 		return analyzeRegions(labelImage, resol, 4);
 	}
 
@@ -60,7 +64,8 @@ public class GeometricMeasures2D {
 	 *         "circularity" of each labeled particle
 	 */
 	public static final ResultsTable analyzeRegions(ImageProcessor labelImage,
-			double[] resol, int nDirs) {
+			double[] resol, int nDirs)
+	{
 		// Check validity of parameters
 		if (labelImage == null)
 			return null;
@@ -75,7 +80,8 @@ public class GeometricMeasures2D {
 
 		// Create data table, and add shape parameters
 		ResultsTable table = new ResultsTable();
-		for (int i = 0; i < nbLabels; i++) {
+		for (int i = 0; i < nbLabels; i++)
+		{
 			int label = labels[i];
 
 			table.incrementCounter();
@@ -95,6 +101,86 @@ public class GeometricMeasures2D {
 		return table;
 	}
 
+	/**
+	 * Compute bounding box of each label in input stack and returns the result
+	 * as a ResultsTable.
+	 */
+	public final static ResultsTable boundingBox(ImageProcessor labelImage) 
+	{
+		int[] labels = LabelImages.findAllLabels(labelImage);
+		int nbLabels = labels.length;
+
+		double[][] boxes = boundingBox(labelImage, labels);
+
+		// Create data table
+		ResultsTable table = new ResultsTable();
+		for (int i = 0; i < nbLabels; i++)
+		{
+			table.incrementCounter();
+			table.addLabel(Integer.toString(labels[i]));
+			table.addValue("XMin", boxes[i][0]);
+			table.addValue("XMax", boxes[i][1]);
+			table.addValue("YMin", boxes[i][2]);
+			table.addValue("YMax", boxes[i][3]);
+		}
+
+		return table;
+	}
+	
+	/**
+	 * Compute bounding box of each label in input stack and returns the result
+	 * as an array of double for each label.
+	 */
+	public final static double[][] boundingBox(ImageProcessor labelImage, int[] labels)
+	{
+        // create associative array to know index of each label
+		int nLabels = labels.length;
+        HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
+        for (int i = 0; i < nLabels; i++)
+        {
+        	labelIndices.put(labels[i], i);
+        }
+
+        // initialize result
+		double[][] boxes = new double[nLabels][6];
+		for (int i = 0; i < nLabels; i++)
+		{
+			boxes[i][0] = Double.POSITIVE_INFINITY;
+			boxes[i][1] = Double.NEGATIVE_INFINITY;
+			boxes[i][2] = Double.POSITIVE_INFINITY;
+			boxes[i][3] = Double.NEGATIVE_INFINITY;
+		}
+
+		
+		// size of image
+		int sizeX = labelImage.getWidth();
+		int sizeY = labelImage.getHeight();
+
+		// iterate on image voxels to update bounding boxes
+		IJ.showStatus("Compute Bounding boxes");
+		for (int y = 0; y < sizeY; y++)
+		{
+			for (int x = 0; x < sizeX; x++)
+			{
+				int label = labelImage.get(x, y);
+				// do not consider background
+				if (label == 0)
+					continue;
+				int labelIndex = labelIndices.get(label);
+
+				// update bounding box of current label
+				boxes[labelIndex][0] = min(boxes[labelIndex][0], x);
+				boxes[labelIndex][1] = max(boxes[labelIndex][1], x);
+				boxes[labelIndex][2] = min(boxes[labelIndex][2], y);
+				boxes[labelIndex][3] = max(boxes[labelIndex][3], y);
+			}
+		}
+        
+		IJ.showStatus("");
+        return boxes;
+
+	}
+	
 	/**
 	 * Computes the area for each particle in the label image, taking into
 	 * account image resolution.
@@ -129,16 +215,20 @@ public class GeometricMeasures2D {
 	/**
 	 * Counts the number of pixel that composes the particle with given label.
 	 */
-	public static final int particleArea(ImageProcessor image, int label) {
+	public static final int particleArea(ImageProcessor image, int label) 
+	{
 		int width = image.getWidth();
 		int height = image.getHeight();
 
 		int count = 0;
 
 		// count all pixels belonging to the particle
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				if (((int) image.getf(x, y)) == label) {
+		for (int y = 0; y < height; y++) 
+		{
+			for (int x = 0; x < width; x++) 
+			{
+				if (((int) image.getf(x, y)) == label)
+				{
 					count++;
 				}
 			}
@@ -162,7 +252,8 @@ public class GeometricMeasures2D {
 	 */
 	@Deprecated
 	public static final ResultsTable croftonPerimeter(
-			ImageProcessor labelImage, double[] resol, int nDirs) {
+			ImageProcessor labelImage, double[] resol, int nDirs)
+	{
 		// Check validity of parameters
 		if (labelImage == null)
 			return null;
@@ -175,7 +266,8 @@ public class GeometricMeasures2D {
 
 		// Create data table
 		ResultsTable table = new ResultsTable();
-		for (int i = 0; i < nbLabels; i++) {
+		for (int i = 0; i < nbLabels; i++) 
+		{
 			int label = labels[i];
 
 			table.incrementCounter();
@@ -199,12 +291,13 @@ public class GeometricMeasures2D {
 	 * Compute surface area for each label given in the "labels" argument.
 	 */
 	public final static double[] croftonPerimeter(ImageProcessor image,
-			int[] labels, double[] resol, int nDirs) {
-
+			int[] labels, double[] resol, int nDirs)
+	{
 		// create associative array to know index of each label
 		int nLabels = labels.length;
 		HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
-		for (int i = 0; i < nLabels; i++) {
+		for (int i = 0; i < nLabels; i++) 
+		{
 			labelIndices.put(labels[i], i);
 		}
 
@@ -224,14 +317,18 @@ public class GeometricMeasures2D {
 
 		// iterate on image pixel configurations
 		IJ.showStatus("Measure perimeter...");
-		for (int y = 0; y < sizeY - 1; y++) {
+		for (int y = 0; y < sizeY - 1; y++) 
+		{
 			IJ.showProgress(y, sizeY);
-			for (int x = 0; x < sizeX - 1; x++) {
+			for (int x = 0; x < sizeX - 1; x++) 
+			{
 
 				// identify labels in current config
 				localLabels.clear();
-				for (int y2 = y; y2 <= y + 1; y2++) {
-					for (int x2 = x; x2 <= x + 1; x2++) {
+				for (int y2 = y; y2 <= y + 1; y2++) 
+				{
+					for (int x2 = x; x2 <= x + 1; x2++)
+					{
 						int label = (int) image.getf(x2, y2);
 						// do not consider background
 						if (label == 0)
@@ -243,7 +340,8 @@ public class GeometricMeasures2D {
 				}
 
 				// if no label in local configuration contribution is zero
-				if (localLabels.size() == 0) {
+				if (localLabels.size() == 0)
+				{
 					continue;
 				}
 
@@ -275,7 +373,8 @@ public class GeometricMeasures2D {
 	 * is an array with 16 entries, each entry corresponding to a binary 2-by-2
 	 * configuration of pixels.
 	 */
-	private final static double[] computePerimeterLut(double[] resol, int nDirs) {
+	private final static double[] computePerimeterLut(double[] resol, int nDirs)
+	{
 		// distances between a pixel and its neighbors.
 		// di refer to orthogonal neighbors
 		// dij refer to diagonal neighbors
@@ -287,7 +386,8 @@ public class GeometricMeasures2D {
 		// weights associated to each direction, computed only for four
 		// directions
 		double[] weights = null;
-		if (nDirs == 4) {
+		if (nDirs == 4)
+		{
 			weights = computeDirectionWeightsD4(resol);
 		}
 
@@ -296,7 +396,8 @@ public class GeometricMeasures2D {
 		double[] tab = new double[nConfigs];
 
 		// loop for each tile configuration
-		for (int i = 0; i < nConfigs; i++) {
+		for (int i = 0; i < nConfigs; i++)
+		{
 			// create the binary image representing the 2x2 tile
 			boolean[][] im = new boolean[2][2];
 			im[0][0] = (i & 1) > 0;
@@ -311,8 +412,10 @@ public class GeometricMeasures2D {
 			double ke12;
 
 			// iterate over the 4 pixels within the configuration
-			for (int y = 0; y < 2; y++) {
-				for (int x = 0; x < 2; x++) {
+			for (int y = 0; y < 2; y++)
+			{
+				for (int x = 0; x < 2; x++)
+				{
 					if (!im[y][x])
 						continue;
 
@@ -321,13 +424,15 @@ public class GeometricMeasures2D {
 					ke1 = im[y][1 - x] ? 0 : (area / d1) / 2;
 					ke2 = im[1 - y][x] ? 0 : (area / d2) / 2;
 
-					if (nDirs == 2) {
+					if (nDirs == 2) 
+					{
 						// Count only orthogonal directions
 						// divides by two for average, and by two for
 						// multiplicity
 						tab[i] += (ke1 + ke2) / 4;
 
-					} else if (nDirs == 4) {
+					} else if (nDirs == 4) 
+					{
 						// compute contribution of diagonal directions
 						ke12 = im[1 - y][1 - x] ? 0 : (area / d12) / 2;
 
@@ -351,7 +456,8 @@ public class GeometricMeasures2D {
 	 * Computes perimeter of each label using Crofton method with 2 directions.
 	 */
 	public static final double[] croftonPerimeterD2(ImageProcessor labelImage,
-			int[] labels, double[] resol) {
+			int[] labels, double[] resol)
+	{
 		// Check validity of parameters
 		if (labelImage == null)
 			return null;
@@ -365,7 +471,8 @@ public class GeometricMeasures2D {
 		double d1 = resol[0];
 		double d2 = resol[1];
 
-		for (int i = 0; i < nbLabels; i++) {
+		for (int i = 0; i < nbLabels; i++)
+		{
 			int label = labels[i];
 			IJ.showStatus("Compute perimeter of label: " + label);
 
@@ -387,7 +494,8 @@ public class GeometricMeasures2D {
 	 * (orthogonal and diagonal).
 	 */
 	public static final double[] croftonPerimeterD4(ImageProcessor labelImage,
-			int[] labels, double[] resol) {
+			int[] labels, double[] resol)
+	{
 		// Check validity of parameters
 		if (labelImage == null)
 			return null;
@@ -408,7 +516,8 @@ public class GeometricMeasures2D {
 		// compute weights associated to each direction
 		double[] weights = computeDirectionWeightsD4(resol);
 
-		for (int i = 0; i < nbLabels; i++) {
+		for (int i = 0; i < nbLabels; i++)
+		{
 			int label = labels[i];
 			IJ.showStatus("Compute perimeter of label: " + label);
 
@@ -428,7 +537,8 @@ public class GeometricMeasures2D {
 			// Compute perimeter
 			perimeters[i] = (wd1 + wd2 + wd3 + wd4) * Math.PI / 2;
 
-			if (debug) {
+			if (debug)
+			{
 				// Display individual counts
 				System.out.println(String.format(Locale.ENGLISH,
 						"dir 1, n=%d, wd=%5.2f", n1, wd1));
@@ -450,7 +560,8 @@ public class GeometricMeasures2D {
 	 * 
 	 */
 	public static final ResultsTable perimeterDensity(ImageProcessor image,
-			double[] resol, int nDirs) {
+			double[] resol, int nDirs) 
+	{
 		if (nDirs == 2)
 			return perimeterDensity_D2(image, resol);
 		else
@@ -462,7 +573,8 @@ public class GeometricMeasures2D {
 	 * 2 directions (horizontal and vertical).
 	 */
 	private static final ResultsTable perimeterDensity_D2(ImageProcessor image,
-			double[] resol) {
+			double[] resol) 
+	{
 
 		// Create data table
 		ResultsTable table = new ResultsTable();
@@ -502,7 +614,8 @@ public class GeometricMeasures2D {
 		double refArea = pixelCount * pixelArea;
 		table.addValue("A. Density", area / refArea);
 
-		if (debug) {
+		if (debug) 
+		{
 			// Display individual counts
 			table.addValue("N1", n1);
 			table.addValue("N2", n2);
@@ -525,7 +638,8 @@ public class GeometricMeasures2D {
 	 * 4 directions (orthogonal and diagonal).
 	 */
 	private static final ResultsTable perimeterDensity_D4(ImageProcessor image,
-			double[] resol) {
+			double[] resol) 
+	{
 		// Create data table
 		ResultsTable table = new ResultsTable();
 		double perim;
@@ -569,7 +683,8 @@ public class GeometricMeasures2D {
 		double refArea = pixelCount * pixelArea;
 		table.addValue("A. Density", area / refArea);
 
-		if (debug) {
+		if (debug) 
+		{
 			// Display individual counts
 			table.addValue("N1", n1);
 			table.addValue("N2", n2);
@@ -732,7 +847,8 @@ public class GeometricMeasures2D {
 		int current;
 
 		// iterate on image pixels
-		for (int i = 0; i < nDiags; i++) {
+		for (int i = 0; i < nDiags; i++)
+		{
 			int x0 = Math.max(i + 1 - height, 0);
 			int x1 = Math.min(i, width - 1);
 			int y0 = Math.min(i, height - 1);
@@ -815,7 +931,8 @@ public class GeometricMeasures2D {
 
 		// create associative array to know index of each label
 		HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
-		for (int i = 0; i < nLabels; i++) {
+		for (int i = 0; i < nLabels; i++)
+		{
 			labelIndices.put(labels[i], i);
 		}
 
