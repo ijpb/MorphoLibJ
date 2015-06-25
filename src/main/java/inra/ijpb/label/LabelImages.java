@@ -818,14 +818,10 @@ public class LabelImages
 	    int height 	= image.getHeight();
 	
         // create associative array to identify the index of each label
-		int nLabels = labels.length;
-        HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
-        for (int i = 0; i < nLabels; i++)
-        {
-        	labelIndices.put(labels[i], i);
-        }
+	    HashMap<Integer, Integer> labelIndices = mapLabelIndices(labels);
 
         // initialize result
+		int nLabels = labels.length;
 		int[] counts = new int[nLabels];
 	
 		// count all pixels belonging to the particle
@@ -852,14 +848,10 @@ public class LabelImages
 	public final static int[] voxelCount(ImageStack labelImage, int[] labels) 
 	{
         // create associative array to know index of each label
-		int nLabels = labels.length;
-        HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
-        for (int i = 0; i < nLabels; i++) 
-        {
-        	labelIndices.put(labels[i], i);
-        }
+		HashMap<Integer, Integer> labelIndices = mapLabelIndices(labels);
 
         // initialize result
+		int nLabels = labels.length;
 		int[] counts = new int[nLabels];
 
 		// size of image
@@ -1184,14 +1176,9 @@ public class LabelImages
 		
         // extract particle labels
         int[] labels = LabelImages.findAllLabels(labelImage);
-        int nLabels = labels.length;
         
         // create associative array to know index of each label
-        HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
-        for (int i = 0; i < nLabels; i++)
-        {
-        	labelIndices.put(labels[i], i);
-        }
+        HashMap<Integer, Integer> labelIndices = mapLabelIndices(labels);
 
 		for (int y = 0; y < height; y++) 
 		{
@@ -1229,15 +1216,11 @@ public class LabelImages
 		
         // extract particle labels
         int[] labels = LabelImages.findAllLabels(labelImage);
-        int nLabels = labels.length;
         
         // create associative array to know index of each label
-        HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
-        for (int i = 0; i < nLabels; i++) 
-        {
-        	labelIndices.put(labels[i], i);
-        }
+        HashMap<Integer, Integer> labelIndices = mapLabelIndices(labels);
 
+        // Iterate over voxels to change their color
         for (int z = 0; z < sizeZ; z++) 
         {
 			for (int y = 0; y < sizeY; y++) 
@@ -1267,5 +1250,24 @@ public class LabelImages
         
         return resultImage;
 	}
-	
+
+	/**
+	 * Create associative array to retrieve the index corresponding each label.
+	 * 
+	 * @param labels
+	 *            an array of labels
+	 * @return a HashMap instance with each label as key, and the index of the
+	 *         label in array as value.
+	 */
+	public static final HashMap<Integer, Integer> mapLabelIndices(int[] labels)
+	{
+		int nLabels = labels.length;
+        HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
+        for (int i = 0; i < nLabels; i++) 
+        {
+        	labelIndices.put(labels[i], i);
+        }
+
+        return labelIndices;
+	}
 }

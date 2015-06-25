@@ -61,14 +61,11 @@ public class GeometricMeasures3D {
 	 */
 	public final static double[][] boundingBox(ImageStack labelImage, int[] labels) {
         // create associative array to know index of each label
-		int nLabels = labels.length;
-        HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
-        for (int i = 0; i < nLabels; i++) {
-        	labelIndices.put(labels[i], i);
-        }
+		HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
 
         // initialize result
-		double[][] boxes = new double[nLabels][6];
+		int nLabels = labels.length;
+        double[][] boxes = new double[nLabels][6];
 		for (int i = 0; i < nLabels; i++) {
 			boxes[i][0] = Double.POSITIVE_INFINITY;
 			boxes[i][1] = Double.NEGATIVE_INFINITY;
@@ -78,7 +75,6 @@ public class GeometricMeasures3D {
 			boxes[i][5] = Double.NEGATIVE_INFINITY;
 		}
 
-		
 		// size of image
 		int sizeX = labelImage.getWidth();
 		int sizeY = labelImage.getHeight();
@@ -219,18 +215,15 @@ public class GeometricMeasures3D {
 	public final static double[] surfaceAreaByLut(ImageStack image, int[] labels, double[] resol, int nDirs) {
         
         // create associative array to know index of each label
-		int nLabels = labels.length;
-        HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
-        for (int i = 0; i < nLabels; i++) {
-        	labelIndices.put(labels[i], i);
-        }
+		HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
 
         // pre-compute LUT corresponding to resolution and number of directions
 		IJ.showStatus("Compute LUT...");
 		double[] surfLut = computeSurfaceAreaLut(resol, nDirs);
 
 		// initialize result
-		double[] surfaces = new double[nLabels];
+		int nLabels = labels.length;
+        double[] surfaces = new double[nLabels];
 
 		// size of image
 		int sizeX = image.getWidth();
@@ -680,10 +673,7 @@ public class GeometricMeasures3D {
         int nLabels = labels.length;
         
         // create associative array to know index of each label
-        HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
-        for (int i = 0; i < nLabels; i++) {
-        	labelIndices.put(labels[i], i);
-        }
+        HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
         
         // allocate memory for result
         int[] counts = new int[nLabels];

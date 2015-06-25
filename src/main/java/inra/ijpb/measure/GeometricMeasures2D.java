@@ -134,14 +134,10 @@ public class GeometricMeasures2D
 	public final static double[][] boundingBox(ImageProcessor labelImage, int[] labels)
 	{
         // create associative array to know index of each label
-		int nLabels = labels.length;
-        HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
-        for (int i = 0; i < nLabels; i++)
-        {
-        	labelIndices.put(labels[i], i);
-        }
+        HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
 
         // initialize result
+		int nLabels = labels.length;
 		double[][] boxes = new double[nLabels][6];
 		for (int i = 0; i < nLabels; i++)
 		{
@@ -295,11 +291,7 @@ public class GeometricMeasures2D
 	{
 		// create associative array to know index of each label
 		int nLabels = labels.length;
-		HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
-		for (int i = 0; i < nLabels; i++) 
-		{
-			labelIndices.put(labels[i], i);
-		}
+        HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
 
 		// pre-compute LUT corresponding to resolution and number of directions
 		IJ.showStatus("Compute LUT...");
@@ -431,7 +423,8 @@ public class GeometricMeasures2D
 						// multiplicity
 						tab[i] += (ke1 + ke2) / 4;
 
-					} else if (nDirs == 4) 
+					} 
+					else if (nDirs == 4) 
 					{
 						// compute contribution of diagonal directions
 						ke12 = im[1 - y][1 - x] ? 0 : (area / d12) / 2;
@@ -930,11 +923,7 @@ public class GeometricMeasures2D
 		int nLabels = labels.length;
 
 		// create associative array to know index of each label
-		HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
-		for (int i = 0; i < nLabels; i++)
-		{
-			labelIndices.put(labels[i], i);
-		}
+        HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
 
 		// allocate memory for result
 		int[] counts = new int[nLabels];
