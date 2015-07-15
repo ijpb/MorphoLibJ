@@ -303,13 +303,35 @@ public class TopologicalMarkerControlledWatershedTransform2D
 	 * Recursive function for resolving the downstream paths of the lower
 	 * complete graph
 	 * 
-	 * @param p
-	 * @param g
-	 * @return
+	 * @param p current pixel
+	 * @param g dag with lower complete graph
+	 * @return representative element of pixel p, or W if p is a watershed pixel
 	 */
-	private Cursor2D resolve(Cursor2D p, ArrayList<Cursor2D>[][] g) {
-		// TODO Auto-generated method stub
-		return null;
+	Cursor2D resolve(Cursor2D p, ArrayList<Cursor2D>[][] g) 
+	{
+		ArrayList<Cursor2D> neigh = g[ p.getX() ][ p.getY() ];
+		int i = 1;
+		Cursor2D rep = new Cursor2D( 0, 0 );
+		
+		while( i <= neigh.size() && rep.equals( W ) == false )
+		{
+			if( neigh.get(i-1).equals( p ) == false 
+				&& neigh.get( i-1 ).equals( W ) == false )
+			{
+				neigh.set(i -1, resolve( neigh.get(i-1), g) );
+			}
+			if( i == 1 )
+				rep = neigh.get( i-1 );
+			else if( neigh.get( i-1 ).equals( rep ) == false )
+			{
+				rep = W;
+				for( int j=0; j<neigh.size(); j++ )
+					neigh.set( j, W );
+			}
+			i++;
+		}
+		
+		return rep;
 	}
 	
 }
