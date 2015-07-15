@@ -1,9 +1,11 @@
 package inra.ijpb.watershed;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 
+import ij.IJ;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.data.Cursor2D;
@@ -195,7 +197,14 @@ public class TopologicalMarkerControlledWatershedTransform2D
 		final Neighborhood2D neigh = connectivity == 4 ? 
 					new Neighborhood2DC4() : new Neighborhood2DC8();
 					
-		// for each minimum 
+		// For each pixel p, store in a DAG a pointer to each steepest lower
+		// neighbor of p.
+		// For each minimum m, one pixel r belonging to m is chosen as the 
+		// representative of this minimum, and a pointer is created from r to 
+		// itself.
+		
+		// hash table to help handling minima
+		HashMap<Float, Cursor2D> minima = new HashMap<Float, Cursor2D>();
 		
 		for( int x = 0; x < size1; x++ )
 			for( int y = 0; y < size2; y++ )
@@ -204,28 +213,49 @@ public class TopologicalMarkerControlledWatershedTransform2D
 				
 				dag[ x ] [ y ] = new ArrayList<Cursor2D>();
 				
-				float min = Float.MAX_VALUE;
+				final float label = markerImage.getf( x, y );
 				
-				neigh.setCursor( cur );
-	    		for( Cursor2D c : neigh.getNeighbors() )			       		
-	    		{       			
-	    			int u = c.getX();
-	    			int v = c.getY();
-	    			if ( u >= 0 && u < size1 && v >= 0 && v < size2
-	    					&& input.getf( x, y ) > input.getf( u, v ) )
-	    			{
-	    				if( Float.compare( input.getf( u, v ), min ) == 0 )
-	    				{
-	    					dag[ x ][ y ].add( new Cursor2D( u, v ) );
-	    				}
-	    				else if ( input.getf( u, v ) < min )
-	    				{
-	    					min = input.getf( u, v );
-	    					dag[ x ][ y ].clear();
-	    					dag[ x ][ y ].add( new Cursor2D( u, v ) );
-	    				}
-	    			}
-	    		}
+				// if current point is a local minimum
+				if ( Float.compare( label, 0f ) != 0 )
+				{
+					if( minima.containsKey(label) )
+					{
+						dag[ x ][ y ].add( minima.get( label ) );
+						//IJ.log( "dag[ "+x+" ][ "+y+" ].add( " +minima.get(label).getX() + ", " + minima.get(label).getY() + ")");
+					}
+					else
+					{
+						final Cursor2D c = new Cursor2D(x, y);
+						minima.put( label, c );
+						dag[ x ][ y ].add( c );
+						//IJ.log( "dag[ "+x+" ][ "+y+" ].add( " +c.getX() + ", " + c.getY() + ")");
+					}
+				}
+				else // non minimum
+				{
+					float min = Float.MAX_VALUE;
+
+					neigh.setCursor( cur );
+					for( Cursor2D c : neigh.getNeighbors() )			       		
+					{       			
+						int u = c.getX();
+						int v = c.getY();
+						if ( u >= 0 && u < size1 && v >= 0 && v < size2
+								&& input.getf( x, y ) > input.getf( u, v ) )
+						{
+							if( Float.compare( input.getf( u, v ), min ) == 0 )
+							{
+								dag[ x ][ y ].add( new Cursor2D( u, v ) );
+							}
+							else if ( input.getf( u, v ) < min )
+							{
+								min = input.getf( u, v );
+								dag[ x ][ y ].clear();
+								dag[ x ][ y ].add( new Cursor2D( u, v ) );
+							}
+						}
+					}
+				}// end else
 		
 			}
 		return dag;
