@@ -252,7 +252,7 @@ public class TopologicalMarkerControlledWatershedTransform2D
 								min = input.getf( u, v );
 								dag[ x ][ y ].clear();
 								dag[ x ][ y ].add( new Cursor2D( u, v ) );
-							}
+							}							
 						}
 					}
 				}// end else
@@ -271,7 +271,7 @@ public class TopologicalMarkerControlledWatershedTransform2D
 		// LabelInit: initialize image lab with distinct labels for minima
 		for( int x = 0; x < size1; x++ )
 			for( int y = 0; y < size2; y++ )
-				lab[ x ][ y ] = (int) markerImage.getf(x, y);
+				lab[ x ][ y ] = (int) markerImage.getf( x, y );
 		
 		
 		final Cursor2D p = new Cursor2D( 0, 0 );
@@ -310,19 +310,19 @@ public class TopologicalMarkerControlledWatershedTransform2D
 	Cursor2D resolve(Cursor2D p, ArrayList<Cursor2D>[][] g) 
 	{
 		ArrayList<Cursor2D> neigh = g[ p.getX() ][ p.getY() ];
-		int i = 1;
-		Cursor2D rep = new Cursor2D( 0, 0 );
+		int i = 0;
+		Cursor2D rep = new Cursor2D( 0, 0 ); // some value such that rep != W
 		
-		while( i <= neigh.size() && rep.equals( W ) == false )
+		while( i < neigh.size() && rep.equals( W ) == false )
 		{
-			if( neigh.get(i-1).equals( p ) == false 
-				&& neigh.get( i-1 ).equals( W ) == false )
+			if( neigh.get( i ).equals( p ) == false &&
+				neigh.get( i ).equals( W ) == false )
 			{
-				neigh.set(i -1, resolve( neigh.get(i-1), g) );
+				neigh.set( i, resolve( neigh.get( i ), g) );
 			}
-			if( i == 1 )
-				rep = neigh.get( i-1 );
-			else if( neigh.get( i-1 ).equals( rep ) == false )
+			if( i == 0 )
+				rep = neigh.get( 0 );
+			else if( neigh.get( i ).equals( rep ) == false )
 			{
 				rep = W;
 				for( int j=0; j<neigh.size(); j++ )
