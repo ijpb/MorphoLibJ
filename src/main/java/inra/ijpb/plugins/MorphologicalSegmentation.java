@@ -44,6 +44,7 @@ import ij.gui.StackWindow;
 import ij.plugin.PlugIn;
 import ij.plugin.frame.Recorder;
 import ij.process.ImageProcessor;
+import ij.process.LUT;
 import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.binary.ConnectedComponents;
 import inra.ijpb.data.image.ColorImages;
@@ -1341,8 +1342,9 @@ public class MorphologicalSegmentation implements PlugIn {
 				{
 					ImageProcessor lines = BinaryImages.binarize( resultImage.getImageStack().getProcessor( slice ) );
 					lines.invert();
-					ImageProcessor gray = displayImage.getImageStack().getProcessor( slice );
-					roi = new ImageRoi(0, 0, ColorImages.binaryOverlay( gray, lines, Color.red ) ) ;
+					lines.setLut( LUT.createLutFromColor( Color.red ) );
+					roi = new ImageRoi( 0, 0, lines );
+					roi.setZeroTransparent( true );
 					roi.setOpacity( 1.0 );
 				}
 				else if( displayOption.equals( watershedLinesText ) )
