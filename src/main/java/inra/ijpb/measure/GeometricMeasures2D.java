@@ -906,6 +906,52 @@ public class GeometricMeasures2D
 	}
 
 	/**
+	 * Compute centroid of each label in input stack and returns the result
+	 * as an array of double for each label.
+	 */
+	public final static double[][] centroids(ImageProcessor labelImage,
+			int[] labels) 
+	{
+		// create associative array to know index of each label
+		int nLabels = labels.length;
+        HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
+
+		// allocate memory for result
+		int[] counts = new int[nLabels];
+		double[][] centroids = new double[nLabels][2];
+
+		// compute centroid of each region
+		int sizeX = labelImage.getWidth();
+		int sizeY = labelImage.getHeight();
+		for (int y = 0; y < sizeY; y++) 
+		{
+			for (int x = 0; x < sizeX; x++)
+			{
+				int label = (int) labelImage.getf(x, y);
+				if (label == 0)
+					continue;
+
+				// do not process labels that are not in the input list 
+				if (!labelIndices.containsKey(label))
+					continue;
+				
+				int index = labelIndices.get(label);
+				centroids[index][0] += x;
+				centroids[index][1] += y;
+				counts[index]++;
+			}
+		}
+
+		// normalize by number of pixels in each region
+		for (int i = 0; i < nLabels; i++)
+		{
+			centroids[i][0] /= counts[i];
+			centroids[i][1] /= counts[i];
+		}
+
+		return centroids;
+	}
+	/**
 	 * Computes inertia ellipse of each region in input label image.
 	 */
 	public final static ResultsTable inertiaEllipse(ImageProcessor image)

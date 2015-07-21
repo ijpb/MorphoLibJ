@@ -9,6 +9,8 @@ import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
 import inra.ijpb.label.LabelImages;
+import inra.ijpb.measure.GeometricMeasures2D;
+import inra.ijpb.measure.GeometricMeasures3D;
 
 /**
  * Creates a new image larger than the original one, and copies each label identically
@@ -92,7 +94,7 @@ public class ExpandLabelsPlugin implements PlugIn
 	
 		// compute centroids of labels
 		int[] labels = LabelImages.findAllLabels(image);
-		double[][] centroids = centroids(image, labels);
+		double[][] centroids = GeometricMeasures2D.centroids(image, labels);
 		
 		// compute shift associated to each label
 		int nLabels = labels.length;
@@ -128,54 +130,6 @@ public class ExpandLabelsPlugin implements PlugIn
 		return result;
 	}
 
-	/**
-	 * Compute centroid of each label in input stack and returns the result
-	 * as an array of double for each label.
-	 */
-	public final static double[][] centroids(ImageProcessor labelImage,
-			int[] labels) 
-	{
-        // create associative array to know index of each label
-		// TODO: integrate as method of LabelImages
-		int nLabels = labels.length;
-        HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
-        for (int i = 0; i < nLabels; i++) 
-        {
-        	labelIndices.put(labels[i], i);
-        }
-
-		// allocate memory for result
-		int[] counts = new int[nLabels];
-		double[][] centroids = new double[nLabels][2];
-
-		// compute centroid of each region
-		int sizeX = labelImage.getWidth();
-		int sizeY = labelImage.getHeight();
-		for (int y = 0; y < sizeY; y++) 
-		{
-			for (int x = 0; x < sizeX; x++)
-			{
-				int label = (int) labelImage.getf(x, y);
-				if (label == 0)
-					continue;
-
-				int index = labelIndices.get(label);
-				centroids[index][0] += x;
-				centroids[index][1] += y;
-				counts[index]++;
-			}
-		}
-
-		// normalize by number of pixels in each region
-		for (int i = 0; i < nLabels; i++)
-		{
-			centroids[i][0] /= counts[i];
-			centroids[i][1] /= counts[i];
-		}
-
-		return centroids;
-	}
-	
 	public static final ImageStack expandLabels(ImageStack image,
 			float ratio) 
 	{
@@ -195,7 +149,7 @@ public class ExpandLabelsPlugin implements PlugIn
 	
 		// compute centroids of labels
 		int[] labels = LabelImages.findAllLabels(image);
-		double[][] centroids = centroids(image, labels);
+		double[][] centroids = GeometricMeasures3D.centroids(image, labels);
 		
 		// compute shift associated to each label
 		int nLabels = labels.length;
@@ -236,56 +190,4 @@ public class ExpandLabelsPlugin implements PlugIn
 		return result;
 	}
 
-	/**
-	 * Compute centroid of each label in input stack and returns the result
-	 * as an array of double for each label.
-	 */
-	public final static double[][] centroids(ImageStack labelImage,
-			int[] labels) 
-	{
-        // create associative array to know index of each label
-		int nLabels = labels.length;
-        HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
-        for (int i = 0; i < nLabels; i++) 
-        {
-        	labelIndices.put(labels[i], i);
-        }
-
-		// allocate memory for result
-		int[] counts = new int[nLabels];
-		double[][] centroids = new double[nLabels][3];
-
-		// compute centroid of each region
-		int sizeX = labelImage.getWidth();
-		int sizeY = labelImage.getHeight();
-		int sizeZ = labelImage.getHeight();
-		for (int z = 0; z < sizeZ; z++) 
-		{
-			for (int y = 0; y < sizeY; y++) 
-			{
-				for (int x = 0; x < sizeX; x++)
-				{
-					int label = (int) labelImage.getVoxel(x, y, z);
-					if (label == 0)
-						continue;
-
-					int index = labelIndices.get(label);
-					centroids[index][0] += x;
-					centroids[index][1] += y;
-					centroids[index][2] += z;
-					counts[index]++;
-				}
-			}
-		}
-
-		// normalize by number of pixels in each region
-		for (int i = 0; i < nLabels; i++)
-		{
-			centroids[i][0] /= counts[i];
-			centroids[i][1] /= counts[i];
-			centroids[i][2] /= counts[i];
-		}
-
-		return centroids;
-	}
 }
