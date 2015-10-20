@@ -2,7 +2,7 @@
 \lyxformat 474
 \begin_document
 \begin_header
-\textclass report
+\textclass scrreprt
 \begin_preamble
 \usepackage{hyperref}
 \usepackage{lstlinebgrd}
@@ -13,6 +13,60 @@
 \definecolor{mymauve}{rgb}{0.58,0,0.82}
 
 \hypersetup{colorlinks=true, citecolor=blue}
+
+\usepackage{xcolor}
+\definecolor{bl}{rgb}{0.0,0.2,0.6} 
+
+
+% package that modifies style of section headers
+\addtokomafont{chapter}{\color{bl}\scshape \selectfont}
+\addtokomafont{section}{\color{bl}\scshape \selectfont}
+\addtokomafont{subsection}{\color{bl}\scshape \selectfont}
+\addtokomafont{subsubsection}{\color{bl}\scshape \selectfont}
+%\allsectionsfont{\color{bl}\scshape \selectfont }
+
+% setup font style for different title elements
+\setkomafont{title}{\color{bl} \bfseries \scshape}
+\setkomafont{author}{\centering \small}
+\setkomafont{date}{\centering \small}
+
+
+% Change the abstract environment
+\usepackage[runin]{abstract}			% runin option for a run-in title
+\setlength\absleftindent{30pt}		% left margin
+\setlength\absrightindent{30pt}		% right margin
+\abslabeldelim{\quad }						% 
+\setlength{\abstitleskip}{-10pt}
+\renewcommand{\abstractname}{}
+\renewcommand{\abstracttextfont}{\color{bl} \small \slshape }	% slanted text
+
+
+
+% Custom headers and footers
+\usepackage{fancyhdr}
+% Enabling the custom headers/footers
+\pagestyle{fancy}
+\usepackage{lastpage}	
+% Header (empty)
+% Haut a gauche - page g : chapitre (sl), page d : page (bf) - plain : rien
+\lhead[\fancyplain{}{\slshape\leftmark}]{\fancyplain{}{}}
+% rien au centre
+\chead{}
+% Haut a droite - page g : page (bf), page d : section (sl) - plain : rien
+\rhead[\fancyplain{}{}]{\fancyplain{}{\slshape\rightmark}}
+
+% Footer (you may change this to your own needs)
+\lfoot{\footnotesize \jobname.lyx}
+\cfoot{}
+\rfoot{\footnotesize page \thepage\ / \pageref{LastPage}}	% "Page 1 / 2"
+\renewcommand{\headrulewidth}{0.0pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% chap a gauche sans numero, rien a droite
+%\renewcommand{\chaptermark}[1]{\markboth{\textit{#1}}{}}
+\renewcommand{\chaptermark}[1]{\markboth{\thechapter\ #1}{}}
+% section à droite avec numero
+\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
 \end_preamble
 \use_default_options true
 \maintain_unincluded_children false
@@ -20,7 +74,7 @@
 \language_package default
 \inputencoding auto
 \fontencoding global
-\font_roman default
+\font_roman md-charter
 \font_sans default
 \font_typewriter default
 \font_math auto
@@ -95,7 +149,7 @@ MorphoLibJ user manual
 \end_layout
 
 \begin_layout Author
-David Legland and Ignacio Arganda-Carreras
+David Legland, Ignacio Arganda-Carreras
 \end_layout
 
 \begin_layout Standard
@@ -221,7 +275,7 @@ watershed segmentation + GUI, making it possible to segment 2D/3D images
 \end_layout
 
 \begin_layout Itemize
-utilities for manipulation of binary and label images
+several utilities for the manipulation of binary and label images
 \end_layout
 
 \begin_layout Standard
@@ -400,7 +454,7 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename images/binary/particles.tif
+	filename images/binary/particles.png
 	width 3.5cm
 
 \end_inset
@@ -563,7 +617,7 @@ The following structuring elements can be used for 2D images:
 \end_layout
 
 \begin_layout Itemize
-disk
+disk 
 \end_layout
 
 \begin_layout Itemize
@@ -602,11 +656,14 @@ Principle
 \end_layout
 
 \begin_layout Standard
-The principle of geodesic reconstruction is to repeat conditional dilations
+The principle of geodesic reconstruction is to repeat 
+\series bold
+conditional dilations
+\series default
  or erosions until idempotence.
  Conditional dilation is the result of a dilation, combined with a mask
  image using a logical operation.
- Conditional dilations are repeated until no more modification occur (idenpotenc
+ Conditional dilations are repeated until no more modification occur (idempotenc
 e condition).
 \end_layout
 
@@ -2263,7 +2320,9 @@ area computes the volume, the surface area, and a sphericity index, defined
 \end_inset
 
 .
- Surface area is computed using a discretized version of the Crofton formula.
+ Surface area is computed using a discretized version of the Crofton formula,
+ that computes intersections with line grids of various orientations (currentlye
+ither 3 or 13).
 \end_layout
 
 \begin_layout Description
@@ -2301,6 +2360,19 @@ pitch
 ), and the roll around the main axis.
 \end_layout
 
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Region adjacency graph
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 Intensity measurements
 \end_layout
@@ -2319,6 +2391,19 @@ Plugins > Analyze > Measure 3D
  The plugin calculates the mean, the standard deviation, the maximum and
  the minimum intensity value of each labeled region in the grayscale image.
  The results are displayed as well in a ResultsTable.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Mapping of measures on 2D/3D image
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Chapter
@@ -2486,13 +2571,15 @@ Algorithms work for both 2D or 3D images.
 \end_layout
 
 \begin_layout Chapter
-Label image utilities
+Utilities for label image
 \end_layout
 
 \begin_layout Standard
-Some functions specific for the processing of label images, in which the
- pixel/voxel values is used to identify the particle it belongs to.
+Some functions are specific for the processing of label images, in which
+ the pixel/voxel values is used to identify the particle it belongs to.
  The value 0 is assumed to correspond to the background.
+ The number of labels that can be represented depends on the image type
+ : 255 for byte images, 65535 for short images...
 \end_layout
 
 \begin_layout Standard
