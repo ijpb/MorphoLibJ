@@ -9,6 +9,7 @@ import ij.plugin.PlugIn;
 import inra.ijpb.binary.ChamferWeights3D;
 import inra.ijpb.binary.distmap.ChamferDistance3D;
 import inra.ijpb.binary.distmap.ChamferDistance3DFloat;
+import inra.ijpb.binary.distmap.ChamferDistance3DShort;
 import inra.ijpb.data.image.Images3D;
 import inra.ijpb.util.IJUtils;
 
@@ -54,7 +55,7 @@ public class ChamferDistanceMap3DPlugin implements PlugIn {
 
     	// set up current parameters
     	String weightLabel = gd.getNextChoice();
-//    	boolean floatProcessing = gd.getNextChoiceIndex() == 0;
+    	boolean floatProcessing = gd.getNextChoiceIndex() == 0;
     	boolean normalize = gd.getNextBoolean();
 
     	// identify which weights should be used
@@ -62,7 +63,16 @@ public class ChamferDistanceMap3DPlugin implements PlugIn {
 
     	long t0 = System.currentTimeMillis();
 
-    	ChamferDistance3D algo = new ChamferDistance3DFloat(weights.getFloatWeights(), normalize);
+    	ChamferDistance3D algo;
+    	if (floatProcessing)
+    	{
+    		algo = new ChamferDistance3DFloat(weights.getFloatWeights(), normalize);
+    	} 
+    	else
+    	{
+    		algo = new ChamferDistance3DShort(weights.getShortWeights(), normalize);
+    	}
+    	
     	ImageStack image = imagePlus.getStack();
     	ImageStack res = algo.distanceMap(image);
 

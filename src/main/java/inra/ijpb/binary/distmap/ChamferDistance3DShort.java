@@ -5,17 +5,20 @@ import ij.ImagePlus;
 import ij.ImageStack;
 
 /**
- * Computes Chamfer distances in a 3x3x3 neighborhood using floating point 
+ * Computes Chamfer distances in a 3x3x3 neighborhood using short point 
  * calculation.
+ * 
+ * In practice, computations are done with floats, but result is stored in a
+ * 3D short image, thus requiring less memory than floating point. 
  * 
  * @author David Legland
  * 
  */
-public class ChamferDistance3DFloat implements ChamferDistance3D 
+public class ChamferDistance3DShort implements ChamferDistance3D 
 {
 	private final static int DEFAULT_MASK_LABEL = 255;
 
-	float[] weights;
+	short[] weights;
 
 	int width;
 	int height;
@@ -30,7 +33,7 @@ public class ChamferDistance3DFloat implements ChamferDistance3D
 	 * image.
 	 * Default is short.MAX_VALUE.
 	 */
-	float backgroundValue = Float.MAX_VALUE;
+	short backgroundValue = Short.MAX_VALUE;
 	
 	/**
 	 * Flag for dividing final distance map by the value first weight. 
@@ -49,7 +52,7 @@ public class ChamferDistance3DFloat implements ChamferDistance3D
 	 * Default constructor that specifies the chamfer weights.
 	 * @param weights an array of two weights for orthogonal and diagonal directions
 	 */
-	public ChamferDistance3DFloat(float[] weights)
+	public ChamferDistance3DShort(short[] weights)
 	{
 		this.weights = weights;
 	}
@@ -62,7 +65,7 @@ public class ChamferDistance3DFloat implements ChamferDistance3D
 	 *            flag indicating whether the final distance map should be
 	 *            normalized by the first weight
 	 */
-	public ChamferDistance3DFloat(float[] weights, boolean normalize)
+	public ChamferDistance3DShort(short[] weights, boolean normalize)
 	{
 		this.weights = weights;
 		this.normalizeMap = normalize;
@@ -71,7 +74,7 @@ public class ChamferDistance3DFloat implements ChamferDistance3D
 	/**
 	 * @return the backgroundValue
 	 */
-	public float getBackgroundValue() 
+	public short getBackgroundValue() 
 	{
 		return backgroundValue;
 	}
@@ -79,7 +82,7 @@ public class ChamferDistance3DFloat implements ChamferDistance3D
 	/**
 	 * @param backgroundValue the backgroundValue to set
 	 */
-	public void setBackgroundValue(float backgroundValue) 
+	public void setBackgroundValue(short backgroundValue) 
 	{
 		this.backgroundValue = backgroundValue;
 	}
@@ -118,7 +121,7 @@ public class ChamferDistance3DFloat implements ChamferDistance3D
 		this.maskProc = mask;
 
 		// create new empty image, and fill it with black
-		buffer = ImageStack.create(width, height, depth, 32);
+		buffer = ImageStack.create(width, height, depth, 16);
 		
 		// initialize empty image with either 0 (background) or Inf (foreground)
 		for (int i = 0; i < width; i++) 
