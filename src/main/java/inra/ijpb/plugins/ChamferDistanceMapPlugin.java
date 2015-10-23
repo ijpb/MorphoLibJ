@@ -196,10 +196,11 @@ public class ChamferDistanceMapPlugin implements ExtendedPlugInFilter, DialogLis
 			calc = new ChamferDistance5x5Float(weights, normalize);
 		}
 		// Compute distance on specified images
-		ImagePlus result = calc.distanceMap(image, newName);
-				
+		ImageProcessor result = calc.distanceMap(image.getProcessor());
+		ImagePlus resultPlus = new ImagePlus(newName, result);
+		
 		// create result array
-		return new Object[]{newName, result};
+		return new Object[]{newName, resultPlus};
 	}
 	
 	/**
@@ -228,10 +229,11 @@ public class ChamferDistanceMapPlugin implements ExtendedPlugInFilter, DialogLis
 		}
 		
 		// Compute distance on specified images
-		ImagePlus result = calc.distanceMap(image, newName);
-				
+		ImageProcessor result = calc.distanceMap(image.getProcessor());
+		ImagePlus resultPlus = new ImagePlus(newName, result);
+		
 		// create result array
-		return new Object[]{newName, result};
+		return new Object[]{newName, resultPlus};
 	}
 	
 	private static String createResultImageName(ImagePlus baseImage) {

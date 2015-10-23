@@ -9,6 +9,7 @@ import ij.plugin.PlugIn;
 import inra.ijpb.binary.ChamferWeights3D;
 import inra.ijpb.binary.distmap.ChamferDistance3D;
 import inra.ijpb.binary.distmap.ChamferDistance3DFloat;
+import inra.ijpb.data.image.Images3D;
 import inra.ijpb.util.IJUtils;
 
 /**
@@ -26,15 +27,9 @@ public class ChamferDistanceMap3DPlugin implements PlugIn {
 	@Override
 	public void run(String arg) {
 		
-//		if ( IJ.getVersion().compareTo("1.48a") < 0 )
-//		{
-//			IJ.error( "Morphological Filter 3D", "ERROR: detected ImageJ version " + IJ.getVersion()  
-//					+ ".\nThis plugin requires version 1.48a or superior, please update ImageJ!" );
-//			return;
-//		}
-		
 		ImagePlus imagePlus = WindowManager.getCurrentImage();
-		if (imagePlus == null) {
+		if (imagePlus == null) 
+		{
 			IJ.error("No image", "Need at least one image to work");
 			return;
 		}
@@ -59,7 +54,7 @@ public class ChamferDistanceMap3DPlugin implements PlugIn {
 
     	// set up current parameters
     	String weightLabel = gd.getNextChoice();
-    	boolean floatProcessing = gd.getNextChoiceIndex() == 0;
+//    	boolean floatProcessing = gd.getNextChoiceIndex() == 0;
     	boolean normalize = gd.getNextBoolean();
 
     	// identify which weights should be used
@@ -77,6 +72,13 @@ public class ChamferDistanceMap3DPlugin implements PlugIn {
 		String newName = imagePlus.getShortTitle() + "-dist";
 		ImagePlus resPlus = new ImagePlus(newName, res);
 		
+		// calibrate display range of distances
+		double[] distExtent = Images3D.findMinAndMax(resPlus);
+		resPlus.setDisplayRange(0, distExtent[1]);
+		
+		// keep spatial calibration
+		resPlus.copyScale(imagePlus);
+
 		// Display the result image
 		resPlus.show();
 		resPlus.setSlice(imagePlus.getSlice());
@@ -84,6 +86,5 @@ public class ChamferDistanceMap3DPlugin implements PlugIn {
 		// Display elapsed time
 		long t1 = System.currentTimeMillis();
 		IJUtils.showElapsedTime("distance map", t1 - t0, imagePlus);
-//		IJ.showStatus("Elapsed time: " + (t1 - t0) / 1000. + "s");
 	}
 }

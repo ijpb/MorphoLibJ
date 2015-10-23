@@ -8,6 +8,8 @@ import ij.ImageStack;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.binary.distmap.ChamferDistance;
+import inra.ijpb.binary.distmap.ChamferDistance3D;
+import inra.ijpb.binary.distmap.ChamferDistance3DFloat;
 import inra.ijpb.binary.distmap.ChamferDistance3x3Float;
 import inra.ijpb.binary.distmap.ChamferDistance3x3Short;
 import inra.ijpb.binary.distmap.ChamferDistance5x5Float;
@@ -23,8 +25,34 @@ import inra.ijpb.label.LabelImages;
  * @author David Legland
  *
  */
-public class BinaryImages {
+public class BinaryImages 
+{
 
+	public static final ImagePlus distanceMap(ImagePlus imagePlus)
+	{
+		ImagePlus resultPlus;
+		String newName = imagePlus.getShortTitle() + "-distMap";
+		
+		// Dispatch to appropriate function depending on dimension
+		if (imagePlus.getStackSize() == 1) 
+		{
+			// process planar image
+			ImageProcessor image = imagePlus.getProcessor();
+			ImageProcessor result = distanceMap(image);
+			resultPlus = new ImagePlus(newName, result);
+		} 
+		else
+		{
+			// process image stack
+			ImageStack image = imagePlus.getStack();
+			ImageStack result = distanceMap(image);
+			resultPlus = new ImagePlus(newName, result);
+		}
+		
+		resultPlus.copyScale(imagePlus);
+		return resultPlus;		
+	}
+	
 	/**
 	 * Computes the distance map from a binary image processor. Distance is
 	 * computed for each foreground (white) pixel, as the chamfer distance to
@@ -32,7 +60,8 @@ public class BinaryImages {
 	 * weights, and normalizes the resulting map. Result is given in a new
 	 * instance of ShortProcessor.
 	 */
-	public static final ImageProcessor distanceMap(ImageProcessor image) {
+	public static final ImageProcessor distanceMap(ImageProcessor image) 
+	{
 		return distanceMap(image, new short[]{5, 7, 11}, true);
 	}
 	
@@ -71,9 +100,12 @@ public class BinaryImages {
 	 * chamfer distance to the nearest background (black) pixel.
 	 * Result is given in a new instance of FloatProcessor.
 	 */
-	public static final ImageProcessor distanceMap(ImageProcessor image, float[] weights, boolean normalize) {
+	public static final ImageProcessor distanceMap(ImageProcessor image,
+			float[] weights, boolean normalize) 
+	{
 		ChamferDistance algo;
-		switch (weights.length) {
+		switch (weights.length) 
+		{
 		case 2:
 			algo = new ChamferDistance3x3Float(weights, normalize);
 			break;
@@ -89,13 +121,26 @@ public class BinaryImages {
 	}
 
 	/**
+	 * Computes the distance map from a binary 3D image. 
+	 * Distance is computed for each foreground (white) pixel, as the 
+	 * chamfer distance to the nearest background (black) pixel.
+	 */
+	public static final ImageStack distanceMap(ImageStack image)
+	{
+		float[] weights = new float[]{3.0f, 4.0f, 5.0f};
+		ChamferDistance3D algo = new ChamferDistance3DFloat(weights);
+		return algo.distanceMap(image);
+	}
+	
+	/**
 	 * Applies size opening on a binary 2D or 3D image. The method creates a new
 	 * binary image that contains only particles with at least the specified
 	 * number of pixels.
 	 * 
 	 * @see inra.ijpb.label.LabelImages#sizeOpening(ImagePlus, int)
 	 */
-	public static final ImagePlus sizeOpening(ImagePlus imagePlus, int minElementCount) 
+	public static final ImagePlus sizeOpening(ImagePlus imagePlus,
+			int minElementCount) 
 	{
 		ImagePlus resultPlus;
 		String newName = imagePlus.getShortTitle() + "-sizeOpening";
@@ -125,7 +170,9 @@ public class BinaryImages {
 	 * 
 	 * @see inra.ijpb.label.LabelImages#areaOpening(ImageProcessor, int)
 	 */
-	public static final ImageProcessor areaOpening(ImageProcessor image, int nPixelMin) {
+	public static final ImageProcessor areaOpening(ImageProcessor image,
+			int nPixelMin) 
+	{
 		// Labeling
 		ImageProcessor labelImage = ConnectedComponents.computeLabels(image, 4, 16);
 
@@ -140,7 +187,8 @@ public class BinaryImages {
 	 *
 	 * @see inra.ijpb.label.LabelImages#volumeOpening(ImageStack, int)
 	 */
-	public static final ImageStack volumeOpening(ImageStack image, int nVoxelMin) {
+	public static final ImageStack volumeOpening(ImageStack image, int nVoxelMin) 
+	{
 		// Labeling
 		ImageStack labelImage = ConnectedComponents.computeLabels(image, 6, 16);
 
@@ -154,17 +202,21 @@ public class BinaryImages {
 	 * 
 	 * @param imagePlus an instance of imagePlus that contains a binary image
 	 */
-	public static final ImagePlus keepLargestRegion(ImagePlus imagePlus) {
+	public static final ImagePlus keepLargestRegion(ImagePlus imagePlus) 
+	{
 		ImagePlus resultPlus;
 		String newName = imagePlus.getShortTitle() + "-largest";
 		
 		// Dispatch to appropriate function depending on dimension
-		if (imagePlus.getStackSize() == 1) {
+		if (imagePlus.getStackSize() == 1) 
+		{
 			// process planar image
 			ImageProcessor image = imagePlus.getProcessor();
 			ImageProcessor result = keepLargestRegion(image);
 			resultPlus = new ImagePlus(newName, result);
-		} else {
+		} 
+		else 
+		{
 			// process image stack
 			ImageStack image = imagePlus.getStack();
 			ImageStack result = keepLargestRegion(image);
@@ -179,7 +231,8 @@ public class BinaryImages {
 	 * Returns a binary image that contains only the largest region.
 	 * @param image a binary image
 	 */
-	public static final ImageProcessor keepLargestRegion(ImageProcessor image) {
+	public static final ImageProcessor keepLargestRegion(ImageProcessor image) 
+	{
 		ImageProcessor labelImage = ConnectedComponents.computeLabels(image, 4, 16);
 		ImageProcessor result = binarize(LabelImages.keepLargestLabel(labelImage));
 		result.setLut(image.getLut());
@@ -190,7 +243,8 @@ public class BinaryImages {
 	 * Returns a binary image that contains only the largest label.
 	 * @param image a binary image
 	 */
-	public static final ImageStack keepLargestRegion(ImageStack image) {
+	public static final ImageStack keepLargestRegion(ImageStack image) 
+	{
 		ImageStack labelImage = ConnectedComponents.computeLabels(image, 6, 16);
 		ImageStack result = binarize(LabelImages.keepLargestLabel(labelImage));
 		result.setColorModel(image.getColorModel());
@@ -204,11 +258,15 @@ public class BinaryImages {
 	 * 
 	 * @param imagePlus an instance of imagePlus that contains a binary image
 	 */
-	public static final void removeLargestRegion(ImagePlus imagePlus) {
+	public static final void removeLargestRegion(ImagePlus imagePlus) 
+	{
 		// Dispatch to appropriate function depending on dimension
-		if (imagePlus.getStackSize() == 1) {
+		if (imagePlus.getStackSize() == 1) 
+		{
 			imagePlus.setProcessor(removeLargestRegion(imagePlus.getProcessor()));
-		} else {
+		} 
+		else 
+		{
 			imagePlus.setStack(removeLargestRegion(imagePlus.getStack()));
 		}
 		
@@ -218,7 +276,8 @@ public class BinaryImages {
 	 * Returns a binary image in which the largest region has been replaced by
 	 * the background value.
 	 */
-	public static final ImageProcessor removeLargestRegion(ImageProcessor image) {
+	public static final ImageProcessor removeLargestRegion(ImageProcessor image) 
+	{
 		ImageProcessor labelImage = ConnectedComponents.computeLabels(image, 4, 16);
 		LabelImages.removeLargestLabel(labelImage);
 		ImageProcessor result = binarize(labelImage);
@@ -231,7 +290,8 @@ public class BinaryImages {
 	 * Returns a binary image in which the largest region has been replaced by
 	 * the background value.
 	 */
-	public static final ImageStack removeLargestRegion(ImageStack image) {
+	public static final ImageStack removeLargestRegion(ImageStack image) 
+	{
 		ImageStack labelImage = ConnectedComponents.computeLabels(image, 6, 16);
 		LabelImages.removeLargestLabel(labelImage);
 		ImageStack result = binarize(labelImage);
@@ -243,14 +303,18 @@ public class BinaryImages {
 	 * Converts a grayscale 2D or 3D image into a binary image by setting 
 	 * non-zero elements to 255.
 	 */
-	public static final ImagePlus binarize(ImagePlus imagePlus) {
+	public static final ImagePlus binarize(ImagePlus imagePlus) 
+	{
 		// Dispatch to appropriate function depending on dimension
 		ImagePlus resultPlus;
 		String title = imagePlus.getShortTitle() + "-bin";
-		if (imagePlus.getStackSize() == 1) {
+		if (imagePlus.getStackSize() == 1)
+		{
 			ImageProcessor result = binarize(imagePlus.getProcessor());
 			resultPlus = new ImagePlus(title, result);
-		} else {
+		}
+		else 
+		{
 			ImageStack result = binarize(imagePlus.getStack());
 			resultPlus = new ImagePlus(title, result);
 		}
@@ -261,13 +325,16 @@ public class BinaryImages {
 	 * Converts a grayscale 2D image into a binary 2D image by setting non-zero
 	 * pixels to 255.
 	 */
-	public static final ImageProcessor binarize(ImageProcessor image) {
+	public static final ImageProcessor binarize(ImageProcessor image) 
+	{
 		int width = image.getWidth();
 		int height = image.getHeight();
 		ImageProcessor result = new ByteProcessor(width, height);
 		
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
+		for (int y = 0; y < height; y++)
+		{
+			for (int x = 0; x < width; x++) 
+			{
 				if (image.get(x, y) > 0) 
 					result.set(x, y, 255);
 			}
@@ -280,16 +347,20 @@ public class BinaryImages {
 	 * Converts a grayscale 3D image into a binary 3D image by setting non-zero
 	 * voxels to 255.
 	 */
-	public static final ImageStack binarize(ImageStack image) {
+	public static final ImageStack binarize(ImageStack image)
+	{
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		int sizeZ = image.getSize();
 		
 		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
 		
-		for (int z = 0; z < sizeZ; z++) {
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
+		for (int z = 0; z < sizeZ; z++)
+		{
+			for (int y = 0; y < sizeY; y++) 
+			{
+				for (int x = 0; x < sizeX; x++) 
+				{
 					if (image.getVoxel(x, y, z) > 0) 
 						result.setVoxel(x, y, z, 255);
 				}
@@ -298,5 +369,4 @@ public class BinaryImages {
 		
 		return result;
 	}
-
 }

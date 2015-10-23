@@ -5,14 +5,14 @@ import ij.ImagePlus;
 import ij.ImageStack;
 
 /**
- * Computes Chamfer distances in a 3x3 neighborhood using ShortProcessor object
- * for storing result.
+ * Computes Chamfer distances in a 3x3x3 neighborhood using floating point 
+ * calculation.
  * 
  * @author David Legland
  * 
  */
-public class ChamferDistance3DFloat implements ChamferDistance3D {
-	
+public class ChamferDistance3DFloat implements ChamferDistance3D 
+{
 	private final static int DEFAULT_MASK_LABEL = 255;
 
 	float[] weights;
@@ -49,7 +49,8 @@ public class ChamferDistance3DFloat implements ChamferDistance3D {
 	 * Default constructor that specifies the chamfer weights.
 	 * @param weights an array of two weights for orthogonal and diagonal directions
 	 */
-	public ChamferDistance3DFloat(float[] weights) {
+	public ChamferDistance3DFloat(float[] weights)
+	{
 		this.weights = weights;
 	}
 
@@ -61,7 +62,8 @@ public class ChamferDistance3DFloat implements ChamferDistance3D {
 	 *            flag indicating whether the final distance map should be
 	 *            normalized by the first weight
 	 */
-	public ChamferDistance3DFloat(float[] weights, boolean normalize) {
+	public ChamferDistance3DFloat(float[] weights, boolean normalize)
+	{
 		this.weights = weights;
 		this.normalizeMap = normalize;
 	}
@@ -69,19 +71,21 @@ public class ChamferDistance3DFloat implements ChamferDistance3D {
 	/**
 	 * @return the backgroundValue
 	 */
-	public short getBackgroundValue() {
+	public short getBackgroundValue() 
+	{
 		return backgroundValue;
 	}
 
 	/**
 	 * @param backgroundValue the backgroundValue to set
 	 */
-	public void setBackgroundValue(short backgroundValue) {
+	public void setBackgroundValue(short backgroundValue) 
+	{
 		this.backgroundValue = backgroundValue;
 	}
 
-	public ImagePlus distanceMap(ImagePlus mask, String newName) {
-
+	public ImagePlus distanceMap(ImagePlus mask, String newName) 
+	{
 		// size of image
 		width = mask.getWidth();
 		height = mask.getHeight();
@@ -102,8 +106,8 @@ public class ChamferDistance3DFloat implements ChamferDistance3D {
 	 * The function returns a new short processor the same size as the input,
 	 * with values greater or equal to zero. 
 	 */
-	public ImageStack distanceMap(ImageStack mask) {
-
+	public ImageStack distanceMap(ImageStack mask) 
+	{
 		// size of image
 		width = mask.getWidth();
 		height = mask.getHeight();
@@ -134,10 +138,14 @@ public class ChamferDistance3DFloat implements ChamferDistance3D {
 
 		// Normalize values by the first weight
 		if (this.normalizeMap) {
-			for (int i = 0; i < width; i++) {
-				for (int j = 0; j < height; j++) {
-					for (int k = 0; k < depth; k++) {
-						if (maskProc.getVoxel(i, j, k) != 0) {
+			for (int i = 0; i < width; i++) 
+			{
+				for (int j = 0; j < height; j++) 
+				{
+					for (int k = 0; k < depth; k++) 
+					{
+						if (maskProc.getVoxel(i, j, k) != 0)
+						{
 							buffer.setVoxel(i, j, k, buffer.getVoxel(i, j, k) / weights[0]);
 						}
 					}
@@ -148,7 +156,8 @@ public class ChamferDistance3DFloat implements ChamferDistance3D {
 		return buffer;
 	}
 
-	private void forwardIteration() {
+	private void forwardIteration() 
+	{
 		// iterate on image voxels
 		for (int z = 0; z < depth; z++)
 		{
@@ -221,7 +230,8 @@ public class ChamferDistance3DFloat implements ChamferDistance3D {
 		}
 	}
 
-	private void backwardIteration() {
+	private void backwardIteration() 
+	{
 		// iterate on image voxels in backward order
 		for (int z = depth - 1; z >= 0; z--)
 		{
@@ -298,7 +308,8 @@ public class ChamferDistance3DFloat implements ChamferDistance3D {
 	 * Computes the weighted minima of orthogonal, diagonal, and 3D diagonal
 	 * values.
 	 */
-	private double min3w(double ortho, double diago, double diag2) {
+	private double min3w(double ortho, double diago, double diag2)
+	{
 		return min(min(ortho + weights[0], diago + weights[1]), 
 				diag2 + weights[2]);
 	}
@@ -307,9 +318,11 @@ public class ChamferDistance3DFloat implements ChamferDistance3D {
 	 * Update the pixel at position (i,j,k) with the value newVal. If newVal is
 	 * greater or equal to current value at position (i,j,k), do nothing.
 	 */
-	private void updateIfNeeded(int i, int j, int k, double newVal) {
+	private void updateIfNeeded(int i, int j, int k, double newVal)
+	{
 		double value = buffer.getVoxel(i, j, k);
-		if (newVal < value) {
+		if (newVal < value) 
+		{
 			buffer.setVoxel(i, j, k, newVal);
 		}
 	}
