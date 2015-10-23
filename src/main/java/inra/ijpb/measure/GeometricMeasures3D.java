@@ -12,6 +12,8 @@ import static java.lang.Math.toDegrees;
 import ij.IJ;
 import ij.ImageStack;
 import ij.measure.ResultsTable;
+import ij.process.ImageProcessor;
+import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.label.LabelImages;
 
 import java.util.ArrayList;
@@ -923,6 +925,20 @@ public class GeometricMeasures3D
         }
 
         return table;
+    }
+    
+	/**
+     * Radius of maximum inscribed sphere of each particle.
+     * 
+     */
+    public final static ResultsTable inscribedBall(ImageStack labelImage)
+    {
+		// Initialize mask as binarisation of labels
+		ImageStack mask = BinaryImages.binarize(labelImage);
+
+		
+		
+    	return null;
     }
 
 }
