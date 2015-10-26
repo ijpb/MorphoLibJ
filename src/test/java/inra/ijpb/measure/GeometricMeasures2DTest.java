@@ -195,7 +195,7 @@ public class GeometricMeasures2DTest
 		fillRect(image, 1, 1+3, 4, 4+3, 3); // radius 4
 		fillRect(image, 6, 6+6, 1, 1+6, 4); // radius 7
 		
-		ResultsTable table = GeometricMeasures2D.maxInscribedCircle(image);
+		ResultsTable table = GeometricMeasures2D.maximumInscribedCircle(image);
 		
 		assertEquals(1, table.getValue("Radius", 0), .1);
 		assertEquals(1, table.getValue("Radius", 1), .1);
