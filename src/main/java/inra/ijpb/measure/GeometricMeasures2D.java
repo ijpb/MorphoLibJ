@@ -1063,15 +1063,15 @@ public class GeometricMeasures2D
 	}
 
 	/**
-	 * Radius of maximum inscribed disk of each particle. Particles must be
-	 * disjoint.
+	 * Computes radius and center of maximum inscribed disk of each particle. 
+	 * Particles must be disjoint.
 	 * 
 	 * @return a ResultsTable with as many rows as the number of unique labels
 	 *         in label image, and columns "Label", "xi", "yi" and "Radius".
 	 */
-    public final static ResultsTable maxInscribedCircle(ImageProcessor labelImage)
+    public final static ResultsTable maximumInscribedCircle(ImageProcessor labelImage)
     {
-    	return maxInscribedCircle(labelImage, new double[]{1, 1});
+    	return maximumInscribedCircle(labelImage, new double[]{1, 1});
     }
     
 	/**
@@ -1081,7 +1081,7 @@ public class GeometricMeasures2D
 	 * @return a ResultsTable with as many rows as the number of unique labels
 	 *         in label image, and columns "Label", "xi", "yi" and "Radius".
 	 */
-    public final static ResultsTable maxInscribedCircle(ImageProcessor labelImage, 
+    public final static ResultsTable maximumInscribedCircle(ImageProcessor labelImage, 
     		double[] resol)
     {
     	// compute max label within image

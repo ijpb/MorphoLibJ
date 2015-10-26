@@ -12,8 +12,8 @@ import static java.lang.Math.toDegrees;
 import ij.IJ;
 import ij.ImageStack;
 import ij.measure.ResultsTable;
-import ij.process.ImageProcessor;
 import inra.ijpb.binary.BinaryImages;
+import inra.ijpb.data.Cursor3D;
 import inra.ijpb.label.LabelImages;
 
 import java.util.ArrayList;
@@ -926,19 +926,148 @@ public class GeometricMeasures3D
 
         return table;
     }
-    
+
 	/**
-     * Radius of maximum inscribed sphere of each particle.
+     * Radius of maximum inscribed sphere of each particle within a label 
+     * image.
      * 
      */
-    public final static ResultsTable inscribedBall(ImageStack labelImage)
+    public final static ResultsTable maximumInscribedSphere(ImageStack labelImage)
     {
-		// Initialize mask as binarisation of labels
+    	return maximumInscribedSphere(labelImage, new double[]{1, 1});
+    }
+    
+	/**
+     * Radius of maximum inscribed sphere of each particle within a label 
+     * image.
+     * 
+     */
+    public final static ResultsTable maximumInscribedSphere(ImageStack labelImage, 
+    		double[] resol)
+    {
+    	// compute max label within image
+    	int[] labels = LabelImages.findAllLabels(labelImage);
+    	int nbLabels = labels.length;
+    	
+    	// Initialize mask as binarisation of labels
 		ImageStack mask = BinaryImages.binarize(labelImage);
 
+		// first distance propagation to find an arbitrary center
+		ImageStack distanceMap = BinaryImages.distanceMap(mask);
 		
-		
-    	return null;
+		// Extract position of maxima
+		Cursor3D[] posCenter;
+		posCenter = findPositionOfMaxValues(distanceMap, labelImage, labels);
+		float[] radii = getValues(distanceMap, posCenter);
+
+		// Create result data table
+		ResultsTable table = new ResultsTable();
+		for (int i = 0; i < nbLabels; i++) 
+		{
+			// add an entry to the resulting data table
+			table.incrementCounter();
+			table.addValue("Label", labels[i]);
+			table.addValue("xi", posCenter[i].getX() * resol[0]);
+			table.addValue("yi", posCenter[i].getY() * resol[1]);
+			table.addValue("zi", posCenter[i].getZ() * resol[2]);
+			table.addValue("Radius", radii[i] * resol[0]);
+		}
+
+		return table;
     }
 
+	/**
+	 * Find one position of maximum value within each label.
+	 * 
+	 * @param image
+	 *            the input image containing the value (for example a distance 
+	 *            map)
+	 * @param labelImage
+	 *            the input image containing label of particles
+	 * @param labels
+	 *            the set of labels contained in the label image
+	 *            
+	 */
+	private final static Cursor3D[] findPositionOfMaxValues(ImageStack image,
+			ImageStack labelImage, int[] labels)
+	{
+		int width 	= labelImage.getWidth();
+		int height 	= labelImage.getHeight();
+		int depth 	= labelImage.getSize(); 
+		
+		// Compute value of greatest label
+		int nbLabel = labels.length;
+		int maxLabel = 0;
+		for (int i = 0; i < nbLabel; i++)
+		{
+			maxLabel = Math.max(maxLabel, labels[i]);
+		}
+		
+		// init index of each label
+		// to make correspondence between label value and label index
+		int[] labelIndex = new int[maxLabel+1];
+		for (int i = 0; i < nbLabel; i++)
+		{
+			labelIndex[labels[i]] = i;
+		}
+		
+		// Init Position and value of maximum for each label
+		Cursor3D[] posMax 	= new Cursor3D[nbLabel];
+		double[] maxValues = new double[nbLabel];
+		for (int i = 0; i < nbLabel; i++) 
+		{
+			maxValues[i] = -1;
+			posMax[i] = new Cursor3D(-1, -1, -1);
+		}
+		
+		// store current value
+		double value;
+		int index;
+		
+		// iterate on image pixels
+		for (int z = 0; z < depth; z++) 
+		{
+			for (int y = 0; y < height; y++) 
+			{
+				for (int x = 0; x < width; x++) 
+				{
+					int label = (int) labelImage.getVoxel(x, y, z);
+
+					// do not process pixels that do not belong to particle
+					if (label==0)
+						continue;
+
+					index = labelIndex[label];
+
+					// update values and positions
+					value = image.getVoxel(x, y, z);
+					if (value > maxValues[index])
+					{
+						posMax[index].set(x, y, z);
+						maxValues[index] = value;
+					}
+				}
+			}
+		}
+
+		return posMax;
+	}
+	
+	/**
+	 * Get values in input image for each specified position.
+	 */
+	private final static float[] getValues(ImageStack image, 
+			Cursor3D[] positions) 
+	{
+		float[] values = new float[positions.length];
+		
+		// iterate on positions
+		for (int i = 0; i < positions.length; i++) 
+		{
+			values[i] = (float) image.getVoxel((int) positions[i].getX(),
+					(int) positions[i].getY(), (int) positions[i].getZ());
+		}
+				
+		return values;
+	}
 }

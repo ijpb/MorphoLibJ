@@ -82,27 +82,17 @@ public class MaxInscribedCirclePlugin implements PlugIn
         }
         
 		// Execute the plugin
-		String newName = labelImage.getShortTitle() + "-geodDiam";
-
-        // Execute the plugin
-        Object[] results = exec(labelImage, newName, weights.getShortWeights());
-        
+        Object[] results = exec(labelImage, weights.getShortWeights());
+        ResultsTable table = (ResultsTable) results[1];
         
         // Display plugin result
-		// create string for indexing results
 		String tableName = labelImage.getShortTitle() + "-MaxInscribedCircle"; 
-    
-		// show results
-		((ResultsTable) results[1]).show(tableName);
+		table.show(tableName);
 		
-        
 		// Check if results must be displayed on an image
 		if (showOverlay)
 		{
-			// Extract result table
-			ResultsTable table = (ResultsTable) results[1];
-			
-			// New image for displaying geometric overlays
+			// find image for displaying geometric overlays
 			ImagePlus resultImage = WindowManager.getImage(resultImageIndex + 1);
 			showResultsAsOverlay(resultImage, table, getPixelSize(labelImage));
 		}
@@ -111,7 +101,7 @@ public class MaxInscribedCirclePlugin implements PlugIn
     /**
      * Main body of the plugin. 
      */
-    public Object[] exec(ImagePlus imagePlus, String newName, short[] weights) 
+    public Object[] exec(ImagePlus imagePlus, short[] weights) 
     {
         // Check validity of parameters
         if (imagePlus==null) 
@@ -122,7 +112,7 @@ public class MaxInscribedCirclePlugin implements PlugIn
         // Extract spatial calibration
         double[] resol = getPixelSize(imagePlus);
 
-        ResultsTable results = GeometricMeasures2D.maxInscribedCircle(image, 
+        ResultsTable results = GeometricMeasures2D.maximumInscribedCircle(image, 
         		resol);
         
 		// return the created array
@@ -141,6 +131,7 @@ public class MaxInscribedCirclePlugin implements PlugIn
         }
         return resol;
     }
+    
 	/**
 	 * Display the result of maximal inscribed circle extraction as overlay on
 	 * a given image.
@@ -149,7 +140,6 @@ public class MaxInscribedCirclePlugin implements PlugIn
 			double[] resol)	
 	{
 		Overlay overlay = new Overlay();
-		
 		Roi roi;
 		
 		int count = table.getCounter();
