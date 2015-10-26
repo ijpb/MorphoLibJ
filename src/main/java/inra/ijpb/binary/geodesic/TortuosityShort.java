@@ -11,6 +11,8 @@ import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 
 /**
+ * Compute tortuosity and related features on a binary microstructure image.
+ * 
  * @author David Legland
  *
  */

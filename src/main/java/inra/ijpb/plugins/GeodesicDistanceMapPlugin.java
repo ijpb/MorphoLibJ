@@ -5,6 +5,7 @@ import ij.ImagePlus;
 import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
+import ij.process.ImageProcessor;
 import inra.ijpb.binary.ChamferWeights;
 import inra.ijpb.binary.geodesic.GeodesicDistanceMap;
 import inra.ijpb.binary.geodesic.GeodesicDistanceMapFloat;
@@ -143,10 +144,11 @@ public class GeodesicDistanceMapPlugin implements PlugIn {
 		}
 		
 		// Compute distance on specified images
-		ImagePlus result = calc.geodesicDistanceMap(mask, marker, newName);
+		ImageProcessor result = calc.geodesicDistanceMap(mask.getProcessor(), marker.getProcessor());
+		ImagePlus resultPlus = new ImagePlus(newName, result);
 				
 		// create result array
-		return new Object[]{newName, result};
+		return new Object[]{newName, resultPlus};
 	}
 	
 	/**
@@ -188,10 +190,11 @@ public class GeodesicDistanceMapPlugin implements PlugIn {
 		}
 		
 		// Compute distance on specified images
-		ImagePlus result = calc.geodesicDistanceMap(mask, marker, newName);
+		ImageProcessor result = calc.geodesicDistanceMap(mask.getProcessor(), marker.getProcessor());
+		ImagePlus resultPlus = new ImagePlus(newName, result);
 				
 		// create result array
-		return new Object[]{newName, result};
+		return new Object[]{newName, resultPlus};
 	}
 	
 	private static String createResultImageName(ImagePlus baseImage) {

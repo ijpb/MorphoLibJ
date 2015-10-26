@@ -76,6 +76,10 @@ public class GeodesicDistanceMapShort implements GeodesicDistanceMap {
 		this.maskLabel = maskLabel;
 	}
 
+	/**
+	 * @deprecated only the method using ImageProcessing should be called
+	 */
+	@Deprecated
 	@Override
 	public ImagePlus geodesicDistanceMap(ImagePlus mask, ImagePlus marker,
 			String newName) {
@@ -189,7 +193,9 @@ public class GeodesicDistanceMapShort implements GeodesicDistanceMap {
 	/**
 	 * Also specifies a label for mask. The distance will be propagated only on
 	 * pixels with mask value equal to mask label.
+	 * @deprecated 
 	 */
+	@Deprecated
 	public ImagePlus computeDistanceMap(ImagePlus mask, ImagePlus marker,
 			int label, String newName) {
 
@@ -203,7 +209,9 @@ public class GeodesicDistanceMapShort implements GeodesicDistanceMap {
 	/**
 	 * Also specifies a label for mask. The distance will be propagated only on
 	 * pixels with mask value equal to mask label.
+	 * @deprecated 
 	 */
+	@Deprecated
 	public ImageProcessor computeDistanceMap(ImageProcessor mask,
 			ImageProcessor marker, int label) {
 

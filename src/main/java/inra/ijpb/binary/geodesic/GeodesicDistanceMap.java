@@ -88,7 +88,10 @@ public interface GeodesicDistanceMap {
 
 	}
 
-	
+	/**
+	 * @deprecated only the method using ImageProcessing should be called
+	 */
+	@Deprecated
 	public ImagePlus geodesicDistanceMap(ImagePlus mask, ImagePlus marker,
 			String newName);
 
