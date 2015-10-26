@@ -2,7 +2,6 @@ package inra.ijpb.binary.geodesic;
 
 import static java.lang.Math.min;
 import ij.IJ;
-import ij.ImagePlus;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 
@@ -82,48 +81,6 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap
 	public void setMaskLabel(int maskLabel) 
 	{
 		this.maskLabel = maskLabel;
-	}
-
-	
-	/**
-	 * @deprecated replaced by geodesicDistanceMap(ImagePlus, ImagePlus, String)
-	 */
-	@Deprecated
-	public ImagePlus computeDistanceMap(ImagePlus mask, ImagePlus marker,
-			String newName) {
-		return geodesicDistanceMap(mask, marker, newName);
-	}
-
-	/**
-	 * @deprecated replaced by geodesicDistanceMap(ImagePlus, ImagePlus, String)
-	 */
-	@Deprecated
-	public ShortProcessor computeDistanceMap(ImageProcessor mask,
-			ImageProcessor marker) {
-		return geodesicDistanceMap(mask, marker);
-	}
-
-	/**
-	 * @deprecated only the method using ImageProcessing should be called
-	 */
-	@Deprecated
-	public ImagePlus geodesicDistanceMap(ImagePlus mask, ImagePlus marker,
-			String newName) {
-
-		// size of image
-		width = mask.getWidth();
-		height = mask.getHeight();
-
-		// get image processors
-		maskProc = mask.getProcessor();
-		ImageProcessor markerProc = marker.getProcessor();
-
-		// Compute distance map
-		ShortProcessor rp = geodesicDistanceMap(maskProc, markerProc);
-			
-		// Create image plus for storing the result
-		ImagePlus result = new ImagePlus(newName, rp);
-		return result;
 	}
 
 	/**
@@ -206,38 +163,6 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap
 		if (buffer.isInvertedLut())
 			buffer.invertLut();
 		return buffer;
-	}
-	
-	/**
-	 * Also specifies a label for mask. The distance will be propagated only on
-	 * pixels with mask value equal to mask label.
-	 * @deprecated 
-	 */
-	@Deprecated
-	public ImagePlus computeDistanceMap(ImagePlus mask, ImagePlus marker,
-			int label, String newName) {
-
-		this.maskLabel = label;
-		ImagePlus result = geodesicDistanceMap(mask, marker, newName);
-		this.maskLabel = DEFAULT_MASK_LABEL;
-
-		return result;
-	}
-
-	/**
-	 * Also specifies a label for mask. The distance will be propagated only on
-	 * pixels with mask value equal to mask label.
-	 * @deprecated 
-	 */
-	@Deprecated
-	public ImageProcessor computeDistanceMap(ImageProcessor mask,
-			ImageProcessor marker, int label) {
-
-		this.maskLabel = label;
-		ImageProcessor result = geodesicDistanceMap(mask, marker);
-		this.maskLabel = DEFAULT_MASK_LABEL;
-
-		return result;
 	}
 
 	private void forwardIteration() 

@@ -19,18 +19,17 @@ import inra.ijpb.binary.geodesic.GeodesicDistanceMapShort5x5;
  * @author dlegland
  *
  */
-public class GeodesicDistanceMapPlugin implements PlugIn {
-
-	
+public class GeodesicDistanceMapPlugin implements PlugIn
+{
 	/* (non-Javadoc)
 	 * @see ij.plugin.PlugIn#run(java.lang.String)
 	 */
 	@Override
-	public void run(String arg0) {
-		
+	public void run(String arg0) 
+	{
 		// Open a dialog to choose:
-		// - mask image
 		// - marker image
+		// - mask image
 		// - set of weights
 		int[] indices = WindowManager.getIDList();
 		if (indices==null) {
@@ -40,7 +39,8 @@ public class GeodesicDistanceMapPlugin implements PlugIn {
 		
 		// create the list of image names
 		String[] imageNames = new String[indices.length];
-		for (int i=0; i<indices.length; i++) {
+		for (int i=0; i<indices.length; i++) 
+		{
 			imageNames[i] = WindowManager.getImage(indices[i]).getTitle();
 		}
 		
@@ -73,35 +73,39 @@ public class GeodesicDistanceMapPlugin implements PlugIn {
 		boolean normalizeWeights = gd.getNextBoolean();
 
 		// check image types
-		if (maskImage.getType() != ImagePlus.GRAY8) {
-			IJ.showMessage("Mask image should be binary");
+		if (markerImage.getType() != ImagePlus.GRAY8) 
+		{
+			IJ.showMessage("Marker image should be binary");
 			return;
 		}
-		if (markerImage.getType() != ImagePlus.GRAY8) {
-			IJ.showMessage("Marker image should be binary");
+		if (maskImage.getType() != ImagePlus.GRAY8) 
+		{
+			IJ.showMessage("Mask image should be binary");
 			return;
 		}
 		
 		// Execute core of the plugin
-		
-		// init default weights
-		
 		String newName = createResultImageName(maskImage);
 		Object[] res;
-    	if (resultAsFloat) {
+    	if (resultAsFloat) 
+    	{
     		res = exec(markerImage, maskImage, newName, weights.getFloatWeights(), normalizeWeights);
-		} else {
+		}
+    	else
+		{
 			res = exec(markerImage, maskImage, newName, weights.getShortWeights(), normalizeWeights);
 		}
 
 		// show new image if needed
-		if (res!=null) {
+		if (res!=null) 
+		{
 			ImagePlus image = (ImagePlus) res[1];
 			image.show();
 		}
 	}
 		
-	public Object[] exec(ImagePlus marker, ImagePlus mask, String newName, float[] weights) {
+	public Object[] exec(ImagePlus marker, ImagePlus mask, String newName, float[] weights) 
+	{
 		return exec(marker, mask, newName, weights, true);
 	}
 	
@@ -110,17 +114,21 @@ public class GeodesicDistanceMapPlugin implements PlugIn {
 	 * particles, within the black phase.
 	 */
 	public Object[] exec(ImagePlus marker, ImagePlus mask, String newName,
-			float[] weights, boolean normalize) {
+			float[] weights, boolean normalize) 
+	{
 		// Check validity of parameters
-		if (marker == null) {
+		if (marker == null) 
+		{
 			throw new IllegalArgumentException("Marker image not specified");
 		}
-		if (mask == null) {
+		if (mask == null) 
+		{
 			throw new IllegalArgumentException("Mask image not specified");
 		}
 		if (newName == null)
 			newName = createResultImageName(mask);
-		if (weights == null) {
+		if (weights == null)
+		{
 			throw new IllegalArgumentException("Weights not specified");
 		}
 	
@@ -129,7 +137,8 @@ public class GeodesicDistanceMapPlugin implements PlugIn {
 		int height 	= mask.getHeight();
 		
 		// check input and mask have the same size
-		if (marker.getWidth() != width || marker.getHeight() != height) {
+		if (marker.getWidth() != width || marker.getHeight() != height) 
+		{
 			IJ.showMessage("Error",
 					"Input and marker images\nshould have the same size");
 			return null;
@@ -137,9 +146,12 @@ public class GeodesicDistanceMapPlugin implements PlugIn {
 		
 		// Initialize calculator
 		GeodesicDistanceMap calc;
-		if (weights.length == 2) {
+		if (weights.length == 2) 
+		{
 			calc = new GeodesicDistanceMapFloat(weights, normalize);
-		} else {
+		} 
+		else
+		{
 			calc = new GeodesicDistanceMapFloat5x5(weights, normalize);
 		}
 		
@@ -156,17 +168,21 @@ public class GeodesicDistanceMapPlugin implements PlugIn {
 	 * particles, within the black phase.
 	 */
 	public Object[] exec(ImagePlus marker, ImagePlus mask, String newName,
-			short[] weights, boolean normalize) {
+			short[] weights, boolean normalize) 
+	{
 		// Check validity of parameters
-		if (marker == null) {
+		if (marker == null) 
+		{
 			throw new IllegalArgumentException("Marker image not specified");
 		}
-		if (mask == null) {
+		if (mask == null)
+		{
 			throw new IllegalArgumentException("Mask image not specified");
 		}
 		if (newName == null)
 			newName = createResultImageName(mask);
-		if (weights == null) {
+		if (weights == null) 
+		{
 			throw new IllegalArgumentException("Weights not specified");
 		}
 	
@@ -175,7 +191,8 @@ public class GeodesicDistanceMapPlugin implements PlugIn {
 		int height 	= mask.getHeight();
 		
 		// check input and mask have the same size
-		if (marker.getWidth() != width || marker.getHeight() != height) {
+		if (marker.getWidth() != width || marker.getHeight() != height) 
+		{
 			IJ.showMessage("Error",
 					"Input and marker images\nshould have the same size");
 			return null;
@@ -183,9 +200,12 @@ public class GeodesicDistanceMapPlugin implements PlugIn {
 		
 		// Initialize calculator
 		GeodesicDistanceMap calc;
-		if (weights.length == 2) {
+		if (weights.length == 2) 
+		{
 			calc = new GeodesicDistanceMapShort(weights, normalize);
-		} else {
+		} 
+		else
+		{
 			calc = new GeodesicDistanceMapShort5x5(weights, normalize);
 		}
 		
@@ -197,7 +217,8 @@ public class GeodesicDistanceMapPlugin implements PlugIn {
 		return new Object[]{newName, resultPlus};
 	}
 	
-	private static String createResultImageName(ImagePlus baseImage) {
+	private static String createResultImageName(ImagePlus baseImage)
+	{
 		return baseImage.getShortTitle() + "-geoddist";
 	}
 }

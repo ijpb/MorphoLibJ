@@ -28,8 +28,8 @@ import java.awt.Color;
  * @author dlegland
  *
  */
-public class GeodesicDiameterPlugin implements PlugIn {
-
+public class GeodesicDiameterPlugin implements PlugIn
+{
 	// ====================================================
 	// Calling functions 
 	
@@ -37,20 +37,22 @@ public class GeodesicDiameterPlugin implements PlugIn {
 	 * @see ij.plugin.PlugIn#run(java.lang.String)
 	 */
 	@Override
-	public void run(String arg0) {
-		
+	public void run(String arg0) 
+	{
 		// Open a dialog to choose:
 		// - a label image
 		// - a set of weights
 		int[] indices = WindowManager.getIDList();
-		if (indices==null) {
+		if (indices==null)
+		{
 			IJ.error("No image", "Need at least one image to work");
 			return;
 		}
 		
 		// create the list of image names
 		String[] imageNames = new String[indices.length];
-		for (int i=0; i<indices.length; i++) {
+		for (int i=0; i<indices.length; i++)
+		{
 			imageNames[i] = WindowManager.getImage(indices[i]).getTitle();
 		}
 		
@@ -76,7 +78,8 @@ public class GeodesicDiameterPlugin implements PlugIn {
 		ChamferWeights weights = ChamferWeights.fromLabel(gd.getNextChoice());
 		// check image types
 		if (labelImage.getType() != ImagePlus.GRAY8
-				&& labelImage.getType() != ImagePlus.GRAY16) {
+				&& labelImage.getType() != ImagePlus.GRAY16)
+		{
 			IJ.showMessage("Input image should be a label image");
 			return;
 		}
@@ -86,14 +89,18 @@ public class GeodesicDiameterPlugin implements PlugIn {
 
 		Object[] results;
 		boolean useIntegers = false;
-		if (useIntegers) {
+		if (useIntegers) 
+		{
 			results = exec(labelImage, newName, weights.getShortWeights());
-		} else {
+		} 
+		else 
+		{
 			results = exec(labelImage, newName, weights.getFloatWeights());
 		}
 
 		// Check if results must be displayed on an image
-		if (gd.getNextBoolean()) {
+		if (gd.getNextBoolean()) 
+		{
 			// Extract result table
 			ResultsTable table = (ResultsTable) results[1];
 			
@@ -109,7 +116,8 @@ public class GeodesicDiameterPlugin implements PlugIn {
 	/**
 	 * Compute geodesic length of particles using floating point weights. 
 	 */
-	public Object[] exec(ImagePlus labels, String newName, float[] weights) {
+	public Object[] exec(ImagePlus labels, String newName, float[] weights) 
+	{
 		// Check validity of parameters
 		if (labels==null) 
 			return null;
@@ -122,7 +130,7 @@ public class GeodesicDiameterPlugin implements PlugIn {
 				weights);
 
 		// create string for indexing results
-		String tableName = removeImageExtension(labels.getTitle()) + ":Geodesics"; 
+		String tableName = labels.getShortTitle() + "-Geodesics"; 
 		
 		// show result
 		table.show(tableName);
@@ -134,7 +142,8 @@ public class GeodesicDiameterPlugin implements PlugIn {
 	/**
 	 * Compute geodesic length of particles using integer weights.
 	 */
-	public Object[] exec(ImagePlus labels, String newName, short[] weights) {
+	public Object[] exec(ImagePlus labels, String newName, short[] weights) 
+	{
 		// Check validity of parameters
 		if (labels==null) 
 			return null;
@@ -147,7 +156,7 @@ public class GeodesicDiameterPlugin implements PlugIn {
 				weights);
 		
 		// create string for indexing results
-		String tableName = removeImageExtension(labels.getTitle()) + ":Geodesics"; 
+		String tableName = labels.getShortTitle() + "-Geodesics"; 
 		
 		// show result
 		table.show(tableName);
@@ -160,7 +169,8 @@ public class GeodesicDiameterPlugin implements PlugIn {
 	 * Display the result of geodesic parameter extraction as overlay on a 
 	 * given image.
 	 */
-	public void showResultsAsOverlay(ImagePlus target, ResultsTable table) {
+	public void showResultsAsOverlay(ImagePlus target, ResultsTable table) 
+	{
 		
 		Overlay overlay = new Overlay();
 		
@@ -205,15 +215,15 @@ public class GeodesicDiameterPlugin implements PlugIn {
 	 * Compute geodesic length of particles, using imageProcessor as input and
 	 * weights as array of float
 	 */
-	public Object[] exec(ImageProcessor labels, float[] weights) {
-		
+	public Object[] exec(ImageProcessor labels, float[] weights) 
+	{
 		ResultsTable table = computeGeodesicLengthTable(labels, weights);
 		
 		// show result
-		table.show("Geodesic Lengths");
+		table.show("Geodesic Diameters");
 		
 		// return the created array
-		return new Object[]{"Geodesic Lengths", table};
+		return new Object[]{"Geodesic Diameters", table};
 	}
 	
 	/**
@@ -221,9 +231,9 @@ public class GeodesicDiameterPlugin implements PlugIn {
 	 * floating point values.
 	 */
 	private ResultsTable computeGeodesicLengthTable(ImageProcessor labels, 
-			float[] weights){
-		GeodesicDiameterFloat calc = 
-			new GeodesicDiameterFloat(weights);
+			float[] weights)
+	{
+		GeodesicDiameterFloat calc = new GeodesicDiameterFloat(weights);
 		ResultsTable table = calc.analyzeImage(labels);
 		return table;
 	}
@@ -233,31 +243,16 @@ public class GeodesicDiameterPlugin implements PlugIn {
 	 * integer values.
 	 */
 	private ResultsTable computeGeodesicLengthTable(ImageProcessor labels, 
-			short[] weights){
+			short[] weights)
+	{
 		GeodesicDiameterShort calc = 
 			new GeodesicDiameterShort(weights);
 		ResultsTable table = calc.analyzeImage(labels);
 		return table;
 	}
 
-	private static String createResultImageName(ImagePlus baseImage) {
-		String name = removeImageExtension(baseImage.getTitle());
-		return name + "-dist";
-	}
-
-	/**
-	 * Remove the extension of the filename if it belongs to a set of known
-	 * image formats.
-	 */
-	private static String removeImageExtension(String name) {
-		if (name.endsWith(".tif"))
-			name = name.substring(0, name.length()-4);
-		if (name.endsWith(".png"))
-			name = name.substring(0, name.length()-4);
-		if (name.endsWith(".bmp"))
-			name = name.substring(0, name.length()-4);
-		if (name.endsWith(".mhd"))
-			name = name.substring(0, name.length()-4);
-		return name;
+	private static String createResultImageName(ImagePlus baseImage) 
+	{
+		return baseImage.getShortTitle() + "-diam";
 	}
 }

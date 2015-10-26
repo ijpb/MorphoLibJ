@@ -184,56 +184,6 @@ public class GeodesicDistanceMapFloat5x5 implements GeodesicDistanceMap
 
 	}
 
-	/**
-	 * @deprecated replaced by geodesicDistanceMap(ImagePlus, ImagePlus, String)
-	 */
-	@Deprecated
-	public ImagePlus computeDistanceMap(ImagePlus mask, ImagePlus marker,
-			String newName) {
-		return geodesicDistanceMap(mask, marker, newName);
-	}
-
-	/**
-	 * @deprecated replaced by geodesicDistanceMap(ImageProcessor, ImageProcessor)
-	 */
-	@Deprecated
-	public FloatProcessor computeDistanceMap(ImageProcessor mask,
-			ImageProcessor marker) {
-		return geodesicDistanceMap(mask, marker);
-	}
-
-	/**
-	 * Also specifies a label for mask. The distance will be propagated only on
-	 * pixels with mask value equal to mask label.
-	 * @deprecated 
-	 */
-	@Deprecated
-	public ImagePlus computeDistanceMap(ImagePlus mask, ImagePlus marker,
-			int label, String newName) {
-
-		this.maskLabel = label;
-		ImagePlus result = computeDistanceMap(mask, marker, newName);
-		this.maskLabel = DEFAULT_MASK_LABEL;
-
-		return result;
-	}
-
-	/**
-	 * Also specifies a label for mask. The distance will be propagated only on
-	 * pixels with mask value equal to mask label.
-	 * @deprecated 
-	 */
-	@Deprecated
-	public ImageProcessor computeDistanceMap(ImageProcessor mask,
-			ImageProcessor marker, int label) {
-
-		this.maskLabel = label;
-		ImageProcessor result = computeDistanceMap(mask, marker);
-		this.maskLabel = DEFAULT_MASK_LABEL;
-
-		return result;
-	}
-
 	private void forwardIteration() 
 	{
 		// variables declaration
