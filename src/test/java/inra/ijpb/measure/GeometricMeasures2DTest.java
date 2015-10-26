@@ -184,10 +184,10 @@ public class GeometricMeasures2DTest
 	}
 	
 	/**
-	 * Test method for {@link ijt.measure.geometric.GeometricMeasures2D#maxInscribedDisk(ij.process.ImageProcessor)}.
+//	 * Test method for {@link ijt.measure.geometric.GeometricMeasures2D#maxInscribedCircle(ij.process.ImageProcessor)}.
 	 */
 	@Test
-	public final void testMaxInscribedDisk() 
+	public final void testMaxInscribedCircle() 
 	{
 		ImageProcessor image = new ByteProcessor(14, 9);
 		image.set(1, 1, 1);
@@ -195,12 +195,12 @@ public class GeometricMeasures2DTest
 		fillRect(image, 1, 1+3, 4, 4+3, 3); // radius 4
 		fillRect(image, 6, 6+6, 1, 1+6, 4); // radius 7
 		
-		ResultsTable table = GeometricMeasures2D.maxInscribedDisk(image);
+		ResultsTable table = GeometricMeasures2D.maxInscribedCircle(image);
 		
-		assertEquals(1, table.getValue("Radius", 0), .2);
-		assertEquals(1, table.getValue("Radius", 1), .2);
-		assertEquals(2, table.getValue("Radius", 2), .2);
-		assertEquals(4, table.getValue("Radius", 3), .2);
+		assertEquals(1, table.getValue("Radius", 0), .1);
+		assertEquals(1, table.getValue("Radius", 1), .1);
+		assertEquals(2, table.getValue("Radius", 2), .1);
+		assertEquals(4, table.getValue("Radius", 3), .1);
 	}
 
 	private static final void fillRect(ImageProcessor image, int xmin,

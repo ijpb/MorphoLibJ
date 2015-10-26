@@ -1061,7 +1061,7 @@ public class GeometricMeasures2D
 
 		return table;
 	}
-	
+
 	/**
 	 * Radius of maximum inscribed disk of each particle. Particles must be
 	 * disjoint.
@@ -1069,7 +1069,20 @@ public class GeometricMeasures2D
 	 * @return a ResultsTable with as many rows as the number of unique labels
 	 *         in label image, and columns "Label", "xi", "yi" and "Radius".
 	 */
-    public final static ResultsTable maxInscribedDisk(ImageProcessor labelImage)
+    public final static ResultsTable maxInscribedCircle(ImageProcessor labelImage)
+    {
+    	return maxInscribedCircle(labelImage, new double[]{1, 1});
+    }
+    
+	/**
+	 * Radius of maximum inscribed disk of each particle. Particles must be
+	 * disjoint.
+	 * 
+	 * @return a ResultsTable with as many rows as the number of unique labels
+	 *         in label image, and columns "Label", "xi", "yi" and "Radius".
+	 */
+    public final static ResultsTable maxInscribedCircle(ImageProcessor labelImage, 
+    		double[] resol)
     {
     	// compute max label within image
     	int[] labels = LabelImages.findAllLabels(labelImage);
@@ -1093,9 +1106,9 @@ public class GeometricMeasures2D
 			// add an entry to the resulting data table
 			table.incrementCounter();
 			table.addValue("Label", labels[i]);
-			table.addValue("xi", posCenter[i].x);
-			table.addValue("yi", posCenter[i].y);
-			table.addValue("Radius", radii[i]);
+			table.addValue("xi", posCenter[i].x * resol[0]);
+			table.addValue("yi", posCenter[i].y * resol[1]);
+			table.addValue("Radius", radii[i] * resol[0]);
 		}
 
 		return table;

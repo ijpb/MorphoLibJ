@@ -18,20 +18,13 @@ import inra.ijpb.measure.GeometricMeasures2D;
 
 import java.awt.Color;
 
-public class MaxInscribedDiskPlugin implements PlugIn 
+public class MaxInscribedCirclePlugin implements PlugIn 
 {
     // ====================================================
     // Global Constants
 
     // ====================================================
     // Class variables
-    
-   /**
-     * When this options is set to true, information messages are displayed on
-     * the console, and the number of counts for each direction is included in
-     * results table. 
-     */
-    public boolean debug  = false;
     
     // ====================================================
     // Calling functions 
@@ -60,7 +53,7 @@ public class MaxInscribedDiskPlugin implements PlugIn
 		String selectedImageName = IJ.getImage().getTitle();
 
 		// create the dialog
-		GenericDialog gd = new GenericDialog("Geodesic Lengths");
+		GenericDialog gd = new GenericDialog("Max. Inscribed Circle");
 		gd.addChoice("Label Image:", imageNames, selectedImageName);
 		// Set Chessknight weights as default
 		gd.addChoice("Distances", ChamferWeights.getAllLabels(), 
@@ -97,7 +90,7 @@ public class MaxInscribedDiskPlugin implements PlugIn
         
         // Display plugin result
 		// create string for indexing results
-		String tableName = labelImage.getShortTitle() + "-MaxInscribedDisk"; 
+		String tableName = labelImage.getShortTitle() + "-MaxInscribedCircle"; 
     
 		// show results
 		((ResultsTable) results[1]).show(tableName);
@@ -111,7 +104,7 @@ public class MaxInscribedDiskPlugin implements PlugIn
 			
 			// New image for displaying geometric overlays
 			ImagePlus resultImage = WindowManager.getImage(resultImageIndex + 1);
-			showResultsAsOverlay(resultImage, table);
+			showResultsAsOverlay(resultImage, table, getPixelSize(labelImage));
 		}
 	}
 	   
@@ -124,15 +117,21 @@ public class MaxInscribedDiskPlugin implements PlugIn
         if (imagePlus==null) 
             return null;
 
-        if (debug)
-        {
-        	System.out.println("Compute maximum inscribed disk on image '" 
-        			+ imagePlus.getTitle());
-        }
-        
         ImageProcessor image = imagePlus.getProcessor();
         
         // Extract spatial calibration
+        double[] resol = getPixelSize(imagePlus);
+
+        ResultsTable results = GeometricMeasures2D.maxInscribedCircle(image, 
+        		resol);
+        
+		// return the created array
+		return new Object[]{"Morphometry", results};
+    }
+    
+    private static final double[] getPixelSize(ImagePlus imagePlus)
+    {
+    	// Extract spatial calibration
         Calibration cal = imagePlus.getCalibration();
         double[] resol = new double[]{1, 1};
         if (cal.scaled()) 
@@ -140,19 +139,14 @@ public class MaxInscribedDiskPlugin implements PlugIn
         	resol[0] = cal.pixelWidth;
         	resol[1] = cal.pixelHeight;
         }
-
-        // TODO: convert results in user unit
-        ResultsTable results = GeometricMeasures2D.maxInscribedDisk(image);
-        
-		// return the created array
-		return new Object[]{"Morphometry", results};
+        return resol;
     }
-    
 	/**
 	 * Display the result of maximal inscribed circle extraction as overlay on
 	 * a given image.
 	 */
-	private void showResultsAsOverlay(ImagePlus target, ResultsTable table) 
+	private void showResultsAsOverlay(ImagePlus target, ResultsTable table,
+			double[] resol)	
 	{
 		Overlay overlay = new Overlay();
 		
@@ -161,10 +155,10 @@ public class MaxInscribedDiskPlugin implements PlugIn
 		int count = table.getCounter();
 		for (int i = 0; i < count; i++) 
 		{
-			// Coordinates of inscribed circle
-			double xi = table.getValue("xi", i);
-			double yi = table.getValue("yi", i);
-			double ri = table.getValue("Radius", i);
+			// Coordinates of inscribed circle, in pixel coordinates
+			double xi = table.getValue("xi", i) / resol[0];
+			double yi = table.getValue("yi", i) / resol[1];
+			double ri = table.getValue("Radius", i) / resol[0];
 			
 			// draw inscribed circle
 			int width = (int) Math.round(2 * ri);
