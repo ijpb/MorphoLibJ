@@ -7,9 +7,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.sqrt;
 import ij.IJ;
-import ij.ImageStack;
 import ij.measure.ResultsTable;
-import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.label.LabelImages;
@@ -1065,9 +1063,12 @@ public class GeometricMeasures2D
 	}
 	
 	/**
-     * Radius of maximum inscribed disk of each particle.
-     * Particles must be disjoint.
-     */
+	 * Radius of maximum inscribed disk of each particle. Particles must be
+	 * disjoint.
+	 * 
+	 * @return a ResultsTable with as many rows as the number of unique labels
+	 *         in label image, and columns "Label", "xi", "yi" and "Radius".
+	 */
     public final static ResultsTable maxInscribedDisk(ImageProcessor labelImage)
     {
     	// compute max label within image
@@ -1083,7 +1084,7 @@ public class GeometricMeasures2D
 		// Extract position of maxima
 		Point[] posCenter;
 		posCenter = findPositionOfMaxValues(distanceMap, labelImage, labels);
-		float[] radii = findMaxValues(distanceMap, labelImage, labels);
+		float[] radii = getValues(distanceMap, posCenter);
 
 		// Create result data table
 		ResultsTable table = new ResultsTable();
@@ -1095,19 +1096,26 @@ public class GeometricMeasures2D
 			table.addValue("xi", posCenter[i].x);
 			table.addValue("yi", posCenter[i].y);
 			table.addValue("Radius", radii[i]);
-			
 		}
 
 		return table;
     }
     
 	/**
-	 * Find one position for each label. 
+	 * Find one position of maximum value within each label.
+	 * 
+	 * @param image
+	 *            the input image containing the value (for example a distance 
+	 *            map)
+	 * @param labelImage
+	 *            the input image containing label of particles
+	 * @param labels
+	 *            the set of labels contained in the label image
+	 *            
 	 */
-    // TODO: merge findPositionOfMaxValues and findMaxValues ?
-	private final static Point[] findPositionOfMaxValues(ImageProcessor image, 
-			ImageProcessor labelImage, int[] labels) {
-		
+	private final static Point[] findPositionOfMaxValues(ImageProcessor image,
+			ImageProcessor labelImage, int[] labels)
+	{
 		int width 	= labelImage.getWidth();
 		int height 	= labelImage.getHeight();
 		
@@ -1115,18 +1123,23 @@ public class GeometricMeasures2D
 		int nbLabel = labels.length;
 		int maxLabel = 0;
 		for (int i = 0; i < nbLabel; i++)
+		{
 			maxLabel = Math.max(maxLabel, labels[i]);
+		}
 		
 		// init index of each label
 		// to make correspondence between label value and label index
 		int[] labelIndex = new int[maxLabel+1];
 		for (int i = 0; i < nbLabel; i++)
+		{
 			labelIndex[labels[i]] = i;
-				
+		}
+		
 		// Init Position and value of maximum for each label
 		Point[] posMax 	= new Point[nbLabel];
 		int[] maxValues = new int[nbLabel];
-		for (int i = 0; i < nbLabel; i++) {
+		for (int i = 0; i < nbLabel; i++) 
+		{
 			maxValues[i] = -1;
 			posMax[i] = new Point(-1, -1);
 		}
@@ -1136,8 +1149,10 @@ public class GeometricMeasures2D
 		int index;
 		
 		// iterate on image pixels
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
+		for (int y = 0; y < height; y++) 
+		{
+			for (int x = 0; x < width; x++) 
+			{
 				int label = labelImage.get(x, y);
 				
 				// do not process pixels that do not belong to particle
@@ -1148,7 +1163,8 @@ public class GeometricMeasures2D
 				
 				// update values and positions
 				value = image.get(x, y);
-				if (value > maxValues[index]) {
+				if (value > maxValues[index])
+				{
 					posMax[index].setLocation(x, y);
 					maxValues[index] = value;
 				}
@@ -1157,57 +1173,21 @@ public class GeometricMeasures2D
 				
 		return posMax;
 	}
-
+	
 	/**
-	 * Find maximum value of each label
+	 * Get values in input image for each specified position.
 	 */
-	private final static float[] findMaxValues(ImageProcessor image, 
-			ImageProcessor labelImage, int[] labels) {
+	private final static float[] getValues(ImageProcessor image, 
+			Point[] positions) 
+	{
+		float[] values = new float[positions.length];
 		
-		int width 	= labelImage.getWidth();
-		int height 	= labelImage.getHeight();
-		
-		// Compute value of greatest label
-		int nbLabel = labels.length;
-		int maxLabel = 0;
-		for (int i = 0; i < nbLabel; i++)
-			maxLabel = Math.max(maxLabel, labels[i]);
-		
-		// init index of each label
-		// to make correspondence between label value and label index
-		int[] labelIndex = new int[maxLabel+1];
-		for (int i = 0; i < nbLabel; i++)
-			labelIndex[labels[i]] = i;
-				
-		// Init Position and value of maximum for each label
-		float[] maxValues = new float[nbLabel];
-		for (int i = 0; i < nbLabel; i++)
-			maxValues[i] = Float.MIN_VALUE;
-		
-		// store current value
-		float value;
-		int index;
-		
-		// iterate on image pixels
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				int label = labelImage.get(x, y);
-				
-				// do not process pixels that do not belong to particle
-				if (label == 0)
-					continue;
-
-				index = labelIndex[label];
-				
-				// update values and positions
-				value = image.getf(x, y);
-				if (value > maxValues[index])
-					maxValues[index] = value;
-			}
+		// iterate on positions
+		for (int i = 0; i < positions.length; i++) 
+		{
+			values[i] = image.getf(positions[i].x, positions[i].y);
 		}
 				
-		return maxValues;
+		return values;
 	}
-
-
 }

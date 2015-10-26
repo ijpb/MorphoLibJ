@@ -16,17 +16,20 @@ import org.junit.Test;
  * @author David Legland
  *
  */
-public class GeometricMeasures2DTest {
-
+public class GeometricMeasures2DTest 
+{
 	/**
 	 * Test method for {@link ijt.measure.geometric.GeometricMeasures2D#croftonPerimeter_D2(ij.process.ImageProcessor, double[])}.
 	 */
 	@Test
-	public final void testAnalyzeRegions_D2() {
+	public final void testAnalyzeRegions_D2() 
+	{
 		// initialize image with a square of side 4 in the middle
 		ImageProcessor image = new ByteProcessor(10, 10);
-		for (int y = 3; y < 7; y++) {
-			for (int x = 3; x < 7; x++) {
+		for (int y = 3; y < 7; y++) 
+		{
+			for (int x = 3; x < 7; x++) 
+			{
 				image.set(x, y, 255);
 			}
 		}
@@ -45,7 +48,8 @@ public class GeometricMeasures2DTest {
 	 * Test method for {@link ijt.measure.geometric.GeometricMeasures2D#croftonPerimeter_D2(ij.process.ImageProcessor, double[])}.
 	 */
 	@Test
-	public final void testAnalyzeRegions_DiskR8_D2() {
+	public final void testAnalyzeRegions_DiskR8_D2() 
+	{
 		ImageProcessor image = createDiskR8Image();
 
 		double[] resol = new double[]{1, 1};
@@ -67,7 +71,8 @@ public class GeometricMeasures2DTest {
 	 * Test method for {@link ijt.measure.geometric.GeometricMeasures2D#croftonPerimeter_D2(ij.process.ImageProcessor, double[])}.
 	 */
 	@Test
-	public final void testAnalyzeRegions_DiskR8_D4() {
+	public final void testAnalyzeRegions_DiskR8_D4() 
+	{
 		ImageProcessor image = createDiskR8Image();
 
 		double[] resol = new double[]{1, 1};
@@ -87,7 +92,8 @@ public class GeometricMeasures2DTest {
 	 * Test method for {@link ijt.measure.geometric.GeometricMeasures2D#croftonPerimeter_D2(ij.process.ImageProcessor, double[])}.
 	 */
 	@Test
-	public final void testCroftonPerimeterD2_DiskR8() {
+	public final void testCroftonPerimeterD2_DiskR8()
+	{
 		ImageProcessor image = createDiskR8Image();
 
 		double[] resol = new double[]{1, 1};
@@ -105,10 +111,11 @@ public class GeometricMeasures2DTest {
 	 * in expected perimeter equal to 50.2655. The center of the disk is 
 	 * slightly shifted to reduce discretization artifacts.
 	 * 
-	 * Test method for {@link ijt.measure.geometric.GeometricMeasures2D#croftonPerimeter_D2(ij.process.ImageProcessor, double[])}.
+	 * Test method for {@link ijt.measure.geometric.GeometricMeasures2D#croftonPerimeterD4(ij.process.ImageProcessor, double[])}.
 	 */
 	@Test
-	public final void testCroftonPerimeterD4_DiskR8() {
+	public final void testCroftonPerimeterD4_DiskR8() 
+	{
 		ImageProcessor image = createDiskR8Image();
 
 		double[] resol = new double[]{1, 1};
@@ -121,10 +128,13 @@ public class GeometricMeasures2DTest {
 		assertEquals(exp, perims[0], exp * .052);
 	}
 
-	private final ImageProcessor createDiskR8Image() {
+	private final ImageProcessor createDiskR8Image() 
+	{
 		ImageProcessor image = new ByteProcessor(20, 20);
-		for (int y = 0; y < 20; y++) {
-			for (int x = 0; x < 20; x++) {
+		for (int y = 0; y < 20; y++) 
+		{
+			for (int x = 0; x < 20; x++)
+			{
 				double d = Math.hypot(x - 10.12, y - 10.23);
 				if (d <= 8) 
 					image.set(x, y, 255);
@@ -137,11 +147,14 @@ public class GeometricMeasures2DTest {
 	 * Test method for {@link ijt.measure.geometric.GeometricMeasures2D#particleArea(ij.process.ImageProcessor, int)}.
 	 */
 	@Test
-	public final void testParticleArea() {
+	public final void testParticleArea() 
+	{
 		// initialize image with a square of side 4 in the middle
 		ImageProcessor image = new ByteProcessor(10, 10);
-		for (int y = 3; y < 7; y++) {
-			for (int x = 3; x < 7; x++) {
+		for (int y = 3; y < 7; y++)
+		{
+			for (int x = 3; x < 7; x++)
+			{
 				image.set(x, y, 255);
 			}
 		}
@@ -151,10 +164,11 @@ public class GeometricMeasures2DTest {
 	}
 	
 	/**
-	 * Test method for {@link ijt.measure.geometric.GeometricMeasures2D#particleArea(ij.process.ImageProcessor, int)}.
+	 * Test method for {@link ijt.measure.geometric.GeometricMeasures2D#inertiaEllipse(ij.process.ImageProcessor)}.
 	 */
 	@Test
-	public final void testInertiaEllipse() {
+	public final void testInertiaEllipse() 
+	{
 		String fileName = getClass().getResource("/files/ellipse_A40_B20_T30.tif").getFile();
 		ImagePlus imagePlus = IJ.openImage(fileName);
 		assertNotNull(imagePlus);
@@ -167,5 +181,38 @@ public class GeometricMeasures2DTest {
 		assertEquals(40, table.getValue("Radius1", 0), .2);
 		assertEquals(20, table.getValue("Radius2", 0), .2);
 		assertEquals(30, table.getValue("Orientation", 0), 1);
+	}
+	
+	/**
+	 * Test method for {@link ijt.measure.geometric.GeometricMeasures2D#maxInscribedDisk(ij.process.ImageProcessor)}.
+	 */
+	@Test
+	public final void testMaxInscribedDisk() 
+	{
+		ImageProcessor image = new ByteProcessor(14, 9);
+		image.set(1, 1, 1);
+		fillRect(image, 3, 4, 1, 2, 2);		// radius 2
+		fillRect(image, 1, 1+3, 4, 4+3, 3); // radius 4
+		fillRect(image, 6, 6+6, 1, 1+6, 4); // radius 7
+		
+		ResultsTable table = GeometricMeasures2D.maxInscribedDisk(image);
+		
+		assertEquals(1, table.getValue("Radius", 0), .2);
+		assertEquals(1, table.getValue("Radius", 1), .2);
+		assertEquals(2, table.getValue("Radius", 2), .2);
+		assertEquals(4, table.getValue("Radius", 3), .2);
+	}
+
+	private static final void fillRect(ImageProcessor image, int xmin,
+			int xmax, int ymin, int ymax, double value)
+	{
+		for (int y = ymin; y <= ymax; y++)
+		{
+			for (int x = xmin; x <= xmax; x++) 
+			{
+				image.setf(x, y, (float) value);
+			}
+		}
+		
 	}
 }
