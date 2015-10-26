@@ -7,7 +7,9 @@ import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 
 /**
- * Compute Chamfer distances using short array for storing result.
+ * Computation of Chamfer geodesic distances using short integer array for
+ * storing result, and 5-by-5 chamfer masks.
+ * 
  * The maximum propagated distance is limited to Short.MAX_VALUE.
  * 
  * All computations are performed using integers, results are stored as
@@ -16,8 +18,8 @@ import ij.process.ShortProcessor;
  * @author David Legland
  * 
  */
-public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
-
+public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap 
+{
 	private final static int DEFAULT_MASK_LABEL = 255;
 
 	short[] weights = new short[]{5, 7, 11};
@@ -45,11 +47,13 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
 	
 	boolean modif;
 
-	public GeodesicDistanceMapShort5x5(short[] weights) {
+	public GeodesicDistanceMapShort5x5(short[] weights)
+	{
 		this.weights = weights;
 	}
 
-	public GeodesicDistanceMapShort5x5(short[] weights, boolean normalizeMap) {
+	public GeodesicDistanceMapShort5x5(short[] weights, boolean normalizeMap) 
+	{
 		this.weights = weights;
 		this.normalizeMap = normalizeMap;
 	}
@@ -57,22 +61,26 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
 	/**
 	 * @return the backgroundValue
 	 */
-	public short getBackgroundValue() {
+	public short getBackgroundValue() 
+	{
 		return backgroundValue;
 	}
 
 	/**
 	 * @param backgroundValue the backgroundValue to set
 	 */
-	public void setBackgroundValue(short backgroundValue) {
+	public void setBackgroundValue(short backgroundValue) 
+	{
 		this.backgroundValue = backgroundValue;
 	}
 	
-	public int getMaskLabel() {
+	public int getMaskLabel() 
+	{
 		return maskLabel;
 	}
 
-	public void setMaskLabel(int maskLabel) {
+	public void setMaskLabel(int maskLabel) 
+	{
 		this.maskLabel = maskLabel;
 	}
 
@@ -85,7 +93,6 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
 			String newName) {
 		return geodesicDistanceMap(mask, marker, newName);
 	}
-
 
 	/**
 	 * @deprecated replaced by geodesicDistanceMap(ImagePlus, ImagePlus, String)
@@ -126,9 +133,9 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
 	 * The function returns a new ShortProcessor the same size as the input,
 	 * with values greater or equal to zero. 
 	 */
-	public ShortProcessor geodesicDistanceMap(ImageProcessor mask,
-			ImageProcessor marker) {
-
+	public ShortProcessor geodesicDistanceMap(ImageProcessor marker, 
+			ImageProcessor mask) 
+	{
 		// size of image
 		width = mask.getWidth();
 		height = mask.getHeight();
@@ -142,15 +149,18 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
 		buffer.fill();
 
 		// initialize empty image with either 0 (foreground) or Inf (background)
-		for (int i = 0; i < width; i++) {
-			for (int j = 0; j < height; j++) {
+		for (int i = 0; i < width; i++) 
+		{
+			for (int j = 0; j < height; j++) 
+			{
 				int val = marker.get(i, j) & 0x00ff;
 				buffer.set(i, j, val == 0 ? backgroundValue : 0);
 			}
 		}
 
 		int iter = 0;
-		do {
+		do 
+		{
 			modif = false;
 
 			// forward iteration
@@ -163,12 +173,16 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
 
 			// Iterate while pixels have been modified
 			iter++;
-		} while (modif);
+		}
+		while (modif);
 
 		// Normalize values by the first weight
-		if (this.normalizeMap) {
-			for (int i = 0; i < width; i++) {
-				for (int j = 0; j < height; j++) {
+		if (this.normalizeMap) 
+		{
+			for (int i = 0; i < width; i++) 
+			{
+				for (int j = 0; j < height; j++)
+				{
 					buffer.set(i,j, buffer.get(i, j) / this.weights[0]);
 				}
 			}
@@ -177,10 +191,13 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
 		// Compute max value within the mask
 		float maxVal = 0;
 		for (int i = 0; i < width; i++)
-			for (int j = 0; j < height; j++) {
+		{
+			for (int j = 0; j < height; j++)
+			{
 				if (maskProc.getPixel(i, j) != 0)
 					maxVal = Math.max(maxVal, buffer.get(i, j));
 			}
+		}
 		// System.out.println("max value: " + Float.toString(maxVal));
 
 		// update and return resulting Image processor
@@ -223,7 +240,8 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
 		return result;
 	}
 
-	private void forwardIteration() {
+	private void forwardIteration() 
+	{
 		// variables declaration
 		int ortho;
 		int diago;
@@ -231,7 +249,8 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
 		int newVal;
 		
 		// Process first line: consider only the pixel on the left
-		for (int i = 1; i < width; i++) {
+		for (int i = 1; i < width; i++) 
+		{
 			if (maskProc.get(i, 0) != maskLabel)
 				continue;
 			ortho = buffer.get(i - 1, 0) + weights[0];
@@ -239,7 +258,8 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
 		}
 
 		// process first pixel of second line: up, upright, and (+2,-1)
-		if (maskProc.get(0, 1) == maskLabel) {
+		if (maskProc.get(0, 1) == maskLabel) 
+		{
 			ortho = buffer.get(0, 0) + weights[0];
 			diago = buffer.get(1, 0) + weights[1];
 			diag2 = buffer.get(2, 0) + weights[2];
@@ -248,7 +268,8 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
 		}
 		
 		// process second pixel of second line: up, left, upleft and upright, and (+2,-1)
-		if (maskProc.get(1, 1) == maskLabel) {
+		if (maskProc.get(1, 1) == maskLabel) 
+		{
 			ortho = min(buffer.get(0, 1), buffer.get(1, 0));
 			diago = min(buffer.get(0, 0), buffer.get(2, 0));
 			diag2 = buffer.get(3, 0);
@@ -258,7 +279,8 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
 
 		// Second line, regular pixels: consider only the pixels on the left
 		// and from the first line
-		for (int i = 2; i < width - 2; i++) {
+		for (int i = 2; i < width - 2; i++) 
+		{
 			if (maskProc.get(i, 1) != maskLabel)
 				continue;
 			ortho = min(buffer.get(i - 1, 1), buffer.get(i, 0));
@@ -269,7 +291,8 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
 		}
 		
 		// last pixel of second line
-		if (maskProc.get(width-1, 1) == maskLabel) {
+		if (maskProc.get(width-1, 1) == maskLabel) 
+		{
 			ortho = min(buffer.get(width-2, 1), buffer.get(width-1, 0));
 			diago = buffer.get(1, 0);
 			diag2 = buffer.get(2, 0);
@@ -279,10 +302,12 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
 
 		
 		// Process all other lines
-		for (int j = 2; j < height; j++) {
+		for (int j = 2; j < height; j++) 
+		{
 			// process first pixel of current line: consider pixels up and
 			// two pixels upright
-			if (maskProc.get(0, j) == maskLabel) {
+			if (maskProc.get(0, j) == maskLabel) 
+			{
 				ortho = buffer.get(0, j - 1);
 				diago = buffer.get(1, j - 1);
 				diag2 = min(buffer.get(2, j - 1), buffer.get(1, j - 2));
@@ -291,7 +316,8 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
 			}
 
 			//  process second pixel of regular line 
-			if (maskProc.get(1, j) == maskLabel) {
+			if (maskProc.get(1, j) == maskLabel) 
+			{
 				ortho = min(buffer.get(0, j), buffer.get(1, j - 1));
 				diago = min(buffer.get(0, j - 1), buffer.get(2, j - 1));
 				diag2 = min3(buffer.get(0, j - 2), buffer.get(2, j - 2), buffer.get(3, j - 1));
@@ -300,7 +326,8 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
 			}
 
 			// Process pixels in the middle of the line
-			for (int i = 2; i < width - 2; i++) {
+			for (int i = 2; i < width - 2; i++)
+			{
 				// process only pixels inside structure
 				if (maskProc.get(i, j) != maskLabel)
 					continue;
@@ -320,7 +347,8 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
 			}
 
 			// penultimate pixel 
-			if (maskProc.getPixel(width - 2, j) == maskLabel) {
+			if (maskProc.getPixel(width - 2, j) == maskLabel)
+			{
 				ortho =  min(buffer.get(width - 3, j), buffer.get(width - 2, j - 1));
 				diago = min(buffer.get(width - 3, j - 1), buffer.get(width - 1, j - 1));
 				diag2 = min3(
@@ -332,7 +360,8 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
 			
 			// process last pixel of current line: consider pixels left,
 			// up-left, and up
-			if (maskProc.getPixel(width - 1, j) == maskLabel) {
+			if (maskProc.getPixel(width - 1, j) == maskLabel)
+			{
 				ortho =  min(buffer.get(width - 2, j), buffer.get(width - 1, j - 1));
 				diago = buffer.get(width - 2, j - 1);
 				diag2 = min(buffer.get(width - 3, j - 1), buffer.get(width - 2, j - 2));
@@ -343,7 +372,8 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
 		} // end of forward iteration
 	}
 
-	private void backwardIteration() {
+	private void backwardIteration()
+	{
 		// variables declaration
 		int ortho;
 		int diago;
@@ -351,7 +381,8 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
 		int newVal;
 		
 		// Process last line: consider only the pixel just after (on the right)
-		for (int i = width - 2; i >= 0; i--) {
+		for (int i = width - 2; i >= 0; i--) 
+		{
 			if (maskProc.getPixel(i, height - 1) != maskLabel)
 				continue;
 
@@ -360,7 +391,8 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
 		}
 
 		// last pixel of penultimate line: consider the 3 pixels below
-		if (maskProc.getPixel(width - 1, height - 2) == maskLabel) {
+		if (maskProc.getPixel(width - 1, height - 2) == maskLabel)
+		{
 			ortho = buffer.get(width - 1, height - 1);
 			diago = buffer.get(width - 2, height - 1);
 			diag2 = buffer.get(width - 3, height - 1);
@@ -369,7 +401,8 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
 		}
 
 		// penultimate pixel of penultimate line: consider right pixel, and the 4 pixels below
-		if (maskProc.getPixel(width - 2, height - 2) == maskLabel) {
+		if (maskProc.getPixel(width - 2, height - 2) == maskLabel) 
+		{
 			ortho = min(buffer.get(width - 1, height - 2), buffer.get(width - 2, height - 1));
 			diago = min(buffer.get(width - 1, height - 1), buffer.get(width - 3, height - 1));
 			diag2 = buffer.get(width - 4, height - 1);
@@ -378,7 +411,8 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
 		}
 
 		// Process regular pixels of penultimate line
-		for (int i = width - 3; i > 1; i--) {
+		for (int i = width - 3; i > 1; i--) 
+		{
 			if (maskProc.getPixel(i, height - 2) != maskLabel)
 				continue;
 
@@ -395,11 +429,12 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
 		}
 
 		// Process regular lines
-		for (int j = height - 3; j >= 0; j--) {
-
+		for (int j = height - 3; j >= 0; j--)
+		{
 			// process last pixel of the current line: consider pixels
 			// down and down-left
-			if (maskProc.getPixel(width - 1, j) == maskLabel) {
+			if (maskProc.getPixel(width - 1, j) == maskLabel)
+			{
 				ortho = buffer.get(width - 1, j + 1);
 				diago = buffer.get(width - 2, j + 1);
 				newVal = min(ortho + weights[0], diago + weights[1]);
@@ -408,8 +443,8 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
 
 		
 			// process penultimate pixel of current line
-			if (maskProc.getPixel(width - 2, j) == maskLabel) {
-
+			if (maskProc.getPixel(width - 2, j) == maskLabel) 
+			{
 				// minimum distance of neighbor pixels
 				ortho = min(buffer.get(width - 1, j), buffer.get(width - 2, j + 1));
 				diago = min(buffer.get(width - 3, j + 1), buffer.get(width - 1, j + 1));
@@ -426,7 +461,8 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
 			}
 
 			// Process pixels in the middle of the current line
-			for (int i = width - 3; i > 1; i--) {
+			for (int i = width - 3; i > 1; i--)
+			{
 				// process only pixels inside structure
 				if (maskProc.getPixel(i, j) != maskLabel)
 					continue;
@@ -447,7 +483,8 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
 
 			// process second pixel of current line: consider pixels right,
 			// down-right and down
-			if (maskProc.getPixel(1, j) == maskLabel) {
+			if (maskProc.getPixel(1, j) == maskLabel)
+			{
 				ortho = min(buffer.get(2, j), buffer.get(1, j + 1));
 				diago = min(buffer.get(0, j + 1), buffer.get(2, j + 1));
 				diag2 = min3(buffer.get(3, j + 2), buffer.get(2, j + 1), buffer.get(0, j + 1));
@@ -457,7 +494,8 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
 
 			// process first pixel of current line: consider pixels right,
 			// down-right and down
-			if (maskProc.getPixel(0, j) == maskLabel) {
+			if (maskProc.getPixel(0, j) == maskLabel)
+			{
 				ortho = min(buffer.get(1, j), buffer.get(0, j + 1));
 				diago = buffer.get(1, j + 1);
 				diag2 = min(buffer.get(2, j + 2), buffer.get(1, j + 1));
@@ -471,7 +509,8 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
 	/**
 	 * Computes the minimum within 3 values.
 	 */
-	private final static int min3(int v1, int v2, int v3) {
+	private final static int min3(int v1, int v2, int v3)
+	{
 		return min(min(v1, v2), v3);
 	}
 	
@@ -479,7 +518,8 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
 	 * Computes the weighted minima of orthogonal, diagonal, and (2,1)-diagonal
 	 * values.
 	 */
-	private int min3w(int ortho, int diago, int diag2) {
+	private int min3w(int ortho, int diago, int diag2)
+	{
 		return min(min(ortho + weights[0], diago + weights[1]), 
 				diag2 + weights[2]);
 	}
@@ -488,9 +528,11 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap {
 	 * Update the pixel at position (i,j) with the value newVal. If newVal is
 	 * greater or equal to current value at position (i,j), do nothing.
 	 */
-	private void updateIfNeeded(int i, int j, int newVal) {
+	private void updateIfNeeded(int i, int j, int newVal) 
+	{
 		int value = buffer.get(i, j);
-		if (newVal < value) {
+		if (newVal < value) 
+		{
 			modif = true;
 			buffer.set(i, j, newVal);
 		}

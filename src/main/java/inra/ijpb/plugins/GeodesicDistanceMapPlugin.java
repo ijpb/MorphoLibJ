@@ -14,7 +14,8 @@ import inra.ijpb.binary.geodesic.GeodesicDistanceMapShort;
 import inra.ijpb.binary.geodesic.GeodesicDistanceMapShort5x5;
 
 /**
- * Plugin for computing geodesic distances using chamfer weights.
+ * Plugin for computing geodesic distance map from binary images using chamfer weights.
+ * 
  * @author dlegland
  *
  */
@@ -46,8 +47,8 @@ public class GeodesicDistanceMapPlugin implements PlugIn {
 		// create the dialog
 		GenericDialog gd = new GenericDialog("Geodesic Distance Map");
 		
-		gd.addChoice("Mask Image", imageNames, IJ.getImage().getTitle());
 		gd.addChoice("Marker Image", imageNames, IJ.getImage().getTitle());
+		gd.addChoice("Mask Image", imageNames, IJ.getImage().getTitle());
 		// Set Chessknight weights as default
 		gd.addChoice("Distances", ChamferWeights.getAllLabels(), 
 				ChamferWeights.CHESSKNIGHT.toString());
@@ -61,14 +62,13 @@ public class GeodesicDistanceMapPlugin implements PlugIn {
 			return;
 		
 		// set up current parameters
-		int maskImageIndex = gd.getNextChoiceIndex();
-		ImagePlus maskImage = WindowManager.getImage(maskImageIndex + 1);
 		int markerImageIndex = gd.getNextChoiceIndex();
 		ImagePlus markerImage = WindowManager.getImage(markerImageIndex + 1);
+		int maskImageIndex = gd.getNextChoiceIndex();
+		ImagePlus maskImage = WindowManager.getImage(maskImageIndex + 1);
 		String weightLabel = gd.getNextChoice();
 		// identify which weights should be used
 		ChamferWeights weights = ChamferWeights.fromLabel(weightLabel);
-//		float[] weights = weightValues[weightIndex];
 		boolean resultAsFloat = gd.getNextChoiceIndex() == 0;
 		boolean normalizeWeights = gd.getNextBoolean();
 
@@ -89,9 +89,9 @@ public class GeodesicDistanceMapPlugin implements PlugIn {
 		String newName = createResultImageName(maskImage);
 		Object[] res;
     	if (resultAsFloat) {
-    		res = exec(maskImage, markerImage, newName, weights.getFloatWeights(), normalizeWeights);
+    		res = exec(markerImage, maskImage, newName, weights.getFloatWeights(), normalizeWeights);
 		} else {
-			res = exec(maskImage, markerImage, newName, weights.getShortWeights(), normalizeWeights);
+			res = exec(markerImage, maskImage, newName, weights.getShortWeights(), normalizeWeights);
 		}
 
 		// show new image if needed
@@ -101,22 +101,22 @@ public class GeodesicDistanceMapPlugin implements PlugIn {
 		}
 	}
 		
-	public Object[] exec(ImagePlus mask, ImagePlus marker, String newName, float[] weights) {
-		return exec(mask, marker, newName, weights, true);
+	public Object[] exec(ImagePlus marker, ImagePlus mask, String newName, float[] weights) {
+		return exec(marker, mask, newName, weights, true);
 	}
 	
 	/**
 	 * Computes the distance propagated from the boundary of the white
 	 * particles, within the black phase.
 	 */
-	public Object[] exec(ImagePlus mask, ImagePlus marker, String newName,
+	public Object[] exec(ImagePlus marker, ImagePlus mask, String newName,
 			float[] weights, boolean normalize) {
 		// Check validity of parameters
-		if (mask == null) {
-			throw new IllegalArgumentException("Mask image not specified");
-		}
 		if (marker == null) {
 			throw new IllegalArgumentException("Marker image not specified");
+		}
+		if (mask == null) {
+			throw new IllegalArgumentException("Mask image not specified");
 		}
 		if (newName == null)
 			newName = createResultImageName(mask);
@@ -144,7 +144,7 @@ public class GeodesicDistanceMapPlugin implements PlugIn {
 		}
 		
 		// Compute distance on specified images
-		ImageProcessor result = calc.geodesicDistanceMap(mask.getProcessor(), marker.getProcessor());
+		ImageProcessor result = calc.geodesicDistanceMap(marker.getProcessor(), mask.getProcessor());
 		ImagePlus resultPlus = new ImagePlus(newName, result);
 				
 		// create result array
@@ -155,14 +155,14 @@ public class GeodesicDistanceMapPlugin implements PlugIn {
 	 * Computes the distance propagated from the boundary of the white
 	 * particles, within the black phase.
 	 */
-	public Object[] exec(ImagePlus mask, ImagePlus marker, String newName,
+	public Object[] exec(ImagePlus marker, ImagePlus mask, String newName,
 			short[] weights, boolean normalize) {
 		// Check validity of parameters
-		if (mask == null) {
-			throw new IllegalArgumentException("Mask image not specified");
-		}
 		if (marker == null) {
 			throw new IllegalArgumentException("Marker image not specified");
+		}
+		if (mask == null) {
+			throw new IllegalArgumentException("Mask image not specified");
 		}
 		if (newName == null)
 			newName = createResultImageName(mask);
@@ -190,7 +190,7 @@ public class GeodesicDistanceMapPlugin implements PlugIn {
 		}
 		
 		// Compute distance on specified images
-		ImageProcessor result = calc.geodesicDistanceMap(mask.getProcessor(), marker.getProcessor());
+		ImageProcessor result = calc.geodesicDistanceMap(marker.getProcessor(), mask.getProcessor());
 		ImagePlus resultPlus = new ImagePlus(newName, result);
 				
 		// create result array
@@ -198,6 +198,6 @@ public class GeodesicDistanceMapPlugin implements PlugIn {
 	}
 	
 	private static String createResultImageName(ImagePlus baseImage) {
-		return baseImage.getShortTitle() + "-dist";
+		return baseImage.getShortTitle() + "-geoddist";
 	}
 }

@@ -74,7 +74,7 @@ public class GeodesicDiameterFloat {
 		//System.out.println("Initialize pseudo geodesic centers");
 
 		// first distance propagation to find an arbitrary center
-		distance = calculator.geodesicDistanceMap(mask, marker);
+		distance = calculator.geodesicDistanceMap(marker, mask);
 		
 		// Extract position of maxima
 		posCenter = findPositionOfMaxValues(distance, labelImage, labels);
@@ -97,7 +97,7 @@ public class GeodesicDiameterFloat {
 		IJ.showStatus("Computing first geodesic extremities...");
 
 		// Second distance propagation from first maximum
-		distance = calculator.geodesicDistanceMap(mask, marker);
+		distance = calculator.geodesicDistanceMap(marker, mask);
 
 		// find position of maximal value,
 		// this is expected to correspond to a geodesic extremity 
@@ -118,7 +118,7 @@ public class GeodesicDiameterFloat {
 		IJ.showStatus("Computing second geodesic extremities...");
 
 		// third distance propagation from second maximum
-		distance = calculator.geodesicDistanceMap(mask, marker);
+		distance = calculator.geodesicDistanceMap(marker, mask);
 		
 		
 		// compute max distance constrained to each label,

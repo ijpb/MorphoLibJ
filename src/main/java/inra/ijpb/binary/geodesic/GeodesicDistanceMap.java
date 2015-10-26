@@ -7,12 +7,13 @@ import ij.ImagePlus;
 import ij.process.ImageProcessor;
 
 /**
- * Interface for computing Geodesic distance maps from binary images.
+ * Interface for computing Geodesic distance maps (also known as geodesic
+ * distance transform) from binary images.
  *
  * @author David Legland
  */
-public interface GeodesicDistanceMap {
-
+public interface GeodesicDistanceMap
+{
 	/**
 	 * A pre-defined set of weigths that can be used to compute distance maps.
 	 * 
@@ -95,6 +96,10 @@ public interface GeodesicDistanceMap {
 	public ImagePlus geodesicDistanceMap(ImagePlus mask, ImagePlus marker,
 			String newName);
 
-	public ImageProcessor geodesicDistanceMap(ImageProcessor mask,
-			ImageProcessor marker);
+	/**
+	 * Computes the geodesic distance transform (or geodesic distance map) of a
+	 * binary image of marker, constrained to a binary mask.
+	 */
+	public ImageProcessor geodesicDistanceMap(ImageProcessor marker,
+			ImageProcessor mask);
 }
