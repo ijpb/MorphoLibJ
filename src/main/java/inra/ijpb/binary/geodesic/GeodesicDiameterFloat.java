@@ -44,11 +44,11 @@ public class GeodesicDiameterFloat {
 		
 		
 		// Create calculator for propagating distances
-		GeodesicDistanceMap calculator;
+		GeodesicDistanceTransform calculator;
 		if (weights.length == 3) {
-			calculator = new GeodesicDistanceMapFloat5x5(weights, false);
+			calculator = new GeodesicDistanceTransformFloat5x5(weights, false);
 		} else {
-			calculator = new GeodesicDistanceMapFloat(weights, false);
+			calculator = new GeodesicDistanceTransformFloat(weights, false);
 		}
 			
 		// Initialize a new result table

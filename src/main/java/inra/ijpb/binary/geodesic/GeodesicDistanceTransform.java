@@ -11,7 +11,7 @@ import ij.process.ImageProcessor;
  *
  * @author David Legland
  */
-public interface GeodesicDistanceMap
+public interface GeodesicDistanceTransform
 {
 	/**
 	 * Computes the geodesic distance transform (or geodesic distance map) of a

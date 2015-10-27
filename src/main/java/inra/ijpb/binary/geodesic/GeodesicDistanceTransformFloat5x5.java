@@ -2,7 +2,6 @@ package inra.ijpb.binary.geodesic;
 
 import static java.lang.Math.min;
 import ij.IJ;
-import ij.ImagePlus;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 
@@ -13,9 +12,8 @@ import ij.process.ImageProcessor;
  * @author David Legland
  * 
  */
-public class GeodesicDistanceMapFloat5x5 implements GeodesicDistanceMap
+public class GeodesicDistanceTransformFloat5x5 implements GeodesicDistanceTransform
 {
-
 	private final static int DEFAULT_MASK_LABEL = 255;
 
 	float[] weights = new float[]{5, 7, 11};
@@ -47,16 +45,16 @@ public class GeodesicDistanceMapFloat5x5 implements GeodesicDistanceMap
 
 	boolean modif;
 
-	public GeodesicDistanceMapFloat5x5()
+	public GeodesicDistanceTransformFloat5x5()
 	{
 	}
 	
-	public GeodesicDistanceMapFloat5x5(float[] weights)
+	public GeodesicDistanceTransformFloat5x5(float[] weights)
 	{
 		this.weights = weights;
 	}
 
-	public GeodesicDistanceMapFloat5x5(float[] weights, boolean normalizeMap) 
+	public GeodesicDistanceTransformFloat5x5(float[] weights, boolean normalizeMap) 
 	{
 		this.weights = weights;
 		this.normalizeMap = normalizeMap;
@@ -76,29 +74,6 @@ public class GeodesicDistanceMapFloat5x5 implements GeodesicDistanceMap
 	public void setBackgroundValue(float backgroundValue)
 	{
 		this.backgroundValue = backgroundValue;
-	}
-
-	/**
-	 * @deprecated only the method using ImageProcessing should be called
-	 */
-	@Deprecated
-	public ImagePlus geodesicDistanceMap(ImagePlus mask, ImagePlus marker,
-			String newName) {
-
-		// size of image
-		width = mask.getWidth();
-		height = mask.getHeight();
-
-		// get image processors
-		maskProc = mask.getProcessor();
-		ImageProcessor markerProc = marker.getProcessor();
-
-		// Compute distance map
-		FloatProcessor rp = geodesicDistanceMap(maskProc, markerProc);
-			
-		// Create image plus for storing the result
-		ImagePlus result = new ImagePlus(newName, rp);
-		return result;
 	}
 
 	/**

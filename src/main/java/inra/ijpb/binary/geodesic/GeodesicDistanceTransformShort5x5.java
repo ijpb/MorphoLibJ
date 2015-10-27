@@ -17,7 +17,7 @@ import ij.process.ShortProcessor;
  * @author David Legland
  * 
  */
-public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap 
+public class GeodesicDistanceTransformShort5x5 implements GeodesicDistanceTransform 
 {
 	private final static int DEFAULT_MASK_LABEL = 255;
 
@@ -46,12 +46,12 @@ public class GeodesicDistanceMapShort5x5 implements GeodesicDistanceMap
 	
 	boolean modif;
 
-	public GeodesicDistanceMapShort5x5(short[] weights)
+	public GeodesicDistanceTransformShort5x5(short[] weights)
 	{
 		this.weights = weights;
 	}
 
-	public GeodesicDistanceMapShort5x5(short[] weights, boolean normalizeMap) 
+	public GeodesicDistanceTransformShort5x5(short[] weights, boolean normalizeMap) 
 	{
 		this.weights = weights;
 		this.normalizeMap = normalizeMap;

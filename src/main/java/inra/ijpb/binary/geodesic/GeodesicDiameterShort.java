@@ -42,11 +42,11 @@ public class GeodesicDiameterShort {
 //		System.out.println("Max label: " + maxLabel);
 
 		// Create calculator for propagating distances
-		GeodesicDistanceMap calculator;
+		GeodesicDistanceTransform calculator;
 		if (weights.length == 3) {
-			calculator = new GeodesicDistanceMapShort5x5(weights, false);
+			calculator = new GeodesicDistanceTransformShort5x5(weights, false);
 		} else {
-			calculator = new GeodesicDistanceMapShort(weights, false);
+			calculator = new GeodesicDistanceTransformShort(weights, false);
 		}
 
 		// Initialize a new result table

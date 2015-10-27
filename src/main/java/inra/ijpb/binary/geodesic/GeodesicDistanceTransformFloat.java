@@ -12,9 +12,8 @@ import ij.process.ImageProcessor;
  * @author David Legland
  * 
  */
-public class GeodesicDistanceMapFloat implements GeodesicDistanceMap
+public class GeodesicDistanceTransformFloat implements GeodesicDistanceTransform
 {
-
 	private final static int DEFAULT_MASK_LABEL = 255;
 
 	float[] weights;
@@ -42,11 +41,13 @@ public class GeodesicDistanceMapFloat implements GeodesicDistanceMap
 
 	boolean modif;
 
-	public GeodesicDistanceMapFloat(float[] weights) {
+	public GeodesicDistanceTransformFloat(float[] weights)
+	{
 		this.weights = weights;
 	}
 
-	public GeodesicDistanceMapFloat(float[] weights, boolean normalizeMap) {
+	public GeodesicDistanceTransformFloat(float[] weights, boolean normalizeMap)
+	{
 		this.weights = weights;
 		this.normalizeMap = normalizeMap;
 	}
@@ -54,14 +55,16 @@ public class GeodesicDistanceMapFloat implements GeodesicDistanceMap
 	/**
 	 * @return the backgroundValue
 	 */
-	public float getBackgroundValue() {
+	public float getBackgroundValue() 
+	{
 		return backgroundValue;
 	}
 
 	/**
 	 * @param backgroundValue the backgroundValue to set
 	 */
-	public void setBackgroundValue(float backgroundValue) {
+	public void setBackgroundValue(float backgroundValue) 
+	{
 		this.backgroundValue = backgroundValue;
 	}
 

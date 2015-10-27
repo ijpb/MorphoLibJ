@@ -233,8 +233,8 @@ public class GeodesicDiameterPlugin implements PlugIn
 	private ResultsTable computeGeodesicLengthTable(ImageProcessor labels, 
 			float[] weights)
 	{
-		GeodesicDiameterFloat calc = new GeodesicDiameterFloat(weights);
-		ResultsTable table = calc.analyzeImage(labels);
+		GeodesicDiameterFloat algo = new GeodesicDiameterFloat(weights);
+		ResultsTable table = algo.analyzeImage(labels);
 		return table;
 	}
 
@@ -245,9 +245,9 @@ public class GeodesicDiameterPlugin implements PlugIn
 	private ResultsTable computeGeodesicLengthTable(ImageProcessor labels, 
 			short[] weights)
 	{
-		GeodesicDiameterShort calc = 
+		GeodesicDiameterShort algo = 
 			new GeodesicDiameterShort(weights);
-		ResultsTable table = calc.analyzeImage(labels);
+		ResultsTable table = algo.analyzeImage(labels);
 		return table;
 	}
 

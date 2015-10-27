@@ -17,7 +17,7 @@ import ij.process.ShortProcessor;
  * @author David Legland
  * 
  */
-public class GeodesicDistanceMapShort implements GeodesicDistanceMap
+public class GeodesicDistanceTransformShort implements GeodesicDistanceTransform
 {
 	private final static int DEFAULT_MASK_LABEL = 255;
 
@@ -46,12 +46,12 @@ public class GeodesicDistanceMapShort implements GeodesicDistanceMap
 	
 	boolean modif;
 
-	public GeodesicDistanceMapShort(short[] weights) 
+	public GeodesicDistanceTransformShort(short[] weights) 
 	{
 		this.weights = weights;
 	}
 
-	public GeodesicDistanceMapShort(short[] weights, boolean normalizeMap) 
+	public GeodesicDistanceTransformShort(short[] weights, boolean normalizeMap) 
 	{
 		this.weights = weights;
 		this.normalizeMap = normalizeMap;
@@ -237,7 +237,6 @@ public class GeodesicDistanceMapShort implements GeodesicDistanceMap
 		// Process regular lines
 		for (int j = height-2; j >= 0; j--)
 		{
-
 			// process last pixel of the current line: consider pixels
 			// down and down-left
 			if (maskProc.get(width - 1, j) == maskLabel)

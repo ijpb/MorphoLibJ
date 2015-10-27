@@ -7,11 +7,11 @@ import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
 import inra.ijpb.binary.ChamferWeights;
-import inra.ijpb.binary.geodesic.GeodesicDistanceMap;
-import inra.ijpb.binary.geodesic.GeodesicDistanceMapFloat;
-import inra.ijpb.binary.geodesic.GeodesicDistanceMapFloat5x5;
-import inra.ijpb.binary.geodesic.GeodesicDistanceMapShort;
-import inra.ijpb.binary.geodesic.GeodesicDistanceMapShort5x5;
+import inra.ijpb.binary.geodesic.GeodesicDistanceTransform;
+import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat;
+import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat5x5;
+import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort;
+import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort5x5;
 
 /**
  * Plugin for computing geodesic distance map from binary images using chamfer weights.
@@ -145,18 +145,18 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 		}
 		
 		// Initialize calculator
-		GeodesicDistanceMap calc;
+		GeodesicDistanceTransform algo;
 		if (weights.length == 2) 
 		{
-			calc = new GeodesicDistanceMapFloat(weights, normalize);
+			algo = new GeodesicDistanceTransformFloat(weights, normalize);
 		} 
 		else
 		{
-			calc = new GeodesicDistanceMapFloat5x5(weights, normalize);
+			algo = new GeodesicDistanceTransformFloat5x5(weights, normalize);
 		}
 		
 		// Compute distance on specified images
-		ImageProcessor result = calc.geodesicDistanceMap(marker.getProcessor(), mask.getProcessor());
+		ImageProcessor result = algo.geodesicDistanceMap(marker.getProcessor(), mask.getProcessor());
 		ImagePlus resultPlus = new ImagePlus(newName, result);
 				
 		// create result array
@@ -199,18 +199,18 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 		}
 		
 		// Initialize calculator
-		GeodesicDistanceMap calc;
+		GeodesicDistanceTransform algo;
 		if (weights.length == 2) 
 		{
-			calc = new GeodesicDistanceMapShort(weights, normalize);
+			algo = new GeodesicDistanceTransformShort(weights, normalize);
 		} 
 		else
 		{
-			calc = new GeodesicDistanceMapShort5x5(weights, normalize);
+			algo = new GeodesicDistanceTransformShort5x5(weights, normalize);
 		}
 		
 		// Compute distance on specified images
-		ImageProcessor result = calc.geodesicDistanceMap(marker.getProcessor(), mask.getProcessor());
+		ImageProcessor result = algo.geodesicDistanceMap(marker.getProcessor(), mask.getProcessor());
 		ImagePlus resultPlus = new ImagePlus(newName, result);
 				
 		// create result array

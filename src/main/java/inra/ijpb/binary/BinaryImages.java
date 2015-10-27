@@ -14,10 +14,11 @@ import inra.ijpb.binary.distmap.DistanceTransform3x3Float;
 import inra.ijpb.binary.distmap.DistanceTransform3x3Short;
 import inra.ijpb.binary.distmap.DistanceTransform5x5Float;
 import inra.ijpb.binary.distmap.DistanceTransform5x5Short;
-import inra.ijpb.binary.geodesic.GeodesicDistanceMap;
-import inra.ijpb.binary.geodesic.GeodesicDistanceMapFloat;
-import inra.ijpb.binary.geodesic.GeodesicDistanceMapShort;
-import inra.ijpb.binary.geodesic.GeodesicDistanceMapShort5x5;
+import inra.ijpb.binary.geodesic.GeodesicDistanceTransform;
+import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat;
+import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat5x5;
+import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort;
+import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort5x5;
 import inra.ijpb.label.LabelImages;
 
 /**
@@ -139,6 +140,7 @@ public class BinaryImages
 	/**
 	 * Computes the geodesic distance transform (or geodesic distance map) of a
 	 * binary image of marker, constrained to a binary mask.
+	 * Returns the result in a new instance of ShortProcessor.
 	 */
 	public static final ImageProcessor geodesicDistanceMap(ImageProcessor marker,
 			ImageProcessor mask) 
@@ -149,18 +151,44 @@ public class BinaryImages
 	/**
 	 * Computes the geodesic distance transform (or geodesic distance map) of a
 	 * binary image of marker, constrained to a binary mask.
+	 * Returns the result in a new instance of ShortProcessor.
 	 */
 	public static final ImageProcessor geodesicDistanceMap(ImageProcessor marker,
 			ImageProcessor mask, short[] weights, boolean normalize) 
 	{
-		GeodesicDistanceMap algo;
+		GeodesicDistanceTransform algo;
 		switch (weights.length) 
 		{
 		case 2:
-			algo = new GeodesicDistanceMapShort(weights, normalize);
+			algo = new GeodesicDistanceTransformShort(weights, normalize);
 			break;
 		case 3:
-			algo = new GeodesicDistanceMapShort5x5(weights, normalize);
+			algo = new GeodesicDistanceTransformShort5x5(weights, normalize);
+			break;
+		default:
+			throw new IllegalArgumentException(
+					"Requires weight array with 2 or 3 elements");
+		}
+		
+		return algo.geodesicDistanceMap(marker, mask);
+	}
+	
+	/**
+	 * Computes the geodesic distance transform (or geodesic distance map) of a
+	 * binary image of marker, constrained to a binary mask. 
+	 * Returns the result in a new instance of FloatProcessor.
+	 */
+	public static final ImageProcessor geodesicDistanceMap(ImageProcessor marker,
+			ImageProcessor mask, float[] weights, boolean normalize) 
+	{
+		GeodesicDistanceTransform algo;
+		switch (weights.length) 
+		{
+		case 2:
+			algo = new GeodesicDistanceTransformFloat(weights, normalize);
+			break;
+		case 3:
+			algo = new GeodesicDistanceTransformFloat5x5(weights, normalize);
 			break;
 		default:
 			throw new IllegalArgumentException(
