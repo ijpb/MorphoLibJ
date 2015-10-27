@@ -6,6 +6,7 @@ import ij.gui.GenericDialog;
 import ij.plugin.filter.ExtendedPlugInFilter;
 import ij.plugin.filter.PlugInFilterRunner;
 import ij.process.ImageProcessor;
+import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.binary.ChamferWeights;
 import inra.ijpb.binary.distmap.DistanceTransform;
 import inra.ijpb.binary.distmap.DistanceTransform3x3Float;
@@ -22,9 +23,10 @@ import java.awt.AWTEvent;
  * @author dlegland
  *
  */
-public class ChamferDistanceMapPlugin implements ExtendedPlugInFilter, DialogListener {
+public class ChamferDistanceMapPlugin implements ExtendedPlugInFilter,
+		DialogListener
+		{
 
-	
 	/** Apparently, it's better to store flags in plugin */
 	private int flags = DOES_8G | KEEP_PREVIEW | FINAL_PROCESSING;
 	PlugInFilterRunner pfr;
@@ -49,7 +51,8 @@ public class ChamferDistanceMapPlugin implements ExtendedPlugInFilter, DialogLis
 	 * Called at the beginning of the process to know if the plugin can be run
 	 * with current image, and at the end to finalize.
 	 */
-	public int setup(String arg, ImagePlus imp) {
+	public int setup(String arg, ImagePlus imp)
+	{
 		// Special case of plugin called to finalize the process
 		if (arg.equals("final")) {
 			// replace the preview image by the original image 
@@ -67,7 +70,8 @@ public class ChamferDistanceMapPlugin implements ExtendedPlugInFilter, DialogLis
 		return flags;
 	}
 
-    public int showDialog(ImagePlus imp, String command, PlugInFilterRunner pfr) {
+    public int showDialog(ImagePlus imp, String command, PlugInFilterRunner pfr) 
+    {
     	// Store user data
     	this.imagePlus = imp;
     	this.baseImage = imp.getProcessor().duplicate();
@@ -106,7 +110,8 @@ public class ChamferDistanceMapPlugin implements ExtendedPlugInFilter, DialogLis
      * Called when a dialog widget has been modified: recomputes option values
      * from dialog content. 
      */
-    public boolean dialogItemChanged(GenericDialog gd, AWTEvent evt) {
+    public boolean dialogItemChanged(GenericDialog gd, AWTEvent evt)
+    {
     	// set up current parameters
     	String weightLabel = gd.getNextChoice();
     	floatProcessing = gd.getNextChoiceIndex() == 0;
@@ -117,24 +122,30 @@ public class ChamferDistanceMapPlugin implements ExtendedPlugInFilter, DialogLis
         return true;
     }
 
-    public void setNPasses (int nPasses) {
+    public void setNPasses (int nPasses)
+    {
     	this.nPasses = nPasses;
     }
     
     /**
      * Apply the current filter settings to process the given image. 
      */
-    public void run(ImageProcessor image) {
-    	if (floatProcessing) {
+    public void run(ImageProcessor image) 
+    {
+    	if (floatProcessing)
+    	{
     		result = processFloat(image, weights.getFloatWeights(), normalize);
-		} else {
+		} else 
+		{
 			result = processShort(image, weights.getShortWeights(), normalize);
 		}
     	
-    	if (previewing) {
+    	if (previewing)
+    	{
     		// Fill up the values of original image with values of the result
     		double valMax = result.getMax();
-    		for (int i = 0; i < image.getPixelCount(); i++) {
+    		for (int i = 0; i < image.getPixelCount(); i++)
+    		{
     			image.set(i, (int) (255 * result.getf(i) / valMax));
     		}
     		image.resetMinAndMax();
@@ -143,30 +154,38 @@ public class ChamferDistanceMapPlugin implements ExtendedPlugInFilter, DialogLis
         }
     }
     
-    private ImageProcessor processFloat(ImageProcessor image, float[] weights, boolean normalize) {
+	private ImageProcessor processFloat(ImageProcessor image, float[] weights,
+			boolean normalize) 
+	{
     	// Initialize calculator
-    	DistanceTransform calc;
+    	DistanceTransform algo;
     	if (weights.length == 2) {
-    		calc = new DistanceTransform3x3Float(weights, normalize);
+    		algo = new DistanceTransform3x3Float(weights, normalize);
     	} else {
-    		calc = new DistanceTransform5x5Float(weights, normalize);
+    		algo = new DistanceTransform5x5Float(weights, normalize);
     	}
 
+    	// add monitoring
+    	DefaultAlgoListener.monitor(algo);
+    	
     	// Compute distance on specified images
-    	return calc.distanceMap(image);
+    	return algo.distanceMap(image);
     }
 
     private ImageProcessor processShort(ImageProcessor image, short[] weights, boolean normalize) {
     	// Initialize calculator
-    	DistanceTransform calc;
+    	DistanceTransform algo;
     	if (weights.length == 2) {
-    		calc = new DistanceTransform3x3Short(weights, normalize);
+    		algo = new DistanceTransform3x3Short(weights, normalize);
     	} else {
-    		calc = new DistanceTransform5x5Short(weights, normalize);
+    		algo = new DistanceTransform5x5Short(weights, normalize);
     	}
 
+    	// add monitoring
+    	DefaultAlgoListener.monitor(algo);
+
     	// Compute distance on specified images
-    	return calc.distanceMap(image);
+    	return algo.distanceMap(image);
     }
    
 		
@@ -239,5 +258,4 @@ public class ChamferDistanceMapPlugin implements ExtendedPlugInFilter, DialogLis
 	private static String createResultImageName(ImagePlus baseImage) {
 		return baseImage.getShortTitle() + "-dist";
 	}
-
 }

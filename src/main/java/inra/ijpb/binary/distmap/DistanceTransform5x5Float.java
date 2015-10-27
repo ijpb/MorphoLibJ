@@ -3,6 +3,8 @@ package inra.ijpb.binary.distmap;
 import static java.lang.Math.min;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
+import inra.ijpb.algo.AlgoStub;
+import inra.ijpb.algo.StatusEvent;
 
 /**
  * <p>
@@ -19,7 +21,7 @@ import ij.process.ImageProcessor;
  * @author David Legland
  * 
  */
-public class DistanceTransform5x5Float implements DistanceTransform
+public class DistanceTransform5x5Float extends AlgoStub implements DistanceTransform
 {
 	private final static int DEFAULT_MASK_LABEL = 255;
 
@@ -130,6 +132,8 @@ public class DistanceTransform5x5Float implements DistanceTransform
 		buffer.setValue(0);
 		buffer.fill();
 
+		this.fireStatusChanged(new StatusEvent(this, "Initialization"));
+		
 		// initialize empty image with either 0 (background) or Inf (foreground)
 		for (int i = 0; i < width; i++) 
 		{
@@ -141,12 +145,15 @@ public class DistanceTransform5x5Float implements DistanceTransform
 		}
 
 		// Two iterations are enough to compute distance map to boundary
+		this.fireStatusChanged(new StatusEvent(this, "Forward Scan"));
 		forwardIteration();
+		this.fireStatusChanged(new StatusEvent(this, "Backward Scan"));
 		backwardIteration();
 
 		// Normalize values by the first weight
 		if (this.normalizeMap) 
 		{
+			this.fireStatusChanged(new StatusEvent(this, "Normalization"));
 			for (int i = 0; i < width; i++) 
 			{
 				for (int j = 0; j < height; j++) 
@@ -158,6 +165,8 @@ public class DistanceTransform5x5Float implements DistanceTransform
 				}
 			}
 		}
+
+		this.fireStatusChanged(new StatusEvent(this, ""));
 
 		// Compute max value within the mask
 		float maxVal = 0;
@@ -244,6 +253,8 @@ public class DistanceTransform5x5Float implements DistanceTransform
 		// Process all other lines
 		for (int j = 2; j < height; j++) 
 		{
+			this.fireProgressChange(this, j, height);
+
 			// process first pixel of current line: consider pixels up and
 			// upright
 			if (maskProc.get(0, j) == maskLabel)
@@ -416,6 +427,8 @@ public class DistanceTransform5x5Float implements DistanceTransform
 		// Process regular lines
 		for (int j = height - 3; j >= 0; j--) 
 		{
+			this.fireProgressChange(this, height-1-j, height);
+
 			// process last pixel of the current line: consider pixels
 			// down, down-left, and (-2,+1)
 			if (maskProc.getPixel(width - 1, j) == maskLabel) 
@@ -496,6 +509,7 @@ public class DistanceTransform5x5Float implements DistanceTransform
 
 		} // end of processing for current line
 
+		this.fireProgressChange(this, height, height);
 	} // end of backward iteration
 
 	/**

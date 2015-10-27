@@ -29,8 +29,8 @@ import java.awt.AWTEvent;
  *
  */
 public class MorphologicalFilterPlugin
-implements ExtendedPlugInFilter, DialogListener, ProgressListener, StatusListener {
-
+implements ExtendedPlugInFilter, DialogListener, ProgressListener, StatusListener 
+{
 	/** Apparently, it's better to store flags in plugin */
 	private int flags = DOES_ALL | KEEP_PREVIEW | FINAL_PROCESSING | NO_CHANGES;
 	
@@ -59,16 +59,18 @@ implements ExtendedPlugInFilter, DialogListener, ProgressListener, StatusListene
 	 * Setup function is called in the beginning of the process, but also at the
 	 * end. It is also used for displaying "about" frame.
 	 */
-	public int setup(String arg, ImagePlus imp) {
-		
+	public int setup(String arg, ImagePlus imp) 
+	{
 		// about...
-		if (arg.equals("about")) {
+		if (arg.equals("about")) 
+		{
 			showAbout(); 
 			return DONE;
 		}
 
 		// Called at the end for cleaning the results
-		if (arg.equals("final")) {
+		if (arg.equals("final")) 
+		{
 			// replace the preview image by the original image 
 			resetPreview();
 			imagePlus.updateAndDraw();
@@ -85,7 +87,8 @@ implements ExtendedPlugInFilter, DialogListener, ProgressListener, StatusListene
 	}
 	
 	
-	public int showDialog(ImagePlus imp, String command, PlugInFilterRunner pfr) {
+	public int showDialog(ImagePlus imp, String command, PlugInFilterRunner pfr)
+	{
 		// Normal setup
     	this.imagePlus = imp;
     	this.baseImage = imp.getProcessor().duplicate();
@@ -119,7 +122,8 @@ implements ExtendedPlugInFilter, DialogListener, ProgressListener, StatusListene
 		return flags;
 	}
 
-    public boolean dialogItemChanged(GenericDialog gd, AWTEvent evt) {
+    public boolean dialogItemChanged(GenericDialog gd, AWTEvent evt)
+    {
     	boolean wasPreview = this.previewing;
     	parseDialogParameters(gd);
     	
@@ -131,7 +135,8 @@ implements ExtendedPlugInFilter, DialogListener, ProgressListener, StatusListene
     	return true;
     }
 
-    private void parseDialogParameters(GenericDialog gd) {
+    private void parseDialogParameters(GenericDialog gd) 
+    {
 		// extract chosen parameters
 		this.op 		= Operation.fromLabel(gd.getNextChoice());
 		this.shape 		= Strel.Shape.fromLabel(gd.getNextChoice());
@@ -140,12 +145,14 @@ implements ExtendedPlugInFilter, DialogListener, ProgressListener, StatusListene
 		this.previewing = gd.getPreviewCheckbox().getState();
     }
     
-    public void setNPasses (int nPasses) {
+    public void setNPasses (int nPasses) 
+    {
     	this.nPasses = nPasses;
     }
     
 	@Override
-	public void run(ImageProcessor image) {
+	public void run(ImageProcessor image)
+	{
 		// Create structuring element of the given size
 		Strel strel = shape.fromRadius(radius);
 		
@@ -167,7 +174,8 @@ implements ExtendedPlugInFilter, DialogListener, ProgressListener, StatusListene
     	if (previewing) 
     	{
     		// Fill up the values of original image with values of the result
-    		for (int i = 0; i < image.getPixelCount(); i++) {
+    		for (int i = 0; i < image.getPixelCount(); i++)
+    		{
     			image.setf(i, result.getf(i));
     		}
     		image.resetMinAndMax();
@@ -175,7 +183,8 @@ implements ExtendedPlugInFilter, DialogListener, ProgressListener, StatusListene
 	}
 	
 	// About...
-	private void showAbout() {
+	private void showAbout()
+	{
 		IJ.showMessage("Morphological Filters",
 				"Fast Grayscale Morphological Filtering,\n" +
 				"http://imagejdocu.tudor.lu/doku.php?id=plugin:morphology:fast_morphological_filters:start\n" +
@@ -204,7 +213,8 @@ implements ExtendedPlugInFilter, DialogListener, ProgressListener, StatusListene
 	 * Displays the current structuring element in a new ImagePlus. 
 	 * @param strel the structuring element to display
 	 */
-	private void showStrelImage(Strel strel) {
+	private void showStrelImage(Strel strel)
+	{
 		// Size of the strel image (little bit larger than strel)
 		int[] dim = strel.getSize();
 		int width = dim[0] + 20; 
@@ -220,9 +230,12 @@ implements ExtendedPlugInFilter, DialogListener, ProgressListener, StatusListene
 			strelImage.invertLut();
 		
 		// Display strel image
-		if (strelDisplay == null) {
+		if (strelDisplay == null)
+		{
 			strelDisplay = new ImagePlus("Structuring Element", strelImage);
-		} else {
+		} 
+		else 
+		{
 			strelDisplay.setProcessor(strelImage);
 		}
 		strelDisplay.show();
@@ -231,7 +244,8 @@ implements ExtendedPlugInFilter, DialogListener, ProgressListener, StatusListene
 	
 	/**
 	 */
-	public ImagePlus exec(ImagePlus image, Operation op, Strel strel) {
+	public ImagePlus exec(ImagePlus image, Operation op, Strel strel)
+	{
 		// Check validity of parameters
 		if (image == null)
 			return null;
@@ -257,20 +271,22 @@ implements ExtendedPlugInFilter, DialogListener, ProgressListener, StatusListene
 	 * Creates the name for result image, by adding a suffix to the base name
 	 * of original image.
 	 */
-	private String createResultImageName(ImagePlus baseImage) {
+	private String createResultImageName(ImagePlus baseImage) 
+	{
 		return baseImage.getShortTitle() + "-" + op.toString();
 	}
 
 
 	@Override
-	public void progressChanged(ProgressEvent evt) {
+	public void progressChanged(ProgressEvent evt) 
+	{
 		IJ.showProgress(evt.getProgressRatio());
 	}
 
 
 	@Override
-	public void statusChanged(StatusEvent evt) {
+	public void statusChanged(StatusEvent evt)
+	{
 		IJ.showStatus(evt.getMessage());
 	}
-
 }
