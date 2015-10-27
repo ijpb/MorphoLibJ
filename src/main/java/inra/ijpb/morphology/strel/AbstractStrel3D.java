@@ -3,9 +3,9 @@
  */
 package inra.ijpb.morphology.strel;
 
-import inra.ijpb.event.AlgoStub;
-import inra.ijpb.event.ProgressEvent;
-import inra.ijpb.event.StatusEvent;
+import inra.ijpb.algo.AlgoStub;
+import inra.ijpb.algo.ProgressEvent;
+import inra.ijpb.algo.StatusEvent;
 import inra.ijpb.morphology.Strel3D;
 
 

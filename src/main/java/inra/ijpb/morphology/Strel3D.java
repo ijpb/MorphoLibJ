@@ -4,7 +4,7 @@
 package inra.ijpb.morphology;
 
 import ij.ImageStack;
-import inra.ijpb.event.Algo;
+import inra.ijpb.algo.Algo;
 import inra.ijpb.morphology.strel.Cross3x3Strel;
 import inra.ijpb.morphology.strel.CubeStrel;
 import inra.ijpb.morphology.strel.DiamondStrel;

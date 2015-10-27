@@ -1,7 +1,7 @@
 /**
  * 
  */
-package inra.ijpb.event;
+package inra.ijpb.algo;
 
 /**
  * An event class for propagating information about the progression of an 

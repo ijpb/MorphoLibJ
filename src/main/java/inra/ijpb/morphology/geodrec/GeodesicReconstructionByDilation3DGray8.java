@@ -10,7 +10,7 @@ import java.util.LinkedList;
 
 import ij.IJ;
 import ij.ImageStack;
-import inra.ijpb.event.AlgoStub;
+import inra.ijpb.algo.AlgoStub;
 
 
 /**

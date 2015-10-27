@@ -4,7 +4,7 @@
 package inra.ijpb.morphology.geodrec;
 
 import ij.ImageStack;
-import inra.ijpb.event.Algo;
+import inra.ijpb.algo.Algo;
 
 /**
  * Defines the interface for geodesic reconstructions algorithms applied to

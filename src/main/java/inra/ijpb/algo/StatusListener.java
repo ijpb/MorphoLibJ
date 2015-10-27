@@ -1,7 +1,7 @@
 /**
  * 
  */
-package inra.ijpb.event;
+package inra.ijpb.algo;
 
 /**
  * Interface for managing status changes of an algorithm. 

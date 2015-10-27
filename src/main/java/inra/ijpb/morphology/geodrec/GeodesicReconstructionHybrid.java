@@ -12,8 +12,8 @@ import java.util.Deque;
 import ij.IJ;
 import ij.process.ImageProcessor;
 import ij.process.FloatProcessor;
+import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.data.Cursor2D;
-import inra.ijpb.event.AlgoStub;
 
 /**
  * Geodesic reconstruction for planar integer images (gray8 and gray16), using scanning algorithm.

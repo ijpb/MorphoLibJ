@@ -7,7 +7,7 @@ import static java.lang.Math.min;
 import ij.IJ;
 import ij.process.ImageProcessor;
 import ij.process.FloatProcessor;
-import inra.ijpb.event.AlgoStub;
+import inra.ijpb.algo.AlgoStub;
 
 /**
  * Geodesic reconstruction for planar images, using scanning algorithm.

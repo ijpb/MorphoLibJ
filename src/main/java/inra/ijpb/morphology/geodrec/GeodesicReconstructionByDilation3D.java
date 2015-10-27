@@ -7,7 +7,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import ij.IJ;
 import ij.ImageStack;
-import inra.ijpb.event.AlgoStub;
+import inra.ijpb.algo.AlgoStub;
 
 
 /**

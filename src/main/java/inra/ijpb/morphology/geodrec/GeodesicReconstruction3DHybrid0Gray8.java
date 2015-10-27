@@ -7,9 +7,9 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import ij.IJ;
 import ij.ImageStack;
+import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.data.Cursor3D;
 import inra.ijpb.data.image.Images3D;
-import inra.ijpb.event.AlgoStub;
 import inra.ijpb.morphology.GeodesicReconstruction3D;
 
 import java.util.ArrayDeque;

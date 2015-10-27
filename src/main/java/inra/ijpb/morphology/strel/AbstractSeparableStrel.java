@@ -4,8 +4,8 @@
 package inra.ijpb.morphology.strel;
 
 import ij.process.ImageProcessor;
-import inra.ijpb.event.ProgressEvent;
-import inra.ijpb.event.ProgressListener;
+import inra.ijpb.algo.ProgressEvent;
+import inra.ijpb.algo.ProgressListener;
 
 import java.util.Collection;
 
