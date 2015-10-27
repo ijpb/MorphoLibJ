@@ -197,41 +197,9 @@ peaufiner vocabulaire : regions / label, component / region...
 \end_layout
 
 \begin_layout Itemize
-ajouter une section 
-\begin_inset Quotes eld
-\end_inset
-
-developeur
-\begin_inset Quotes erd
-\end_inset
-
-, avec les différentes possibilités pour utiliser la bibliothèque dans un
- plugin.
+adresses Ignacio+David
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
-runPlugin(
-\begin_inset Quotes eld
-\end_inset
-
-...
-\begin_inset Quotes erd
-\end_inset
-
-)
-\end_layout
-
-\begin_layout Itemize
-MorphologicalFilter.gradient(image, se);
-\end_layout
-
-\begin_layout Itemize
-algo = new GeodesicReconstruction3DScanningGray8(); algo.setConnectivity(26);
- result = algo.applyTo(marker, mask);
-\end_layout
-
-\end_deeper
 \end_inset
 
 
@@ -2368,6 +2336,10 @@ status open
 Region adjacency graph
 \end_layout
 
+\begin_layout Plain Layout
+geodesic diameter
+\end_layout
+
 \end_inset
 
 
@@ -2820,6 +2792,84 @@ Assign result of a measurment to a label image.
 \end_inset
 
 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Chapter
+Developer section
+\end_layout
+
+\begin_layout Plain Layout
+ajouter une section 
+\begin_inset Quotes eld
+\end_inset
+
+developeur
+\begin_inset Quotes erd
+\end_inset
+
+, avec les différentes possibilités pour utiliser la bibliothèque dans un
+ plugin.
+\end_layout
+
+\begin_layout Plain Layout
+En particulier, les différents niveaux d'accès aux fonctionnalités 
+\end_layout
+
+\begin_layout Description
+Plugin Affichage d'une boîte de dialogue, ce qui permet d'ajuster les options,
+ lancer le traitement, et éventuellement (pour les images 2D) d'avoir une
+ prévisualisation.
+ Exemple runPlugin(
+\begin_inset Quotes eld
+\end_inset
+
+Morphological Filters...
+\begin_inset Quotes erd
+\end_inset
+
+, shape=square, radius=5);
+\end_layout
+
+\begin_layout Description
+Static
+\begin_inset space ~
+\end_inset
+
+factories Lancement du traitement sur une image ou un ensemble d'images
+ donnée, et récupération du résultat dans une nouvelle image.
+ On essaie d'avoir des appels similaires pour les ImageProcessor, les ImageStack
+, et les ImagePlus (dans ce dernier cas on teste la dimensionnalité et on
+ appelle le traitement spécialisé correspondant).
+ Exemple : MorphologicalFilter.gradient(image, se);
+\end_layout
+
+\begin_layout Description
+Algorithms Création d'une instance de classe qui sera responsable du traitement,
+ et qui permettra de monitorer les différentes étapes de l'éxecution.
+ Travaille sur des ImageProcessor ou des ImageStack.
+ Exemple : algo = new GeodesicReconstruction3DScanningGray8(); algo.setConnectivi
+ty(26); result = algo.applyTo(marker, mask);
+\end_layout
+
+\begin_layout Plain Layout
+Quelques conventions de codage ?
+\end_layout
+
+\begin_layout Itemize
+TAB
+\end_layout
+
+\begin_layout Itemize
+accolades sur une ligne
 \end_layout
 
 \end_inset
