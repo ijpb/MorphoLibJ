@@ -12,12 +12,23 @@ import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.GeometricMeasures3D;
 
 /**
- * Plugin for measuring geometric quantities such as volume, surface area 
+ * Plugin for measuring geometric quantities such as volume, surface area,
+ * and eventually sphericity index.
+ * 
+ * Volume is obtained by counting the number of voxels. Surface area is
+ * computed using discretization of Crofton formula. Sphericity is obtained as
+ * the ratio of V^2 by S^3, multiplied by 36*pi.
+ * 
+ * If the input image is calibrated, the spatial resolution is taken into 
+ * account for computing geometric features.
+ * 
+ * @see inra.ijpb.measure.GeometricMeasures3D
+ * 
  * @author David Legland
  *
  */
-public class Geometric_Measures_3D implements PlugIn {
-
+public class ParticleAnalysis3DPlugin implements PlugIn
+{
     // ====================================================
     // Global Constants
     
@@ -25,8 +36,8 @@ public class Geometric_Measures_3D implements PlugIn {
      * List of available numbers of directions
      */
     public final static String[] dirNumberLabels = {
-            "3 directions", 
-            "13 directions" 
+            "Crofton  (3 dirs.)", 
+            "Crofton (13 dirs.)" 
     }; 
     
     /**
@@ -57,29 +68,33 @@ public class Geometric_Measures_3D implements PlugIn {
 	/* (non-Javadoc)
      * @see ij.plugin.PlugIn#run(java.lang.String)
      */
-    public void run(String args) {
+    public void run(String args) 
+    {
         ImagePlus imagePlus = IJ.getImage();
         
-		if (imagePlus.getStackSize() == 1) {
+		if (imagePlus.getStackSize() == 1) 
+		{
 			IJ.error("Requires a Stack");
 			return;
 		}
 		
         // create the dialog, with operator options
         GenericDialog gd = new GenericDialog("Geometric Measures 3D");
-        gd.addChoice("Number of Directions:", dirNumberLabels, dirNumberLabels[1]);
+        gd.addChoice("Surface area method:", dirNumberLabels, dirNumberLabels[1]);
+        gd.addCheckbox("Sphericity", true);
         gd.showDialog();
         
         // If cancel was clicked, do nothing
         if (gd.wasCanceled())
             return;
         
-        // extract number of directions
+        // extract analysis options
         int nDirsIndex = gd.getNextChoiceIndex();
         int nDirs = dirNumbers[nDirsIndex];
+        boolean computeSphericity = gd.getNextBoolean();
         
         // Execute the plugin
-        Object[] results = exec(imagePlus, nDirs);
+        Object[] results = exec(imagePlus, nDirs, computeSphericity);
         ResultsTable table = (ResultsTable) results[1];
         
  		// create string for indexing results
@@ -92,7 +107,8 @@ public class Geometric_Measures_3D implements PlugIn {
     /**
      * Main body of the plugin. 
      */
-    public Object[] exec(ImagePlus imagePlus, int nDirs) {
+    public Object[] exec(ImagePlus imagePlus, int nDirs, boolean computeSphericity) 
+    {
         // Check validity of parameters
         if (imagePlus==null) 
             return null;
@@ -102,7 +118,8 @@ public class Geometric_Measures_3D implements PlugIn {
         // Extract spatial calibration
         Calibration cal = imagePlus.getCalibration();
         double[] resol = new double[]{1, 1, 1};
-        if (cal.scaled()) {
+        if (cal.scaled()) 
+        {
         	resol[0] = cal.pixelWidth;
         	resol[1] = cal.pixelHeight;
         	resol[2] = cal.pixelDepth;
@@ -115,12 +132,14 @@ public class Geometric_Measures_3D implements PlugIn {
    
 		// Create data table
 		ResultsTable table = new ResultsTable();
-		for (int i = 0; i < labels.length; i++) {
+		for (int i = 0; i < labels.length; i++) 
+		{
 			table.incrementCounter();
 			table.addLabel(Integer.toString(labels[i]));
 			table.addValue("Volume", volumes[i]);
 			table.addValue("Surface", surfaces[i]);
-			table.addValue("Sphericity", sphericities[i]);
+			if (computeSphericity)
+				table.addValue("Sphericity", sphericities[i]);
 		}
 
 		// return the created array

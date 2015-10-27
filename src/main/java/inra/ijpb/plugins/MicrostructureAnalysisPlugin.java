@@ -10,13 +10,7 @@ import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
 import inra.ijpb.measure.GeometricMeasures2D;
 
-/**
- * 
- * @deprecated use RegionMorphometryPlugin instead
- *
- */
-@Deprecated
-public class Crofton_Perimeter implements PlugInFilter {
+public class MicrostructureAnalysisPlugin implements PlugInFilter {
 
     // ====================================================
     // Global Constants
@@ -36,7 +30,6 @@ public class Crofton_Perimeter implements PlugInFilter {
         2, 4
     };
     
-
     // ====================================================
     // Class variables
     
@@ -53,7 +46,7 @@ public class Crofton_Perimeter implements PlugInFilter {
     // ====================================================
     // Calling functions 
     
-	/* (non-Javadoc)
+   	/* (non-Javadoc)
 	 * @see ij.plugin.filter.PlugInFilter#setup(java.lang.String, ij.ImagePlus)
 	 */
 	@Override
@@ -66,15 +59,16 @@ public class Crofton_Perimeter implements PlugInFilter {
 		this.imagePlus = imp;
 		return DOES_ALL | NO_CHANGES;
 	}
-
-	/* (non-Javadoc)
+	
+    /* (non-Javadoc)
      * @see ij.plugin.PlugIn#run(java.lang.String)
      */
+    @Override
     public void run(ImageProcessor ip) {
-        
-        // create the dialog, with operator options
-        GenericDialog gd = new GenericDialog("Crofton Perimeter");
+        // create the dialog, here an image input and a boolean option
+        GenericDialog gd = new GenericDialog("Crofton Densities");
         gd.addChoice("Number of Directions:", dirNumberLabels, dirNumberLabels[1]);
+        gd.addCheckbox("Add_Porosity", false);
         gd.showDialog();
         
         // If cancel was clicked, do nothing
@@ -84,53 +78,71 @@ public class Crofton_Perimeter implements PlugInFilter {
         // extract number of directions
         int nDirsIndex = gd.getNextChoiceIndex();
         int nDirs = dirNumbers[nDirsIndex];
-        
+        boolean addPorosity = gd.getNextBoolean(); 
+        		
         // check if image is a label image
-        if(imagePlus.getType() == ImagePlus.GRAY8 && 
-        		imagePlus.getType() != ImagePlus.GRAY16 && 
-        		imagePlus.getType() != ImagePlus.GRAY32) {
-            IJ.showMessage("Input image should be a label image");
+        if(imagePlus.getType() != ImagePlus.GRAY8) {
+            IJ.showMessage("Input image should be a binary image");
             return;
         }
         
         // Execute the plugin
-        exec(imagePlus, nDirs);
+        exec(imagePlus, nDirs, addPorosity);
+    }
+  
+    /**
+     * Old interface for calling the plugin, kept for compatibility.
+     */
+    public Object[] exec(ImagePlus image, int nDirs) {
+    	return exec(image, nDirs, false);
     }
     
     /**
      * Main body of the plugin. 
+     * Computes geometric measures on the image contained in <code>image</code>,
+     * using <code>nDirs</code> discrete directions. 
+     * If the addPorosity flag is set to true, an additional column equal to 1-area density is added. 
      */
-    public Object[] exec(ImagePlus inputImage, int nDirs) {
+    public Object[] exec(ImagePlus image, int nDirs, boolean addPorosity) {
         // Check validity of parameters
-        if (inputImage==null) 
+        if (image==null) 
             return null;
 
         if (debug) {
-        	System.out.println("Compute Crofton perimeter on image '" 
-        			+ inputImage.getTitle() + "' using " + nDirs 
+        	System.out.println("Compute Crofton densities on image '" 
+        			+ image.getTitle() + "' using " + nDirs 
         			+ " directions.");
         }
         
-        ImageProcessor proc = inputImage.getProcessor();
+        ImageProcessor proc = image.getProcessor();
         
         // Extract spatial calibration
-        Calibration cal = inputImage.getCalibration();
+        Calibration cal = image.getCalibration();
         double[] resol = new double[]{1, 1};
         if (cal.scaled()) {
         	resol[0] = cal.pixelWidth;
         	resol[1] = cal.pixelHeight;
         }
-
-        ResultsTable results = GeometricMeasures2D.croftonPerimeter(proc, resol, nDirs);
         
+        // Compute basis measures
+        ResultsTable results = GeometricMeasures2D.perimeterDensity(proc, resol, nDirs);
+        
+        // eventually add the porosity for those who do not want to subtract by hand...
+        if (addPorosity) {
+        	int nRows = results.getColumn(0).length;
+        	for (int i = 0; i < nRows; i++) {
+        		double areaDensity = results.getValue("A. Density", i);
+        		results.setValue("Porosity", i, 1-areaDensity);
+        	}
+        }
 		// create string for indexing results
-		String tableName = removeImageExtension(inputImage.getTitle()) + "-Perimeter"; 
+		String tableName = removeImageExtension(image.getTitle()) + "-Densities"; 
     
 		// show result
 		results.show(tableName);
 		
 		// return the created array
-		return new Object[]{"Crofton Perimeter", results};
+		return new Object[]{"Crofton Densties", results};
     }
 
 
