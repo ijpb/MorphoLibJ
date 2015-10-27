@@ -1,7 +1,6 @@
 package inra.ijpb.binary.distmap;
 
 import static java.lang.Math.min;
-import ij.ImagePlus;
 import ij.ImageStack;
 
 /**
@@ -85,24 +84,6 @@ public class ChamferDistance3DShort implements ChamferDistance3D
 	public void setBackgroundValue(short backgroundValue) 
 	{
 		this.backgroundValue = backgroundValue;
-	}
-
-	@Deprecated
-	public ImagePlus distanceMap(ImagePlus mask, String newName) 
-	{
-		// size of image
-		width = mask.getWidth();
-		height = mask.getHeight();
-
-		// get image processors
-		maskProc = mask.getStack();
-		
-		// Compute distance map
-		ImageStack rp = distanceMap(maskProc);
-			
-		// Create image plus for storing the result
-		ImagePlus result = new ImagePlus(newName, rp);
-		return result;
 	}
 
 	/**

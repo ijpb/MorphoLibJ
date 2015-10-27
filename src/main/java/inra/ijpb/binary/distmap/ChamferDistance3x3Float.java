@@ -1,7 +1,6 @@
 package inra.ijpb.binary.distmap;
 
 import static java.lang.Math.min;
-import ij.ImagePlus;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 
@@ -12,8 +11,8 @@ import ij.process.ImageProcessor;
  * @author David Legland
  * 
  */
-public class ChamferDistance3x3Float implements ChamferDistance {
-	
+public class ChamferDistance3x3Float implements ChamferDistance
+{
 	private final static int DEFAULT_MASK_LABEL = 255;
 
 	float[] weights;
@@ -49,7 +48,8 @@ public class ChamferDistance3x3Float implements ChamferDistance {
 	 * Default constructor that specifies the chamfer weights.
 	 * @param weights an array of two weights for orthogonal and diagonal directions
 	 */
-	public ChamferDistance3x3Float(float[] weights) {
+	public ChamferDistance3x3Float(float[] weights) 
+	{
 		this.weights = weights;
 	}
 
@@ -61,7 +61,8 @@ public class ChamferDistance3x3Float implements ChamferDistance {
 	 *            flag indicating whether the final distance map should be
 	 *            normalized by the first weight
 	 */
-	public ChamferDistance3x3Float(float[] weights, boolean normalize) {
+	public ChamferDistance3x3Float(float[] weights, boolean normalize) 
+	{
 		this.weights = weights;
 		this.normalizeMap = normalize;
 	}
@@ -69,32 +70,17 @@ public class ChamferDistance3x3Float implements ChamferDistance {
 	/**
 	 * @return the backgroundValue
 	 */
-	public float getBackgroundValue() {
+	public float getBackgroundValue()
+	{
 		return backgroundValue;
 	}
 
 	/**
 	 * @param backgroundValue the backgroundValue to set
 	 */
-	public void setBackgroundValue(float backgroundValue) {
+	public void setBackgroundValue(float backgroundValue)
+	{
 		this.backgroundValue = backgroundValue;
-	}
-
-	public ImagePlus distanceMap(ImagePlus mask, String newName) {
-
-		// size of image
-		width = mask.getWidth();
-		height = mask.getHeight();
-
-		// get image processors
-		maskProc = mask.getProcessor();
-		
-		// Compute distance map
-		FloatProcessor rp = distanceMap(maskProc);
-			
-		// Create image plus for storing the result
-		ImagePlus result = new ImagePlus(newName, rp);
-		return result;
 	}
 
 	/**
@@ -102,8 +88,8 @@ public class ChamferDistance3x3Float implements ChamferDistance {
 	 * The function returns a new Float processor the same size as the input,
 	 * with values greater or equal to zero. 
 	 */
-	public FloatProcessor distanceMap(ImageProcessor mask) {
-
+	public FloatProcessor distanceMap(ImageProcessor mask)
+	{
 		// size of image
 		width = mask.getWidth();
 		height = mask.getHeight();
@@ -118,8 +104,10 @@ public class ChamferDistance3x3Float implements ChamferDistance {
 		
 		// initialize empty image with either 0 (background) or Inf (foreground)
 		array = result.getFloatArray();
-		for (int i = 0; i < width; i++) {
-			for (int j = 0; j < height; j++) {
+		for (int i = 0; i < width; i++) 
+		{
+			for (int j = 0; j < height; j++) 
+			{
 				int val = mask.get(i, j) & 0x00ff;
 				array[i][j] = val == 0 ? 0 : backgroundValue;
 			}
@@ -130,10 +118,14 @@ public class ChamferDistance3x3Float implements ChamferDistance {
 		backwardIteration();
 
 		// Normalize values by the first weight
-		if (this.normalizeMap) {
-			for (int i = 0; i < width; i++) {
-				for (int j = 0; j < height; j++) {
-					if (maskProc.getPixel(i, j) != 0) {
+		if (this.normalizeMap) 
+		{
+			for (int i = 0; i < width; i++) 
+			{
+				for (int j = 0; j < height; j++) 
+				{
+					if (maskProc.getPixel(i, j) != 0) 
+					{
 						array[i][j] /= this.weights[0];
 					}
 				}
@@ -145,11 +137,14 @@ public class ChamferDistance3x3Float implements ChamferDistance {
 		// Compute max value within the mask
 		float maxVal = 0;
 		for (int i = 0; i < width; i++)
-			for (int j = 0; j < height; j++) {
+		{
+			for (int j = 0; j < height; j++) 
+			{
 				if (maskProc.getPixel(i, j) != 0)
 					maxVal = Math.max(maxVal, array[i][j]);
 			}
-
+		}
+		
 		// calibrate min and max values of result image processor
 		result.setMinAndMax(0, maxVal);
 
@@ -160,14 +155,16 @@ public class ChamferDistance3x3Float implements ChamferDistance {
 		return result;
 	}
 
-	private void forwardIteration() {
+	private void forwardIteration() 
+	{
 		// variables declaration
 		float ortho;
 		float diago;
 		float newVal;
 
 		// Process first line: consider only the pixel on the left
-		for (int i = 1; i < width; i++) {
+		for (int i = 1; i < width; i++) 
+		{
 			if (maskProc.getPixel(i, 0) != maskLabel)
 				continue;
 			ortho = array[i - 1][0];
@@ -175,10 +172,12 @@ public class ChamferDistance3x3Float implements ChamferDistance {
 		}
 
 		// Process all other lines
-		for (int j = 1; j < height; j++) {
+		for (int j = 1; j < height; j++) 
+		{
 			// process first pixel of current line: consider pixels up and
 			// upright
-			if (maskProc.getPixel(0, j) == maskLabel) {
+			if (maskProc.getPixel(0, j) == maskLabel) 
+			{
 				ortho = array[0][j - 1];
 				diago = array[1][j - 1];
 				newVal = min(ortho + weights[0], diago + weights[1]);
@@ -186,7 +185,8 @@ public class ChamferDistance3x3Float implements ChamferDistance {
 			}
 
 			// Process pixels in the middle of the line
-			for (int i = 1; i < width - 1; i++) {
+			for (int i = 1; i < width - 1; i++)
+			{
 				// process only pixels inside structure
 				if (maskProc.getPixel(i, j) != maskLabel)
 					continue;
@@ -204,7 +204,8 @@ public class ChamferDistance3x3Float implements ChamferDistance {
 
 			// process last pixel of current line: consider pixels left,
 			// up-left, and up
-			if (maskProc.getPixel(width - 1, j) == maskLabel) {
+			if (maskProc.getPixel(width - 1, j) == maskLabel) 
+			{
 				ortho = min(array[width - 2][j], array[width - 1][j - 1]);
 				diago = array[width - 2][j - 1];
 				newVal = min(ortho + weights[0], diago + weights[1]);
@@ -214,14 +215,16 @@ public class ChamferDistance3x3Float implements ChamferDistance {
 		} // end of forward iteration
 	}
 
-	private void backwardIteration() {
+	private void backwardIteration()
+	{
 		// variables declaration
 		float ortho;
 		float diago;
 		float newVal;
 
 		// Process last line: consider only the pixel just after (on the right)
-		for (int i = width - 2; i >= 0; i--) {
+		for (int i = width - 2; i >= 0; i--) 
+		{
 			if (maskProc.getPixel(i, height - 1) != maskLabel)
 				continue;
 
@@ -230,11 +233,12 @@ public class ChamferDistance3x3Float implements ChamferDistance {
 		}
 
 		// Process regular lines
-		for (int j = height - 2; j >= 0; j--) {
-
+		for (int j = height - 2; j >= 0; j--)
+		{
 			// process last pixel of the current line: consider pixels
 			// down and down-left
-			if (maskProc.getPixel(width - 1, j) == maskLabel) {
+			if (maskProc.getPixel(width - 1, j) == maskLabel)
+			{
 				ortho = array[width - 1][j + 1];
 				diago = array[width - 2][j + 1];
 				newVal = min(ortho + weights[0], diago + weights[1]);
@@ -242,7 +246,8 @@ public class ChamferDistance3x3Float implements ChamferDistance {
 			}
 
 			// Process pixels in the middle of the current line
-			for (int i = width - 2; i > 0; i--) {
+			for (int i = width - 2; i > 0; i--) 
+			{
 				// process only pixels inside structure
 				if (maskProc.getPixel(i, j) != maskLabel)
 					continue;
@@ -260,7 +265,8 @@ public class ChamferDistance3x3Float implements ChamferDistance {
 
 			// process first pixel of current line: consider pixels right,
 			// down-right and down
-			if (maskProc.getPixel(0, j) == maskLabel) {
+			if (maskProc.getPixel(0, j) == maskLabel) 
+			{
 				// curVal = array[0][j];
 				ortho = min(array[1][j], array[0][j + 1]);
 				diago = array[1][j + 1];
@@ -275,9 +281,11 @@ public class ChamferDistance3x3Float implements ChamferDistance {
 	 * Update the pixel at position (i,j) with the value newVal. If newVal is
 	 * greater or equal to current value at position (i,j), do nothing.
 	 */
-	private void updateIfNeeded(int i, int j, float newVal) {
+	private void updateIfNeeded(int i, int j, float newVal) 
+	{
 		float value = array[i][j];
-		if (newVal < value) {
+		if (newVal < value)
+		{
 			array[i][j] = newVal;
 		}
 	}

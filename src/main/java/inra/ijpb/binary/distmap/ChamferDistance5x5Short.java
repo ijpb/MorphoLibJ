@@ -1,7 +1,6 @@
 package inra.ijpb.binary.distmap;
 
 import static java.lang.Math.min;
-import ij.ImagePlus;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 
@@ -17,9 +16,8 @@ import ij.process.ShortProcessor;
  * @author David Legland
  * 
  */
-public class ChamferDistance5x5Short implements ChamferDistance {
-	
-	
+public class ChamferDistance5x5Short implements ChamferDistance 
+{
 	private final static int DEFAULT_MASK_LABEL = 255;
 
 	short[] weights = new short[]{3, 4, 5};
@@ -54,7 +52,8 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 	/**
 	 * Default constructor with predefined chamfer weights.
 	 */
-	public ChamferDistance5x5Short() {
+	public ChamferDistance5x5Short() 
+	{
 		this(new short[]{5, 7, 11}, true);
 	}
 
@@ -62,7 +61,8 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 	 * Default constructor that specifies the chamfer weights.
 	 * @param weights an array of two weights for orthogonal and diagonal directions
 	 */
-	public ChamferDistance5x5Short(short[] weights) {
+	public ChamferDistance5x5Short(short[] weights) 
+	{
 		this(weights, true);
 	}
 
@@ -74,7 +74,8 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 	 *            flag indicating whether the final distance map should be
 	 *            normalized by the first weight
 	 */
-	public ChamferDistance5x5Short(short[] weights, boolean normalize) {
+	public ChamferDistance5x5Short(short[] weights, boolean normalize)
+	{
 		if (weights.length < 3) 
 		{
 			short[] newWeights = new short[3];
@@ -90,32 +91,17 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 	/**
 	 * @return the backgroundValue
 	 */
-	public short getBackgroundValue() {
+	public short getBackgroundValue() 
+	{
 		return backgroundValue;
 	}
 
 	/**
 	 * @param backgroundValue the backgroundValue to set
 	 */
-	public void setBackgroundValue(short backgroundValue) {
+	public void setBackgroundValue(short backgroundValue)
+	{
 		this.backgroundValue = backgroundValue;
-	}
-
-	public ImagePlus distanceMap(ImagePlus mask, String newName) {
-
-		// size of image
-		width = mask.getWidth();
-		height = mask.getHeight();
-
-		// get image processors
-		maskProc = mask.getProcessor();
-		
-		// Compute distance map
-		ShortProcessor rp = distanceMap(maskProc);
-			
-		// Create image plus for storing the result
-		ImagePlus result = new ImagePlus(newName, rp);
-		return result;
 	}
 
 	/**
@@ -123,8 +109,8 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 	 * The function returns a new short processor the same size as the input,
 	 * with values greater or equal to zero. 
 	 */
-	public ShortProcessor distanceMap(ImageProcessor mask) {
-
+	public ShortProcessor distanceMap(ImageProcessor mask)
+	{
 		// size of image
 		width = mask.getWidth();
 		height = mask.getHeight();
@@ -138,8 +124,10 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 		buffer.fill();
 		
 		// initialize empty image with either 0 (background) or Inf (foreground)
-		for (int i = 0; i < width; i++) {
-			for (int j = 0; j < height; j++) {
+		for (int i = 0; i < width; i++)
+		{
+			for (int j = 0; j < height; j++)
+			{
 				int val = mask.get(i, j) & 0x00ff;
 				buffer.set(i, j, val == 0 ? 0 : backgroundValue);
 			}
@@ -150,10 +138,14 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 		backwardIteration();
 
 		// Normalize values by the first weight
-		if (this.normalizeMap) {
-			for (int i = 0; i < width; i++) {
-				for (int j = 0; j < height; j++) {
-					if (maskProc.getPixel(i, j) != 0) {
+		if (this.normalizeMap) 
+		{
+			for (int i = 0; i < width; i++) 
+			{
+				for (int j = 0; j < height; j++)
+				{
+					if (maskProc.getPixel(i, j) != 0) 
+					{
 						buffer.set(i, j, buffer.get(i, j) / weights[0]);
 					}
 				}
@@ -163,11 +155,14 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 		// Compute max value within the mask
 		short maxVal = 0;
 		for (int i = 0; i < width; i++)
-			for (int j = 0; j < height; j++) {
+		{
+			for (int j = 0; j < height; j++) 
+			{
 				if (maskProc.getPixel(i, j) != 0)
 					maxVal = (short) Math.max(maxVal, buffer.get(i, j));
 			}
-
+		}
+		
 		// calibrate min and max values of result imaeg processor
 		buffer.setMinAndMax(0, maxVal);
 
@@ -178,7 +173,8 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 		return buffer;
 	}
 
-	private void forwardIteration() {
+	private void forwardIteration()
+	{
 		// variables declaration
 		int ortho;
 		int diago;
@@ -186,7 +182,8 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 		int newVal;
 
 		// Process first line: consider only the pixel on the left
-		for (int i = 1; i < width; i++) {
+		for (int i = 1; i < width; i++) 
+		{
 			if (maskProc.get(i, 0) != maskLabel)
 				continue;
 			ortho = buffer.get(i - 1, 0) + weights[0];
@@ -194,7 +191,8 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 		}
 
 		// process first pixel of second line: up, upright, and (+2,-1)
-		if (maskProc.get(0, 1) == maskLabel) {
+		if (maskProc.get(0, 1) == maskLabel) 
+		{
 			ortho = buffer.get(0, 0) + weights[0];
 			diago = buffer.get(1, 0) + weights[1];
 			diag2 = buffer.get(2, 0) + weights[2];
@@ -203,7 +201,8 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 		}
 		
 		// process second pixel of second line: up, left, upleft and upright, and (+2,-1)
-		if (maskProc.get(1, 1) == maskLabel) {
+		if (maskProc.get(1, 1) == maskLabel) 
+		{
 			ortho = min(buffer.get(0, 1), buffer.get(1, 0));
 			diago = min(buffer.get(0, 0), buffer.get(2, 0));
 			diag2 = buffer.get(3, 0);
@@ -213,7 +212,8 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 
 		// Second line, regular pixels: consider only the pixel on the left
 		// and from the first line
-		for (int i = 2; i < width - 2; i++) {
+		for (int i = 2; i < width - 2; i++) 
+		{
 			if (maskProc.get(i, 1) != maskLabel)
 				continue;
 			ortho = min(buffer.get(i - 1, 1), buffer.get(i, 0));
@@ -224,7 +224,8 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 		}
 		
 		// last pixel of second line
-		if (maskProc.get(width-1, 1) == maskLabel) {
+		if (maskProc.get(width-1, 1) == maskLabel) 
+		{
 			ortho = min(buffer.get(width-2, 1), buffer.get(width-1, 0));
 			diago = buffer.get(1, 0);
 			diag2 = buffer.get(2, 0);
@@ -233,10 +234,12 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 		}
 
 		// Process all other lines
-		for (int j = 2; j < height; j++) {
+		for (int j = 2; j < height; j++) 
+		{
 			// process first pixel of current line: consider pixels up and
 			// upright
-			if (maskProc.get(0, j) == maskLabel) {
+			if (maskProc.get(0, j) == maskLabel) 
+			{
 				ortho = buffer.get(0, j - 1);
 				diago = buffer.get(1, j - 1);
 				diag2 = min(buffer.get(2, j - 1), buffer.get(1, j - 2));
@@ -245,7 +248,8 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 			}
 
 			//  process second pixel of regular line 
-			if (maskProc.get(1, j) == maskLabel) {
+			if (maskProc.get(1, j) == maskLabel)
+			{
 				ortho = min(buffer.get(0, j), buffer.get(1, j - 1));
 				diago = min(buffer.get(0, j - 1), buffer.get(2, j - 1));
 				diag2 = min3(buffer.get(0, j - 2), buffer.get(2, j - 2), buffer.get(3, j - 1));
@@ -254,7 +258,8 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 			}
 			
 			// Process pixels in the middle of the line
-			for (int i = 2; i < width - 2; i++) {
+			for (int i = 2; i < width - 2; i++) 
+			{
 				// process only pixels inside structure
 				if (maskProc.get(i, j) != maskLabel)
 					continue;
@@ -274,7 +279,8 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 			}
 
 			// penultimate pixel 
-			if (maskProc.getPixel(width - 2, j) == maskLabel) {
+			if (maskProc.getPixel(width - 2, j) == maskLabel)
+			{
 				ortho =  min(buffer.get(width - 3, j), buffer.get(width - 2, j - 1));
 				diago = min(buffer.get(width - 3, j - 1), buffer.get(width - 1, j - 1));
 				diag2 = min3(
@@ -286,7 +292,8 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 			
 			// process last pixel of current line: consider pixels left,
 			// up-left, and up
-			if (maskProc.getPixel(width - 1, j) == maskLabel) {
+			if (maskProc.getPixel(width - 1, j) == maskLabel) 
+			{
 				ortho =  min(buffer.get(width - 2, j), buffer.get(width - 1, j - 1));
 				diago = buffer.get(width - 2, j - 1);
 				diag2 = min(buffer.get(width - 3, j - 1), buffer.get(width - 2, j - 2));
@@ -298,7 +305,8 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 		
 	} // end of forward iteration
 
-	private void backwardIteration() {
+	private void backwardIteration()
+	{
 		// variables declaration
 		int ortho;
 		int diago;
@@ -306,7 +314,8 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 		int newVal;
 
 		// Process last line: consider only the pixel just after (on the right)
-		for (int i = width - 2; i >= 0; i--) {
+		for (int i = width - 2; i >= 0; i--) 
+		{
 			if (maskProc.getPixel(i, height - 1) != maskLabel)
 				continue;
 
@@ -315,7 +324,8 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 		}
 
 		// last pixel of penultimate line: consider the 3 pixels below
-		if (maskProc.getPixel(width - 1, height - 2) == maskLabel) {
+		if (maskProc.getPixel(width - 1, height - 2) == maskLabel) 
+		{
 			ortho = buffer.get(width - 1, height - 1);
 			diago = buffer.get(width - 2, height - 1);
 			diag2 = buffer.get(width - 3, height - 1);
@@ -324,7 +334,8 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 		}
 
 		// penultimate pixel of penultimate line: consider right pixel, and the 4 pixels below
-		if (maskProc.getPixel(width - 2, height - 2) == maskLabel) {
+		if (maskProc.getPixel(width - 2, height - 2) == maskLabel) 
+		{
 			ortho = min(buffer.get(width - 1, height - 2), buffer.get(width - 2, height - 1));
 			diago = min(buffer.get(width - 1, height - 1), buffer.get(width - 3, height - 1));
 			diag2 = buffer.get(width - 4, height - 1);
@@ -333,7 +344,8 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 		}
 
 		// Process regular pixels of penultimate line
-		for (int i = width - 3; i > 1; i--) {
+		for (int i = width - 3; i > 1; i--) 
+		{
 			if (maskProc.getPixel(i, height - 2) != maskLabel)
 				continue;
 
@@ -350,7 +362,8 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 		}
 		
 		// Process second pixel of penultimate line
-		if (maskProc.getPixel(1, height - 2) == maskLabel) {
+		if (maskProc.getPixel(1, height - 2) == maskLabel)
+		{
 			// minimum distance of neighbor pixels
 			ortho = min(buffer.get(2, height - 2), buffer.get(1, height - 1));
 			diago = min(buffer.get(0, height - 1), buffer.get(2, height - 1));
@@ -364,7 +377,8 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 		}
 
 		// Process first pixel of penultimate line
-		if (maskProc.getPixel(0, height - 2) == maskLabel) {
+		if (maskProc.getPixel(0, height - 2) == maskLabel)
+		{
 			// minimum distance of neighbor pixels
 			ortho = min(buffer.get(1, height - 2), buffer.get(0, height - 1));
 			diago = buffer.get(1, height - 1);
@@ -378,11 +392,13 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 		}
 			
 		// Process regular lines
-		for (int j = height - 3; j >= 0; j--) {
+		for (int j = height - 3; j >= 0; j--) 
+		{
 
 			// process last pixel of the current line: consider pixels
 			// down, down-left and (-2,+1)
-			if (maskProc.getPixel(width - 1, j) == maskLabel) {
+			if (maskProc.getPixel(width - 1, j) == maskLabel)
+			{
 				ortho = buffer.get(width - 1, j + 1);
 				diago = buffer.get(width - 2, j + 1);
 				diag2 = min(buffer.get(width - 3, j + 1), buffer.get(width - 2, j + 2));
@@ -392,7 +408,8 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 
 		
 			// process penultimate pixel of current line
-			if (maskProc.getPixel(width - 2, j) == maskLabel) {
+			if (maskProc.getPixel(width - 2, j) == maskLabel)
+			{
 
 				// minimum distance of neighbor pixels
 				ortho = min(buffer.get(width - 1, j), buffer.get(width - 2, j + 1));
@@ -410,7 +427,8 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 			}
 
 			// Process pixels in the middle of the current line
-			for (int i = width - 3; i > 1; i--) {
+			for (int i = width - 3; i > 1; i--) 
+			{
 				// process only pixels inside structure
 				if (maskProc.getPixel(i, j) != maskLabel)
 					continue;
@@ -431,7 +449,8 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 
 			// process second pixel of current line: consider pixels right,
 			// down-right and down
-			if (maskProc.getPixel(1, j) == maskLabel) {
+			if (maskProc.getPixel(1, j) == maskLabel) 
+			{
 				ortho = min(buffer.get(2, j), buffer.get(1, j + 1));
 				diago = min(buffer.get(0, j + 1), buffer.get(2, j + 1));
 				diag2 = min3(buffer.get(3, j + 1), buffer.get(2, j + 2), buffer.get(0, j + 2));
@@ -441,7 +460,8 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 
 			// process first pixel of current line: consider pixels right,
 			// down-right and down
-			if (maskProc.getPixel(0, j) == maskLabel) {
+			if (maskProc.getPixel(0, j) == maskLabel)
+			{
 				ortho = min(buffer.get(1, j), buffer.get(0, j + 1));
 				diago = buffer.get(1, j + 1);
 				diag2 = min(buffer.get(2, j + 1), buffer.get(1, j + 2));
@@ -456,7 +476,8 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 	/**
 	 * Computes the minimum within 3 values.
 	 */
-	private final static int min3(int v1, int v2, int v3) {
+	private final static int min3(int v1, int v2, int v3)
+	{
 		return min(min(v1, v2), v3);
 	}
 	
@@ -464,7 +485,8 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 	 * Computes the weighted minima of orthogonal, diagonal, and (2,1)-diagonal
 	 * values.
 	 */
-	private int min3w(int ortho, int diago, int diag2) {
+	private int min3w(int ortho, int diago, int diag2)
+	{
 		return min(min(ortho + weights[0], diago + weights[1]), 
 				diag2 + weights[2]);
 	}
@@ -473,9 +495,11 @@ public class ChamferDistance5x5Short implements ChamferDistance {
 	 * Update the pixel at position (i,j) with the value newVal. If newVal is
 	 * greater or equal to current value at position (i,j), do nothing.
 	 */
-	private void updateIfNeeded(int i, int j, int newVal) {
+	private void updateIfNeeded(int i, int j, int newVal)
+	{
 		int value = buffer.get(i, j);
-		if (newVal < value) {
+		if (newVal < value) 
+		{
 			buffer.set(i, j, newVal);
 		}
 	}
