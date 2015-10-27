@@ -8,7 +8,7 @@ import ij.process.ImageProcessor;
 /**
  * Interface for computing distance maps from binary images.
  */
-public interface ChamferDistance {
+public interface DistanceTransform {
 	/**
 	 * Computes the distance map from a binary image processor. 
 	 * Distance is computed for each foreground (white) pixel, as the 

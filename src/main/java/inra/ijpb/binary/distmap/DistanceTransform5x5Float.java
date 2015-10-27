@@ -19,7 +19,7 @@ import ij.process.ImageProcessor;
  * @author David Legland
  * 
  */
-public class ChamferDistance5x5Float implements ChamferDistance
+public class DistanceTransform5x5Float implements DistanceTransform
 {
 	private final static int DEFAULT_MASK_LABEL = 255;
 
@@ -54,7 +54,7 @@ public class ChamferDistance5x5Float implements ChamferDistance
 	/**
 	 * Default constructor with predefined chamfer weights.
 	 */
-	public ChamferDistance5x5Float() 
+	public DistanceTransform5x5Float() 
 	{
 		this(new float[] { 5, 7, 11 }, true);
 	}
@@ -65,7 +65,7 @@ public class ChamferDistance5x5Float implements ChamferDistance
 	 * @param weights
 	 *            an array of two weights for orthogonal and diagonal directions
 	 */
-	public ChamferDistance5x5Float(float[] weights) 
+	public DistanceTransform5x5Float(float[] weights) 
 	{
 		this(weights, true);
 	}
@@ -80,7 +80,7 @@ public class ChamferDistance5x5Float implements ChamferDistance
 	 *            flag indicating whether the final distance map should be
 	 *            normalized by the first weight
 	 */
-	public ChamferDistance5x5Float(float[] weights, boolean normalize) 
+	public DistanceTransform5x5Float(float[] weights, boolean normalize) 
 	{
 		if (weights.length < 3) 
 		{

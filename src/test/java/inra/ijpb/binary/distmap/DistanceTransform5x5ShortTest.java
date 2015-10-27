@@ -8,12 +8,13 @@ import inra.ijpb.binary.ChamferWeights;
 
 import org.junit.Test;
 
-public class ChamferDistance5x5FloatTest {
+public class DistanceTransform5x5ShortTest {
 
 	@Test
 	public final void testDistanceMap_ChessBoard() {
 		ByteProcessor image = new ByteProcessor(12, 10);
 		image.setBackgroundValue(0);
+		image.setValue(0);
 		image.fill();
 		for (int y = 2; y < 8; y++) {
 			for (int x = 2; x < 10; x++) {
@@ -21,14 +22,14 @@ public class ChamferDistance5x5FloatTest {
 			}
 		}
 		
-		float[] weights = ChamferWeights.CHESSBOARD.getFloatWeights();
-		ChamferDistance5x5Float algo = new ChamferDistance5x5Float(weights, true);
+		short[] weights = ChamferWeights.CHESSBOARD.getShortWeights();
+		DistanceTransform5x5Short algo = new DistanceTransform5x5Short(weights, true);
 		ImageProcessor result = algo.distanceMap(image);
 		
 		assertNotNull(result);
 		assertEquals(image.getWidth(), result.getWidth());
 		assertEquals(image.getHeight(), result.getHeight());
-		assertEquals(3, result.getf(4, 4), 1e-12);
+		assertEquals(3, result.get(4, 4));
 	}
 	
 	@Test
@@ -38,18 +39,20 @@ public class ChamferDistance5x5FloatTest {
 		image.fill();
 		image.set(4, 4, 0);
 		
-		float[] weights = ChamferWeights.CITY_BLOCK.getFloatWeights();
-		ChamferDistance5x5Float algo = new ChamferDistance5x5Float(weights, false);
+		
+		short[] weights = ChamferWeights.CITY_BLOCK.getShortWeights();
+		DistanceTransform5x5Short algo = new DistanceTransform5x5Short(weights, false);
 		ImageProcessor result = algo.distanceMap(image);
 		
 		assertNotNull(result);
 		assertEquals(image.getWidth(), result.getWidth());
 		assertEquals(image.getHeight(), result.getHeight());
-		assertEquals(8, result.getf(0, 0), .01);
-		assertEquals(6, result.getf(6, 0), .01);
-		assertEquals(6, result.getf(0, 6), .01);
-		assertEquals(4, result.getf(6, 6), .01);
-		assertEquals(5, result.getf(0, 5), .01);
+		assertEquals(8, result.get(0, 0));
+		assertEquals(6, result.get(6, 0));
+		assertEquals(6, result.get(0, 6));
+		assertEquals(4, result.get(6, 6));
+		
+		assertEquals(5, result.get(0, 5));
 	}
 
 	@Test
@@ -59,19 +62,20 @@ public class ChamferDistance5x5FloatTest {
 		image.fill();
 		image.set(4, 4, 0);
 		
-		float[] weights = ChamferWeights.CHESSBOARD.getFloatWeights();
-		ChamferDistance5x5Float algo = new ChamferDistance5x5Float(weights, false);
+		
+		short[] weights = ChamferWeights.CHESSBOARD.getShortWeights();
+		DistanceTransform5x5Short algo = new DistanceTransform5x5Short(weights, false);
 		ImageProcessor result = algo.distanceMap(image);
 		
 		assertNotNull(result);
 		assertEquals(image.getWidth(), result.getWidth());
 		assertEquals(image.getHeight(), result.getHeight());
-		assertEquals(4, result.getf(0, 0), .01);
-		assertEquals(4, result.getf(6, 0), .01);
-		assertEquals(4, result.getf(0, 6), .01);
-		assertEquals(2, result.getf(6, 6), .01);
+		assertEquals(4, result.get(0, 0));
+		assertEquals(4, result.get(6, 0));
+		assertEquals(4, result.get(0, 6));
+		assertEquals(2, result.get(6, 6));
 		
-		assertEquals(4, result.getf(0, 5), .01);
+		assertEquals(4, result.get(0, 5));
 	}
 	
 	@Test
@@ -81,19 +85,20 @@ public class ChamferDistance5x5FloatTest {
 		image.fill();
 		image.set(4, 4, 0);
 		
-		float[] weights = ChamferWeights.WEIGHTS_23.getFloatWeights();
-		ChamferDistance5x5Float algo = new ChamferDistance5x5Float(weights, false);
+		
+		short[] weights = ChamferWeights.WEIGHTS_23.getShortWeights();
+		DistanceTransform5x5Short algo = new DistanceTransform5x5Short(weights, false);
 		ImageProcessor result = algo.distanceMap(image);
 		
 		assertNotNull(result);
 		assertEquals(image.getWidth(), result.getWidth());
 		assertEquals(image.getHeight(), result.getHeight());
-		assertEquals(12, result.getf(0, 0), .01);
-		assertEquals(10, result.getf(6, 0), .01);
-		assertEquals(10, result.getf(0, 6), .01);
-		assertEquals(6, result.getf(6, 6), .01);
+		assertEquals(12, result.get(0, 0));
+		assertEquals(10, result.get(6, 0));
+		assertEquals(10, result.get(0, 6));
+		assertEquals(6, result.get(6, 6));
 		
-		assertEquals(9, result.getf(0, 5), .01);
+		assertEquals(9, result.get(0, 5));
 	}
 	
 	@Test
@@ -103,19 +108,43 @@ public class ChamferDistance5x5FloatTest {
 		image.fill();
 		image.set(4, 4, 0);
 		
-		float[] weights = ChamferWeights.BORGEFORS.getFloatWeights();
-		ChamferDistance5x5Float algo = new ChamferDistance5x5Float(weights, false);
+		
+		short[] weights = ChamferWeights.BORGEFORS.getShortWeights();
+		DistanceTransform5x5Short algo = new DistanceTransform5x5Short(weights, false);
 		ImageProcessor result = algo.distanceMap(image);
 		
 		assertNotNull(result);
 		assertEquals(image.getWidth(), result.getWidth());
 		assertEquals(image.getHeight(), result.getHeight());
-		assertEquals(16, result.getf(0, 0), .01);
-		assertEquals(14, result.getf(6, 0), .01);
-		assertEquals(14, result.getf(0, 6), .01);
-		assertEquals(8, result.getf(6, 6), .01);
+		assertEquals(16, result.get(0, 0));
+		assertEquals(14, result.get(6, 0));
+		assertEquals(14, result.get(0, 6));
+		assertEquals(8, result.get(6, 6));
 		
-		assertEquals(13, result.getf(0, 5), .01);
+		assertEquals(13, result.get(0, 5));
+	}
+	
+	@Test
+	public final void testDistanceMap_UntilCorners_ChessKnight() {
+		ByteProcessor image = new ByteProcessor(7, 7);
+		image.setValue(255);
+		image.fill();
+		image.set(4, 4, 0);
+		
+		
+		short[] weights = ChamferWeights.CHESSKNIGHT.getShortWeights();
+		DistanceTransform5x5Short algo = new DistanceTransform5x5Short(weights, false);
+		ImageProcessor result = algo.distanceMap(image);
+		
+		assertNotNull(result);
+		assertEquals(image.getWidth(), result.getWidth());
+		assertEquals(image.getHeight(), result.getHeight());
+		assertEquals(28, result.get(0, 0));
+		assertEquals(22, result.get(6, 0));
+		assertEquals(22, result.get(0, 6));
+		assertEquals(14, result.get(6, 6));
+		
+		assertEquals(20, result.get(0, 4));
 	}
 	
 	/**
@@ -129,18 +158,18 @@ public class ChamferDistance5x5FloatTest {
 		image.fill();
 		image.set(6, 6, 0);
 		
-		float[] weights = ChamferWeights.CHESSKNIGHT.getFloatWeights();
-		ChamferDistance5x5Float algo = new ChamferDistance5x5Float(weights, false);
+		short[] weights = ChamferWeights.CHESSKNIGHT.getShortWeights();
+		DistanceTransform5x5Short algo = new DistanceTransform5x5Short(weights, false);
 		ImageProcessor result = algo.distanceMap(image);
 		
 		assertNotNull(result);
 		assertEquals(image.getWidth(), result.getWidth());
 		assertEquals(image.getHeight(), result.getHeight());
-		assertEquals(42, result.getf(0, 0), .01);
-		assertEquals(32, result.getf(8, 0), .01);
-		assertEquals(32, result.getf(0, 8), .01);
-		assertEquals(14, result.getf(8, 8), .01);
+		assertEquals(42, result.get(0, 0));
+		assertEquals(32, result.get(8, 0));
+		assertEquals(32, result.get(0, 8));
+		assertEquals(14, result.get(8, 8));
 		
-		assertEquals(30, result.getf(0, 6), .01);
+		assertEquals(30, result.get(0, 6));
 	}
 }

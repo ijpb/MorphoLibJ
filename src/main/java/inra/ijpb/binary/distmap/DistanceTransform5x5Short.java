@@ -16,7 +16,7 @@ import ij.process.ShortProcessor;
  * @author David Legland
  * 
  */
-public class ChamferDistance5x5Short implements ChamferDistance 
+public class DistanceTransform5x5Short implements DistanceTransform 
 {
 	private final static int DEFAULT_MASK_LABEL = 255;
 
@@ -52,7 +52,7 @@ public class ChamferDistance5x5Short implements ChamferDistance
 	/**
 	 * Default constructor with predefined chamfer weights.
 	 */
-	public ChamferDistance5x5Short() 
+	public DistanceTransform5x5Short() 
 	{
 		this(new short[]{5, 7, 11}, true);
 	}
@@ -61,7 +61,7 @@ public class ChamferDistance5x5Short implements ChamferDistance
 	 * Default constructor that specifies the chamfer weights.
 	 * @param weights an array of two weights for orthogonal and diagonal directions
 	 */
-	public ChamferDistance5x5Short(short[] weights) 
+	public DistanceTransform5x5Short(short[] weights) 
 	{
 		this(weights, true);
 	}
@@ -74,7 +74,7 @@ public class ChamferDistance5x5Short implements ChamferDistance
 	 *            flag indicating whether the final distance map should be
 	 *            normalized by the first weight
 	 */
-	public ChamferDistance5x5Short(short[] weights, boolean normalize)
+	public DistanceTransform5x5Short(short[] weights, boolean normalize)
 	{
 		if (weights.length < 3) 
 		{

@@ -8,10 +8,10 @@ import inra.ijpb.binary.ChamferWeights;
 
 import org.junit.Test;
 
-public class ChamferDistance3x3FloatTest {
+public class DistanceTransform5x5FloatTest {
 
 	@Test
-	public final void testDistanceMapImageProcessor() {
+	public final void testDistanceMap_ChessBoard() {
 		ByteProcessor image = new ByteProcessor(12, 10);
 		image.setBackgroundValue(0);
 		image.fill();
@@ -22,7 +22,7 @@ public class ChamferDistance3x3FloatTest {
 		}
 		
 		float[] weights = ChamferWeights.CHESSBOARD.getFloatWeights();
-		ChamferDistance3x3Float algo = new ChamferDistance3x3Float(weights, true);
+		DistanceTransform5x5Float algo = new DistanceTransform5x5Float(weights, true);
 		ImageProcessor result = algo.distanceMap(image);
 		
 		assertNotNull(result);
@@ -39,7 +39,7 @@ public class ChamferDistance3x3FloatTest {
 		image.set(4, 4, 0);
 		
 		float[] weights = ChamferWeights.CITY_BLOCK.getFloatWeights();
-		ChamferDistance3x3Float algo = new ChamferDistance3x3Float(weights, false);
+		DistanceTransform5x5Float algo = new DistanceTransform5x5Float(weights, false);
 		ImageProcessor result = algo.distanceMap(image);
 		
 		assertNotNull(result);
@@ -49,6 +49,7 @@ public class ChamferDistance3x3FloatTest {
 		assertEquals(6, result.getf(6, 0), .01);
 		assertEquals(6, result.getf(0, 6), .01);
 		assertEquals(4, result.getf(6, 6), .01);
+		assertEquals(5, result.getf(0, 5), .01);
 	}
 
 	@Test
@@ -59,7 +60,7 @@ public class ChamferDistance3x3FloatTest {
 		image.set(4, 4, 0);
 		
 		float[] weights = ChamferWeights.CHESSBOARD.getFloatWeights();
-		ChamferDistance3x3Float algo = new ChamferDistance3x3Float(weights, false);
+		DistanceTransform5x5Float algo = new DistanceTransform5x5Float(weights, false);
 		ImageProcessor result = algo.distanceMap(image);
 		
 		assertNotNull(result);
@@ -69,6 +70,8 @@ public class ChamferDistance3x3FloatTest {
 		assertEquals(4, result.getf(6, 0), .01);
 		assertEquals(4, result.getf(0, 6), .01);
 		assertEquals(2, result.getf(6, 6), .01);
+		
+		assertEquals(4, result.getf(0, 5), .01);
 	}
 	
 	@Test
@@ -79,7 +82,7 @@ public class ChamferDistance3x3FloatTest {
 		image.set(4, 4, 0);
 		
 		float[] weights = ChamferWeights.WEIGHTS_23.getFloatWeights();
-		ChamferDistance3x3Float algo = new ChamferDistance3x3Float(weights, false);
+		DistanceTransform5x5Float algo = new DistanceTransform5x5Float(weights, false);
 		ImageProcessor result = algo.distanceMap(image);
 		
 		assertNotNull(result);
@@ -89,6 +92,8 @@ public class ChamferDistance3x3FloatTest {
 		assertEquals(10, result.getf(6, 0), .01);
 		assertEquals(10, result.getf(0, 6), .01);
 		assertEquals(6, result.getf(6, 6), .01);
+		
+		assertEquals(9, result.getf(0, 5), .01);
 	}
 	
 	@Test
@@ -99,7 +104,7 @@ public class ChamferDistance3x3FloatTest {
 		image.set(4, 4, 0);
 		
 		float[] weights = ChamferWeights.BORGEFORS.getFloatWeights();
-		ChamferDistance3x3Float algo = new ChamferDistance3x3Float(weights, false);
+		DistanceTransform5x5Float algo = new DistanceTransform5x5Float(weights, false);
 		ImageProcessor result = algo.distanceMap(image);
 		
 		assertNotNull(result);
@@ -109,5 +114,33 @@ public class ChamferDistance3x3FloatTest {
 		assertEquals(14, result.getf(6, 0), .01);
 		assertEquals(14, result.getf(0, 6), .01);
 		assertEquals(8, result.getf(6, 6), .01);
+		
+		assertEquals(13, result.getf(0, 5), .01);
+	}
+	
+	/**
+	 * Another test for chessknight weigths, to fix a bug that incorrectly
+	 * checked image bounds.
+	 */
+	@Test
+	public final void testDistanceMap_UntilCorners_ChessKnight2() {
+		ByteProcessor image = new ByteProcessor(9, 9);
+		image.setValue(255);
+		image.fill();
+		image.set(6, 6, 0);
+		
+		float[] weights = ChamferWeights.CHESSKNIGHT.getFloatWeights();
+		DistanceTransform5x5Float algo = new DistanceTransform5x5Float(weights, false);
+		ImageProcessor result = algo.distanceMap(image);
+		
+		assertNotNull(result);
+		assertEquals(image.getWidth(), result.getWidth());
+		assertEquals(image.getHeight(), result.getHeight());
+		assertEquals(42, result.getf(0, 0), .01);
+		assertEquals(32, result.getf(8, 0), .01);
+		assertEquals(32, result.getf(0, 8), .01);
+		assertEquals(14, result.getf(8, 8), .01);
+		
+		assertEquals(30, result.getf(0, 6), .01);
 	}
 }

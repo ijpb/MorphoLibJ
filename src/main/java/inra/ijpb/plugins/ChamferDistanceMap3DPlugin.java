@@ -7,9 +7,9 @@ import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import inra.ijpb.binary.ChamferWeights3D;
-import inra.ijpb.binary.distmap.ChamferDistance3D;
-import inra.ijpb.binary.distmap.ChamferDistance3DFloat;
-import inra.ijpb.binary.distmap.ChamferDistance3DShort;
+import inra.ijpb.binary.distmap.DistanceTransform3D;
+import inra.ijpb.binary.distmap.DistanceTransform3DFloat;
+import inra.ijpb.binary.distmap.DistanceTransform3DShort;
 import inra.ijpb.data.image.Images3D;
 import inra.ijpb.util.IJUtils;
 
@@ -63,14 +63,14 @@ public class ChamferDistanceMap3DPlugin implements PlugIn {
 
     	long t0 = System.currentTimeMillis();
 
-    	ChamferDistance3D algo;
+    	DistanceTransform3D algo;
     	if (floatProcessing)
     	{
-    		algo = new ChamferDistance3DFloat(weights.getFloatWeights(), normalize);
+    		algo = new DistanceTransform3DFloat(weights.getFloatWeights(), normalize);
     	} 
     	else
     	{
-    		algo = new ChamferDistance3DShort(weights.getShortWeights(), normalize);
+    		algo = new DistanceTransform3DShort(weights.getShortWeights(), normalize);
     	}
     	
     	ImageStack image = imagePlus.getStack();

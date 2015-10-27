@@ -7,13 +7,13 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
-import inra.ijpb.binary.distmap.ChamferDistance;
-import inra.ijpb.binary.distmap.ChamferDistance3D;
-import inra.ijpb.binary.distmap.ChamferDistance3DFloat;
-import inra.ijpb.binary.distmap.ChamferDistance3x3Float;
-import inra.ijpb.binary.distmap.ChamferDistance3x3Short;
-import inra.ijpb.binary.distmap.ChamferDistance5x5Float;
-import inra.ijpb.binary.distmap.ChamferDistance5x5Short;
+import inra.ijpb.binary.distmap.DistanceTransform;
+import inra.ijpb.binary.distmap.DistanceTransform3D;
+import inra.ijpb.binary.distmap.DistanceTransform3DFloat;
+import inra.ijpb.binary.distmap.DistanceTransform3x3Float;
+import inra.ijpb.binary.distmap.DistanceTransform3x3Short;
+import inra.ijpb.binary.distmap.DistanceTransform5x5Float;
+import inra.ijpb.binary.distmap.DistanceTransform5x5Short;
 import inra.ijpb.label.LabelImages;
 
 /**
@@ -76,13 +76,13 @@ public class BinaryImages
 	public static final ImageProcessor distanceMap(ImageProcessor image,
 			short[] weights, boolean normalize)
 	{
-		ChamferDistance algo;
+		DistanceTransform algo;
 		switch (weights.length) {
 		case 2:
-			algo = new ChamferDistance3x3Short(weights, normalize);
+			algo = new DistanceTransform3x3Short(weights, normalize);
 			break;
 		case 3:
-			algo = new ChamferDistance5x5Short(weights, normalize);
+			algo = new DistanceTransform5x5Short(weights, normalize);
 			break;
 		default:
 			throw new IllegalArgumentException(
@@ -103,14 +103,14 @@ public class BinaryImages
 	public static final ImageProcessor distanceMap(ImageProcessor image,
 			float[] weights, boolean normalize) 
 	{
-		ChamferDistance algo;
+		DistanceTransform algo;
 		switch (weights.length) 
 		{
 		case 2:
-			algo = new ChamferDistance3x3Float(weights, normalize);
+			algo = new DistanceTransform3x3Float(weights, normalize);
 			break;
 		case 3:
-			algo = new ChamferDistance5x5Float(weights, normalize);
+			algo = new DistanceTransform5x5Float(weights, normalize);
 			break;
 		default:
 			throw new IllegalArgumentException(
@@ -128,7 +128,7 @@ public class BinaryImages
 	public static final ImageStack distanceMap(ImageStack image)
 	{
 		float[] weights = new float[]{3.0f, 4.0f, 5.0f};
-		ChamferDistance3D algo = new ChamferDistance3DFloat(weights);
+		DistanceTransform3D algo = new DistanceTransform3DFloat(weights);
 		return algo.distanceMap(image);
 	}
 	

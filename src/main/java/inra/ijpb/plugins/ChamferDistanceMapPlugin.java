@@ -7,11 +7,11 @@ import ij.plugin.filter.ExtendedPlugInFilter;
 import ij.plugin.filter.PlugInFilterRunner;
 import ij.process.ImageProcessor;
 import inra.ijpb.binary.ChamferWeights;
-import inra.ijpb.binary.distmap.ChamferDistance;
-import inra.ijpb.binary.distmap.ChamferDistance3x3Float;
-import inra.ijpb.binary.distmap.ChamferDistance3x3Short;
-import inra.ijpb.binary.distmap.ChamferDistance5x5Float;
-import inra.ijpb.binary.distmap.ChamferDistance5x5Short;
+import inra.ijpb.binary.distmap.DistanceTransform;
+import inra.ijpb.binary.distmap.DistanceTransform3x3Float;
+import inra.ijpb.binary.distmap.DistanceTransform3x3Short;
+import inra.ijpb.binary.distmap.DistanceTransform5x5Float;
+import inra.ijpb.binary.distmap.DistanceTransform5x5Short;
 
 import java.awt.AWTEvent;
 
@@ -145,11 +145,11 @@ public class ChamferDistanceMapPlugin implements ExtendedPlugInFilter, DialogLis
     
     private ImageProcessor processFloat(ImageProcessor image, float[] weights, boolean normalize) {
     	// Initialize calculator
-    	ChamferDistance calc;
+    	DistanceTransform calc;
     	if (weights.length == 2) {
-    		calc = new ChamferDistance3x3Float(weights, normalize);
+    		calc = new DistanceTransform3x3Float(weights, normalize);
     	} else {
-    		calc = new ChamferDistance5x5Float(weights, normalize);
+    		calc = new DistanceTransform5x5Float(weights, normalize);
     	}
 
     	// Compute distance on specified images
@@ -158,11 +158,11 @@ public class ChamferDistanceMapPlugin implements ExtendedPlugInFilter, DialogLis
 
     private ImageProcessor processShort(ImageProcessor image, short[] weights, boolean normalize) {
     	// Initialize calculator
-    	ChamferDistance calc;
+    	DistanceTransform calc;
     	if (weights.length == 2) {
-    		calc = new ChamferDistance3x3Short(weights, normalize);
+    		calc = new DistanceTransform3x3Short(weights, normalize);
     	} else {
-    		calc = new ChamferDistance5x5Short(weights, normalize);
+    		calc = new DistanceTransform5x5Short(weights, normalize);
     	}
 
     	// Compute distance on specified images
@@ -189,11 +189,11 @@ public class ChamferDistanceMapPlugin implements ExtendedPlugInFilter, DialogLis
 		}
 	
 		// Initialize calculator
-		ChamferDistance calc;
+		DistanceTransform calc;
 		if (weights.length == 2) {
-			calc = new ChamferDistance3x3Float(weights, normalize);
+			calc = new DistanceTransform3x3Float(weights, normalize);
 		} else {
-			calc = new ChamferDistance5x5Float(weights, normalize);
+			calc = new DistanceTransform5x5Float(weights, normalize);
 		}
 		// Compute distance on specified images
 		ImageProcessor result = calc.distanceMap(image.getProcessor());
@@ -221,11 +221,11 @@ public class ChamferDistanceMapPlugin implements ExtendedPlugInFilter, DialogLis
 		}
 	
 		// Initialize calculator
-		ChamferDistance calc;
+		DistanceTransform calc;
 		if (weights.length == 2) {
-			calc = new ChamferDistance3x3Short(weights, normalize);
+			calc = new DistanceTransform3x3Short(weights, normalize);
 		} else {
-			calc = new ChamferDistance5x5Short(weights, normalize);
+			calc = new DistanceTransform5x5Short(weights, normalize);
 		}
 		
 		// Compute distance on specified images

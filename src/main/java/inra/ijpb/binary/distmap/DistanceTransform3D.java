@@ -8,7 +8,7 @@ import ij.ImageStack;
 /**
  * Interface for computing distance maps from binary 3D images.
  */
-public interface ChamferDistance3D 
+public interface DistanceTransform3D 
 {
 	/**
 	 * Computes the distance map from a binary image processor. 
