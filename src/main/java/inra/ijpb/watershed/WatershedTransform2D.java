@@ -666,7 +666,7 @@ public class WatershedTransform2D
 	
 	/**
 	 * Extract pixel values from input image such that
-	 * they have value h, hMin <= h <= hMax. A binary
+	 * they have value h, hMin &lt;= h &lt;= hMax. A binary
 	 * mask is used if it exists.
 	 * 
 	 * @param inputImage input image

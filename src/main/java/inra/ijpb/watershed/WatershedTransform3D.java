@@ -696,7 +696,7 @@ public class WatershedTransform3D
 
 	/**
 	 * Extract voxel values from input image such that
-	 * they have value h, hMin <= h <= hMax. A binary
+	 * they have value h, hMin &lt;= h &lt;= hMax. A binary
 	 * mask is used if it exists.
 	 * 
 	 * @param inputStack input stack

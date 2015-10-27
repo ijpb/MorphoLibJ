@@ -8,8 +8,8 @@ package inra.ijpb.binary;
  * Provides methosd to access weight values either as float array or as short
  * array.
  * 
- * @see inra.ijpb.binary.BinaryImages#distanceMap(ImageStack, short[], boolean)
- * @see inra.ijpb.binary.BinaryImages#distanceMap(ImageStack, float[], boolean)
+ * @see BinaryImages#distanceMap(ij.ImageStack)
+ * @see BinaryImages#distanceMap(ij.ImageStack)
  */
 public enum ChamferWeights3D
 {

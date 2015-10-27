@@ -2,7 +2,7 @@
  * Several classes for managing progress of algorithms. 
  * 
  * Sample code usage:
- * <code><pre>
+ * <pre><code>
  * 	// create ImageJ instance and open an image
  * 	new ImageJ();
  * 	ImagePlus imagePlus = IJ.openImage("http://imagej.nih.gov/ij/images/NileBend.jpg");
@@ -20,6 +20,6 @@
  * 	ImageProcessor result = Morphology.dilation(image, strel);
  * 	ImagePlus resultPlus = new ImagePlus("Result", result);
  * 	resultPlus.show("Result");
- * </pre></code>	
+ * </code></pre>	
  */
 package inra.ijpb.algo;
