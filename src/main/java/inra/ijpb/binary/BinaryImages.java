@@ -14,6 +14,10 @@ import inra.ijpb.binary.distmap.DistanceTransform3x3Float;
 import inra.ijpb.binary.distmap.DistanceTransform3x3Short;
 import inra.ijpb.binary.distmap.DistanceTransform5x5Float;
 import inra.ijpb.binary.distmap.DistanceTransform5x5Short;
+import inra.ijpb.binary.geodesic.GeodesicDistanceMap;
+import inra.ijpb.binary.geodesic.GeodesicDistanceMapFloat;
+import inra.ijpb.binary.geodesic.GeodesicDistanceMapShort;
+import inra.ijpb.binary.geodesic.GeodesicDistanceMapShort5x5;
 import inra.ijpb.label.LabelImages;
 
 /**
@@ -132,6 +136,41 @@ public class BinaryImages
 		return algo.distanceMap(image);
 	}
 	
+	/**
+	 * Computes the geodesic distance transform (or geodesic distance map) of a
+	 * binary image of marker, constrained to a binary mask.
+	 */
+	public static final ImageProcessor geodesicDistanceMap(ImageProcessor marker,
+			ImageProcessor mask) 
+	{
+		return geodesicDistanceMap(marker, mask, new short[]{5, 7, 11}, true);
+	}
+	
+	/**
+	 * Computes the geodesic distance transform (or geodesic distance map) of a
+	 * binary image of marker, constrained to a binary mask.
+	 */
+	public static final ImageProcessor geodesicDistanceMap(ImageProcessor marker,
+			ImageProcessor mask, short[] weights, boolean normalize) 
+	{
+		GeodesicDistanceMap algo;
+		switch (weights.length) 
+		{
+		case 2:
+			algo = new GeodesicDistanceMapShort(weights, normalize);
+			break;
+		case 3:
+			algo = new GeodesicDistanceMapShort5x5(weights, normalize);
+			break;
+		default:
+			throw new IllegalArgumentException(
+					"Requires weight array with 2 or 3 elements");
+		}
+		
+		return algo.geodesicDistanceMap(marker, mask);
+	}
+	
+
 	/**
 	 * Applies size opening on a binary 2D or 3D image. The method creates a new
 	 * binary image that contains only particles with at least the specified
