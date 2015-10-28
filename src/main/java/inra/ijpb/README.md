@@ -4,13 +4,13 @@ Contents of the src/main/java/inra/ijpb directory
 This directory contains various packages, organized according to their functionalities
 or to the type of images they are working on.
 
+* **algo** utilities to propagate events (progression, status change...) during execution of algorithms
+
 * **binary** a set of utilities for working on binary images (connected component 
-labeling, distance map...)
+labeling, distance transform, geodesic distance transform...)
 
 * **data** contains various data structure to represent images as well as utility 
 data structures (connectivities, cursors...)
-
-* **event** utilities to propagate events during execution of algorithms
 
 * **filter** utilities for filtering
 

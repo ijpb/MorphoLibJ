@@ -13,7 +13,7 @@ The library implements several functionalities that were missing in the ImageJ s
 
 * 2D/3D measurements: volume, surface area, inertia ellipse/ellipsoid...
 
-* binary / label images utilities
+* binary / label images utilities for removing or keeping largest connected component, perform size opening, fill holes, kill borders...
 
 Installation
 ------------
@@ -36,4 +36,4 @@ A more detailed presentation of the plugin for the user is available on the
 [ImageJ Wiki](http://imagejdocu.tudor.lu/doku.php?id=plugin:segmentation:morphological_segmentation:start), 
 as well as on the [Fiji Wiki](http://fiji.sc/Morphological_Segmentation).
 
-The main source code directory is [src/main/java/inra/ijpb](https://github.com/ijpb/ijpb-plugins/tree/master/src/main/java/inra/ijpb).
+The main source code directory is [src/main/java/inra/ijpb](http://github.com/ijpb/MorphoLibJ/tree/master/src/main/java/inra/ijpb).
