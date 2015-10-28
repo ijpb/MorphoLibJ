@@ -4,7 +4,7 @@ import static java.lang.Math.min;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.algo.AlgoStub;
-import inra.ijpb.algo.StatusEvent;
+import inra.ijpb.algo.AlgoEvent;
 
 /**
  * <p>
@@ -132,7 +132,7 @@ public class DistanceTransform5x5Float extends AlgoStub implements DistanceTrans
 		buffer.setValue(0);
 		buffer.fill();
 
-		this.fireStatusChanged(new StatusEvent(this, "Initialization"));
+		this.fireStatusChanged(new AlgoEvent(this, "Initialization"));
 		
 		// initialize empty image with either 0 (background) or Inf (foreground)
 		for (int i = 0; i < width; i++) 
@@ -145,15 +145,15 @@ public class DistanceTransform5x5Float extends AlgoStub implements DistanceTrans
 		}
 
 		// Two iterations are enough to compute distance map to boundary
-		this.fireStatusChanged(new StatusEvent(this, "Forward Scan"));
+		this.fireStatusChanged(new AlgoEvent(this, "Forward Scan"));
 		forwardIteration();
-		this.fireStatusChanged(new StatusEvent(this, "Backward Scan"));
+		this.fireStatusChanged(new AlgoEvent(this, "Backward Scan"));
 		backwardIteration();
 
 		// Normalize values by the first weight
 		if (this.normalizeMap) 
 		{
-			this.fireStatusChanged(new StatusEvent(this, "Normalization"));
+			this.fireStatusChanged(new AlgoEvent(this, "Normalization"));
 			for (int i = 0; i < width; i++) 
 			{
 				for (int j = 0; j < height; j++) 
@@ -166,7 +166,7 @@ public class DistanceTransform5x5Float extends AlgoStub implements DistanceTrans
 			}
 		}
 
-		this.fireStatusChanged(new StatusEvent(this, ""));
+		this.fireStatusChanged(new AlgoEvent(this, ""));
 
 		// Compute max value within the mask
 		float maxVal = 0;
@@ -253,7 +253,7 @@ public class DistanceTransform5x5Float extends AlgoStub implements DistanceTrans
 		// Process all other lines
 		for (int j = 2; j < height; j++) 
 		{
-			this.fireProgressChange(this, j, height);
+			this.fireProgressChanged(this, j, height);
 
 			// process first pixel of current line: consider pixels up and
 			// upright
@@ -427,7 +427,7 @@ public class DistanceTransform5x5Float extends AlgoStub implements DistanceTrans
 		// Process regular lines
 		for (int j = height - 3; j >= 0; j--) 
 		{
-			this.fireProgressChange(this, height-1-j, height);
+			this.fireProgressChanged(this, height-1-j, height);
 
 			// process last pixel of the current line: consider pixels
 			// down, down-left, and (-2,+1)
@@ -509,7 +509,7 @@ public class DistanceTransform5x5Float extends AlgoStub implements DistanceTrans
 
 		} // end of processing for current line
 
-		this.fireProgressChange(this, height, height);
+		this.fireProgressChanged(this, height, height);
 	} // end of backward iteration
 
 	/**

@@ -117,7 +117,7 @@ public class LinearVerticalStrel extends AbstractInPlaceStrel {
 
 		// Iterate on image columns
 		for (int x = 0; x < width; x++) {
-			fireProgressChange(this, x, width);
+			fireProgressChanged(this, x, width);
 			
 			// reset local histogram
 			localMax.fill(Strel.BACKGROUND);
@@ -141,7 +141,7 @@ public class LinearVerticalStrel extends AbstractInPlaceStrel {
 		}
 		
 		// clear the progress bar
-		fireProgressChange(this, width, width);
+		fireProgressChanged(this, width, width);
 	}
 
 	
@@ -159,7 +159,7 @@ public class LinearVerticalStrel extends AbstractInPlaceStrel {
 		
 		// Iterate on image columns
 		for (int x = 0; x < width; x++) {
-			fireProgressChange(this, x, width);
+			fireProgressChanged(this, x, width);
 			
 			// reset local histogram
 			localMax.fill(Float.MIN_VALUE);
@@ -183,7 +183,7 @@ public class LinearVerticalStrel extends AbstractInPlaceStrel {
 		}
 		
 		// clear the progress bar
-		fireProgressChange(this, width, width);
+		fireProgressChanged(this, width, width);
 	}
 
 	/* (non-Javadoc)
@@ -217,7 +217,7 @@ public class LinearVerticalStrel extends AbstractInPlaceStrel {
 
 		// Iterate on image columns
 		for (int x = 0; x < width; x++) {
-			fireProgressChange(this, x, width);
+			fireProgressChanged(this, x, width);
 			
 			// reset local histogram
 			localMin.fill(Strel.FOREGROUND);
@@ -241,7 +241,7 @@ public class LinearVerticalStrel extends AbstractInPlaceStrel {
 		}
 		
 		// clear the progress bar
-		fireProgressChange(this, width, width);
+		fireProgressChanged(this, width, width);
 	}
 
 	private void inPlaceErosionFloat(ImageProcessor image) {
@@ -259,7 +259,7 @@ public class LinearVerticalStrel extends AbstractInPlaceStrel {
 		
 		// Iterate on image columns
 		for (int x = 0; x < width; x++) {
-			fireProgressChange(this, x, width);
+			fireProgressChanged(this, x, width);
 			
 			// reset local histogram
 			localMin.fill(Float.MAX_VALUE);
@@ -283,7 +283,7 @@ public class LinearVerticalStrel extends AbstractInPlaceStrel {
 		}
 		
 		// clear the progress bar
-		fireProgressChange(this, width, width);
+		fireProgressChanged(this, width, width);
 	}
 
 	

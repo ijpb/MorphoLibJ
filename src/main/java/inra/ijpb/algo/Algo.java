@@ -11,11 +11,7 @@ package inra.ijpb.algo;
  */
 public interface Algo
 {
-	public void addProgressListener(ProgressListener listener);
+	public void addAlgoListener(AlgoListener listener);
 
-	public void removeProgressListener(ProgressListener listener);
-	
-	public void addStatusListener(StatusListener listener);
-
-	public void removeStatusListener(StatusListener listener);
+	public void removeAlgoListener(AlgoListener listener);
 }

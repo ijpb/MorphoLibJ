@@ -117,7 +117,7 @@ public class LinearHorizontalStrel extends AbstractInPlaceStrel  {
 		
 		// Iterate on image rows
 		for (int y = 0; y < height; y++) {
-			fireProgressChange(this, y, height);
+			fireProgressChanged(this, y, height);
 			
 			// init local histogram with background values
 			localMax.fill(Strel.BACKGROUND);
@@ -141,7 +141,7 @@ public class LinearHorizontalStrel extends AbstractInPlaceStrel  {
 		}
 		
 		// clear the progress bar
-		fireProgressChange(this, height, height);
+		fireProgressChanged(this, height, height);
 	}
 
 	private void inPlaceDilationFloat(ImageProcessor image) {
@@ -158,7 +158,7 @@ public class LinearHorizontalStrel extends AbstractInPlaceStrel  {
 		
 		// Iterate on image rows
 		for (int y = 0; y < height; y++) {
-			fireProgressChange(this, y, height);
+			fireProgressChanged(this, y, height);
 			
 			// init local histogram with background values
 			localMax.fill(Float.MIN_VALUE);
@@ -182,7 +182,7 @@ public class LinearHorizontalStrel extends AbstractInPlaceStrel  {
 		}
 		
 		// clear the progress bar
-		fireProgressChange(this, height, height);
+		fireProgressChanged(this, height, height);
 	}
 
 
@@ -216,7 +216,7 @@ public class LinearHorizontalStrel extends AbstractInPlaceStrel  {
 		
 		// Iterate on image rows
 		for (int y = 0; y < height; y++) {
-			fireProgressChange(this, y, height);
+			fireProgressChanged(this, y, height);
 			
 			// reset local histogram
 			localMin.fill(Strel.FOREGROUND);
@@ -240,7 +240,7 @@ public class LinearHorizontalStrel extends AbstractInPlaceStrel  {
 		}
 		
 		// clear the progress bar
-		fireProgressChange(this, height, height);
+		fireProgressChanged(this, height, height);
 	}
 
 	private void inPlaceErosionFloat(ImageProcessor image) {
@@ -257,7 +257,7 @@ public class LinearHorizontalStrel extends AbstractInPlaceStrel  {
 		
 		// Iterate on image rows
 		for (int y = 0; y < height; y++) {
-			fireProgressChange(this, y, height);
+			fireProgressChanged(this, y, height);
 			
 			// reset local histogram
 			localMin.fill(Float.MAX_VALUE);
@@ -281,7 +281,7 @@ public class LinearHorizontalStrel extends AbstractInPlaceStrel  {
 		}
 		
 		// clear the progress bar
-		fireProgressChange(this, height, height);
+		fireProgressChanged(this, height, height);
 	}
 
 	

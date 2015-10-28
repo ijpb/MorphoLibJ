@@ -120,7 +120,7 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 		
 		// Iterate on image z-columns
 		for (int y = 0; y < height; y++) {
-			fireProgressChange(this, y, height);
+			fireProgressChanged(this, y, height);
 			for (int x = 0; x < width; x++) {
 
 				// init local histogram with background values
@@ -146,7 +146,7 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 		}
 
 		// clear the progress bar
-		fireProgressChange(this, height, height);		
+		fireProgressChanged(this, height, height);		
 	}
 
 	/* (non-Javadoc)
@@ -167,7 +167,7 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 		
 		// Iterate on image z-columns
 		for (int y = 0; y < height; y++) {
-			fireProgressChange(this, y, height);
+			fireProgressChanged(this, y, height);
 			for (int x = 0; x < width; x++) {
 
 				// init local histogram with background values
@@ -193,7 +193,7 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 		}
 
 		// clear the progress bar
-		fireProgressChange(this, height, height);		
+		fireProgressChanged(this, height, height);		
 	}
 
 	/* (non-Javadoc)
@@ -232,7 +232,7 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 		
 		// Iterate on image z-columns
 		for (int y = 0; y < height; y++) {
-			fireProgressChange(this, y, height);
+			fireProgressChanged(this, y, height);
 			for (int x = 0; x < width; x++) {
 
 				// init local histogram with background values
@@ -258,7 +258,7 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 		}
 		
 		// clear the progress bar
-		fireProgressChange(this, height, height);		
+		fireProgressChanged(this, height, height);		
 	}
 
 	/* (non-Javadoc)
@@ -279,7 +279,7 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 		
 		// Iterate on image z-columns
 		for (int y = 0; y < height; y++) {
-			fireProgressChange(this, y, height);
+			fireProgressChanged(this, y, height);
 			for (int x = 0; x < width; x++) {
 
 				// init local histogram with background values
@@ -305,7 +305,7 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 		}
 		
 		// clear the progress bar
-		fireProgressChange(this, height, height);		
+		fireProgressChanged(this, height, height);		
 	}
 
 	/* (non-Javadoc)

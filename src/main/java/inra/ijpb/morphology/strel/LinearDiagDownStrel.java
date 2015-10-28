@@ -123,7 +123,7 @@ public class LinearDiagDownStrel extends AbstractInPlaceStrel {
 		
 		// Iterate on diagonal lines
 		for (int d = dmin; d < dmax; d++) {
-			fireProgressChange(this, d - dmin, dmax - dmin);
+			fireProgressChanged(this, d - dmin, dmax - dmin);
 				
 			// reset local histogram
 			localMax.fill(Strel.BACKGROUND);
@@ -166,7 +166,7 @@ public class LinearDiagDownStrel extends AbstractInPlaceStrel {
 		}
 		
 		// clear the progress bar
-		fireProgressChange(this, dmax - dmin, dmax - dmin);
+		fireProgressChanged(this, dmax - dmin, dmax - dmin);
 	}
 
 	private void inPlaceDilationFloat(ImageProcessor image) {
@@ -186,7 +186,7 @@ public class LinearDiagDownStrel extends AbstractInPlaceStrel {
 		
 		// Iterate on diagonal lines
 		for (int d = dmin; d < dmax; d++) {
-			fireProgressChange(this, d - dmin, dmax - dmin);
+			fireProgressChanged(this, d - dmin, dmax - dmin);
 				
 			// reset local histogram
 			localMax.fill(Float.MIN_VALUE);
@@ -229,7 +229,7 @@ public class LinearDiagDownStrel extends AbstractInPlaceStrel {
 		}
 		
 		// clear the progress bar
-		fireProgressChange(this, dmax - dmin, dmax - dmin);
+		fireProgressChanged(this, dmax - dmin, dmax - dmin);
 	}
 
 	/* (non-Javadoc)
@@ -268,7 +268,7 @@ public class LinearDiagDownStrel extends AbstractInPlaceStrel {
 
 		// Iterate on diagonal lines
 		for (int d = dmin; d < dmax; d++) {
-			fireProgressChange(this, d - dmin, dmax - dmin);
+			fireProgressChanged(this, d - dmin, dmax - dmin);
 			
 			// reset local histogram
 			localMin.fill(Strel.FOREGROUND);
@@ -310,7 +310,7 @@ public class LinearDiagDownStrel extends AbstractInPlaceStrel {
 		}
 		
 		// clear the progress bar
-		fireProgressChange(this, dmax - dmin, dmax - dmin);
+		fireProgressChanged(this, dmax - dmin, dmax - dmin);
 	}
 
 	private void inPlaceErosionFloat(ImageProcessor image) {
@@ -333,7 +333,7 @@ public class LinearDiagDownStrel extends AbstractInPlaceStrel {
 
 		// Iterate on diagonal lines
 		for (int d = dmin; d < dmax; d++) {
-			fireProgressChange(this, d - dmin, dmax - dmin);
+			fireProgressChanged(this, d - dmin, dmax - dmin);
 			
 			// reset local histogram
 			localMin.fill(Float.MAX_VALUE);
@@ -375,7 +375,7 @@ public class LinearDiagDownStrel extends AbstractInPlaceStrel {
 		}
 		
 		// clear the progress bar
-		fireProgressChange(this, dmax - dmin, dmax - dmin);
+		fireProgressChanged(this, dmax - dmin, dmax - dmin);
 	}
 
 	/* (non-Javadoc)

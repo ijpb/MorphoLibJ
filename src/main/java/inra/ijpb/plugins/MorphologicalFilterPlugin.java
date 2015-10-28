@@ -11,10 +11,7 @@ import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
-import inra.ijpb.algo.ProgressEvent;
-import inra.ijpb.algo.ProgressListener;
-import inra.ijpb.algo.StatusEvent;
-import inra.ijpb.algo.StatusListener;
+import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.morphology.Morphology;
 import inra.ijpb.morphology.Morphology.Operation;
 import inra.ijpb.morphology.Strel;
@@ -28,8 +25,8 @@ import java.awt.AWTEvent;
  * @author David Legland
  *
  */
-public class MorphologicalFilterPlugin
-implements ExtendedPlugInFilter, DialogListener, ProgressListener, StatusListener 
+public class MorphologicalFilterPlugin implements ExtendedPlugInFilter,
+		DialogListener 
 {
 	/** Apparently, it's better to store flags in plugin */
 	private int flags = DOES_ALL | KEEP_PREVIEW | FINAL_PROCESSING | NO_CHANGES;
@@ -157,8 +154,7 @@ implements ExtendedPlugInFilter, DialogListener, ProgressListener, StatusListene
 		Strel strel = shape.fromRadius(radius);
 		
 		// add some listeners
-		strel.addProgressListener(this);
-		strel.addStatusListener(this);
+		DefaultAlgoListener.monitor(strel);
 		
 		// Eventually display the structuring element used for processing 
 		if (showStrel) 
@@ -274,19 +270,5 @@ implements ExtendedPlugInFilter, DialogListener, ProgressListener, StatusListene
 	private String createResultImageName(ImagePlus baseImage) 
 	{
 		return baseImage.getShortTitle() + "-" + op.toString();
-	}
-
-
-	@Override
-	public void progressChanged(ProgressEvent evt) 
-	{
-		IJ.showProgress(evt.getProgressRatio());
-	}
-
-
-	@Override
-	public void statusChanged(StatusEvent evt)
-	{
-		IJ.showStatus(evt.getMessage());
 	}
 }

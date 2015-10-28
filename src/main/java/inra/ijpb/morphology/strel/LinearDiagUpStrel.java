@@ -125,7 +125,7 @@ public class LinearDiagUpStrel extends AbstractInPlaceStrel {
 			if (this.showProgress()) {
 				IJ.showProgress(d, dmax - dmin);
 			}
-			fireProgressChange(this, d - dmin, dmax - dmin);
+			fireProgressChanged(this, d - dmin, dmax - dmin);
 			
 			// reset local histogram
 			localMax.fill(Strel.BACKGROUND);
@@ -194,7 +194,7 @@ public class LinearDiagUpStrel extends AbstractInPlaceStrel {
 			if (this.showProgress()) {
 				IJ.showProgress(d, dmax - dmin);
 			}
-			fireProgressChange(this, d - dmin, dmax - dmin);
+			fireProgressChanged(this, d - dmin, dmax - dmin);
 			
 			// reset local histogram
 			localMax.fill(Float.MIN_VALUE);
@@ -279,7 +279,7 @@ public class LinearDiagUpStrel extends AbstractInPlaceStrel {
 			if (this.showProgress()) {
 				IJ.showProgress(d, dmax - dmin);
 			}
-			fireProgressChange(this, d - dmin, dmax - dmin);
+			fireProgressChanged(this, d - dmin, dmax - dmin);
 			
 			// reset local histogram
 			localMin.fill(Strel.FOREGROUND);
@@ -348,7 +348,7 @@ public class LinearDiagUpStrel extends AbstractInPlaceStrel {
 			if (this.showProgress()) {
 				IJ.showProgress(d, dmax - dmin);
 			}
-			fireProgressChange(this, d - dmin, dmax - dmin);
+			fireProgressChanged(this, d - dmin, dmax - dmin);
 			
 			// reset local histogram
 			localMin.fill(Float.MAX_VALUE);

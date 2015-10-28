@@ -150,7 +150,7 @@ s	 * <pre><code>
 			// Iterate over image lines
 			int valMax;
 			for (int y = 0; y < height; y++) {
-				fireProgressChange(this, y, height);
+				fireProgressChanged(this, y, height);
 				
 				// permute lines in buffer
 				int[] tmp = buffer[0];
@@ -183,7 +183,7 @@ s	 * <pre><code>
 			}
 			
 			// clear the progress bar
-			fireProgressChange(this, height, height);
+			fireProgressChanged(this, height, height);
 		}
 
 		private void inPlaceDilationFloat(ImageProcessor image) {
@@ -203,7 +203,7 @@ s	 * <pre><code>
 			// Iterate over image lines
 			float valMax;
 			for (int y = 0; y < height; y++) {
-				fireProgressChange(this, y, height);
+				fireProgressChanged(this, y, height);
 				
 				// permute lines in buffer
 				float[] tmp = buffer[0];
@@ -236,7 +236,7 @@ s	 * <pre><code>
 			}
 			
 			// clear the progress bar
-			fireProgressChange(this, height, height);
+			fireProgressChanged(this, height, height);
 		}
 
 		/* (non-Javadoc)
@@ -267,7 +267,7 @@ s	 * <pre><code>
 			// Iterate over image lines
 			int valMin;
 			for (int y = 0; y < height; y++) {
-				fireProgressChange(this, y, height);
+				fireProgressChanged(this, y, height);
 				
 				// permute lines in buffer
 				int[] tmp = buffer[0];
@@ -300,7 +300,7 @@ s	 * <pre><code>
 			}
 			
 			// clear the progress bar
-			fireProgressChange(this, height, height);
+			fireProgressChanged(this, height, height);
 		}
 
 		private void inPlaceErosionFloat(ImageProcessor image) {
@@ -320,7 +320,7 @@ s	 * <pre><code>
 			// Iterate over image lines
 			float valMin;
 			for (int y = 0; y < height; y++) {
-				fireProgressChange(this, y, height);
+				fireProgressChanged(this, y, height);
 				
 				// permute lines in buffer
 				float[] tmp = buffer[0];
@@ -353,7 +353,7 @@ s	 * <pre><code>
 			}
 			
 			// clear the progress bar
-			fireProgressChange(this, height, height);
+			fireProgressChanged(this, height, height);
 		}
 	}
 
@@ -458,7 +458,7 @@ s	 * <pre><code>
 			// Iterate over image lines
 			int valMax;
 			for (int y = 0; y < height; y++) {
-				fireProgressChange(this, y, height);
+				fireProgressChanged(this, y, height);
 				
 				// permute lines in buffer
 				int[] tmp = buffer[0];
@@ -491,7 +491,7 @@ s	 * <pre><code>
 			}
 			
 			// clear the progress bar
-			fireProgressChange(this, height, height);
+			fireProgressChanged(this, height, height);
 		}
 
 		private void inPlaceDilationFloat(ImageProcessor image) {
@@ -511,7 +511,7 @@ s	 * <pre><code>
 			// Iterate over image lines
 			float valMax;
 			for (int y = 0; y < height; y++) {
-				fireProgressChange(this, y, height);
+				fireProgressChanged(this, y, height);
 
 				// permute lines in buffer
 				float[] tmp = buffer[0];
@@ -544,7 +544,7 @@ s	 * <pre><code>
 			}
 			
 			// clear the progress bar
-			fireProgressChange(this, height, height);
+			fireProgressChanged(this, height, height);
 		}
 
 		/* (non-Javadoc)
@@ -575,7 +575,7 @@ s	 * <pre><code>
 			// Iterate over image lines
 			int valMin;
 			for (int y = 0; y < height; y++) {
-				fireProgressChange(this, y, height);
+				fireProgressChanged(this, y, height);
 				
 				// permute lines in buffer
 				int[] tmp = buffer[0];
@@ -608,7 +608,7 @@ s	 * <pre><code>
 			}
 			
 			// clear the progress bar
-			fireProgressChange(this, height, height);
+			fireProgressChanged(this, height, height);
 		}
 		
 		private void inPlaceErosionFloat(ImageProcessor image) {
@@ -628,7 +628,7 @@ s	 * <pre><code>
 			// Iterate over image lines
 			float valMin;
 			for (int y = 0; y < height; y++) {
-				fireProgressChange(this, y, height);
+				fireProgressChanged(this, y, height);
 
 				// permute lines in buffer
 				float[] tmp = buffer[0];
@@ -661,7 +661,7 @@ s	 * <pre><code>
 			}
 			
 			// clear the progress bar
-			fireProgressChange(this, height, height);
+			fireProgressChanged(this, height, height);
 		}
 
 	}

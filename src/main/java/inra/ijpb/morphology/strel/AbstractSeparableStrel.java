@@ -4,8 +4,8 @@
 package inra.ijpb.morphology.strel;
 
 import ij.process.ImageProcessor;
-import inra.ijpb.algo.ProgressEvent;
-import inra.ijpb.algo.ProgressListener;
+import inra.ijpb.algo.AlgoEvent;
+import inra.ijpb.algo.AlgoListener;
 
 import java.util.Collection;
 
@@ -15,9 +15,10 @@ import java.util.Collection;
  *
  */
 public abstract class AbstractSeparableStrel extends AbstractStrel 
-implements SeparableStrel, ProgressListener {
-
-	public ImageProcessor dilation(ImageProcessor image) {
+implements SeparableStrel, AlgoListener 
+{
+	public ImageProcessor dilation(ImageProcessor image)
+	{
 		// Allocate memory for result
 		ImageProcessor result = image.duplicate();
 		
@@ -28,7 +29,8 @@ implements SeparableStrel, ProgressListener {
 		
 		// Dilation
 		int i = 1;
-		for (InPlaceStrel strel : strels) {
+		for (InPlaceStrel strel : strels)
+		{
 			fireStatusChanged(this, createStatusMessage("Dilation", i, n));
 			runDilation(result, strel);
 			i++;
@@ -40,7 +42,8 @@ implements SeparableStrel, ProgressListener {
 		return result;
 	}
 
-	public ImageProcessor erosion(ImageProcessor image) {
+	public ImageProcessor erosion(ImageProcessor image) 
+	{
 		// Allocate memory for result
 		ImageProcessor result = image.duplicate();
 		
@@ -50,7 +53,8 @@ implements SeparableStrel, ProgressListener {
 		
 		// Erosion
 		int i = 1;
-		for (InPlaceStrel strel : strels) {
+		for (InPlaceStrel strel : strels)
+		{
 			fireStatusChanged(this, createStatusMessage("Erosion", i, n));
 			runErosion(result, strel);
 			i++;
@@ -62,7 +66,8 @@ implements SeparableStrel, ProgressListener {
 		return result;
 	}
 
-	public ImageProcessor closing(ImageProcessor image) {
+	public ImageProcessor closing(ImageProcessor image)
+	{
 		// Allocate memory for result
 		ImageProcessor result = image.duplicate();
 		
@@ -72,7 +77,8 @@ implements SeparableStrel, ProgressListener {
 		
 		// Dilation
 		int i = 1;
-		for (InPlaceStrel strel : strels) {
+		for (InPlaceStrel strel : strels)
+		{
 			fireStatusChanged(this, createStatusMessage("Dilation", i, n));
 			runDilation(result, strel);
 			i++;
@@ -81,7 +87,8 @@ implements SeparableStrel, ProgressListener {
 		// Erosion (with reversed strel)
 		i = 1;
 		strels = this.reverse().decompose();
-		for (InPlaceStrel strel : strels) {
+		for (InPlaceStrel strel : strels)
+		{
 			fireStatusChanged(this, createStatusMessage("Erosion", i, n));
 			runErosion(result, strel);
 			i++;
@@ -93,7 +100,8 @@ implements SeparableStrel, ProgressListener {
 		return result;
 	}
 
-	public ImageProcessor opening(ImageProcessor image) {
+	public ImageProcessor opening(ImageProcessor image) 
+	{
 		// Allocate memory for result
 		ImageProcessor result = image.duplicate();
 		
@@ -103,7 +111,8 @@ implements SeparableStrel, ProgressListener {
 		
 		// Erosion
 		int i = 1;
-		for (InPlaceStrel strel : strels) {
+		for (InPlaceStrel strel : strels)
+		{
 			fireStatusChanged(this, createStatusMessage("Erosion", i, n));
 			runErosion(result, strel);
 			i++;
@@ -112,7 +121,8 @@ implements SeparableStrel, ProgressListener {
 		// Dilation (with reversed strel)
 		i = 1;
 		strels = this.reverse().decompose();
-		for (InPlaceStrel strel : strels) {
+		for (InPlaceStrel strel : strels) 
+		{
 			fireStatusChanged(this, createStatusMessage("Dilation", i, n));
 			runDilation(result, strel);
 			i++;
@@ -124,18 +134,20 @@ implements SeparableStrel, ProgressListener {
 		return result;
 	}
 	
-	private void runDilation(ImageProcessor image, InPlaceStrel strel) {
+	private void runDilation(ImageProcessor image, InPlaceStrel strel)
+	{
 		strel.showProgress(this.showProgress());
-		strel.addProgressListener(this);
+		strel.addAlgoListener(this);
 		strel.inPlaceDilation(image);
-		strel.removeProgressListener(this);
+		strel.removeAlgoListener(this);
 	}
 	
-	private void runErosion(ImageProcessor image, InPlaceStrel strel) {
+	private void runErosion(ImageProcessor image, InPlaceStrel strel) 
+	{
 		strel.showProgress(this.showProgress());
-		strel.addProgressListener(this);
+		strel.addAlgoListener(this);
 		strel.inPlaceErosion(image);
-		strel.removeProgressListener(this);
+		strel.removeAlgoListener(this);
 	}
 	
 	private String createStatusMessage(String opName, int i, int n)
@@ -150,7 +162,16 @@ implements SeparableStrel, ProgressListener {
 	/**
 	 * Propagates the event by changing the source.
 	 */
-	public void progressChanged(ProgressEvent evt) {
-		this.fireProgressChange(this, evt.getStep(), evt.getTotal());
+	public void algoProgressChanged(AlgoEvent evt)
+	{
+		this.fireProgressChanged(this, evt.getCurrentProgress(), evt.getTotalProgress());
+	}
+	
+	/**
+	 * Propagates the event by changing the source.
+	 */
+	public void algoStatusChanged(AlgoEvent evt)
+	{
+		this.fireStatusChanged(this, evt.getStatus());
 	}
 }

@@ -4,8 +4,7 @@
 package inra.ijpb.morphology.strel;
 
 import inra.ijpb.algo.AlgoStub;
-import inra.ijpb.algo.ProgressEvent;
-import inra.ijpb.algo.StatusEvent;
+import inra.ijpb.algo.AlgoEvent;
 import inra.ijpb.morphology.Strel3D;
 
 
@@ -27,14 +26,14 @@ public abstract class AbstractStrel3D extends AlgoStub implements Strel3D {
 		this.showProgress = b;
 	}
 	
-	protected void fireProgressChange(Object source, double step, double total) {
+	protected void fireProgressChanged(Object source, double step, double total) {
 		if (showProgress)
-			super.fireProgressChange(source, step, total);
+			super.fireProgressChanged(source, step, total);
 	}
 
-	protected void fireProgressChange(ProgressEvent evt) {
+	protected void fireProgressChanged(AlgoEvent evt) {
 		if (showProgress)
-			super.fireProgressChange(evt);
+			super.fireProgressChanged(evt);
 	}
 	
 	protected void fireStatusChanged(Object source, String message) {
@@ -42,7 +41,7 @@ public abstract class AbstractStrel3D extends AlgoStub implements Strel3D {
 			super.fireStatusChanged(source, message);
 	}
 
-	protected void fireStatusChanged(StatusEvent evt) {
+	protected void fireStatusChanged(AlgoEvent evt) {
 		if (showProgress)
 			super.fireStatusChanged(evt);
 	}

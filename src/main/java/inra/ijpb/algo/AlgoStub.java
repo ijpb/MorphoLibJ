@@ -7,59 +7,62 @@ import java.util.ArrayList;
 
 /**
  * A minimal implementation of algorithm for managing progression listeners.
+ * 
  * @author David Legland
  */
-public class AlgoStub implements Algo {
-	private ArrayList<ProgressListener> progressListeners = new ArrayList<ProgressListener>();
-	private ArrayList<StatusListener> statusListeners = new ArrayList<StatusListener>();
+public class AlgoStub implements Algo
+{
+	private ArrayList<AlgoListener> algoListeners = new ArrayList<AlgoListener>();
 
 	@Override
-	public void addProgressListener(ProgressListener listener) {
-		this.progressListeners.add(listener);
+	public void addAlgoListener(AlgoListener listener) 
+	{
+		this.algoListeners.add(listener);
 	}
 
 	@Override
-	public void removeProgressListener(ProgressListener listener) {
-		this.progressListeners.remove(listener);
+	public void removeAlgoListener(AlgoListener listener) 
+	{
+		this.algoListeners.remove(listener);
 	}
 	
-	@Override
-	public void addStatusListener(StatusListener listener) {
-		this.statusListeners.add(listener);
-	}
-
-	@Override
-	public void removeStatusListener(StatusListener listener) {
-		this.statusListeners.remove(listener);
-	}
-
-	protected void fireProgressChange(Object source, double step, double total) {
-		if (!this.progressListeners.isEmpty()) {
-			ProgressEvent evt = new ProgressEvent(source, step, total);
-			for (ProgressListener listener : this.progressListeners) {
-				listener.progressChanged(evt);
+		protected void fireProgressChanged(Object source, double step, double total) 
+	{
+		if (!this.algoListeners.isEmpty()) 
+		{
+			AlgoEvent evt = new AlgoEvent(source, step, total);
+			for (AlgoListener listener : this.algoListeners)
+			{
+				listener.algoProgressChanged(evt);
 			}
 		}
 	}
 
-	protected void fireProgressChange(ProgressEvent evt) {
-		for (ProgressListener listener : this.progressListeners) {
-			listener.progressChanged(evt);
+	protected void fireProgressChanged(AlgoEvent evt) 
+	{
+		for (AlgoListener listener : this.algoListeners) 
+		{
+			listener.algoProgressChanged(evt);
 		}
 	}
 	
-	protected void fireStatusChanged(Object source, String message) {
-		if (!this.statusListeners.isEmpty()) {
-			StatusEvent evt = new StatusEvent(source, message);
-			for (StatusListener listener : this.statusListeners) {
-				listener.statusChanged(evt);
+	protected void fireStatusChanged(Object source, String message) 
+	{
+		if (!this.algoListeners.isEmpty()) 
+		{
+			AlgoEvent evt = new AlgoEvent(source, message);
+			for (AlgoListener listener : this.algoListeners) 
+			{
+				listener.algoStatusChanged(evt);
 			}
 		}
 	}
 
-	protected void fireStatusChanged(StatusEvent evt) {
-		for (StatusListener listener : this.statusListeners) {
-			listener.statusChanged(evt);
+	protected void fireStatusChanged(AlgoEvent evt)
+	{
+		for (AlgoListener listener : this.algoListeners)
+		{
+			listener.algoStatusChanged(evt);
 		}
 	}
 }
