@@ -139,7 +139,7 @@ public class MorphologicalSegmentation implements PlugIn {
 	/** gradient list of options */
 	String[] gradientOptions = new String[]{ "Morphological" };
 	/** gradient combo box */
-	JComboBox gradientList;		
+	JComboBox<String> gradientList;		
 	/** gradient radius size panel */
 	JPanel gradientSizePanel = new JPanel();
 	/** gradient size label */
@@ -203,7 +203,7 @@ public class MorphologicalSegmentation implements PlugIn {
 	/** connectivity list of options (6 and 26) */
 	String[] connectivityOptions = new String[]{ "6", "26" };
 	/** connectivity combo box */
-	JComboBox connectivityList;
+	JComboBox<String> connectivityList;
 
 	/** segmentation button (Run) */
 	JButton segmentButton;
@@ -237,7 +237,7 @@ public class MorphologicalSegmentation implements PlugIn {
 	String[] resultDisplayOption = new String[]{ overlaidBasinsText, 
 			overlaidDamsText, catchmentBasinsText, watershedLinesText };
 	/** result display combo box */
-	JComboBox resultDisplayList = null;
+	JComboBox<String> resultDisplayList = null;
 	/** panel to store the combo box with the display options */
 	JPanel resultDisplayPanel = new JPanel();
 
@@ -432,7 +432,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			// gradient options panel (activated when selecting object image)
 			gradientTypeLabel = new JLabel( "Gradient type " );			
 			gradientTypeLabel.setToolTipText( "type of gradient filter to apply" );		
-			gradientList = new JComboBox( gradientOptions );			
+			gradientList = new JComboBox<String>( gradientOptions );			
 			gradientTypePanel.add( gradientTypeLabel );
 			gradientTypePanel.add( gradientList );			
 			gradientTypePanel.setToolTipText( "type of gradient filter to apply" );	
@@ -514,7 +514,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			// connectivity
 			if( inputIs2D )
 				connectivityOptions = new String[]{ "4", "8" };
-			connectivityList = new JComboBox( connectivityOptions );
+			connectivityList = new JComboBox<String>( connectivityOptions );
 			connectivityList.setToolTipText( "Voxel connectivity to use" );
 			connectivityLabel = new JLabel( "Connectivity" );
 			connectivityPanel.add( connectivityLabel );
@@ -572,7 +572,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			// Display result panel
 			displayLabel = new JLabel( "Display" );
 			displayLabel.setEnabled( false );
-			resultDisplayList = new JComboBox( resultDisplayOption );
+			resultDisplayList = new JComboBox<String>( resultDisplayOption );
 			resultDisplayList.setEnabled( false );
 			resultDisplayList.setToolTipText( "Select how to display segmentation results" );
 			resultDisplayList.addActionListener( listener );

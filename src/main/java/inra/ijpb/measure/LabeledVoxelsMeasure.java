@@ -32,6 +32,7 @@ public class LabeledVoxelsMeasure {
 	 * @param inputImage input (grayscale) image
 	 * @param labelImage label image (labels are positive integer values)
 	 */
+	@SuppressWarnings("unchecked")
 	public LabeledVoxelsMeasure(
 			ImagePlus inputImage,
 			ImagePlus labelImage )
@@ -54,7 +55,8 @@ public class LabeledVoxelsMeasure {
         }
 
 		// initialize lists of voxels per object
-		objectVoxels = new ArrayList[ numLabels ];
+        // unchecked cast
+		objectVoxels = (ArrayList<Double>[]) new ArrayList[ numLabels ];
 
 		for( int i=0; i<numLabels; i++ )
 			objectVoxels[ i ] = new ArrayList<Double>();

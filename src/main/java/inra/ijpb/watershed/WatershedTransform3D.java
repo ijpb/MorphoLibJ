@@ -721,7 +721,8 @@ public class WatershedTransform3D
         
         Thread[] threads = ThreadUtil.createThreadArray( n_cpus );
         
-        final ArrayList<VoxelRecord>[] lists = new ArrayList[ n_cpus ];
+        @SuppressWarnings("unchecked")
+		final ArrayList<VoxelRecord>[] lists = new ArrayList[ n_cpus ];
 	    
 		if( null != maskImage )
 		{

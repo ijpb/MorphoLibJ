@@ -642,7 +642,7 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 	    IJ.log( "  Flooding from " + count + " voxels..." );
       	IJ.showStatus("Flooding from " + count + " voxels...");
 	    
-      	final int numVoxels = size1 * size2 * size3;
+//      	final int numVoxels = size1 * size2 * size3;
       	
       	final double[] extent = Images3D.findMinAndMax(inputImage);
       	double maxValue = extent[1];
@@ -995,7 +995,8 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
         
         Thread[] threads = ThreadUtil.createThreadArray( n_cpus );
         
-        final LinkedList<VoxelRecord>[] lists = new LinkedList[ n_cpus ];
+        @SuppressWarnings("unchecked")
+		final LinkedList<VoxelRecord>[] lists = new LinkedList[ n_cpus ];
 	    
 		if( null != maskImage )
 		{
