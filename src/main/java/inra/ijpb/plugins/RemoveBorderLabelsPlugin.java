@@ -101,7 +101,7 @@ public class RemoveBorderLabelsPlugin implements PlugIn {
 
 		// remove labels direclty within result image
 		IJ.showStatus("Remove border labels");
-		LabelImages.removeLabels(resultPlus, labels);
+		LabelImages.replaceLabels(resultPlus, labels, 0);
 		IJ.showStatus("");
 		
 		resultPlus.setTitle(imagePlus.getShortTitle() + "-killBorders");
