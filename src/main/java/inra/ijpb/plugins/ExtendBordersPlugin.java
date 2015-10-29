@@ -5,7 +5,7 @@ import ij.ImagePlus;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
-import inra.ijpb.filter.border.BorderManager;
+import inra.ijpb.data.border.BorderManager;
 
 /**
  * 

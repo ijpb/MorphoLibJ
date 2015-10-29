@@ -1,7 +1,7 @@
 /**
  * 
  */
-package inra.ijpb.filter.border;
+package inra.ijpb.data.border;
 
 import ij.process.ImageProcessor;
 
@@ -23,7 +23,7 @@ public class ReplicatedBorder implements BorderManager {
 	/** 
 	 * Forces both of x and y to be between 0 and the corresponding image size, 
 	 * and returns the corresponding image value. 
-	 * @see inra.ijpb.filter.border.BorderManager#get(int, int)
+	 * @see inra.ijpb.data.border.BorderManager#get(int, int)
 	 */
 	@Override
 	public int get(int x, int y) {

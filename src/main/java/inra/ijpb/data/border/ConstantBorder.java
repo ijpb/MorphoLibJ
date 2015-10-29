@@ -1,7 +1,7 @@
 /**
  * 
  */
-package inra.ijpb.filter.border;
+package inra.ijpb.data.border;
 
 import ij.process.ImageProcessor;
 
@@ -24,7 +24,7 @@ public class ConstantBorder implements BorderManager {
 	/** 
 	 * Returns either image pixel when position is inside image bounds, 
 	 * or a constant value when position is outside of image bounds.
-	 * @see inra.ijpb.filter.border.BorderManager#get(int, int)
+	 * @see inra.ijpb.data.border.BorderManager#get(int, int)
 	 */
 	@Override
 	public int get(int x, int y) {

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package inra.ijpb.filter.border;
+package inra.ijpb.data.border;
 
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
@@ -10,6 +10,12 @@ import ij.process.ShortProcessor;
 /**
  * Manages borders of an image, by providing methods for accessing values also
  * for position out of image bounds.
+ * 
+ * <pre><code>
+ * ImageProcessor image = ...
+ * BorderManager bm = new ReplicatedBorder(image);
+ * int value = bm.get(-5, -10);
+ * </code></pre>
  * @author David Legland
  *
  */
@@ -23,6 +29,16 @@ public interface BorderManager {
 	 * To get the type corresponding to a given label, use the twin method
 	 * <code>fromLabel(String)</code>.
 	 * 
+	 * <pre><code>
+	 * // init initial values 
+	 * ImageProcessor image = ...
+	 * String borderManagerName = "Periodic";
+	 * 
+	 * // create border manager from name and image
+	 * BorderManager.Type bmType = BorderManager.Type.fromLabel(borderManagerName);
+	 * BorderManager bm = bmType.createBorderManager(image);
+	 * int value = bm.get(-5, -10);
+	 * </code></pre>
 	 * @author David Legland
 	 *
 	 */
@@ -100,7 +116,8 @@ public interface BorderManager {
 
 	/**
 	 * Returns the value corresponding to (x,y) position. Position can be
-	 * outside image bounds.  
+	 * outside original image bounds.
+	 *   
 	 * @param x column index of the position
 	 * @param y row index of the position
 	 * @return border corrected value
