@@ -33,21 +33,18 @@ public class TestMorphologicalSegmentation {
 		
 		boolean[] values = new boolean[]{ true, false };
 
-		for( boolean usePriorityQueue : values )
-			for( boolean calculateDams : values )
-			{
-				input = copy;
-				
-				ImagePlus result8bit = segmentImage( input, dynamic, connectivity, gradientRadius, usePriorityQueue, calculateDams );
-				IJ.run( input, "16-bit", "" );
-				ImagePlus result16bit = segmentImage( input, dynamic, connectivity, gradientRadius, usePriorityQueue, calculateDams );		
-				assertEquals( "Different results for 8 and 16 bit images (priority queue = " 
-								+ usePriorityQueue + ", dams = " + calculateDams + ")", 0, diffImagePlus( result8bit, result16bit ) );
-				IJ.run( input.duplicate(), "32-bit", "" );
-				ImagePlus result32bit = segmentImage( input, dynamic, connectivity, gradientRadius, usePriorityQueue, calculateDams );
-				assertEquals( "Different results for 8 and 32 bit images (priority queue = " 
-						+ usePriorityQueue + ", dams = " + calculateDams + ")", 0, diffImagePlus( result8bit, result32bit ) );
-			}
+		for( boolean calculateDams : values )
+		{
+			input = copy;
+			
+			ImagePlus result8bit = segmentImage( input, dynamic, connectivity, gradientRadius, calculateDams );
+			IJ.run( input, "16-bit", "" );
+			ImagePlus result16bit = segmentImage( input, dynamic, connectivity, gradientRadius, calculateDams );		
+			assertEquals( "Different results for 8 and 16 bit images (dams = " + calculateDams + ")", 0, diffImagePlus( result8bit, result16bit ) );
+			IJ.run( input.duplicate(), "32-bit", "" );
+			ImagePlus result32bit = segmentImage( input, dynamic, connectivity, gradientRadius, calculateDams );
+			assertEquals( "Different results for 8 and 32 bit images (dams = " + calculateDams + ")", 0, diffImagePlus( result8bit, result32bit ) );
+		}
 	}
 	
 	ImagePlus segmentImage( 
@@ -55,7 +52,6 @@ public class TestMorphologicalSegmentation {
 			int dynamic, 
 			int connectivity,
 			int gradientRadius,
-			boolean usePriorityQueue,
 			boolean calculateDams )
 	{
 		Strel3D strel = Strel3D.Shape.CUBE.fromRadius( gradientRadius );
@@ -64,7 +60,7 @@ public class TestMorphologicalSegmentation {
 		ImageStack imposedMinima = MinimaAndMaxima3D.imposeMinima( image, regionalMinima, connectivity );
 		ImageStack labeledMinima = ConnectedComponents.computeLabels( regionalMinima, connectivity, 32 );
 		ImageStack resultStack = Watershed.computeWatershed( imposedMinima, labeledMinima, 
-				connectivity, usePriorityQueue, calculateDams );
+				connectivity, calculateDams );
 		ImagePlus resultImage = new ImagePlus( "watershed", resultStack );
 		resultImage.setCalibration( input.getCalibration() );
 		return resultImage;
