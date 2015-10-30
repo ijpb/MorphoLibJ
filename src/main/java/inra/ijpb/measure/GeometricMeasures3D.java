@@ -26,6 +26,15 @@ import Jama.SingularValueDecomposition;
  * Provides a set of static methods to compute geometric measures in 3D binary
  * or label images.
  * 
+ * Ideally, each parameter should provide two methods to measure it:
+ * <ul>
+ * <li>a method with two (or more) input parameters: the label image and the
+ * resolution, and which returns a ResultsTable</li>
+ * <li>a method with three (or more) input parameters: the label image, the list
+ * of labels to consider, and the resolution, and which returns an array of
+ * double, with as many elements as the number of labels</li>
+ * </ul>
+ * 
  * @author David Legland
  *
  */
@@ -122,7 +131,13 @@ public class GeometricMeasures3D
 
 	}
 	
-
+	/**
+	 * Measures the volume of each particle in a 3D label image.
+	 * 
+	 * @param labelImage image containing the label of each particle
+	 * @param resol image resolution, as a double array with 3 elements
+	 * @return the volume of each particle in the image
+	 */
 	public final static ResultsTable volume(ImageStack labelImage, double[] resol) 
 	{
 		IJ.showStatus("Compute volume...");
@@ -176,7 +191,23 @@ public class GeometricMeasures3D
         return volumes;
 	}
 	
-	
+	/**
+	 * Helper function that computes the sphericity index of 3D particles, based
+	 * on the value of volume and surface area.
+	 * 
+	 * The sphericity is computed using the following formula: <code>
+	 * sphericity = 36 * PI * V^2 / S^3
+	 * </code>
+	 * 
+	 * A perfect ball would have a sphericity index close to 1, a very complex
+	 * particle will present a lower sphericity index.
+	 * 
+	 * @param volumes
+	 *            the volume of each particle
+	 * @param surfaces
+	 *            the surface area of each particle
+	 * @return the sphericity index of each particle
+	 */
 	public final static double[] computeSphericity(double[] volumes, double[] surfaces) 
 	{
 		int n = volumes.length;
@@ -204,14 +235,15 @@ public class GeometricMeasures3D
 	 * Computes the surface area of each label in the 3D image, using the
 	 * specified resolution, and the given number of directions.
 	 * 
-	 * Current algorithms pre-computes a LUT, then iterate on 2-by-2-by-2 
+	 * Current algorithms pre-computes a LUT, then iterate on 2-by-2-by-2
 	 * configurations of voxels, and identifies the labels whose surface area
 	 * measure need to be updated.
-	 *  
-	 * For 3 directions, the surfaceAreaD3 function is analternative that does
-	 * not uses LUT. 
+	 * 
+	 * For 3 directions, the surfaceAreaD3 function is an alternative that does
+	 * not uses LUT.
 	 */
-	public final static ResultsTable surfaceArea(ImageStack labelImage, double[] resol, int nDirs)
+	public final static ResultsTable surfaceArea(ImageStack labelImage, 
+			double[] resol, int nDirs)
 	{
 		IJ.showStatus("Count labels...");
 		int[] labels = LabelImages.findAllLabels(labelImage);
@@ -225,7 +257,7 @@ public class GeometricMeasures3D
 		{
 			table.incrementCounter();
 			table.addLabel(Integer.toString(labels[i]));
-			table.addValue("Surface", surfaces[i]);
+			table.addValue("SurfaceArea", surfaces[i]);
 		}
 
 		IJ.showStatus("");
@@ -235,7 +267,8 @@ public class GeometricMeasures3D
 	/**
 	 * Compute surface area for each label given in the "labels" argument.
 	 */
-	public final static double[] surfaceAreaByLut(ImageStack image, int[] labels, double[] resol, int nDirs)
+	public final static double[] surfaceAreaByLut(ImageStack image, int[] labels, 
+			double[] resol, int nDirs)
 	{    
         // create associative array to know index of each label
 		HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
@@ -318,7 +351,13 @@ public class GeometricMeasures3D
 	
 	/**
 	 * Compute surface area for a single label in the image. This can be useful
-	 * for binary images by using label 255.  
+	 * for binary images by using label 255.
+	 * 
+	 * @param image the input 3D label image (with labels having integer values)
+	 * @param label the value of the label to measure
+	 * @param resol the resolution of the image, in each direction
+	 * @param nDirs the number of directions to consider for computing surface (3 or 13)
+	 * @return the surface area measured for the given label
 	 */
 	public final static double surfaceAreaByLut(ImageStack image, int label, double[] resol, int nDirs) 
 	{
@@ -520,7 +559,8 @@ public class GeometricMeasures3D
         		for (int x = 0; x < sizeX; x++) 
         		{
             		current = image.getVoxel(x, y, z);
-        			if (previous == label ^ current == label) // Exclusive or
+            		// identify transition using Exclusive OR
+        			if (previous == label ^ current == label) 
         				count++;
         			previous = current;
         		}
@@ -603,7 +643,8 @@ public class GeometricMeasures3D
 	            for (int z = 0; z < sizeZ; z++)
 	            {
 	        		current = image.getVoxel(x, y, z);
-	    			if (previous == label ^ current == label) // Exclusive or
+            		// identify transition using Exclusive OR
+	    			if (previous == label ^ current == label)
 	    				count++;
 	    			previous = current;
 	    		}
@@ -698,6 +739,7 @@ public class GeometricMeasures3D
 	/**
 	 * Compute centroid of each label in input stack and returns the result
 	 * as an array of double for each label.
+	 * 
 	 * @param labelImage an instance of ImageStack containing region labels
 	 * @param labels the set of indices contained in the image
 	 */
@@ -750,7 +792,7 @@ public class GeometricMeasures3D
 
 		return centroids;
 	}
-	
+
 	/**
      * Computes inertia ellipsoid of each 3D region in input 3D label image.
      * 
@@ -758,6 +800,79 @@ public class GeometricMeasures3D
      */
     public final static ResultsTable inertiaEllipsoid(ImageStack image)
     {
+    	return inertiaEllipsoid(image, new double[]{1, 1, 1});
+    }
+
+    	
+	/**
+	 * <p>
+     * Computes inertia ellipsoid of each 3D region in input 3D label image.
+     * </p>
+     * 
+     * <p>The result is given as a ResultsTable with as many rows as the number
+	 * of labels, and 9 columns. Columns correspond to the centroid coordinates
+	 * (3 values), the radius of the ellipsoid (3 values), and the orientation,
+	 * given as azimut, elevation, and roll angles, in degrees (3 values).
+	 * 
+     * @throws RuntimeException if jama package is not found.
+     */
+    public final static ResultsTable inertiaEllipsoid(ImageStack image, double[] resol)
+    {
+    	// extract particle labels
+        int[] labels = LabelImages.findAllLabels(image);
+        int nLabels = labels.length;
+        
+        double[][] elli = inertiaEllipsoid(image, labels, resol);
+        
+        ResultsTable table = new ResultsTable();
+        for (int i = 0; i < nLabels; i++)
+        {
+            table.incrementCounter();
+            table.addLabel(Integer.toString(labels[i]));
+            // add coordinates of origin pixel (IJ coordinate system) 
+            table.addValue("XCentroid", elli[i][0]);
+        	table.addValue("YCentroid", elli[i][1]);
+        	table.addValue("ZCentroid", elli[i][2]);
+        	// add scaling parameters 
+            table.addValue("Radius1", elli[i][3]);
+        	table.addValue("Radius2", elli[i][4]);
+        	table.addValue("Radius3", elli[i][5]);
+        	// add orientation info
+            table.addValue("Phi", elli[i][6]);
+        	table.addValue("Theta", elli[i][7]);
+        	table.addValue("Psi", elli[i][8]);
+        }
+  
+        return table;
+    }
+
+    /**
+	 * <p>
+	 * Computes inertia ellipsoid from input 3D label image for each specified
+	 * region label.
+	 * </p>
+	 * 
+	 * <p>
+	 * The result is given as an array of double with as many rows as the number
+	 * of labels, and 9 columns. Columns correspond to the centroid coordinates
+	 * (3 values), the radius of the ellipsoid (3 values), and the orientation,
+	 * given as azimut, elevation, and roll angles, in degrees (3 values).
+	 * <p>
+	 * 
+	 * @throws RuntimeException
+	 *             if jama package is not found.
+	 * @param image
+	 *            input image containing label of each particle
+	 * @param labels
+	 *            the list of labels for which we want to compute inertia
+	 *            ellipsoid
+	 * @param resol
+	 *            the spatial resolution, as an array of length 3.
+	 * @return an array with as many rows as the number of labels, and 9 columns
+	 */
+	public static final double[][] inertiaEllipsoid(ImageStack image,
+			int[] labels, double[] resol)
+	{
         // Check validity of parameters
         if (image==null) return null;
         
@@ -776,168 +891,169 @@ public class GeometricMeasures3D
         int sizeY = image.getHeight();
         int sizeZ = image.getSize();
         
-        // extract particle labels
-        int[] labels = LabelImages.findAllLabels(image);
-        int nLabels = labels.length;
-        
-        // create associative array to know index of each label
-        HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
-        
-        // allocate memory for result
-        int[] counts = new int[nLabels];
-        double[] cx = new double[nLabels];
-        double[] cy = new double[nLabels];
-        double[] cz = new double[nLabels];
-        double[] Ixx = new double[nLabels];
-        double[] Iyy = new double[nLabels];
-        double[] Izz = new double[nLabels];
-        double[] Ixy = new double[nLabels];
-        double[] Ixz = new double[nLabels];
-        double[] Iyz = new double[nLabels];
+    	// create associative array to know index of each label
+    	HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
 
-        // compute centroid of each region
-        for (int z = 0; z < sizeZ; z++) 
+        // ensure valid resolution
+        if (resol == null)
         {
-        	for (int y = 0; y < sizeY; y++)
-        	{
-        		for (int x = 0; x < sizeX; x++)
-        		{
-        			int label = (int) image.getVoxel(x, y, z);
-        			if (label == 0)
-        				continue;
+        	resol = new double[]{1, 1, 1};
+        }
+        
+    	// allocate memory for result
+    	int nLabels = labels.length;
+    	int[] counts = new int[nLabels];
+    	double[] cx = new double[nLabels];
+    	double[] cy = new double[nLabels];
+    	double[] cz = new double[nLabels];
+    	double[] Ixx = new double[nLabels];
+    	double[] Iyy = new double[nLabels];
+    	double[] Izz = new double[nLabels];
+    	double[] Ixy = new double[nLabels];
+    	double[] Ixz = new double[nLabels];
+    	double[] Iyz = new double[nLabels];
 
-        			int index = labelIndices.get(label);
-        			cx[index] += x;
-        			cy[index] += y;
-        			cz[index] += z;
-        			counts[index]++;
-        		}
-        	}
-        }
-        
-        // normalize by number of pixels in each region
-        for (int i = 0; i < nLabels; i++) 
-        {
-        	cx[i] = cx[i] / counts[i];
-        	cy[i] = cy[i] / counts[i];
-        	cz[i] = cz[i] / counts[i];
-        }
-        
-        // compute centered inertia matrix of each label
-        for (int z = 0; z < sizeZ; z++) 
-        {
-        	for (int y = 0; y < sizeY; y++)
-        	{
-        		for (int x = 0; x < sizeX; x++) 
-        		{
-        			int label = (int) image.getVoxel(x, y, z);
-        			if (label == 0)
-        				continue;
-            	
-        			int index = labelIndices.get(label);
-        			double x2 = x - cx[index];
-        			double y2 = y - cy[index];
-        			double z2 = z - cz[index];
-        			
-        			Ixx[index] += x2 * x2;
-        			Iyy[index] += y2 * y2;
-        			Izz[index] += z2 * z2;
-        			Ixy[index] += x2 * y2;
-        			Ixz[index] += x2 * z2;
-        			Iyz[index] += y2 * z2;
-        		}
-        	}
-        }
-        
-        // normalize by number of pixels in each region 
-        for (int i = 0; i < nLabels; i++) 
-        {
-        	Ixx[i] = Ixx[i] / counts[i];
-        	Iyy[i] = Iyy[i] / counts[i];
-        	Izz[i] = Izz[i] / counts[i];
-        	Ixy[i] = Ixy[i] / counts[i];
-        	Ixz[i] = Ixz[i] / counts[i];
-        	Iyz[i] = Iyz[i] / counts[i];
-        }
-        
-        // Create data table
-        ResultsTable table = new ResultsTable();
-        
-        // compute ellipse parameters for each region
+    	// compute centroid of each region
+    	for (int z = 0; z < sizeZ; z++) 
+    	{
+    		for (int y = 0; y < sizeY; y++)
+    		{
+    			for (int x = 0; x < sizeX; x++)
+    			{
+    				// do not process background voxels
+    				int label = (int) image.getVoxel(x, y, z);
+    				if (label == 0)
+    					continue;
+
+    				// convert label to its index
+    				int index = labelIndices.get(label);
+
+    				// update sum coordinates, taking into account the spatial calibration 
+    				cx[index] += x * resol[0];
+    				cy[index] += y * resol[1];
+    				cz[index] += z * resol[2];
+    				counts[index]++;
+    			}
+    		}
+    	}
+
+    	// normalize by number of pixels in each region
+    	for (int i = 0; i < nLabels; i++) 
+    	{
+    		cx[i] = cx[i] / counts[i];
+    		cy[i] = cy[i] / counts[i];
+    		cz[i] = cz[i] / counts[i];
+    	}
+
+    	// compute centered inertia matrix of each label
+    	for (int z = 0; z < sizeZ; z++) 
+    	{
+    		for (int y = 0; y < sizeY; y++)
+    		{
+    			for (int x = 0; x < sizeX; x++) 
+    			{
+    				// do not process background voxels
+    				int label = (int) image.getVoxel(x, y, z);
+    				if (label == 0)
+    					continue;
+
+    				// convert label to its index
+    				int index = labelIndices.get(label);
+
+    				// convert coordinates relative to centroid 
+    				double x2 = x * resol[0] - cx[index];
+    				double y2 = y * resol[1] - cy[index];
+    				double z2 = z * resol[2] - cz[index];
+
+    				// update coefficients of inertia matrix
+    				Ixx[index] += x2 * x2;
+    				Iyy[index] += y2 * y2;
+    				Izz[index] += z2 * z2;
+    				Ixy[index] += x2 * y2;
+    				Ixz[index] += x2 * z2;
+    				Iyz[index] += y2 * z2;
+    			}
+    		}
+    	}
+
+    	// normalize by number of pixels in each region 
+    	for (int i = 0; i < nLabels; i++) 
+    	{
+    		Ixx[i] = Ixx[i] / counts[i];
+    		Iyy[i] = Iyy[i] / counts[i];
+    		Izz[i] = Izz[i] / counts[i];
+    		Ixy[i] = Ixy[i] / counts[i];
+    		Ixz[i] = Ixz[i] / counts[i];
+    		Iyz[i] = Iyz[i] / counts[i];
+    	}
+
+    	// Create result array
+    	double[][] res = new double[nLabels][9];
+
+    	// compute ellipsoid parameters for each region
     	Matrix matrix = new Matrix(3, 3);
-        for (int i = 0; i < nLabels; i++) 
-        {
-        	// fill up the 3x3 inertia matrix
-			matrix.set(0, 0, Ixx[i]);
-			matrix.set(0, 1, Ixy[i]);
-			matrix.set(0, 2, Ixz[i]);
-			matrix.set(1, 0, Ixy[i]);
-			matrix.set(1, 1, Iyy[i]);
-			matrix.set(1, 2, Iyz[i]);
-			matrix.set(2, 0, Ixz[i]);
-			matrix.set(2, 1, Iyz[i]);
-			matrix.set(2, 2, Izz[i]);
-		
-			// Extract singular values
-			SingularValueDecomposition svd = new SingularValueDecomposition(matrix);
-			Matrix values = svd.getS();
-			
-			// convert singular values to ellipsoid radii 
-			double r1 = sqrt(5) * sqrt(values.get(0, 0));
-			double r2 = sqrt(5) * sqrt(values.get(1, 1));
-			double r3 = sqrt(5) * sqrt(values.get(2, 2));
-			
-			// extract |cos(theta)| 
-			Matrix mat = svd.getU();
-			double tmp = hypot(mat.get(1, 1), mat.get(2, 1));
-			double phi, theta, psi;
+    	for (int i = 0; i < nLabels; i++) 
+    	{
+    		// fill up the 3x3 inertia matrix
+    		matrix.set(0, 0, Ixx[i]);
+    		matrix.set(0, 1, Ixy[i]);
+    		matrix.set(0, 2, Ixz[i]);
+    		matrix.set(1, 0, Ixy[i]);
+    		matrix.set(1, 1, Iyy[i]);
+    		matrix.set(1, 2, Iyz[i]);
+    		matrix.set(2, 0, Ixz[i]);
+    		matrix.set(2, 1, Iyz[i]);
+    		matrix.set(2, 2, Izz[i]);
 
-			// avoid dividing by 0
-			if (tmp > 16 * Double.MIN_VALUE) 
-			{
-			    // normal case: theta <> 0
-			    psi     = atan2( mat.get(2, 1), mat.get(2, 2));
-			    theta   = atan2(-mat.get(2, 0), tmp);
-			    phi     = atan2( mat.get(1, 0), mat.get(0, 0));
-			}
-			else 
-			{
-				// theta is around 0 
-			    psi     = atan2(-mat.get(1, 2), mat.get(1,1));
-			    theta   = atan2(-mat.get(2, 0), tmp);
-			    phi     = 0;
-			}
-            
-            table.incrementCounter();
-            table.addLabel(Integer.toString(labels[i]));
-            // add coordinates of origin pixel (IJ coordinate system) 
-            table.addValue("XCentroid", cx[i] + .5);
-        	table.addValue("YCentroid", cy[i] + .5);
-        	table.addValue("ZCentroid", cz[i] + .5);
-        	// add scaling parameters 
-            table.addValue("Radius1", r1);
-        	table.addValue("Radius2", r2);
-        	table.addValue("Radius3", r3);
-        	// add orientation info
-            table.addValue("Phi", toDegrees(phi));
-        	table.addValue("Theta", toDegrees(theta));
-        	table.addValue("Psi", toDegrees(psi));
-        }
+    		// Extract singular values
+    		SingularValueDecomposition svd = new SingularValueDecomposition(matrix);
+    		Matrix values = svd.getS();
 
-        return table;
-    }
+    		// convert singular values to ellipsoid radii 
+    		double r1 = sqrt(5) * sqrt(values.get(0, 0));
+    		double r2 = sqrt(5) * sqrt(values.get(1, 1));
+    		double r3 = sqrt(5) * sqrt(values.get(2, 2));
 
-	/**
-     * Radius of maximum inscribed sphere of each particle within a label 
-     * image.
-     * 
-     */
-    public final static ResultsTable maximumInscribedSphere(ImageStack labelImage)
-    {
-    	return maximumInscribedSphere(labelImage, new double[]{1, 1});
+    		// extract |cos(theta)| 
+    		Matrix mat = svd.getU();
+    		double tmp = hypot(mat.get(1, 1), mat.get(2, 1));
+    		double phi, theta, psi;
+
+    		// avoid dividing by 0
+    		if (tmp > 16 * Double.MIN_VALUE) 
+    		{
+    			// normal case: theta <> 0
+    			psi     = atan2( mat.get(2, 1), mat.get(2, 2));
+    			theta   = atan2(-mat.get(2, 0), tmp);
+    			phi     = atan2( mat.get(1, 0), mat.get(0, 0));
+    		}
+    		else 
+    		{
+    			// theta is around 0 
+    			psi     = atan2(-mat.get(1, 2), mat.get(1,1));
+    			theta   = atan2(-mat.get(2, 0), tmp);
+    			phi     = 0;
+    		}
+
+    		// add coordinates of origin pixel (IJ coordinate system) 
+    		res[i][0] = cx[i] + .5 * resol[0];
+    		res[i][1] = cy[i] + .5 * resol[1];
+    		res[i][2] = cz[i] + .5 * resol[2];
+    		// add scaling parameters 
+    		res[i][3] = r1;
+    		res[i][4] = r2;
+    		res[i][5] = r3;
+    		// add orientation info
+    		res[i][6] = toDegrees(phi);
+    		res[i][7] = toDegrees(theta);
+    		res[i][8] = toDegrees(psi);
+    	}
+
+    	return res;
     }
     
-	/**
+    
+    /**
      * Radius of maximum inscribed sphere of each particle within a label 
      * image.
      * 
@@ -947,6 +1063,44 @@ public class GeometricMeasures3D
     {
     	// compute max label within image
     	int[] labels = LabelImages.findAllLabels(labelImage);
+    	int nbLabels = labels.length;
+
+    	// Initialize mask as binarisation of labels
+    	ImageStack mask = BinaryImages.binarize(labelImage);
+
+    	// first distance propagation to find an arbitrary center
+    	ImageStack distanceMap = BinaryImages.distanceMap(mask);
+
+    	// Extract position of maxima
+    	Cursor3D[] posCenter;
+    	posCenter = findPositionOfMaxValues(distanceMap, labelImage, labels);
+    	float[] radii = getValues(distanceMap, posCenter);
+
+    	// Create result data table
+    	ResultsTable table = new ResultsTable();
+    	for (int i = 0; i < nbLabels; i++) 
+    	{
+    		// add an entry to the resulting data table
+    		table.incrementCounter();
+    		table.addValue("Label", labels[i]);
+    		table.addValue("xi", posCenter[i].getX() * resol[0]);
+    		table.addValue("yi", posCenter[i].getY() * resol[1]);
+    		table.addValue("zi", posCenter[i].getZ() * resol[2]);
+    		table.addValue("Radius", radii[i] * resol[0]);
+    	}
+
+    	return table;
+    }
+
+	/**
+     * Radius of maximum inscribed sphere of each particle within a label 
+     * image.
+     * 
+     */
+    public final static double[][] maximumInscribedSphere(ImageStack labelImage, 
+    		int[] labels, double[] resol)
+    {
+    	// compute max label within image
     	int nbLabels = labels.length;
     	
     	// Initialize mask as binarisation of labels
@@ -961,19 +1115,16 @@ public class GeometricMeasures3D
 		float[] radii = getValues(distanceMap, posCenter);
 
 		// Create result data table
-		ResultsTable table = new ResultsTable();
+		double[][] res = new double[nbLabels][4];
 		for (int i = 0; i < nbLabels; i++) 
 		{
-			// add an entry to the resulting data table
-			table.incrementCounter();
-			table.addValue("Label", labels[i]);
-			table.addValue("xi", posCenter[i].getX() * resol[0]);
-			table.addValue("yi", posCenter[i].getY() * resol[1]);
-			table.addValue("zi", posCenter[i].getZ() * resol[2]);
-			table.addValue("Radius", radii[i] * resol[0]);
+			res[i][0] = posCenter[i].getX() * resol[0];
+			res[i][1] = posCenter[i].getY() * resol[1];
+			res[i][2] = posCenter[i].getZ() * resol[2];
+			res[i][3] = radii[i] * resol[0];
 		}
 
-		return table;
+		return res;
     }
 
 	/**

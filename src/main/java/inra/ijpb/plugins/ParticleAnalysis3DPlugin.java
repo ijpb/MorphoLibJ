@@ -79,7 +79,7 @@ public class ParticleAnalysis3DPlugin implements PlugIn
 		}
 		
         // create the dialog, with operator options
-        GenericDialog gd = new GenericDialog("Geometric Measures 3D");
+        GenericDialog gd = new GenericDialog("Particles Analysis 3D");
         gd.addChoice("Surface area method:", dirNumberLabels, dirNumberLabels[1]);
         gd.addCheckbox("Sphericity", true);
         gd.showDialog();

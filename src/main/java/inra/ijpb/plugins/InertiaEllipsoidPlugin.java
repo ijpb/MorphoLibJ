@@ -4,6 +4,7 @@ package inra.ijpb.plugins;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
+import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
 import inra.ijpb.measure.GeometricMeasures3D;
@@ -40,7 +41,16 @@ public class InertiaEllipsoidPlugin implements PlugIn {
 			return;
 		}
 		
-//        System.out.println("start inertia ellipsoid plugin");
+		// Extract spatial calibration
+		double[] resol = new double[]{1, 1, 1};
+        Calibration cal = imagePlus.getCalibration();
+        if (cal.scaled()) 
+        {
+        	resol[0] = cal.pixelWidth;
+        	resol[1] = cal.pixelHeight;
+        	resol[2] = cal.pixelDepth;
+        }
+
         ImageStack image = imagePlus.getStack();
         ResultsTable table;
         try {
@@ -52,10 +62,9 @@ public class InertiaEllipsoidPlugin implements PlugIn {
         	ex.printStackTrace(System.err);
         	return;
         }
-//        System.out.println("inertia ellipsoid ready");
-        
+
+        // show table results
         String title = imagePlus.getShortTitle() + "-ellipsoid";
         table.show(title);
-      
     }
 }
