@@ -207,6 +207,9 @@ public class GeometricMeasures3D
 	 * @param surfaces
 	 *            the surface area of each particle
 	 * @return the sphericity index of each particle
+	 * 
+	 * @see #surfaceArea(ImageStack, double[], int)
+	 * @see #volume(ImageStack, int[], double[])
 	 */
 	public final static double[] computeSphericity(double[] volumes, double[] surfaces) 
 	{
@@ -249,7 +252,7 @@ public class GeometricMeasures3D
 		int[] labels = LabelImages.findAllLabels(labelImage);
 		int nbLabels = labels.length;
 
-		double[] surfaces = surfaceAreaByLut(labelImage, labels, resol, nDirs);
+		double[] surfaces = surfaceAreaCrofton(labelImage, labels, resol, nDirs);
 
 		// Create data table
 		ResultsTable table = new ResultsTable();
@@ -267,7 +270,7 @@ public class GeometricMeasures3D
 	/**
 	 * Compute surface area for each label given in the "labels" argument.
 	 */
-	public final static double[] surfaceAreaByLut(ImageStack image, int[] labels, 
+	public final static double[] surfaceAreaCrofton(ImageStack image, int[] labels, 
 			double[] resol, int nDirs)
 	{    
         // create associative array to know index of each label
@@ -350,16 +353,23 @@ public class GeometricMeasures3D
 	}
 	
 	/**
-	 * Compute surface area for a single label in the image. This can be useful
-	 * for binary images by using label 255.
+	 * Compute surface area for a single label in the image, using
+	 * discretization of the Crofton formula. This can be useful for binary
+	 * images by using label 255.
 	 * 
-	 * @param image the input 3D label image (with labels having integer values)
-	 * @param label the value of the label to measure
-	 * @param resol the resolution of the image, in each direction
-	 * @param nDirs the number of directions to consider for computing surface (3 or 13)
+	 * @param image
+	 *            the input 3D label image (with labels having integer values)
+	 * @param label
+	 *            the value of the label to measure
+	 * @param resol
+	 *            the resolution of the image, in each direction
+	 * @param nDirs
+	 *            the number of directions to consider for computing surface (3
+	 *            or 13)
 	 * @return the surface area measured for the given label
 	 */
-	public final static double surfaceAreaByLut(ImageStack image, int label, double[] resol, int nDirs) 
+	public final static double surfaceAreaCrofton(ImageStack image, int label, 
+			double[] resol, int nDirs) 
 	{
     	// pre-compute LUT corresponding to resolution and number of directions
 		double[] surfLut = computeSurfaceAreaLut(resol, nDirs);
@@ -516,7 +526,7 @@ public class GeometricMeasures3D
 	/**
 	 * Compute surface area of a binary image using 3 directions.
 	 */
-	public final static double surfaceAreaD3(ImageStack image, double[] resol) 
+	public final static double surfaceAreaCroftonD3(ImageStack image, double[] resol) 
 	{
 		double d1 = resol[0];
 		double d2 = resol[1];
@@ -822,8 +832,10 @@ public class GeometricMeasures3D
         int[] labels = LabelImages.findAllLabels(image);
         int nLabels = labels.length;
         
+        // Compute inertia ellipsoids data
         double[][] elli = inertiaEllipsoid(image, labels, resol);
         
+        // Convert data array to ResultsTable object, with appropriate column names
         ResultsTable table = new ResultsTable();
         for (int i = 0; i < nLabels; i++)
         {
@@ -859,6 +871,15 @@ public class GeometricMeasures3D
 	 * given as azimut, elevation, and roll angles, in degrees (3 values).
 	 * <p>
 	 * 
+	 * <pre><code>
+	 * ImageStack labelImage = ...
+	 * int[] labels = LabelImages.findAllLabels(image);
+	 * double[] resol = new double[]{1, 1, 1};
+	 * double[][] ellipsoids = GeometricMeasures3D.inertiaEllipsoid(labelImage,
+	 * 		labels, resol);
+	 * double[][] elongations = GeometricMeasures3D.computeEllipsoidElongations(ellipsoids);
+	 * </code></pre>
+	 *
 	 * @throws RuntimeException
 	 *             if jama package is not found.
 	 * @param image
@@ -1052,6 +1073,45 @@ public class GeometricMeasures3D
     	return res;
     }
     
+	/**
+	 * Compute three elongation factors for an array of ellipsoids.
+	 * 
+	 * <pre><code>
+	 * ImageStack labelImage = ...
+	 * int[] labels = LabelImages.findAllLabels(image);
+	 * double[] resol = new double[]{1, 1, 1};
+	 * double[][] ellipsoids = GeometricMeasures3D.inertiaEllipsoid(labelImage,
+	 * 		labels, resol);
+	 * double[][] elongations = GeometricMeasures3D.computeEllipsoidElongations(ellipsoids);
+	 * </code></pre>
+	 * 
+	 * @param ellipsoids
+	 *            an array of ellipsoids, with radius data given in columns 3,
+	 *            4, and 5
+	 * @return an array of elongation factors. When radii are ordered such that
+	 *         R1 &gt; R2 &gt; R3, the three elongation factors are defined by
+	 *         ratio of R1 by R2, ratio of R1 by R3, and ratio of R2 by R3.
+	 * @see #inertiaEllipsoid(ImageStack, double[])
+	 * @see #inertiaEllipsoid(ImageStack, int[], double[])
+	 */
+	public static final double[][] computeEllipsoidElongations(double[][] ellipsoids)
+    {
+		int nLabels = ellipsoids.length;
+    	double[][] res = new double[nLabels][3];
+    	
+    	for (int i = 0; i < nLabels; i++)
+    	{
+    		double ra = ellipsoids[i][3];
+    		double rb = ellipsoids[i][4];
+    		double rc = ellipsoids[i][5];
+    		
+    		res[i][0] = ra / rb;
+    		res[i][1] = ra / rc;
+    		res[i][2] = rb / rc;
+    	}
+    	
+    	return res;
+    }
     
     /**
      * Radius of maximum inscribed sphere of each particle within a label 

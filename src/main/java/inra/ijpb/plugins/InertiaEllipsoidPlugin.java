@@ -9,10 +9,8 @@ import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
 import inra.ijpb.measure.GeometricMeasures3D;
 
-public class InertiaEllipsoidPlugin implements PlugIn {
-
-
-
+public class InertiaEllipsoidPlugin implements PlugIn
+{
     // ====================================================
     // Class variables
     
@@ -33,10 +31,12 @@ public class InertiaEllipsoidPlugin implements PlugIn {
 	/* (non-Javadoc)
      * @see ij.plugin.PlugIn#run(java.lang.String)
      */
-    public void run(String args) {
+    public void run(String args)
+    {
         ImagePlus imagePlus = IJ.getImage();
     
-		if (imagePlus.getStackSize() == 1) {
+		if (imagePlus.getStackSize() == 1) 
+		{
 			IJ.error("Requires a Stack");
 			return;
 		}
@@ -53,9 +53,12 @@ public class InertiaEllipsoidPlugin implements PlugIn {
 
         ImageStack image = imagePlus.getStack();
         ResultsTable table;
-        try {
+        try 
+        {
         	table = GeometricMeasures3D.inertiaEllipsoid(image);
-        } catch (Exception ex) {
+        } 
+        catch (Exception ex) 
+        {
         	String msg = ex.getMessage();
         	IJ.log(msg);
 			IJ.error("Problem occured during Inertia Ellipsoid computation:\n" + msg);

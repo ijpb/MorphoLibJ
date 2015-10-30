@@ -14,7 +14,7 @@ public class GeometricMeasures3DTest {
 	public final void testSurfaceAreaByLut_D13() {
 		ImageStack image = createBallImage();
 		double[] resol = new double[]{1, 1, 1};
-		double surf = GeometricMeasures3D.surfaceAreaByLut(image, 255, resol, 13);
+		double surf = GeometricMeasures3D.surfaceAreaCrofton(image, 255, resol, 13);
 		double exp = 5026.;
 		assertEquals(exp, surf, 2.);
 	}
@@ -23,7 +23,7 @@ public class GeometricMeasures3DTest {
 	public final void testSurfaceAreaByLut_D3() {
 		ImageStack image = createBallImage();
 		double[] resol = new double[]{1, 1, 1};
-		double surf = GeometricMeasures3D.surfaceAreaByLut(image, 255, resol, 3);
+		double surf = GeometricMeasures3D.surfaceAreaCrofton(image, 255, resol, 3);
 		double exp = 5026.;
 		assertEquals(exp, surf, 2.);
 	}
