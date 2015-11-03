@@ -6,10 +6,13 @@ package inra.ijpb.binary;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ByteProcessor;
+import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
+import ij.process.ShortProcessor;
 import inra.ijpb.binary.distmap.DistanceTransform;
 import inra.ijpb.binary.distmap.DistanceTransform3D;
 import inra.ijpb.binary.distmap.DistanceTransform3DFloat;
+import inra.ijpb.binary.distmap.DistanceTransform3DShort;
 import inra.ijpb.binary.distmap.DistanceTransform3x3Float;
 import inra.ijpb.binary.distmap.DistanceTransform3x3Short;
 import inra.ijpb.binary.distmap.DistanceTransform5x5Float;
@@ -32,7 +35,12 @@ import inra.ijpb.label.LabelImages;
  */
 public class BinaryImages 
 {
-
+	/**
+	 * Computes the distance map (or distance transform) from a binary image
+	 * processor. Distance is computed for each foreground (white) pixel or
+	 * voxel, as the chamfer distance to the nearest background (black) pixel or
+	 * voxel.
+	 */
 	public static final ImagePlus distanceMap(ImagePlus imagePlus)
 	{
 		ImagePlus resultPlus;
@@ -59,11 +67,16 @@ public class BinaryImages
 	}
 	
 	/**
-	 * Computes the distance map from a binary image processor. Distance is
-	 * computed for each foreground (white) pixel, as the chamfer distance to
-	 * the nearest background (black) pixel. This method uses default 5x5
-	 * weights, and normalizes the resulting map. Result is given in a new
-	 * instance of ShortProcessor.
+	 * <p>
+	 * Computes the distance map (or distance transform) from a binary image
+	 * processor. Distance is computed for each foreground (white) pixel, as the
+	 * chamfer distance to the nearest background (black) pixel.
+	 * </p>
+	 * 
+	 * <p>
+	 * This method uses default 5x5 weights, and normalizes the resulting map.
+	 * Result is given in a new instance of ShortProcessor.
+	 * </p>
 	 */
 	public static final ImageProcessor distanceMap(ImageProcessor image) 
 	{
@@ -71,14 +84,27 @@ public class BinaryImages
 	}
 	
 	/**
+	 * <p>
 	 * Computes the distance map from a binary image processor, by specifying
 	 * weights and normalization.
+	 * </p>
 	 * 
+	 * <p>
 	 * Distance is computed for each foreground (white) pixel, as the chamfer
 	 * distance to the nearest background (black) pixel. Result is given as a
 	 * new instance of ShortProcessor.
+	 * </p>
+	 * 
+	 * @param image
+	 *            the input binary image
+	 * @param weights
+	 *            an array of chamfer weights, with at least two values
+	 * @param normalize
+	 *            indicates whether the resulting distance map should be
+	 *            normalized (divide distances by the first chamfer weight)
+	 * @return the distance map obtained after applying the distance transform
 	 */
-	public static final ImageProcessor distanceMap(ImageProcessor image,
+	public static final ShortProcessor distanceMap(ImageProcessor image,
 			short[] weights, boolean normalize)
 	{
 		DistanceTransform algo;
@@ -94,18 +120,31 @@ public class BinaryImages
 					"Requires weight array with 2 or 3 elements");
 		}
 
-		return algo.distanceMap(image);
+		return (ShortProcessor) algo.distanceMap(image);
 	}
 
 	/**
+	 * <p>
 	 * Computes the distance map from a binary image processor, by specifying
-	 * weights and normalization. 
+	 * weights and normalization.
+	 * </p>
 	 * 
-	 * Distance is computed for each foreground (white) pixel, as the 
-	 * chamfer distance to the nearest background (black) pixel.
-	 * Result is given in a new instance of FloatProcessor.
+	 * <p>
+	 * Distance is computed for each foreground (white) pixel, as the chamfer
+	 * distance to the nearest background (black) pixel. Result is given in a
+	 * new instance of FloatProcessor.
+	 * </p>
+	 * 
+	 * @param image
+	 *            the input binary image
+	 * @param weights
+	 *            an array of chamfer weights, with at least two values
+	 * @param normalize
+	 *            indicates whether the resulting distance map should be
+	 *            normalized (divide distances by the first chamfer weight)
+	 * @return the distance map obtained after applying the distance transform
 	 */
-	public static final ImageProcessor distanceMap(ImageProcessor image,
+	public static final FloatProcessor distanceMap(ImageProcessor image,
 			float[] weights, boolean normalize) 
 	{
 		DistanceTransform algo;
@@ -122,18 +161,65 @@ public class BinaryImages
 					"Requires weight array with 2 or 3 elements");
 		}
 		
-		return algo.distanceMap(image);
+		return (FloatProcessor) algo.distanceMap(image);
 	}
 
 	/**
 	 * Computes the distance map from a binary 3D image. 
 	 * Distance is computed for each foreground (white) pixel, as the 
 	 * chamfer distance to the nearest background (black) pixel.
+	 * 
+	 * @param image
+	 *            the input binary image
+	 * @return the distance map obtained after applying the distance transform
 	 */
 	public static final ImageStack distanceMap(ImageStack image)
 	{
 		float[] weights = new float[]{3.0f, 4.0f, 5.0f};
 		DistanceTransform3D algo = new DistanceTransform3DFloat(weights);
+		return algo.distanceMap(image);
+	}
+	
+	/**
+	 * Computes the distance map from a binary 3D image. 
+	 * Distance is computed for each foreground (white) pixel, as the 
+	 * chamfer distance to the nearest background (black) pixel.
+	 * 
+	 * @param image
+	 *            the input binary image
+	 * @param weights
+	 *            an array of chamfer weights, with at least two values
+	 * @param normalize
+	 *            indicates whether the resulting distance map should be
+	 *            normalized (divide distances by the first chamfer weight)
+	 * @return the distance map obtained after applying the distance transform
+	 */
+	public static final ImageStack distanceMap(ImageStack image,
+			short[] weights, boolean normalize)
+	{
+		DistanceTransform3D	algo = new DistanceTransform3DShort(weights, normalize);
+			
+		return algo.distanceMap(image);
+	}
+	
+	/**
+	 * Computes the distance map from a binary 3D image. 
+	 * Distance is computed for each foreground (white) pixel, as the 
+	 * chamfer distance to the nearest background (black) pixel.
+	 * 
+	 * @param image
+	 *            the input binary image
+	 * @param weights
+	 *            an array of chamfer weights, with at least two values
+	 * @param normalize
+	 *            indicates whether the resulting distance map should be
+	 *            normalized (divide distances by the first chamfer weight)
+	 * @return the distance map obtained after applying the distance transform
+	 */
+	public static final ImageStack distanceMap(ImageStack image, 
+			float[] weights, boolean normalize)
+	{
+		DistanceTransform3D algo = new DistanceTransform3DFloat(weights, normalize);
 		return algo.distanceMap(image);
 	}
 	
