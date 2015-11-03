@@ -7,8 +7,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	// generic classes
-	BinaryImagesTest.class,
-	ConnectedComponentsTest.class, 
+	BinaryImagesTest.class, 
 	})
 public class AllTests {
   //nothing

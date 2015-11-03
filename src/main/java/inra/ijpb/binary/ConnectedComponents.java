@@ -14,8 +14,11 @@ import inra.ijpb.morphology.FloodFill;
 
 /**
  * Several static methods for computing connected components in binary images. 
- * Results are label images, whose bit-depth can be specified. 
+ * Results are label images, whose bit-depth can be specified.
+ * 
+ * @deprecated all methods have been moved to the BinaryImages class 
  */
+@Deprecated
 public class ConnectedComponents
 {
 	/**
@@ -27,7 +30,10 @@ public class ConnectedComponents
 	 * @param conn the connectivity, either 4 or 8 for planar images, or 6 or 26 for 3D images
 	 * @param bitDepth the number of bits used to create the result stack (8, 16 or 32)
 	 * @return an ImagePlus containing the label of each connected component.
+	 * 
+	 * @deprecated replaced by BinaryImages.componentsLabeling(ImagePlus, int, int)
 	 */
+	@Deprecated
 	public final static ImagePlus computeLabels(ImagePlus imagePlus, int conn, int bitDepth)
 	{
 		ImagePlus labelPlus;
@@ -59,7 +65,10 @@ public class ConnectedComponents
 	 * @param conn the connectivity, either 4 or 8 
 	 * @param bitDepth the number of bits used to create the result stack (8, 16 or 32)
 	 * @return a new instance of ImageProcessor containing the label of each connected component.
+	 * 
+	 * @deprecated replaced by BinaryImages.componentsLabeling(ImageProcessor, int, int)
 	 */
+	@Deprecated
 	public final static ImageProcessor computeLabels(ImageProcessor image,
 			int conn, int bitDepth) 
 	{
@@ -107,7 +116,10 @@ public class ConnectedComponents
 	 * @param conn the connectivity, either 6 or 26 
 	 * @param bitDepth the number of bits used to create the result stack (8, 16 or 32)
 	 * @return a new instance of ImageStack containing the label of each connected component.
+	 * 
+	 * @deprecated replaced by BinaryImages.componentsLabeling(ImageStack, int, int)
 	 */
+	@Deprecated
 	public final static ImageStack computeLabels(ImageStack image, int conn,
 			int bitDepth) 
 	{

@@ -7,7 +7,7 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
-import inra.ijpb.binary.ConnectedComponents;
+import inra.ijpb.binary.BinaryImages;
 
 /**
  * Computes label image of connected components in a binary planar image or 3D
@@ -45,7 +45,7 @@ public class LabelingPlugin implements PlugIn {
 		int bitDepth = resultBitDepthList[gd.getNextChoiceIndex()];
 		
 		int conn = isPlanar ? conn2DValues[connIndex] : conn3DValues[connIndex];
-		ImagePlus resultPlus  = ConnectedComponents.computeLabels(imagePlus, conn, bitDepth);
+		ImagePlus resultPlus  = BinaryImages.componentsLabeling(imagePlus, conn, bitDepth);
 		
 		// udpate meta information of result image
 		String newName = imagePlus.getShortTitle() + "-lbl";

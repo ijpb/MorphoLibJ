@@ -22,7 +22,7 @@ package inra.ijpb.binary;
  * DistanceTransform3D dt = new DistanceTransform3DFloat(floatWeights, normalize);
  * ImageStack result = dt.distanceMap(inputStack);
  * </code></pre>
- * </p>
+ *
  * 
  * @see BinaryImages#distanceMap(ij.ImageStack)
  * @see inra.ijpb.binary.distmap.DistanceTransform3D

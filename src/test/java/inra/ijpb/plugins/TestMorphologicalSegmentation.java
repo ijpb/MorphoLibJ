@@ -1,19 +1,18 @@
 package inra.ijpb.plugins;
 
 import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
-
 import ij.IJ;
 import ij.ImageJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ImageProcessor;
-import inra.ijpb.binary.ConnectedComponents;
+import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.morphology.MinimaAndMaxima3D;
 import inra.ijpb.morphology.Morphology;
 import inra.ijpb.morphology.Strel3D;
 import inra.ijpb.watershed.Watershed;
+
+import org.junit.Test;
 
 public class TestMorphologicalSegmentation {
 	
@@ -58,7 +57,7 @@ public class TestMorphologicalSegmentation {
 		ImageStack image = Morphology.gradient( input.getImageStack(), strel );
 		ImageStack regionalMinima = MinimaAndMaxima3D.extendedMinima( image, dynamic, connectivity );
 		ImageStack imposedMinima = MinimaAndMaxima3D.imposeMinima( image, regionalMinima, connectivity );
-		ImageStack labeledMinima = ConnectedComponents.computeLabels( regionalMinima, connectivity, 32 );
+		ImageStack labeledMinima = BinaryImages.componentsLabeling( regionalMinima, connectivity, 32 );
 		ImageStack resultStack = Watershed.computeWatershed( imposedMinima, labeledMinima, 
 				connectivity, calculateDams );
 		ImagePlus resultImage = new ImagePlus( "watershed", resultStack );

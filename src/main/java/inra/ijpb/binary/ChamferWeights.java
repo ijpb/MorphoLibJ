@@ -24,9 +24,8 @@ package inra.ijpb.binary;
  * // or:
  * ImagePlus resultPlus = BinaryImages.distanceMap(imagePlus, floatWeights, normalize);
  * </code></pre>
- * </p>
+ *  
  * 
-* 
  * @see inra.ijpb.binary.BinaryImages#distanceMap(ImageProcessor, short[], boolean)
  * @see inra.ijpb.binary.BinaryImages#distanceMap(ImageProcessor, float[], boolean)
  * @see inra.ijpb.binary.distmap.DistanceTransform

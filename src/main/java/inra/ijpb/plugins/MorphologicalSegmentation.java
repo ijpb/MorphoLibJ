@@ -1,5 +1,29 @@
 package inra.ijpb.plugins;
 
+import ij.IJ;
+import ij.ImagePlus;
+import ij.ImageStack;
+import ij.WindowManager;
+import ij.gui.ImageCanvas;
+import ij.gui.ImageRoi;
+import ij.gui.ImageWindow;
+import ij.gui.Overlay;
+import ij.gui.StackWindow;
+import ij.plugin.PlugIn;
+import ij.plugin.frame.Recorder;
+import ij.process.ImageProcessor;
+import ij.process.LUT;
+import inra.ijpb.binary.BinaryImages;
+import inra.ijpb.data.image.ColorImages;
+import inra.ijpb.data.image.Images3D;
+import inra.ijpb.morphology.MinimaAndMaxima3D;
+import inra.ijpb.morphology.Morphology;
+import inra.ijpb.morphology.Strel;
+import inra.ijpb.morphology.Strel3D;
+import inra.ijpb.util.ColorMaps;
+import inra.ijpb.util.ColorMaps.CommonLabelMaps;
+import inra.ijpb.watershed.Watershed;
+
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -31,31 +55,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-
-import ij.IJ;
-import ij.ImagePlus;
-import ij.ImageStack;
-import ij.WindowManager;
-import ij.gui.ImageCanvas;
-import ij.gui.ImageRoi;
-import ij.gui.ImageWindow;
-import ij.gui.Overlay;
-import ij.gui.StackWindow;
-import ij.plugin.PlugIn;
-import ij.plugin.frame.Recorder;
-import ij.process.ImageProcessor;
-import ij.process.LUT;
-import inra.ijpb.binary.BinaryImages;
-import inra.ijpb.binary.ConnectedComponents;
-import inra.ijpb.data.image.ColorImages;
-import inra.ijpb.data.image.Images3D;
-import inra.ijpb.morphology.MinimaAndMaxima3D;
-import inra.ijpb.morphology.Morphology;
-import inra.ijpb.morphology.Strel;
-import inra.ijpb.morphology.Strel3D;
-import inra.ijpb.util.ColorMaps;
-import inra.ijpb.util.ColorMaps.CommonLabelMaps;
-import inra.ijpb.watershed.Watershed;
 
 /**
  * Plugin to perform automatic segmentation of 2D and 3D images 
@@ -1030,7 +1029,7 @@ public class MorphologicalSegmentation implements PlugIn {
 						IJ.log( "Labeling regional minima..." );
 
 						// Label regional minima
-						ImageStack labeledMinima = ConnectedComponents.computeLabels( regionalMinima, connectivity, 32 );
+						ImageStack labeledMinima = BinaryImages.componentsLabeling( regionalMinima, connectivity, 32 );
 						if( null == labeledMinima )
 						{
 							IJ.log( "The segmentation was interrupted!" );

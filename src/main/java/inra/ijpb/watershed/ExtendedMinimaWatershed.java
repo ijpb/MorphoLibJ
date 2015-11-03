@@ -6,7 +6,7 @@ package inra.ijpb.watershed;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ImageProcessor;
-import inra.ijpb.binary.ConnectedComponents;
+import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.morphology.MinimaAndMaxima;
 import inra.ijpb.morphology.MinimaAndMaxima3D;
 
@@ -53,7 +53,7 @@ public class ExtendedMinimaWatershed {
 		
 		ImageProcessor minima = MinimaAndMaxima.extendedMinima(image, dynamic, connectivity);
 		ImageProcessor imposedMinima = MinimaAndMaxima.imposeMinima(image, minima, connectivity);
-		ImageProcessor labels = ConnectedComponents.computeLabels(minima, connectivity, 32);
+		ImageProcessor labels = BinaryImages.componentsLabeling(minima, connectivity, 32);
 		ImageProcessor basins = Watershed.computeWatershed(imposedMinima, labels, connectivity, true);
 		return basins;
 	}
@@ -68,7 +68,7 @@ public class ExtendedMinimaWatershed {
 		
 		ImageStack minima = MinimaAndMaxima3D.extendedMinima(image, dynamic, connectivity);
 		ImageStack imposedMinima = MinimaAndMaxima3D.imposeMinima(image, minima, connectivity);
-		ImageStack labels = ConnectedComponents.computeLabels(minima, connectivity, 32);
+		ImageStack labels = BinaryImages.componentsLabeling(minima, connectivity, 32);
 		ImageStack basins = Watershed.computeWatershed(imposedMinima, labels, connectivity, true);
 		return basins;
 	}
