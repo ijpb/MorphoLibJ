@@ -82,6 +82,63 @@ public class LabelImages
 	}
 	
 	/**
+	 * <p>
+	 * Creates a new label image from a set of binary images. The label values
+	 * range between 1 and the number of images.
+	 * </p>
+	 * 
+	 * Example:
+	 * <pre><code>
+	 * ImageProcessor binary1 = new ByteProcessor(10, 10);
+	 * binary1.set(2, 2, 255);
+	 * binary1.set(3, 5, 255);
+	 * ImageProcessor binary2 = new ByteProcessor(10, 10);
+	 * binary2.set(4, 4, 255);
+	 * binary2.set(3, 5, 255); // overlap of binary images
+	 * ImageProcessor binary3 = new ByteProcessor(10, 10);
+	 * binary3.set(6, 6, 255);
+	 * ImageProcessor labels = LabelImages.createLabelImage(binary1, 
+	 * 		binary2, binary3);
+	 * int background = labels.get(1, 1); // returns 0
+	 * int label1 = labels.get(2, 2); // returns 1
+	 * int label2 = labels.get(4, 4); // returns 2
+	 * int label3 = labels.get(6, 6); // returns 3
+	 * int label1overlap2 = labels.get(3, 5); // returns 2
+	 * </code></pre>
+	 * 
+	 * @param images
+	 *            a collection of binary images (0: background, >0 pixel belongs
+	 *            to current label)
+	 * @return a new image with label values
+	 */
+	public static final ByteProcessor createLabelImage(ImageProcessor... images)
+	{
+		ImageProcessor refImage = images[0];
+		int width = refImage.getWidth();
+		int height = refImage.getHeight();
+		
+		ByteProcessor result = new ByteProcessor(width, height);
+		
+		int label = 0;
+		for (ImageProcessor image : images) 
+		{
+			label++;
+			for (int y = 0; y < height; y++)
+			{
+				for (int x = 0; x < width; x++)
+				{
+					if (image.get(x, y) > 0) 
+					{
+						result.set(x, y, label);
+					}
+				}
+			}
+		}
+		
+		return result;
+	}
+
+	/**
 	 * Creates a binary 3D image that contains 255 for voxels that are 
 	 * boundaries between two labels.
 	 */
