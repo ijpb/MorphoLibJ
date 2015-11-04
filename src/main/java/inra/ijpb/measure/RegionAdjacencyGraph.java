@@ -1,7 +1,7 @@
 /**
  * 
  */
-package inra.ijpb.label;
+package inra.ijpb.measure;
 
 import ij.ImagePlus;
 import ij.ImageStack;

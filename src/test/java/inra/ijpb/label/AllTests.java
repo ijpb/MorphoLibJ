@@ -10,7 +10,6 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
 	// generic classes
 	LabelImagesTest.class, 
-	RegionAdjacencyGraphTest.class, 
 	})
 public class AllTests {
   //nothing

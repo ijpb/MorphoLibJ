@@ -7,8 +7,8 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
-import inra.ijpb.label.RegionAdjacencyGraph;
-import inra.ijpb.label.RegionAdjacencyGraph.LabelPair;
+import inra.ijpb.measure.RegionAdjacencyGraph;
+import inra.ijpb.measure.RegionAdjacencyGraph.LabelPair;
 
 import java.util.Set;
 

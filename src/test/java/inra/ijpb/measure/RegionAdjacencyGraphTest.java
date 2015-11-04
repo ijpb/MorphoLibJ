@@ -1,4 +1,4 @@
-package inra.ijpb.label;
+package inra.ijpb.measure;
 
 import static org.junit.Assert.*;
 
@@ -7,7 +7,7 @@ import java.util.Set;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 
-import inra.ijpb.label.RegionAdjacencyGraph.LabelPair;
+import inra.ijpb.measure.RegionAdjacencyGraph.LabelPair;
 
 import org.junit.Test;
 

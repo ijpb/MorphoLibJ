@@ -1,6 +1,8 @@
 package inra.ijpb.measure;
 
 
+import inra.ijpb.measure.RegionAdjacencyGraphTest;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -10,6 +12,7 @@ import org.junit.runners.Suite;
 	GeometricMeasures2DTest.class,
 	GeometricMeasures3DTest.class,
 	GeometryUtilsTest.class,
+	RegionAdjacencyGraphTest.class, 
 	Vector3dTest.class,
 	})
 public class AllTests {

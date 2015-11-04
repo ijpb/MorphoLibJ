@@ -107,7 +107,7 @@ public class LabelImages
 	 * </code></pre>
 	 * 
 	 * @param images
-	 *            a collection of binary images (0: background, >0 pixel belongs
+	 *            a collection of binary images (0: background, &gt;0 pixel belongs
 	 *            to current label)
 	 * @return a new image with label values
 	 */

@@ -9,10 +9,11 @@ import inra.ijpb.morphology.geodrec.GeodesicReconstructionHybrid;
 import inra.ijpb.morphology.geodrec.GeodesicReconstructionType;
 
 /**
- * Geodesic reconstruction for 8-bits grayscale or binary images.
+ * Geodesic reconstruction for grayscale or binary images. Most algorithms works
+ * for any data type.
  * 
- * This class provides a collection of static methods for commonly used 
- * operations, such as border removal or holes filling. 
+ * This class provides a collection of static methods for commonly used
+ * operations, such as border removal or holes filling.
  * 
  * @author David Legland
  *
