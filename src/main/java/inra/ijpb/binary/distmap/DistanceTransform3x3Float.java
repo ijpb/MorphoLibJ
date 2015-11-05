@@ -44,8 +44,7 @@ public class DistanceTransform3x3Float extends AlgoStub implements
 	 * The inner array of values that will store the distance map. The content
 	 * of the array is updated during forward and backward iterations.
 	 */
-	// TODO: should use a FloatProcessor instead, this would remove a conversion step
-	float[][] array;
+	float[][] buffer;
 
 	/**
 	 * Default constructor that specifies the chamfer weights.
@@ -108,13 +107,13 @@ public class DistanceTransform3x3Float extends AlgoStub implements
 		this.fireStatusChanged(new AlgoEvent(this, "Initialization"));
 		
 		// initialize empty image with either 0 (background) or Inf (foreground)
-		array = result.getFloatArray();
+		buffer = result.getFloatArray();
 		for (int i = 0; i < width; i++) 
 		{
 			for (int j = 0; j < height; j++) 
 			{
 				int val = mask.get(i, j) & 0x00ff;
-				array[i][j] = val == 0 ? 0 : backgroundValue;
+				buffer[i][j] = val == 0 ? 0 : backgroundValue;
 			}
 		}
 		
@@ -134,13 +133,13 @@ public class DistanceTransform3x3Float extends AlgoStub implements
 				{
 					if (maskProc.getPixel(i, j) != 0) 
 					{
-						array[i][j] /= this.weights[0];
+						buffer[i][j] /= this.weights[0];
 					}
 				}
 			}
 		}
 		// update the result image processor
-		result.setFloatArray(array);
+		result.setFloatArray(buffer);
 		
 		this.fireStatusChanged(new AlgoEvent(this, ""));
 
@@ -151,7 +150,7 @@ public class DistanceTransform3x3Float extends AlgoStub implements
 			for (int j = 0; j < height; j++) 
 			{
 				if (maskProc.getPixel(i, j) != 0)
-					maxVal = Math.max(maxVal, array[i][j]);
+					maxVal = Math.max(maxVal, buffer[i][j]);
 			}
 		}
 		
@@ -177,7 +176,7 @@ public class DistanceTransform3x3Float extends AlgoStub implements
 		{
 			if (maskProc.getPixel(i, 0) != maskLabel)
 				continue;
-			ortho = array[i - 1][0];
+			ortho = buffer[i - 1][0];
 			updateIfNeeded(i, 0, ortho + weights[0]);
 		}
 
@@ -190,8 +189,8 @@ public class DistanceTransform3x3Float extends AlgoStub implements
 			// upright
 			if (maskProc.getPixel(0, j) == maskLabel) 
 			{
-				ortho = array[0][j - 1];
-				diago = array[1][j - 1];
+				ortho = buffer[0][j - 1];
+				diago = buffer[1][j - 1];
 				newVal = min(ortho + weights[0], diago + weights[1]);
 				updateIfNeeded(0, j, newVal);
 			}
@@ -204,8 +203,8 @@ public class DistanceTransform3x3Float extends AlgoStub implements
 					continue;
 
 				// minimum distance of neighbor pixels
-				ortho = min(array[i - 1][j], array[i][j - 1]);
-				diago = min(array[i - 1][j - 1], array[i + 1][j - 1]);
+				ortho = min(buffer[i - 1][j], buffer[i][j - 1]);
+				diago = min(buffer[i - 1][j - 1], buffer[i + 1][j - 1]);
 
 				// compute new distance of current pixel
 				newVal = min(ortho + weights[0], diago + weights[1]);
@@ -218,8 +217,8 @@ public class DistanceTransform3x3Float extends AlgoStub implements
 			// up-left, and up
 			if (maskProc.getPixel(width - 1, j) == maskLabel) 
 			{
-				ortho = min(array[width - 2][j], array[width - 1][j - 1]);
-				diago = array[width - 2][j - 1];
+				ortho = min(buffer[width - 2][j], buffer[width - 1][j - 1]);
+				diago = buffer[width - 2][j - 1];
 				newVal = min(ortho + weights[0], diago + weights[1]);
 				updateIfNeeded(width - 1, j, newVal);
 			}
@@ -240,7 +239,7 @@ public class DistanceTransform3x3Float extends AlgoStub implements
 			if (maskProc.getPixel(i, height - 1) != maskLabel)
 				continue;
 
-			ortho = array[i + 1][height - 1];
+			ortho = buffer[i + 1][height - 1];
 			updateIfNeeded(i, height - 1, ortho + weights[0]);
 		}
 
@@ -253,8 +252,8 @@ public class DistanceTransform3x3Float extends AlgoStub implements
 			// down and down-left
 			if (maskProc.getPixel(width - 1, j) == maskLabel)
 			{
-				ortho = array[width - 1][j + 1];
-				diago = array[width - 2][j + 1];
+				ortho = buffer[width - 1][j + 1];
+				diago = buffer[width - 2][j + 1];
 				newVal = min(ortho + weights[0], diago + weights[1]);
 				updateIfNeeded(width - 1, j, newVal);
 			}
@@ -267,8 +266,8 @@ public class DistanceTransform3x3Float extends AlgoStub implements
 					continue;
 
 				// minimum distance of neighbor pixels
-				ortho = min(array[i + 1][j], array[i][j + 1]);
-				diago = min(array[i - 1][j + 1], array[i + 1][j + 1]);
+				ortho = min(buffer[i + 1][j], buffer[i][j + 1]);
+				diago = min(buffer[i - 1][j + 1], buffer[i + 1][j + 1]);
 
 				// compute new distance of current pixel
 				newVal = min(ortho + weights[0], diago + weights[1]);
@@ -282,8 +281,8 @@ public class DistanceTransform3x3Float extends AlgoStub implements
 			if (maskProc.getPixel(0, j) == maskLabel) 
 			{
 				// curVal = array[0][j];
-				ortho = min(array[1][j], array[0][j + 1]);
-				diago = array[1][j + 1];
+				ortho = min(buffer[1][j], buffer[0][j + 1]);
+				diago = buffer[1][j + 1];
 				newVal = min(ortho + weights[0], diago + weights[1]);
 				updateIfNeeded(0, j, newVal);
 			}
@@ -298,10 +297,10 @@ public class DistanceTransform3x3Float extends AlgoStub implements
 	 */
 	private void updateIfNeeded(int i, int j, float newVal) 
 	{
-		float value = array[i][j];
+		float value = buffer[i][j];
 		if (newVal < value)
 		{
-			array[i][j] = newVal;
+			buffer[i][j] = newVal;
 		}
 	}
 }
