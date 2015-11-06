@@ -16,23 +16,29 @@ import java.util.ArrayDeque;
 
 
 /**
+ * <p>
  * Geodesic reconstruction for 3D stacks using hybrid algorithm. This class
  * manages both reconstructions by dilation and erosion.
+ * </p>
  * 
- * Performs forward and backward passes, then performs an
- * additional forward pass only to initialize the queue, and finally processes
- * all pixels in the queue.
+ * <p>
+ * Performs forward and backward passes, then performs an additional forward
+ * pass only to initialize the queue, and finally processes all pixels in the
+ * queue.
+ * </p>
  * 
+ * <p>
  * Uses specialized class to access the values in 3D image stacks, by avoiding
  * to check bounds at each access. Process all type of images by using double
  * precision computation.
+ * </p>
  * 
  * @author David Legland
  * 
  */
-public class GeodesicReconstruction3DHybrid1Double extends AlgoStub implements
-		GeodesicReconstruction3DAlgo {
-
+public class GeodesicReconstruction3DHybrid1Image3D extends AlgoStub implements
+		GeodesicReconstruction3DAlgo
+{
 	GeodesicReconstructionType reconstructionType = GeodesicReconstructionType.BY_DILATION;
 	
 	int connectivity = 6;
@@ -68,14 +74,16 @@ public class GeodesicReconstruction3DHybrid1Double extends AlgoStub implements
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * using the default connectivity 6.
 	 */
-	public GeodesicReconstruction3DHybrid1Double() {
+	public GeodesicReconstruction3DHybrid1Image3D() 
+	{
 	}
 	
 	/**
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * that specifies the type of reconstruction, and using the connectivity 6.
 	 */
-	public GeodesicReconstruction3DHybrid1Double(GeodesicReconstructionType type) {
+	public GeodesicReconstruction3DHybrid1Image3D(GeodesicReconstructionType type) 
+	{
 		this.reconstructionType = type;
 	}
 
@@ -83,7 +91,9 @@ public class GeodesicReconstruction3DHybrid1Double extends AlgoStub implements
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * that specifies the type of reconstruction, and the connectivity to use.
 	 */
-	public GeodesicReconstruction3DHybrid1Double(GeodesicReconstructionType type, int connectivity) {
+	public GeodesicReconstruction3DHybrid1Image3D(
+			GeodesicReconstructionType type, int connectivity) 
+	{
 		this.reconstructionType = type;
 		this.connectivity = connectivity;
 	}
@@ -92,29 +102,35 @@ public class GeodesicReconstruction3DHybrid1Double extends AlgoStub implements
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * that specifies the connectivity to use.
 	 */
-	public GeodesicReconstruction3DHybrid1Double(int connectivity) {
+	public GeodesicReconstruction3DHybrid1Image3D(int connectivity) 
+	{
 		this.connectivity = connectivity;
 	}
 
 	/**
 	 * @return the reconstructionType
 	 */
-	public GeodesicReconstructionType getReconstructionType() {
+	public GeodesicReconstructionType getReconstructionType() 
+	{
 		return reconstructionType;
 	}
 
 	/**
 	 * @param reconstructionType the reconstructionType to set
 	 */
-	public void setReconstructionType(GeodesicReconstructionType reconstructionType) {
-		this.reconstructionType = reconstructionType;
+	public void setReconstructionType(
+			GeodesicReconstructionType reconstructionType) 
+	{
+	this.reconstructionType = reconstructionType;
 	}
 
-	public int getConnectivity() {
+	public int getConnectivity()
+	{
 		return this.connectivity;
 	}
 	
-	public void setConnectivity(int conn) {
+	public void setConnectivity(int conn)
+	{
 		this.connectivity = conn;
 	}
 
@@ -123,7 +139,8 @@ public class GeodesicReconstruction3DHybrid1Double extends AlgoStub implements
 	 * Run the reconstruction by dilation algorithm using the images specified
 	 * as argument.
 	 */
-	public ImageStack applyTo(ImageStack marker, ImageStack mask) {
+	public ImageStack applyTo(ImageStack marker, ImageStack mask)
+	{
 		// Keep references to input images
 		this.markerStack = marker;
 		this.maskStack = mask;
@@ -135,23 +152,27 @@ public class GeodesicReconstruction3DHybrid1Double extends AlgoStub implements
 		this.sizeX 	= marker.getWidth();
 		this.sizeY 	= marker.getHeight();
 		this.sizeZ 	= marker.getSize();
-		if (sizeX != mask.getWidth() || sizeY != mask.getHeight() || sizeZ != mask.getSize()) {
+		if (sizeX != mask.getWidth() || sizeY != mask.getHeight() || sizeZ != mask.getSize()) 
+		{
 			throw new IllegalArgumentException("Marker and Mask images must have the same size");
 		}
 		
 		// Check connectivity has a correct value
-		if (connectivity != 6 && connectivity != 26) {
+		if (connectivity != 6 && connectivity != 26)
+		{
 			throw new RuntimeException(
 					"Connectivity for stacks must be either 6 or 26, not "
 							+ connectivity);
 		}
 
 		long t0 = System.currentTimeMillis();
-		if (verbose) {
+		if (verbose)
+		{
 			System.out.print("Initialize result ");
 		}
 		initializeResult();
-		if (verbose) {
+		if (verbose) 
+		{
 			long t1 = System.currentTimeMillis();
 			System.out.println((t1 - t0) + " ms");
 			t0 = t1;
@@ -159,15 +180,18 @@ public class GeodesicReconstruction3DHybrid1Double extends AlgoStub implements
 
 		
 		// Display current status
-		if (verbose) {
+		if (verbose) 
+		{
 			System.out.print("Forward iteration ");
 		}
-		if (showStatus) {
+		if (showStatus) 
+		{
 			IJ.showStatus("Geod. Rec. by Dil. Fwd ");
 		}
 
 		forwardScan();
-		if (verbose) {
+		if (verbose)
+		{
 			long t1 = System.currentTimeMillis();
 			System.out.println((t1 - t0) + " ms");
 			t0 = t1;
@@ -178,41 +202,49 @@ public class GeodesicReconstruction3DHybrid1Double extends AlgoStub implements
 		if (verbose) {
 			System.out.print("Backward iteration ");
 		}
-		if (showStatus) {
+		if (showStatus)
+		{
 			IJ.showStatus("Geod. Rec. by Dil. Bwd ");
 		}
 		backwardScan();
-		if (verbose) {
+		if (verbose)
+		{
 			long t1 = System.currentTimeMillis();
 			System.out.println((t1 - t0) + " ms");
 			t0 = t1;
 		}
 
 		// Display current status
-		if (verbose) {
+		if (verbose) 
+		{
 			System.out.print("Init queue ");
 		}
-		if (showStatus) {
+		if (showStatus) 
+		{
 			IJ.showStatus("Init queue");
 		}
 
 		initQueue();
-		if (verbose) {
+		if (verbose) 
+		{
 			long t1 = System.currentTimeMillis();
 			System.out.println((t1 - t0) + " ms");
 			t0 = t1;
 		}
 		
 		// Display current status
-		if (verbose) {
+		if (verbose) 
+		{
 			System.out.print("Process queue");
 		}
-		if (showStatus) {
+		if (showStatus)
+		{
 			IJ.showStatus("Process queue");
 		}
 
 		processQueue();
-		if (verbose) {
+		if (verbose) 
+		{
 			long t1 = System.currentTimeMillis();
 			System.out.println((t1 - t0) + " ms");
 			t0 = t1;
@@ -239,50 +271,72 @@ public class GeodesicReconstruction3DHybrid1Double extends AlgoStub implements
 	 * Initialize the result image with the minimum value of marker and mask
 	 * images.
 	 */
-	private void initializeResult() {
+	private void initializeResult()
+	{
 		// Create result image the same size as marker image
 		this.resultStack = ImageStack.create(sizeX, sizeY, sizeZ, markerStack.getBitDepth());
 		this.result = Images3D.createWrapper(this.resultStack);
 
-		if (this.reconstructionType == GeodesicReconstructionType.BY_DILATION) {
+		if (this.reconstructionType == GeodesicReconstructionType.BY_DILATION) 
+		{
 			// Initialize the result image with the minimum value of marker and mask
 			// images
-			if (this.markerStack.getBitDepth() == 32) {
+			if (this.markerStack.getBitDepth() == 32)
+			{
 				// Initialize float result stack
-				for (int z = 0; z < sizeZ; z++) {
-					for (int y = 0; y < sizeY; y++) {
-						for (int x = 0; x < sizeX; x++) {
-							result.setValue(x, y, z, min(marker.getValue(x, y, z), mask.getValue(x, y, z)));
-						}
-					}
-				}
-			} else {
-				// Initialize integer result stack
-				for (int z = 0; z < sizeZ; z++) {
-					for (int y = 0; y < sizeY; y++) {
-						for (int x = 0; x < sizeX; x++) {
+				for (int z = 0; z < sizeZ; z++) 
+				{
+					for (int y = 0; y < sizeY; y++)
+					{
+						for (int x = 0; x < sizeX; x++)
+						{
 							result.setValue(x, y, z, min(marker.getValue(x, y, z), mask.getValue(x, y, z)));
 						}
 					}
 				}
 			}
-		} else {
+			else
+			{
+				// Initialize integer result stack
+				for (int z = 0; z < sizeZ; z++) 
+				{
+					for (int y = 0; y < sizeY; y++)
+					{
+						for (int x = 0; x < sizeX; x++)
+						{
+							result.setValue(x, y, z, min(marker.getValue(x, y, z), mask.getValue(x, y, z)));
+						}
+					}
+				}
+			}
+		}
+		else 
+		{
 			// Initialize the result image with the maximum value of marker and mask
 			// images
-			if (this.markerStack.getBitDepth() == 32) {
+			if (this.markerStack.getBitDepth() == 32) 
+			{
 				// Initialize float result stack
-				for (int z = 0; z < sizeZ; z++) {
-					for (int y = 0; y < sizeY; y++) {
-						for (int x = 0; x < sizeX; x++) {
+				for (int z = 0; z < sizeZ; z++)
+				{
+					for (int y = 0; y < sizeY; y++)
+					{
+						for (int x = 0; x < sizeX; x++)
+						{
 							result.setValue(x, y, z, max(marker.getValue(x, y, z), mask.getValue(x, y, z)));
 						}
 					}
 				}
-			} else {
+			} 
+			else 
+			{
 				// Initialize integer result stack
-				for (int z = 0; z < sizeZ; z++) {
-					for (int y = 0; y < sizeY; y++) {
-						for (int x = 0; x < sizeX; x++) {
+				for (int z = 0; z < sizeZ; z++) 
+				{
+					for (int y = 0; y < sizeY; y++)
+					{
+						for (int x = 0; x < sizeX; x++)
+						{
 							result.setValue(x, y, z, max(marker.getValue(x, y, z), mask.getValue(x, y, z)));
 						}
 					}
@@ -291,10 +345,14 @@ public class GeodesicReconstruction3DHybrid1Double extends AlgoStub implements
 		}
 	}
 	
-	private void forwardScan() {
-		if (this.connectivity == 6) {
+	private void forwardScan()
+	{
+		if (this.connectivity == 6)
+		{
 			forwardScanC6();
-		} else {
+		}
+		else
+		{
 			forwardScanC26();
 		}
 	}
@@ -303,24 +361,30 @@ public class GeodesicReconstruction3DHybrid1Double extends AlgoStub implements
 	 * Update result image using pixels in the upper left neighborhood, using
 	 * the 6-adjacency, assuming pixels are stored in bytes.
 	 */
-	private void forwardScanC6() {
+	private void forwardScanC6() 
+	{
 		final int sign = this.reconstructionType.getSign();
 		
 		// the maximal value around current pixel
 		double maxValue;
 
-		if (showProgress) {
+		if (showProgress) 
+		{
 			IJ.showProgress(0, sizeZ);
 		}
 		
 		// Iterate over pixels
-		for (int z = 0; z < sizeZ; z++) {
-			if (showProgress) {
+		for (int z = 0; z < sizeZ; z++)
+		{
+			if (showProgress)
+			{
 				IJ.showProgress(z + 1, sizeZ);
 			}
 			
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
+			for (int y = 0; y < sizeY; y++) 
+			{
+				for (int x = 0; x < sizeX; x++) 
+				{
 					double currentValue = result.getValue(x, y, z) * sign;
 					maxValue = currentValue;
 					
@@ -347,34 +411,43 @@ public class GeodesicReconstruction3DHybrid1Double extends AlgoStub implements
 	 * Update result image using pixels in the upper left neighborhood, using
 	 * the 26-adjacency, assuming pixels are stored using integer data types.
 	 */
-	private void forwardScanC26() {
+	private void forwardScanC26()
+	{
 		final int sign = this.reconstructionType.getSign();
 		// the maximal value around current pixel
 		double maxValue;
 
-		if (showProgress) {
+		if (showProgress)
+		{
 			IJ.showProgress(0, sizeZ);
 		}
 
 		// Iterate over pixels
-		for (int z = 0; z < sizeZ; z++) {
-			if (showProgress) {
+		for (int z = 0; z < sizeZ; z++) 
+		{
+			if (showProgress)
+			{
 				IJ.showProgress(z + 1, sizeZ);
 				System.out.println("z = " + z);
 			}
 
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
+			for (int y = 0; y < sizeY; y++)
+			{
+				for (int x = 0; x < sizeX; x++)
+				{
 					double currentValue = result.getValue(x, y, z) * sign;
 					maxValue = currentValue;
 
 					// Iterate over neighbors of current pixel
 					int zmax = min(z + 1, sizeZ);
-					for (int z2 = max(z - 1, 0); z2 < zmax; z2++) {
+					for (int z2 = max(z - 1, 0); z2 < zmax; z2++)
+					{
 						int ymax = z2 == z ? y : min(y + 1, sizeY - 1); 
-						for (int y2 = max(y - 1, 0); y2 <= ymax; y2++) {
+						for (int y2 = max(y - 1, 0); y2 <= ymax; y2++) 
+						{
 							int xmax = (z2 == z && y2 == y) ? x - 1 : min(x + 1, sizeX - 1); 
-							for (int x2 = max(x - 1, 0); x2 <= xmax; x2++) {
+							for (int x2 = max(x - 1, 0); x2 <= xmax; x2++) 
+							{
 								maxValue = max(maxValue, result.getValue(x2, y2, z2) * sign);
 							}
 						}
@@ -382,7 +455,8 @@ public class GeodesicReconstruction3DHybrid1Double extends AlgoStub implements
 
 					// update value of current voxel
 					maxValue = min(maxValue, mask.getValue(x, y, z) * sign);
-					if (maxValue > currentValue) {
+					if (maxValue > currentValue)
+					{
 						result.setValue(x, y, z, maxValue * sign);
 					}
 				}
@@ -391,10 +465,14 @@ public class GeodesicReconstruction3DHybrid1Double extends AlgoStub implements
 	}
 
 
-	private void backwardScan() {
-		if (this.connectivity == 6) {
+	private void backwardScan()
+	{
+		if (this.connectivity == 6) 
+		{
 			backwardScanC6();
-		} else {
+		} 
+		else 
+		{
 			backwardScanC26();
 		}
 	}
@@ -402,24 +480,30 @@ public class GeodesicReconstruction3DHybrid1Double extends AlgoStub implements
 	 * Update result image using pixels in the lower right neighborhood, using
 	 * the 6-adjacency.
 	 */
-	private void backwardScanC6() {
+	private void backwardScanC6() 
+	{
 		final int sign = this.reconstructionType.getSign();
 		// the maximal value around current pixel
 		double maxValue;
 
-		if (showProgress) {
+		if (showProgress)
+		{
 			IJ.showProgress(0, sizeZ);
 		}
 
 		// Iterate over voxels
-		for (int z = sizeZ - 1; z >= 0; z--) {
-			if (showProgress) {
+		for (int z = sizeZ - 1; z >= 0; z--) 
+		{
+			if (showProgress)
+			{
 				IJ.showProgress(sizeZ - z, sizeZ);
 				System.out.println("z = " + z);
 			}
 
-			for (int y = sizeY - 1; y >= 0; y--) {
-				for (int x = sizeX - 1; x >= 0; x--) {
+			for (int y = sizeY - 1; y >= 0; y--) 
+			{
+				for (int x = sizeX - 1; x >= 0; x--)
+				{
 					double currentValue = result.getValue(x, y, z) * sign;
 					maxValue = currentValue;
 					
@@ -434,7 +518,8 @@ public class GeodesicReconstruction3DHybrid1Double extends AlgoStub implements
 
 					// update value of current voxel
 					maxValue = min(maxValue, mask.getValue(x, y, z) * sign);
-					if (maxValue > currentValue) {
+					if (maxValue > currentValue) 
+					{
 						result.setValue(x, y, z, maxValue * sign);
 					}
 				}
@@ -446,35 +531,44 @@ public class GeodesicReconstruction3DHybrid1Double extends AlgoStub implements
 	 * Update result image using pixels in the upper left neighborhood, using
 	 * the 26-adjacency.
 	 */
-	private void backwardScanC26() {
+	private void backwardScanC26() 
+	{
 		final int sign = this.reconstructionType.getSign();
 		// the maximal value around current pixel
 		double maxValue;
 	
-		if (showProgress) {
+		if (showProgress) 
+		{
 			IJ.showProgress(0, sizeZ);
 		}
 	
 		// Iterate over voxels
-		for (int z = sizeZ - 1; z >= 0; z--) {
-			if (showProgress) {
+		for (int z = sizeZ - 1; z >= 0; z--)
+		{
+			if (showProgress) 
+			{
 				IJ.showProgress(sizeZ - z, sizeZ);
 				System.out.println("z = " + z);
 			}
 	
-			for (int y = sizeY - 1; y >= 0; y--) {
-				for (int x = sizeX - 1; x >= 0; x--) {
+			for (int y = sizeY - 1; y >= 0; y--)
+			{
+				for (int x = sizeX - 1; x >= 0; x--)
+				{
 					double currentValue = result.getValue(x, y, z) * sign;
 					maxValue = currentValue;
 	
 					// Iterate over neighbors of current voxel
 					int zmin = max(z - 1, 0);
-					for (int z2 = min(z + 1, sizeZ - 1); z2 >= zmin; z2--) {
+					for (int z2 = min(z + 1, sizeZ - 1); z2 >= zmin; z2--) 
+					{
 	
 						int ymin = z2 == z ? y : max(y - 1, 0); 
-						for (int y2 = min(y + 1, sizeY - 1); y2 >= ymin; y2--) {
+						for (int y2 = min(y + 1, sizeY - 1); y2 >= ymin; y2--) 
+						{
 							int xmin = (z2 == z && y2 == y) ? x : max(x - 1, 0); 
-							for (int x2 = min(x + 1, sizeX - 1); x2 >= xmin; x2--) {
+							for (int x2 = min(x + 1, sizeX - 1); x2 >= xmin; x2--) 
+							{
 								maxValue = max(maxValue, result.getValue(x2, y2, z2) * sign);
 							}
 						}
@@ -482,7 +576,8 @@ public class GeodesicReconstruction3DHybrid1Double extends AlgoStub implements
 	
 					// update value of current voxel
 					maxValue = min(maxValue, mask.getValue(x, y, z) * sign);
-					if (maxValue > currentValue) {
+					if (maxValue > currentValue)
+					{
 						result.setValue(x, y, z, maxValue * sign);
 					}
 				}
@@ -490,10 +585,14 @@ public class GeodesicReconstruction3DHybrid1Double extends AlgoStub implements
 		}	
 	}
 	
-	private void initQueue() {
-		if (this.connectivity == 6) {
+	private void initQueue()
+	{
+		if (this.connectivity == 6) 
+		{
 			initQueueC6();
-		} else {
+		} 
+		else 
+		{
 			initQueueC26();
 		}
 	}
@@ -502,31 +601,38 @@ public class GeodesicReconstruction3DHybrid1Double extends AlgoStub implements
 	 * Update result image using pixels in the upper left neighborhood,
 	 * using the 6-adjacency.
 	 */
-	private void initQueueC6() {
+	private void initQueueC6() 
+	{
 		// sign for adapting dilation and erosion algorithms
 		final int sign = this.reconstructionType.getSign();
 
 		// the maximal value around current pixel
 		double maxValue;
 				
-		if (showProgress) {
+		if (showProgress) 
+		{
 			IJ.showProgress(0, sizeZ);
 		}
 		
 		queue = new ArrayDeque<Cursor3D>();
 		
-		if (showProgress) {
+		if (showProgress) 
+		{
 			IJ.showProgress(0, sizeZ);
 		}
 		
 		// Iterate over pixels
-		for (int z = 0; z < sizeZ; z++) {
-			if (showProgress) {
+		for (int z = 0; z < sizeZ; z++)
+		{
+			if (showProgress) 
+			{
 				IJ.showProgress(z + 1, sizeZ);
 			}
 			
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
+			for (int y = 0; y < sizeY; y++)
+			{
+				for (int x = 0; x < sizeX; x++) 
+				{
 					double currentValue = result.getValue(x, y, z) * sign;
 					maxValue = currentValue;
 					
@@ -550,41 +656,51 @@ public class GeodesicReconstruction3DHybrid1Double extends AlgoStub implements
 	 * Update result image using pixels in the upper left neighborhood,
 	 * using the 26-adjacency.
 	 */
-	private void initQueueC26() {
+	private void initQueueC26() 
+	{
 		// sign for adapting dilation and erosion algorithms
 		final int sign = this.reconstructionType.getSign();
 
 		// the maximal value around current pixel
 		double maxValue;
 				
-		if (showProgress) {
+		if (showProgress) 
+		{
 			IJ.showProgress(0, sizeZ);
 		}
 		
 		queue = new ArrayDeque<Cursor3D>();
 		
-		if (showProgress) {
+		if (showProgress) 
+		{
 			IJ.showProgress(0, sizeZ);
 		}
 		
 		// Iterate over pixels
-		for (int z = 0; z < sizeZ; z++) {
-			if (showProgress) {
+		for (int z = 0; z < sizeZ; z++)
+		{
+			if (showProgress)
+			{
 				IJ.showProgress(z + 1, sizeZ);
 			}
 			
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
+			for (int y = 0; y < sizeY; y++) 
+			{
+				for (int x = 0; x < sizeX; x++)
+				{
 					double currentValue = result.getValue(x, y, z) * sign;
 					maxValue = currentValue;
 					
 					// Iterate over neighbors of current pixel
 					int zmax = min(z + 1, sizeZ);
-					for (int z2 = max(z - 1, 0); z2 < zmax; z2++) {
+					for (int z2 = max(z - 1, 0); z2 < zmax; z2++)
+					{
 						int ymax = z2 == z ? y : min(y + 1, sizeY - 1); 
-						for (int y2 = max(y - 1, 0); y2 <= ymax; y2++) {
+						for (int y2 = max(y - 1, 0); y2 <= ymax; y2++) 
+						{
 							int xmax = (z2 == z && y2 == y) ? x - 1 : min(x + 1, sizeX - 1); 
-							for (int x2 = max(x - 1, 0); x2 <= xmax; x2++) {
+							for (int x2 = max(x - 1, 0); x2 <= xmax; x2++)
+							{
 								maxValue = max(maxValue, result.getValue(x2, y2, z2) * sign);
 							}
 						}
@@ -598,8 +714,10 @@ public class GeodesicReconstruction3DHybrid1Double extends AlgoStub implements
 
 	}
 
-	private void processQueue() {
-		if (this.connectivity == 6) {
+	private void processQueue()
+	{
+		if (this.connectivity == 6)
+		{
 			processQueueC6();
 		} else {
 			processQueueC26();
@@ -610,14 +728,16 @@ public class GeodesicReconstruction3DHybrid1Double extends AlgoStub implements
 	 * Update result image using next pixel in the queue,
 	 * using the 6-adjacency.
 	 */
-	private void processQueueC6() {
+	private void processQueueC6()
+	{
 		// sign for adapting dilation and erosion algorithms
 		final int sign = this.reconstructionType.getSign();
 
 		// the maximal value around current pixel
 		double value;
 		
-		while (!queue.isEmpty()) {
+		while (!queue.isEmpty())
+		{
 			Cursor3D p = queue.removeFirst();
 			int x = p.getX();
 			int y = p.getY();
@@ -669,7 +789,8 @@ public class GeodesicReconstruction3DHybrid1Double extends AlgoStub implements
 	 * Update result image using next pixel in the queue,
 	 * using the 26-adjacency.
 	 */
-	private void processQueueC26() {
+	private void processQueueC26()
+	{
 		// sign for adapting dilation and erosion algorithms
 		final int sign = this.reconstructionType.getSign();
 
@@ -696,9 +817,12 @@ public class GeodesicReconstruction3DHybrid1Double extends AlgoStub implements
 			int zmax = min(z + 1, sizeZ - 1);
 
 			// compare with each one of the neighbors
-			for (int z2 = zmin; z2 <= zmax; z2++) {
-				for (int y2 = ymin; y2 <= ymax; y2++) {
-					for (int x2 = xmin; x2 <= xmax; x2++) {
+			for (int z2 = zmin; z2 <= zmax; z2++) 
+			{
+				for (int y2 = ymin; y2 <= ymax; y2++) 
+				{
+					for (int x2 = xmin; x2 <= xmax; x2++) 
+					{
 						value = max(value, result.getValue(x2, y2, z2) * sign);
 					}
 				}
@@ -715,9 +839,12 @@ public class GeodesicReconstruction3DHybrid1Double extends AlgoStub implements
 			result.setValue(x, y, z, value * sign);
 
 			// compare with each one of the neighbors
-			for (int z2 = zmin; z2 <= zmax; z2++) {
-				for (int y2 = ymin; y2 <= ymax; y2++) {
-					for (int x2 = xmin; x2 <= xmax; x2++) {
+			for (int z2 = zmin; z2 <= zmax; z2++) 
+			{
+				for (int y2 = ymin; y2 <= ymax; y2++) 
+				{
+					for (int x2 = xmin; x2 <= xmax; x2++) 
+					{
 						updateQueue(x2, y2, z2, value, sign);
 					}
 				}
@@ -733,13 +860,14 @@ public class GeodesicReconstruction3DHybrid1Double extends AlgoStub implements
 	 * @param value value at (i,j) position
 	 * @param sign integer +1 or -1 to manage both erosions and dilations
 	 */
-	private void updateQueue(int i, int j, int k, double value, double sign) {
+	private void updateQueue(int i, int j, int k, double value, double sign) 
+	{
 		// update current value only if value is strictly greater
 		value = Math.min(value, mask.getValue(i, j, k) * sign);
-		if (value > result.getValue(i, j, k) * sign) {
+		if (value > result.getValue(i, j, k) * sign)
+		{
 			Cursor3D position = new Cursor3D(i, j, k);
 			queue.add(position);
 		}
 	}
-
 }

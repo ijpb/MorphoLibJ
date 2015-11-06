@@ -8,17 +8,24 @@ import ij.process.ImageProcessor;
 import ij.process.FloatProcessor;
 
 /**
+ * <p>
  * Geodesic reconstruction by dilation for planar images.
+ * </p>
  * 
+ * <p>
  * This class performs the algorithm on the two instances of ImageProcessor
  * kept in it. Works for integer as well as for floating-point images.
+ * Also performs a specific processing for pixels at the border of the image.
+ * </p>
  * 
  * @see GeodesicReconstructionByErosion
+ * @see GeodesicReconstructionHybrid
+ * @see GeodesicReconstructionScanning
  * @author David Legland
  *
  */
-public class GeodesicReconstructionByDilation implements GeodesicReconstructionAlgo {
-
+public class GeodesicReconstructionByDilation implements GeodesicReconstructionAlgo 
+{
 	ImageProcessor marker;
 	ImageProcessor mask;
 	
@@ -45,22 +52,26 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * using the default connectivity 4.
 	 */
-	public GeodesicReconstructionByDilation() {
+	public GeodesicReconstructionByDilation() 
+	{
 	}
 	
 	/**
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * that specifies the connectivity to use.
 	 */
-	public GeodesicReconstructionByDilation(int connectivity) {
+	public GeodesicReconstructionByDilation(int connectivity) 
+	{
 		this.connectivity = connectivity;
 	}
 
-	public int getConnectivity() {
+	public int getConnectivity()
+	{
 		return this.connectivity;
 	}
 	
-	public void setConnectivity(int conn) {
+	public void setConnectivity(int conn) 
+	{
 		this.connectivity = conn;
 	}
 	
@@ -69,7 +80,8 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 	 * Run the reconstruction by dilation algorithm using the images specified
 	 * as argument.
 	 */
-	public ImageProcessor applyTo(ImageProcessor marker, ImageProcessor mask) {
+	public ImageProcessor applyTo(ImageProcessor marker, ImageProcessor mask) 
+	{
 		// Keep references to input images
 		this.marker = marker;
 		this.mask = mask;
@@ -77,12 +89,14 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 		// Check sizes are consistent
 		int width = marker.getWidth();
 		int height = marker.getHeight();
-		if (width != mask.getWidth() || height != mask.getHeight()) {
+		if (width != mask.getWidth() || height != mask.getHeight())
+		{
 			throw new IllegalArgumentException("Marker and Mask images must have the same size");
 		}
 		
 		// Check connectivity has a correct value
-		if (connectivity != 4 && connectivity != 8) {
+		if (connectivity != 4 && connectivity != 8)
+		{
 			throw new RuntimeException(
 					"Connectivity for planar images must be either 4 or 8, not "
 							+ connectivity);
@@ -93,8 +107,10 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 	
 		// Initialize the result image with the minimum value of marker and mask
 		// images
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
+		for (int y = 0; y < height; y++)
+		{
+			for (int x = 0; x < width; x++)
+			{
 				this.result.set(x, y,
 						Math.min(this.marker.get(x, y), this.mask.get(x, y)));
 			}
@@ -110,15 +126,18 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 			modif = false;
 
 			// Display current status
-			if (verbose) {
+			if (verbose) 
+			{
 				System.out.println("Forward iteration " + iter);
 			}
-			if (showStatus) {
+			if (showStatus)
+			{
 				IJ.showStatus("Geod. Rec. by Dil. Fwd " + (iter + 1));
 			}
 			
 			// forward iteration
-			switch (connectivity) {
+			switch (connectivity) 
+			{
 			case 4:
 				if (isFloat)
 					forwardDilationC4Float();
@@ -134,15 +153,18 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 			}
 
 			// Display current status
-			if (verbose) {
+			if (verbose) 
+			{
 				System.out.println("Backward iteration " + iter);
 			}
-			if (showStatus) {
+			if (showStatus)
+			{
 				IJ.showStatus("Geod. Rec. by Dil. Bwd " + (iter + 1));
 			}
 			
 			// backward iteration
-			switch (connectivity) {
+			switch (connectivity)
+			{
 			case 4:
 				if (isFloat)
 					backwardDilationC4Float();
@@ -167,7 +189,8 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 	 * Update result image using pixels in the upper left neighborhood,
 	 * using the 4-adjacency.
 	 */
-	private void forwardDilationC4() {
+	private void forwardDilationC4()
+	{
 		int width = this.marker.getWidth();
 		int height = this.marker.getHeight();
 		
@@ -177,20 +200,24 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 		// the maximal value around current pixel
 		int value;
 				
-		if (showProgress) {
+		if (showProgress) 
+		{
 			IJ.showProgress(0, height);
 		}
 		
 		// Process first line: consider only the pixel on the left
-		for (int i = 1; i < width; i++) {
+		for (int i = 1; i < width; i++)
+		{
 			value = result.get(i-1, 0);
 			geodesicDilationUpdate(i, 0, value);
 		}
 	
 		// Process all other lines
-		for (int j = 1; j < height; j++) {
+		for (int j = 1; j < height; j++) 
+		{
 			
-			if (showProgress) {
+			if (showProgress)
+			{
 				IJ.showProgress(j, height);
 			}
 			// process first pixel of current line: consider pixel up
@@ -198,7 +225,8 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 			geodesicDilationUpdate(0, j, value);
 	
 			// Process pixels in the middle of the line
-			for (int i = 1; i < width; i++) {
+			for (int i = 1; i < width; i++)
+			{
 				v1 = result.get(i,   j-1);
 				v2 = result.get(i-1, j);
 				value = Math.max(v1, v2);
@@ -211,7 +239,8 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 	 * Update result image using pixels in the upper left neighborhood,
 	 * using the 4-adjacency.
 	 */
-	private void forwardDilationC4Float() {
+	private void forwardDilationC4Float()
+	{
 		int width = this.marker.getWidth();
 		int height = this.marker.getHeight();
 		
@@ -221,20 +250,24 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 		// the maximal value around current pixel
 		float value;
 				
-		if (showProgress) {
+		if (showProgress) 
+		{
 			IJ.showProgress(0, height);
 		}
 		
 		// Process first line: consider only the pixel on the left
-		for (int i = 1; i < width; i++) {
+		for (int i = 1; i < width; i++)
+		{
 			value = result.getf(i-1, 0);
 			geodesicDilationUpdateFloat(i, 0, value);
 		}
 	
 		// Process all other lines
-		for (int j = 1; j < height; j++) {
+		for (int j = 1; j < height; j++) 
+		{
 			
-			if (showProgress) {
+			if (showProgress)
+			{
 				IJ.showProgress(j, height);
 			}
 			// process first pixel of current line: consider pixel up
@@ -242,7 +275,8 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 			geodesicDilationUpdateFloat(0, j, value);
 	
 			// Process pixels in the middle of the line
-			for (int i = 1; i < width; i++) {
+			for (int i = 1; i < width; i++) 
+			{
 				v1 = result.getf(i,   j-1);
 				v2 = result.getf(i-1, j);
 				value = Math.max(v1, v2);
@@ -255,7 +289,8 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 	 * Update result image using pixels in the upper left neighborhood,
 	 * using the 8-adjacency.
 	 */
-	private void forwardDilationC8() {
+	private void forwardDilationC8() 
+	{
 		int width = this.marker.getWidth();
 		int height = this.marker.getHeight();
 		
@@ -265,20 +300,24 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 		// the maximal value around current pixel
 		int value;
 				
-		if (showProgress) {
+		if (showProgress) 
+		{
 			IJ.showProgress(0, height);
 		}
 		
 		// Process first line: consider only the pixel on the left
-		for (int i = 1; i < width; i++) {
+		for (int i = 1; i < width; i++)
+		{
 			value = result.get(i-1, 0);
 			geodesicDilationUpdate(i, 0, value);
 		}
 
 		// Process all other lines
-		for (int j = 1; j < height; j++) {
+		for (int j = 1; j < height; j++)
+		{
 			
-			if (showProgress) {
+			if (showProgress)
+			{
 				IJ.showProgress(j, height);
 			}
 			// process first pixel of current line: consider pixels up and
@@ -289,7 +328,8 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 			geodesicDilationUpdate(0, j, value);
 
 			// Process pixels in the middle of the line
-			for (int i = 1; i < width - 1; i++) {
+			for (int i = 1; i < width - 1; i++)
+			{
 				v1 = result.get(i-1, j-1);
 				v2 = result.get(i,   j-1);
 				v3 = result.get(i+1, j-1);
@@ -313,7 +353,8 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 	 * Update result image using pixels in the upper left neighborhood,
 	 * using the 8-adjacency.
 	 */
-	private void forwardDilationC8Float() {
+	private void forwardDilationC8Float()
+	{
 		int width = this.marker.getWidth();
 		int height = this.marker.getHeight();
 		
@@ -323,7 +364,8 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 		// the maximal value around current pixel
 		float value;
 				
-		if (showProgress) {
+		if (showProgress)
+		{
 			IJ.showProgress(0, height);
 		}
 		
@@ -334,9 +376,11 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 		}
 
 		// Process all other lines
-		for (int j = 1; j < height; j++) {
+		for (int j = 1; j < height; j++)
+		{
 			
-			if (showProgress) {
+			if (showProgress) 
+			{
 				IJ.showProgress(j, height);
 			}
 			// process first pixel of current line: consider pixels up and
@@ -347,7 +391,8 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 			geodesicDilationUpdateFloat(0, j, value);
 
 			// Process pixels in the middle of the line
-			for (int i = 1; i < width - 1; i++) {
+			for (int i = 1; i < width - 1; i++)
+			{
 				v1 = result.getf(i-1, j-1);
 				v2 = result.getf(i,   j-1);
 				v3 = result.getf(i+1, j-1);
@@ -371,7 +416,8 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 	 * Update result image using pixels in the lower-right neighborhood, 
 	 * using the 4-adjacency.
 	 */
-	private void backwardDilationC4() {
+	private void backwardDilationC4()
+	{
 		int width = this.marker.getWidth();
 		int height = this.marker.getHeight();
 		
@@ -381,20 +427,24 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 		// the maximal value around current pixel
 		int value;
 	
-		if (showProgress) {
+		if (showProgress)
+		{
 			IJ.showProgress(0, height);
 		}
 		
 		// Process last line: consider only the pixel just after (on the right)
-		for (int i = width - 2; i > 0; i--) {
+		for (int i = width - 2; i > 0; i--) 
+		{
 			value = result.get(i+1, height-1);
 			geodesicDilationUpdate(i, height-1, value);
 		}
 		
 		// Process regular lines
-		for (int j = height-2; j >= 0; j--) {
+		for (int j = height-2; j >= 0; j--) 
+		{
 	
-			if (showProgress) {
+			if (showProgress) 
+			{
 				IJ.showProgress(height-1-j, height);
 			}
 			
@@ -404,7 +454,8 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 	
 			// Process pixels in the middle of the current line
 			// consider pixels on the right and below
-			for (int i = width - 2; i > 0; i--) {
+			for (int i = width - 2; i > 0; i--)
+			{
 				v1 = result.get(i+1, j);
 				v2 = result.get(i,   j+1);
 				value = Math.max(v1, v2);
@@ -425,7 +476,8 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 	 * Update result image using pixels in the lower-right neighborhood, 
 	 * using the 4-adjacency.
 	 */
-	private void backwardDilationC4Float() {
+	private void backwardDilationC4Float() 
+	{
 		int width = this.marker.getWidth();
 		int height = this.marker.getHeight();
 		
@@ -435,20 +487,24 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 		// the maximal value around current pixel
 		float value;
 	
-		if (showProgress) {
+		if (showProgress)
+		{
 			IJ.showProgress(0, height);
 		}
 		
 		// Process last line: consider only the pixel just after (on the right)
-		for (int i = width - 2; i > 0; i--) {
+		for (int i = width - 2; i > 0; i--)
+		{
 			value = result.getf(i+1, height-1);
 			geodesicDilationUpdateFloat(i, height-1, value);
 		}
 		
 		// Process regular lines
-		for (int j = height-2; j >= 0; j--) {
+		for (int j = height-2; j >= 0; j--) 
+		{
 	
-			if (showProgress) {
+			if (showProgress) 
+			{
 				IJ.showProgress(height-1-j, height);
 			}
 			
@@ -458,7 +514,8 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 	
 			// Process pixels in the middle of the current line
 			// consider pixels on the right and below
-			for (int i = width - 2; i > 0; i--) {
+			for (int i = width - 2; i > 0; i--) 
+			{
 				v1 = result.getf(i+1, j);
 				v2 = result.getf(i,   j+1);
 				value = Math.max(v1, v2);
@@ -479,7 +536,8 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 	 * Update result image using pixels in the lower-right neighborhood, using
 	 * the 8-adjacency.
 	 */
-	private void backwardDilationC8() {
+	private void backwardDilationC8() 
+	{
 		int width = this.marker.getWidth();
 		int height = this.marker.getHeight();
 		
@@ -489,18 +547,21 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 		// the maximal value around current pixel
 		int value;
 	
-		if (showProgress) {
+		if (showProgress)
+		{
 			IJ.showProgress(0, height);
 		}
 		
 		// Process last line: consider only the pixel just after (on the right)
-		for (int i = width - 2; i > 0; i--) {
+		for (int i = width - 2; i > 0; i--)
+		{
 			value = result.get(i+1, height-1);
 			geodesicDilationUpdate(i, height-1, value);
 		}
 		
 		// Process regular lines
-		for (int j = height-2; j >= 0; j--) {
+		for (int j = height-2; j >= 0; j--)
+		{
 
 			if (showProgress) {
 				IJ.showProgress(height-1-j, height);
@@ -514,7 +575,8 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 			geodesicDilationUpdate(width - 1, j, value);
 
 			// Process pixels in the middle of the current line
-			for (int i = width - 2; i > 0; i--) {
+			for (int i = width - 2; i > 0; i--)
+			{
 				v1 = result.get(i+1, j);
 				v2 = result.get(i+1, j+1);
 				v3 = result.get(i,   j+1);
@@ -538,7 +600,8 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 	 * Update result image using pixels in the lower-right neighborhood, using
 	 * the 8-adjacency.
 	 */
-	private void backwardDilationC8Float() {
+	private void backwardDilationC8Float() 
+	{
 		int width = this.marker.getWidth();
 		int height = this.marker.getHeight();
 		
@@ -548,20 +611,24 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 		// the maximal value around current pixel
 		float value;
 	
-		if (showProgress) {
+		if (showProgress) 
+		{
 			IJ.showProgress(0, height);
 		}
 		
 		// Process last line: consider only the pixel just after (on the right)
-		for (int i = width - 2; i > 0; i--) {
+		for (int i = width - 2; i > 0; i--)
+		{
 			value = result.getf(i+1, height-1);
 			geodesicDilationUpdateFloat(i, height-1, value);
 		}
 		
 		// Process regular lines
-		for (int j = height-2; j >= 0; j--) {
+		for (int j = height-2; j >= 0; j--)
+		{
 
-			if (showProgress) {
+			if (showProgress)
+			{
 				IJ.showProgress(height-1-j, height);
 			}
 			
@@ -573,7 +640,8 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 			geodesicDilationUpdateFloat(width - 1, j, value);
 
 			// Process pixels in the middle of the current line
-			for (int i = width - 2; i > 0; i--) {
+			for (int i = width - 2; i > 0; i--)
+			{
 				v1 = result.getf(i+1, j);
 				v2 = result.getf(i+1, j+1);
 				v3 = result.getf(i,   j+1);
@@ -599,10 +667,12 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 	 * Check if value is greater than the current value at position (i,j). 
 	 * If new value is lower than current value, do nothing.
 	 */
-	private void geodesicDilationUpdate(int i, int j, int value) {
+	private void geodesicDilationUpdate(int i, int j, int value)
+	{
 		// update current value only if value is strictly greater
 		value = Math.min(value, mask.get(i, j));
-		if (value > result.get(i, j)) {
+		if (value > result.get(i, j)) 
+		{
 			modif = true;
 			result.set(i, j, value);
 		}
@@ -614,10 +684,12 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 	 * Check if value is greater than the current value at position (i,j). 
 	 * If new value is lower than current value, do nothing.
 	 */
-	private void geodesicDilationUpdateFloat(int i, int j, float value) {
+	private void geodesicDilationUpdateFloat(int i, int j, float value)
+	{
 		// update current value only if value is strictly greater
 		value = Math.min(value, mask.getf(i, j));
-		if (value > result.getf(i, j)) {
+		if (value > result.getf(i, j))
+		{
 			modif = true;
 			result.setf(i, j, value);
 		}

@@ -21,11 +21,11 @@ import inra.ijpb.morphology.geodrec.GeodesicReconstructionType;
  * and provides a collection of static methods for commonly used 
  * operations, such as border removal or holes filling. 
  * 
+ * @see GeodesicReconstruction
  * @author David Legland
- *
  */
-public abstract class GeodesicReconstruction3D {
-
+public abstract class GeodesicReconstruction3D 
+{
 	/**
 	 * Removes the border of the input image, by performing a geodesic 
 	 * reconstruction initialized with image boundary. 
@@ -75,7 +75,8 @@ public abstract class GeodesicReconstruction3D {
 	 * boundary and (3) by inverting the result.
 	 * @see #killBorders(ImageStack)
 	 */
-	public final static ImageStack fillHoles(ImageStack stack) {
+	public final static ImageStack fillHoles(ImageStack stack) 
+	{
 		// Image size
 		int width = stack.getWidth();
 		int height = stack.getHeight();
@@ -83,9 +84,12 @@ public abstract class GeodesicReconstruction3D {
 		
 		// Initialize marker image with white everywhere except at borders
 		ImageStack markers = stack.duplicate();
-		for (int z = 1; z < depth-1; z++) {
-			for (int y = 1; y < height-1; y++) {
-				for (int x = 1; x < width-1; x++) {
+		for (int z = 1; z < depth-1; z++) 
+		{
+			for (int y = 1; y < height-1; y++) 
+			{
+				for (int x = 1; x < width-1; x++) 
+				{
 					markers.setVoxel(x, y, z, Float.MAX_VALUE);
 				}
 			}
@@ -98,6 +102,10 @@ public abstract class GeodesicReconstruction3D {
 	/**
 	 * Static method to computes the geodesic reconstruction by dilation of 
 	 * the marker image under the mask image.
+	 * 
+	 * @param marker input marker image
+	 * @param mask mask image
+	 * @param connectivity 3d connectivity (6 or 26)
 	 */
 	public final static ImageStack reconstructByDilation(ImageStack marker,
 			ImageStack mask)
@@ -123,6 +131,10 @@ public abstract class GeodesicReconstruction3D {
 	/**
 	 * Static method to computes the geodesic reconstruction by dilation of 
 	 * the marker image under the mask image.
+	 * 
+	 * @param marker input marker image
+	 * @param mask mask image
+	 * @param connectivity 3d connectivity (6 or 26)
 	 */
 	public final static ImageStack reconstructByDilation(ImageStack marker,
 			ImageStack mask, int connectivity)
@@ -149,9 +161,9 @@ public abstract class GeodesicReconstruction3D {
 	 * Static method to computes the geodesic reconstruction by dilation of 
 	 * the marker image under the mask image, but restricted to a binary mask.
 	 * 
-	 * @param marker input image
+	 * @param marker input marker image
 	 * @param mask mask image
-	 * @param connectivity 3d connnectivity
+	 * @param connectivity 3d connectivity (6 or 26)
 	 * @param binaryMask binary mask to restrict area of application
 	 * @return geodesic reconstruction by dilation of input image
 	 */
@@ -171,6 +183,9 @@ public abstract class GeodesicReconstruction3D {
 	/**
 	 * Static method to computes the geodesic reconstruction by erosion of the
 	 * marker image over the mask image.
+	 * 
+	 * @param marker input marker image
+	 * @param mask mask image
 	 */
 	public final static ImageStack reconstructByErosion(ImageStack marker,
 			ImageStack mask)
@@ -197,6 +212,10 @@ public abstract class GeodesicReconstruction3D {
 	/**
 	 * Static method to computes the geodesic reconstruction by erosion of the
 	 * marker image over the mask image.
+
+	 * @param marker input marker image
+	 * @param mask mask image
+	 * @param connectivity 3d connectivity (6 or 26)
 	 */
 	public final static ImageStack reconstructByErosion(ImageStack marker,
 			ImageStack mask, int connectivity) {
@@ -221,5 +240,4 @@ public abstract class GeodesicReconstruction3D {
 		}
 		return algo.applyTo(marker, mask);
 	}
-	
 }

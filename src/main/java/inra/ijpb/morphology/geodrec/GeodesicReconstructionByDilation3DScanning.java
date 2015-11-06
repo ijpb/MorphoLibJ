@@ -13,21 +13,30 @@ import inra.ijpb.data.image.Images3D;
 
 
 /**
- * Geodesic reconstruction by dilation for 3D stacks using scanning algorithm.
+ * <p>
+ * Geodesic reconstruction by dilation for 3D stacks with any data type, using
+ * scanning algorithm.
+ * </p>
  * 
+ * <p>
  * This version uses iterations of forward and backward passes until no more
- * modifications are made. It is intended to work on any type of scalar 3D, 
- * images, using 6 or 26 adjacencies. 
+ * modifications are made. It is intended to work on any type of scalar 3D,
+ * images, using 6 or 26 adjacencies.
+ * <p>
  * 
+ * <p>
  * Uses specialized class to access the values in 3D image stacks, by avoiding
  * to check bounds at each access. For byte stack, the class
  * GeodesicReconstructionByDilation3DGray8Scanning may be faster.
+ * </p>
+ * 
+ * @see inra.ijpb.data.image.Image3D
  * 
  * @author David Legland
- * 
  */
 public class GeodesicReconstructionByDilation3DScanning extends AlgoStub
-		implements	GeodesicReconstruction3DAlgo {
+		implements	GeodesicReconstruction3DAlgo
+{
 	ImageStack markerStack;
 	ImageStack maskStack;
 	
@@ -65,22 +74,26 @@ public class GeodesicReconstructionByDilation3DScanning extends AlgoStub
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * using the default connectivity 6.
 	 */
-	public GeodesicReconstructionByDilation3DScanning() {
+	public GeodesicReconstructionByDilation3DScanning() 
+	{
 	}
 	
 	/**
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * that specifies the connectivity to use.
 	 */
-	public GeodesicReconstructionByDilation3DScanning(int connectivity) {
+	public GeodesicReconstructionByDilation3DScanning(int connectivity) 
+	{
 		this.connectivity = connectivity;
 	}
 
-	public int getConnectivity() {
+	public int getConnectivity()
+	{
 		return this.connectivity;
 	}
 	
-	public void setConnectivity(int conn) {
+	public void setConnectivity(int conn) 
+	{
 		this.connectivity = conn;
 	}
 
@@ -89,7 +102,8 @@ public class GeodesicReconstructionByDilation3DScanning extends AlgoStub
 	 * Run the reconstruction by dilation algorithm using the images specified
 	 * as argument.
 	 */
-	public ImageStack applyTo(ImageStack marker, ImageStack mask) {
+	public ImageStack applyTo(ImageStack marker, ImageStack mask)
+	{
 		// Keep references to input images
 		this.markerStack = marker;
 		this.maskStack = mask;
@@ -101,12 +115,14 @@ public class GeodesicReconstructionByDilation3DScanning extends AlgoStub
 		this.sizeX 	= marker.getWidth();
 		this.sizeY 	= marker.getHeight();
 		this.sizeZ 	= marker.getSize();
-		if (sizeX != mask.getWidth() || sizeY != mask.getHeight() || sizeZ != mask.getSize()) {
+		if (sizeX != mask.getWidth() || sizeY != mask.getHeight() || sizeZ != mask.getSize())
+		{
 			throw new IllegalArgumentException("Marker and Mask images must have the same size");
 		}
 		
 		// Check connectivity has a correct value
-		if (connectivity != 6 && connectivity != 26) {
+		if (connectivity != 6 && connectivity != 26)
+		{
 			throw new RuntimeException(
 					"Connectivity for stacks must be either 6 or 26, not "
 							+ connectivity);
@@ -120,34 +136,45 @@ public class GeodesicReconstructionByDilation3DScanning extends AlgoStub
 		int iter = 1;
 		
 		// Iterate forward and backward propagations until no more pixel have been modified
-		do {
+		do
+		{
 			modif = false;
 
 			// Display current status
-			if (verbose) {
+			if (verbose) 
+			{
 				System.out.println("Forward iteration " + iter);
 			}
-			if (showStatus) {
+			if (showStatus) 
+			{
 				IJ.showStatus("Geod. Rec. by Dil. Fwd " + iter);
 			}
 			
-			if (integerStack) {
+			if (integerStack) 
+			{
 				forwardDilationInt();
-			} else {
+			} 
+			else
+			{
 				forwardDilationFloat();
 			}
 
 			// Display current status
-			if (verbose) {
+			if (verbose)
+			{
 				System.out.println("Backward iteration " + iter);
 			}
-			if (showStatus) {
+			if (showStatus)
+			{
 				IJ.showStatus("Geod. Rec. by Dil. Bwd " + iter);
 			}
 			
-			if (integerStack) {
+			if (integerStack)
+			{
 				backwardDilationInt();
-			} else {
+			} 
+			else
+			{
 				backwardDilationFloat();
 			}
 
@@ -174,27 +201,37 @@ public class GeodesicReconstructionByDilation3DScanning extends AlgoStub
 	 * Initialize the result image with the minimum value of marker and mask
 	 * images.
 	 */
-	private void initializeResult() {
+	private void initializeResult()
+	{
 		// Create result image the same size as marker image
 		this.resultStack = ImageStack.create(sizeX, sizeY, sizeZ, markerStack.getBitDepth());
 		this.result = Images3D.createWrapper(this.resultStack);
 
 		// Initialize the result image with the minimum value of marker and mask
 		// images
-		if (this.markerStack.getBitDepth() == 32) {
+		if (this.markerStack.getBitDepth() == 32) 
+		{
 			// Initialize float result stack
-			for (int z = 0; z < sizeZ; z++) {
-				for (int y = 0; y < sizeY; y++) {
-					for (int x = 0; x < sizeX; x++) {
+			for (int z = 0; z < sizeZ; z++) 
+			{
+				for (int y = 0; y < sizeY; y++)
+				{
+					for (int x = 0; x < sizeX; x++)
+					{
 						result.setValue(x, y, z, min(marker.getValue(x, y, z), mask.getValue(x, y, z)));
 					}
 				}
 			}
-		} else {
+		}
+		else
+		{
 			// Initialize integer result stack
-			for (int z = 0; z < sizeZ; z++) {
-				for (int y = 0; y < sizeY; y++) {
-					for (int x = 0; x < sizeX; x++) {
+			for (int z = 0; z < sizeZ; z++) 
+			{
+				for (int y = 0; y < sizeY; y++) 
+				{
+					for (int x = 0; x < sizeX; x++) 
+					{
 						result.set(x, y, z, min(marker.get(x, y, z), mask.get(x, y, z)));
 					}
 				}
@@ -202,10 +239,14 @@ public class GeodesicReconstructionByDilation3DScanning extends AlgoStub
 		}
 	}
 	
-	private void forwardDilationInt() {
-		if (this.connectivity == 6) {
+	private void forwardDilationInt()
+	{
+		if (this.connectivity == 6) 
+		{
 			forwardDilationIntC6();
-		} else {
+		} 
+		else 
+		{
 			forwardDilationIntC26();
 		}
 	}
@@ -214,22 +255,28 @@ public class GeodesicReconstructionByDilation3DScanning extends AlgoStub
 	 * Update result image using pixels in the upper left neighborhood, using
 	 * the 6-adjacency, assuming pixels are stored in bytes.
 	 */
-	private void forwardDilationIntC6() {
+	private void forwardDilationIntC6() 
+	{
 		// the maximal value around current pixel
 		int maxValue;
 
-		if (showProgress) {
+		if (showProgress)
+		{
 			IJ.showProgress(0, sizeZ);
 		}
 		
 		// Iterate over pixels
-		for (int z = 0; z < sizeZ; z++) {
-			if (showProgress) {
+		for (int z = 0; z < sizeZ; z++) 
+		{
+			if (showProgress) 
+			{
 				IJ.showProgress(z + 1, sizeZ);
 			}
 			
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
+			for (int y = 0; y < sizeY; y++) 
+			{
+				for (int x = 0; x < sizeX; x++)
+				{
 					int currentValue = result.get(x, y, z);
 					maxValue = currentValue;
 					
@@ -257,31 +304,39 @@ public class GeodesicReconstructionByDilation3DScanning extends AlgoStub
 	 * Update result image using pixels in the upper left neighborhood, using
 	 * the 26-adjacency, assuming pixels are stored using integer data types.
 	 */
-	private void forwardDilationIntC26() {
+	private void forwardDilationIntC26()
+	{
 		// the maximal value around current pixel
 		int maxValue;
 
-		if (showProgress) {
+		if (showProgress)
+		{
 			IJ.showProgress(0, sizeZ);
 		}
 
 		// Iterate over pixels
-		for (int z = 0; z < sizeZ; z++) {
-			if (showProgress) {
+		for (int z = 0; z < sizeZ; z++) 
+		{
+			if (showProgress)
+			{
 				IJ.showProgress(z + 1, sizeZ);
 				System.out.println("z = " + z);
 			}
 
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
+			for (int y = 0; y < sizeY; y++)
+			{
+				for (int x = 0; x < sizeX; x++)
+				{
 					int currentValue = result.get(x, y, z);
 					maxValue = currentValue;
 
 					// Iterate over neighbors of current pixel
 					int zmax = min(z + 1, sizeZ);
-					for (int z2 = max(z - 1, 0); z2 < zmax; z2++) {
+					for (int z2 = max(z - 1, 0); z2 < zmax; z2++)
+					{
 						int ymax = z2 == z ? y : min(y + 1, sizeY - 1); 
-						for (int y2 = max(y - 1, 0); y2 <= ymax; y2++) {
+						for (int y2 = max(y - 1, 0); y2 <= ymax; y2++)
+						{
 							int xmax = (z2 == z && y2 == y) ? x - 1 : min(x + 1, sizeX - 1); 
 							for (int x2 = max(x - 1, 0); x2 <= xmax; x2++) {
 								maxValue = max(maxValue, result.get(x2, y2, z2));
@@ -300,10 +355,14 @@ public class GeodesicReconstructionByDilation3DScanning extends AlgoStub
 		}
 	}
 
-	private void forwardDilationFloat() {
-		if (this.connectivity == 6) {
+	private void forwardDilationFloat()
+	{
+		if (this.connectivity == 6) 
+		{
 			forwardDilationFloatC6();
-		} else {
+		} 
+		else
+		{
 			forwardDilationFloatC26();
 		}
 	}
@@ -312,23 +371,29 @@ public class GeodesicReconstructionByDilation3DScanning extends AlgoStub
 	 * Update result image using pixels in the upper left neighborhood, using
 	 * the 6-adjacency, assuming pixels are stored in bytes.
 	 */
-	private void forwardDilationFloatC6() {
+	private void forwardDilationFloatC6() 
+	{
 		// the maximal value around current pixel
 		double maxValue;
 
-		if (showProgress) {
+		if (showProgress)
+		{
 			IJ.showProgress(0, sizeZ);
 		}
 
 		// Iterate over pixels
-		for (int z = 0; z < sizeZ; z++) {
-			if (showProgress) {
+		for (int z = 0; z < sizeZ; z++) 
+		{
+			if (showProgress) 
+			{
 				IJ.showProgress(z + 1, sizeZ);
 				System.out.println("z = " + z);
 			}
 			
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
+			for (int y = 0; y < sizeY; y++) 
+			{
+				for (int x = 0; x < sizeX; x++) 
+				{
 					double currentValue = result.getValue(x, y, z);
 					maxValue = currentValue;
 					
@@ -343,7 +408,8 @@ public class GeodesicReconstructionByDilation3DScanning extends AlgoStub
 					
 					// update value of current voxel
 					maxValue = min(maxValue, mask.getValue(x, y, z));
-					if (maxValue > currentValue) {
+					if (maxValue > currentValue) 
+					{
 						result.setValue(x, y, z, maxValue);
 						modif = true;
 					}
@@ -356,33 +422,42 @@ public class GeodesicReconstructionByDilation3DScanning extends AlgoStub
 	 * Update result image using pixels in the upper left neighborhood, using
 	 * the 26-adjacency, assuming pixels are stored in floating point values.
 	 */
-	private void forwardDilationFloatC26() {
+	private void forwardDilationFloatC26() 
+	{
 		// the maximal value around current pixel
 		double maxValue;
 
-		if (showProgress) {
+		if (showProgress)
+		{
 			IJ.showProgress(0, sizeZ);
 		}
 
 		// Iterate over pixels
-		for (int z = 0; z < sizeZ; z++) {
-			if (showProgress) {
+		for (int z = 0; z < sizeZ; z++) 
+		{
+			if (showProgress) 
+			{
 				IJ.showProgress(z + 1, sizeZ);
 				System.out.println("z = " + z);
 			}
 
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
+			for (int y = 0; y < sizeY; y++) 
+			{
+				for (int x = 0; x < sizeX; x++)
+				{
 					double currentValue = result.getValue(x, y, z);
 					maxValue = currentValue;
 
 					// Iterate over neighbors of current pixel
 					int zmax = min(z + 1, sizeZ);
-					for (int z2 = max(z - 1, 0); z2 < zmax; z2++) {
+					for (int z2 = max(z - 1, 0); z2 < zmax; z2++) 
+					{
 						int ymax = z2 == z ? y : min(y + 1, sizeY - 1); 
-						for (int y2 = max(y - 1, 0); y2 <= ymax; y2++) {
+						for (int y2 = max(y - 1, 0); y2 <= ymax; y2++)
+						{
 							int xmax = (z2 == z && y2 == y) ? x - 1 : min(x + 1, sizeX - 1); 
-							for (int x2 = max(x - 1, 0); x2 <= xmax; x2++) {
+							for (int x2 = max(x - 1, 0); x2 <= xmax; x2++)
+							{
 								maxValue = max(maxValue, result.getValue(x2, y2, z2));
 							}
 						}
@@ -399,10 +474,14 @@ public class GeodesicReconstructionByDilation3DScanning extends AlgoStub
 		}
 	}
 	
-	private void backwardDilationInt() {
-		if (this.connectivity == 6) {
+	private void backwardDilationInt() 
+	{
+		if (this.connectivity == 6) 
+		{
 			backwardDilationIntC6();
-		} else {
+		} 
+		else 
+		{
 			backwardDilationIntC26();
 		}
 	}
@@ -411,23 +490,29 @@ public class GeodesicReconstructionByDilation3DScanning extends AlgoStub
 	 * Update result image using pixels in the lower right neighborhood, using
 	 * the 6-adjacency.
 	 */
-	private void backwardDilationIntC6() {
+	private void backwardDilationIntC6() 
+	{
 		// the maximal value around current pixel
 		int maxValue;
 
-		if (showProgress) {
+		if (showProgress) 
+		{
 			IJ.showProgress(0, sizeZ);
 		}
 
 		// Iterate over voxels
-		for (int z = sizeZ - 1; z >= 0; z--) {
-			if (showProgress) {
+		for (int z = sizeZ - 1; z >= 0; z--)
+		{
+			if (showProgress) 
+			{
 				IJ.showProgress(sizeZ - z, sizeZ);
 				System.out.println("z = " + z);
 			}
 
-			for (int y = sizeY - 1; y >= 0; y--) {
-				for (int x = sizeX - 1; x >= 0; x--) {
+			for (int y = sizeY - 1; y >= 0; y--) 
+			{
+				for (int x = sizeX - 1; x >= 0; x--)
+				{
 					int currentValue = result.get(x, y, z);
 					maxValue = currentValue;
 					
@@ -442,7 +527,8 @@ public class GeodesicReconstructionByDilation3DScanning extends AlgoStub
 
 					// update value of current voxel
 					maxValue = min(maxValue, mask.get(x, y, z));
-					if (maxValue > currentValue) {
+					if (maxValue > currentValue)
+					{
 						result.set(x, y, z, maxValue);
 						modif = true;
 					}
@@ -455,34 +541,43 @@ public class GeodesicReconstructionByDilation3DScanning extends AlgoStub
 	 * Update result image using pixels in the upper left neighborhood, using
 	 * the 26-adjacency.
 	 */
-	private void backwardDilationIntC26() {
+	private void backwardDilationIntC26()
+	{
 		// the maximal value around current pixel
 		int maxValue;
 	
-		if (showProgress) {
+		if (showProgress)
+		{
 			IJ.showProgress(0, sizeZ);
 		}
 	
 		// Iterate over voxels
-		for (int z = sizeZ - 1; z >= 0; z--) {
-			if (showProgress) {
+		for (int z = sizeZ - 1; z >= 0; z--) 
+		{
+			if (showProgress)
+			{
 				IJ.showProgress(sizeZ - z, sizeZ);
 				System.out.println("z = " + z);
 			}
 	
-			for (int y = sizeY - 1; y >= 0; y--) {
-				for (int x = sizeX - 1; x >= 0; x--) {
+			for (int y = sizeY - 1; y >= 0; y--)
+			{
+				for (int x = sizeX - 1; x >= 0; x--)
+				{
 					int currentValue = result.get(x, y, z);
 					maxValue = currentValue;
 	
 					// Iterate over neighbors of current voxel
 					int zmin = max(z - 1, 0);
-					for (int z2 = min(z + 1, sizeZ - 1); z2 >= zmin; z2--) {
+					for (int z2 = min(z + 1, sizeZ - 1); z2 >= zmin; z2--) 
+					{
 	
 						int ymin = z2 == z ? y : max(y - 1, 0); 
-						for (int y2 = min(y + 1, sizeY - 1); y2 >= ymin; y2--) {
+						for (int y2 = min(y + 1, sizeY - 1); y2 >= ymin; y2--) 
+						{
 							int xmin = (z2 == z && y2 == y) ? x : max(x - 1, 0); 
-							for (int x2 = min(x + 1, sizeX - 1); x2 >= xmin; x2--) {
+							for (int x2 = min(x + 1, sizeX - 1); x2 >= xmin; x2--) 
+							{
 								maxValue = max(maxValue, result.get(x2, y2, z2));
 							}
 						}
@@ -490,7 +585,8 @@ public class GeodesicReconstructionByDilation3DScanning extends AlgoStub
 	
 					// update value of current voxel
 					maxValue = min(maxValue, mask.get(x, y, z));
-					if (maxValue > currentValue) {
+					if (maxValue > currentValue)
+					{
 						result.set(x, y, z, maxValue);
 						modif = true;
 					}
@@ -499,10 +595,14 @@ public class GeodesicReconstructionByDilation3DScanning extends AlgoStub
 		}	
 	}
 
-	private void backwardDilationFloat() {
-		if (this.connectivity == 6) {
+	private void backwardDilationFloat()
+	{
+		if (this.connectivity == 6) 
+		{
 			backwardDilationFloatC6();
-		} else {
+		}
+		else
+		{
 			backwardDilationFloatC26();
 		}
 	}
@@ -511,23 +611,29 @@ public class GeodesicReconstructionByDilation3DScanning extends AlgoStub
 	 * Update result image using pixels in the lower right neighborhood, using
 	 * the 6-adjacency.
 	 */
-	private void backwardDilationFloatC6() {
+	private void backwardDilationFloatC6() 
+	{
 		// the maximal value around current pixel
 		double maxValue;
 
-		if (showProgress) {
+		if (showProgress)
+		{
 			IJ.showProgress(0, sizeZ);
 		}
 
 		// Iterate over voxels
-		for (int z = sizeZ - 1; z >= 0; z--) {
-			if (showProgress) {
+		for (int z = sizeZ - 1; z >= 0; z--)
+		{
+			if (showProgress)
+			{
 				IJ.showProgress(sizeZ - z, sizeZ);
 				System.out.println("z = " + z);
 			}
 
-			for (int y = sizeY - 1; y >= 0; y--) {
-				for (int x = sizeX - 1; x >= 0; x--) {
+			for (int y = sizeY - 1; y >= 0; y--) 
+			{
+				for (int x = sizeX - 1; x >= 0; x--) 
+				{
 					double currentValue = result.getValue(x, y, z);
 					maxValue = currentValue;
 					
@@ -536,13 +642,13 @@ public class GeodesicReconstructionByDilation3DScanning extends AlgoStub
 						maxValue = max(maxValue, result.getValue(x + 1, y, z));
 					if (y < sizeY - 1) 
 						maxValue = max(maxValue, result.getValue(x, y + 1, z));
-					if (z < sizeZ - 1) {
+					if (z < sizeZ - 1) 
 						maxValue = max(maxValue, result.getValue(x, y, z + 1));
-					}
-
+					
 					// update value of current voxel
 					maxValue = min(maxValue, mask.getValue(x, y, z));
-					if (maxValue > currentValue) {
+					if (maxValue > currentValue)
+					{
 						result.setValue(x, y, z, maxValue);
 						modif = true;
 					}
@@ -555,34 +661,43 @@ public class GeodesicReconstructionByDilation3DScanning extends AlgoStub
 	 * Update result image using pixels in the upper left neighborhood, using
 	 * the 26-adjacency.
 	 */
-	private void backwardDilationFloatC26() {
+	private void backwardDilationFloatC26() 
+	{
 		// the maximal value around current pixel
 		double maxValue;
 	
-		if (showProgress) {
+		if (showProgress)
+		{
 			IJ.showProgress(0, sizeZ);
 		}
 	
 		// Iterate over voxels
-		for (int z = sizeZ - 1; z >= 0; z--) {
-			if (showProgress) {
+		for (int z = sizeZ - 1; z >= 0; z--)
+		{
+			if (showProgress) 
+			{
 				IJ.showProgress(sizeZ - z, sizeZ);
 				System.out.println("z = " + z);
 			}
 	
-			for (int y = sizeY - 1; y >= 0; y--) {
-				for (int x = sizeX - 1; x >= 0; x--) {
+			for (int y = sizeY - 1; y >= 0; y--) 
+			{
+				for (int x = sizeX - 1; x >= 0; x--) 
+				{
 					double currentValue = result.getValue(x, y, z);
 					maxValue = currentValue;
 	
 					// Iterate over neighbors of current voxel
 					int zmin = max(z - 1, 0);
-					for (int z2 = min(z + 1, sizeZ - 1); z2 >= zmin; z2--) {
+					for (int z2 = min(z + 1, sizeZ - 1); z2 >= zmin; z2--) 
+					{
 	
 						int ymin = z2 == z ? y : max(y - 1, 0); 
-						for (int y2 = min(y + 1, sizeY - 1); y2 >= ymin; y2--) {
+						for (int y2 = min(y + 1, sizeY - 1); y2 >= ymin; y2--) 
+						{
 							int xmin = (z2 == z && y2 == y) ? x : max(x - 1, 0); 
-							for (int x2 = min(x + 1, sizeX - 1); x2 >= xmin; x2--) {
+							for (int x2 = min(x + 1, sizeX - 1); x2 >= xmin; x2--)
+							{
 								maxValue = max(maxValue, result.getValue(x2, y2, z2));
 							}
 						}
@@ -590,7 +705,8 @@ public class GeodesicReconstructionByDilation3DScanning extends AlgoStub
 	
 					// update value of current voxel
 					maxValue = min(maxValue, mask.getValue(x, y, z));
-					if (maxValue > currentValue) {
+					if (maxValue > currentValue)
+					{
 						result.setValue(x, y, z, maxValue);
 						modif = true;
 					}
@@ -598,5 +714,4 @@ public class GeodesicReconstructionByDilation3DScanning extends AlgoStub
 			}
 		}	
 	}
-
 }

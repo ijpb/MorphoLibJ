@@ -20,9 +20,8 @@ import inra.ijpb.algo.AlgoStub;
  *
  */
 public class GeodesicReconstructionScanning extends AlgoStub implements
-		GeodesicReconstructionAlgo 
-		{
-
+		GeodesicReconstructionAlgo
+{
 	// ------------------------
 	// Class fields
 	
@@ -57,9 +56,10 @@ public class GeodesicReconstructionScanning extends AlgoStub implements
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * using the default connectivity 4.
 	 */
-	public GeodesicReconstructionScanning() {
+	public GeodesicReconstructionScanning()
+	{
 	}
-	
+
 	/**
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * that specifies the type of reconstruction, and using the connectivity 4.

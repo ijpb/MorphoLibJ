@@ -16,19 +16,24 @@ import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.data.Cursor2D;
 
 /**
- * Geodesic reconstruction for planar integer images (gray8 and gray16), using scanning algorithm.
+ * <p>
+ * Geodesic reconstruction for planar images, using hybrid algorithm.
+ * </p>
  * 
+ * <p>
  * This class performs the algorithm on the two instances of ImageProcessor
  * kept in it. 
+ * </p>
  * 
+ * @see GeodesicReconstructionScanning
+ * @see GeodesicReconstructionByDilation
  * @see GeodesicReconstructionByErosion
  * @author David Legland
  *
  */
 public class GeodesicReconstructionHybrid extends AlgoStub implements
 		GeodesicReconstructionAlgo 
-		{
-
+{
 	// ------------------------
 	// Class fields
 	
@@ -65,7 +70,8 @@ public class GeodesicReconstructionHybrid extends AlgoStub implements
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * using the default connectivity 4.
 	 */
-	public GeodesicReconstructionHybrid() {
+	public GeodesicReconstructionHybrid()
+	{
 	}
 	
 	/**

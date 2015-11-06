@@ -9,15 +9,21 @@ import inra.ijpb.morphology.extrema.RegionalExtrema3DAlgo;
 import inra.ijpb.morphology.extrema.RegionalExtrema3DByFlooding;
 
 /**
+ * <p>
  * A collection of static methods for computing regional and extended minima and
  * maxima on 3D stacks. Supports integer and floating-point stacks, in 6 and 26
  * connectivities.
+ * </p>
  * 
+ * <p>
  * Regional extrema algorithms are based on flood-filling-like algorithms,
  * whereas extended extrema and extrema imposition algorithms use geodesic
  * reconstruction algorithm.
+ * </p>
  * 
+ * <p>
  * See the books of Serra and Soille for further details.
+ * </p>
  * 
  * @see MinimaAndMaxima
  * @see GeodesicReconstruction3D
@@ -26,8 +32,8 @@ import inra.ijpb.morphology.extrema.RegionalExtrema3DByFlooding;
  * @author David Legland
  * 
  */
-public class MinimaAndMaxima3D {
-
+public class MinimaAndMaxima3D 
+{
 	/**
 	 * The default connectivity used by reconstruction algorithms in 3D images.
 	 */
@@ -37,7 +43,8 @@ public class MinimaAndMaxima3D {
 	 * Computes the regional maxima in 3D stack <code>image</code>, 
 	 * using the default connectivity.
 	 */
-	public final static ImageStack regionalMaxima(ImageStack image) {
+	public final static ImageStack regionalMaxima(ImageStack image) 
+	{
 		return regionalMaxima(image, DEFAULT_CONNECTIVITY_3D);
 	}
 
@@ -47,7 +54,8 @@ public class MinimaAndMaxima3D {
 	 * @param conn the connectivity for maxima, that should be either 6 or 26
 	 */
 	public final static ImageStack regionalMaxima(ImageStack image,
-			int conn) {
+			int conn) 
+	{
 		RegionalExtrema3DAlgo algo = new RegionalExtrema3DByFlooding();
 		algo.setConnectivity(conn);
 		algo.setExtremaType(ExtremaType.MAXIMA);
@@ -87,14 +95,15 @@ public class MinimaAndMaxima3D {
 		ImageStack mask = stack.duplicate();
 		addValue(mask, 1);
 
-//		GeodesicReconstruction3DAlgo algo = new GeodesicReconstructionByDilation3DGray8Scanning(conn);
-//		ImageStack rec = algo.applyTo(stack, mask);
 		ImageStack rec = GeodesicReconstruction3D.reconstructByDilation(stack, mask, conn);
 		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
 
-		for (int z = 0; z < sizeZ; z++) {
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
+		for (int z = 0; z < sizeZ; z++) 
+		{
+			for (int y = 0; y < sizeY; y++) 
+			{
+				for (int x = 0; x < sizeX; x++) 
+				{
 					if (mask.getVoxel(x, y, z) > rec.getVoxel(x, y, z)) 
 						result.setVoxel(x, y, z, 255);
 					else
@@ -109,7 +118,8 @@ public class MinimaAndMaxima3D {
 	 * Computes the regional minima in 3D image <code>stack</code>, 
 	 * using the default connectivity.
 	 */
-	public final static ImageStack regionalMinima(ImageStack stack) {
+	public final static ImageStack regionalMinima(ImageStack stack) 
+	{
 		return regionalMinima(stack, DEFAULT_CONNECTIVITY_3D);
 	}
 
@@ -119,8 +129,8 @@ public class MinimaAndMaxima3D {
 	 * @param conn the connectivity for minima, that should be either 6 or 26
 	 */
 	public final static ImageStack regionalMinima(ImageStack image,
-			int conn) {
-		
+			int conn) 
+	{
 		if ( Thread.currentThread().isInterrupted() )					
 			return null;
 		
@@ -154,8 +164,8 @@ public class MinimaAndMaxima3D {
 	 * @param conn the connectivity for minima, that should be either 4 or 8
 	 */
 	public final static ImageStack regionalMinimaByReconstruction(ImageStack stack,
-			int conn) {
-
+			int conn)
+	{
 		int sizeX = stack.getWidth();
 		int sizeY = stack.getHeight();
 		int sizeZ = stack.getSize();
@@ -163,14 +173,15 @@ public class MinimaAndMaxima3D {
 		ImageStack marker = stack.duplicate();
 		addValue(marker, 1);
 
-//		GeodesicReconstruction3DAlgo algo = new GeodesicReconstructionByErosion3DGray8Scanning(conn);
-//		ImageStack rec = algo.applyTo(marker, stack);
 		ImageStack rec = GeodesicReconstruction3D.reconstructByErosion(marker, stack, conn);
 		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
 
-		for (int z = 0; z < sizeZ; z++) {
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
+		for (int z = 0; z < sizeZ; z++)
+		{
+			for (int y = 0; y < sizeY; y++) 
+			{
+				for (int x = 0; x < sizeX; x++)
+				{
 					if (marker.getVoxel(x, y, z) > rec.getVoxel(x, y, z)) 
 						result.setVoxel(x, y, z, 0);
 					else
@@ -187,7 +198,8 @@ public class MinimaAndMaxima3D {
 	 * connectivity.
 	 */
 	public final static ImageStack extendedMaxima(ImageStack image,
-			int dynamic) {
+			int dynamic) 
+	{
 		return extendedMaxima(image, dynamic, DEFAULT_CONNECTIVITY_3D);
 	}
 
@@ -203,7 +215,8 @@ public class MinimaAndMaxima3D {
 	public final static ImageStack extendedMaxima(
 			ImageStack image,
 			int dynamic, 
-			ImageStack binaryMask ) {
+			ImageStack binaryMask ) 
+	{
 		return extendedMaxima( image, dynamic, DEFAULT_CONNECTIVITY_3D, binaryMask );
 	}
 	
@@ -213,12 +226,11 @@ public class MinimaAndMaxima3D {
 	 * connectivity.
 	 */
 	public final static ImageStack extendedMaxima(ImageStack image,
-			int dynamic, int conn) {
+			int dynamic, int conn) 
+	{
 		ImageStack mask = image.duplicate();
 		addValue(mask, dynamic);
 
-		//		GeodesicReconstruction3DAlgo algo = new GeodesicReconstructionByDilation3DGray8Scanning(conn);
-		//		ImageStack rec = algo.applyTo(image, mask);
 		ImageStack rec = GeodesicReconstruction3D.reconstructByDilation(image, mask, conn);
 
 		return regionalMaxima(rec, conn);
@@ -243,8 +255,6 @@ public class MinimaAndMaxima3D {
 		ImageStack mask = image.duplicate();
 		addValue( mask, dynamic );
 
-		//		GeodesicReconstruction3DAlgo algo = new GeodesicReconstructionByDilation3DGray8Scanning(conn);
-		//		ImageStack rec = algo.applyTo(image, mask);
 		ImageStack rec = GeodesicReconstruction3D.reconstructByDilation( image, mask, conn, binaryMask );
 
 		return regionalMaxima(rec, conn);
@@ -255,7 +265,8 @@ public class MinimaAndMaxima3D {
 	 * keeping minima with the specified dynamic, and using the default 
 	 * connectivity.
 	 */
-	public final static ImageStack extendedMinima(ImageStack stack, int dynamic) {
+	public final static ImageStack extendedMinima(ImageStack stack, int dynamic)
+	{
 		return extendedMinima(stack, dynamic, DEFAULT_CONNECTIVITY_3D);
 	}
 
@@ -265,12 +276,11 @@ public class MinimaAndMaxima3D {
 	 * connectivity.
 	 */
 	public final static ImageStack extendedMinima(ImageStack stack,
-			int dynamic, int conn) {
+			int dynamic, int conn) 
+	{
 		ImageStack marker = stack.duplicate();
 		addValue(marker, dynamic);
 
-//		GeodesicReconstruction3DAlgo algo = new GeodesicReconstructionByErosion3DGray8Scanning(conn);
-//		ImageStack rec = algo.applyTo(marker, stack);
 		ImageStack rec = GeodesicReconstruction3D.reconstructByErosion(marker, stack, conn);
 
 		if( null == rec )
@@ -284,7 +294,8 @@ public class MinimaAndMaxima3D {
 	 * the default connectivity.
 	 */
 	public final static ImageStack imposeMaxima(ImageStack stack,
-			ImageStack maxima) {
+			ImageStack maxima)
+	{
 		return imposeMaxima(stack, maxima, DEFAULT_CONNECTIVITY_3D);
 	}
 
@@ -293,8 +304,8 @@ public class MinimaAndMaxima3D {
 	 * the specified connectivity.
 	 */
 	public final static ImageStack imposeMaxima(ImageStack stack,
-			ImageStack maxima, int conn) {
-
+			ImageStack maxima, int conn)
+	{
 		ImageStack marker = stack.duplicate();
 		ImageStack mask = stack.duplicate();
 
@@ -302,13 +313,19 @@ public class MinimaAndMaxima3D {
 		int sizeY = stack.getHeight();
 		int sizeZ = stack.getSize();
 
-		for (int z = 0; z < sizeZ; z++) {
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
-					if (maxima.getVoxel(x, y, z) > 0) {
+		for (int z = 0; z < sizeZ; z++) 
+		{
+			for (int y = 0; y < sizeY; y++)
+			{
+				for (int x = 0; x < sizeX; x++) 
+				{
+					if (maxima.getVoxel(x, y, z) > 0)
+					{
 						marker.setVoxel(x, y, z, 255);
 						mask.setVoxel(x, y, z, 255);
-					} else {
+					} 
+					else
+					{
 						marker.setVoxel(x, y, z, 0);
 						mask.setVoxel(x, y, z, stack.getVoxel(x, y, z)-1);
 					}
@@ -324,7 +341,8 @@ public class MinimaAndMaxima3D {
 	 * the default connectivity.
 	 */
 	public final static ImageStack imposeMinima(ImageStack stack,
-			ImageStack minima) {
+			ImageStack minima) 
+	{
 		return imposeMinima(stack, minima, DEFAULT_CONNECTIVITY_3D);
 	}
 
@@ -333,8 +351,8 @@ public class MinimaAndMaxima3D {
 	 * the specified connectivity.
 	 */
 	public final static ImageStack imposeMinima(ImageStack stack,
-			ImageStack minima, int conn) {
-		
+			ImageStack minima, int conn) 
+	{
 		if ( Thread.currentThread().isInterrupted() )					
 			return null;
 
@@ -345,13 +363,19 @@ public class MinimaAndMaxima3D {
 		int sizeY = stack.getHeight();
 		int sizeZ = stack.getSize();
 
-		for (int z = 0; z < sizeZ; z++) {
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
-					if (minima.getVoxel(x, y, z) > 0) {
+		for (int z = 0; z < sizeZ; z++) 
+		{
+			for (int y = 0; y < sizeY; y++)
+			{
+				for (int x = 0; x < sizeX; x++) 
+				{
+					if (minima.getVoxel(x, y, z) > 0) 
+					{
 						marker.setVoxel(x, y, z, 0);
 						mask.setVoxel(x, y, z, 0);
-					} else {
+					} 
+					else 
+					{
 						marker.setVoxel(x, y, z, 255);
 						mask.setVoxel(x, y, z, stack.getVoxel(x, y, z)+1);
 					}
@@ -362,17 +386,20 @@ public class MinimaAndMaxima3D {
 		return GeodesicReconstruction3D.reconstructByErosion(marker, mask, conn);
 	}
 
-	private final static void addValue(ImageStack stack, double value) {
+	private final static void addValue(ImageStack stack, double value) 
+	{
 		int sizeX = stack.getWidth();
 		int sizeY = stack.getHeight();
 		int sizeZ = stack.getSize();
-		for (int z = 0; z < sizeZ; z++) {
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
+		for (int z = 0; z < sizeZ; z++) 
+		{
+			for (int y = 0; y < sizeY; y++) 
+			{
+				for (int x = 0; x < sizeX; x++) 
+				{
 					stack.setVoxel(x, y, z, stack.getVoxel(x, y, z) + value);
 				}
 			}
 		}
 	}
-
 }

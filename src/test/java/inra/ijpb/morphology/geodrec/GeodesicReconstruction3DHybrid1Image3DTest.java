@@ -11,7 +11,7 @@ import inra.ijpb.morphology.strel.CubeStrel;
 
 import org.junit.Test;
 
-public class GeodesicReconstruction3DHybrid1DoubleTest {
+public class GeodesicReconstruction3DHybrid1Image3DTest {
 
 	@Test
 	public final void testDilationCubicMeshC6() {
@@ -20,7 +20,7 @@ public class GeodesicReconstruction3DHybrid1DoubleTest {
 		ImageStack marker = ImageStack.create(20, 20, 20, 8);
 		marker.setVoxel(5, 5, 5, 255);
 		
-		GeodesicReconstruction3DHybrid1Double algo = new GeodesicReconstruction3DHybrid1Double();
+		GeodesicReconstruction3DHybrid1Image3D algo = new GeodesicReconstruction3DHybrid1Image3D();
 		algo.setConnectivity(6);
 
 		ImageStack result = algo.applyTo(marker, mask);
@@ -37,7 +37,7 @@ public class GeodesicReconstruction3DHybrid1DoubleTest {
 		marker.setVoxel(5, 5, 5, 255);
 		invertGray8Stack(marker);
 		
-		GeodesicReconstruction3DHybrid1Double algo = new GeodesicReconstruction3DHybrid1Double();
+		GeodesicReconstruction3DHybrid1Image3D algo = new GeodesicReconstruction3DHybrid1Image3D();
 		algo.setReconstructionType(GeodesicReconstructionType.BY_EROSION);
 		algo.setConnectivity(6);
 
@@ -68,7 +68,7 @@ public class GeodesicReconstruction3DHybrid1DoubleTest {
 		ImageStack marker = ImageStack.create(20, 20, 20, 8);
 		marker.setVoxel(5, 5, 5, 255);
 		
-		GeodesicReconstruction3DHybrid1Double algo = new GeodesicReconstruction3DHybrid1Double();
+		GeodesicReconstruction3DHybrid1Image3D algo = new GeodesicReconstruction3DHybrid1Image3D();
 		algo.setConnectivity(26);
 
 		ImageStack result = algo.applyTo(marker, mask);
@@ -83,7 +83,7 @@ public class GeodesicReconstruction3DHybrid1DoubleTest {
 		ImageStack marker = ImageStack.create(20, 20, 20, 8);
 		marker.setVoxel(5, 5, 5, 255);
 		
-		GeodesicReconstruction3DHybrid1Double algo = new GeodesicReconstruction3DHybrid1Double();
+		GeodesicReconstruction3DHybrid1Image3D algo = new GeodesicReconstruction3DHybrid1Image3D();
 		algo.setConnectivity(26);
 		
 		ImageStack result = algo.applyTo(marker, mask);
@@ -105,7 +105,7 @@ public class GeodesicReconstruction3DHybrid1DoubleTest {
 		}
 		marker.setVoxel(5, 5, 5, 0);
 		
-		GeodesicReconstruction3DHybrid1Double algo = new GeodesicReconstruction3DHybrid1Double();
+		GeodesicReconstruction3DHybrid1Image3D algo = new GeodesicReconstruction3DHybrid1Image3D();
 		
 		ImageStack result = algo.applyTo(marker, mask);
 		
@@ -134,7 +134,7 @@ public class GeodesicReconstruction3DHybrid1DoubleTest {
 	
 		marker.setVoxel(20, 80, 50, 255);
 	
-		GeodesicReconstruction3DHybrid1Double algo = new GeodesicReconstruction3DHybrid1Double();
+		GeodesicReconstruction3DHybrid1Image3D algo = new GeodesicReconstruction3DHybrid1Image3D();
 		algo.setConnectivity(6);
 	
 		ImageStack result = algo.applyTo(marker, mask);
@@ -166,7 +166,7 @@ public class GeodesicReconstruction3DHybrid1DoubleTest {
 
 		marker.setVoxel(20, 80, 50, 255);
 
-		GeodesicReconstruction3DHybrid1Double algo = new GeodesicReconstruction3DHybrid1Double();
+		GeodesicReconstruction3DHybrid1Image3D algo = new GeodesicReconstruction3DHybrid1Image3D();
 		algo.setConnectivity(26);
 
 		ImageStack result = algo.applyTo(marker, mask);

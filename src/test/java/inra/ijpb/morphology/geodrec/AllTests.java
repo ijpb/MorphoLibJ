@@ -10,7 +10,7 @@ import org.junit.runners.Suite;
 	GeodesicReconstructionHybridTest.class,
 	GeodesicReconstructionScanningTest.class,
 	GeodesicReconstruction3DHybrid0Gray8Test.class,
-	GeodesicReconstruction3DHybrid1DoubleTest.class,
+	GeodesicReconstruction3DHybrid1Image3DTest.class,
 	GeodesicReconstructionByDilation3DGray8Test.class,
 	GeodesicReconstructionByDilation3DGray8ScanningTest.class,
 	GeodesicReconstructionByDilation3DScanningTest.class,
