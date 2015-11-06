@@ -17,7 +17,7 @@ import inra.ijpb.algo.AlgoStub;
  * modifications are made.
  * 
  * @see GeodesicReconstructionByDilation3DScanning
- * @see GeodesicReconstructionHybrid0Gray8
+ * @see GeodesicReconstruction3DHybrid0Gray8
  * 
  * @author David Legland
  * 

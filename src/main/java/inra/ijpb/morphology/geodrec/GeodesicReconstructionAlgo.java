@@ -25,7 +25,7 @@ import ij.process.ImageProcessor;
  * erosion, using a classical forward pass, a backward pass that initialize a
  * processing queue, and processes each pixel in the queue until it is empty.</li>
  * </ul>
- * </p>
+ * 
  * The most versatile one is the "Hybrid" version.
  * 
  * @author David Legland

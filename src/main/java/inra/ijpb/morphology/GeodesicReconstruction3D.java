@@ -105,7 +105,6 @@ public abstract class GeodesicReconstruction3D
 	 * 
 	 * @param marker input marker image
 	 * @param mask mask image
-	 * @param connectivity 3d connectivity (6 or 26)
 	 */
 	public final static ImageStack reconstructByDilation(ImageStack marker,
 			ImageStack mask)

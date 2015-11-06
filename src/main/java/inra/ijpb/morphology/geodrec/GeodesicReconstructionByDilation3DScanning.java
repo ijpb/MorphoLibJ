@@ -22,7 +22,7 @@ import inra.ijpb.data.image.Images3D;
  * This version uses iterations of forward and backward passes until no more
  * modifications are made. It is intended to work on any type of scalar 3D,
  * images, using 6 or 26 adjacencies.
- * <p>
+ * </p>
  * 
  * <p>
  * Uses specialized class to access the values in 3D image stacks, by avoiding

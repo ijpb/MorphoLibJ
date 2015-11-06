@@ -29,6 +29,11 @@ public class FloodFill {
 	/**
 	 * Replaces all the neighbor pixels of (x,y) that have the same values
 	 * by the specified integer value, using the 4-connectivity.
+	 * 
+	 * @param image the image in which floodfill will be propagated
+	 * @param x the x-coordinate of the flooding source 
+	 * @param y the y-coordinate of the flooding source 
+	 * @param value the new value of the connected component at (x,y) 
 	 */
 	public final static void floodFillC4(ImageProcessor image, int x, int y, int value) {
 		// get image size
@@ -108,6 +113,11 @@ public class FloodFill {
 	 * same values as the pixel in (x,y) by the specified floating point value,
 	 * using the 4-connectivity.
 	 * Should work the same way for all type of images.
+	 * 
+	 * @param image the image in which floodfill will be propagated
+	 * @param x the x-coordinate of the flooding source 
+	 * @param y the y-coordinate of the flooding source 
+	 * @param value the new value of the connected component at (x,y) 
 	 */
 	public final static void floodFillC4(ImageProcessor image, int x, int y, float value) {
 		// get image size
@@ -185,6 +195,11 @@ public class FloodFill {
 	/**
 	 * Replaces all the pixels in the 8-neighborhood of (x,y) that have the 
 	 * same values by the specified value.
+	 * 
+	 * @param image the image in which floodfill will be propagated
+	 * @param x the x-coordinate of the flooding source 
+	 * @param y the y-coordinate of the flooding source 
+	 * @param value the new value of the connected component at (x,y) 
 	 */
 	public final static void floodFillC8(ImageProcessor image, int x, int y, int value) {
 		// get image size
@@ -264,6 +279,11 @@ public class FloodFill {
 	 * same values as the pixel in (x,y) by the specified value.
 	 * Should work for all integer based images: ByteProcessor, ShortProcessor 
 	 * and ColorProcessor. 
+	 * 
+	 * @param image the image in which floodfill will be propagated
+	 * @param x the x-coordinate of the flooding source 
+	 * @param y the y-coordinate of the flooding source 
+	 * @param value the new value of the connected component at (x,y) 
 	 */
 	public final static void floodFillC8(ImageProcessor image, int x, int y, float value) {
 		// get image size
@@ -348,7 +368,7 @@ public class FloodFill {
 	 * @param y y- coordinate of pixel of interest
 	 * @param outputImage output label image (to fill) 
 	 * @param value filling value
-	 * @param conn connectivity to use (4-8)
+	 * @param conn connectivity to use (4 or 8)
 	 */
 	public final static void floodFillInt(ImageProcessor inputImage, int x, int y,
 			ImageProcessor outputImage, int value, int conn) {
@@ -442,7 +462,7 @@ public class FloodFill {
 	 * @param y y- coordinate of pixel of interest
 	 * @param outputImage output label image (to fill) 
 	 * @param value filling value
-	 * @param conn connectivity to use (4-8)
+	 * @param conn connectivity to use (4 or 8)
 	 */
 	public final static void floodFillFloat(ImageProcessor inputImage, int x, int y,
 			ImageProcessor outputImage, float value, int conn) {
@@ -549,8 +569,14 @@ public class FloodFill {
 	/**
 	 * Replaces all the pixels in the 6-neighborhood of (x,y,z) that have the 
 	 * same values as the pixel in (x,y,z) by the specified value.
-	 * Should work for all integer based images: ByteProcessor, ShortProcessor 
-	 * and ColorProcessor. 
+	 * Should work for all integer based 3D images.
+	 * 
+  	 * @param image the 3D image in which floodfill will be propagated
+	 * @param x the x-coordinate of the flooding source 
+	 * @param y the y-coordinate of the flooding source 
+	 * @param z the z-coordinate of the flooding source
+	 * @param value the new value of the connected component at (x,y,z) 
+
 	 */
 	public final static void floodFillC6(ImageStack image, int x, int y, int z, int value) {
 		// get image size
@@ -655,9 +681,15 @@ public class FloodFill {
 	}
 
 	/**
-	 * Replaces all the pixels in the 4-neighborhood of (x,y) that have the 
-	 * same values as the pixel in (x,y) by the specified floating point value.
+	 * Replaces all the pixels in the 6-neighborhood of (x,y,z) that have the 
+	 * same values as the pixel in (x,y,z) by the specified floating point value.
 	 * Should work the same way for all type of images.
+	 * 
+	 * @param image the 3D image in which floodfill will be propagated
+	 * @param x the x-coordinate of the flooding source 
+	 * @param y the y-coordinate of the flooding source 
+	 * @param z the z-coordinate of the flooding source
+	 * @param value the new value of the connected component at (x,y,z) 
 	 */
 	public final static void floodFillC6(ImageStack image, int x, int y, int z, double value) {
 		// get image size
@@ -761,10 +793,15 @@ public class FloodFill {
 	}
 
 	/**
-	 * Replaces all the pixels in the 8-neighborhood of (x,y) that have the 
-	 * same values as the pixel in (x,y) by the specified value.
-	 * Should work for all integer based images: ByteProcessor, ShortProcessor 
-	 * and ColorProcessor. 
+	 * Replaces all the pixels in the 26-neighborhood of (x,y,z) that have the same
+	 * values as the pixel in (x,y,z) by the specified value. Should work for all
+	 * integer based 3D images.
+	 * 
+	 * @param image the 3D image in which floodfill will be propagated
+	 * @param x the x-coordinate of the flooding source 
+	 * @param y the y-coordinate of the flooding source 
+	 * @param z the z-coordinate of the flooding source
+	 * @param value the new value of the connected component at (x,y,z) 
 	 */
 	public final static void floodFillC26(ImageStack image, int x, int y, int z, int value) {
 		// get image size
@@ -839,7 +876,13 @@ public class FloodFill {
 	/**
 	 * Replaces all the pixels in the 26-neighborhood of (x,y,z) that have the 
 	 * same values as the pixel in (x,y,z) by the specified value.
-	 * This version is dedicated to floating-point stacks. 
+	 * This version is dedicated to floating-point stacks.
+	 *  
+	 * @param image the 3D image in which floodfill will be propagated
+	 * @param x the x-coordinate of the flooding source 
+	 * @param y the y-coordinate of the flooding source 
+	 * @param z the z-coordinate of the flooding source
+	 * @param value the new value of the connected component at (x,y,z) 
 	 */
 	public final static void floodFillC26(ImageStack image, int x, int y, int z, double value) {
 		// get image size

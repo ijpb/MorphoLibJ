@@ -15,7 +15,6 @@
  * <li>GeodesicReconstruction3DHybrid0Gray8 for images with 255 gray levels</li>
  * <li>GeodesicReconstructionByDilation3DScanning and GeodesicReconstructionByErosion3DScanning for 16 bits images</li>
  * </ul> 
- * </p>
  */
 package inra.ijpb.morphology.geodrec;
 
