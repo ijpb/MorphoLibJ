@@ -716,35 +716,219 @@ public class GeometricMeasures3D
 		
 		// Spherical cap type 1, direction [1 0 0]
 		neighbors = new Vector3d[]{vPNN, vPNZ, vPNP, vPZP, vPPP, vPPZ, vPPN, vPZN};
-		weights[0] = GeometryUtils.sphericalVoronoiDomainArea(vPZZ, neighbors) / (2 * Math. PI);
+		weights[0] = GeometryUtils.sphericalVoronoiDomainArea(vPZZ, neighbors) / (2 * Math.PI);
 		
 		// Spherical cap type 1, direction [0 1 0]
 		neighbors = new Vector3d[]{vPPZ, vPPP, vZPP, vNPP, vNPZ, vNPN, vZPN, vPPN};
-		weights[1] = GeometryUtils.sphericalVoronoiDomainArea(vZPZ, neighbors) / (2 * Math. PI);
+		weights[1] = GeometryUtils.sphericalVoronoiDomainArea(vZPZ, neighbors) / (2 * Math.PI);
 
 		// Spherical cap type 1, direction [0 0 1]
 		neighbors = new Vector3d[]{vPZP, vPPP, vZPP, vNPP, vNZP, vNNP, vZNP, vPNP};
-		weights[2] = GeometryUtils.sphericalVoronoiDomainArea(vZZP, neighbors) / (2 * Math. PI);
+		weights[2] = GeometryUtils.sphericalVoronoiDomainArea(vZZP, neighbors) / (2 * Math.PI);
 
 		// Spherical cap type 2, direction [1 1 0]
 		neighbors = new Vector3d[]{vPZZ, vPPP, vZPZ, vPPN};
-		weights[3] = GeometryUtils.sphericalVoronoiDomainArea(vPPZ, neighbors) / (2 * Math. PI);
+		weights[3] = GeometryUtils.sphericalVoronoiDomainArea(vPPZ, neighbors) / (2 * Math.PI);
 
 		// Spherical cap type 2, direction [1 0 1]
 		neighbors = new Vector3d[]{vPZZ, vPPP, vZZP, vPNP};
-		weights[4] = GeometryUtils.sphericalVoronoiDomainArea(vPZP, neighbors) / (2 * Math. PI);
+		weights[4] = GeometryUtils.sphericalVoronoiDomainArea(vPZP, neighbors) / (2 * Math.PI);
 
 		// Spherical cap type 2, direction [0 1 1]
 		neighbors = new Vector3d[]{vZPZ, vNPP, vZZP, vPPP};
-		weights[5] = GeometryUtils.sphericalVoronoiDomainArea(vZPP, neighbors) / (2 * Math. PI);
+		weights[5] = GeometryUtils.sphericalVoronoiDomainArea(vZPP, neighbors) / (2 * Math.PI);
 
 		// Spherical cap type 2, direction [1 0 1]
 		neighbors = new Vector3d[]{vPZP, vZZP, vZPP, vZPZ, vPPZ, vPZZ};
-		weights[6] = GeometryUtils.sphericalVoronoiDomainArea(vPPP, neighbors) / (2 * Math. PI);
+		weights[6] = GeometryUtils.sphericalVoronoiDomainArea(vPPP, neighbors) / (2 * Math.PI);
 		
 		return weights;
 	}
+
 	
+	/**
+	 * Compute Euler numnber for each label given in the "labels" argument,
+	 * using the specified connectivity.
+	 */
+	public static final double[] eulerNumber(ImageStack image, int[] labels,
+			int conn)
+	{    
+        // create associative array to know index of each label
+		HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
+
+        // pre-compute LUT corresponding to resolution and number of directions
+		IJ.showStatus("Compute Euler LUT...");
+		double[] surfLut = computeEulerNumberLut(conn);
+
+		// initialize result
+		int nLabels = labels.length;
+        double[] eulerNumbers = new double[nLabels];
+
+		// size of image
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		int sizeZ = image.getSize();
+
+		// for each configuration of 2x2x2 voxels, we identify the labels
+		ArrayList<Integer> localLabels = new ArrayList<Integer>(8);
+		
+		// iterate on image voxel configurations
+		IJ.showStatus("Iterate over voxel configurations...");
+        for (int z = 0; z < sizeZ - 1; z++) 
+        {
+        	IJ.showProgress(z, sizeZ);
+        	for (int y = 0; y < sizeY - 1; y++) 
+        	{
+        		for (int x = 0; x < sizeX - 1; x++) 
+        		{
+        			// identify labels in current config
+        			localLabels.clear();
+					for (int z2 = z; z2 <= z + 1; z2++) 
+					{
+						for (int y2 = y; y2 <= y + 1; y2++) 
+						{
+							for (int x2 = x; x2 <= x + 1; x2++) 
+							{
+								int label = (int) image.getVoxel(x2, y2, z2);
+								// do not consider background
+								if (label == 0)
+									continue;
+								// keep only one instance of each label
+								if (!localLabels.contains(label))
+									localLabels.add(label);
+                			}
+            			}
+        			}
+
+					// if no label in local configuration contribution is zero
+					if (localLabels.size() == 0) 
+					{
+						continue;
+					}
+					
+					// For each label, compute binary confi
+					for (int label : localLabels) 
+					{
+	        			// Compute index of local configuration
+	        			int index = 0;
+	        			index += image.getVoxel(x, y, z) == label ? 1 : 0;
+	        			index += image.getVoxel(x + 1, y, z) == label ? 2 : 0;
+	        			index += image.getVoxel(x, y + 1, z) == label ? 4 : 0;
+	        			index += image.getVoxel(x + 1, y + 1, z) == label ? 8 : 0;
+	        			index += image.getVoxel(x, y, z + 1) == label ? 16 : 0;
+	        			index += image.getVoxel(x + 1, y, z + 1) == label ? 32 : 0;
+	        			index += image.getVoxel(x, y + 1, z + 1) == label ? 64 : 0;
+	        			index += image.getVoxel(x + 1, y + 1, z + 1) == label ? 128 : 0;
+
+	        			int labelIndex = labelIndices.get(label);
+	        			eulerNumbers[labelIndex] += surfLut[index];
+					}
+        		}
+        	}
+        }
+        
+		IJ.showStatus("");
+    	IJ.showProgress(1);
+        return eulerNumbers;
+	}
+	
+	/**
+	 * Computes the look-up table for measuring Euler number in binary 3D image,
+	 * depending on the connectivity.
+	 * 
+	 * See "3D Images of Material Structures", from J. Ohser and K. Schladitz, 
+	 * Wiley 2009, tables 3.2 p. 52 and 3.3 p. 53.
+	 * 
+	 * @param conn the 3D connectivity, either 6 or 26
+	 * @return a look-up-table with 256 entries 
+	 */
+	private static final double[] computeEulerNumberLut(int conn)
+	{
+		if (conn == 6)
+		{
+			return computeEulerNumberLut_C6();			
+		}
+		else if (conn == 26)
+		{
+			return computeEulerNumberLut_C26();
+		}
+		else
+		{
+			throw new IllegalArgumentException("Connectivity must be either 6 or 26");
+		}
+	}
+
+	/**
+	 * Computes the look-up table for measuring Euler number in binary 3D image,
+	 * for the 6-connectivity.
+	 * 
+	 * @return a look-up-table with 256 entries 
+	 */
+	private static final double[] computeEulerNumberLut_C6()
+	{
+		double[] lut = new double[]{
+			 0,  1,  1,  0,   1,  0,  2, -1,   1,  2,  0, -1,   0, -1, -1,  0, 	//   0 ->  15
+			 1,  0,  2, -1,   2, -1,  3, -2,   2,  1,  1, -2,   1, -2,  0, -1, 	//  16 ->  31
+			 1,  2,  0, -1,   2,  1,  1, -2,   2,  3, -1, -2,   1,  0, -2, -1,	//  32 ->  47
+			 0, -1, -1,  0,   1, -2,  0, -1,   1,  0, -2, -1,   0, -3, -3,  0,  //  48 ->  63
+			 1,  2,  2,  1,   0, -1,  1, -2,   2,  3,  1,  0,  -1, -2, -2, -1,	//  64 ->  79
+			 0, -1,  1, -2,  -1,  0,  0, -1,   1,  0,  0, -3,  -2, -1, -3,  0,	//  80 ->  95
+			 2,  3,  1,  0,   1,  0,  0, -3,   3,  4,  0, -1,   0, -1, -3, -2,	//  96 -> 111
+			-1, -2, -2, -1,  -2, -1, -3,  0,   0, -1, -3, -2,  -3, -2, -6,  1, 	// 112 -> 127
+			
+			 1,  2,  2,  1,   2,  1,  3,  0,   0,  1, -1, -2,  -1, -2, -2, -1,	// 128 -> 145
+			 2,  1,  3,  0,   3,  0,  4, -1,   1,  0,  0, -3,   0, -3, -1, -2,	// 146 -> 159
+			 0,  1, -1, -2,   1,  0,  0, -3,  -1,  0,  0, -1,  -2, -3, -1,  0,	// 160 -> 175
+			-1, -2, -2, -1,   0, -3, -1, -2,  -2, -3, -1,  0,  -3, -6, -2,  1,	// 176 -> 191
+			 0,  1,  1,  0,  -1, -2,  0, -3,  -1,  0, -2, -3,   0, -1, -1,  0,	// 192 -> 207
+			-1, -2,  0, -3,  -2, -1, -1, -2,  -2, -3, -3, -6,  -1,  0, -2,  1,	// 208 -> 223
+			-1,  0, -2, -3,  -2, -3, -3, -6,  -2, -1, -1, -2,  -1, -2,  0,  1,	// 224 -> 239
+			 0, -1, -1,  0,  -1,  0, -2,  1,  -1, -2,  0,  1,   0,  1,  1,  0	// 240 -> 255
+		};
+		
+		for (int i = 0; i < lut.length; i++)
+		{
+			lut[i] /= 8.0;
+		}
+		
+		return lut;
+	}
+
+	/**
+	 * Computes the look-up table for measuring Euler number in binary 3D image,
+	 * for the 26-connectivity.
+	 * 
+	 * @return a look-up-table with 256 entries 
+	 */
+	private static final double[] computeEulerNumberLut_C26()
+	{
+		double[] lut = new double[]{
+			 0,  1,  1,  0,   1,  0, -2, -1,   1,  2,  0, -1,   0, -1, -1,  0, 	//   0 ->  15
+			 1,  0, -2, -1,   2, -1, -1, -2,  -6, -3, -3, -2,  -3, -2,  0, -1, 	//  16 ->  31
+			 1, -2,  0, -1,  -6, -3, -3, -2,  -2, -1, -1, -2,  -3,  0, -2, -1,	//  32 ->  47
+			 0, -1, -1,  0,  -3, -2,  0, -1,  -3,  0, -2, -1,   0, +1, +1,  0,  //  48 ->  63
+			 1, -2, -6, -3,   0, -1, -3, -2,  -2, -1, -3,  0,  -1, -2, -2, -1,	//  64 ->  79
+			 0, -1, -3, -2,  -1,  0,  0, -1,  -3,  0,  0,  1,  -2, -1,  1,  0,	//  80 ->  95
+			-2, -1, -3,  0,  -3,  0,  0,  1,  -1,  4,  0,  3,   0,  3,  1,  2,	//  96 -> 111
+			-1, -2, -2, -1,  -2, -1,  1,  0,   0,  3,  1,  2,   1,  2,  2,  1, 	// 112 -> 127
+			
+			 1, -6, -2, -3,  -2, -3, -1,  0,   0, -3, -1, -2,  -1, -2, -2, -1,	// 128 -> 143
+			-2, -3, -1,  0,  -1,  0,  4,  3,  -3,  0,  0,  1,   0,  1,  3,  2,	// 144 -> 159
+			 0, -3, -1, -2,  -3,  0,  0,  1,  -1,  0,  0, -1,  -2,  1, -1,  0,	// 160 -> 175
+			-1, -2, -2, -1,   0,  1,  3,  2,  -2,  1, -1,  0,   1,  2,  2,  1,	// 176 -> 191
+			 0, -3, -3,  0,  -1, -2,  0,  1,  -1,  0, -2,  1,   0, -1, -1,  0,	// 192 -> 207
+			-1, -2,  0,  1,  -2, -1,  3,  2,  -2,  1,  1,  2,  -1,  0,  2,  1,	// 208 -> 223
+			-1,  0, -2,  1,  -2,  1,  1,  2,  -2,  3, -1,  2,  -1,  2,  0,  1,	// 224 -> 239
+			 0, -1, -1,  0,  -1,  0,  2,  1,  -1,  2,  0,  1,   0,  1,  1,  0	// 240 -> 255
+		};
+		
+		for (int i = 0; i < lut.length; i++)
+		{
+			lut[i] /= 8.0;
+		}
+		
+		return lut;
+	}
 
 	/**
 	 * Compute centroid of each label in input stack and returns the result

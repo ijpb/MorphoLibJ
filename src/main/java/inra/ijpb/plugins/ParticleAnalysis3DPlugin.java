@@ -32,10 +32,19 @@ public class ParticleAnalysis3DPlugin implements PlugIn
     // ====================================================
     // Global Constants
     
+	/**
+	 * The list of connectivity names.
+	 */
+	private final static String[] connectivityNames = {
+		"C6", "C26"
+	};
+	
+	private final static int[] connectivityValues = new int[]{6, 26};
+	
     /**
      * List of available numbers of directions
      */
-    public final static String[] surfaceAreaMethods = {
+    private final static String[] surfaceAreaMethods = {
             "Crofton  (3 dirs.)", 
             "Crofton (13 dirs.)" 
     }; 
@@ -43,11 +52,11 @@ public class ParticleAnalysis3DPlugin implements PlugIn
     /**
      *  Array of weights, in the same order than the array of names.
      */
-    public final static int[] dirNumbers = {
+    private final static int[] dirNumbers = {
         3, 13
     };
     
-
+    
     // ====================================================
     // Class variables
     
@@ -60,13 +69,15 @@ public class ParticleAnalysis3DPlugin implements PlugIn
     
 	boolean computeVolume 		= true;
 	boolean computeSurface 		= true;
+	boolean computeEulerNumber	= true;
 	boolean computeSphericity 	= true;
 	boolean computeEllipsoid 	= true;
 	boolean computeElongations 	= true;
 	boolean computeInscribedBall = true;
 	
     String surfaceAreaMethod = surfaceAreaMethods[1];
-    
+    int surfaceAreaDirs = 3;
+    int connectivity = 6;
     
     // ====================================================
     // Calling functions 
@@ -90,11 +101,13 @@ public class ParticleAnalysis3DPlugin implements PlugIn
         gd.addCheckbox("Volume", true);
         gd.addCheckbox("Surface Area", true);
         gd.addCheckbox("Sphericity", true);
+        gd.addCheckbox("Euler Number", true);
         gd.addCheckbox("Inertia Ellipsoid", true);
         gd.addCheckbox("Ellipsoid Elongation", true);
         gd.addCheckbox("Max. Inscribed Ball", true);
         gd.addMessage("");
         gd.addChoice("Surface area method:", surfaceAreaMethods, surfaceAreaMethods[1]);
+        gd.addChoice("Euler Connectivity:", connectivityNames, connectivityNames[1]);
         gd.showDialog();
         
         // If cancel was clicked, do nothing
@@ -105,6 +118,7 @@ public class ParticleAnalysis3DPlugin implements PlugIn
         computeVolume 		= gd.getNextBoolean();
         computeSurface 		= gd.getNextBoolean();
         computeSphericity 	= gd.getNextBoolean() & computeVolume & computeSurface;
+        computeEulerNumber	= gd.getNextBoolean();
         computeEllipsoid 	= gd.getNextBoolean();
         computeElongations 	= gd.getNextBoolean() & computeEllipsoid;
         computeInscribedBall = gd.getNextBoolean();
@@ -112,7 +126,8 @@ public class ParticleAnalysis3DPlugin implements PlugIn
         
         // extract analysis options
 //        int nDirsIndex = gd.getNextChoiceIndex();
-        surfaceAreaMethod = gd.getNextChoice();
+        surfaceAreaDirs = dirNumbers[gd.getNextChoiceIndex()];
+        connectivity = connectivityValues[gd.getNextChoiceIndex()];
         
         // Execute the plugin
         ResultsTable table = computeFeatures(imagePlus);
@@ -124,6 +139,10 @@ public class ParticleAnalysis3DPlugin implements PlugIn
 		table.show(tableName);
     }
     
+    /**
+     * Computes features from an ImagePlus object. 
+     * Spatial resolution is read from image Calibration.
+     */
     public ResultsTable computeFeatures(ImagePlus imagePlus)
     {
     	// Check validity of parameters
@@ -137,11 +156,14 @@ public class ParticleAnalysis3DPlugin implements PlugIn
         return computeFeatures(image, calib);
     }
     
+    /**
+     * Computes features from an ImageStack object, specifying the calibration. 
+     */
     public ResultsTable computeFeatures(ImageStack image, Calibration calib)
     {
     	// Extract spatial calibration
         double[] resol = new double[]{1, 1, 1};
-        if (calib.scaled()) 
+        if (calib != null && calib.scaled()) 
         {
         	resol[0] = calib.pixelWidth;
         	resol[1] = calib.pixelHeight;
@@ -151,6 +173,7 @@ public class ParticleAnalysis3DPlugin implements PlugIn
         // declare arrays for results
         double[] volumes = null;
         double[] surfaces = null;
+        double[] eulerNumbers = null;
         double[] sphericities = null;
         double[][] ellipsoids = null;
         double[][] elongations = null;
@@ -168,8 +191,13 @@ public class ParticleAnalysis3DPlugin implements PlugIn
         }
         if (computeSurface)
         {
-        	int nDirs = parseDirectionNumber(surfaceAreaMethod);
-        	surfaces = GeometricMeasures3D.surfaceAreaCrofton(image, labels, resol, nDirs);
+//        	int nDirs = parseDirectionNumber(surfaceAreaMethod);
+        	surfaces = GeometricMeasures3D.surfaceAreaCrofton(image, labels, resol, surfaceAreaDirs);
+        }
+        if (computeEulerNumber)
+        {
+        	IJ.log("Compute Euler Number with copnnectivity " + connectivity);
+        	eulerNumbers = GeometricMeasures3D.eulerNumber(image, labels, connectivity);
         }
         if (computeSphericity)
         {
@@ -207,6 +235,8 @@ public class ParticleAnalysis3DPlugin implements PlugIn
         		table.addValue("SurfaceArea", surfaces[i]);
         	if (computeSphericity)
         		table.addValue("Sphericity", sphericities[i]);
+        	if (computeEulerNumber)
+        		table.addValue("EulerNumber", eulerNumbers[i]);
 
         	// inertia ellipsoids
         	if (computeEllipsoid)
@@ -241,23 +271,5 @@ public class ParticleAnalysis3DPlugin implements PlugIn
         }
         
         return table;
-    }
-    
-    private int parseDirectionNumber(String surfaceAreaMethodName)
-    {
-    	if (surfaceAreaMethods[0].equals(surfaceAreaMethodName))
-    	{
-    		return 3;
-    	}
-    	else if (surfaceAreaMethods[1].equals(surfaceAreaMethodName))
-    	{
-    		return 13;
-    	}
-    	else
-    	{
-			throw new RuntimeException(
-					"Could not recognize method for surface area: "
-							+ surfaceAreaMethodName);
-    	}
     }
 }
