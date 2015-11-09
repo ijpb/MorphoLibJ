@@ -46,25 +46,7 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
     
     
 	<build>
-		
-		<resources>
-			<resource>
-				<directory>${basedir}/src/main/resources</directory>
-			</resource>
-			<resource>
-				<directory>${project.build.sourceDirectory}</directory>
-			</resource>
-		</resources>
-		
-		<testResources>
-			<testResource>
-				<directory>${basedir}/src/test/resources</directory>
-			</testResource>
-			<testResource>
-				<directory>${project.build.testSourceDirectory}</directory>
-			</testResource>
-		</testResources>
-		
+	
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -128,7 +110,7 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 		<developer>
 			<id>dlegland</id>
 			<name>David Legland</name>
-			<email>david.legland@grignon.inra.fr</email>
+			<email>david.legland@nantes.inra.fr</email>
 			<organization>INRA</organization>
 			<organizationUrl>http://www-ijpb.versailles.inra.fr/en/bc/equipes/modelisation-imagerie/</organizationUrl>
 			<roles>
