@@ -18,8 +18,22 @@ import inra.ijpb.algo.AlgoEvent;
  * moves. Weights equal to (5,7,11) usually give nice results.
  * </p>
  * 
- * @author David Legland
+ * <p>
+ * Example of use:
+ * <pre><code>
+ *	float[] floatWeights = ChamferWeights.CHESSKNIGHT.getFloatWeights();
+ *	boolean normalize = true;
+ *	DistanceTransform dt = new DistanceTransform5x5Float(floatWeights, normalize);
+ *	ImageProcessor result = dt.distanceMap(inputImage);
+ *	// or:
+ *	ImagePlus resultPlus = BinaryImages.distanceMap(imagePlus, floatWeights, normalize);
+ * </code></pre>
  * 
+ * @see inra.ijpb.binary.BinaryImages#distanceMap(ImageProcessor, float[], boolean)
+ * @see inra.ijpb.binary.distmap.DistanceTransform5x5Short
+ * @see inra.ijpb.binary.distmap.DistanceTransform
+ * 
+ * @author David Legland
  */
 public class DistanceTransform5x5Float extends AlgoStub implements DistanceTransform
 {

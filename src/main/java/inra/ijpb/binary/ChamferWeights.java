@@ -17,14 +17,13 @@ package inra.ijpb.binary;
  * <p>
  * Example of use:
  * <pre><code>
- * short[] floatWeights = ChamferWeights.BORGEFORS.getShortWeights();
- * boolean normalize = true;
- * DistanceTransform dt = new DistanceTransform3x3Float(floatWeights, normalize);
- * ImageProcessor result = dt.distanceMap(inputImage);
- * // or:
- * ImagePlus resultPlus = BinaryImages.distanceMap(imagePlus, floatWeights, normalize);
+ *	short[] shortWeights = ChamferWeights.CHESSKNIGHT.getShortWeights();
+ *	boolean normalize = true;
+ *	DistanceTransform dt = new DistanceTransform5x5Short(shortWeights, normalize);
+ *	ImageProcessor result = dt.distanceMap(inputImage);
+ *	// or:
+ *	ImagePlus resultPlus = BinaryImages.distanceMap(imagePlus, shortWeights, normalize);
  * </code></pre>
- *  
  * 
  * @see inra.ijpb.binary.BinaryImages#distanceMap(ImageProcessor, short[], boolean)
  * @see inra.ijpb.binary.BinaryImages#distanceMap(ImageProcessor, float[], boolean)

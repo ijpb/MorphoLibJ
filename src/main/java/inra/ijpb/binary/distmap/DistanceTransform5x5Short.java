@@ -7,7 +7,7 @@ import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.algo.AlgoEvent;
 
 /**
- * <p>Computes Chamfer distances in a 5x5 neighborhood using a FloatProcessor 
+ * <p>Computes Chamfer distances in a 5x5 neighborhood using a ShortProcessor 
  * object for storing result.</p>
  * 
  * <p>Uses 5x5 chamfer map, with two passes (one forward, one backward).
@@ -15,8 +15,22 @@ import inra.ijpb.algo.AlgoEvent;
  * "chess-knight" moves. Weights equal to (5,7,11) usually give nice results.
  * </p>
  * 
- * @author David Legland
+ * <p>
+ * Example of use:
+ * <pre><code>
+ *	short[] shortWeights = ChamferWeights.CHESSKNIGHT.getShortWeights();
+ *	boolean normalize = true;
+ *	DistanceTransform dt = new DistanceTransform5x5Short(shortWeights, normalize);
+ *	ImageProcessor result = dt.distanceMap(inputImage);
+ *	// or:
+ *	ImagePlus resultPlus = BinaryImages.distanceMap(imagePlus, shortWeights, normalize);
+ * </code></pre>
  * 
+ * @see inra.ijpb.binary.BinaryImages#distanceMap(ImageProcessor, short[], boolean)
+ * @see inra.ijpb.binary.distmap.DistanceTransform5x5Float
+ * @see inra.ijpb.binary.distmap.DistanceTransform
+ * 
+ * @author David Legland
  */
 public class DistanceTransform5x5Short extends AlgoStub implements DistanceTransform 
 {

@@ -10,8 +10,22 @@ import inra.ijpb.algo.AlgoStub;
  * Computes Chamfer distances in a 3x3 neighborhood using a float array
  * for storing result.
  * 
- * @author David Legland
+ * <p>
+ * Example of use:
+ * <pre><code>
+ *	float[] floatWeights = ChamferWeights.BORGEFORS.getFloatWeights();
+ *	boolean normalize = true;
+ *	DistanceTransform dt = new DistanceTransform3x3Float(floatWeights, normalize);
+ *	ImageProcessor result = dt.distanceMap(inputImage);
+ *	// or:
+ *	ImagePlus resultPlus = BinaryImages.distanceMap(imagePlus, floatWeights, normalize);
+ * </code></pre>
  * 
+ * @see inra.ijpb.binary.BinaryImages#distanceMap(ImageProcessor, short[], boolean)
+ * @see inra.ijpb.binary.distmap.DistanceTransform
+ * @see inra.ijpb.binary.distmap.DistanceTransform3x3Short
+ * 
+ * @author David Legland
  */
 public class DistanceTransform3x3Float extends AlgoStub implements
 		DistanceTransform 

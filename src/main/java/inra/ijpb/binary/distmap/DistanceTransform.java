@@ -8,6 +8,20 @@ import inra.ijpb.algo.Algo;
 
 /**
  * Interface for computing distance maps from binary images.
+ * 
+ * <p>
+ * Example of use:
+ * <pre><code>
+ *	short[] shortWeights = ChamferWeights.CHESSKNIGHT.getShortWeights();
+ *	boolean normalize = true;
+ *	DistanceTransform dt = new DistanceTransform5x5Short(shortWeights, normalize);
+ *	ImageProcessor result = dt.distanceMap(inputImage);
+ *	// or:
+ *	ImagePlus resultPlus = BinaryImages.distanceMap(imagePlus, shortWeights, normalize);
+ * </code></pre>
+ * 
+ * @see inra.ijpb.binary.BinaryImages#distanceMap(ImageProcessor, short[], boolean)
+ * @see inra.ijpb.binary.BinaryImages#distanceMap(ImageProcessor, float[], boolean)
  */
 public interface DistanceTransform extends Algo {
 	/**

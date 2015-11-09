@@ -10,8 +10,21 @@ import inra.ijpb.algo.AlgoEvent;
  * Computes Chamfer distances in a 3x3 neighborhood using ShortProcessor object
  * for storing result.
  * 
- * @author David Legland
+ * <p>
+ * Example of use: <pre><code>
+ *	short[] shortWeights = ChamferWeights.BORGEFORS.getShortWeights();
+ *	boolean normalize = true;
+ *	DistanceTransform dt = new DistanceTransform3x3Short(shortWeights, normalize);
+ *	ImageProcessor result = dt.distanceMap(inputImage);
+ *	// or:
+ *	ImagePlus resultPlus = BinaryImages.distanceMap(imagePlus, shortWeights, normalize);
+ * </code></pre>
  * 
+ * @see inra.ijpb.binary.BinaryImages#distanceMap(ImageProcessor, short[], boolean)
+ * @see inra.ijpb.binary.distmap.DistanceTransform
+ * @see inra.ijpb.binary.distmap.DistanceTransform3x3Float
+ * 
+ * @author David Legland
  */
 public class DistanceTransform3x3Short extends AlgoStub implements DistanceTransform 
 {
