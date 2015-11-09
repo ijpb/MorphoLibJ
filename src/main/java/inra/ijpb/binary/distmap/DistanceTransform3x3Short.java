@@ -11,14 +11,15 @@ import inra.ijpb.algo.AlgoEvent;
  * for storing result.
  * 
  * <p>
- * Example of use: <pre><code>
+ * Example of use: 
+ *<pre>{@code
  *	short[] shortWeights = ChamferWeights.BORGEFORS.getShortWeights();
  *	boolean normalize = true;
  *	DistanceTransform dt = new DistanceTransform3x3Short(shortWeights, normalize);
  *	ImageProcessor result = dt.distanceMap(inputImage);
  *	// or:
  *	ImagePlus resultPlus = BinaryImages.distanceMap(imagePlus, shortWeights, normalize);
- * </code></pre>
+ *}</pre>
  * 
  * @see inra.ijpb.binary.BinaryImages#distanceMap(ImageProcessor, short[], boolean)
  * @see inra.ijpb.binary.distmap.DistanceTransform
@@ -30,33 +31,27 @@ public class DistanceTransform3x3Short extends AlgoStub implements DistanceTrans
 {
 	private final static int DEFAULT_MASK_LABEL = 255;
 
-	short[] weights;
+	private short[] weights;
 
-	int width;
-	int height;
+	private int width;
+	private int height;
 
-	ImageProcessor maskProc;
+	private ImageProcessor maskProc;
 
 	int maskLabel = DEFAULT_MASK_LABEL;
-
-	/**
-	 * The value assigned to result pixels that do not belong to the input
-	 * image. Default is short.MAX_VALUE.
-	 */
-	short backgroundValue = Short.MAX_VALUE;
 
 	/**
 	 * Flag for dividing final distance map by the value first weight. This
 	 * results in distance map values closer to euclidean, but with non integer
 	 * values.
 	 */
-	boolean normalizeMap = true;
+	private boolean normalizeMap = true;
 
 	/**
 	 * The inner buffer that will store the distance map. The content of the
 	 * buffer is updated during forward and backward iterations.
 	 */
-	ShortProcessor buffer;
+	private ShortProcessor buffer;
 
 	/**
 	 * Default constructor that specifies the chamfer weights.
@@ -86,36 +81,25 @@ public class DistanceTransform3x3Short extends AlgoStub implements DistanceTrans
 	}
 
 	/**
-	 * @return the backgroundValue
-	 */
-	public short getBackgroundValue()
-	{
-		return backgroundValue;
-	}
-
-	/**
-	 * @param backgroundValue
-	 *            the backgroundValue to set
-	 */
-	public void setBackgroundValue(short backgroundValue) 
-	{
-		this.backgroundValue = backgroundValue;
-	}
-
-	/**
 	 * Computes the distance map of the distance to the nearest boundary pixel.
 	 * The function returns a new short processor the same size as the input,
 	 * with values greater or equal to zero.
+	 * 
+	 * @param image a binary image with white pixels (255) as foreground
+	 * @return a new instance of ShortProcessor containing: <ul>
+	 * <li> 0 for each background pixel </li>
+	 * <li> the distance to the nearest background pixel otherwise</li>
+	 * </ul>
 	 */
-	public ShortProcessor distanceMap(ImageProcessor mask) 
+	public ShortProcessor distanceMap(ImageProcessor image) 
 	{
 
 		// size of image
-		width = mask.getWidth();
-		height = mask.getHeight();
+		width = image.getWidth();
+		height = image.getHeight();
 
 		// update mask
-		this.maskProc = mask;
+		this.maskProc = image;
 
 		// create new empty image, and fill it with black
 		buffer = new ShortProcessor(width, height);
@@ -129,8 +113,8 @@ public class DistanceTransform3x3Short extends AlgoStub implements DistanceTrans
 		{
 			for (int j = 0; j < height; j++) 
 			{
-				int val = mask.get(i, j) & 0x00ff;
-				buffer.set(i, j, val == 0 ? 0 : backgroundValue);
+				int val = image.get(i, j) & 0x00ff;
+				buffer.set(i, j, val == 0 ? 0 : Short.MAX_VALUE);
 			}
 		}
 

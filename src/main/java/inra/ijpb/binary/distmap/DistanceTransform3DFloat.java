@@ -14,35 +14,28 @@ public class DistanceTransform3DFloat implements DistanceTransform3D
 {
 	private final static int DEFAULT_MASK_LABEL = 255;
 
-	float[] weights;
+	private float[] weights;
 
-	int width;
-	int height;
-	int depth;
+	private int width;
+	private int height;
+	private int depth;
 
-	ImageStack maskProc;
+	private ImageStack maskProc;
 
 	int maskLabel = DEFAULT_MASK_LABEL;
 
-	/** 
-	 * The value assigned to result pixels that do not belong to the input
-	 * image.
-	 * Default is short.MAX_VALUE.
-	 */
-	float backgroundValue = Float.MAX_VALUE;
-	
 	/**
 	 * Flag for dividing final distance map by the value first weight. 
 	 * This results in distance map values closer to euclidean, but with 
 	 * non integer values. 
 	 */
-	boolean normalizeMap = true;
+	private boolean normalizeMap = true;
 
 	/**
 	 * The inner buffer that will store the distance map. The content
 	 * of the buffer is updated during forward and backward iterations.
 	 */
-	ImageStack buffer;
+	private ImageStack buffer;
 	
 	/**
 	 * Default constructor that specifies the chamfer weights.
@@ -68,35 +61,25 @@ public class DistanceTransform3DFloat implements DistanceTransform3D
 	}
 
 	/**
-	 * @return the backgroundValue
+	 * Computes the distance map from a 3D binary image. 
+	 * Distance is computed for each foreground (white) pixel, as the 
+	 * chamfer distance to the nearest background (black) pixel.
+	 * 
+	 * @param image a 3D binary image with white pixels (255) as foreground
+	 * @return a new 3D image containing: <ul>
+	 * <li> 0 for each background pixel </li>
+	 * <li> the distance to the nearest background pixel otherwise</li>
+	 * </ul>
 	 */
-	public float getBackgroundValue() 
-	{
-		return backgroundValue;
-	}
-
-	/**
-	 * @param backgroundValue the backgroundValue to set
-	 */
-	public void setBackgroundValue(float backgroundValue) 
-	{
-		this.backgroundValue = backgroundValue;
-	}
-
-	/**
-	 * Computes the distance map of the distance to the nearest boundary pixel.
-	 * The function returns a new short processor the same size as the input,
-	 * with values greater or equal to zero. 
-	 */
-	public ImageStack distanceMap(ImageStack mask) 
+	public ImageStack distanceMap(ImageStack image) 
 	{
 		// size of image
-		width = mask.getWidth();
-		height = mask.getHeight();
-		depth = mask.getSize();
+		width = image.getWidth();
+		height = image.getHeight();
+		depth = image.getSize();
 		
 		// update mask
-		this.maskProc = mask;
+		this.maskProc = image;
 
 		// create new empty image, and fill it with black
 		buffer = ImageStack.create(width, height, depth, 32);
@@ -108,8 +91,8 @@ public class DistanceTransform3DFloat implements DistanceTransform3D
 			{
 				for (int k = 0; k < depth; k++) 
 				{
-					double val = mask.getVoxel(i, j, k);
-					buffer.setVoxel(i, j, k, val == 0 ? 0 : backgroundValue);
+					double val = image.getVoxel(i, j, k);
+					buffer.setVoxel(i, j, k, val == 0 ? 0 : Float.MAX_VALUE);
 				}
 			}
 		}
