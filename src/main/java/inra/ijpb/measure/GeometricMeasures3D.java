@@ -252,6 +252,7 @@ public class GeometricMeasures3D
 		int[] labels = LabelImages.findAllLabels(labelImage);
 		int nbLabels = labels.length;
 
+		// Compute surface area of ach label
 		double[] surfaces = surfaceAreaCrofton(labelImage, labels, resol, nDirs);
 
 		// Create data table
@@ -272,84 +273,15 @@ public class GeometricMeasures3D
 	 */
 	public final static double[] surfaceAreaCrofton(ImageStack image, int[] labels, 
 			double[] resol, int nDirs)
-	{    
-        // create associative array to know index of each label
-		HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
-
-        // pre-compute LUT corresponding to resolution and number of directions
+	{
+		// pre-compute LUT corresponding to resolution and number of directions
 		IJ.showStatus("Compute LUT...");
 		double[] surfLut = computeSurfaceAreaLut(resol, nDirs);
 
-		// initialize result
-		int nLabels = labels.length;
-        double[] surfaces = new double[nLabels];
-
-		// size of image
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-		int sizeZ = image.getSize();
-
-		// for each configuration of 2x2x2 voxels, we identify the labels
-		ArrayList<Integer> localLabels = new ArrayList<Integer>(8);
-		
-		// iterate on image voxel configurations
-		IJ.showStatus("Measure surface...");
-        for (int z = 0; z < sizeZ - 1; z++) 
-        {
-        	IJ.showProgress(z, sizeZ);
-        	for (int y = 0; y < sizeY - 1; y++) 
-        	{
-        		for (int x = 0; x < sizeX - 1; x++) 
-        		{
-        			// identify labels in current config
-        			localLabels.clear();
-					for (int z2 = z; z2 <= z + 1; z2++) 
-					{
-						for (int y2 = y; y2 <= y + 1; y2++) 
-						{
-							for (int x2 = x; x2 <= x + 1; x2++) 
-							{
-								int label = (int) image.getVoxel(x2, y2, z2);
-								// do not consider background
-								if (label == 0)
-									continue;
-								// keep only one instance of each label
-								if (!localLabels.contains(label))
-									localLabels.add(label);
-                			}
-            			}
-        			}
-
-					// if no label in local configuration contribution is zero
-					if (localLabels.size() == 0) 
-					{
-						continue;
-					}
-					
-					// For each label, compute binary confi
-					for (int label : localLabels) 
-					{
-	        			// Compute index of local configuration
-	        			int index = 0;
-	        			index += image.getVoxel(x, y, z) == label ? 1 : 0;
-	        			index += image.getVoxel(x + 1, y, z) == label ? 2 : 0;
-	        			index += image.getVoxel(x, y + 1, z) == label ? 4 : 0;
-	        			index += image.getVoxel(x + 1, y + 1, z) == label ? 8 : 0;
-	        			index += image.getVoxel(x, y, z + 1) == label ? 16 : 0;
-	        			index += image.getVoxel(x + 1, y, z + 1) == label ? 32 : 0;
-	        			index += image.getVoxel(x, y + 1, z + 1) == label ? 64 : 0;
-	        			index += image.getVoxel(x + 1, y + 1, z + 1) == label ? 128 : 0;
-
-	        			int labelIndex = labelIndices.get(label);
-	        			surfaces[labelIndex] += surfLut[index];
-					}
-        		}
-        	}
-        }
-        
-		IJ.showStatus("");
-    	IJ.showProgress(1);
-        return surfaces;
+		// Compute index of each 2x2x2 binary voxel configuration, associate LUT
+		// contribution, and sum up for each label
+		IJ.showStatus("Surface Area...");
+        return sumOfLutContributions(image, labels, surfLut);
 	}
 	
 	/**
@@ -753,94 +685,26 @@ public class GeometricMeasures3D
 	public static final double[] eulerNumber(ImageStack image, int[] labels,
 			int conn)
 	{    
-        // create associative array to know index of each label
-		HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
-
         // pre-compute LUT corresponding to resolution and number of directions
-		IJ.showStatus("Compute Euler LUT...");
-		double[] surfLut = computeEulerNumberLut(conn);
+		double[] eulerLut = computeEulerNumberLut(conn);
 
-		// initialize result
-		int nLabels = labels.length;
-        double[] eulerNumbers = new double[nLabels];
-
-		// size of image
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-		int sizeZ = image.getSize();
-
-		// for each configuration of 2x2x2 voxels, we identify the labels
-		ArrayList<Integer> localLabels = new ArrayList<Integer>(8);
-		
-		// iterate on image voxel configurations
-		IJ.showStatus("Iterate over voxel configurations...");
-        for (int z = 0; z < sizeZ - 1; z++) 
-        {
-        	IJ.showProgress(z, sizeZ);
-        	for (int y = 0; y < sizeY - 1; y++) 
-        	{
-        		for (int x = 0; x < sizeX - 1; x++) 
-        		{
-        			// identify labels in current config
-        			localLabels.clear();
-					for (int z2 = z; z2 <= z + 1; z2++) 
-					{
-						for (int y2 = y; y2 <= y + 1; y2++) 
-						{
-							for (int x2 = x; x2 <= x + 1; x2++) 
-							{
-								int label = (int) image.getVoxel(x2, y2, z2);
-								// do not consider background
-								if (label == 0)
-									continue;
-								// keep only one instance of each label
-								if (!localLabels.contains(label))
-									localLabels.add(label);
-                			}
-            			}
-        			}
-
-					// if no label in local configuration contribution is zero
-					if (localLabels.size() == 0) 
-					{
-						continue;
-					}
-					
-					// For each label, compute binary confi
-					for (int label : localLabels) 
-					{
-	        			// Compute index of local configuration
-	        			int index = 0;
-	        			index += image.getVoxel(x, y, z) == label ? 1 : 0;
-	        			index += image.getVoxel(x + 1, y, z) == label ? 2 : 0;
-	        			index += image.getVoxel(x, y + 1, z) == label ? 4 : 0;
-	        			index += image.getVoxel(x + 1, y + 1, z) == label ? 8 : 0;
-	        			index += image.getVoxel(x, y, z + 1) == label ? 16 : 0;
-	        			index += image.getVoxel(x + 1, y, z + 1) == label ? 32 : 0;
-	        			index += image.getVoxel(x, y + 1, z + 1) == label ? 64 : 0;
-	        			index += image.getVoxel(x + 1, y + 1, z + 1) == label ? 128 : 0;
-
-	        			int labelIndex = labelIndices.get(label);
-	        			eulerNumbers[labelIndex] += surfLut[index];
-					}
-        		}
-        	}
-        }
-        
-		IJ.showStatus("");
-    	IJ.showProgress(1);
-        return eulerNumbers;
+		// Compute index of each 2x2x2 binary voxel configuration, associate LUT
+		// contribution, and sum up for each label
+		IJ.showStatus("Euler Number...");
+		return sumOfLutContributions(image, labels, eulerLut);
 	}
 	
 	/**
 	 * Computes the look-up table for measuring Euler number in binary 3D image,
-	 * depending on the connectivity.
+	 * depending on the connectivity. The input structure should not touch image
+	 * border.
 	 * 
-	 * See "3D Images of Material Structures", from J. Ohser and K. Schladitz, 
+	 * See "3D Images of Material Structures", from J. Ohser and K. Schladitz,
 	 * Wiley 2009, tables 3.2 p. 52 and 3.3 p. 53.
 	 * 
-	 * @param conn the 3D connectivity, either 6 or 26
-	 * @return a look-up-table with 256 entries 
+	 * @param conn
+	 *            the 3D connectivity, either 6 or 26
+	 * @return a look-up-table with 256 entries
 	 */
 	private static final double[] computeEulerNumberLut(int conn)
 	{
@@ -930,6 +794,99 @@ public class GeometricMeasures3D
 		return lut;
 	}
 
+	/**
+	 * Applies a look-up-table for each of the 2x2x2 voxel configuration, and
+	 * returns the sum of contribution for each label.
+	 * 
+	 * @param image
+	 *            the input 3D image of labels
+	 * @param labels
+	 *            the set of lables to process
+	 * @param lut
+	 *            the look-up-table containing the measure contribution for each
+	 *            of the 256 configuration of 8 voxels
+	 * @return the sum of measure contribution for each label
+	 * 
+	 * @see #surfaceAreaCrofton(ImageStack, int[], double[], int)
+	 * @see #eulerNumber(ImageStack, int[], int)
+	 */
+	private final static double[] sumOfLutContributions(ImageStack image, int[] labels, 
+			double[] lut)
+	{    
+        // create associative array to know index of each label
+		HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
+
+       // initialize result
+		int nLabels = labels.length;
+        double[] surfaces = new double[nLabels];
+
+		// size of image
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		int sizeZ = image.getSize();
+
+		// for each configuration of 2x2x2 voxels, we identify the labels
+		ArrayList<Integer> localLabels = new ArrayList<Integer>(8);
+		
+		// iterate on image voxel configurations
+        for (int z = 0; z < sizeZ - 1; z++) 
+        {
+        	IJ.showProgress(z, sizeZ);
+        	for (int y = 0; y < sizeY - 1; y++) 
+        	{
+        		for (int x = 0; x < sizeX - 1; x++) 
+        		{
+        			// identify labels in current config
+        			localLabels.clear();
+					for (int z2 = z; z2 <= z + 1; z2++) 
+					{
+						for (int y2 = y; y2 <= y + 1; y2++) 
+						{
+							for (int x2 = x; x2 <= x + 1; x2++) 
+							{
+								int label = (int) image.getVoxel(x2, y2, z2);
+								// do not consider background
+								if (label == 0)
+									continue;
+								// keep only one instance of each label
+								if (!localLabels.contains(label))
+									localLabels.add(label);
+                			}
+            			}
+        			}
+
+					// if no label in local configuration contribution is zero
+					if (localLabels.size() == 0) 
+					{
+						continue;
+					}
+					
+					// For each label, compute binary confi
+					for (int label : localLabels) 
+					{
+	        			// Compute index of local configuration
+	        			int index = 0;
+	        			index += image.getVoxel(x, y, z) 			== label ? 1 : 0;
+	        			index += image.getVoxel(x + 1, y, z) 		== label ? 2 : 0;
+	        			index += image.getVoxel(x, y + 1, z) 		== label ? 4 : 0;
+	        			index += image.getVoxel(x + 1, y + 1, z) 	== label ? 8 : 0;
+	        			index += image.getVoxel(x, y, z + 1) 		== label ? 16 : 0;
+	        			index += image.getVoxel(x + 1, y, z + 1) 	== label ? 32 : 0;
+	        			index += image.getVoxel(x, y + 1, z + 1) 	== label ? 64 : 0;
+	        			index += image.getVoxel(x + 1, y + 1, z + 1) == label ? 128 : 0;
+
+	        			int labelIndex = labelIndices.get(label);
+	        			surfaces[labelIndex] += lut[index];
+					}
+        		}
+        	}
+        }
+        
+		IJ.showStatus("");
+    	IJ.showProgress(1);
+        return surfaces;
+	}
+	
 	/**
 	 * Compute centroid of each label in input stack and returns the result
 	 * as an array of double for each label.

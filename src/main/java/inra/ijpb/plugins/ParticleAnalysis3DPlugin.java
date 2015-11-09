@@ -125,7 +125,6 @@ public class ParticleAnalysis3DPlugin implements PlugIn
         
         
         // extract analysis options
-//        int nDirsIndex = gd.getNextChoiceIndex();
         surfaceAreaDirs = dirNumbers[gd.getNextChoiceIndex()];
         connectivity = connectivityValues[gd.getNextChoiceIndex()];
         
@@ -191,12 +190,10 @@ public class ParticleAnalysis3DPlugin implements PlugIn
         }
         if (computeSurface)
         {
-//        	int nDirs = parseDirectionNumber(surfaceAreaMethod);
         	surfaces = GeometricMeasures3D.surfaceAreaCrofton(image, labels, resol, surfaceAreaDirs);
         }
         if (computeEulerNumber)
         {
-        	IJ.log("Compute Euler Number with copnnectivity " + connectivity);
         	eulerNumbers = GeometricMeasures3D.eulerNumber(image, labels, connectivity);
         }
         if (computeSphericity)
