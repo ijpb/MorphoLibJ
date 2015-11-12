@@ -1,6 +1,7 @@
 package inra.ijpb.measure;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
@@ -57,6 +58,32 @@ public class GeometricMeasures3DTest {
 		assertEquals(27, table.getCounter());
 		for (int i = 0; i < 27; i++)
 			assertEquals(exp, table.getValueAsDouble(0, i), 2.);
+	}
+
+	@Test
+	public final void testEulerNumber_C6() 
+	{
+		ImageStack image = createEulerImage();
+		int[] labels = {1, 2, 3, 4};
+		double[] euler = GeometricMeasures3D.eulerNumber(image, labels, 6);
+		
+		assertEquals(1, euler[0], .1);
+		assertEquals(8, euler[1], .1);
+		assertEquals(0, euler[2], .1);
+		assertEquals(2, euler[3], .1);
+	}
+
+	@Test
+	public final void testEulerNumber_C26() 
+	{
+		ImageStack image = createEulerImage();
+		int[] labels = {1, 2, 3, 4};
+		double[] euler = GeometricMeasures3D.eulerNumber(image, labels, 26);
+		
+		assertEquals(1, euler[0], .1);
+		assertEquals(8, euler[1], .1);
+		assertEquals(0, euler[2], .1);
+		assertEquals(2, euler[3], .1);
 	}
 
 	@Test
@@ -173,4 +200,69 @@ public class GeometricMeasures3DTest {
 		
 		return result;
 	}	
+	
+	/**
+	 * Generate the 3D test image with 7 labels for measuring Euler Number.
+	 * 
+	 * Labels:
+	 * 1: a single blob, with some thickness (Euler = 1)
+	 * 2: a set of single points (Euler = 8)
+	 * 3: a single loop, one voxel thickness (Euler = 0)
+	 * 4: a hollow sphere (Euler = 2)
+	 */
+	public final static ImageStack createEulerImage() 
+	{
+		ImageStack labelImage = ImageStack.create(10, 10, 10, 8);
+		
+		// Label 1 -> a single compact blob
+		for(int z = 1; z < 4; z++)
+		{
+			for(int y = 1; y < 4; y++)
+			{
+				for(int x = 1; x < 4; x++)
+				{
+					labelImage.setVoxel(x, y, z, 1);
+				}
+			}
+		}
+		
+		// Label 2 -> eight indivdual voxels
+		labelImage.setVoxel(5, 1, 1, 2);
+		labelImage.setVoxel(7, 1, 1, 2);
+		labelImage.setVoxel(5, 3, 1, 2);
+		labelImage.setVoxel(7, 3, 1, 2);
+		labelImage.setVoxel(5, 1, 3, 2);
+		labelImage.setVoxel(7, 1, 3, 2);
+		labelImage.setVoxel(5, 3, 3, 2);
+		labelImage.setVoxel(7, 3, 3, 2);
+	
+		// Label 3 -> a single loop
+		for (int x = 1; x < 4; x++)
+		{
+			labelImage.setVoxel(x, 5, 1, 3);
+			labelImage.setVoxel(x, 7, 1, 3);
+			labelImage.setVoxel(x, 5, 3, 3);
+			labelImage.setVoxel(x, 7, 3, 3);
+		}
+		labelImage.setVoxel(3, 6, 1, 3);
+		labelImage.setVoxel(3, 6, 3, 3);
+		labelImage.setVoxel(1, 5, 2, 3);
+		labelImage.setVoxel(1, 7, 2, 3);
+	
+		// Label 4 -> hollow cube
+		for(int z = 1; z < 4; z++)
+		{
+			for(int y = 5; y < 8; y++)
+			{
+				for(int x = 5; x < 8; x++)
+				{
+					labelImage.setVoxel(x, y, z, 4);
+				}
+			}
+		}
+		labelImage.setVoxel(6, 6, 2, 0);
+		
+		return labelImage;
+	}
+
 }
