@@ -27,13 +27,20 @@ public class GeodesicReconstructionScanning extends AlgoStub implements
 	
 	GeodesicReconstructionType reconstructionType = GeodesicReconstructionType.BY_DILATION;
 
+	int connectivity = 4;
+
+	
 	ImageProcessor marker;
 	ImageProcessor mask;
 	
 	ImageProcessor result;
 	
-	int connectivity = 4;
+	/** image width */
+	int sizeX = 0;
 	
+	/** image height */
+	int sizeY = 0;
+
 	/**
 	 * The flag indicating whether the result image has been modified during
 	 * last image scan
@@ -49,6 +56,7 @@ public class GeodesicReconstructionScanning extends AlgoStub implements
 	public boolean showStatus = true; 
 	public boolean showProgress = false; 
 
+	
 	// ------------------------
 	// Constructors
 	
@@ -132,9 +140,9 @@ public class GeodesicReconstructionScanning extends AlgoStub implements
 		this.mask = mask;
 		
 		// Check sizes are consistent
-		int width = marker.getWidth();
-		int height = marker.getHeight();
-		if (width != mask.getWidth() || height != mask.getHeight()) 
+		this.sizeX = marker.getWidth();
+		this.sizeY = marker.getHeight();
+		if (this.sizeX != mask.getWidth() || this.sizeY != mask.getHeight()) 
 		{
 			throw new IllegalArgumentException("Marker and Mask images must have the same size");
 		}
@@ -148,24 +156,34 @@ public class GeodesicReconstructionScanning extends AlgoStub implements
 		}
 
 		// Create result image the same size as marker image
-		this.result = this.marker.createProcessor(width, height);
+		this.result = this.marker.createProcessor(sizeX, sizeY);
 	
 		// Initialize the result image with the minimum value of marker and mask
 		// images
-		for (int y = 0; y < height; y++) 
+		for (int y = 0; y < sizeY; y++) 
 		{
-			for (int x = 0; x < width; x++) 
+			for (int x = 0; x < sizeX; x++) 
 			{
 				this.result.set(x, y,
 						Math.min(this.marker.get(x, y), this.mask.get(x, y)));
 			}
 		}
 
+		boolean isInteger = !(mask instanceof FloatProcessor);
+		
+		// Initialize the result image
+		if (isInteger)
+		{
+			initializeResult();
+		}
+		else
+		{
+			initializeResultFloat();
+		}
+
 		// Count the number of iterations for eventually displaying progress
 		int iter = 0;
 
-		boolean isFloat = (mask instanceof FloatProcessor);
-		
 		// Iterate forward and backward propagations until no more pixel have been modified
 		do {
 			modif = false;
@@ -177,23 +195,23 @@ public class GeodesicReconstructionScanning extends AlgoStub implements
 			}
 			if (showStatus)
 			{
-				IJ.showStatus("Geod. Rec. by Dil. Fwd " + (iter + 1));
+				IJ.showStatus("Geod. Rec. Fwd " + (iter + 1));
 			}
 			
 			// forward iteration
 			switch (connectivity) 
 			{
 			case 4:
-				if (isFloat)
-					forwardScanC4Float();
+				if (isInteger)
+					forwardScanC4();
 				else
-					forwardScanC4(); 
+					forwardScanC4Float(); 
 				break;
 			case 8:	
-				if (isFloat)
-					forwardScanC8Float();
+				if (isInteger)
+					forwardScanC8();
 				else
-					forwardScanC8(); 
+					forwardScanC8Float(); 
 				break;
 			}
 
@@ -204,23 +222,23 @@ public class GeodesicReconstructionScanning extends AlgoStub implements
 			}
 			if (showStatus)
 			{
-				IJ.showStatus("Geod. Rec. by Dil. Bwd " + (iter + 1));
+				IJ.showStatus("Geod. Rec. Bwd " + (iter + 1));
 			}
 			
 			// backward iteration
 			switch (connectivity)
 			{
 			case 4:
-				if (isFloat)
-					backwardScanC4Float();
+				if (isInteger)
+					backwardScanC4();
 				else
-					backwardScanC4(); 
+					backwardScanC4Float(); 
 				break;
 			case 8:	
-				if (isFloat)
-					backwardScanC8Float();
+				if (isInteger)
+					backwardScanC8();
 				else
-					backwardScanC8(); 
+					backwardScanC8Float(); 
 				break;
 			}
 
@@ -228,6 +246,40 @@ public class GeodesicReconstructionScanning extends AlgoStub implements
 		} while (modif);
 	
 		return this.result;
+	}
+
+	private void initializeResult()
+	{
+		// Create result image the same size as marker image
+		this.result = this.marker.createProcessor(this.sizeX, this.sizeY);
+	
+		int sign = this.reconstructionType.getSign();
+		for (int y = 0; y < this.sizeY; y++) 
+		{
+			for (int x = 0; x < this.sizeX; x++) 
+			{
+				int v1 = this.marker.get(x, y) * sign; 
+				int v2 = this.mask.get(x, y) * sign; 
+				this.result.set(x, y, Math.min(v1, v2) * sign);
+			}
+		}		
+	}
+	
+	private void initializeResultFloat()
+	{
+		// Create result image the same size as marker image
+		this.result = this.marker.createProcessor(this.sizeX, this.sizeY);
+	
+		float sign = this.reconstructionType.getSign();
+		for (int y = 0; y < this.sizeY; y++) 
+		{
+			for (int x = 0; x < this.sizeX; x++) 
+			{
+				float v1 = this.marker.getf(x, y) * sign; 
+				float v2 = this.mask.getf(x, y) * sign; 
+				this.result.setf(x, y, Math.min(v1, v2) * sign);
+			}
+		}
 	}
 
 	/**
@@ -238,25 +290,22 @@ public class GeodesicReconstructionScanning extends AlgoStub implements
 	{
 		final int sign = this.reconstructionType.getSign();
 		
-		int width = this.marker.getWidth();
-		int height = this.marker.getHeight();
-		
 		if (showProgress)
 		{
-			IJ.showProgress(0, height);
+			IJ.showProgress(0, this.sizeY);
 		}
 		
 		// Process all other lines
-		for (int y = 0; y < height; y++) 
+		for (int y = 0; y < this.sizeY; y++) 
 		{
 			
 			if (showProgress)
 			{
-				IJ.showProgress(y, height);
+				IJ.showProgress(y, this.sizeY);
 			}
 	
 			// Process pixels in the middle of the line
-			for (int x = 0; x < width; x++) 
+			for (int x = 0; x < this.sizeX; x++) 
 			{
 				int currentValue = result.get(x, y) * sign;
 				int maxValue = currentValue;
@@ -285,25 +334,22 @@ public class GeodesicReconstructionScanning extends AlgoStub implements
 	{
 		final float sign = this.reconstructionType.getSign();
 		
-		int width = this.marker.getWidth();
-		int height = this.marker.getHeight();
-		
 		if (showProgress)
 		{
-			IJ.showProgress(0, height);
+			IJ.showProgress(0, this.sizeY);
 		}
 		
 		// Process all other lines
-		for (int y = 0; y < height; y++) 
+		for (int y = 0; y < this.sizeY; y++) 
 		{
 			
 			if (showProgress)
 			{
-				IJ.showProgress(y, height);
+				IJ.showProgress(y, this.sizeY);
 			}
 	
 			// Process pixels in the middle of the line
-			for (int x = 0; x < width; x++) 
+			for (int x = 0; x < this.sizeX; x++) 
 			{
 				float currentValue = result.getf(x, y) * sign;
 				float maxValue = currentValue;
@@ -332,25 +378,22 @@ public class GeodesicReconstructionScanning extends AlgoStub implements
 	{
 		final int sign = this.reconstructionType.getSign();
 		
-		int width = this.marker.getWidth();
-		int height = this.marker.getHeight();
-		
 		if (showProgress)
 		{
-			IJ.showProgress(0, height);
+			IJ.showProgress(0, this.sizeY);
 		}
 		
 		// Process all other lines
-		for (int y = 0; y < height; y++)
+		for (int y = 0; y < this.sizeY; y++)
 		{
 			
 			if (showProgress) 
 			{
-				IJ.showProgress(y, height);
+				IJ.showProgress(y, this.sizeY);
 			}
 
 			// Process pixels in the middle of the line
-			for (int x = 0; x < width; x++) 
+			for (int x = 0; x < this.sizeX; x++) 
 			{
 				int currentValue = result.get(x, y) * sign;
 				int maxValue = currentValue;
@@ -361,7 +404,7 @@ public class GeodesicReconstructionScanning extends AlgoStub implements
 					if (x > 0)
 						maxValue = Math.max(maxValue, result.get(x-1, y-1) * sign);
 					maxValue = Math.max(maxValue, result.get(x, y-1) * sign);
-					if (x < width - 1)
+					if (x < this.sizeX - 1)
 						maxValue = Math.max(maxValue, result.get(x+1, y-1) * sign);
 				}
 				if (x > 0)
@@ -386,25 +429,22 @@ public class GeodesicReconstructionScanning extends AlgoStub implements
 	{
 		final float sign = this.reconstructionType.getSign();
 		
-		int width = this.marker.getWidth();
-		int height = this.marker.getHeight();
-		
 		if (showProgress)
 		{
-			IJ.showProgress(0, height);
+			IJ.showProgress(0, this.sizeY);
 		}
 		
 		// Process all other lines
-		for (int y = 0; y < height; y++)
+		for (int y = 0; y < this.sizeY; y++)
 		{
 			
 			if (showProgress) 
 			{
-				IJ.showProgress(y, height);
+				IJ.showProgress(y, this.sizeY);
 			}
 
 			// Process pixels in the middle of the line
-			for (int x = 0; x < width; x++) 
+			for (int x = 0; x < this.sizeX; x++) 
 			{
 				float currentValue = result.getf(x, y) * sign;
 				float maxValue = currentValue;
@@ -415,7 +455,7 @@ public class GeodesicReconstructionScanning extends AlgoStub implements
 					if (x > 0)
 						maxValue = Math.max(maxValue, result.getf(x-1, y-1) * sign);
 					maxValue = Math.max(maxValue, result.getf(x, y-1) * sign);
-					if (x < width - 1)
+					if (x < this.sizeX - 1)
 						maxValue = Math.max(maxValue, result.getf(x+1, y-1) * sign);
 				}
 				if (x > 0)
@@ -440,34 +480,31 @@ public class GeodesicReconstructionScanning extends AlgoStub implements
 	{
 		final int sign = this.reconstructionType.getSign();
 		
-		int width = this.marker.getWidth();
-		int height = this.marker.getHeight();
-	
 		if (showProgress)
 		{
-			IJ.showProgress(0, height);
+			IJ.showProgress(0, this.sizeY);
 		}
 		
 		// Process regular lines
-		for (int y = height-1; y >= 0; y--)
+		for (int y = this.sizeY-1; y >= 0; y--)
 		{
 	
 			if (showProgress) 
 			{
-				IJ.showProgress(height-1-y, height);
+				IJ.showProgress(this.sizeY-1-y, this.sizeY);
 			}
 	
 			// Process pixels in the middle of the current line
 			// consider pixels on the right and below
-			for (int x = width - 1; x >= 0; x--) 
+			for (int x = this.sizeX - 1; x >= 0; x--) 
 			{
 
 				int currentValue = result.get(x, y) * sign;
 				int maxValue = currentValue;
 				
-				if (x < width - 1)
+				if (x < this.sizeX - 1)
 					maxValue = Math.max(maxValue, result.get(x+1, y) * sign);
-				if (y < height - 1)
+				if (y < this.sizeY - 1)
 					maxValue = Math.max(maxValue, result.get(x, y+1) * sign);
 				
 				// update value of current pixel
@@ -489,34 +526,31 @@ public class GeodesicReconstructionScanning extends AlgoStub implements
 	{
 		final float sign = this.reconstructionType.getSign();
 		
-		int width = this.marker.getWidth();
-		int height = this.marker.getHeight();
-	
 		if (showProgress)
 		{
-			IJ.showProgress(0, height);
+			IJ.showProgress(0, this.sizeY);
 		}
 		
 		// Process regular lines
-		for (int y = height-1; y >= 0; y--)
+		for (int y = this.sizeY-1; y >= 0; y--)
 		{
 	
 			if (showProgress) 
 			{
-				IJ.showProgress(height-1-y, height);
+				IJ.showProgress(this.sizeY-1-y, this.sizeY);
 			}
 	
 			// Process pixels in the middle of the current line
 			// consider pixels on the right and below
-			for (int x = width - 1; x >= 0; x--) 
+			for (int x = this.sizeX - 1; x >= 0; x--) 
 			{
 
 				float currentValue = result.getf(x, y) * sign;
 				float maxValue = currentValue;
 				
-				if (x < width - 1)
+				if (x < this.sizeX - 1)
 					maxValue = Math.max(maxValue, result.getf(x+1, y) * sign);
-				if (y < height - 1)
+				if (y < this.sizeY - 1)
 					maxValue = Math.max(maxValue, result.getf(x, y+1) * sign);
 				
 				// update value of current pixel
@@ -538,39 +572,36 @@ public class GeodesicReconstructionScanning extends AlgoStub implements
 	{
 		final int sign = this.reconstructionType.getSign();
 		
-		int width = this.marker.getWidth();
-		int height = this.marker.getHeight();
-		
 		if (showProgress)
 		{
-			IJ.showProgress(0, height);
+			IJ.showProgress(0, this.sizeY);
 		}
 		
 		// Process regular lines
-		for (int y = height-1; y >= 0; y--)
+		for (int y = this.sizeY-1; y >= 0; y--)
 		{
 
 			if (showProgress) 
 			{
-				IJ.showProgress(height-1-y, height);
+				IJ.showProgress(this.sizeY-1-y, this.sizeY);
 			}
 
 			// Process pixels in the middle of the current line
-			for (int x = width - 1; x >= 0; x--)
+			for (int x = this.sizeX - 1; x >= 0; x--)
 			{
 				int currentValue = result.get(x, y) * sign;
 				int maxValue = currentValue;
 				
-				if (y < height - 1)
+				if (y < this.sizeY - 1)
 				{
 					// process the 3 values on the line below current pixel
 					if (x > 0)
 						maxValue = Math.max(maxValue, result.get(x-1, y+1) * sign);
 					maxValue = Math.max(maxValue, result.get(x, y+1) * sign);
-					if (x < width - 1)
+					if (x < this.sizeX - 1)
 						maxValue = Math.max(maxValue, result.get(x+1, y+1) * sign);
 				}
-				if (x < width - 1)
+				if (x < this.sizeX - 1)
 					maxValue = Math.max(maxValue, result.get(x+1, y) * sign);
 				
 				// update value of current pixel
@@ -592,39 +623,36 @@ public class GeodesicReconstructionScanning extends AlgoStub implements
 	{
 		final float sign = this.reconstructionType.getSign();
 		
-		int width = this.marker.getWidth();
-		int height = this.marker.getHeight();
-		
 		if (showProgress)
 		{
-			IJ.showProgress(0, height);
+			IJ.showProgress(0, this.sizeY);
 		}
 		
 		// Process regular lines
-		for (int y = height-1; y >= 0; y--)
+		for (int y = this.sizeY-1; y >= 0; y--)
 		{
 
 			if (showProgress) 
 			{
-				IJ.showProgress(height-1-y, height);
+				IJ.showProgress(this.sizeY-1-y, this.sizeY);
 			}
 
 			// Process pixels in the middle of the current line
-			for (int x = width - 1; x >= 0; x--)
+			for (int x = this.sizeX - 1; x >= 0; x--)
 			{
 				float currentValue = result.getf(x, y) * sign;
 				float maxValue = currentValue;
 				
-				if (y < height - 1)
+				if (y < this.sizeY - 1)
 				{
 					// process the 3 values on the line below current pixel
 					if (x > 0)
 						maxValue = Math.max(maxValue, result.getf(x-1, y+1) * sign);
 					maxValue = Math.max(maxValue, result.getf(x, y+1) * sign);
-					if (x < width - 1)
+					if (x < this.sizeX - 1)
 						maxValue = Math.max(maxValue, result.getf(x+1, y+1) * sign);
 				}
-				if (x < width - 1)
+				if (x < this.sizeX - 1)
 					maxValue = Math.max(maxValue, result.getf(x+1, y) * sign);
 				
 				// update value of current pixel

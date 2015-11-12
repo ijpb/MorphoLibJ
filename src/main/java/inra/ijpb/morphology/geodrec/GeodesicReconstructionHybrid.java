@@ -290,8 +290,8 @@ public class GeodesicReconstructionHybrid extends AlgoStub implements
 				this.result.setf(x, y, Math.min(v1, v2) * sign);
 			}
 		}
-
 	}
+
 	/**
 	 * Update result image using pixels in the upper left neighborhood,
 	 * using the 4-adjacency.

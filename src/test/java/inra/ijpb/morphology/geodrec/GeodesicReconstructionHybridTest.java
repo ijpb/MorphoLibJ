@@ -201,7 +201,6 @@ public class GeodesicReconstructionHybridTest {
 				assertEquals(expectedProfile[x], result.getf(x, y), .01);
 			}
 		}
-
 	}
 
 	@Test
@@ -284,8 +283,10 @@ public class GeodesicReconstructionHybridTest {
 		assertEquals(0, result.get(8, 8));
 		assertEquals(0, result.get(8, 5));
 		assertEquals(0, result.get(14, 8));
-		assertEquals(255, result.get(15, 9));
-		assertEquals(255, result.get(0, 0));
+		assertEquals(FG, result.get(15, 9));
+		assertEquals(FG, result.get(0, 0));
+		assertEquals(FG, result.get(5, 3));
+		assertEquals(FG, result.get(11, 5));
 	}
 
 	/**
@@ -334,6 +335,8 @@ public class GeodesicReconstructionHybridTest {
 		assertEquals(0, result.get(14, 8));
 		assertEquals(255, result.get(15, 9));
 		assertEquals(255, result.get(0, 0));
+		assertEquals(255, result.get(5, 3));
+		assertEquals(255, result.get(11, 5));
 	}
 
 	/**
@@ -384,6 +387,8 @@ public class GeodesicReconstructionHybridTest {
 		assertEquals(BG, result.getf(14, 8), .01);
 		assertEquals(FG, result.getf(15, 9), .01);
 		assertEquals(FG, result.getf(0, 0), .01);
+		assertEquals(FG, result.getf(5, 3), .01);
+		assertEquals(FG, result.getf(11, 5), .01);
 	}
 
 	/**
@@ -434,17 +439,35 @@ public class GeodesicReconstructionHybridTest {
 		assertEquals(BG, result.getf(14, 8), .01);
 		assertEquals(FG, result.getf(15, 9), .01);
 		assertEquals(FG, result.getf(0, 0), .01);
+		assertEquals(FG, result.getf(5, 3), .01);
+		assertEquals(FG, result.getf(11, 5), .01);
 	}
 	
-	public void printImage(ImageProcessor image) {
+	public void printImage(ImageProcessor image) 
+	{
 		int width = image.getWidth();
 		int height = image.getHeight();
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				System.out.printf("%4d", image.get(x, y));
+		for (int y = 0; y < height; y++) 
+		{
+			for (int x = 0; x < width; x++) 
+			{
+				System.out.printf(" %3d", image.get(x, y));
 			}
 			System.out.println("");			
 		}
 	}
 
+	public void printImageFloat(ImageProcessor image) 
+	{
+		int width = image.getWidth();
+		int height = image.getHeight();
+		for (int y = 0; y < height; y++) 
+		{
+			for (int x = 0; x < width; x++) 
+			{
+				System.out.printf(" %7.2f", image.getf(x, y));
+			}
+			System.out.println("");			
+		}
+	}
 }

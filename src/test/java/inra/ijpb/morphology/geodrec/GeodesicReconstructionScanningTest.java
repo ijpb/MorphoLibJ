@@ -51,6 +51,8 @@ public class GeodesicReconstructionScanningTest {
 		assertEquals(255, result.get(8, 8));
 		assertEquals(255, result.get(8, 5));
 		assertEquals(255, result.get(14, 8));
+		assertEquals(0, result.get(5, 3));
+		assertEquals(0, result.get(11, 5));
 	}
 
 	/**
@@ -89,11 +91,14 @@ public class GeodesicReconstructionScanningTest {
 		
 		assertEquals(16, result.getWidth());
 		assertEquals(10, result.getHeight());
+		
 		assertEquals(255, result.get(2, 6));
 		assertEquals(255, result.get(4, 8));
 		assertEquals(255, result.get(8, 4));
 		assertEquals(255, result.get(10, 2));
 		assertEquals(255, result.get(14, 8));
+		assertEquals(0, result.get(5, 3));
+		assertEquals(0, result.get(11, 5));
 	}
 
 	@Test
@@ -129,7 +134,6 @@ public class GeodesicReconstructionScanningTest {
 				assertEquals(expectedProfile[x], result.get(x, y));
 			}
 		}
-
 	}
 
 	@Test
@@ -244,7 +248,7 @@ public class GeodesicReconstructionScanningTest {
 	 * Test method for {@link ijt.filter.morphology.GeodesicReconstruction#reconstructByErosion()}.
 	 */
 	@Test
-	public void testReconstructByErosion() {
+	public void testReconstructByErosion_C4() {
 		int BG = 0;
 		int FG = 255;
 		int[][] data = new int[][]{
@@ -274,9 +278,16 @@ public class GeodesicReconstructionScanningTest {
 		marker.fill();
 		marker.set(2, 3, 0);
 		
+//		System.out.println("Marker Image:");
+//		printImage(marker);
+//		System.out.println("Mask Image:");
+//		printImage(mask);
+
 		GeodesicReconstructionScanning algo = new GeodesicReconstructionScanning(
 				GeodesicReconstructionType.BY_EROSION, 4);
 		ImageProcessor result = algo.applyTo(marker, mask);
+//		System.out.println("Result Image:");
+//		printImage(result);
 		
 		assertEquals(16, result.getWidth());
 		assertEquals(10, result.getHeight());
@@ -284,6 +295,10 @@ public class GeodesicReconstructionScanningTest {
 		assertEquals(0, result.get(8, 8));
 		assertEquals(0, result.get(8, 5));
 		assertEquals(0, result.get(14, 8));
+		assertEquals(255, result.get(15, 9));
+		assertEquals(255, result.get(0, 0));
+		assertEquals(255, result.get(5, 3));
+		assertEquals(255, result.get(11, 5));
 	}
 
 	/**
@@ -330,14 +345,126 @@ public class GeodesicReconstructionScanningTest {
 		assertEquals(0, result.get(4, 8));
 		assertEquals(0, result.get(8, 5));
 		assertEquals(0, result.get(14, 8));
+		assertEquals(255, result.get(15, 9));
+		assertEquals(255, result.get(0, 0));
+		assertEquals(255, result.get(5, 3));
+		assertEquals(255, result.get(11, 5));
 	}
 
-	public void printImage(ImageProcessor image) {
-		int width = image.getWidth();
-		int height = image.getHeight();
+	/**
+	 * Test method for {@link ijt.filter.morphology.GeodesicReconstruction#reconstructByErosion()}.
+	 */
+	@Test
+	public void testReconstructByErosion_FloatC4() {
+		float BG = -42;
+		float FG = 2500;
+		float[][] data = new float[][]{
+				{BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG},   
+				{BG, FG, FG, BG, FG, FG, BG, FG, FG, FG, FG, FG, FG, FG, FG, BG},
+				{BG, FG, FG, BG, FG, FG, BG, FG, FG, FG, FG, FG, FG, FG, FG, BG},
+				{BG, FG, FG, BG, FG, FG, BG, FG, FG, BG, BG, BG, BG, FG, FG, BG},
+				{BG, FG, FG, BG, FG, FG, BG, FG, FG, BG, FG, FG, BG, FG, FG, BG},
+				{BG, FG, FG, BG, FG, FG, BG, FG, FG, BG, FG, FG, BG, FG, FG, BG},
+				{BG, FG, FG, BG, BG, BG, BG, FG, FG, BG, FG, FG, BG, FG, FG, BG},
+				{BG, FG, FG, FG, FG, FG, FG, FG, FG, BG, FG, FG, BG, FG, FG, BG},
+				{BG, FG, FG, FG, FG, FG, FG, FG, FG, BG, FG, FG, BG, FG, FG, BG},
+				{BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG},
+		};
+		int height = data.length;
+		int width = data[0].length;
+		ImageProcessor mask = new FloatProcessor(width, height);
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
-				System.out.printf("%4d", image.get(x, y));
+				if (data[y][x] == FG)
+					mask.setf(x, y, BG);
+				else
+					mask.setf(x, y, FG);
+			}
+		}
+		
+		ImageProcessor marker = new FloatProcessor(width, height);
+		marker.setColor(FG);
+		marker.fill();
+		marker.setf(2, 3, BG);
+		
+		GeodesicReconstructionScanning algo = new GeodesicReconstructionScanning(
+				GeodesicReconstructionType.BY_EROSION, 4);
+		ImageProcessor result = algo.applyTo(marker, mask);
+		
+		assertEquals(16, result.getWidth());
+		assertEquals(10, result.getHeight());
+		assertEquals(BG, result.getf(2, 8), .01);
+		assertEquals(BG, result.getf(8, 8), .01);
+		assertEquals(BG, result.getf(8, 5), .01);
+		assertEquals(BG, result.getf(14, 8), .01);
+		assertEquals(FG, result.getf(15, 9), .01);
+		assertEquals(FG, result.getf(0, 0), .01);
+		assertEquals(FG, result.getf(5, 3), .01);
+		assertEquals(FG, result.getf(11, 5), .01);
+	}
+
+	/**
+	 * Test method for {@link ijt.filter.morphology.GeodesicReconstruction#reconstructByErosion()}.
+	 */
+	@Test
+	public void testReconstructByErosion_FloatC8() {
+		float BG = -42;
+		float FG = 2500;
+		float[][] data = new float[][]{
+				{BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG},   
+				{BG, FG, FG, BG, FG, FG, BG, FG, FG, FG, FG, FG, FG, FG, FG, BG},
+				{BG, FG, FG, BG, FG, FG, BG, FG, FG, FG, FG, FG, FG, FG, FG, BG},
+				{BG, FG, FG, BG, FG, FG, BG, FG, FG, BG, BG, BG, BG, FG, FG, BG},
+				{BG, FG, FG, BG, FG, FG, BG, FG, FG, BG, FG, FG, BG, FG, FG, BG},
+				{BG, FG, FG, BG, FG, FG, BG, FG, FG, BG, FG, FG, BG, FG, FG, BG},
+				{BG, FG, FG, BG, BG, BG, BG, FG, FG, BG, FG, FG, BG, FG, FG, BG},
+				{BG, FG, FG, FG, FG, FG, FG, FG, FG, BG, FG, FG, BG, FG, FG, BG},
+				{BG, FG, FG, FG, FG, FG, FG, FG, FG, BG, FG, FG, BG, FG, FG, BG},
+				{BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG},
+		};
+		int height = data.length;
+		int width = data[0].length;
+		ImageProcessor mask = new FloatProcessor(width, height);
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				if (data[y][x] == FG)
+					mask.setf(x, y, BG);
+				else
+					mask.setf(x, y, FG);
+			}
+		}
+		
+		ImageProcessor marker = new FloatProcessor(width, height);
+		marker.setColor(FG);
+		marker.fill();
+		marker.setf(2, 3, BG);
+		
+		GeodesicReconstructionScanning algo = new GeodesicReconstructionScanning(
+				GeodesicReconstructionType.BY_EROSION, 8);
+		ImageProcessor result = algo.applyTo(marker, mask);
+		
+		assertEquals(16, result.getWidth());
+		assertEquals(10, result.getHeight());
+		assertEquals(BG, result.getf(2, 8), .01);
+		assertEquals(BG, result.getf(8, 8), .01);
+		assertEquals(BG, result.getf(8, 5), .01);
+		assertEquals(BG, result.getf(14, 8), .01);
+		assertEquals(FG, result.getf(15, 9), .01);
+		assertEquals(FG, result.getf(0, 0), .01);
+		assertEquals(FG, result.getf(5, 3), .01);
+		assertEquals(FG, result.getf(11, 5), .01);
+	}
+	
+	
+	public void printImage(ImageProcessor image) 
+	{
+		int width = image.getWidth();
+		int height = image.getHeight();
+		for (int y = 0; y < height; y++) 
+		{
+			for (int x = 0; x < width; x++) 
+			{
+				System.out.printf(" %3d", image.get(x, y));
 			}
 			System.out.println("");			
 		}
