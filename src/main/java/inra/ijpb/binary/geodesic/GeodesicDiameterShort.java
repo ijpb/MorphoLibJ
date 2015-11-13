@@ -18,21 +18,43 @@ import java.util.TreeSet;
  * iteration over particles.
  * 
  * @see inra.ijpb.binary.geodesic.GeodesicDiameterFloat
+ * @see inra.ijpb.binary.geodesic.GeodesicDistanceTransform
+ * 
  * @author David Legland
  *
  */
-public class GeodesicDiameterShort {
-
+public class GeodesicDiameterShort 
+{
+	/**
+	 * The weights for orthogonal, diagonal, and eventually chess-knight moves
+	 * neighbors
+	 */
 	short[] weights;
 	
-	public GeodesicDiameterShort(short[] weights) {
+	/**
+	 * Creates a new geodesic diameter computation operator.
+	 * 
+	 * @param weights
+	 *            the array of weights for orthogonal, diagonal, and eventually
+	 *            chess-knight moves neighbors
+	 */
+	public GeodesicDiameterShort(short[] weights) 
+	{
 		this.weights = weights;
 	}
 	
 	/**
-	 * Compute the distance propagation from the boundary of the white particles. 
+	 * Computes the geodesic diameter of each particle within the given label
+	 * image.
+	 * 
+	 * @param labelImage
+	 *            a label image, containing either the label of a particle or
+	 *            region, or zero for background
+	 * @return a ResultsTable containing for each label the geodesic diameter of
+	 *         the corresponding particle
 	 */
-	public ResultsTable analyzeImage(ImageProcessor labelImage) {
+	public ResultsTable analyzeImage(ImageProcessor labelImage) 
+	{
 		// Check validity of parameters
 		if (labelImage==null) return null;
 		
@@ -82,8 +104,10 @@ public class GeodesicDiameterShort {
 		// Create new marker image with position of maxima
 		marker.setValue(0);
 		marker.fill();
-		for (int i = 0; i < nbLabels; i++) {
-			if (posCenter[i].x == -1) {
+		for (int i = 0; i < nbLabels; i++) 
+		{
+			if (posCenter[i].x == -1)
+			{
 				IJ.showMessage("Particle Not Found", 
 						"Could not find maximum for particle label " + i);
 				continue;
@@ -104,8 +128,10 @@ public class GeodesicDiameterShort {
 		// Create new marker image with position of maxima
 		marker.setValue(0);
 		marker.fill();
-		for (int i = 0; i < nbLabels; i++) {
-			if (pos1[i].x == -1) {
+		for (int i = 0; i < nbLabels; i++)
+		{
+			if (pos1[i].x == -1) 
+			{
 				IJ.showMessage("Particle Not Found", 
 						"Could not find maximum for particle label " + i);
 				continue;
@@ -125,7 +151,8 @@ public class GeodesicDiameterShort {
 		pos2 = findPositionOfMaxValues(distance, labelImage, labels);
 		
 		// Small conversion to normalize with weights
-		for (int i = 0; i < nbLabels; i++) {
+		for (int i = 0; i < nbLabels; i++)
+		{
 			// convert to pixel distance
 			double radius = ((double) radii[i]) / weights[0];
 			double value = ((double) values[i]) / weights[0];
@@ -152,7 +179,8 @@ public class GeodesicDiameterShort {
 		return table;
 	}
 	
-	private int[] findAllLabels(ImageProcessor image) {
+	private int[] findAllLabels(ImageProcessor image)
+	{
 		int width 	= image.getWidth();
 		int height 	= image.getHeight();
 		
@@ -180,7 +208,8 @@ public class GeodesicDiameterShort {
 	 * Create a new binary image with same 0 value, and value 255 for each
 	 * non-zero pixel of the original image.
 	 */
-	private ImageProcessor binariseImage(ImageProcessor mask) {
+	private ImageProcessor binariseImage(ImageProcessor mask)
+	{
 		// Extract image size
 		int width = mask.getWidth();
 		int height = mask.getHeight();
@@ -189,8 +218,10 @@ public class GeodesicDiameterShort {
 		ImageProcessor marker = new ByteProcessor(width, height);
 		
 		// Fill result image to either 255 or 0.
-		for(int y = 0; y < height; y++) {
-			for(int x = 0; x < width; x++) {				
+		for(int y = 0; y < height; y++)
+		{
+			for(int x = 0; x < width; x++) 
+			{				
 				marker.set(x, y, mask.get(x, y)==0 ? 0 : 255);
 			}
 		}
@@ -203,7 +234,8 @@ public class GeodesicDiameterShort {
 	 * Create the binary image with value 255 for mask pixels equal to 0, 
 	 * and value 0 for any other value of mask.
 	 */
-	private ImageProcessor createMarkerOutsideLabels(ImageProcessor mask) {
+	private ImageProcessor createMarkerOutsideLabels(ImageProcessor mask)
+	{
 		// Extract image size
 		int width = mask.getWidth();
 		int height = mask.getHeight();
@@ -212,8 +244,10 @@ public class GeodesicDiameterShort {
 		ImageProcessor marker = new ByteProcessor(width, height);
 		
 		// Fill result image to either 255 or 0.
-		for(int y = 0; y < height; y++) {
-			for(int x = 0; x < width; x++) {				
+		for(int y = 0; y < height; y++)
+		{
+			for(int x = 0; x < width; x++)
+			{				
 				marker.set(x, y, mask.get(x, y) == 0 ? 255 : 0);
 			}
 		}
@@ -226,7 +260,8 @@ public class GeodesicDiameterShort {
 	 * Find one position for each label. 
 	 */
 	private Point[] findPositionOfMaxValues(ImageProcessor image, 
-			ImageProcessor labelImage, int[] labels) {
+			ImageProcessor labelImage, int[] labels) 
+	{
 		
 		int width 	= labelImage.getWidth();
 		int height 	= labelImage.getHeight();
@@ -246,7 +281,8 @@ public class GeodesicDiameterShort {
 		// Init Position and value of maximum for each label
 		Point[] posMax 	= new Point[nbLabel];
 		int[] maxValues = new int[nbLabel];
-		for (int i = 0; i < nbLabel; i++) {
+		for (int i = 0; i < nbLabel; i++) 
+		{
 			maxValues[i] = -1;
 			posMax[i] = new Point(-1, -1);
 		}
@@ -256,8 +292,10 @@ public class GeodesicDiameterShort {
 		int index;
 		
 		// iterate on image pixels
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
+		for (int y = 0; y < height; y++)
+		{
+			for (int x = 0; x < width; x++) 
+			{
 				int label = labelImage.get(x, y);
 				
 				// do not process pixels that do not belong to particle
@@ -268,7 +306,8 @@ public class GeodesicDiameterShort {
 				
 				// update values and positions
 				value = image.get(x, y);
-				if (value > maxValues[index]) {
+				if (value > maxValues[index])
+				{
 					posMax[index].setLocation(x, y);
 					maxValues[index] = value;
 				}
@@ -282,8 +321,8 @@ public class GeodesicDiameterShort {
 	 * Find maximum value of each label
 	 */
 	private int[] findMaxValues(ImageProcessor image, 
-			ImageProcessor labelImage, int[] labels) {
-		
+			ImageProcessor labelImage, int[] labels)
+	{
 		int width 	= labelImage.getWidth();
 		int height 	= labelImage.getHeight();
 		
@@ -309,8 +348,10 @@ public class GeodesicDiameterShort {
 		int index;
 		
 		// iterate on image pixels
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
+		for (int y = 0; y < height; y++) 
+		{
+			for (int x = 0; x < width; x++) 
+			{
 				int label = labelImage.get(x, y);
 				
 				// do not process pixels that do not belong to particle

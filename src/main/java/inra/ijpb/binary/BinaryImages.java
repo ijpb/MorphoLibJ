@@ -235,11 +235,16 @@ public class BinaryImages
 		
 		return maxVal;
 	}
+	
 	/**
 	 * Computes the distance map (or distance transform) from a binary image
 	 * processor. Distance is computed for each foreground (white) pixel or
 	 * voxel, as the chamfer distance to the nearest background (black) pixel or
 	 * voxel.
+	 * 
+	 * @param imagePlus
+	 *            an ImagePlus object containing a 3D binary stack
+	 * @return a new ImagePlus containing the 3D distance map
 	 */
 	public static final ImagePlus distanceMap(ImagePlus imagePlus)
 	{
@@ -277,6 +282,10 @@ public class BinaryImages
 	 * This method uses default 5x5 weights, and normalizes the resulting map.
 	 * Result is given in a new instance of ShortProcessor.
 	 * </p>
+	 * 
+	 * @param image
+	 *            the input binary image
+	 * @return a new ImageProcessor containing the distance map result
 	 */
 	public static final ImageProcessor distanceMap(ImageProcessor image) 
 	{
@@ -388,7 +397,7 @@ public class BinaryImages
 	 * @param image
 	 *            the input binary image
 	 * @param weights
-	 *            an array of chamfer weights, with at least two values
+	 *            an array of chamfer weights, with at least three values
 	 * @param normalize
 	 *            indicates whether the resulting distance map should be
 	 *            normalized (divide distances by the first chamfer weight)
@@ -408,9 +417,9 @@ public class BinaryImages
 	 * chamfer distance to the nearest background (black) pixel.
 	 * 
 	 * @param image
-	 *            the input binary image
+	 *            the input 3D binary image
 	 * @param weights
-	 *            an array of chamfer weights, with at least two values
+	 *            an array of chamfer weights, with at least three values
 	 * @param normalize
 	 *            indicates whether the resulting distance map should be
 	 *            normalized (divide distances by the first chamfer weight)
@@ -427,6 +436,12 @@ public class BinaryImages
 	 * Computes the geodesic distance transform (or geodesic distance map) of a
 	 * binary image of marker, constrained to a binary mask.
 	 * Returns the result in a new instance of ShortProcessor.
+	 * 
+	 * @param marker
+	 *            the binary image of marker
+	 * @param mask
+	 *            the binary image of mask
+	 * @return the geodesic distance map in a new ImageProcessor
 	 */
 	public static final ImageProcessor geodesicDistanceMap(ImageProcessor marker,
 			ImageProcessor mask) 
@@ -438,6 +453,17 @@ public class BinaryImages
 	 * Computes the geodesic distance transform (or geodesic distance map) of a
 	 * binary image of marker, constrained to a binary mask.
 	 * Returns the result in a new instance of ShortProcessor.
+	 * 
+	 * @param marker
+	 *            the binary image of marker
+	 * @param mask
+	 *            the binary image of mask
+	 * @param weights
+	 *            an array of chamfer weights, with at least two values
+	 * @param normalize
+	 *            indicates whether the resulting distance map should be
+	 *            normalized (divide distances by the first chamfer weight)
+	 * @return the geodesic distance map in a new ImageProcessor
 	 */
 	public static final ImageProcessor geodesicDistanceMap(ImageProcessor marker,
 			ImageProcessor mask, short[] weights, boolean normalize) 
@@ -463,6 +489,17 @@ public class BinaryImages
 	 * Computes the geodesic distance transform (or geodesic distance map) of a
 	 * binary image of marker, constrained to a binary mask. 
 	 * Returns the result in a new instance of FloatProcessor.
+	 * 
+	 * @param marker
+	 *            the binary image of marker
+	 * @param mask
+	 *            the binary image of mask
+	 * @param weights
+	 *            an array of chamfer weights, with at least two values
+	 * @param normalize
+	 *            indicates whether the resulting distance map should be
+	 *            normalized (divide distances by the first chamfer weight)
+	 * @return the geodesic distance map in a new ImageProcessor
 	 */
 	public static final ImageProcessor geodesicDistanceMap(ImageProcessor marker,
 			ImageProcessor mask, float[] weights, boolean normalize) 
@@ -489,6 +526,13 @@ public class BinaryImages
 	 * Applies size opening on a binary 2D or 3D image. The method creates a new
 	 * binary image that contains only particles with at least the specified
 	 * number of pixels.
+	 * 
+	 * @param imagePlus
+	 *            the binary 2D or 3D image containing individual particles
+	 * @param minElementCount
+	 *            the minimum number of pixels or voxels required to keep a
+	 *            particle
+	 * @return a new binary image containing only the selected particles
 	 * 
 	 * @see inra.ijpb.label.LabelImages#sizeOpening(ImagePlus, int)
 	 */
@@ -521,6 +565,12 @@ public class BinaryImages
 	 * Applies area opening on a binary image: creates a new binary image that
 	 * contains only particles with at least the specified number of pixels.
 	 * 
+	 * @param image
+	 *            the binary image containing individual particles
+	 * @param nPixelMin
+	 *            the minimum number of pixels required to keep a particle
+	 * @return a new binary image containing only the selected particles
+	 * 
 	 * @see inra.ijpb.label.LabelImages#areaOpening(ImageProcessor, int)
 	 */
 	public static final ImageProcessor areaOpening(ImageProcessor image,
@@ -537,6 +587,12 @@ public class BinaryImages
 	/**
 	 * Applies area opening on a binary image: creates a new binary image that
 	 * contains only particle with at least the specified number of voxels.
+	 * 
+	 * @param image
+	 *            the 3D binary image containing individual particles
+	 * @param nVoxelMin
+	 *            the minimum number of voxels required to keep a particle
+	 * @return a new binary image containing only the selected particles
 	 *
 	 * @see inra.ijpb.label.LabelImages#volumeOpening(ImageStack, int)
 	 */
@@ -553,7 +609,10 @@ public class BinaryImages
 	/**
 	 * Returns a binary image that contains only the largest region.
 	 * 
-	 * @param imagePlus an instance of imagePlus that contains a binary image
+	 * @param imagePlus
+	 *            an instance of imagePlus that contains a binary image
+	 * @return a new ImagePlus containing only the largest region from original
+	 *         image
 	 */
 	public static final ImagePlus keepLargestRegion(ImagePlus imagePlus) 
 	{
@@ -582,7 +641,11 @@ public class BinaryImages
 	
 	/**
 	 * Returns a binary image that contains only the largest region.
-	 * @param image a binary image
+	 * 
+	 * @param image
+	 *            a binary image containing several individual regions
+	 * @return a new binary image containing only the largest region from
+	 *         original image
 	 */
 	public static final ImageProcessor keepLargestRegion(ImageProcessor image) 
 	{
@@ -594,7 +657,11 @@ public class BinaryImages
 	
 	/**
 	 * Returns a binary image that contains only the largest label.
-	 * @param image a binary image
+	 * 
+	 * @param image
+	 *            a binary 3D image containing several individual regions
+	 * @return a new binary image containing only the largest region from
+	 *         original image
 	 */
 	public static final ImageStack keepLargestRegion(ImageStack image) 
 	{
@@ -609,7 +676,8 @@ public class BinaryImages
 	 * Returns a binary image in which the largest region has been replaced by
 	 * background. Works for both 2D and 3D images.
 	 * 
-	 * @param imagePlus an instance of imagePlus that contains a binary image
+	 * @param imagePlus
+	 *            a binary image containing several individual particles
 	 */
 	public static final void removeLargestRegion(ImagePlus imagePlus) 
 	{
@@ -628,6 +696,11 @@ public class BinaryImages
 	/**
 	 * Returns a binary image in which the largest region has been replaced by
 	 * the background value.
+	 * 
+	 * @param image
+	 *            a binary image containing several individual particles
+	 * @return a new binary image containing all the regions from original image
+	 *         but the largest one
 	 */
 	public static final ImageProcessor removeLargestRegion(ImageProcessor image) 
 	{
@@ -642,6 +715,11 @@ public class BinaryImages
 	/**
 	 * Returns a binary image in which the largest region has been replaced by
 	 * the background value.
+	 * 
+	 * @param image
+	 *            a binary 3D image containing several individual particles
+	 * @return a new binary image containing all the regions from original image
+	 *         but the largest one
 	 */
 	public static final ImageStack removeLargestRegion(ImageStack image) 
 	{
@@ -653,8 +731,13 @@ public class BinaryImages
 	}
 	
 	/**
-	 * Converts a grayscale 2D or 3D image into a binary image by setting 
+	 * Converts a grayscale 2D or 3D image into a binary image by setting
 	 * non-zero elements to 255.
+	 * 
+	 * @param imagePlus
+	 *            an ImagePlus object containing a gray scale image
+	 * @return a binary image containing 255 for all non-zero elements of
+	 *         original image
 	 */
 	public static final ImagePlus binarize(ImagePlus imagePlus) 
 	{
@@ -677,7 +760,12 @@ public class BinaryImages
 	/**
 	 * Converts a grayscale 2D image into a binary 2D image by setting non-zero
 	 * pixels to 255.
-	 */
+	 * 
+	 * @param image
+	 *            a gray scale image
+	 * @return a binary image containing 255 for all non-zero elements of
+	 *         original image
+	 	 */
 	public static final ImageProcessor binarize(ImageProcessor image) 
 	{
 		int width = image.getWidth();
@@ -699,6 +787,11 @@ public class BinaryImages
 	/**
 	 * Converts a grayscale 3D image into a binary 3D image by setting non-zero
 	 * voxels to 255.
+	 * 
+	 * @param image
+	 *            a gray scale 3D image
+	 * @return a binary image containing 255 for all non-zero elements of
+	 *         original image
 	 */
 	public static final ImageStack binarize(ImageStack image)
 	{

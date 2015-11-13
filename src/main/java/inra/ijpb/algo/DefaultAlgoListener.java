@@ -4,12 +4,6 @@
 package inra.ijpb.algo;
 
 import ij.IJ;
-import ij.ImageJ;
-import ij.ImagePlus;
-import ij.process.ImageProcessor;
-import inra.ijpb.morphology.Morphology;
-import inra.ijpb.morphology.Strel;
-import inra.ijpb.morphology.strel.SquareStrel;
 
 /**
  * Utility class that catches algorithm events and displays them either on ImageJ
@@ -73,28 +67,5 @@ public class DefaultAlgoListener implements AlgoListener
 	public void algoStatusChanged(AlgoEvent evt) 
 	{
 		IJ.showStatus(evt.getStatus());
-	}
-
-	/**
-	 * Sample program demonstrating the use of DefaultAlgoListener.
-	 */
-	public static final void main(String[] args) 
-	{
-		new ImageJ();
-		
-		ImagePlus imagePlus = IJ.openImage("http://imagej.nih.gov/ij/images/NileBend.jpg");
-		 
-		imagePlus.show("Input");
-		
-		ImageProcessor image = imagePlus.getProcessor();
-		
-		Strel strel = SquareStrel.fromDiameter(21);
-		DefaultAlgoListener.monitor(strel);
-		
-		ImageProcessor result = Morphology.dilation(image, strel);
-		ImagePlus resultPlus = new ImagePlus("Result", result);
-		resultPlus.show("Result");
-
-		System.out.println("done.");
 	}
 }

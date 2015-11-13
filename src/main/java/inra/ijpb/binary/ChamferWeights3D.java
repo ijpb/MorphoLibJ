@@ -101,8 +101,11 @@ public enum ChamferWeights3D
 	/**
 	 * Determines the operation type from its label.
 	 * 
+	 * @param label the name of a chamfer weight 
+	 * @return the ChamferWeights3D enum corresponding to the given name
+	 * 
 	 * @throws IllegalArgumentException
-	 *             if label is not recognized.
+	 *             if label name is not recognized.
 	 */
 	public static ChamferWeights3D fromLabel(String label)
 	{

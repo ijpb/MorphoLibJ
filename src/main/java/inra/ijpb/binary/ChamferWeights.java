@@ -108,8 +108,11 @@ public enum ChamferWeights
 	/**
 	 * Determines the operation type from its label.
 	 * 
+	 * @param label the name of a chamfer weight 
+	 * @return the ChamferWeights enum corresponding to the given name
+	 * 
 	 * @throws IllegalArgumentException
-	 *             if label is not recognized.
+	 *             if label name is not recognized.
 	 */
 	public static ChamferWeights fromLabel(String label)
 	{
