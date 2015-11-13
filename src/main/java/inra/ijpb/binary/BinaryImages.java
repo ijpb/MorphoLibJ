@@ -176,6 +176,8 @@ public class BinaryImages
 				}
 			}
 		}
+		
+		IJ.showStatus("");
 		IJ.showProgress(1);
 		return labels;
 	}

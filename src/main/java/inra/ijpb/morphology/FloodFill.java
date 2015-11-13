@@ -45,8 +45,34 @@ public class FloodFill
 	 *            the y-coordinate of the seed pixel
 	 * @param value
 	 *            the new value of the connected component at (x,y)
+	 * @param conn
+	 *            the connectivity to use, either 4 or 8
 	 */
-	public final static void floodFillC4(ImageProcessor image, int x, int y,
+	public final static void floodFill(ImageProcessor image, int x, int y,
+			int value, int conn)
+	{
+		if (conn == 4)
+			floodFillC4(image, x, y, value);
+		else if (conn == 8)
+			floodFillC8(image, x, y, value);
+		else
+			throw new IllegalArgumentException("Connectivity must be either 4 or 8, not " + conn);
+	}
+	
+	/**
+	 * Replaces all the neighbor pixels of (x,y) that have the same values by
+	 * the specified floating-point value, using the 4-connectivity.
+	 * 
+	 * @param image
+	 *            the image in which floodfill will be propagated
+	 * @param x
+	 *            the x-coordinate of the seed pixel
+	 * @param y
+	 *            the y-coordinate of the seed pixel
+	 * @param value
+	 *            the new value of the connected component at (x,y)
+	 */
+	private final static void floodFillC4(ImageProcessor image, int x, int y,
 			int value)
 	{
 		// get image size
@@ -134,6 +160,129 @@ public class FloodFill
 	}
 
 	/**
+	 * Replaces all the pixels in the 8-neighborhood of (x,y) that have the same
+	 * values by the specified value.
+	 * 
+	 * @param image
+	 *            the image in which floodfill will be propagated
+	 * @param x
+	 *            the x-coordinate of the seed pixel
+	 * @param y
+	 *            the y-coordinate of the seed pixel
+	 * @param value
+	 *            the new value of the connected component at (x,y)
+	 */
+	private final static void floodFillC8(ImageProcessor image, int x, int y,
+			int value)
+	{
+		// get image size
+		int width = image.getWidth();
+		int height = image.getHeight();
+
+		// get old value
+		int oldValue = image.getPixel(x, y);
+
+		// test if already the right value
+		if (oldValue == value)
+			return;
+
+		// initialize the stack with original pixel
+		ArrayList<Point> stack = new ArrayList<Point>();
+		stack.add(new Point(x, y));
+
+		boolean inScanLine;
+
+		// process all items in stack
+		while (!stack.isEmpty())
+		{
+			// Extract current position
+			Point p = stack.remove(stack.size() - 1);
+			x = p.x;
+			y = p.y;
+
+			// process only pixel with the same value
+			if (image.get(x, y) != oldValue)
+				continue;
+
+			// x extremities of scan-line
+			int x1 = x;
+			int x2 = x;
+
+			// find start of scan-line
+			while (x1 > 0 && image.getPixel(x1 - 1, y) == oldValue)
+				x1--;
+
+			// find end of scan-line
+			while (x2 < width - 1 && image.getPixel(x2 + 1, y) == oldValue)
+				x2++;
+
+			// fill current scan-line
+			fillLine(image, y, x1, x2, value);
+
+			// find scan-lines above the current one
+			if (y > 0)
+			{
+				inScanLine = false;
+				for (int i = Math.max(x1 - 1, 0); i <= Math.min(x2 + 1, width - 1); i++)
+				{
+					int val = image.get(i, y - 1);
+					if (!inScanLine && val == oldValue)
+					{
+						stack.add(new Point(i, y - 1));
+						inScanLine = true;
+					} else if (inScanLine && val != oldValue)
+						inScanLine = false;
+				}
+			}
+
+			// find scan-lines below the current one
+			if (y < height - 1)
+			{
+				inScanLine = false;
+				for (int i = Math.max(x1 - 1, 0); i <= Math.min(x2 + 1, width - 1); i++)
+				{
+					int val = image.getPixel(i, y + 1);
+					if (!inScanLine && val == oldValue)
+					{
+						stack.add(new Point(i, y + 1));
+						inScanLine = true;
+					} 
+					else if (inScanLine && val != oldValue)
+					{
+						inScanLine = false;
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Replaces all the neighbor pixels of (x,y) that have the same values by
+	 * the specified integer value, using the 4-connectivity.
+	 * 
+	 * @param image
+	 *            the image in which floodfill will be propagated
+	 * @param x
+	 *            the x-coordinate of the seed pixel
+	 * @param y
+	 *            the y-coordinate of the seed pixel
+	 * @param value
+	 *            the new value of the connected component at (x,y)
+	 * @param conn
+	 *            the connectivity to use, either 4 or 8
+	 */
+	public final static void floodFill(ImageProcessor image, int x, int y,
+			float value, int conn)
+	{
+		if (conn == 4)
+			floodFillC4(image, x, y, value);
+		else if (conn == 8)
+			floodFillC8(image, x, y, value);
+		else
+			throw new IllegalArgumentException("Connectivity must be either 4 or 8, not " + conn);
+	}
+	
+	/**
 	 * Replaces all the pixels in the 4-neighborhood of (x,y) that have the same
 	 * values as the pixel in (x,y) by the specified floating point value, using
 	 * the 4-connectivity. Should work the same way for all type of images.
@@ -147,7 +296,7 @@ public class FloodFill
 	 * @param value
 	 *            the new value of the connected component at (x,y)
 	 */
-	public final static void floodFillC4(ImageProcessor image, int x, int y,
+	private final static void floodFillC4(ImageProcessor image, int x, int y,
 			float value)
 	{
 		// get image size
@@ -234,102 +383,6 @@ public class FloodFill
 		}
 	}
 
-	/**
-	 * Replaces all the pixels in the 8-neighborhood of (x,y) that have the same
-	 * values by the specified value.
-	 * 
-	 * @param image
-	 *            the image in which floodfill will be propagated
-	 * @param x
-	 *            the x-coordinate of the seed pixel
-	 * @param y
-	 *            the y-coordinate of the seed pixel
-	 * @param value
-	 *            the new value of the connected component at (x,y)
-	 */
-	public final static void floodFillC8(ImageProcessor image, int x, int y,
-			int value)
-	{
-		// get image size
-		int width = image.getWidth();
-		int height = image.getHeight();
-
-		// get old value
-		int oldValue = image.getPixel(x, y);
-
-		// test if already the right value
-		if (oldValue == value)
-			return;
-
-		// initialize the stack with original pixel
-		ArrayList<Point> stack = new ArrayList<Point>();
-		stack.add(new Point(x, y));
-
-		boolean inScanLine;
-
-		// process all items in stack
-		while (!stack.isEmpty())
-		{
-			// Extract current position
-			Point p = stack.remove(stack.size() - 1);
-			x = p.x;
-			y = p.y;
-
-			// process only pixel with the same value
-			if (image.get(x, y) != oldValue)
-				continue;
-
-			// x extremities of scan-line
-			int x1 = x;
-			int x2 = x;
-
-			// find start of scan-line
-			while (x1 > 0 && image.getPixel(x1 - 1, y) == oldValue)
-				x1--;
-
-			// find end of scan-line
-			while (x2 < width - 1 && image.getPixel(x2 + 1, y) == oldValue)
-				x2++;
-
-			// fill current scan-line
-			fillLine(image, y, x1, x2, value);
-
-			// find scan-lines above the current one
-			if (y > 0)
-			{
-				inScanLine = false;
-				for (int i = Math.max(x1 - 1, 0); i <= Math.min(x2 + 1, width - 1); i++)
-				{
-					int val = image.get(i, y - 1);
-					if (!inScanLine && val == oldValue)
-					{
-						stack.add(new Point(i, y - 1));
-						inScanLine = true;
-					} else if (inScanLine && val != oldValue)
-						inScanLine = false;
-				}
-			}
-
-			// find scan-lines below the current one
-			if (y < height - 1)
-			{
-				inScanLine = false;
-				for (int i = Math.max(x1 - 1, 0); i <= Math.min(x2 + 1, width - 1); i++)
-				{
-					int val = image.getPixel(i, y + 1);
-					if (!inScanLine && val == oldValue)
-					{
-						stack.add(new Point(i, y + 1));
-						inScanLine = true;
-					} 
-					else if (inScanLine && val != oldValue)
-					{
-						inScanLine = false;
-					}
-				}
-			}
-		}
-	}
 
 	/**
 	 * Replaces all the pixels in the 8-neighborhood of (x,y) that have the same
@@ -345,7 +398,7 @@ public class FloodFill
 	 * @param value
 	 *            the new value of the connected component at (x,y)
 	 */
-	public final static void floodFillC8(ImageProcessor image, int x, int y,
+	private final static void floodFillC8(ImageProcessor image, int x, int y,
 			float value)
 	{
 		// get image size
@@ -433,10 +486,9 @@ public class FloodFill
 	}
 
 	/**
-	 * Assign to all the neighbor pixels of (x,y,z) that have the same pixel
-	 * value in <code>image</code>, the specified new label value (
-	 * <code>value</code>) in <code>labelImage</code>, using the specified
-	 * connectivity.
+	 * Assigns in <code>labelImage</code> all the neighbor pixels of (x,y) that
+	 * have the same pixel value in <code>image</code>, the specified new label
+	 * value (<code>value</code>), using the specified connectivity.
 	 * 
 	 * @param inputImage
 	 *            original image to read the pixel values from
@@ -445,13 +497,13 @@ public class FloodFill
 	 * @param y
 	 *            y- coordinate of the seed pixel
 	 * @param outputImage
-	 *            output label image (to fill)
+	 *            the label image to fill in
 	 * @param value
 	 *            filling value
 	 * @param conn
 	 *            connectivity to use (4 or 8)
 	 */
-	public final static void floodFillInt(ImageProcessor inputImage, int x,
+	public final static void floodFill(ImageProcessor inputImage, int x,
 			int y, ImageProcessor outputImage, int value, int conn)
 	{
 
@@ -548,10 +600,9 @@ public class FloodFill
 	}
 
 	/**
-	 * Assign to all the neighbor pixels of (x,y,z) that have the same pixel
-	 * value in <code>image</code>, the specified new label value (
-	 * <code>value</code>) in <code>labelImage</code>, using the specified
-	 * connectivity.
+	 * Assigns in <code>labelImage</code> all the neighbor pixels of (x,y) that
+	 * have the same pixel value in <code>image</code>, the specified new label
+	 * value (<code>value</code>), using the specified connectivity.
 	 * 
 	 * @param inputImage
 	 *            original image to read the pixel values from
@@ -560,7 +611,7 @@ public class FloodFill
 	 * @param y
 	 *            y- coordinate of the seed pixel
 	 * @param outputImage
-	 *            output label image (to fill)
+	 *            the label image to fill in
 	 * @param value
 	 *            filling value
 	 * @param conn
@@ -718,8 +769,37 @@ public class FloodFill
 	 *            the z-coordinate of the seed voxel
 	 * @param value
 	 *            the new value of the connected component at (x,y,z)
+	 * @param conn
+	 * 			  the connectivity to use, either 6 or 26
 	 */
-	public final static void floodFillC6(ImageStack image, int x, int y, int z,
+	public final static void floodFill(ImageStack image, int x, int y, int z,
+			int value, int conn)
+	{
+		if (conn == 6)
+			floodFillC6(image, x, y, z, value);
+		else if (conn == 26)
+			floodFillC26(image, x, y, z, value);
+		else
+			throw new IllegalArgumentException("Connectivity must be either 6 or 26, not " + conn);
+	}
+	
+	/**
+	 * Replaces all the pixels in the 6-neighborhood of (x,y,z) that have the
+	 * same values as the pixel in (x,y,z) by the specified value. Should work
+	 * for all integer based 3D images.
+	 * 
+	 * @param image
+	 *            the 3D image in which floodfill will be propagated
+	 * @param x
+	 *            the x-coordinate of the seed voxel
+	 * @param y
+	 *            the y-coordinate of the seed voxel
+	 * @param z
+	 *            the z-coordinate of the seed voxel
+	 * @param value
+	 *            the new value of the connected component at (x,y,z)
+	 */
+	private final static void floodFillC6(ImageStack image, int x, int y, int z,
 			int value)
 	{
 		// get image size
@@ -848,6 +928,130 @@ public class FloodFill
 	}
 
 	/**
+	 * Replaces all the pixels in the 26-neighborhood of (x,y,z) that have the
+	 * same values as the pixel in (x,y,z) by the specified value. Should work
+	 * for all integer based 3D images.
+	 * 
+	 * @param image
+	 *            the 3D image in which floodfill will be propagated
+	 * @param x
+	 *            the x-coordinate of the seed voxel
+	 * @param y
+	 *            the y-coordinate of the seed voxel
+	 * @param z
+	 *            the z-coordinate of the seed voxel
+	 * @param value
+	 *            the new value of the connected component at (x,y,z)
+	 */
+	private final static void floodFillC26(ImageStack image, int x, int y,
+			int z, int value)
+	{
+		// get image size
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		int sizeZ = image.getSize();
+		
+		// get old value
+		int oldValue = (int) image.getVoxel(x, y, z);
+		
+		// test if already the right value 
+		if (oldValue == value) 
+			return ;
+		
+		// initialize the stack with original pixel
+		ArrayList<Cursor3D> stack = new ArrayList<Cursor3D>();
+		stack.add(new Cursor3D(x, y, z));
+		
+		boolean inScanLine;
+		
+		// process all items in stack
+		while (!stack.isEmpty())
+		{
+			// Extract current position
+			Cursor3D p = stack.remove(stack.size()-1);
+			x = p.x;
+			y = p.y;
+			z = p.z;
+			
+			// process only pixel with the same value
+			if (image.getVoxel(x, y, z) != oldValue) 
+				continue;
+			
+			// x extremities of scan-line
+			int x1 = x; 
+			int x2 = x;
+			
+			// find start of scan-line
+			while (x1 > 0 && image.getVoxel(x1-1, y, z) == oldValue)
+				x1--;
+			
+			// find end of scan-line
+			while (x2 < sizeX - 1 && image.getVoxel(x2+1, y, z) == oldValue)
+				x2++;
+			
+			// fill current scan-line
+			fillLineInt(image, x1, x2, y, z, value);
+			
+			// check the eight X-lines around the current one
+			for (int z2 = max(z - 1, 0); z2 <= min(z + 1, sizeZ - 1); z2++)
+			{
+				for (int y2 = max(y - 1, 0); y2 <= min(y + 1, sizeY - 1); y2++)
+				{
+					// do not process the middle line
+					if (y2 == z && y2 == y)
+						continue;
+
+					inScanLine = false;
+					for (int i = max(x1 - 1, 0); i <= min(x2 + 1, sizeX - 1); i++)
+					{
+						int val = (int) image.getVoxel(i, y2, z2);
+						if (!inScanLine && val == oldValue)
+						{
+							stack.add(new Cursor3D(i, y2, z2));
+							inScanLine = true;
+						} 
+						else if (inScanLine && val != oldValue)
+						{
+							inScanLine = false;
+						}
+					}
+				}
+			} // end of iteration on neighbor lines
+
+		} // end of iteration on position stack
+
+	}
+
+	/**
+	 * Replaces all the pixels in the 6-neighborhood of (x,y,z) that have the
+	 * same values as the pixel in (x,y,z) by the specified floating point
+	 * value. Should work the same way for all type of images.
+	 * 
+	 * @param image
+	 *            the 3D image in which floodfill will be propagated
+	 * @param x
+	 *            the x-coordinate of the seed voxel
+	 * @param y
+	 *            the y-coordinate of the seed voxel
+	 * @param z
+	 *            the z-coordinate of the seed voxel
+	 * @param value
+	 *            the new value of the connected component at (x,y,z)
+	 * @param conn
+	 * 			  the connectivity to use, either 6 or 26
+	 */
+	public final static void floodFill(ImageStack image, int x, int y, int z,
+			double value, int conn)
+	{
+		if (conn == 6)
+			floodFillC6(image, x, y, z, value);
+		else if (conn == 26)
+			floodFillC26(image, x, y, z, value);
+		else
+			throw new IllegalArgumentException("Connectivity must be either 6 or 26, not " + conn);
+	}
+
+	/**
 	 * Replaces all the pixels in the 6-neighborhood of (x,y,z) that have the
 	 * same values as the pixel in (x,y,z) by the specified floating point
 	 * value. Should work the same way for all type of images.
@@ -863,7 +1067,7 @@ public class FloodFill
 	 * @param value
 	 *            the new value of the connected component at (x,y,z)
 	 */
-	public final static void floodFillC6(ImageStack image, int x, int y, int z,
+	private final static void floodFillC6(ImageStack image, int x, int y, int z,
 			double value)
 	{
 		// get image size
@@ -993,101 +1197,6 @@ public class FloodFill
 
 	/**
 	 * Replaces all the pixels in the 26-neighborhood of (x,y,z) that have the
-	 * same values as the pixel in (x,y,z) by the specified value. Should work
-	 * for all integer based 3D images.
-	 * 
-	 * @param image
-	 *            the 3D image in which floodfill will be propagated
-	 * @param x
-	 *            the x-coordinate of the seed voxel
-	 * @param y
-	 *            the y-coordinate of the seed voxel
-	 * @param z
-	 *            the z-coordinate of the seed voxel
-	 * @param value
-	 *            the new value of the connected component at (x,y,z)
-	 */
-	public final static void floodFillC26(ImageStack image, int x, int y,
-			int z, int value)
-	{
-		// get image size
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-		int sizeZ = image.getSize();
-		
-		// get old value
-		int oldValue = (int) image.getVoxel(x, y, z);
-		
-		// test if already the right value 
-		if (oldValue == value) 
-			return ;
-		
-		// initialize the stack with original pixel
-		ArrayList<Cursor3D> stack = new ArrayList<Cursor3D>();
-		stack.add(new Cursor3D(x, y, z));
-		
-		boolean inScanLine;
-		
-		// process all items in stack
-		while (!stack.isEmpty())
-		{
-			// Extract current position
-			Cursor3D p = stack.remove(stack.size()-1);
-			x = p.x;
-			y = p.y;
-			z = p.z;
-			
-			// process only pixel with the same value
-			if (image.getVoxel(x, y, z) != oldValue) 
-				continue;
-			
-			// x extremities of scan-line
-			int x1 = x; 
-			int x2 = x;
-			
-			// find start of scan-line
-			while (x1 > 0 && image.getVoxel(x1-1, y, z) == oldValue)
-				x1--;
-			
-			// find end of scan-line
-			while (x2 < sizeX - 1 && image.getVoxel(x2+1, y, z) == oldValue)
-				x2++;
-			
-			// fill current scan-line
-			fillLineInt(image, x1, x2, y, z, value);
-			
-			// check the eight X-lines around the current one
-			for (int z2 = max(z - 1, 0); z2 <= min(z + 1, sizeZ - 1); z2++)
-			{
-				for (int y2 = max(y - 1, 0); y2 <= min(y + 1, sizeY - 1); y2++)
-				{
-					// do not process the middle line
-					if (y2 == z && y2 == y)
-						continue;
-
-					inScanLine = false;
-					for (int i = max(x1 - 1, 0); i <= min(x2 + 1, sizeX - 1); i++)
-					{
-						int val = (int) image.getVoxel(i, y2, z2);
-						if (!inScanLine && val == oldValue)
-						{
-							stack.add(new Cursor3D(i, y2, z2));
-							inScanLine = true;
-						} 
-						else if (inScanLine && val != oldValue)
-						{
-							inScanLine = false;
-						}
-					}
-				}
-			} // end of iteration on neighbor lines
-
-		} // end of iteration on position stack
-
-	}
-
-	/**
-	 * Replaces all the pixels in the 26-neighborhood of (x,y,z) that have the
 	 * same values as the pixel in (x,y,z) by the specified value. This version
 	 * is dedicated to floating-point stacks.
 	 * 
@@ -1102,7 +1211,7 @@ public class FloodFill
 	 * @param value
 	 *            the new value of the connected component at (x,y,z)
 	 */
-	public final static void floodFillC26(ImageStack image, int x, int y,
+	private final static void floodFillC26(ImageStack image, int x, int y,
 			int z, double value)
 	{
 		// get image size
@@ -1203,16 +1312,16 @@ public class FloodFill
 	 * @param conn
 	 *            connectivity to use (6 or 26)
 	 */
-	public final static void floodFillInt(ImageStack inputImage, int x, int y,
+	public final static void floodFill(ImageStack inputImage, int x, int y,
 			int z, ImageStack outputImage, int value, int conn)
 	{
 		switch (conn)
 		{
 		case 6:
-			floodFillIntC6(inputImage, x, y, z, outputImage, value);
+			floodFillC6(inputImage, x, y, z, outputImage, value);
 			return;
 		case 26:
-			floodFillIntC26(inputImage, x, y, z, outputImage, value);
+			floodFillC26(inputImage, x, y, z, outputImage, value);
 			return;
 		default:
 			throw new IllegalArgumentException(
@@ -1239,7 +1348,7 @@ public class FloodFill
 	 * @param value
 	 *            filling value
 	 */
-	private final static void floodFillIntC6(ImageStack inputImage, int x,
+	private final static void floodFillC6(ImageStack inputImage, int x,
 			int y, int z, ImageStack outputImage, int value)
 	{
 		// get image size
@@ -1394,7 +1503,7 @@ public class FloodFill
 	 * @param value
 	 *            filling value
 	 */
-	private final static void floodFillIntC26(ImageStack inputImage, int x,
+	private final static void floodFillC26(ImageStack inputImage, int x,
 			int y, int z, ImageStack outputImage, int value)
 	{
 		// get image size
@@ -1475,7 +1584,7 @@ public class FloodFill
 	}
 
 	/**
-	 * Assign to all the neighbor voxels of (x,y,z) that have the same voxel
+	 * Assigns to all the neighbor voxels of (x,y,z) that have the same voxel
 	 * value in <code>image</code>, the specified new label value (
 	 * <code>value</code>) in <code>labelImage</code>, using the specified
 	 * connectivity.
@@ -1513,7 +1622,7 @@ public class FloodFill
 	}
 	
 	/**
-	 * Assign to all the neighbor voxels of (x,y,z) that have the same voxel
+	 * Assigns to all the neighbor voxels of (x,y,z) that have the same voxel
 	 * value in <code>image</code>, the specified new label value (
 	 * <code>value</code>) in <code>labelImage</code>, using the 6-connectivity.
 	 * 
@@ -1530,7 +1639,7 @@ public class FloodFill
 	 * @param value
 	 *            filling value
 	 */
-	public final static void floodFillFloatC6(ImageStack inputImage, int x,
+	private final static void floodFillFloatC6(ImageStack inputImage, int x,
 			int y, int z, ImageStack outputImage, float value)
 	{
 		// get image size
@@ -1666,7 +1775,7 @@ public class FloodFill
 	}
 
 	/**
-	 * Assign to all the neighbor voxels of (x,y,z) that have the same voxel
+	 * Assigns to all the neighbor voxels of (x,y,z) that have the same voxel
 	 * value in <code>image</code>, the specified new label value (
 	 * <code>value</code>) in <code>labelImage</code>, using the
 	 * 26-connectivity.
@@ -1684,7 +1793,7 @@ public class FloodFill
 	 * @param value
 	 *            filling value
 	 */
-	public final static void floodFillFloatC26(ImageStack inputImage, int x,
+	private final static void floodFillFloatC26(ImageStack inputImage, int x,
 			int y, int z, ImageStack outputImage, float value)
 	{
 		// get image size

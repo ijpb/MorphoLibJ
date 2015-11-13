@@ -31,7 +31,7 @@ public class FloodFillTest {
 			}			
 		}
 		
-		FloodFill.floodFillC4(image, 3, 3, 12);
+		FloodFill.floodFill(image, 3, 3, 12, 4);
 		
 		for (int y = 3; y < 7; y++) {
 			for (int x = 3; x < 7; x++) {
@@ -49,7 +49,7 @@ public class FloodFillTest {
 		image.setColor(8);
 		image.fill();
 		
-		FloodFill.floodFillC4(image, 3, 3, 12);
+		FloodFill.floodFill(image, 3, 3, 12, 4);
 		
 		for (int y = 0; y < 10; y++) {
 			for (int x = 0; x < 10; x++) {
@@ -78,7 +78,7 @@ public class FloodFillTest {
 		image.set(6, 6, 0);
 		image.set(6, 7, 0);
 		
-		FloodFill.floodFillC4(image, 3, 3, 12);
+		FloodFill.floodFill(image, 3, 3, 12, 4);
 		
 		assertEquals(12, image.get(3, 3));
 		assertEquals(12, image.get(7, 3));
@@ -109,7 +109,7 @@ public class FloodFillTest {
 		}
 		
 		ImageProcessor result = image.duplicate(); 
-		FloodFill.floodFillC4(result, 7, 4, 50);
+		FloodFill.floodFill(result, 7, 4, 50, 4);
 //		printImage(result);
 		
 		for (int y = 0; y < height; y++) {
@@ -146,7 +146,7 @@ public class FloodFillTest {
 		}
 		
 		ImageProcessor result = image.duplicate(); 
-		FloodFill.floodFillC8(result, 7, 4, 50);
+		FloodFill.floodFill(result, 7, 4, 50, 8);
 //		printImage(result);
 		
 		for (int y = 0; y < height; y++) {
@@ -188,7 +188,7 @@ public class FloodFillTest {
 		result.fill();
 		
 		// Apply 
-		FloodFill.floodFillInt(image, 7, 4, result, 50, 8);
+		FloodFill.floodFill(image, 7, 4, result, 50, 8);
 //		printImage(result);
 		
 		for (int y = 0; y < height; y++) {
@@ -227,7 +227,7 @@ public class FloodFillTest {
 		result.fill();
 		
 		// compute flood fill result
-		FloodFill.floodFillInt(image, 1, 0, result, 50, 4);
+		FloodFill.floodFill(image, 1, 0, result, 50, 4);
 		
 		assertEquals(50, result.get(0, 0));
 		assertEquals(50, result.get(10, 0));
@@ -258,7 +258,7 @@ public class FloodFillTest {
 		// flood fill from an arbitrary point
 		int value = 83;
 		ImageStack result = image.duplicate();
-		FloodFill.floodFillC26(result, 90, 30, 50, value);
+		FloodFill.floodFill(result, 90, 30, 50, value, 26);
 		
 		int vRef = (int) image.getVoxel(81, 100, 0);
 		assertEquals(255, vRef);
@@ -295,7 +295,7 @@ public class FloodFillTest {
 		
 		ImageStack result = image.duplicate();
 		int newVal = 37;
-		FloodFill.floodFillC6(result, 1, 2, 2, newVal);
+		FloodFill.floodFill(result, 1, 2, 2, newVal, 6);
 		
 		// Test each of the branches
 		assertEquals(newVal, (int) result.getVoxel(0, 2, 2));
@@ -323,7 +323,7 @@ public class FloodFillTest {
 		
 		ImageStack result = image.duplicate().convertToFloat();
 		double newVal = 37.2;
-		FloodFill.floodFillC6(result, 1, 2, 2, newVal);
+		FloodFill.floodFill(result, 1, 2, 2, newVal, 6);
 		
 		// Test each of the branches
 		assertEquals(newVal, result.getVoxel(0, 2, 2), .01);
@@ -368,7 +368,7 @@ public class FloodFillTest {
 	public final void testFloodFill_Cross3d_C26() {
 		ImageStack image = createCornerCross();
 		int newVal = 37;
-		FloodFill.floodFillC26(image, 2, 4, 4, newVal);
+		FloodFill.floodFill(image, 2, 4, 4, newVal, 26);
 		
 //		printStack(result);
 		
@@ -385,7 +385,7 @@ public class FloodFillTest {
 	public final void testFloodFill_Cross3d_C26Float() {
 		ImageStack image = createCornerCross().convertToFloat();
 		double newVal = 37.2;
-		FloodFill.floodFillC26(image, 2, 4, 4, newVal);
+		FloodFill.floodFill(image, 2, 4, 4, newVal, 26);
 		
 //		printStack(result);
 		
@@ -472,7 +472,7 @@ public class FloodFillTest {
 		// flood fill from an arbitrary point
 		double value = 312.5;
 		ImageStack result = image.duplicate();
-		FloodFill.floodFillC26(result, 90, 30, 50, value);
+		FloodFill.floodFill(result, 90, 30, 50, value, 26);
 		
 		for (int z = 0; z < sizeZ; z++) {
 			for (int y = 0; y < sizeY; y++) {
