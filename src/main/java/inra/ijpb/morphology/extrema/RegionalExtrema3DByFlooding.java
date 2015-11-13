@@ -26,10 +26,11 @@ import inra.ijpb.morphology.FloodFill;
  * 
  * @author David Legland
  */
-public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo {
-
+public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo 
+{
 	@Override
-	public ImageStack applyTo(ImageStack image) {
+	public ImageStack applyTo(ImageStack image) 
+	{
 		return regionalExtremaFloat(image);
 	}
 	
@@ -38,8 +39,10 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo {
 	 * flood-filling-like algorithm.  
 	 */
 	// This methods calls the methods with specific connectivity.
-	ImageStack regionalExtremaFloat(ImageStack image) {
-		switch (this.connectivity) {
+	ImageStack regionalExtremaFloat(ImageStack image) 
+	{
+		switch (this.connectivity) 
+		{
 		case 6:
 			return regionalExtremaFloatC6(image);
 		case 26:
@@ -55,7 +58,8 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo {
 	 * Computes regional minima in float 3D image <code>image</code>, using
 	 * flood-filling-like algorithm with 6 connectivity.
 	 */
-	ImageStack regionalExtremaFloatC6(ImageStack image) {
+	ImageStack regionalExtremaFloatC6(ImageStack image) 
+	{
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		int sizeZ = image.getSize();
@@ -68,9 +72,12 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo {
 		final int sign = this.extremaType == ExtremaType.MINIMA ? 1 : -1;
 
 		// iterate on image voxels
-		for (int z = 0; z < sizeZ; z++) {
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
+		for (int z = 0; z < sizeZ; z++) 
+		{
+			for (int y = 0; y < sizeY; y++) 
+			{
+				for (int x = 0; x < sizeX; x++) 
+				{
 					// Check if current voxel was already processed
 					if (result.getVoxel(x, y, z) == 0)
 						continue;
@@ -110,7 +117,8 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo {
 	 * Computes regional minima in float 3D image <code>image</code>, using
 	 * flood-filling-like algorithm with 6 connectivity.
 	 */
-	ImageStack regionalExtremaFloatC26(ImageStack image) {
+	ImageStack regionalExtremaFloatC26(ImageStack image)
+	{
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		int sizeZ = image.getSize();
@@ -123,9 +131,12 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo {
 		final int sign = this.extremaType == ExtremaType.MINIMA ? 1 : -1;
 
 		// iterate on image voxels
-		for (int z = 0; z < sizeZ; z++) {
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
+		for (int z = 0; z < sizeZ; z++) 
+		{
+			for (int y = 0; y < sizeY; y++) 
+			{
+				for (int x = 0; x < sizeX; x++)
+				{
 					// Check if current voxel was already processed
 					if (result.getVoxel(x, y, z) == 0)
 						continue;
@@ -135,17 +146,22 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo {
 					
 					// compute extremum value in 26-neighborhood
 					double value = currentValue;
-					for (int z2 = max(z-1, 0); z2 <= min(z+1, sizeZ-1); z2++) {
-						for (int y2 = max(y-1, 0); y2 <= min(y+1, sizeY-1); y2++) {
-							for (int x2 = max(x-1, 0); x2 <= min(x+1, sizeX-1); x2++) {
+					for (int z2 = max(z-1, 0); z2 <= min(z+1, sizeZ-1); z2++) 
+					{
+						for (int y2 = max(y-1, 0); y2 <= min(y+1, sizeY-1); y2++) 
+						{
+							for (int x2 = max(x-1, 0); x2 <= min(x+1, sizeX-1); x2++) 
+							{
 								value = min(value, image.getVoxel(x2, y2, z2) * sign);
 							}
 						}
 					}
+					
 					// if one of the neighbors has lower value, the local pixel 
 					// is not a minima. All connected pixels with same value are 
 					// set to the marker for non-minima.
-					if (value < currentValue) {
+					if (value < currentValue) 
+					{
 						FloodFill.floodFillFloat(image, x, y, z, result, 0, 26);
 					}
 				}
@@ -156,8 +172,10 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo {
 	}
 	
 	@Override
-	public ImageStack applyTo(ImageStack inputImage, ImageStack maskImage) {
-		switch (this.connectivity) {
+	public ImageStack applyTo(ImageStack inputImage, ImageStack maskImage) 
+	{
+		switch (this.connectivity)
+		{
 		case 6:
 			return regionalExtremaFloatC6(inputImage, maskImage);
 		case 26:
@@ -173,7 +191,8 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo {
 	 * Computes regional extrema in float 3D image <code>image</code>, using
 	 * flood-filling-like algorithm with 6 connectivity.
 	 */
-	ImageStack regionalExtremaFloatC6(ImageStack image, ImageStack mask) {
+	ImageStack regionalExtremaFloatC6(ImageStack image, ImageStack mask) 
+	{
 		if ( Thread.currentThread().isInterrupted() )					
 			return null;
 		
@@ -189,9 +208,12 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo {
 		final int sign = this.extremaType == ExtremaType.MINIMA ? 1 : -1;
 
 		// iterate on image voxels
-		for (int z = 0; z < sizeZ; z++) {
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
+		for (int z = 0; z < sizeZ; z++) 
+		{
+			for (int y = 0; y < sizeY; y++) 
+			{
+				for (int x = 0; x < sizeX; x++) 
+				{
 					// Check if the voxel is in the binary mask
 					if (mask.getVoxel(x, y, z) == 0)
 						continue;
@@ -226,7 +248,8 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo {
 					// if one of the neighbors has lower value, the local pixel 
 					// is not a minima. All connected pixels with same value are 
 					// set to the marker for non-minima.
-					if (value < currentValue) {
+					if (value < currentValue) 
+					{
 						FloodFill.floodFillFloat(image, x, y, z, result, 0, 6);
 					}
 				}
@@ -240,7 +263,8 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo {
 	 * Computes regional extrema in float 3D image <code>image</code>, using
 	 * flood-filling-like algorithm with 26 connectivity.
 	 */
-	ImageStack regionalExtremaFloatC26(ImageStack image, ImageStack mask) {
+	ImageStack regionalExtremaFloatC26(ImageStack image, ImageStack mask)
+	{
 		if ( Thread.currentThread().isInterrupted() )					
 			return null;
 		
@@ -256,9 +280,12 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo {
 		final int sign = this.extremaType == ExtremaType.MINIMA ? 1 : -1;
 
 		// iterate on image voxels
-		for (int z = 0; z < sizeZ; z++) {
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
+		for (int z = 0; z < sizeZ; z++) 
+		{
+			for (int y = 0; y < sizeY; y++) 
+			{
+				for (int x = 0; x < sizeX; x++)
+				{
 					// Check if the voxel is in the binary mask
 					if (mask.getVoxel(x, y, z) == 0)
 						continue;
@@ -272,18 +299,23 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo {
 					
 					// compute extremum value in 26-neighborhood
 					double value = currentValue * sign;
-					for (int z2 = max(z-1, 0); z2 <= min(z+1, sizeZ-1); z2++) {
-						for (int y2 = max(y-1, 0); y2 <= min(y+1, sizeY-1); y2++) {
-							for (int x2 = max(x-1, 0); x2 <= min(x+1, sizeX-1); x2++) {
+					for (int z2 = max(z-1, 0); z2 <= min(z+1, sizeZ-1); z2++) 
+					{
+						for (int y2 = max(y-1, 0); y2 <= min(y+1, sizeY-1); y2++) 
+						{
+							for (int x2 = max(x-1, 0); x2 <= min(x+1, sizeX-1); x2++)
+							{
 								if (mask.getVoxel(x2, y2, z2) != 0)
 									value = min(value, image.getVoxel(x2, y2, z2) * sign);
 							}
 						}
 					}
+					
 					// if one of the neighbors has lower value, the local pixel 
 					// is not a minima. All connected pixels with same value are 
 					// set to the marker for non-minima.
-					if (value < currentValue * sign) {
+					if (value < currentValue * sign) 
+					{
 						FloodFill.floodFillFloat(image, x, y, z, result, 0, 26);
 					}
 				}
@@ -296,13 +328,17 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo {
 	/**
 	 * Fills the 3D image with the given value.
 	 */
-	private void fillStack(ImageStack image, double value) {
+	private void fillStack(ImageStack image, double value) 
+	{
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		int sizeZ = image.getSize();
-		for (int z = 0; z < sizeZ; z++) {
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
+		for (int z = 0; z < sizeZ; z++) 
+		{
+			for (int y = 0; y < sizeY; y++)
+			{
+				for (int x = 0; x < sizeX; x++)
+				{
 					image.setVoxel(x,  y,  z,  value);
 				}
 			}

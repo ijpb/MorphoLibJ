@@ -25,13 +25,14 @@ import static java.lang.Math.min;
  * resPlus.show(); 
  * </code></pre>
  */
-public class RegionalExtremaByFlooding extends RegionalExtremaAlgo {
-
+public class RegionalExtremaByFlooding extends RegionalExtremaAlgo 
+{
 	/* (non-Javadoc)
 	 * @see inra.ijpb.morphology.extrema.RegionalExtremaAlgo#getOutput()
 	 */
 	@Override
-	public ImageProcessor applyTo(ImageProcessor inputImage) {
+	public ImageProcessor applyTo(ImageProcessor inputImage) 
+	{
 		if (this.connectivity == 4) 
 		{
 			return regionalExtremaC4(inputImage);
@@ -51,7 +52,8 @@ public class RegionalExtremaByFlooding extends RegionalExtremaAlgo {
 	 * flood-filling-like algorithm with 4 connectivity.
 	 * Computations are made with double values.
 	 */
-	private ImageProcessor regionalExtremaC4(ImageProcessor image) {
+	private ImageProcessor regionalExtremaC4(ImageProcessor image) 
+	{
 		// get image size
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
@@ -63,13 +65,16 @@ public class RegionalExtremaByFlooding extends RegionalExtremaAlgo {
 		
 		// initialize local data depending on extrema type
 		int sign = 1;
-		if (this.extremaType == ExtremaType.MAXIMA) {
+		if (this.extremaType == ExtremaType.MAXIMA) 
+		{
 			sign = -1;
 		}
 		
 		// Iterate over image pixels
-		for (int y = 0; y < sizeY; y++) {
-			for (int x = 0; x < sizeX; x++) {
+		for (int y = 0; y < sizeY; y++) 
+		{
+			for (int x = 0; x < sizeX; x++) 
+			{
 				// Check if current pixel was already processed
 				if (result.getf(x, y) == 0)
 					continue;
@@ -93,7 +98,8 @@ public class RegionalExtremaByFlooding extends RegionalExtremaAlgo {
 				// greater) value, the the current pixel is not an extremum.
 				// Consequently, the current pixel, and all its connected 
 				// neighbors with same value are set to 0 in the output image. 
-				if (value < currentValue * sign) {
+				if (value < currentValue * sign)
+				{
 					FloodFill.floodFillFloat(image, x, y, result, 0.f, 4);
 				}
 			}
@@ -107,7 +113,8 @@ public class RegionalExtremaByFlooding extends RegionalExtremaAlgo {
 	 * flood-filling-like algorithm with 4 connectivity.
 	 * Computations are made with double values.
 	 */
-	private ImageProcessor regionalExtremaC8(ImageProcessor image) {
+	private ImageProcessor regionalExtremaC8(ImageProcessor image)
+	{
 		// get image size
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
@@ -119,13 +126,16 @@ public class RegionalExtremaByFlooding extends RegionalExtremaAlgo {
 		
 		// initialize local data depending on extrema type
 		int sign = 1;
-		if (this.extremaType == ExtremaType.MAXIMA) {
+		if (this.extremaType == ExtremaType.MAXIMA) 
+		{
 			sign = -1;
 		}
 		
 		// Iterate over image pixels
-		for (int y = 0; y < sizeY; y++) {
-			for (int x = 0; x < sizeX; x++) {
+		for (int y = 0; y < sizeY; y++) 
+		{
+			for (int x = 0; x < sizeX; x++) 
+			{
 				// Check if current pixel was already processed
 				if (result.getf(x, y) == 0)
 					continue;
@@ -136,8 +146,10 @@ public class RegionalExtremaByFlooding extends RegionalExtremaAlgo {
 				// compute extrema value in 4-neighborhood (computes max value
 				// if sign is -1)
 				float value = currentValue * sign;
-				for (int y2 = Math.max(y-1, 0); y2 <= Math.min(y+1, sizeY-1); y2++) {
-					for (int x2 = Math.max(x-1, 0); x2 <= Math.min(x+1, sizeX-1); x2++) {
+				for (int y2 = Math.max(y-1, 0); y2 <= Math.min(y+1, sizeY-1); y2++) 
+				{
+					for (int x2 = Math.max(x-1, 0); x2 <= Math.min(x+1, sizeX-1); x2++) 
+					{
 						value = min(value, image.getf(x2, y2) * sign);
 					}
 				}
@@ -146,7 +158,8 @@ public class RegionalExtremaByFlooding extends RegionalExtremaAlgo {
 				// greater) value, the the current pixel is not an extremum.
 				// Consequently, the current pixel, and all its connected 
 				// neighbors with same value are set to 0 in the output image. 
-				if (value < currentValue * sign) {
+				if (value < currentValue * sign) 
+				{
 					FloodFill.floodFillFloat(image, x, y, result, 0.f, 8);
 				}
 			}
