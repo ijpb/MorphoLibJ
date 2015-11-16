@@ -24,6 +24,18 @@ public class Threshold
 	{
 	}
 
+	/**
+	 * Creates a new 3D binary image with value 255 when input image has value
+	 * between <code>lower</code> and <code>upper</code> values (inclusive).
+	 * 
+	 * @param image
+	 *            the imagePlus that contains the grayscale image
+	 * @param lower
+	 *            the lower threshold bound (inclusive)
+	 * @param upper
+	 *            the upper threshold bound (inclusive)
+	 * @return a new ImagePlus containing the binarised image
+	 */
 	public static final ImagePlus threshold(ImagePlus image, double lower, double upper)
 	{
 		String newName = image.getShortTitle() + "-bin";
@@ -40,11 +52,15 @@ public class Threshold
 	}
 	
 	/**
-	 * Creates a new binary image with value 255 when input image has value 
-	 * between <code>lower</code> and <code>upper</code> values (included). 
-	 * @param image the input grayscale image
-	 * @param lower the lower threshold bound 
-	 * @param upper the upper threshold bound
+	 * Creates a new binary image with value 255 when input image has value
+	 * between <code>lower</code> and <code>upper</code> values (inclusive).
+	 * 
+	 * @param image
+	 *            the input grayscale image
+	 * @param lower
+	 *            the lower threshold bound (inclusive)
+	 * @param upper
+	 *            the upper threshold bound (inclusive)
 	 * @return a binary image
 	 */
 	public static final ImageProcessor threshold(ImageProcessor image, double lower, double upper)
@@ -72,6 +88,18 @@ public class Threshold
 		return result;
 	}
 
+	/**
+	 * Creates a new 3D binary image with value 255 when input image has value
+	 * between <code>lower</code> and <code>upper</code> values (inclusive).
+	 * 
+	 * @param image
+	 *            the input 3D grayscale image
+	 * @param lower
+	 *            the lower threshold bound (inclusive)
+	 * @param upper
+	 *            the upper threshold bound (inclusive)
+	 * @return a 3D binary image
+	 */
 	public static final ImageStack threshold(ImageStack image, double lower, double upper)
 	{
 		int sizeX = image.getWidth();
