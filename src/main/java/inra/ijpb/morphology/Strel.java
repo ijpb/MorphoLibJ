@@ -283,12 +283,17 @@ public interface Strel extends Strel3D {
 	public ImageProcessor opening(ImageProcessor image);
 	
 	/**
-	 * Sets the name of the currently processed channel.
+	 * Sets the name of the currently processed channel, for process monitoring.
+	 * 
+	 * @param channelName
+	 *            the name of the currently processed channel
 	 */
 	public void setChannelName(String channelName);
 
 	/**
 	 * Returns the name of the channel currently processed, or null by default.
+	 * 
+	 * @return the name of the currently processed channel
 	 */
 	public String getChannelName();
 }

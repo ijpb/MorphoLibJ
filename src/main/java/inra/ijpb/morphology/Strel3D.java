@@ -162,7 +162,13 @@ public interface Strel3D extends Algo {
 		
 		/**
 		 * Determines the strel shape from its label.
-		 * @throws IllegalArgumentException if label is not recognized.
+		 * 
+		 * @param label
+		 *            the name of the structuring element
+		 * @return a Shape object that can be used to instantiate new
+		 *         structuring elements
+		 * @throws IllegalArgumentException
+		 *             if label is not recognized.
 		 */
 		public static Shape fromLabel(String label) {
 			if (label != null)
@@ -282,11 +288,15 @@ public interface Strel3D extends Algo {
 	/**
 	 * Returns a boolean flag indicating whether or not this structuring
 	 * element should display its progress or not
+	 * 
+	 * @return a boolean flag with value true if progress should be displayed
 	 */
 	public boolean showProgress();
 
 	/**
 	 * Specifies if this structuring element should display its progress.
+	 * 
+	 * @param b a boolean flag with value true if progress should be displayed
 	 */
 	public void showProgress(boolean b);
 }

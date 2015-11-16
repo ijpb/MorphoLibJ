@@ -13,8 +13,8 @@ package inra.ijpb.morphology.strel;
  * @author David Legland
  * 
  */
-public class LocalExtremumBufferDouble implements LocalExtremum {
-	
+public class LocalExtremumBufferDouble implements LocalExtremum 
+{
 	/**
 	 * Current max value
 	 */
@@ -41,8 +41,12 @@ public class LocalExtremumBufferDouble implements LocalExtremum {
 	
 	/**
 	 * Main constructor.
+	 *
+	 * @param n
+	 *            the size of the buffer
 	 */
-	public LocalExtremumBufferDouble(int n) {
+	public LocalExtremumBufferDouble(int n) 
+	{
 		this.buffer = new double[n];
 		for (int i = 0; i < n; i++)
 			this.buffer[i] = 0;
@@ -50,11 +54,17 @@ public class LocalExtremumBufferDouble implements LocalExtremum {
 	
 	/**
 	 * Constructor from size and type of extremum (minimum or maximum).
+	 *
+	 * @param n
+	 *            the size of the buffer
+	 * @param type
+	 *            the type of extremum (maximum or minimum)
 	 */
 	public LocalExtremumBufferDouble(int n, LocalExtremum.Type type)
 	{
 		this(n);
-		switch (type){
+		switch (type)
+		{
 		case MINIMUM: setMinMaxSign(-1); break;
 		case MAXIMUM: setMinMaxSign(+1); break;
 		}
@@ -62,26 +72,39 @@ public class LocalExtremumBufferDouble implements LocalExtremum {
 	
 	/**
 	 * Initializes an histogram filled with the given value.
+	 *
+	 * @param n
+	 *            the size of the buffer
+	 * @param value
+	 *            the initial value of all elements in buffer
 	 */
-	public LocalExtremumBufferDouble(int n, double value) {
+	public LocalExtremumBufferDouble(int n, double value) 
+	{
 		this.buffer = new double[n];
 		for (int i = 0; i < n; i++)
 			this.buffer[i] = value;
 		this.maxValue = value;
 	}
 
+	/**
+	 * Changes the sign used for distinguishing minimum and maximum.
+	 * 
+	 * @param sign
+	 *            +1 for maximum, -1 for minimum
+	 */
 	public void setMinMaxSign(int sign) 
 	{
 		this.sign = sign;
 	}
 	
-	
 	/**
 	 * Adds a value to the local histogram, and update bounds if needed. 
 	 * Then removes the last stored value, and update bounds if needed.
+	 * 
 	 * @param value the value to add
 	 */
-	public void add(double value) {
+	public void add(double value) 
+	{
 		// add the new value, and remove the oldest one
 		addValue(value);
 		removeValue(this.buffer[this.bufferIndex]);
@@ -91,26 +114,45 @@ public class LocalExtremumBufferDouble implements LocalExtremum {
 		this.bufferIndex = (++this.bufferIndex) % this.buffer.length;
 	}
 	
-	private void addValue(double value) {
+	/**
+	 * Updates local extremum with the specified value.
+	 * 
+	 * @param value
+	 *            the value to add
+	 */
+	private void addValue(double value) 
+	{
 		// update max value
-		if (value * sign > this.maxValue * sign) {
-			updateNeeded = true;
+		if (value * sign > this.maxValue * sign) 
+		{
+			this.maxValue = value;
+//			updateNeeded = true;
 		}
 	}
 	
-	private void removeValue(double value) {
+	/**
+	 * Updates local extremum with the specified value.
+	 * 
+	 * @param value
+	 *            the value to remove
+	 */
+	private void removeValue(double value) 
+	{
 		// update max value if needed
-		if (value == this.maxValue) {
+		if (value == this.maxValue) 
+		{
 			updateNeeded = true;
 		}
 	}
 	
-	private void updateMaxValue() {
+	private void updateMaxValue() 
+	{
 		if (sign == 1)
 		{
 			// find the maximum value in the buffer
 			this.maxValue = Integer.MIN_VALUE;
-			for (int i = 0; i < buffer.length; i++) {
+			for (int i = 0; i < buffer.length; i++) 
+			{
 				this.maxValue = Math.max(this.maxValue, this.buffer[i]);
 			}
 		}
@@ -118,7 +160,8 @@ public class LocalExtremumBufferDouble implements LocalExtremum {
 		{
 			// find the maximum value in the buffer
 			this.maxValue = Integer.MAX_VALUE;
-			for (int i = 0; i < buffer.length; i++) {
+			for (int i = 0; i < buffer.length; i++) 
+			{
 				this.maxValue = Math.min(this.maxValue, this.buffer[i]);
 			}
 		}
@@ -129,7 +172,8 @@ public class LocalExtremumBufferDouble implements LocalExtremum {
 	/**
 	 * Reset inner counts with default values (0 for MAX, 255 for MIN)
 	 */
-	public void clear() {
+	public void clear() 
+	{
 		if (this.sign == 1)
 			this.fill(Double.MIN_VALUE);
 		else
@@ -139,8 +183,12 @@ public class LocalExtremumBufferDouble implements LocalExtremum {
 	/**
 	 * Resets histogram by considering it is filled with the given value. 
 	 * Update max and max accordingly.
+	 * 
+	 * @param value
+	 *            the new value of all elements in buffer
 	 */
-	public void fill(double value) {
+	public void fill(double value) 
+	{
 		// get buffer size
 		int n = this.buffer.length;
 
@@ -156,8 +204,10 @@ public class LocalExtremumBufferDouble implements LocalExtremum {
 	 * Returns the maximum value stored in this local histogram
 	 * @return the maximum value in neighborhood
 	 */
-	public double getMax() {
-		if (updateNeeded) {
+	public double getMax() 
+	{
+		if (updateNeeded) 
+		{
 			updateMaxValue();
 		}
 		

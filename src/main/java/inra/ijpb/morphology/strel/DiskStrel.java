@@ -19,22 +19,38 @@ public class DiskStrel extends AbstractInPlaceStrel implements InPlaceStrel {
 	double radius;
 	
 	/**
-	 * Creates a structuring element with a circular shape of the given radius. 
+	 * Creates a structuring element with a circular shape of the given radius.
+	 * 
+	 * @param radius
+	 *            the radius of the structuring element, in pixels
+	 * @return a new structuring element with disk shape and specified radius
 	 */
 	public final static DiskStrel fromRadius(int radius) {
 		return new DiskStrel(radius);
 	}
 	
 	/**
-	 * Creates a structuring element with a circular shape of the given diameter.
-	 * The diameter is converted to a radius with following relation:
-	 * radius = (diameter - 1) / 2.  
+	 * Creates a structuring element with a circular shape of the given
+	 * diameter. The diameter is converted to a radius with following relation:
+	 * <pre><code>
+	 * radius = (diameter - 1) / 2
+	 * </code></pre>
+	 * 
+	 * @param diam
+	 *            the diameter of the structuring element, in pixels
+	 * @return a new structuring element with disk shape and specified diameter
 	 */
 	public final static DiskStrel fromDiameter(int diam) {
 		double radius = ((double) diam - 1.0) / 2;
 		return new DiskStrel(radius);
 	}
 	
+	/**
+	 * Private constructor of Disk structuring element.
+	 * 
+	 * @param radius
+	 *            the radius of the structuring element, in pixels
+	 */
 	private DiskStrel(double radius) {
 		this.radius = radius;
 	}

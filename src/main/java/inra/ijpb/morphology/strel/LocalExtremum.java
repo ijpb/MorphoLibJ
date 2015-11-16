@@ -11,7 +11,8 @@ package inra.ijpb.morphology.strel;
  */
 public interface LocalExtremum
 {
-	public enum Type {
+	public enum Type
+	{
 		MINIMUM,
 		MAXIMUM
 	};
