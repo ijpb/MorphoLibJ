@@ -27,6 +27,13 @@ import inra.ijpb.morphology.geodrec.GeodesicReconstructionType;
 public abstract class GeodesicReconstruction3D 
 {
 	/**
+	 * Private constructor to prevent class instantiation.
+	 */
+	private GeodesicReconstruction3D()
+	{
+	}
+
+	/**
 	 * Removes the border of the input image, by performing a geodesic 
 	 * reconstruction initialized with image boundary. 
 	 * @see #fillHoles(ImageStack)

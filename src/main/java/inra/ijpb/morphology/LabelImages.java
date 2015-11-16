@@ -5,5 +5,12 @@ package inra.ijpb.morphology;
  */
 @Deprecated
 public class LabelImages extends inra.ijpb.label.LabelImages {
+	/**
+	 * Private constructor to prevent class instantiation.
+	 */
+	private LabelImages()
+	{
+	}
+
 
 }

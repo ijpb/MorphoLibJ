@@ -30,6 +30,13 @@ import inra.ijpb.morphology.geodrec.GeodesicReconstructionType;
 public class MinimaAndMaxima {
 
 	/**
+	 * Private constructor to prevent class instantiation.
+	 */
+	private MinimaAndMaxima()
+	{
+	}
+
+	/**
 	 * The default connectivity used by reconstruction algorithms in 2D images.
 	 */
 	public final static int DEFAULT_CONNECTIVITY_2D = 4;

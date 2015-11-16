@@ -41,6 +41,13 @@ import Jama.SingularValueDecomposition;
 public class GeometricMeasures3D 
 {
 	/**
+	 * Private constructor to prevent class instantiation.
+	 */
+	private GeometricMeasures3D()
+	{
+	}
+	
+	/**
 	 * Compute bounding box of each label in input stack and returns the result
 	 * as a ResultsTable.
 	 */

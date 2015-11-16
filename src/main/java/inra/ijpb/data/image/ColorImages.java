@@ -24,9 +24,18 @@ import java.util.Iterator;
 public class ColorImages
 {
 	/**
-	 * Splits the channels of the color image into three new instances of ByteProcessor.
-	 *  
-	 * @param image the original image, assumed to be a ColorProcessor
+	 * Private constructor to prevent class instantiation.
+	 */
+	private ColorImages()
+	{
+	}
+
+	/**
+	 * Splits the channels of the color image into three new instances of
+	 * ByteProcessor.
+	 * 
+	 * @param image
+	 *            the original image, assumed to be a ColorProcessor
 	 * @return a collection containing the red, green and blue channels
 	 */
 	public static final Collection<ByteProcessor> splitChannels(ImageProcessor image) {

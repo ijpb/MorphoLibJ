@@ -40,6 +40,13 @@ public class MinimaAndMaxima3D
 	public final static int DEFAULT_CONNECTIVITY_3D = 6;
 
 	/**
+	 * Private constructor to prevent class instantiation.
+	 */
+	private MinimaAndMaxima3D()
+	{
+	}
+
+	/**
 	 * Computes the regional maxima in 3D stack <code>image</code>, 
 	 * using the default connectivity.
 	 */

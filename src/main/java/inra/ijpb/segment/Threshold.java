@@ -17,6 +17,13 @@ import ij.process.ImageProcessor;
  */
 public class Threshold
 {
+	/**
+	 * Private constructor to prevent class instantiation.
+	 */
+	private Threshold()
+	{
+	}
+
 	public static final ImagePlus threshold(ImagePlus image, double lower, double upper)
 	{
 		String newName = image.getShortTitle() + "-bin";

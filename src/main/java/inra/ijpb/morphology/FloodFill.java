@@ -34,6 +34,13 @@ import ij.process.ImageProcessor;
 public class FloodFill
 {
 	/**
+	 * Private constructor to prevent class instantiation.
+	 */
+	private FloodFill()
+	{
+	}
+
+	/**
 	 * Replaces all the neighbor pixels of (x,y) that have the same values by
 	 * the specified integer value, using the 4-connectivity.
 	 * 

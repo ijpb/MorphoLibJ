@@ -11,6 +11,12 @@ package inra.ijpb.measure;
  */
 public class GeometryUtils 
 {
+	/**
+	 * Private constructor to prevent class instantiation.
+	 */
+	private GeometryUtils()
+	{
+	}
 
 	public static final double sphericalVoronoiDomainArea(Vector3d germ, Vector3d[] neighbors)
 	{

@@ -123,6 +123,13 @@ public class ColorMaps {
 	};
 
 	/**
+	 * Private constructor to prevent class instantiation.
+	 */
+	private ColorMaps()
+	{
+	}
+
+	/**
 	 * Creates a Java.awt.image.ColorModel from a color map given as an triplet
 	 * of byte arrays.
 	 */

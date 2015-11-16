@@ -28,6 +28,12 @@ import java.util.TreeSet;
  */
 public class LabelImages 
 {
+	/**
+	 * Private constructor to prevent class instantiation.
+	 */
+	protected LabelImages()
+	{
+	}
 
 	/**
 	 * Creates a label image with the appropriate class to store the required

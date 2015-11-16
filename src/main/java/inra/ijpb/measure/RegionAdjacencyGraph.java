@@ -50,6 +50,13 @@ import java.util.TreeSet;
 public class RegionAdjacencyGraph 
 {
 	/**
+	 * Private constructor to prevent class instantiation.
+	 */
+	private RegionAdjacencyGraph()
+	{
+	}
+	
+	/**
 	 * Returns the set of region adjacencies in an ImagePlus, that can contains
 	 * either an ImageProcessor or an ImageStack.
 	 * 

@@ -38,6 +38,13 @@ import inra.ijpb.morphology.FloodFill;
 public class BinaryImages 
 {
 	/**
+	 * Private constructor to prevent class instantiation.
+	 */
+	private BinaryImages()
+	{
+	}
+
+	/**
 	 * Computes the labels in the binary 2D or 3D image contained in the given
 	 * ImagePlus, and computes the maximum label to set up the display range
 	 * of the resulting ImagePlus.  

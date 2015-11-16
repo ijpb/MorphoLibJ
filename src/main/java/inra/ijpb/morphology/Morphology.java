@@ -150,7 +150,8 @@ public class Morphology {
 	/**
 	 * Makes the default constructor private.
 	 */
-	private Morphology() {
+	private Morphology() 
+	{
 	}
 
 	

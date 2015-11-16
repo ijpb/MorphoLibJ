@@ -17,6 +17,13 @@ import ij.ImagePlus;
 public class IJUtils {
 
 	/**
+	 * Private constructor to prevent class instantiation.
+	 */
+	private IJUtils()
+	{
+	}
+
+	/**
 	 * Display elapsed time, converted into seconds, and computes number of
 	 * processed elements per second. Also returns the created message.
 	 */

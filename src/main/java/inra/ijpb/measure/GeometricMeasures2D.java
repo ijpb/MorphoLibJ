@@ -36,6 +36,13 @@ public class GeometricMeasures2D
 	// Main processing functions
 
 	/**
+	 * Private constructor to prevent class instantiation.
+	 */
+	private GeometricMeasures2D()
+	{
+	}
+	
+	/**
 	 * Computes several morphometric features for each region in the input label
 	 * image.
 	 * 

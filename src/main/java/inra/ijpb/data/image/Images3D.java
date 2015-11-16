@@ -9,7 +9,14 @@ import ij.process.ImageProcessor;
  * @author David Legland
  *
  */
-public class Images3D {
+public class Images3D 
+{
+	/**
+	 * Private constructor to prevent class instantiation.
+	 */
+	private Images3D()
+	{
+	}
 
 	/**
 	 * Converts the input ImageStack into an instance of Image3D, depending
@@ -36,7 +43,7 @@ public class Images3D {
 	 * @param image input 2d/3d image
 	 * @return array of 2 extreme values
 	 */
-	public static double[] findMinAndMax( ImagePlus image )
+	public static final double[] findMinAndMax( ImagePlus image )
 	{
 		// Adjust min and max values to display
 		double min = 0;
@@ -59,7 +66,7 @@ public class Images3D {
 	 * 
 	 * @param image input image
 	 */
-	public static void optimizeDisplayRange( ImagePlus image )
+	public static final void optimizeDisplayRange( ImagePlus image )
 	{
 		double[] extremeValue = findMinAndMax(image);
 		image.setDisplayRange( extremeValue[ 0 ], extremeValue[ 1 ] );
