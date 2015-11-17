@@ -71,7 +71,7 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
     		</plugin>
     		
 			<!-- plugin for generating the javadoc.
-				 Output is located in "ijpb-plugins/target/site/apidocs" -->
+				 Output is located in "MorphoLibJ_/target/site/apidocs" -->
     		<plugin>
         		<groupId>org.apache.maven.plugins</groupId>
         		<artifactId>maven-javadoc-plugin</artifactId>
