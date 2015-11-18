@@ -37,3 +37,5 @@ A more detailed presentation of the plugin for the user is available on the
 as well as on the [Fiji Wiki](http://fiji.sc/Morphological_Segmentation).
 
 The main source code directory is [src/main/java/inra/ijpb](http://github.com/ijpb/MorphoLibJ/tree/master/src/main/java/inra/ijpb).
+
+You can browse the [javadoc](http://ijpb.github.io/MorphoLibJ/javadoc/) for more information about its API.
