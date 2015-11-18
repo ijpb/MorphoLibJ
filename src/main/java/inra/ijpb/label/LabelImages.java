@@ -38,6 +38,15 @@ public class LabelImages
 	/**
 	 * Creates a label image with the appropriate class to store the required
 	 * number of labels.
+	 * 
+	 * @param width
+	 *            the width of the new label image
+	 * @param height
+	 *            the height of the new label image
+	 * @param nLabels
+	 *            expected number of labels in new image
+	 * @return a new ImageProcessor with type adapted to store the expected
+	 *         number of labels
 	 */
 	public static final ImageProcessor createLabelImage(int width, int height,
 			int nLabels)	
@@ -64,6 +73,16 @@ public class LabelImages
 	/**
 	 * Creates a new image stack with the appropriate class to store the required
 	 * number of labels.
+	 * @param width
+	 *            the width of the new label image
+	 * @param height
+	 *            the height of the new label image
+	 * @param depth
+	 *            the depth (number of slices) of the new label image
+	 * @param nLabels
+	 *            expected number of labels in new image
+	 * @return a new ImageStack with type adapted to store the expected
+	 *         number of labels
 	 */
 	public static final ImageStack createLabelStack(int width, int height,
 			int depth, int nLabels)
@@ -145,14 +164,18 @@ public class LabelImages
 	}
 
 	/**
-	 * Creates a binary 3D image that contains 255 for voxels that are 
+	 * Creates a binary 3D image that contains 255 for voxels that are
 	 * boundaries between two labels.
+	 * 
+	 * @param image
+	 *            a 3D image containig label regions
+	 * @return a new 3D binary image with white voxels at label boundaries
 	 */
-	public static final ImageStack labelBoundaries(ImageStack stack) 
+	public static final ImageStack labelBoundaries(ImageStack image) 
 	{
-		int sizeX = stack.getWidth();
-		int sizeY = stack.getHeight();
-		int sizeZ = stack.getSize();
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		int sizeZ = image.getSize();
 		
 		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
 		
@@ -162,12 +185,12 @@ public class LabelImages
 			{
 				for (int x = 0; x < sizeX - 1; x++)
 				{
-					double value = stack.getVoxel(x, y, z);
-					if (stack.getVoxel(x+1, y, z) != value)
+					double value = image.getVoxel(x, y, z);
+					if (image.getVoxel(x+1, y, z) != value)
 						result.setVoxel(x, y, z, 255);
-					if (stack.getVoxel(x, y+1, z) != value)
+					if (image.getVoxel(x, y+1, z) != value)
 						result.setVoxel(x, y, z, 255);
-					if (stack.getVoxel(x, y, z+1) != value)
+					if (image.getVoxel(x, y, z+1) != value)
 						result.setVoxel(x, y, z, 255);
 				}
 			}
@@ -270,7 +293,6 @@ public class LabelImages
 		}
 
 		return result;
-
 	}
 	
 
@@ -353,9 +375,17 @@ public class LabelImages
 	
 	/**
 	 * Applies size opening on a label image: creates a new label image that
-	 * contains only particles with at least the specified number of pixels or voxels.
+	 * contains only particles with at least the specified number of pixels or
+	 * voxels.
+	 * 
 	 * @see #areaOpening(ImageProcessor, int)
 	 * @see #volumeOpening(ImageStack, int)
+	 * 
+	 * @param labelImage
+	 *            an image of label regions
+	 * @param minElementCount
+	 *            the minimal number of pixels or voxels of regions
+	 * @return a new image containing only regions with enough elements
 	 */
 	public static final ImagePlus sizeOpening(ImagePlus labelImage, int minElementCount) 
 	{
@@ -393,6 +423,12 @@ public class LabelImages
 	/**
 	 * Applies area opening on a label image: creates a new label image that
 	 * contains only particles with at least the specified number of pixels.
+	 * 
+	 * @param labelImage
+	 *            an image of label regions
+	 * @param nPixelMin
+	 *            the minimal number of pixels of regions
+	 * @return a new image containing only regions with enough pixels
 	 */
 	public static final ImageProcessor areaOpening(ImageProcessor labelImage, int nPixelMin) 
 	{
@@ -429,6 +465,12 @@ public class LabelImages
 	 * Applies area opening on a 3D label image: creates a new label image that
 	 * contains only particle with at least the specified number of voxels.
 	 * Keep original labels unchanged.
+	 * 
+	 * @param labelImage
+	 *            an image of label regions
+	 * @param nVoxelMin
+	 *            the minimal number of voxels of regions
+	 * @return a new image containing only regions with enough voxels
 	 */
 	public static final ImageStack volumeOpening(ImageStack labelImage, int nVoxelMin) 
 	{
@@ -668,7 +710,7 @@ public class LabelImages
 		for (int z = 0; z < sizeZ; z++) 
 		{
 			for (int x = 0; x < sizeX; x++)
-{
+			{
 				labelSet.add((int) image.getVoxel(x, 0, z));
 				labelSet.add((int) image.getVoxel(x, sizeY - 1, z));
 			}
@@ -701,7 +743,8 @@ public class LabelImages
 	/**
 	 * Returns a binary image that contains only the largest label.
 	 * 
-	 * @param imagePlus an instance if ImagePlus containing a binary image
+	 * @param imagePlus an instance of ImagePlus containing a label image
+	 * @return a new ImagePlus containing only the largest label
 	 */
 	public static final ImagePlus keepLargestLabel(ImagePlus imagePlus)
 	{
@@ -730,7 +773,10 @@ public class LabelImages
 	
 	/**
 	 * Returns a binary image that contains only the largest label.
-	 * @param image a binary image
+	 * 
+	 * @param image
+	 *            a label image
+	 * @return a new image containing only the largest label
 	 */
 	public static final ImageProcessor keepLargestLabel(ImageProcessor image)
 	{
@@ -762,7 +808,10 @@ public class LabelImages
 	
 	/**
 	 * Returns a binary image that contains only the largest label.
-	 * @param image a binary image
+	 * 
+	 * @param image
+	 *            a label image
+	 * @return a new image containing only the largest label
 	 */
 	public static final ImageStack keepLargestLabel(ImageStack image) 
 	{
@@ -796,20 +845,31 @@ public class LabelImages
 		return result;
 	}
 
-
+	/**
+	 * Removes the regions corresponding to the largest label from a label image.
+	 * 
+	 * @param imagePlus
+	 *            a label image
+	 */
 	public static final void removeLargestLabel(ImagePlus imagePlus)
 	{
 		// Dispatch to appropriate function depending on dimension
 		if (imagePlus.getStackSize() == 1) 
-		{
 			removeLargestLabel(imagePlus.getProcessor());
-		} else {
+		else
 			removeLargestLabel(imagePlus.getStack());
-		}
 	}
 
+	/**
+	 * Removes the regions corresponding to the largest label from a label
+	 * image.
+	 * 
+	 * @param image
+	 *            a label image
+	 */
 	public static final void removeLargestLabel(ImageProcessor image) 
 	{
+		// determine image size
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 
@@ -818,7 +878,7 @@ public class LabelImages
 		int[] areas = pixelCount(image, labels);
 		int indMax = labels[indexOfMax(areas)];
 		
-		// remove voxels belonging to the largest label
+		// remove pixels belonging to the largest label
 		for (int y = 0; y < sizeY; y++) 
 		{
 			for (int x = 0; x < sizeX; x++) 
@@ -830,8 +890,16 @@ public class LabelImages
 		}
 	}
 
+	/**
+	 * Removes the regions corresponding to the largest label from a label
+	 * image.
+	 * 
+	 * @param image
+	 *            a 3D label image
+	 */
 	public static final void removeLargestLabel(ImageStack image) 
 	{
+		// determine image size
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		int sizeZ = image.getSize();
@@ -841,6 +909,7 @@ public class LabelImages
 		int[] volumes = voxelCount(image, labels);
 		int indMax = labels[indexOfMax(volumes)];
 		
+		// remove voxels belonging to the largest label
 		for (int z = 0; z < sizeZ; z++)
 		{
 			for (int y = 0; y < sizeY; y++)
@@ -872,7 +941,15 @@ public class LabelImages
 	
     /**
 	 * Computes the number of pixels composing each particle in the label image.
-	 * @see inra.ijpb.measure.GeometricMeasures2D#area(ij.process.ImageProcessor, int[], double[])
+	 * 
+	 * @see inra.ijpb.measure.GeometricMeasures2D#area(ij.process.ImageProcessor,
+	 *      int[], double[])
+	 * 
+	 * @param image
+	 *            a label image
+	 * @param labels the array of label indices to process
+	 * @return an array the same size as labels, containing the number of pixels
+	 *         of each region
 	 */
     public static final int[] pixelCount(ImageProcessor image, int[] labels) 
     {
@@ -907,8 +984,14 @@ public class LabelImages
 	 * Counts the number of voxels that compose each labeled particle in 3D 
 	 * image.
 	 * @see inra.ijpb.measure.GeometricMeasures3D#volume(ij.ImageStack, int[], double[])
+	 * 
+	 * @param image
+	 *            a label image
+	 * @param labels the array of label indices to process
+	 * @return an array the same size as labels, containing the number of voxels
+	 *         of each region
 	*/
-	public final static int[] voxelCount(ImageStack labelImage, int[] labels) 
+	public final static int[] voxelCount(ImageStack image, int[] labels) 
 	{
         // create associative array to know index of each label
 		HashMap<Integer, Integer> labelIndices = mapLabelIndices(labels);
@@ -918,9 +1001,9 @@ public class LabelImages
 		int[] counts = new int[nLabels];
 
 		// size of image
-		int sizeX = labelImage.getWidth();
-		int sizeY = labelImage.getHeight();
-		int sizeZ = labelImage.getSize();
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		int sizeZ = image.getSize();
 
 		// iterate on image voxels
 		IJ.showStatus("Count label voxels...");
@@ -931,7 +1014,7 @@ public class LabelImages
         	{
         		for (int x = 0; x < sizeX; x++)
         		{
-        			int label = (int) labelImage.getVoxel(x, y, z);
+        			int label = (int) image.getVoxel(x, y, z);
 					// do not consider background
 					if (label == 0)
 						continue;
@@ -946,9 +1029,13 @@ public class LabelImages
 	}
 	
     /**
-     * Returns the set of unique labels existing in the given image, excluding 
-     * the value zero (used for background).
-     */
+	 * Returns the set of unique labels existing in the given image, excluding
+	 * the value zero (used for background).
+	 * 
+	 * @param image
+	 *            an instance of ImagePlus containing a label image
+	 * @return the list of unique labels present in image (without background)
+	 */
     public final static int[] findAllLabels(ImagePlus image) 
     {
 		return image.getStackSize() == 1 ? findAllLabels(image.getProcessor())
@@ -958,6 +1045,10 @@ public class LabelImages
     /**
      * Returns the set of unique labels existing in the given stack, excluding 
      * the value zero (used for background).
+	 * 
+	 * @param image
+	 *            a 3D label image
+	 * @return the list of unique labels present in image (without background)
      */
     public final static int[] findAllLabels(ImageStack image) 
     {
@@ -997,6 +1088,10 @@ public class LabelImages
     /**
      * Returns the set of unique labels existing in the given image, excluding 
      * the value zero (used for background).
+	 * 
+	 * @param image
+	 *            a label image
+	 * @return the list of unique labels present in image (without background)
      */
     public final static int[] findAllLabels(ImageProcessor image)
     {
@@ -1192,9 +1287,9 @@ public class LabelImages
 	 * Replace all values specified in label array by the value 0.
 	 *  
 	 * @param image a label 3D image
-		 * @param labels the list of labels to replace 
+	 * @param labels the list of labels to replace 
 	 * @param newLabel the new value for labels 
- */
+	 */
 	public static final void replaceLabels(ImageStack image, float[] labels, float newLabel)
 	{
 		int sizeX = image.getWidth();
@@ -1225,9 +1320,12 @@ public class LabelImages
 
 	/**
 	 * Creates a new image containing only the specified labels.
-	 *  
-	 * @param imagePlus an ImagePlus containing a planar label image
-	 * @param labels the list of values to keep 
+	 * 
+	 * @param imagePlus
+	 *            an ImagePlus containing a planar label image
+	 * @param labels
+	 *            the list of values to keep
+	 * @return a new instance of ImagePlus containing only the specified labels
 	 */
 	public static final ImagePlus keepLabels(ImagePlus imagePlus, int[] labels) 
 	{
@@ -1256,9 +1354,12 @@ public class LabelImages
 
 	/**
 	 * Creates a new image containing only the specified labels.
-	 *  
-	 * @param image a label planar image
-	 * @param labels the list of values to keep 
+	 * 
+	 * @param image
+	 *            a planar label image
+	 * @param labels
+	 *            the list of values to keep
+	 * @return a new label image containing only the specified labels
 	 */
 	public static final ImageProcessor keepLabels(ImageProcessor image, int[] labels) 
 	{
@@ -1290,9 +1391,12 @@ public class LabelImages
 
 	/**
 	 * Creates a new image containing only the specified labels.
-	 *  
-	 * @param image a label 3D image
-	 * @param labels the list of values to keep 
+	 * 
+	 * @param image
+	 *            a 3D label image
+	 * @param labels
+	 *            the list of values to keep
+	 * @return a new 3D label image containing only the specified labels
 	 */
 	public static final ImageStack keepLabels(ImageStack image, int[] labels) 
 	{
@@ -1326,6 +1430,17 @@ public class LabelImages
 		return result;
 	}
 	
+	/**
+	 * Applies the given Look-up table to the input label image.
+	 * 
+	 * @param labelImage
+	 *            a label image
+	 * @param values
+	 *            a set of values associated to each unique label
+	 * @return a new FloatProcessor containing for each pixel, either the value
+	 *         associated to the corresponding pixel, or 0 if the pixel is
+	 *         background
+	 */
 	public static final FloatProcessor applyLut(ImageProcessor labelImage, double[] values) 
 	{
 		int width = labelImage.getWidth(); 
@@ -1365,6 +1480,17 @@ public class LabelImages
 		return resultImage;
 	}
 	
+	/**
+	 * Applies the given Look-up table to the input label image.
+	 * 
+	 * @param labelImage
+	 *            a 3D label image
+	 * @param values
+	 *            a set of values associated to each unique label
+	 * @return a new 3D image containing for each pixel, either the value
+	 *         associated to the corresponding pixel, or 0 if the pixel is
+	 *         background
+	 */
 	public static final ImageStack applyLut(ImageStack labelImage, double[] values) 
 	{
 		int sizeX = labelImage.getWidth(); 
