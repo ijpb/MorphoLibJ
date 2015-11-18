@@ -22,7 +22,7 @@ import inra.ijpb.morphology.geodrec.GeodesicReconstructionType;
  * <p>
  * Example of use:
  * <pre><code>
- * ImageProcessor mask = IJ.getImage().imagePlus.getProcessor();
+ * ImageProcessor mask = IJ.getImage().getProcessor();
  * ImageProcessor marker = mask.createProcessor(mask.getWidth(), mask.getHeight());
  * marker.set(20, 10, 255); 
  * ImageProcessor rec = GeodesicReconstruction.reconstructByDilation(marker, mask, 4);

@@ -49,6 +49,10 @@ public class MinimaAndMaxima3D
 	/**
 	 * Computes the regional maxima in 3D stack <code>image</code>, 
 	 * using the default connectivity.
+	 * 
+	 * @param image
+	 *            the 3D image to process
+	 * @return the regional maxima of input image
 	 */
 	public final static ImageStack regionalMaxima(ImageStack image) 
 	{
@@ -58,7 +62,12 @@ public class MinimaAndMaxima3D
 	/**
 	 * Computes the regional maxima in grayscale image <code>stack</code>, 
 	 * using the specified connectivity.
-	 * @param conn the connectivity for maxima, that should be either 6 or 26
+	 * 
+	 * @param image
+	 *            the 3D image to process
+	 * @param conn
+	 *            the connectivity for maxima, that should be either 6 or 26
+	 * @return the regional maxima of input image
 	 */
 	public final static ImageStack regionalMaxima(ImageStack image,
 			int conn) 
@@ -71,40 +80,29 @@ public class MinimaAndMaxima3D
 	}
 
 	/**
-	 * Computes the regional maxima in grayscale image <code>stack</code>, 
-	 * using the specified connectivity and binary mask.
-	 * @param conn the connectivity for maxima, that should be either 6 or 26
-	 */
-	public final static ImageStack regionalMaxima(
-			ImageStack stack,
-			int conn,
-			ImageStack mask ) 
-	{
-		RegionalExtrema3DAlgo algo = new RegionalExtrema3DByFlooding();
-		algo.setConnectivity(conn);
-		algo.setExtremaType(ExtremaType.MAXIMA);
-		
-		return algo.applyTo(stack, mask);
-	}
-
-	/**
 	 * Computes the regional maxima in 3D image <code>stack</code>, 
 	 * using the specified connectivity, and a slower algorithm (used for testing).
-	 * @param conn the connectivity for maxima, that should be either 6 or 26
+	 * 
+	 * @param image
+	 *            the 3D image to process
+	 * @param conn
+	 *            the connectivity for maxima, that should be either 6 or 26
+	 * @return the regional maxima of input image
 	 */
 	public final static ImageStack regionalMaximaByReconstruction(
-			ImageStack stack,
-			int conn) {
-		int sizeX = stack.getWidth();
-		int sizeY = stack.getHeight();
-		int sizeZ = stack.getSize();
-
-		ImageStack mask = stack.duplicate();
+			ImageStack image,
+			int conn) 
+	{
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		int sizeZ = image.getSize();
+	
+		ImageStack mask = image.duplicate();
 		addValue(mask, 1);
-
-		ImageStack rec = GeodesicReconstruction3D.reconstructByDilation(stack, mask, conn);
+	
+		ImageStack rec = GeodesicReconstruction3D.reconstructByDilation(image, mask, conn);
 		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
-
+	
 		for (int z = 0; z < sizeZ; z++) 
 		{
 			for (int y = 0; y < sizeY; y++) 
@@ -122,18 +120,51 @@ public class MinimaAndMaxima3D
 	}
 
 	/**
+	 * Computes the regional maxima in grayscale image <code>stack</code>, 
+	 * using the specified connectivity and binary mask.
+	 * 
+	 * @param image
+	 *            the 3D image to process
+	 * @param conn
+	 *            the connectivity for maxima, that should be either 6 or 26
+	 * @param mask
+	 *            the binary mask that restricts the processing
+	 * @return the regional maxima of input image
+	 */
+	public final static ImageStack regionalMaxima(
+			ImageStack image,
+			int conn,
+			ImageStack mask ) 
+	{
+		RegionalExtrema3DAlgo algo = new RegionalExtrema3DByFlooding();
+		algo.setConnectivity(conn);
+		algo.setExtremaType(ExtremaType.MAXIMA);
+		
+		return algo.applyTo(image, mask);
+	}
+
+	/**
 	 * Computes the regional minima in 3D image <code>stack</code>, 
 	 * using the default connectivity.
+	 * 
+	 * @param image
+	 *            the 3D image to process
+	 * @return the regional minima of input image
 	 */
-	public final static ImageStack regionalMinima(ImageStack stack) 
+	public final static ImageStack regionalMinima(ImageStack image) 
 	{
-		return regionalMinima(stack, DEFAULT_CONNECTIVITY_3D);
+		return regionalMinima(image, DEFAULT_CONNECTIVITY_3D);
 	}
 
 	/**
 	 * Computes the regional minima in 3D stack <code>image</code>, 
 	 * using the specified connectivity.
-	 * @param conn the connectivity for minima, that should be either 6 or 26
+	 * 
+	 * @param image
+	 *            the 3D image to process
+	 * @param conn
+	 *            the connectivity for minima, that should be either 6 or 26
+	 * @return the regional minima of input image
 	 */
 	public final static ImageStack regionalMinima(ImageStack image,
 			int conn) 
@@ -149,40 +180,29 @@ public class MinimaAndMaxima3D
 	}
 
 	/**
-	 * Computes the regional minima in 3D image <code>stack</code>, 
-	 * using the specified connectivity.
-	 * @param conn the connectivity for minima, that should be either 6 or 26
-	 */
-	public final static ImageStack regionalMinima(
-			ImageStack stack,
-			int conn,
-			ImageStack mask ) 
-	{
-		RegionalExtrema3DAlgo algo = new RegionalExtrema3DByFlooding();
-		algo.setConnectivity(conn);
-		algo.setExtremaType(ExtremaType.MINIMA);
-		
-		return algo.applyTo(stack, mask);
-	}
-
-	/**
 	 * Computes the regional minima in grayscale image <code>image</code>, 
 	 * using the specified connectivity, and a slower algorithm (used for testing).
-	 * @param conn the connectivity for minima, that should be either 4 or 8
+	 * 
+	 * @param image
+	 *            the 3D image to process
+	 * @param conn
+	 *            the connectivity for minima, that should be either 6 or 26
+	 * @return the regional minima of input image
 	 */
-	public final static ImageStack regionalMinimaByReconstruction(ImageStack stack,
+	public final static ImageStack regionalMinimaByReconstruction(ImageStack image,
 			int conn)
 	{
-		int sizeX = stack.getWidth();
-		int sizeY = stack.getHeight();
-		int sizeZ = stack.getSize();
-
-		ImageStack marker = stack.duplicate();
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		int sizeZ = image.getSize();
+	
+		ImageStack marker = image.duplicate();
 		addValue(marker, 1);
+	
+		ImageStack rec = GeodesicReconstruction3D.reconstructByErosion(marker,
+				image, conn);
 
-		ImageStack rec = GeodesicReconstruction3D.reconstructByErosion(marker, stack, conn);
 		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
-
 		for (int z = 0; z < sizeZ; z++)
 		{
 			for (int y = 0; y < sizeY; y++) 
@@ -200,9 +220,39 @@ public class MinimaAndMaxima3D
 	}
 
 	/**
+	 * Computes the regional minima in 3D image <code>stack</code>, 
+	 * using the specified connectivity.
+	 * 
+	 * @param image
+	 *            the 3D image to process
+	 * @param conn
+	 *            the connectivity for minima, that should be either 6 or 26
+	 * @param mask
+	 *            the binary mask that restricts processing
+	 * @return the regional minima of input image
+	 */
+	public final static ImageStack regionalMinima(
+			ImageStack image,
+			int conn,
+			ImageStack mask ) 
+	{
+		RegionalExtrema3DAlgo algo = new RegionalExtrema3DByFlooding();
+		algo.setConnectivity(conn);
+		algo.setExtremaType(ExtremaType.MINIMA);
+		
+		return algo.applyTo(image, mask);
+	}
+
+	/**
 	 * Computes the extended maxima in grayscale image <code>image</code>, 
 	 * keeping maxima with the specified dynamic, and using the default 
 	 * connectivity.
+	 * 
+	 * @param image
+	 *            the 3D image to process
+	 * @param dynamic
+	 *            the difference between maxima and maxima boundary
+	 * @return the extended maxima of input image
 	 */
 	public final static ImageStack extendedMaxima(ImageStack image,
 			int dynamic) 
@@ -211,26 +261,17 @@ public class MinimaAndMaxima3D
 	}
 
 	/**
-	 * Computes the extended maxima in the grayscale image <code>image</code>, 
-	 * keeping maxima with the specified dynamic, restricted to the non-zero
-	 * voxels of the binary mask, and using the default connectivity.
-	 * 
-	 * @param image input grayscale image
-	 * @param dynamic nonnegative scalar defining the depth threshold of maxima removal ("h" value in Soile, 1999) 
-	 * @param binaryMask binary mask image to restrict region of application
-	 */
-	public final static ImageStack extendedMaxima(
-			ImageStack image,
-			int dynamic, 
-			ImageStack binaryMask ) 
-	{
-		return extendedMaxima( image, dynamic, DEFAULT_CONNECTIVITY_3D, binaryMask );
-	}
-	
-	/**
 	 * Computes the extended maxima in grayscale image <code>image</code>, 
 	 * keeping maxima with the specified dynamic, and using the specified
 	 * connectivity.
+	 * 
+	 * @param image
+	 *            the 3D image to process
+	 * @param dynamic
+	 *            the difference between maxima and maxima boundary
+	 * @param conn
+	 *            the connectivity for maxima, that should be either 6 or 26
+	 * @return the extended maxima of input image
 	 */
 	public final static ImageStack extendedMaxima(ImageStack image,
 			int dynamic, int conn) 
@@ -244,14 +285,42 @@ public class MinimaAndMaxima3D
 	}
 	
 	/**
-	 * Computes the extended maxima in the grayscale image <code>image</code>, 
+	 * Computes the extended maxima in the grayscale image <code>image</code>,
+	 * keeping maxima with the specified dynamic, restricted to the non-zero
+	 * voxels of the binary mask, and using the default connectivity.
+	 * 
+	 * 
+	 * @param image
+	 *            the 3D image to process
+	 * @param dynamic
+	 *            the difference between maxima and maxima boundary
+	 * @param binaryMask
+	 *            binary mask image to restrict region of application
+	 * @return the extended maxima of input image
+	 */
+	public final static ImageStack extendedMaxima(
+			ImageStack image,
+			int dynamic, 
+			ImageStack binaryMask ) 
+	{
+		return extendedMaxima( image, dynamic, DEFAULT_CONNECTIVITY_3D, binaryMask );
+	}
+
+	/**
+	 * Computes the extended maxima in the grayscale image <code>image</code>,
 	 * keeping maxima with the specified dynamic, restricted to the non-zero
 	 * voxels of the binary mask, and using the specified connectivity.
 	 * 
-	 * @param image input grayscale image
-	 * @param dynamic nonnegative scalar defining the depth threshold of maxima removal ("h" value in Soile, 1999) 
-	 * @param conn connectivity value (6 or 26)
-	 * @param binaryMask binary mask image to restrict region of application
+	 * @param image
+	 *            input grayscale image
+	 * @param dynamic
+	 *            nonnegative scalar defining the depth threshold of maxima
+	 *            removal ("h" value in Soile, 1999)
+	 * @param conn
+	 *            connectivity value (6 or 26)
+	 * @param binaryMask
+	 *            binary mask image to restrict region of application
+	 * @return the extended maxima of input image
 	 */
 	public final static ImageStack extendedMaxima(
 			ImageStack image,
@@ -271,24 +340,38 @@ public class MinimaAndMaxima3D
 	 * Computes the extended minima in grayscale image <code>image</code>, 
 	 * keeping minima with the specified dynamic, and using the default 
 	 * connectivity.
+	 * 
+	 * @param image
+	 *            the 3D image to process
+	 * @param dynamic
+	 *            the difference between minima and minima boundary
+	 * @return the extended minima of input image
 	 */
-	public final static ImageStack extendedMinima(ImageStack stack, int dynamic)
+	public final static ImageStack extendedMinima(ImageStack image, int dynamic)
 	{
-		return extendedMinima(stack, dynamic, DEFAULT_CONNECTIVITY_3D);
+		return extendedMinima(image, dynamic, DEFAULT_CONNECTIVITY_3D);
 	}
 
 	/**
 	 * Computes the extended minima in grayscale image <code>image</code>, 
 	 * keeping minima with the specified dynamic, and using the specified 
 	 * connectivity.
+	 * 
+	 * @param image
+	 *            the 3D image to process
+	 * @param dynamic
+	 *            the difference between minima and minima boundary
+	 * @param conn
+	 *            the connectivity for minima, that should be either 6 or 26
+	 * @return the extended minima of input image
 	 */
-	public final static ImageStack extendedMinima(ImageStack stack,
+	public final static ImageStack extendedMinima(ImageStack image,
 			int dynamic, int conn) 
 	{
-		ImageStack marker = stack.duplicate();
+		ImageStack marker = image.duplicate();
 		addValue(marker, dynamic);
 
-		ImageStack rec = GeodesicReconstruction3D.reconstructByErosion(marker, stack, conn);
+		ImageStack rec = GeodesicReconstruction3D.reconstructByErosion(marker, image, conn);
 
 		if( null == rec )
 			return null;
@@ -299,26 +382,40 @@ public class MinimaAndMaxima3D
 	/**
 	 * Imposes the maxima given by marker image into the input image, using 
 	 * the default connectivity.
+	 * 
+	 * @param image
+	 *            the 3D image to process
+	 * @param maxima
+	 *            a 3D binary image of maxima 
+	 * @return the result of maxima imposition
 	 */
-	public final static ImageStack imposeMaxima(ImageStack stack,
+	public final static ImageStack imposeMaxima(ImageStack image,
 			ImageStack maxima)
 	{
-		return imposeMaxima(stack, maxima, DEFAULT_CONNECTIVITY_3D);
+		return imposeMaxima(image, maxima, DEFAULT_CONNECTIVITY_3D);
 	}
 
 	/**
 	 * Imposes the maxima given by marker image into the input image, using
 	 * the specified connectivity.
+	 * 
+	 * @param image
+	 *            the 3D image to process
+	 * @param maxima
+	 *            a 3D binary image of maxima 
+	 * @param conn
+	 *            the connectivity for maxima, that should be either 6 or 26
+	 * @return the result of maxima imposition
 	 */
-	public final static ImageStack imposeMaxima(ImageStack stack,
+	public final static ImageStack imposeMaxima(ImageStack image,
 			ImageStack maxima, int conn)
 	{
-		ImageStack marker = stack.duplicate();
-		ImageStack mask = stack.duplicate();
+		ImageStack marker = image.duplicate();
+		ImageStack mask = image.duplicate();
 
-		int sizeX = stack.getWidth();
-		int sizeY = stack.getHeight();
-		int sizeZ = stack.getSize();
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		int sizeZ = image.getSize();
 
 		for (int z = 0; z < sizeZ; z++) 
 		{
@@ -334,7 +431,7 @@ public class MinimaAndMaxima3D
 					else
 					{
 						marker.setVoxel(x, y, z, 0);
-						mask.setVoxel(x, y, z, stack.getVoxel(x, y, z)-1);
+						mask.setVoxel(x, y, z, image.getVoxel(x, y, z)-1);
 					}
 				}
 			}
@@ -346,29 +443,43 @@ public class MinimaAndMaxima3D
 	/**
 	 * Imposes the minima given by marker image into the input image, using 
 	 * the default connectivity.
+	 * 
+	 * @param image
+	 *            the 3D image to process
+	 * @param minima
+	 *            a 3D binary image of minima 
+	 * @return the result of minima imposition
 	 */
-	public final static ImageStack imposeMinima(ImageStack stack,
+	public final static ImageStack imposeMinima(ImageStack image,
 			ImageStack minima) 
 	{
-		return imposeMinima(stack, minima, DEFAULT_CONNECTIVITY_3D);
+		return imposeMinima(image, minima, DEFAULT_CONNECTIVITY_3D);
 	}
 
 	/**
 	 * Imposes the minima given by marker image into the input image, using 
 	 * the specified connectivity.
+	 * 
+	 * @param image
+	 *            the 3D image to process
+	 * @param minima
+	 *            a 3D binary image of minima 
+	 * @param conn
+	 *            the connectivity for minima, that should be either 6 or 26
+	 * @return the result of minima imposition
 	 */
-	public final static ImageStack imposeMinima(ImageStack stack,
+	public final static ImageStack imposeMinima(ImageStack image,
 			ImageStack minima, int conn) 
 	{
 		if ( Thread.currentThread().isInterrupted() )					
 			return null;
 
-		ImageStack marker = stack.duplicate();
-		ImageStack mask = stack.duplicate();
+		ImageStack marker = image.duplicate();
+		ImageStack mask = image.duplicate();
 
-		int sizeX = stack.getWidth();
-		int sizeY = stack.getHeight();
-		int sizeZ = stack.getSize();
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		int sizeZ = image.getSize();
 
 		for (int z = 0; z < sizeZ; z++) 
 		{
@@ -384,7 +495,7 @@ public class MinimaAndMaxima3D
 					else 
 					{
 						marker.setVoxel(x, y, z, 255);
-						mask.setVoxel(x, y, z, stack.getVoxel(x, y, z)+1);
+						mask.setVoxel(x, y, z, image.getVoxel(x, y, z)+1);
 					}
 				}
 			}
@@ -393,18 +504,26 @@ public class MinimaAndMaxima3D
 		return GeodesicReconstruction3D.reconstructByErosion(marker, mask, conn);
 	}
 
-	private final static void addValue(ImageStack stack, double value) 
+	/**
+	 * Adds the specified value to each voxel of the 3D stack.
+	 * 
+	 * @param image
+	 *            the 3D image to modify
+	 * @param value
+	 *            the value to add
+	 */
+	private final static void addValue(ImageStack image, double value) 
 	{
-		int sizeX = stack.getWidth();
-		int sizeY = stack.getHeight();
-		int sizeZ = stack.getSize();
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		int sizeZ = image.getSize();
 		for (int z = 0; z < sizeZ; z++) 
 		{
 			for (int y = 0; y < sizeY; y++) 
 			{
 				for (int x = 0; x < sizeX; x++) 
 				{
-					stack.setVoxel(x, y, z, stack.getVoxel(x, y, z) + value);
+					image.setVoxel(x, y, z, image.getVoxel(x, y, z) + value);
 				}
 			}
 		}

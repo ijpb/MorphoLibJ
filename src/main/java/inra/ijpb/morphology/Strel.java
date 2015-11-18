@@ -15,13 +15,23 @@ import inra.ijpb.morphology.strel.OctagonStrel;
 import inra.ijpb.morphology.strel.SquareStrel;
 
 /**
- * Interface for planar structuring elements.
+ * Interface for planar structuring elements. 
+ * 
+ * <pre><code>
+ *  // Creates a 5x5 square structuring element
+ *  Strel strel = Strel.Shape.SQUARE.fromRadius(2);
+ *  // applies dilation on current image
+ *  ImageProcessor image = IJ.getImage().getProcessor();
+ *  ImageProcessor dilated = strel.dilation(image);
+ *  // Display results
+ *  new ImagePlus("dilated", dilated).show();
+ * </code></pre>
  * 
  * @author David Legland
  *
  */
-public interface Strel extends Strel3D {
-
+public interface Strel extends Strel3D 
+{
 	/**
 	 * Default value for background pixels.
 	 */
@@ -38,7 +48,8 @@ public interface Strel extends Strel3D {
 	 * Each item of the enumeration can create Strel instances of specific
 	 * class and of given size.
 	 */
-	public enum Shape {
+	public enum Shape
+	{
 		/**
 		 * Disk of a given radius
 		 * @see DiskStrel 
@@ -90,14 +101,16 @@ public interface Strel extends Strel3D {
 		
 		private final String label;
 		
-		private Shape(String label) {
+		private Shape(String label) 
+		{
 			this.label = label;
 		}
 		
 		/**
-		 * Returns the label associated to this shape.
+		 * @return the label associated to this shape.
 		 */
-		public String toString() {
+		public String toString()
+		{
 			return this.label;
 		}
 		
@@ -110,7 +123,8 @@ public interface Strel extends Strel3D {
 		 * @return a new structuring element
 		 * 
 		 */
-		public Strel fromRadius(int radius) {
+		public Strel fromRadius(int radius)
+		{
 			if (this == DISK) 
 				return DiskStrel.fromRadius(radius);
 			return fromDiameter(2 * radius + 1);
@@ -122,7 +136,8 @@ public interface Strel extends Strel3D {
 		 * @param diam the orthogonal diameter of the structuring element (max of x and y sizes), in pixels
 		 * @return a new structuring element
 		 */
-		public Strel fromDiameter(int diam) {
+		public Strel fromDiameter(int diam) 
+		{
 			if (this == DISK) 
 				return DiskStrel.fromDiameter(diam);
 			if (this == SQUARE) 
@@ -148,9 +163,11 @@ public interface Strel extends Strel3D {
 		
 		/**
 		 * Returns a set of labels for most of classical structuring elements.
+		 * 
 		 * @return a list of labels
 		 */
-		public static String[] getAllLabels(){
+		public static String[] getAllLabels()
+		{
 			// array of all Strel types
 			Shape[] values = Shape.values();
 			int n = values.length;
@@ -165,12 +182,20 @@ public interface Strel extends Strel3D {
 		
 		/**
 		 * Determines the strel shape from its label.
-		 * @throws IllegalArgumentException if label is not recognized.
+		 * 
+		 * @param label
+		 *            the shape name of the structuring element
+		 * @return a new Shape instance that can be used to create structuring
+		 *         elements
+		 * @throws IllegalArgumentException
+		 *             if label is not recognized.
 		 */
-		public static Shape fromLabel(String label) {
+		public static Shape fromLabel(String label)
+		{
 			if (label != null)
 				label = label.toLowerCase();
-			for (Shape type : Shape.values()) {
+			for (Shape type : Shape.values()) 
+			{
 				if (type.label.toLowerCase().equals(label))
 					return type;
 			}

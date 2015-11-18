@@ -26,7 +26,7 @@ import inra.ijpb.morphology.geodrec.GeodesicReconstructionType;
  * <p>
  * Example of use:
  * <pre><code>
- * ImageStack mask = IJ.getImage().imagePlus.getStack();
+ * ImageStack mask = IJ.getImage().getStack();
  * int bitDepth = mask.getBitDepth();
  * ImageStack marker = ImageStack.create(mask.getWidth(), mask.getHeight(), mask.getSize(), bitDepth);
  * marker.set(30, 20, 10, 255); 

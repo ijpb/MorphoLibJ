@@ -22,13 +22,24 @@ import inra.ijpb.morphology.geodrec.GeodesicReconstructionType;
  * 
  * See the books of Serra and Soille for further details.
  * 
+ * <p>
+ * Example of use: <pre><code>
+ *	// Get current image processor
+ *	ImageProcessor image = IJ.getImage().getProcessor();
+ *	// Computes extended minima with a dynamic of 15, using the 4-connectivity
+ *	ImageProcessor minima = MinimaAndMaxima.extendedMinima(image, 15, 4); 
+ *	// Display result in a new imagePlus
+ *	ImagePlus res = new ImagePlus("Minima", minima);
+ *	res.show(); 
+ * </code></pre>
+ * 
  * @see GeodesicReconstruction
  * 
  * @author David Legland
  *
  */
-public class MinimaAndMaxima {
-
+public class MinimaAndMaxima
+{
 	/**
 	 * Private constructor to prevent class instantiation.
 	 */
@@ -42,20 +53,31 @@ public class MinimaAndMaxima {
 	public final static int DEFAULT_CONNECTIVITY_2D = 4;
 	
 	/**
-	 * Computes the regional maxima in grayscale image <code>image</code>, 
-	 * using the default connectivity.
+	 * Computes the regional maxima in grayscale image <code>image</code>, using
+	 * the default connectivity.
+	 * 
+	 * @param image
+	 *            the image to process
+	 * @return the regional maxima of input image
 	 */
-	public final static ImageProcessor regionalMaxima(ImageProcessor image) {
+	public final static ImageProcessor regionalMaxima(ImageProcessor image)
+	{
 		return regionalMaxima(image, DEFAULT_CONNECTIVITY_2D);
 	}
 
 	/**
-	 * Computes the regional maxima in grayscale image <code>image</code>, 
-	 * using the specified connectivity.
-	 * @param conn the connectivity for maxima, that should be either 4 or 8
+	 * Computes the regional maxima in grayscale image <code>image</code>, using
+	 * the specified connectivity.
+	 * 
+	 * @param image
+	 *            the image to process
+	 * @param conn
+	 *            the connectivity for maxima, that should be either 4 or 8
+	 * @return the regional maxima of input image
 	 */
 	public final static ImageProcessor regionalMaxima(ImageProcessor image,
-			int conn) {
+			int conn)
+	{
 		RegionalExtremaAlgo algo = new RegionalExtremaByFlooding();
 		algo.setConnectivity(conn);
 		algo.setExtremaType(ExtremaType.MAXIMA);
@@ -66,23 +88,32 @@ public class MinimaAndMaxima {
 	/**
 	 * Computes the regional maxima in grayscale image <code>image</code>, 
 	 * using the specified connectivity, and a slower algorithm (used for testing).
-	 * @param conn the connectivity for maxima, that should be either 4 or 8
+	 * 
+	 * @param image
+	 *            the image to process
+	 * @param conn
+	 *            the connectivity for maxima, that should be either 4 or 8
+	 * @return the regional maxima of input image
 	 */
 	public final static ImageProcessor regionalMaximaByReconstruction(
 			ImageProcessor image,
-			int conn) {
+			int conn) 
+	{
+		// Compute mask image
 		ImageProcessor mask = image.duplicate();
 		mask.add(1);
 		
-//		GeodesicReconstructionAlgo algo = new GeodesicReconstructionByDilation(conn);
+		// Call geodesic reconstruction algorithm
 		GeodesicReconstructionAlgo algo = new GeodesicReconstructionHybrid(
 				GeodesicReconstructionType.BY_DILATION, conn);
 		ImageProcessor rec = algo.applyTo(image, mask);
 		
+		// allocate memory for result
 		int width = image.getWidth();
 		int height = image.getHeight();
 		ImageProcessor result = new ByteProcessor(width, height);
 		
+		// create binary result image
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
 				if (mask.get(x, y) > rec.get(x, y)) 
@@ -98,18 +129,29 @@ public class MinimaAndMaxima {
 	/**
 	 * Computes the regional minima in grayscale image <code>image</code>, 
 	 * using the default connectivity.
+	 * 
+	 * @param image
+	 *            the image to process
+	 * @return the regional minima of input image
 	 */
-	public final static ImageProcessor regionalMinima(ImageProcessor image) {
+	public final static ImageProcessor regionalMinima(ImageProcessor image) 
+	{
 		return regionalMinima(image, DEFAULT_CONNECTIVITY_2D);
 	}
 
 	/**
 	 * Computes the regional minima in grayscale image <code>image</code>, 
 	 * using the specified connectivity.
-	 * @param conn the connectivity for minima, that should be either 4 or 8
+	 * 
+	 * @param image
+	 *            the image to process
+	 * @param conn
+	 *            the connectivity for minima, that should be either 4 or 8
+	 * @return the regional minima of input image
 	 */
 	public final static ImageProcessor regionalMinima(ImageProcessor image,
-			int conn) {
+			int conn) 
+	{
 		RegionalExtremaAlgo algo = new RegionalExtremaByFlooding();
 		algo.setConnectivity(conn);
 		algo.setExtremaType(ExtremaType.MINIMA);
@@ -120,10 +162,16 @@ public class MinimaAndMaxima {
 	/**
 	 * Computes the regional minima in grayscale image <code>image</code>, 
 	 * using the specified connectivity, and a slower algorithm (used for testing).
-	 * @param conn the connectivity for minima, that should be either 4 or 8
+	 * 
+	 * @param image
+	 *            the image to process
+	 * @param conn
+	 *            the connectivity for minima, that should be either 4 or 8
+	 * @return the regional minima of input image
 	 */
 	public final static ImageProcessor regionalMinimaByReconstruction(ImageProcessor image,
-			int conn) {
+			int conn)
+	{
 		ImageProcessor marker = image.duplicate();
 		marker.add(1);
 		
@@ -136,8 +184,10 @@ public class MinimaAndMaxima {
 		int height = image.getHeight();
 		ImageProcessor result = new ByteProcessor(width, height);
 		
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
+		for (int y = 0; y < height; y++)
+		{
+			for (int x = 0; x < width; x++)
+			{
 				if (marker.get(x, y) > rec.get(x, y)) 
 					result.set(x,  y, 0);
 				else
@@ -152,9 +202,16 @@ public class MinimaAndMaxima {
 	 * Computes the extended maxima in grayscale image <code>image</code>, 
 	 * keeping maxima with the specified dynamic, and using the default 
 	 * connectivity.
+	 * 
+	 * @param image
+	 *            the image to process
+	 * @param dynamic
+	 *            the minimal difference between a maxima and its boundary 
+	 * @return the extended maxima of input image
 	 */
 	public final static ImageProcessor extendedMaxima(ImageProcessor image,
-			int dynamic) {
+			int dynamic)
+	{
 		return extendedMaxima(image, dynamic, DEFAULT_CONNECTIVITY_2D);
 	}
 
@@ -162,9 +219,18 @@ public class MinimaAndMaxima {
 	 * Computes the extended maxima in grayscale image <code>image</code>, 
 	 * keeping maxima with the specified dynamic, and using the specified
 	 * connectivity.
+	 * 
+	 * @param image
+	 *            the image to process
+	 * @param dynamic
+	 *            the minimal difference between a maxima and its boundary 
+	 * @param conn
+	 *            the connectivity for maxima, that should be either 4 or 8
+	 * @return the extended maxima of input image
 	 */
 	public final static ImageProcessor extendedMaxima(ImageProcessor image,
-			int dynamic, int conn) {
+			int dynamic, int conn)
+	{
 		ImageProcessor mask = image.duplicate();
 		mask.add(dynamic);
 		
@@ -180,6 +246,12 @@ public class MinimaAndMaxima {
 	 * Computes the extended minima in grayscale image <code>image</code>, 
 	 * keeping minima with the specified dynamic, and using the default 
 	 * connectivity.
+	 * 
+	 * @param image
+	 *            the image to process
+	 * @param dynamic
+	 *            the minimal difference between a minima and its boundary 
+	 * @return the extended minima of input image
 	 */
 	public final static ImageProcessor extendedMinima(ImageProcessor image, int dynamic) {
 		return extendedMinima(image, dynamic, DEFAULT_CONNECTIVITY_2D);
@@ -189,10 +261,19 @@ public class MinimaAndMaxima {
 	 * Computes the extended minima in grayscale image <code>image</code>, 
 	 * keeping minima with the specified dynamic, and using the specified 
 	 * connectivity.
+	 * 
+	 * @param image
+	 *            the image to process
+	 * @param dynamic
+	 *            the minimal difference between a minima and its boundary 
+	 * @param conn
+	 *            the connectivity for minima, that should be either 4 or 8
+	 * @return the extended minima of input image
 	 */
 	public final static ImageProcessor extendedMinima(ImageProcessor image,
-			int dynamic, int conn) {
-		ImageProcessor marker = image.duplicate();
+			int dynamic, int conn)
+	{
+	ImageProcessor marker = image.duplicate();
 		marker.add(dynamic);
 		
 //		GeodesicReconstructionAlgo algo = new GeodesicReconstructionByErosion(conn);
@@ -206,30 +287,50 @@ public class MinimaAndMaxima {
 	/**
 	 * Imposes the maxima given by marker image into the input image, using 
 	 * the default connectivity.
+	 * 
+	 * @param image
+	 *            the image to process
+	 * @param maxima
+	 *            a binary image of maxima 
+	 * @return the result of maxima imposition
 	 */
 	public final static ImageProcessor imposeMaxima(ImageProcessor image,
-			ImageProcessor maxima) {
+			ImageProcessor maxima)
+	{
 		return imposeMaxima(image, maxima, DEFAULT_CONNECTIVITY_2D);
 	}
 	
 	/**
 	 * Imposes the maxima given by marker image into the input image, using
 	 * the specified connectivity.
+	 * 
+	 * @param image
+	 *            the image to process
+	 * @param maxima
+	 *            a binary image of maxima 
+	 * @param conn
+	 *            the connectivity for maxima, that should be either 4 or 8
+	 * @return the result of maxima imposition
 	 */
 	public final static ImageProcessor imposeMaxima(ImageProcessor image,
-			ImageProcessor maxima, int conn) {
-		
+			ImageProcessor maxima, int conn)
+	{
 		ImageProcessor marker = image.duplicate();
 		ImageProcessor mask = image.duplicate();
 		
 		int width = image.getWidth();
 		int height = image.getHeight();
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				if (maxima.get(x, y) > 0) { 
+		for (int y = 0; y < height; y++)
+		{
+			for (int x = 0; x < width; x++)
+			{
+				if (maxima.get(x, y) > 0)
+				{
 					marker.set(x, y, 255);
 					mask.set(x, y, 255);
-				} else {
+				} 
+				else
+				{
 					marker.set(x, y, 0);
 					mask.set(x, y, image.get(x, y)-1);
 				}
@@ -242,30 +343,50 @@ public class MinimaAndMaxima {
 	/**
 	 * Imposes the minima given by marker image into the input image, using 
 	 * the default connectivity.
+	 * 
+	 * @param image
+	 *            the image to process
+	 * @param minima
+	 *            a binary image of minima 
+	 * @return the result of minima imposition
 	 */
 	public final static ImageProcessor imposeMinima(ImageProcessor image,
-			ImageProcessor minima) {
+			ImageProcessor minima)
+	{
 		return imposeMinima(image, minima, DEFAULT_CONNECTIVITY_2D);
 	}
 	
 	/**
 	 * Imposes the minima given by marker image into the input image, using 
 	 * the specified connectivity.
+	 * 
+	 * @param image
+	 *            the image to process
+	 * @param minima
+	 *            a binary image of minima 
+	 * @param conn
+	 *            the connectivity for minima, that should be either 4 or 8
+	 * @return the result of minima imposition
 	 */
 	public final static ImageProcessor imposeMinima(ImageProcessor image,
-			ImageProcessor minima, int conn) {
-		
+			ImageProcessor minima, int conn)
+	{
 		int width = image.getWidth();
 		int height = image.getHeight();
 		
 		ImageProcessor marker = image.duplicate();
 		ImageProcessor mask = image.duplicate();
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				if (minima.get(x, y) > 0) { 
+		for (int y = 0; y < height; y++)
+		{
+			for (int x = 0; x < width; x++)
+			{
+				if (minima.get(x, y) > 0)
+				{
 					marker.set(x, y, 0);
 					mask.set(x, y, 0);
-				} else {
+				} 
+				else
+				{
 					marker.set(x, y, 255);
 					mask.set(x, y, image.get(x, y)+1);
 				}
@@ -274,5 +395,4 @@ public class MinimaAndMaxima {
 		
 		return GeodesicReconstruction.reconstructByErosion(marker, mask, conn);
 	}
-
 }
