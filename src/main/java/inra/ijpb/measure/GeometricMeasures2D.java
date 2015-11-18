@@ -26,7 +26,6 @@ import java.util.Locale;
  */
 public class GeometricMeasures2D 
 {
-
 	// ====================================================
 	// Class constants
 
@@ -113,6 +112,11 @@ public class GeometricMeasures2D
 	/**
 	 * Compute bounding box of each label in input stack and returns the result
 	 * as a ResultsTable.
+	 * 
+	 * @param labelImage
+	 *            the input image containing label of particles
+	 * @return a data table containing for each labeled particle the extent in
+	 *         each dimension
 	 */
 	public final static ResultsTable boundingBox(ImageProcessor labelImage) 
 	{
@@ -139,6 +143,12 @@ public class GeometricMeasures2D
 	/**
 	 * Compute bounding box of each label in input stack and returns the result
 	 * as an array of double for each label.
+	 * 
+	 * @param labelImage
+	 *            the input image containing label of particles
+	 * @param labels an array of unique labels in image
+	 * @return a data table containing for each labeled particle the extent in
+	 *         each dimension
 	 */
 	public final static double[][] boundingBox(ImageProcessor labelImage, int[] labels)
 	{
@@ -192,6 +202,14 @@ public class GeometricMeasures2D
 	 * 
 	 * @see inra.ijpb.label.LabelImages#pixelCount(ij.process.ImageProcessor,
 	 *      int[])
+	 * 
+	 * @param image
+	 *            the input image containing label of particles
+	 * @param labels
+	 *            the array of unique labels in image
+	 * @param resol
+	 *            the size of a pixel in each direction
+	 * @return the area of each region
 	 */
 	public static final double[] area(ImageProcessor image, int[] labels,
 			double[] resol) {
@@ -219,6 +237,12 @@ public class GeometricMeasures2D
 
 	/**
 	 * Counts the number of pixel that composes the particle with given label.
+	 * 
+	 * @param image
+	 *            the input image containing label of particles
+	 * @param label
+	 *            the label of the region to process
+	 * @return the number of pixels of the specified region
 	 */
 	public static final int particleArea(ImageProcessor image, int label) 
 	{
@@ -294,6 +318,16 @@ public class GeometricMeasures2D
 
 	/**
 	 * Compute surface area for each label given in the "labels" argument.
+	 * 
+	 * @param image
+	 *            the input image containing label of particles
+	 * @param labels
+	 *            the array of unique labels in image
+	 * @param resol
+	 *            the spatial resolution
+	 * @param nDirs
+	 *            the number of directions to process, either 2 or 4
+	 * @return an array containing for each label, an estimate of the region perimeter
 	 */
 	public final static double[] croftonPerimeter(ImageProcessor image,
 			int[] labels, double[] resol, int nDirs)
@@ -373,6 +407,13 @@ public class GeometricMeasures2D
 	 * Computes the Look-up table that is used to compute perimeter. The result
 	 * is an array with 16 entries, each entry corresponding to a binary 2-by-2
 	 * configuration of pixels.
+	 * 
+	 * @param resol
+	 *            the spatial resolution
+	 * @param nDirs
+	 *            the number of directions to process, either 2 or 4
+	 * @return an array containing for each 2-by-2 configuration index, the
+	 *         corresponding contribution to perimeter estimate
 	 */
 	private final static double[] computePerimeterLut(double[] resol, int nDirs)
 	{
@@ -456,6 +497,14 @@ public class GeometricMeasures2D
 
 	/**
 	 * Computes perimeter of each label using Crofton method with 2 directions.
+	 * 
+	 * @param labelImage
+	 *            the input image containing label of particles
+	 * @param labels
+	 *            the array of unique labels in image
+	 * @param resol
+	 *            the spatial resolution
+	 * @return an array containing for each label, an estimate of the region perimeter
 	 */
 	public static final double[] croftonPerimeterD2(ImageProcessor labelImage,
 			int[] labels, double[] resol)
@@ -494,6 +543,14 @@ public class GeometricMeasures2D
 	/**
 	 * Computes perimeter of each label using Crofton method with 4 directions
 	 * (orthogonal and diagonal).
+	 * 
+	 * @param labelImage
+	 *            the input image containing label of particles
+	 * @param labels
+	 *            the array of unique labels in image
+	 * @param resol
+	 *            the spatial resolution
+	 * @return an array containing for each label, an estimate of the region perimeter
 	 */
 	public static final double[] croftonPerimeterD4(ImageProcessor labelImage,
 			int[] labels, double[] resol)
@@ -560,6 +617,12 @@ public class GeometricMeasures2D
 	/**
 	 * Computes porosity and perimeter density of binary image.
 	 * 
+	 * @param image
+	 *            the input binary image
+	 * @param resol
+	 *            the spatial resolution
+	 * @param nDirs the number of directions to consider, either 2 or 4 
+	 * @return a results table containing for each label, an estimate of the region perimeter
 	 */
 	public static final ResultsTable perimeterDensity(ImageProcessor image,
 			double[] resol, int nDirs) 
@@ -573,6 +636,12 @@ public class GeometricMeasures2D
 	/**
 	 * Computes perimeter density of the binary image using Crofton method with
 	 * 2 directions (horizontal and vertical).
+	 * 
+	 * @param image
+	 *            the input binary image
+	 * @param resol
+	 *            the spatial resolution
+	 * @return an array containing for each label, an estimate of the region perimeter
 	 */
 	private static final ResultsTable perimeterDensity_D2(ImageProcessor image,
 			double[] resol) 
@@ -638,6 +707,12 @@ public class GeometricMeasures2D
 	/**
 	 * Computes perimeter density of the binary image using Crofton method with
 	 * 4 directions (orthogonal and diagonal).
+	 * 
+	 * @param image
+	 *            the input binary image
+	 * @param resol
+	 *            the spatial resolution
+	 * @return an array containing for each label, an estimate of the region perimeter
 	 */
 	private static final ResultsTable perimeterDensity_D4(ImageProcessor image,
 			double[] resol) 
@@ -915,8 +990,16 @@ public class GeometricMeasures2D
 	}
 
 	/**
-	 * Compute centroid of each label in input stack and returns the result
-	 * as an array of double for each label.
+	 * Compute centroid of each label in input stack and returns the result as
+	 * an array of double for each label.
+	 * 
+	 * @param labelImage
+	 *            the input image containing label of particles
+	 * @param labels
+	 *            the array of unique labels in image the number of directions
+	 *            to process, either 2 or 4
+	 * @return an array containing for each label, the coordinates of the
+	 *         centroid, in pixel coordinates
 	 */
 	public final static double[][] centroids(ImageProcessor labelImage,
 			int[] labels) 
@@ -960,8 +1043,14 @@ public class GeometricMeasures2D
 
 		return centroids;
 	}
+	
 	/**
 	 * Computes inertia ellipse of each region in input label image.
+	 * 
+	 * @param image
+	 *            the input image containing label of particles
+	 * @return an ResultsTable containing for each label, the parameters of the
+	 *         inertia ellipsoid, in pixel coordinates
 	 */
 	public final static ResultsTable inertiaEllipse(ImageProcessor image)
 	{
@@ -1073,6 +1162,8 @@ public class GeometricMeasures2D
 	 * Computes radius and center of maximum inscribed disk of each particle. 
 	 * Particles must be disjoint.
 	 * 
+	 * @param labelImage
+	 *            the input image containing label of particles
 	 * @return a ResultsTable with as many rows as the number of unique labels
 	 *         in label image, and columns "Label", "xi", "yi" and "Radius".
 	 */
@@ -1085,6 +1176,9 @@ public class GeometricMeasures2D
 	 * Radius of maximum inscribed disk of each particle. Particles must be
 	 * disjoint.
 	 * 
+	 * @param labelImage
+	 *            the input image containing label of particles
+	 * @param resol an array containing the size of the pixel in each direction
 	 * @return a ResultsTable with as many rows as the number of unique labels
 	 *         in label image, and columns "Label", "xi", "yi" and "Radius".
 	 */

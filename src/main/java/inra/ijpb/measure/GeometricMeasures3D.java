@@ -35,6 +35,17 @@ import Jama.SingularValueDecomposition;
  * double, with as many elements as the number of labels</li>
  * </ul>
  * 
+ * <p>
+ * Example of code:
+ * <pre>{@code
+ *  ImageStack labelImage = ...
+ *  int[] labels = LabelImages.findAllLabels(image);
+ *  double[] resol = new double[]{1, 1, 1};
+ *  double[][] ellipsoids = GeometricMeasures3D.inertiaEllipsoid(labelImage,
+ *  	labels, resol);
+ *  double[][] elongations = GeometricMeasures3D.computeEllipsoidElongations(ellipsoids);
+ * }</pre>
+ * 
  * @author David Legland
  *
  */
@@ -48,8 +59,13 @@ public class GeometricMeasures3D
 	}
 	
 	/**
-	 * Compute bounding box of each label in input stack and returns the result
+	 * Computes bounding box of each label in input stack and returns the result
 	 * as a ResultsTable.
+	 * 
+	 * @param labelImage
+	 *            a 3D image containing label of particles or regions
+	 * @return a new ResultsTable containing for each label, the extent of the
+	 *         corresponding region
 	 */
 	public final static ResultsTable boundingBox(ImageStack labelImage) 
 	{
@@ -76,8 +92,14 @@ public class GeometricMeasures3D
 	}
 	
 	/**
-	 * Compute bounding box of each label in input stack and returns the result
+	 * Computes bounding box of each label in input stack and returns the result
 	 * as an array of double for each label.
+	 * 
+	 * @param labelImage
+	 *            a 3D image containing label of particles or regions
+	 * @param labels the set of labels present in image
+	 * @return a new array of doubles  containing for each label, the extent of the
+	 *         corresponding region
 	 */
 	public final static double[][] boundingBox(ImageStack labelImage, int[] labels) 
 	{
@@ -251,6 +273,14 @@ public class GeometricMeasures3D
 	 * 
 	 * For 3 directions, the surfaceAreaD3 function is an alternative that does
 	 * not uses LUT.
+	 * 
+	 * @param labelImage
+	 *            image containing the label of each particle
+	 * @param resol
+	 *            image resolution, as a double array with 3 elements
+	 * @param nDirs
+	 *            the number of directions to consider, either 3 or 13
+	 * @return the surface area of each particle in the image
 	 */
 	public final static ResultsTable surfaceArea(ImageStack labelImage, 
 			double[] resol, int nDirs)
@@ -276,7 +306,17 @@ public class GeometricMeasures3D
 	}
 
 	/**
-	 * Compute surface area for each label given in the "labels" argument.
+	 * Computes surface area for each label given in the "labels" argument.
+	 * 
+	 * @param image
+	 *            image containing the label of each particle
+	 * @param labels
+	 *            the set of labels in the image
+	 * @param resol
+	 *            image resolution, as a double array with 3 elements
+	 * @param nDirs
+	 *            the number of directions to consider, either 3 or 13
+	 * @return the surface area of each particle in the image
 	 */
 	public final static double[] surfaceAreaCrofton(ImageStack image, int[] labels, 
 			double[] resol, int nDirs)
@@ -292,7 +332,7 @@ public class GeometricMeasures3D
 	}
 	
 	/**
-	 * Compute surface area for a single label in the image, using
+	 * Computes surface area for a single label in the image, using
 	 * discretization of the Crofton formula. This can be useful for binary
 	 * images by using label 255.
 	 * 
@@ -463,7 +503,14 @@ public class GeometricMeasures3D
 	}
 	 
 	/**
-	 * Compute surface area of a binary image using 3 directions.
+	 * Computes surface area of a binary image using 3 directions.
+	 * 
+	 * 
+	 * @param image
+	 *            the input 3D label image (with labels having integer values)
+	 * @param resol
+	 *            the resolution of the image, in each direction
+	 * @return the surface area measured for the binary image
 	 */
 	public final static double surfaceAreaCroftonD3(ImageStack image, double[] resol) 
 	{
@@ -686,8 +733,16 @@ public class GeometricMeasures3D
 
 	
 	/**
-	 * Compute Euler numnber for each label given in the "labels" argument,
+	 * Computes Euler number for each label given in the "labels" argument,
 	 * using the specified connectivity.
+	 * 
+	 * @param image
+	 *            the input 3D label image (with labels having integer values)
+	 * @param labels
+	 *            the set of unique labels in image
+	 * @param conn
+	 *            the connectivity to use (either 6 or 26)
+	 * @return the Euler-Poincare characteristic of each region
 	 */
 	public static final double[] eulerNumber(ImageStack image, int[] labels,
 			int conn)
@@ -895,11 +950,12 @@ public class GeometricMeasures3D
 	}
 	
 	/**
-	 * Compute centroid of each label in input stack and returns the result
+	 * Computes centroid of each label in input stack and returns the result
 	 * as an array of double for each label.
 	 * 
 	 * @param labelImage an instance of ImageStack containing region labels
 	 * @param labels the set of indices contained in the image
+	 * @return the centroid of each region, as an array of double[3]
 	 */
 	public final static double[][] centroids(ImageStack labelImage,
 			int[] labels) 
@@ -954,6 +1010,10 @@ public class GeometricMeasures3D
 	/**
      * Computes inertia ellipsoid of each 3D region in input 3D label image.
      * 
+	 * 
+	 * @param image an instance of ImageStack containing region labels
+	 * @return the parameters of the inertia ellipsoid for each region
+	 *
      * @throws RuntimeException if jama package is not found.
      */
     public final static ResultsTable inertiaEllipsoid(ImageStack image)
@@ -964,16 +1024,24 @@ public class GeometricMeasures3D
     	
 	/**
 	 * <p>
-     * Computes inertia ellipsoid of each 3D region in input 3D label image.
-     * </p>
-     * 
-     * <p>The result is given as a ResultsTable with as many rows as the number
-	 * of labels, and 9 columns. Columns correspond to the centroid coordinates
-	 * (3 values), the radius of the ellipsoid (3 values), and the orientation,
+	 * Computes inertia ellipsoid of each 3D region in input 3D label image.
+	 * </p>
+	 * 
+	 * <p>
+	 * The result is given as a ResultsTable with as many rows as the number of
+	 * labels, and 9 columns. Columns correspond to the centroid coordinates (3
+	 * values), the radius of the ellipsoid (3 values), and the orientation,
 	 * given as azimut, elevation, and roll angles, in degrees (3 values).
 	 * 
-     * @throws RuntimeException if jama package is not found.
-     */
+	 * @param image
+	 *            an instance of ImageStack containing region labels
+	 * @param resol
+	 *            the resolution of the image, in each direction
+	 * @return the parameters of the inertia ellipsoid for each region
+	 * 
+	 * @throws RuntimeException
+	 *             if jama package is not found.
+	 */
     public final static ResultsTable inertiaEllipsoid(ImageStack image, double[] resol)
     {
     	// extract particle labels
@@ -1017,7 +1085,7 @@ public class GeometricMeasures3D
 	 * of labels, and 9 columns. Columns correspond to the centroid coordinates
 	 * (3 values), the radius of the ellipsoid (3 values), and the orientation,
 	 * given as azimut, elevation, and roll angles, in degrees (3 values).
-	 * <p>
+	 * </p>
 	 * 
 	 * <pre><code>
 	 * ImageStack labelImage = ...
@@ -1222,7 +1290,7 @@ public class GeometricMeasures3D
     }
     
 	/**
-	 * Compute three elongation factors for an array of ellipsoids.
+	 * Computes the three elongation factors for an array of ellipsoids.
 	 * 
 	 * <pre><code>
 	 * ImageStack labelImage = ...
@@ -1239,6 +1307,7 @@ public class GeometricMeasures3D
 	 * @return an array of elongation factors. When radii are ordered such that
 	 *         R1 &gt; R2 &gt; R3, the three elongation factors are defined by
 	 *         ratio of R1 by R2, ratio of R1 by R3, and ratio of R2 by R3.
+	 *         
 	 * @see #inertiaEllipsoid(ImageStack, double[])
 	 * @see #inertiaEllipsoid(ImageStack, int[], double[])
 	 */
@@ -1262,10 +1331,15 @@ public class GeometricMeasures3D
     }
     
     /**
-     * Radius of maximum inscribed sphere of each particle within a label 
-     * image.
-     * 
-     */
+	 * Radius of maximum inscribed sphere of each particle within a label image.
+	 * 
+	 * @param labelImage
+	 *            input image containing label of each particle
+	 * @param resol
+	 *            the spatial resolution, as an array of length 3.
+	 * @return a ResultsTable with as many rows as the number of labels, and 4
+	 *         columns (xi, yi, zi, radius)
+	 */
     public final static ResultsTable maximumInscribedSphere(ImageStack labelImage, 
     		double[] resol)
     {
@@ -1301,10 +1375,18 @@ public class GeometricMeasures3D
     }
 
 	/**
-     * Radius of maximum inscribed sphere of each particle within a label 
-     * image.
-     * 
-     */
+	 * Radius of maximum inscribed sphere of each particle within a label image.
+	 * 
+	 * @param labelImage
+	 *            input image containing label of each particle
+	 * @param labels
+	 *            the list of labels for which we want to compute inertia
+	 *            ellipsoid
+	 * @param resol
+	 *            the spatial resolution, as an array of length 3.
+	 * @return an array with as many rows as the number of labels, and 4 columns
+	 *         (xi, yi, zi, radius)
+	 */
     public final static double[][] maximumInscribedSphere(ImageStack labelImage, 
     		int[] labels, double[] resol)
     {
@@ -1336,7 +1418,7 @@ public class GeometricMeasures3D
     }
 
 	/**
-	 * Find one position of maximum value within each label.
+	 * Finds one position of maximum value within each label.
 	 * 
 	 * @param image
 	 *            the input image containing the value (for example a distance 
