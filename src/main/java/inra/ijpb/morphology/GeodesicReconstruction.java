@@ -19,7 +19,19 @@ import inra.ijpb.morphology.geodrec.GeodesicReconstructionType;
  * operations, such as border removal or holes filling.
  * </p>
  * 
+ * <p>
+ * Example of use:
+ * <pre><code>
+ * ImageProcessor mask = IJ.getImage().imagePlus.getProcessor();
+ * ImageProcessor marker = mask.createProcessor(mask.getWidth(), mask.getHeight());
+ * marker.set(20, 10, 255); 
+ * ImageProcessor rec = GeodesicReconstruction.reconstructByDilation(marker, mask, 4);
+ * ImagePlus res = new ImagePlus("Geodesic Reconstruction", rec);
+ * res.show(); 
+ * </code></pre>
+ * 
  * @see GeodesicReconstruction3D
+ * 
  * @author David Legland
  */
 public abstract class GeodesicReconstruction 
@@ -32,9 +44,13 @@ public abstract class GeodesicReconstruction
 	}
 
 	/**
-	 * Removes the border of the input image, by performing a geodesic 
-	 * reconstruction initialized with image boundary. 
+	 * Removes the border of the input image, by performing a geodesic
+	 * reconstruction initialized with image boundary.
+	 * 
 	 * @see #fillHoles(ImageProcessor)
+	 * 
+	 * @param image the image to process
+	 * @return a new image with borders removed
 	 */
 	public final static ImageProcessor killBorders(ImageProcessor image) 
 	{
@@ -42,7 +58,7 @@ public abstract class GeodesicReconstruction
 		int width = image.getWidth();
 		int height = image.getHeight();
 		
-		// Initialize marker image zeros everywhere except at borders
+		// Initialize marker image with zeros everywhere except at borders
 		ImageProcessor markers = image.duplicate();
 		for (int y = 1; y < height-1; y++) 
 		{
@@ -72,7 +88,11 @@ public abstract class GeodesicReconstruction
 	 * Fills the holes in the input image, by (1) inverting the image, (2) 
 	 * performing a geodesic reconstruction initialized with inverted image
 	 * boundary and (3) by inverting the result.
+	 * 
 	 * @see #killBorders(ImageProcessor)
+	 * 
+	 * @param image the image to process
+	 * @return a new image with holes filled
 	 */
 	public final static ImageProcessor fillHoles(ImageProcessor image) 
 	{
@@ -95,11 +115,14 @@ public abstract class GeodesicReconstruction
 	}
 
 	/**
-	 * Static method to computes the geodesic reconstruction by dilation of 
-	 * the marker image under the mask image.
+	 * Static method to computes the geodesic reconstruction by dilation of the
+	 * marker image under the mask image.
 	 *
-	 * @param marker input marker image
-	 * @param mask mask image
+	 * @param marker
+	 *            input marker image
+	 * @param mask
+	 *            mask image
+	 * @return the result of geodesic reconstruction
 	 */
 	public final static ImageProcessor reconstructByDilation(ImageProcessor marker,
 			ImageProcessor mask) 
@@ -116,6 +139,7 @@ public abstract class GeodesicReconstruction
 	 * @param marker input marker image
 	 * @param mask mask image
 	 * @param connectivity planar connectivity (4 or 8)
+	 * @return the result of geodesic reconstruction
 	 */
 	public final static ImageProcessor reconstructByDilation(ImageProcessor marker,
 			ImageProcessor mask, int connectivity) 
@@ -131,6 +155,7 @@ public abstract class GeodesicReconstruction
 	 *
 	 * @param marker input marker image
 	 * @param mask mask image
+	 * @return the result of geodesic reconstruction
 	 */
 	public final static ImageProcessor reconstructByErosion(ImageProcessor marker,
 			ImageProcessor mask) 
@@ -147,6 +172,7 @@ public abstract class GeodesicReconstruction
 	 * @param marker input marker image
 	 * @param mask mask image
 	 * @param connectivity planar connectivity (4 or 8)
+	 * @return the result of geodesic reconstruction
 	 */
 	public final static ImageProcessor reconstructByErosion(ImageProcessor marker,
 			ImageProcessor mask, int connectivity)

@@ -16,15 +16,28 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
+ * <p>
  * Collection of static methods for morphological filters,
  * as well as an enumeration of available methods.
+ * </p>
  * 
+ * <p>
  * Example of use:
  * <pre><code>
- * ImageProcessor ip = image.getProcessor();
+ * ImageProcessor image = IJ.getImage().getProcessor();
  * Strel se = SquareStrel.fromDiameter(5);
- * ImageProcessor grad = Morphology.gradient(ip, se);
+ * ImageProcessor grad = Morphology.gradient(image, se);
  * ImagePlus res = new ImagePlus("Gradient", grad);
+ * res.show(); 
+ * </code></pre>
+ * 
+ * <p>
+ * Example of use with 3D image (stack):
+ * <pre><code>
+ * ImageStack image = IJ.getImage().getStack();
+ * Strel3D se = CubeStrel.fromDiameter(3);
+ * ImageStack grad = Morphology.gradient(image, se);
+ * ImagePlus res = new ImagePlus("Gradient3D", grad);
  * res.show(); 
  * </code></pre>
  * @author David Legland

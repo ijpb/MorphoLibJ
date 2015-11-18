@@ -14,12 +14,26 @@ import inra.ijpb.morphology.geodrec.GeodesicReconstructionType;
 
 
 /**
+ * <p>
  * Geodesic reconstruction for 8-bits grayscale or binary stacks.
+ * </p>
  * 
- * This class defines the interface for implementations of geodesic 
- * reconstruction algorithms,   
- * and provides a collection of static methods for commonly used 
- * operations, such as border removal or holes filling. 
+ * <p>
+ * This class provides a collection of static methods for commonly used 
+ * operations on 3D images, such as border removal or holes filling. 
+ * </p>
+ * 
+ * <p>
+ * Example of use:
+ * <pre><code>
+ * ImageStack mask = IJ.getImage().imagePlus.getStack();
+ * int bitDepth = mask.getBitDepth();
+ * ImageStack marker = ImageStack.create(mask.getWidth(), mask.getHeight(), mask.getSize(), bitDepth);
+ * marker.set(30, 20, 10, 255); 
+ * ImageStack rec = GeodesicReconstruction3D.reconstructByDilation(marker, mask, 6);
+ * ImagePlus res = new ImagePlus("Geodesic Reconstruction", rec);
+ * res.show(); 
+ * </code></pre>
  * 
  * @see GeodesicReconstruction
  * @author David Legland
@@ -35,18 +49,22 @@ public abstract class GeodesicReconstruction3D
 
 	/**
 	 * Removes the border of the input image, by performing a geodesic 
-	 * reconstruction initialized with image boundary. 
+	 * reconstruction initialized with image boundary.
+	 *  
 	 * @see #fillHoles(ImageStack)
+	 * 
+	 * @param image the image to process
+	 * @return a new image with borders removed
 	 */
-	public final static ImageStack killBorders(ImageStack stack)
+	public final static ImageStack killBorders(ImageStack image)
 	{
 		// Image size
-		int width = stack.getWidth();
-		int height = stack.getHeight();
-		int depth = stack.getSize();
+		int width = image.getWidth();
+		int height = image.getHeight();
+		int depth = image.getSize();
 
-		// Initialize marker image zeros everywhere except at borders
-		ImageStack markers = stack.duplicate();
+		// Initialize marker image with zeros everywhere except at borders
+		ImageStack markers = image.duplicate();
 		for (int z = 1; z < depth - 1; z++)
 		{
 			for (int y = 1; y < height - 1; y++)
@@ -58,7 +76,7 @@ public abstract class GeodesicReconstruction3D
 			}
 		}
 		// Reconstruct image from borders to find touching structures
-		ImageStack result = reconstructByDilation(markers, stack);
+		ImageStack result = reconstructByDilation(markers, image);
 
 		// removes result from original image
 		for (int z = 0; z < depth; z++)
@@ -67,7 +85,7 @@ public abstract class GeodesicReconstruction3D
 			{
 				for (int x = 0; x < width; x++)
 				{
-					double val = stack.getVoxel(x, y, z) - result.getVoxel(x, y, z);
+					double val = image.getVoxel(x, y, z) - result.getVoxel(x, y, z);
 					result.setVoxel(x, y, z, Math.max(val, 0));
 				}
 			}
@@ -80,17 +98,21 @@ public abstract class GeodesicReconstruction3D
 	 * Fills the holes in the input image, by (1) inverting the image, (2) 
 	 * performing a geodesic reconstruction initialized with inverted image
 	 * boundary and (3) by inverting the result.
+	 * 
 	 * @see #killBorders(ImageStack)
+	 * 
+	 * @param image the image to process
+	 * @return a new image with holes filled
 	 */
-	public final static ImageStack fillHoles(ImageStack stack) 
+	public final static ImageStack fillHoles(ImageStack image) 
 	{
 		// Image size
-		int width = stack.getWidth();
-		int height = stack.getHeight();
-		int depth = stack.getSize();
+		int width = image.getWidth();
+		int height = image.getHeight();
+		int depth = image.getSize();
 		
 		// Initialize marker image with white everywhere except at borders
-		ImageStack markers = stack.duplicate();
+		ImageStack markers = image.duplicate();
 		for (int z = 1; z < depth-1; z++) 
 		{
 			for (int y = 1; y < height-1; y++) 
@@ -103,7 +125,7 @@ public abstract class GeodesicReconstruction3D
 		}
 		
 		// Reconstruct image from borders to find touching structures
-		return reconstructByErosion(markers, stack);
+		return reconstructByErosion(markers, image);
 	}
 
 	/**
@@ -112,6 +134,7 @@ public abstract class GeodesicReconstruction3D
 	 * 
 	 * @param marker input marker image
 	 * @param mask mask image
+	 * @return the result of 3D geodesic reconstruction
 	 */
 	public final static ImageStack reconstructByDilation(ImageStack marker,
 			ImageStack mask)
@@ -141,6 +164,7 @@ public abstract class GeodesicReconstruction3D
 	 * @param marker input marker image
 	 * @param mask mask image
 	 * @param connectivity 3d connectivity (6 or 26)
+	 * @return the result of 3D geodesic reconstruction
 	 */
 	public final static ImageStack reconstructByDilation(ImageStack marker,
 			ImageStack mask, int connectivity)
@@ -192,6 +216,7 @@ public abstract class GeodesicReconstruction3D
 	 * 
 	 * @param marker input marker image
 	 * @param mask mask image
+	 * @return the result of 3D geodesic reconstruction
 	 */
 	public final static ImageStack reconstructByErosion(ImageStack marker,
 			ImageStack mask)
@@ -222,9 +247,11 @@ public abstract class GeodesicReconstruction3D
 	 * @param marker input marker image
 	 * @param mask mask image
 	 * @param connectivity 3d connectivity (6 or 26)
+	 * @return the result of 3D geodesic reconstruction
 	 */
 	public final static ImageStack reconstructByErosion(ImageStack marker,
-			ImageStack mask, int connectivity) {
+			ImageStack mask, int connectivity)
+	{
 		
 		if ( Thread.currentThread().isInterrupted() )					
 			return null;
