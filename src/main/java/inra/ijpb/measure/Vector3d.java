@@ -38,6 +38,10 @@ public class Vector3d
 
 	/**
 	 * Initialization constructor.
+	 * 
+	 * @param x the x coordinate
+	 * @param y the y coordinate
+	 * @param z the z coordinate
 	 */
 	public Vector3d(double x, double y, double z)
 	{
@@ -53,6 +57,10 @@ public class Vector3d
 	/**
 	 * Computes the cross product of the two vectors. Cross product is zero for
 	 * colinear vectors. 
+	 * 
+	 * @param v1 the first vector
+	 * @param v2 the second vector
+	 * @return the cross product of the two vectors
 	 */
 	public static final Vector3d crossProduct(Vector3d v1, Vector3d v2)
 	{
@@ -70,6 +78,10 @@ public class Vector3d
 	 * Dot product is zero if the vectors are orthogonal. 
 	 * It is positive if vectors are in the same direction, and
 	 * negative if they are in opposite direction.
+	 * 
+	 * @param v1 the first vector
+	 * @param v2 the second vector
+	 * @return the dot product of the two vectors
 	 */
 	public static final double dotProduct(Vector3d v1, Vector3d v2)
 	{
@@ -79,6 +91,10 @@ public class Vector3d
 	/**
 	 * Computes the angle between two 3D vectors. The result is given between 0
 	 * and PI.  
+	 *
+	 * @param v1 the first vector
+	 * @param v2 the second vector
+	 * @return the angle between the two vectors, in radians
 	 */
 	public static final double angle(Vector3d v1, Vector3d v2)
 	{
@@ -94,16 +110,31 @@ public class Vector3d
 	// ===================================================================
 	// Accessor methods
 	
+	/**
+	 * Returns the x coordinate of the vector.
+	 * 
+	 * @return the x coordinate of the vector
+	 */
 	public double getX()
 	{
 		return this.x;
 	}
 	
+	/**
+	 * Returns the y coordinate of the vector.
+	 * 
+	 * @return the y coordinate of the vector
+	 */
 	public double getY()
 	{
 		return this.y;
 	}
 	
+	/**
+	 * Returns the z coordinate of the vector.
+	 * 
+	 * @return the z coordinate of the vector
+	 */
 	public double getZ()
 	{
 		return this.z;
@@ -113,7 +144,10 @@ public class Vector3d
 	// Computation methods
 	
 	/**
-	 * Returns the result of the addition of this vector with another vector. 
+	 * Returns the result of the addition of this vector with another vector.
+	 *  
+	 * @param v the vector to add
+	 * @return the results of the vector addition 
 	 */
 	public Vector3d plus(Vector3d v)
 	{
@@ -125,6 +159,9 @@ public class Vector3d
 	
 	/**
 	 * Returns the result of the subtraction of this vector with another vector. 
+	 *  
+	 * @param v the vector to subtract
+	 * @return the results of the vector subtraction 
 	 */
 	public Vector3d minus(Vector3d v)
 	{
@@ -135,7 +172,11 @@ public class Vector3d
 	}
 	
 	/**
-	 * Returns the result of the multiplication of this vector with a scalar value. 
+	 * Returns the result of the multiplication of this vector with a scalar value.  
+	 * 
+	 * @param k the scalar coefficient
+	 * @return the results of scalar multiplication 
+
 	 */
 	public Vector3d times(double k)
 	{
@@ -147,6 +188,8 @@ public class Vector3d
 	
 	/**
 	 * Returns a normalized vector with same direction as this vector
+	 * 
+	 * @return the normalized vector with same direction as this.
 	 */
 	public Vector3d normalize()
 	{
@@ -157,6 +200,8 @@ public class Vector3d
 	/**
 	 * Computes the norm of the vector, given as the square root of the sum
 	 * of squared coordinates.
+	 * 
+	 * @return the norm of the vector
 	 */
 	public double getNorm()
 	{
@@ -167,7 +212,13 @@ public class Vector3d
 	
 	/**
 	 * Checks if this vector is close to the given vector, by checking each
-	 * coordinate using the given threshold.  
+	 * coordinate using the given threshold.
+	 * 
+	 * @param v
+	 *            the vector to compare to
+	 * @param eps
+	 *            the absolute tolerance for comparing coodinates
+	 * @return true if vector have same coordinates with respect to tolerance
 	 */
 	public boolean almostEquals(Vector3d v, double eps)
 	{

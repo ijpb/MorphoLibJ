@@ -72,7 +72,7 @@ s	 * <pre><code>
 		}
 
 		/* (non-Javadoc)
-		 * @see ijt.morphology.Strel#getSize()
+		 * @see Strel#getSize()
 		 */
 		@Override
 		public int[] getSize() {
@@ -80,7 +80,7 @@ s	 * <pre><code>
 		}
 
 		/* (non-Javadoc)
-		 * @see ijt.morphology.Strel#getMask()
+		 * @see Strel#getMask()
 		 */
 		@Override
 		public int[][] getMask() {
@@ -92,7 +92,7 @@ s	 * <pre><code>
 		}
 
 		/* (non-Javadoc)
-		 * @see ijt.morphology.Strel#getOffset()
+		 * @see Strel#getOffset()
 		 */
 		@Override
 		public int[] getOffset() {
@@ -100,7 +100,7 @@ s	 * <pre><code>
 		}
 
 		/* (non-Javadoc)
-		 * @see ijt.morphology.Strel#getShifts()
+		 * @see Strel#getShifts()
 		 */
 		@Override
 		public int[][] getShifts() {
@@ -115,7 +115,7 @@ s	 * <pre><code>
 
 		/**
 		 * Returns this structuring element, as is is self-reverse.
-		 * @see ijt.morphology.InPlaceStrel#reverse()
+		 * @see InPlaceStrel#reverse()
 		 */
 		@Override
 		public InPlaceStrel reverse() {
@@ -123,7 +123,7 @@ s	 * <pre><code>
 		}
 
 		/* (non-Javadoc)
-		 * @see ijt.morphology.InPlaceStrel#inPlaceDilation(ij.process.ImageProcessor)
+		 * @see InPlaceStrel#inPlaceDilation(ij.process.ImageProcessor)
 		 */
 		@Override
 		public void inPlaceDilation(ImageProcessor image) {
@@ -240,7 +240,7 @@ s	 * <pre><code>
 		}
 
 		/* (non-Javadoc)
-		 * @see ijt.morphology.InPlaceStrel#inPlaceErosion(ij.process.ImageProcessor)
+		 * @see InPlaceStrel#inPlaceErosion(ij.process.ImageProcessor)
 		 */
 		@Override
 		public void inPlaceErosion(ImageProcessor image) {
@@ -380,7 +380,7 @@ s	 * <pre><code>
 		}
 
 		/* (non-Javadoc)
-		 * @see ijt.morphology.Strel#getSize()
+		 * @see Strel#getSize()
 		 */
 		@Override
 		public int[] getSize() {
@@ -388,7 +388,7 @@ s	 * <pre><code>
 		}
 
 		/* (non-Javadoc)
-		 * @see ijt.morphology.Strel#getMask()
+		 * @see Strel#getMask()
 		 */
 		@Override
 		public int[][] getMask() {
@@ -400,7 +400,7 @@ s	 * <pre><code>
 		}
 
 		/* (non-Javadoc)
-		 * @see ijt.morphology.Strel#getOffset()
+		 * @see Strel#getOffset()
 		 */
 		@Override
 		public int[] getOffset() {
@@ -408,7 +408,7 @@ s	 * <pre><code>
 		}
 
 		/* (non-Javadoc)
-		 * @see ijt.morphology.Strel#getShifts()
+		 * @see Strel#getShifts()
 		 */
 		@Override
 		public int[][] getShifts() {
@@ -423,7 +423,7 @@ s	 * <pre><code>
 
 		/**
 		 * Returns this structuring element, as is is self-reverse.
-		 * @see ijt.morphology.InPlaceStrel#reverse()
+		 * @see InPlaceStrel#reverse()
 		 */
 		@Override
 		public InPlaceStrel reverse() {
@@ -431,7 +431,7 @@ s	 * <pre><code>
 		}
 
 		/* (non-Javadoc)
-		 * @see ijt.morphology.InPlaceStrel#inPlaceDilation(ij.process.ImageProcessor)
+		 * @see InPlaceStrel#inPlaceDilation(ij.process.ImageProcessor)
 		 */
 		@Override
 		public void inPlaceDilation(ImageProcessor image) {
@@ -548,7 +548,7 @@ s	 * <pre><code>
 		}
 
 		/* (non-Javadoc)
-		 * @see ijt.morphology.InPlaceStrel#inPlaceErosion(ij.process.ImageProcessor)
+		 * @see InPlaceStrel#inPlaceErosion(ij.process.ImageProcessor)
 		 */
 		@Override
 		public void inPlaceErosion(ImageProcessor image) {

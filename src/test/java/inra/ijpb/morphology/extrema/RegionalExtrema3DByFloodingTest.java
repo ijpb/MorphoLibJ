@@ -15,7 +15,7 @@ import org.junit.Test;
 public class RegionalExtrema3DByFloodingTest {
 
 	/**
-	 * Test method for {@link inra.ijpb.morphology.extrema.RegionalExtremaByFlooding3D#applyTo(ij.ImageStack)}.
+	 * Test method for {@link inra.ijpb.morphology.extrema.RegionalExtrema3DByFlooding#applyTo(ij.ImageStack)}.
 	 */
 	@Test
 	public final void testMaximaEightCubesIntC6() {
@@ -41,7 +41,7 @@ public class RegionalExtrema3DByFloodingTest {
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.morphology.extrema.RegionalExtremaByFlooding3D#applyTo(ij.ImageStack)}.
+	 * Test method for {@link inra.ijpb.morphology.extrema.RegionalExtrema3DByFlooding#applyTo(ij.ImageStack)}.
 	 */
 	@Test
 	public final void testMaximaEightCubesFloatC6() {
@@ -68,7 +68,7 @@ public class RegionalExtrema3DByFloodingTest {
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.morphology.extrema.RegionalExtremaByFlooding3D#applyTo(ij.ImageStack)}.
+	 * Test method for {@link inra.ijpb.morphology.extrema.RegionalExtrema3DByFlooding#applyTo(ij.ImageStack)}.
 	 */
 	@Test
 	public final void testMinimaEightCubesIntC6() {
@@ -94,7 +94,7 @@ public class RegionalExtrema3DByFloodingTest {
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.morphology.extrema.RegionalExtremaByFlooding3D#applyTo(ij.ImageStack)}.
+	 * Test method for {@link inra.ijpb.morphology.extrema.RegionalExtrema3DByFlooding#applyTo(ij.ImageStack)}.
 	 */
 	@Test
 	public final void testMinimaEightCubesFloatC6() {
@@ -121,7 +121,7 @@ public class RegionalExtrema3DByFloodingTest {
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.morphology.extrema.RegionalExtremaByFlooding3D#applyTo(ij.ImageStack)}.
+	 * Test method for {@link inra.ijpb.morphology.extrema.RegionalExtrema3DByFlooding#applyTo(ij.ImageStack)}.
 	 */
 	@Test
 	public final void testMaximaEightCubesIntC26() {
@@ -147,7 +147,7 @@ public class RegionalExtrema3DByFloodingTest {
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.morphology.extrema.RegionalExtremaByFlooding3D#applyTo(ij.ImageStack)}.
+	 * Test method for {@link inra.ijpb.morphology.extrema.RegionalExtrema3DByFlooding#applyTo(ij.ImageStack)}.
 	 */
 	@Test
 	public final void testMaximaEightCubesFloatC26() {
@@ -221,7 +221,7 @@ public class RegionalExtrema3DByFloodingTest {
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.morphology.extrema.RegionalExtremaByFlooding3D#applyTo(ij.ImageStack)}.
+	 * Test method for {@link inra.ijpb.morphology.extrema.RegionalExtrema3DByFlooding#applyTo(ij.ImageStack)}.
 	 */
 	@Test
 	public final void testMaximaThinCubeC6() {

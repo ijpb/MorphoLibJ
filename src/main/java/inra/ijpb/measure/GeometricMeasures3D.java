@@ -1096,8 +1096,6 @@ public class GeometricMeasures3D
 	 * double[][] elongations = GeometricMeasures3D.computeEllipsoidElongations(ellipsoids);
 	 * </code></pre>
 	 *
-	 * @throws RuntimeException
-	 *             if jama package is not found.
 	 * @param image
 	 *            input image containing label of each particle
 	 * @param labels
@@ -1106,6 +1104,8 @@ public class GeometricMeasures3D
 	 * @param resol
 	 *            the spatial resolution, as an array of length 3.
 	 * @return an array with as many rows as the number of labels, and 9 columns
+	 * @throws RuntimeException
+	 *             if jama package is not found.
 	 */
 	public static final double[][] inertiaEllipsoid(ImageStack image,
 			int[] labels, double[] resol)

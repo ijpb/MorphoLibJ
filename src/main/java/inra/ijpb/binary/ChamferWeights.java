@@ -25,8 +25,8 @@ package inra.ijpb.binary;
  *	ImagePlus resultPlus = BinaryImages.distanceMap(imagePlus, shortWeights, normalize);
  * </code></pre>
  * 
- * @see inra.ijpb.binary.BinaryImages#distanceMap(ImageProcessor, short[], boolean)
- * @see inra.ijpb.binary.BinaryImages#distanceMap(ImageProcessor, float[], boolean)
+ * @see inra.ijpb.binary.BinaryImages#distanceMap(ij.process.ImageProcessor, short[], boolean)
+ * @see inra.ijpb.binary.BinaryImages#distanceMap(ij.process.ImageProcessor, float[], boolean)
  * @see inra.ijpb.binary.distmap.DistanceTransform
  */
 public enum ChamferWeights
