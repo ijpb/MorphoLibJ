@@ -22,8 +22,8 @@ import ij.process.ImageProcessor;
  * @author David Legland
  *
  */
-public abstract class RegionalExtremaAlgo {
-
+public abstract class RegionalExtremaAlgo
+{
 	// ==============================================================
 	// class variables
 	
@@ -42,15 +42,21 @@ public abstract class RegionalExtremaAlgo {
 	 * Creates a new algorithm for computing regional extrema, that computes
 	 * regional minima with connectivity 4.
 	 */
-	public RegionalExtremaAlgo() {
+	public RegionalExtremaAlgo() 
+	{
 	}
 	
 	/**
-	 * Creates a new algorithm for computing regional extrema, by choosing type of minima and connectivity.
-	 * @param extremaType the type of extrema (minima or maxima)
-	 * @param connectivity should be 4 or 8
+	 * Creates a new algorithm for computing regional extrema, by choosing type
+	 * of minima and connectivity.
+	 * 
+	 * @param extremaType
+	 *            the type of extrema (minima or maxima)
+	 * @param connectivity
+	 *            should be 4 or 8
 	 */
-	public RegionalExtremaAlgo(ExtremaType extremaType, int connectivity) {
+	public RegionalExtremaAlgo(ExtremaType extremaType, int connectivity)
+	{
 		this.extremaType = extremaType;
 		this.connectivity = connectivity;
 	}
@@ -59,27 +65,33 @@ public abstract class RegionalExtremaAlgo {
 	// ==============================================================
 	// getter and setters
 	
-	public int getConnectivity() {
+	public int getConnectivity()
+	{
 		return this.connectivity;
 	}
 	
-	public void setConnectivity(int conn) {
+	public void setConnectivity(int conn)
+	{
 		this.connectivity = conn;
 	}
 	
-	public ExtremaType getExtremaType() {
+	public ExtremaType getExtremaType() 
+	{
 		return extremaType;
 	}
 
-	public void setExtremaType(ExtremaType extremaType) {
+	public void setExtremaType(ExtremaType extremaType)
+	{
 		this.extremaType = extremaType;
 	}
 
-	public boolean isProgressVisible() {
+	public boolean isProgressVisible()
+	{
 		return progressVisible;
 	}
 
-	public void setProgressVisible(boolean progressVisible) {
+	public void setProgressVisible(boolean progressVisible) 
+	{
 		this.progressVisible = progressVisible;
 	}
 
@@ -89,7 +101,10 @@ public abstract class RegionalExtremaAlgo {
 	
 	/**
 	 * Applies this regional extrema algorithm on the image given as argument,
-	 * and returns the result as a binary image. 
+	 * and returns the result as a binary image.
+	 * 
+	 * @param inputImage the image to process
+	 * @return the result of regional extrema detection
 	 */
 	public abstract ImageProcessor applyTo(ImageProcessor inputImage); 
 	

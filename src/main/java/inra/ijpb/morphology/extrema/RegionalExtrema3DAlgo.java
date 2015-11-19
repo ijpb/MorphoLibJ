@@ -22,8 +22,8 @@ import ij.ImageStack;
  * @author David Legland
  *
  */
-public abstract class RegionalExtrema3DAlgo {
-
+public abstract class RegionalExtrema3DAlgo 
+{
 	// ==============================================================
 	// class variables
 	
@@ -43,7 +43,8 @@ public abstract class RegionalExtrema3DAlgo {
 	 * Creates a new algorithm for computing regional extrema, that computes
 	 * regional minima with connectivity 6.
 	 */
-	public RegionalExtrema3DAlgo() {
+	public RegionalExtrema3DAlgo() 
+	{
 	}
 	
 	/**
@@ -55,7 +56,8 @@ public abstract class RegionalExtrema3DAlgo {
 	 * @param connectivity
 	 *            should be 6 or 26
 	 */
-	public RegionalExtrema3DAlgo(ExtremaType extremaType, int connectivity) {
+	public RegionalExtrema3DAlgo(ExtremaType extremaType, int connectivity)
+	{
 		this.extremaType = extremaType;
 		this.connectivity = connectivity;
 	}
@@ -63,27 +65,33 @@ public abstract class RegionalExtrema3DAlgo {
 	// ==============================================================
 	// getter and setters
 	
-	public ExtremaType getExtremaType() {
+	public ExtremaType getExtremaType() 
+	{
 		return extremaType;
 	}
 
-	public void setExtremaType(ExtremaType extremaType) {
+	public void setExtremaType(ExtremaType extremaType)
+	{
 		this.extremaType = extremaType;
 	}
 
-	public int getConnectivity() {
+	public int getConnectivity() 
+	{
 		return this.connectivity;
 	}
 	
-	public void setConnectivity(int conn) {
+	public void setConnectivity(int conn) 
+	{
 		this.connectivity = conn;
 	}
 	
-	public boolean isProgressVisible() {
+	public boolean isProgressVisible() 
+	{
 		return progressVisible;
 	}
 
-	public void setProgressVisible(boolean progressVisible) {
+	public void setProgressVisible(boolean progressVisible)
+	{
 		this.progressVisible = progressVisible;
 	}
 
@@ -94,12 +102,19 @@ public abstract class RegionalExtrema3DAlgo {
 	/**
 	 * Applies this regional extrema algorithm on the 3D image given as argument,
 	 * and returns the result as a binary image stack. 
+	 * 
+	 * @param inputImage the 3D image to process
+	 * @return the result of regional extrema detection
 	 */
 	public abstract ImageStack applyTo(ImageStack inputImage); 
 	
 	/**
 	 * Applies this regional extrema algorithm on the 3D image given as argument
 	 * and using the given mask, and returns the result as a binary image stack. 
+	 * 
+	 * @param inputImage the 3D image to process
+	 * @param maskImage a binary mask
+	 * @return the result of regional extrema detection
 	 */
 	public abstract ImageStack applyTo(ImageStack inputImage, ImageStack maskImage);
 	
