@@ -1,5 +1,5 @@
-#LyX 2.1 created this file. For more info see http://www.lyx.org/
-\lyxformat 474
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
 \begin_document
 \begin_header
 \textclass scrreprt
@@ -67,6 +67,8 @@
 \renewcommand{\chaptermark}[1]{\markboth{\thechapter\ #1}{}}
 % section à droite avec numero
 \renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+% Added by lyx2lyx
+\usepackage[charter]{mathdesign}
 \end_preamble
 \use_default_options true
 \maintain_unincluded_children false
@@ -74,16 +76,16 @@
 \language_package default
 \inputencoding auto
 \fontencoding global
-\font_roman md-charter
+\font_roman default
 \font_sans default
 \font_typewriter default
-\font_math auto
 \font_default_family default
 \use_non_tex_fonts false
 \font_sc false
 \font_osf false
 \font_sf_scale 100
 \font_tt_scale 100
+
 \graphics default
 \default_output_format pdf2
 \output_sync 0
@@ -104,24 +106,15 @@
 \pdf_pdfusetitle true
 \papersize a4paper
 \use_geometry false
-\use_package amsmath 1
-\use_package amssymb 1
-\use_package cancel 1
-\use_package esint 1
-\use_package mathdots 1
-\use_package mathtools 1
-\use_package mhchem 1
-\use_package stackrel 1
-\use_package stmaryrd 1
-\use_package undertilde 1
-\cite_engine natbib
-\cite_engine_type authoryear
-\biblio_style plainnat
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine natbib_authoryear
 \use_bibtopic false
 \use_indices false
 \paperorientation portrait
 \suppress_date false
-\justification true
 \use_refstyle 0
 \index Index
 \shortcut idx
@@ -445,7 +438,7 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption Standard
+\begin_inset Caption
 
 \begin_layout Plain Layout
 Some example of morphological filters.
@@ -499,7 +492,7 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption Standard
+\begin_inset Caption
 
 \begin_layout Plain Layout
 Some example of composed morphological filters.
@@ -615,7 +608,7 @@ Morphological reconstruction
 
 \begin_layout Standard
 The morphological reconstruction is at the basis of many useful algorithms,
- such as border remowing, hole filling, or detection of regional minima
+ such as border removing, hole filling, or detection of regional minima
  or maxima in grey level images.
 \end_layout
 
@@ -681,7 +674,7 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption Standard
+\begin_inset Caption
 
 \begin_layout Plain Layout
 \begin_inset CommandInset label
@@ -751,7 +744,7 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption Standard
+\begin_inset Caption
 
 \begin_layout Plain Layout
 \begin_inset CommandInset label
@@ -974,7 +967,7 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption Standard
+\begin_inset Caption
 
 \begin_layout Plain Layout
 \begin_inset CommandInset label
@@ -1228,10 +1221,10 @@ status open
 \begin_layout Plain Layout
 \begin_inset Tabular
 <lyxtabular version="3" rows="1" columns="3">
-<features rotate="0" tabularvalignment="middle">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
 <row>
 <cell alignment="center" valignment="top" usebox="none">
 \begin_inset Text
@@ -1251,7 +1244,7 @@ status collapsed
 \end_inset
 
 
-\begin_inset Caption Standard
+\begin_inset Caption
 
 \begin_layout Plain Layout
 Gaussian-blurred blobs image used as input (radius = 3).
@@ -1287,7 +1280,7 @@ status collapsed
 \end_inset
 
 
-\begin_inset Caption Standard
+\begin_inset Caption
 
 \begin_layout Plain Layout
 Watershed segmentation on original image (
@@ -1331,7 +1324,7 @@ status collapsed
 \end_inset
 
 
-\begin_inset Caption Standard
+\begin_inset Caption
 
 \begin_layout Plain Layout
 Watershed segmentation on Gaussian-blurred original image (radius = 3, 
@@ -1366,7 +1359,7 @@ Watershed segmentation on Gaussian-blurred original image (radius = 3,
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption Standard
+\begin_inset Caption
 
 \begin_layout Plain Layout
 Input and result images from the macro example.
@@ -1441,7 +1434,7 @@ status open
 \end_inset
 
 
-\begin_inset Caption Standard
+\begin_inset Caption
 
 \begin_layout Plain Layout
 \begin_inset CommandInset label
@@ -1599,7 +1592,7 @@ status open
 \end_inset
 
 
-\begin_inset Caption Standard
+\begin_inset Caption
 
 \begin_layout Plain Layout
 Overview of the Morphological Segmentation plugin.
@@ -1884,7 +1877,7 @@ status open
 \end_inset
 
 
-\begin_inset Caption Standard
+\begin_inset Caption
 
 \begin_layout Plain Layout
 Examples of the 4 different display options.
@@ -2289,8 +2282,8 @@ area computes the volume, the surface area, and a sphericity index, defined
 
 .
  Surface area is computed using a discretized version of the Crofton formula,
- that computes intersections with line grids of various orientations (currentlye
-ither 3 or 13).
+ that computes intersections with line grids of various orientations (currently
+ either 3 or 13).
 \end_layout
 
 \begin_layout Description
@@ -2411,7 +2404,7 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption Standard
+\begin_inset Caption
 
 \begin_layout Plain Layout
 Connected components labeling, and computation of distance maps for binary
@@ -2450,7 +2443,7 @@ Distance
 \begin_inset space ~
 \end_inset
 
-Map computes an approximate distance map between each foregrond pixel to
+Map computes an approximate distance map between each foreground pixel to
  the nearest background pixel
 \end_layout
 
@@ -2486,7 +2479,7 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption Standard
+\begin_inset Caption
 
 \begin_layout Plain Layout
 Utilities for binary images.
@@ -2543,15 +2536,15 @@ Algorithms work for both 2D or 3D images.
 \end_layout
 
 \begin_layout Chapter
-Utilities for label image
+Utilities for label images
 \end_layout
 
 \begin_layout Standard
 Some functions are specific for the processing of label images, in which
- the pixel/voxel values is used to identify the particle it belongs to.
+ the pixel/voxel value is used to identify the particle it belongs to.
  The value 0 is assumed to correspond to the background.
- The number of labels that can be represented depends on the image type
- : 255 for byte images, 65535 for short images...
+ The number of labels that can be represented depends on the image type:
+ 255 for byte images, 65535 for short images...
 \end_layout
 
 \begin_layout Standard
@@ -2593,7 +2586,7 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption Standard
+\begin_inset Caption
 
 \begin_layout Plain Layout
 Utilities for label images.
@@ -2781,10 +2774,10 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption Standard
+\begin_inset Caption
 
 \begin_layout Plain Layout
-Assign result of a measurment to a label image.
+Assign result of a measurement to a label image.
  In this example, the elongation is represented using a color code, between
  dark purple (circular) to yellow (very elongated).
 \end_layout
