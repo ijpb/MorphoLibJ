@@ -12,7 +12,7 @@ labeling, distance transform, geodesic distance transform...)
 * **data** contains various data structure to represent images as well as utility 
 data structures (connectivities, cursors...)
 
-* **filter** utilities for filtering
+* **label** contains utilities for label images (cropping, size opening, remove border labels, etc)
 
 * **math** re-implementation of some mathematical operations on images, that
 can be accessed programmatically (without calling a plugin)
