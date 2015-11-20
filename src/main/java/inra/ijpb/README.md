@@ -26,7 +26,7 @@ maxima...), and some utilities for managing label images
 
 * **plugins** the set of plugins that is accessible from ImageJ/Fiji Plugins menu
 
-* **segment** should contains several segmentation algorithms, but contains only 
+* **segment** should contain several segmentation algorithms, but contains only 
 threshold classes for the moment
 
 * **util** various utilities, for managing colormaps, or communicating with ImageJ
