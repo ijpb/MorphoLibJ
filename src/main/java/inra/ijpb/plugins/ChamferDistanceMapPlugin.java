@@ -191,7 +191,19 @@ public class ChamferDistanceMapPlugin implements ExtendedPlugInFilter,
 		
 	/**
 	 * Computes the distance propagation from the boundary of the particles.
-	 * Background is assumed to be 0. 
+	 * Background is assumed to be 0.
+	 * 
+	 * @param image
+	 *            the binary image to process
+	 * @param newName
+	 *            the name of the new image
+	 * @param weights
+	 *            the array of weights in orthogonal, diagonal and eventually
+	 *            chessknight moves directions
+	 * @param normalize
+	 *            boolean flag indicating whether resulting map should be
+	 *            normalized
+	 * @return an array of objects containing the new name, and the result image
 	 */
 	public Object[] exec(ImagePlus image, String newName, float[] weights, boolean normalize) {
 		// Check validity of parameters
@@ -224,6 +236,18 @@ public class ChamferDistanceMapPlugin implements ExtendedPlugInFilter,
 	
 	/**
 	 * Compute the distance propagation from the boundary of the white particles. 
+	 * 
+	 * @param image
+	 *            the binary image to process
+	 * @param newName
+	 *            the name of the new image
+	 * @param weights
+	 *            the array of weights in orthogonal, diagonal and eventually
+	 *            chessknight moves directions
+	 * @param normalize
+	 *            boolean flag indicating whether resulting map should be
+	 *            normalized
+	 * @return an array of objects containing the new name, and the result image
 	 */
 	public Object[] exec(ImagePlus image, String newName, short[] weights, boolean normalize) {
 		// Check validity of parameters

@@ -114,7 +114,15 @@ public class GeodesicDiameterPlugin implements PlugIn
 
 	
 	/**
-	 * Compute geodesic length of particles using floating point weights. 
+	 * Computes the geodesic diameter of each particle using floating point weights.
+	 * 
+	 * @param labels
+	 *            the label image representing the particles
+	 * @param newName
+	 *            the name of the image to be created
+	 * @param weights
+	 *            the array of weights for the orthogonal, diagonal directions
+	 * @return an array of objects
 	 */
 	public Object[] exec(ImagePlus labels, String newName, float[] weights) 
 	{
@@ -140,7 +148,15 @@ public class GeodesicDiameterPlugin implements PlugIn
 	}
 	
 	/**
-	 * Compute geodesic length of particles using integer weights.
+	 * Computes the geodesic diameter of each particle using integer weights.
+	 * 
+	 * @param labels
+	 *            the label image representing the particles
+	 * @param newName
+	 *            the name of the image to be created
+	 * @param weights
+	 *            the array of weights for the orthogonal, diagonal directions
+	 * @return an array of objects
 	 */
 	public Object[] exec(ImagePlus labels, String newName, short[] weights) 
 	{
@@ -166,8 +182,13 @@ public class GeodesicDiameterPlugin implements PlugIn
 	}
 	
 	/**
-	 * Display the result of geodesic parameter extraction as overlay on a 
-	 * given image.
+	 * Display the result of geodesic parameter extraction as overlay on a given
+	 * image.
+	 * 
+	 * @param target
+	 *            the imagePlus used to display result
+	 * @param table
+	 *            the ResultsTable obtained from geodesicDimaeter analysis
 	 */
 	public void showResultsAsOverlay(ImagePlus target, ResultsTable table) 
 	{
@@ -214,6 +235,12 @@ public class GeodesicDiameterPlugin implements PlugIn
 	/**
 	 * Compute geodesic length of particles, using imageProcessor as input and
 	 * weights as array of float
+	 * 
+	 * @param labels
+	 *            the label image of the particles
+	 * @param weights
+	 *            the weights to use
+	 * @return an array of objects (image name, ImagePlus object)
 	 */
 	public Object[] exec(ImageProcessor labels, float[] weights) 
 	{

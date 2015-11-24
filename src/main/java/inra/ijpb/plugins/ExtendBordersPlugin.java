@@ -78,6 +78,21 @@ public class ExtendBordersPlugin implements PlugIn {
 
 	/**
 	 * Assumes reference image contains a GRAY Processor.
+	 * 
+	 * @param image
+	 *            the input image
+	 * @param left
+	 *            the number of pixels to add to the left
+	 * @param right
+	 *            the number of pixels to add to the right
+	 * @param top
+	 *            the number of pixels to add on top of image
+	 * @param bottom
+	 *            the number of pixels to at the bottom of image
+	 * @param border
+	 *            an instance of BorderManager that specifies the value of
+	 *            pixels to be added
+	 * @return a new image with extended borders
 	 */
 	public static ImageProcessor process(ImageProcessor image, 
 			int left, int right, int top, int bottom, BorderManager border) {

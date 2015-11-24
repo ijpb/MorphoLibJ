@@ -76,7 +76,12 @@ public class ExtendedMinAndMax3DPlugin implements PlugIn {
 		
 		/**
 		 * Determines the operation type from its label.
-		 * @throws IllegalArgumentException if label is not recognized.
+		 * 
+		 * @param opLabel
+		 *            the name of the operation
+		 * @return the Operation object corresponding to the name
+		 * @throws IllegalArgumentException
+		 *             if label is not recognized.
 		 */
 		public static Operation fromLabel(String opLabel) {
 			if (opLabel != null)
