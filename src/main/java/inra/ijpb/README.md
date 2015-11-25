@@ -12,7 +12,7 @@ labeling, distance transform, geodesic distance transform...)
 * **data** contains various data structure to represent images as well as utility 
 data structures (connectivities, cursors...)
 
-* **filter** utilities for filtering
+* **label** contains utilities for label images (cropping, size opening, remove border labels, etc)
 
 * **math** re-implementation of some mathematical operations on images, that
 can be accessed programmatically (without calling a plugin)
@@ -26,7 +26,7 @@ maxima...), and some utilities for managing label images
 
 * **plugins** the set of plugins that is accessible from ImageJ/Fiji Plugins menu
 
-* **segment** should contains several segmentation algorithms, but contains only 
+* **segment** should contain several segmentation algorithms, but contains only 
 threshold classes for the moment
 
 * **util** various utilities, for managing colormaps, or communicating with ImageJ
