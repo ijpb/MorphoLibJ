@@ -6,6 +6,7 @@ import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import inra.ijpb.data.image.ColorImages;
+import inra.ijpb.util.CommonColors;
 
 import java.awt.Color;
 
@@ -18,38 +19,6 @@ import java.awt.Color;
  *
  */
 public class BinaryOverlayPlugin implements PlugIn {
-	
-	// ====================================================
-	// Global Constants
-	
-	/**
-	 * List of available color names
-	 */
-	public final static String[] colorNames = {
-			"Red", 
-			"Green", 
-			"Blue", 
-			"Cyan", 
-			"Magenta", 
-			"Yellow", 
-			"White", 
-			"Black", 
-	}; 
-	
-	/**
-	 * List of colors
-	 */
-	public final static Color[] colors = {
-		Color.RED, 
-		Color.GREEN, 
-		Color.BLUE, 
-		Color.CYAN, 
-		Color.MAGENTA, 
-		Color.YELLOW, 
-		Color.WHITE, 
-		Color.BLACK, 
-	};
-	
 
 	// ====================================================
 	// Calling functions 
@@ -78,7 +47,7 @@ public class BinaryOverlayPlugin implements PlugIn {
 		GenericDialog gd = new GenericDialog("Binary Overlay");
 		gd.addChoice("Reference Image:", imageNames, selectedImageName);
 		gd.addChoice("Binary Mask:", imageNames, selectedImageName);
-		gd.addChoice("Overlay Color:", colorNames, colorNames[0]);
+		gd.addChoice("Overlay Color:", CommonColors.getAllLabels(), CommonColors.RED.getLabel());
 		
 		gd.showDialog();
 		
@@ -94,8 +63,8 @@ public class BinaryOverlayPlugin implements PlugIn {
 		ImagePlus maskImage = WindowManager.getImage(maskIndex+1);
 
 		// Extract overlay color
-		int colorIndex = gd.getNextChoiceIndex();
-		Color color = colors[colorIndex];
+		String colorName = gd.getNextChoice();
+		Color color = CommonColors.fromLabel(colorName).getColor();
 		
 		// Call binary overlay conversion
 		ImagePlus resultPlus = ColorImages.binaryOverlay(refImage, maskImage, color);

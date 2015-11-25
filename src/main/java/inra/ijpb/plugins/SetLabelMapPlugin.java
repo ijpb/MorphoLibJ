@@ -16,6 +16,7 @@ import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.image.ColorModel;
 
+import inra.ijpb.util.CommonColors;
 import static inra.ijpb.util.ColorMaps.CommonLabelMaps;
 
 /**
@@ -36,69 +37,9 @@ import static inra.ijpb.util.ColorMaps.CommonLabelMaps;
  * @author David Legland
  *
  */
-public class SetLabelMapPlugin implements PlugIn, DialogListener {
-	
-
-	public enum Colors {
-		WHITE("White", 	Color.WHITE), 
-		BLACK("Black", 	Color.BLACK), 
-		RED("Red", 		Color.RED), 
-		GREEN("Green", 	Color.GREEN), 
-		BLUE("Blue", 	Color.BLUE), 
-		GRAY("Gray", 	Color.GRAY), 
-		DARK_GRAY("Dark Gray", 	 Color.DARK_GRAY), 
-		LIGHT_GRAY("Light Gray", Color.LIGHT_GRAY);
-		
-		private final String label;
-		private final Color color;
-
-		Colors(String label, Color color) {
-			this.label = label;
-			this.color = color;
-		}
-		
-		public String toString() {
-			return label;
-		}
-		
-		public Color getColor() {
-			return color;
-		}
-		
-		public static String[] getAllLabels(){
-			int n = Colors.values().length;
-			String[] result = new String[n];
-			
-			int i = 0;
-			for (Colors color : Colors.values())
-				result[i++] = color.label;
-			
-			return result;
-		}
-		
-		/**
-		 * Determines the operation type from its label.
-		 * 
-		 * @param label
-		 *            the name of the color
-		 * @return the Colors enumeration corresponding to the name
-		 * @throws IllegalArgumentException
-		 *             if color name is not recognized.
-		 */
-		public static Colors fromLabel(String label) {
-			if (label != null)
-				label = label.toLowerCase();
-			for (Colors color : Colors.values()) {
-				String cmp = color.label.toLowerCase();
-				if (cmp.equals(label))
-					return color;
-			}
-			throw new IllegalArgumentException("Unable to parse Color with label: " + label);
-		}
-		
-	};
-
-	// Image managed by the plugin
+public class SetLabelMapPlugin implements PlugIn, DialogListener 
+{
+	// Images managed by the plugin
 	
 	ImagePlus imagePlus;
 	ImageStack baseStack;
@@ -129,8 +70,6 @@ public class SetLabelMapPlugin implements PlugIn, DialogListener {
 		else
 			oldColorModel = imagePlus.getStack().getColorModel();
 			
-//		computeMaxLabel();
-		
 		GenericDialog gd = showDialog();
 		
         // test cancel  
@@ -154,7 +93,7 @@ public class SetLabelMapPlugin implements PlugIn, DialogListener {
     	GenericDialog gd = new GenericDialog("Choose Label Map");
     	gd.addChoice("Colormap", CommonLabelMaps.getAllLabels(), 
     			CommonLabelMaps.JET.getLabel());
-    	gd.addChoice("Background", Colors.getAllLabels(), Colors.WHITE.label);
+    	gd.addChoice("Background", CommonColors.getAllLabels(), CommonColors.WHITE.toString());
     	gd.addCheckbox("Shuffle", true);
     	
     	gd.addPreviewCheckbox(null);
@@ -192,7 +131,8 @@ public class SetLabelMapPlugin implements PlugIn, DialogListener {
 
 	private void parseDialogParameters(GenericDialog gd) {
 		lutName = gd.getNextChoice();
-		bgColor = Colors.fromLabel(gd.getNextChoice()).color;
+		String bgColorName = gd.getNextChoice();
+		bgColor = CommonColors.fromLabel(bgColorName).getColor();
 		shuffleLut = gd.getNextBoolean();
 
 		// I could not use more than 256 colors for the LUT with ShortProcessor,

@@ -12,6 +12,7 @@ import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.util.ColorMaps.CommonLabelMaps;
+import inra.ijpb.util.CommonColors;
 
 import java.awt.Color;
 
@@ -26,71 +27,6 @@ import java.awt.Color;
  */
 public class LabelToRgbPlugin implements PlugIn
 {
-	
-	public enum Colors
-	{
-		WHITE("White", 	Color.WHITE), 
-		BLACK("Black", 	Color.BLACK), 
-		RED("Red", 		Color.RED), 
-		GREEN("Green", 	Color.GREEN), 
-		BLUE("Blue", 	Color.BLUE);
-		
-		private final String label;
-		private final Color color;
-
-		Colors(String label, Color color)
-		{
-			this.label = label;
-			this.color = color;
-		}
-		
-		public String toString() 
-		{
-			return label;
-		}
-		
-		public Color getColor()
-		{
-			return color;
-		}
-		
-		public static String[] getAllLabels()
-		{
-			int n = Colors.values().length;
-			String[] result = new String[n];
-			
-			int i = 0;
-			for (Colors color : Colors.values())
-				result[i++] = color.label;
-			
-			return result;
-		}
-		
-		/**
-		 * Determines the operation type from its label.
-		 * 
-		 * @param label
-		 *            the name of a color in the enum
-		 * @return the Colors object corresponding to the name
-		 * @throws IllegalArgumentException
-		 *             if label is not recognized.
-		 */
-		public static Colors fromLabel(String label) 
-		{
-			if (label != null)
-				label = label.toLowerCase();
-			for (Colors color : Colors.values()) 
-			{
-				String cmp = color.label.toLowerCase();
-				if (cmp.equals(label))
-					return color;
-			}
-			throw new IllegalArgumentException("Unable to parse Colors with label: " + label);
-		}
-		
-	};
-
-
 	@Override
 	public void run(String arg)
 	{
@@ -102,7 +38,7 @@ public class LabelToRgbPlugin implements PlugIn
     	GenericDialog gd = new GenericDialog("Label To RGB");
     	gd.addChoice("Colormap", CommonLabelMaps.getAllLabels(), 
     			CommonLabelMaps.JET.getLabel());
-    	gd.addChoice("Background", Colors.getAllLabels(), Colors.WHITE.label);
+    	gd.addChoice("Background", CommonColors.getAllLabels(), CommonColors.WHITE.getLabel());
     	gd.addCheckbox("Shuffle", true);
     	gd.showDialog();
 		
@@ -112,7 +48,8 @@ public class LabelToRgbPlugin implements PlugIn
 
     	// Create a new LUT from info in dialog
 		String lutName = gd.getNextChoice();
-		Color bgColor = Colors.fromLabel(gd.getNextChoice()).getColor();
+		String bgColorName = gd.getNextChoice();
+		Color bgColor = CommonColors.fromLabel(bgColorName).getColor();
 		boolean shuffleLut = gd.getNextBoolean();
 
 		// Create a new LUT from info in dialog
