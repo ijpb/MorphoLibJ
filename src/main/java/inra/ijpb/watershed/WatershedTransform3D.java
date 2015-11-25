@@ -151,6 +151,8 @@ public class WatershedTransform3D
 	 * in digital pictures via flooding simulations." Lausanne-DL 
 	 * tentative. International Society for Optics and Photonics, 1990.
 	 *
+	 * @param hMin the minimum value for dynamic
+	 * @param hMax the maximum value for dynamic
 	 * @return image of labeled catchment basins (with dams)
 	 */
 	public ImagePlus apply(

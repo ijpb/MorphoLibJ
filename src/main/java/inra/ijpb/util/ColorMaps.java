@@ -107,7 +107,12 @@ public class ColorMaps {
 		
 		/**
 		 * Determines the color map from its label.
-		 * @throws IllegalArgumentException if label is not recognized.
+		 * 
+		 * @param label
+		 *            the name of the color map
+		 * @return the enumeration item corresponding to the given label
+		 * @throws IllegalArgumentException
+		 *             if label is not recognized.
 		 */
 		public static CommonLabelMaps fromLabel(String label) {
 			if (label != null)
@@ -132,6 +137,9 @@ public class ColorMaps {
 	/**
 	 * Creates a Java.awt.image.ColorModel from a color map given as an triplet
 	 * of byte arrays.
+	 * 
+	 * @param cmap a colormap given as a triplet of byte arrays
+	 * @return the corresponding color model
 	 */
 	public final static ColorModel createColorModel(byte[][] cmap) {
 		int n = cmap.length;
@@ -142,6 +150,10 @@ public class ColorMaps {
 	 * Creates a Java.awt.image.ColorModel from a color map given as an triplet
 	 * of byte arrays, and a color for the background that will be associated 
 	 * to label 0.
+	 * 
+	 * @param cmap a colormap given as a triplet of byte arrays
+	 * @param bg the color associated to the background
+	 * @return the corresponding color model
 	 */
 	public final static ColorModel createColorModel(byte[][] cmap, Color bg) {
 		int n = cmap.length;
@@ -452,6 +464,8 @@ public class ColorMaps {
 
 	/**
 	 * Returns a LUT with only the 6 main colors.
+	 * 
+	 * @return the created LUT
 	 */
 	public final static byte[][] createMainColorsLut() {
 		return new byte[][]{
@@ -466,6 +480,8 @@ public class ColorMaps {
 
 	/**
 	 * Returns a LUT with only the main colors and their mixture.
+	 * 
+	 * @return the created LUT
 	 */
 	public final static byte[][] createMixedColorsLut() {
 		return new byte[][]{
@@ -562,8 +578,14 @@ public class ColorMaps {
 	}
 	
 	/**
-	 * Shuffles the LUT, using the specified seed for initializing the random 
+	 * Shuffles the LUT, using the specified seed for initializing the random
 	 * generator.
+	 * 
+	 * @param lut
+	 *            the initial values of the look-up table
+	 * @param seed
+	 *            the value used to initialize the random number generator
+	 * @return the randomly shuffled look-up table
 	 */
 	public final static byte[][] shuffleLut(byte[][] lut, long seed) {
 		// initialize an array of random values
@@ -586,6 +608,9 @@ public class ColorMaps {
 	/**
 	 * Sorts the input array in increasing order, and returns the indices of 
 	 * elements.
+	 * 
+	 * @param array the values to analyze
+	 * @return the array of indices corresponding to sorted values
 	 */
 	private final static int[] sort(double[] array) {
 		DoubleArrayIndexComparator comparator = new DoubleArrayIndexComparator(array);

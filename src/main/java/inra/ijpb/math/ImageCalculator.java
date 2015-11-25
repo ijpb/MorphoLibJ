@@ -139,12 +139,23 @@ public class ImageCalculator
 
 	/**
 	 * Example that computes the maximum over two images:
-	 * <pre><code>
+	 * 
+	 * <pre>
+	 * <code>
 	 * ImageProcessor image1 = ...
 	 * ImageProcessor image2 = ...
 	 * ImageProcessor result = ImageCalculator.combineImages(
 	 * 		image1, image2, ImageCalculator.Operation.MAX);  
-	 * </code></pre>
+	 * </code>
+	 * </pre>
+	 * 
+	 * @param image1
+	 *            the first input image
+	 * @param image2
+	 *            the second input image
+	 * @param op
+	 *            the operation to apply
+	 * @return the result of operation applied to the pair of input images
 	 */
 	public static final ImageProcessor combineImages(ImageProcessor image1, ImageProcessor image2, Operation op)  
 	{

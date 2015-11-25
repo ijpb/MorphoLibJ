@@ -38,7 +38,8 @@ public class ColorImages
 	 *            the original image, assumed to be a ColorProcessor
 	 * @return a collection containing the red, green and blue channels
 	 */
-	public static final Collection<ByteProcessor> splitChannels(ImageProcessor image) {
+	public static final Collection<ByteProcessor> splitChannels(ImageProcessor image) 
+	{
 		if (!(image instanceof ColorProcessor)) 
 		{
 			throw new IllegalArgumentException("Requires an instance of ColorProcessor");
@@ -83,7 +84,8 @@ public class ColorImages
 	 * @param image the original image, assumed to be a ColorProcessor
 	 * @return a hashmap indexing the three channels by their names
 	 */
-	public static final HashMap<String, ByteProcessor> mapChannels(ImageProcessor image) {
+	public static final HashMap<String, ByteProcessor> mapChannels(ImageProcessor image) 
+	{
 		if (!(image instanceof ColorProcessor)) 
 		{
 			throw new IllegalArgumentException("Requires an instance of ColorProcessor");
@@ -124,7 +126,8 @@ public class ColorImages
 	 * @throws IllegalArgumentException
 	 *             if the collection contains less than three channels
 	 */
-	public static final ColorProcessor mergeChannels(Collection<ImageProcessor> channels) {
+	public static final ColorProcessor mergeChannels(Collection<ImageProcessor> channels) 
+	{
 		// check validity of input
 		if (channels.size() < 3)
 			throw new IllegalArgumentException("Requires at least three channels in the collection");
@@ -140,16 +143,23 @@ public class ColorImages
 	}
 
 	/**
-	 * Creates a new ColorProcessor from the red, green and blue channels.
-	 * Each channel must be an instance of ByteProcessor.
-	 *  
+	 * Creates a new ColorProcessor from the red, green and blue channels. Each
+	 * channel must be an instance of ByteProcessor.
+	 * 
+	 * @param red
+	 *            the image for the red channel (must be a ByteProcessor)
+	 * @param green
+	 *            the image for the green channel (must be a ByteProcessor)
+	 * @param blue
+	 *            the image for the blue channel (must be a ByteProcessor)
 	 * @return the color image corresponding to the concatenation of the three
 	 *         channels
 	 * @throws IllegalArgumentException
 	 *             if one of the channel is not an instance of ByteProcessor
 	 */
 	public static final ColorProcessor mergeChannels(ImageProcessor red, 
-			ImageProcessor green, ImageProcessor blue) {
+			ImageProcessor green, ImageProcessor blue)
+	{
 		// check validity of input
 		if (!(red instanceof ByteProcessor))
 			throw new IllegalArgumentException("Input channels must be instances of ByteProcessor");
@@ -174,9 +184,21 @@ public class ColorImages
 		return result;	
 	}
 	
+	/**
+	 * Applies an overlay of a binary image mask onto a grayscale or color
+	 * image, using the specified color. Both images must have the same size.
+	 * 
+	 * @param imagePlus
+	 *            the original 2D or 3D image used as background
+	 * @param maskPlus
+	 *            the binary 2D or 3D mask image
+	 * @param color
+	 *            the color used to display overlay
+	 * @return a new ImagePlus instance containing a 2D or 3D color image
+	 */
 	public final static ImagePlus binaryOverlay(ImagePlus imagePlus, 
-			ImagePlus maskPlus, Color color) {
-		
+			ImagePlus maskPlus, Color color)
+	{
 		String newName = imagePlus.getShortTitle() + "-ovr";
 		ImagePlus resultPlus;
 		
@@ -186,16 +208,18 @@ public class ColorImages
 			ImageProcessor mask = maskPlus.getProcessor();
 			ImageProcessor result = binaryOverlay(image, mask, color);
 			resultPlus = new ImagePlus(newName, result);
-		} else
+		} 
+		else
 		{
 			// get reference image stack
 			ImageStack image = imagePlus.getStack();
 			
 			// convert image to gray8 if necessary
-			if (imagePlus.getBitDepth() != 24) {
+			if (imagePlus.getBitDepth() != 24) 
+			{
 				double grayMin = imagePlus.getDisplayRangeMin();
 				double grayMax = imagePlus.getDisplayRangeMax();
-				image = adjustDynamic(image, grayMin, grayMax);
+				image = Images3D.adjustDynamic(image, grayMin, grayMax);
 			}
 			
 			// get binary mask
@@ -211,8 +235,21 @@ public class ColorImages
 		return resultPlus;
 	}
 	
+	/**
+	 * Applies an overlay of a binary image mask onto a grayscale or color
+	 * image, using the specified color. Both images must have the same size.
+	 * 
+	 * @param refImage
+	 *            the original image used as background
+	 * @param mask
+	 *            the binary mask image
+	 * @param color
+	 *            the color used to display overlay
+	 * @return a new ImagePlus instance containing a 2D color image
+	 */
 	public final static ImageProcessor binaryOverlay(ImageProcessor refImage, 
-			ImageProcessor mask, Color color) {
+			ImageProcessor mask, Color color)
+	{
 		if (refImage instanceof ColorProcessor) 
 		{
 			return binaryOverlayRGB(refImage, mask, color);
@@ -231,8 +268,8 @@ public class ColorImages
 	 * Assumes reference image contains a ByteProcessor.
 	 */
 	private final static ImageProcessor binaryOverlayGray8(ImageProcessor refImage, 
-			ImageProcessor mask, Color color) {
-		
+			ImageProcessor mask, Color color) 
+	{
 		int width = refImage.getWidth(); 
 		int height = refImage.getHeight(); 
 		ColorProcessor result = new ColorProcessor(width, height);
@@ -265,8 +302,8 @@ public class ColorImages
 	 * Assumes reference image contains a ColorProcessor.
 	 */
 	private final static ImageProcessor binaryOverlayRGB(ImageProcessor refImage, 
-			ImageProcessor mask, Color color) {
-		
+			ImageProcessor mask, Color color)
+	{
 		int width = refImage.getWidth(); 
 		int height = refImage.getHeight(); 
 		ColorProcessor result = new ColorProcessor(width, height);
@@ -292,8 +329,21 @@ public class ColorImages
 		return result;
 	}
 
+	/**
+	 * Applies an overlay of a binary image mask onto a grayscale or color
+	 * image, using the specified color. Both images must have the same size.
+	 * 
+	 * @param refImage
+	 *            the original 2D or 3D image used as background
+	 * @param mask
+	 *            the binary 2D or 3D mask image
+	 * @param color
+	 *            the color used to display overlay
+	 * @return a new ImageStack containing a 3D color image
+	 */
 	public final static ImageStack binaryOverlay(ImageStack refImage, 
-			ImageStack mask, Color color) {
+			ImageStack mask, Color color) 
+	{
 		int sizeX = refImage.getWidth(); 
 		int sizeY = refImage.getHeight(); 
 		int sizeZ = refImage.getSize();
@@ -318,7 +368,6 @@ public class ColorImages
 					}
 				}
 			}
-			System.out.println("vmin= " + vmin + "  vmax= " + vmax);
 		}
 		
 		// Iterate on image voxels, and choose result value depending on mask
@@ -364,42 +413,4 @@ public class ColorImages
 		
 		return result;
 	}
-
-	/**
-	 * Returns a new instance of ImageStack containing ByteProcessors such that
-	 * display range is specified by vmin and vmax.
-	 * 
-	 * @param image input image, that can be 8, 16 or 32 bits
-	 * @param vmin value that will correspond to 0 in new image
-	 * @param vmax value that will correspond to 255 in new image
-	 */
-	private static final ImageStack adjustDynamic(ImageStack image, double vmin, double vmax)
-	{
-		// get image size
-		int sizeX = image.getWidth(); 
-		int sizeY = image.getHeight(); 
-		int sizeZ = image.getSize();
-
-		// create result image
-		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
-
-		// Iterate on image voxels, and choose result value depending on mask
-		for (int z = 0; z < sizeZ; z++)
-		{
-			for (int y = 0; y < sizeY; y++)
-			{
-				for (int x = 0; x < sizeX; x++)
-				{
-					// linearly interpolates new value
-					double value = image.getVoxel(x, y, z);
-					value = 255 * (value - vmin) / (vmax - vmin);
-					value = Math.max(Math.min(value, 255), 0);
-					result.setVoxel(x, y, z, value);
-				}
-			}
-		}
-		
-		return result;
-	}
-	
 }

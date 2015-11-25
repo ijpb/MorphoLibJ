@@ -40,6 +40,8 @@ public class Watershed
 	 * @param input original grayscale image (usually a gradient image)
 	 * @param mask binary mask to restrict the regions of interest
 	 * @param connectivity voxel connectivity to define neighborhoods
+	 * @param hMin the minimum value for dynamic
+	 * @param hMax the maximum value for dynamic
 	 * @return image of labeled catchment basins with dams (labels are 1, 2, ...)
 	 */
 	public static ImagePlus computeWatershed( 

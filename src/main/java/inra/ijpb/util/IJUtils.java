@@ -26,6 +26,14 @@ public class IJUtils {
 	/**
 	 * Display elapsed time, converted into seconds, and computes number of
 	 * processed elements per second. Also returns the created message.
+	 * 
+	 * @param opName
+	 *            the name of the operation (algorithm, plugin...)
+	 * @param timeInMillis
+	 *            the elapsed time, in milliseconds
+	 * @param refImage
+	 *            the image on which process was applied
+	 * @return the String corresponding to the message displayed in status bar
 	 */
 	public final static String showElapsedTime(String opName, long timeInMillis, ImagePlus refImage) {
 		int nElements;

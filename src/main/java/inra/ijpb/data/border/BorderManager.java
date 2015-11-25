@@ -100,7 +100,12 @@ public interface BorderManager {
 		
 		/**
 		 * Determines the operation type from its label.
-		 * @throws IllegalArgumentException if label is not recognized.
+		 * 
+		 * @param label
+		 *            the name of the border manager
+		 * @return the enumeration item corresponding to the name
+		 * @throws IllegalArgumentException
+		 *             if label is not recognized.
 		 */
 		public static Type fromLabel(String label) {
 			if (label != null)
