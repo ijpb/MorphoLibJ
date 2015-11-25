@@ -68,7 +68,12 @@ public class LabelToRgbPlugin implements PlugIn
 		
 		/**
 		 * Determines the operation type from its label.
-		 * @throws IllegalArgumentException if label is not recognized.
+		 * 
+		 * @param label
+		 *            the name of a color in the enum
+		 * @return the Colors object corresponding to the name
+		 * @throws IllegalArgumentException
+		 *             if label is not recognized.
 		 */
 		public static Colors fromLabel(String label) 
 		{

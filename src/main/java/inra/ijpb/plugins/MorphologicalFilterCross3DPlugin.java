@@ -18,12 +18,9 @@ import inra.ijpb.morphology.strel.Cross3DStrel;
 import inra.ijpb.util.IJUtils;
 
 /**
- * 
- */
-
-/**
  * A simple plugin to test the Cross 3D strel.
  * 
+ * @see inra.ijpb.morphology.strel.Cross3DStrel
  * @author David Legland
  *
  */
@@ -113,9 +110,6 @@ public class MorphologicalFilterCross3DPlugin implements PlugIn {
 		maskImage.show();
 	}
 
-	
-	/**
-	 */
 	public ImagePlus exec(ImagePlus image, Operation op, Strel3D strel) {
 		// Check validity of parameters
 		if (image == null)

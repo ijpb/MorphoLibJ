@@ -141,6 +141,9 @@ public class ParticleAnalysis3DPlugin implements PlugIn
     /**
      * Computes features from an ImagePlus object. 
      * Spatial resolution is read from image Calibration.
+     * 
+     * @param imagePlus the label image to analyze
+     * @return the results in a new ResultsTable
      */
     public ResultsTable computeFeatures(ImagePlus imagePlus)
     {
@@ -156,8 +159,14 @@ public class ParticleAnalysis3DPlugin implements PlugIn
     }
     
     /**
-     * Computes features from an ImageStack object, specifying the calibration. 
-     */
+	 * Computes features from an ImageStack object, specifying the calibration.
+	 * 
+	 * @param image
+	 *            the 3D label image to analyze
+	 * @param calib
+	 *            the spatial calibration of the image
+	 * @return the results in a new ResultsTable
+	 */
     public ResultsTable computeFeatures(ImageStack image, Calibration calib)
     {
     	// Extract spatial calibration

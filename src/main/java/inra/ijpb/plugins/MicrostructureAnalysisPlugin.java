@@ -92,17 +92,33 @@ public class MicrostructureAnalysisPlugin implements PlugInFilter {
   
     /**
      * Old interface for calling the plugin, kept for compatibility.
+	 * 
+	 * @param image
+	 *            the image to process
+	 * @param nDirs
+	 *            the number of directions to consider, either 2 or 4
+	 * @return an array of objects
+     * @deprecated specify porosity
      */
+    @Deprecated
     public Object[] exec(ImagePlus image, int nDirs) {
     	return exec(image, nDirs, false);
     }
     
     /**
-     * Main body of the plugin. 
-     * Computes geometric measures on the image contained in <code>image</code>,
-     * using <code>nDirs</code> discrete directions. 
-     * If the addPorosity flag is set to true, an additional column equal to 1-area density is added. 
-     */
+	 * Main body of the plugin. Computes geometric measures on the image
+	 * contained in <code>image</code>, using <code>nDirs</code> discrete
+	 * directions. If the addPorosity flag is set to true, an additional column
+	 * equal to 1-area density is added.
+	 * 
+	 * @param image
+	 *            the image to process
+	 * @param nDirs
+	 *            the number of directions to consider, either 2 or 4
+	 * @param addPorosity
+	 *            specifiy if porpsoity should be added
+	 * @return an array of objects
+	 */
     public Object[] exec(ImagePlus image, int nDirs, boolean addPorosity) {
         // Check validity of parameters
         if (image==null) 

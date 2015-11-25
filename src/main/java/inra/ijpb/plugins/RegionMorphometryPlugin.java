@@ -77,9 +77,6 @@ public class RegionMorphometryPlugin implements PlugInFilter {
         exec(imagePlus, 4);
     }
     
-    /**
-     * Main body of the plugin. 
-     */
     public Object[] exec(ImagePlus inputImage, int nDirs) {
         // Check validity of parameters
         if (inputImage==null) 

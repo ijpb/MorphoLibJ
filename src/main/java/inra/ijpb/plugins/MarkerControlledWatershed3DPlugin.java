@@ -32,6 +32,7 @@ public class MarkerControlledWatershed3DPlugin implements PlugIn
 	 * @param marker the labeled marker image
 	 * @param mask binary mask to restrict region of interest
 	 * @param connectivity 6 or 26 voxel connectivity
+	 * @return the resulting watershed
 	 */
 	public ImagePlus process(
 			ImagePlus input, 

@@ -111,7 +111,22 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 	
 	/**
 	 * Computes the distance propagated from the boundary of the white
-	 * particles, within the black phase.
+	 * particles, within the white phase.
+	 * 
+	 * @param marker
+	 *            the binary marker image from which distances will be
+	 *            propagated
+	 * @param mask
+	 *            the binary mask image that will constrain the propagation
+	 * @param newName
+	 *            the name of the result image
+	 * @param weights
+	 *            the set of chamfer weights for computing distances
+	 * @param normalize
+	 *            specifies whether the resulting distance map should be
+	 *            normalized
+	 * @return an array of object, containing the name of the new image, and the
+	 *         new ImagePlus instance
 	 */
 	public Object[] exec(ImagePlus marker, ImagePlus mask, String newName,
 			float[] weights, boolean normalize) 
@@ -166,6 +181,21 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 	/**
 	 * Computes the distance propagated from the boundary of the white
 	 * particles, within the black phase.
+	 * 
+	 * @param marker
+	 *            the binary marker image from which distances will be
+	 *            propagated
+	 * @param mask
+	 *            the binary mask image that will constrain the propagation
+	 * @param newName
+	 *            the name of the result image
+	 * @param weights
+	 *            the set of chamfer weights for computing distances
+	 * @param normalize
+	 *            specifies whether the resulting distance map should be
+	 *            normalized
+	 * @return an array of object, containing the name of the new image, and the
+	 *         new ImagePlus instance
 	 */
 	public Object[] exec(ImagePlus marker, ImagePlus mask, String newName,
 			short[] weights, boolean normalize) 

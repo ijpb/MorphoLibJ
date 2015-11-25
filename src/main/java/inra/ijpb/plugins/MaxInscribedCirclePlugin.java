@@ -99,8 +99,14 @@ public class MaxInscribedCirclePlugin implements PlugIn
 	}
 	   
     /**
-     * Main body of the plugin. 
-     */
+	 * Main body of the plugin.
+	 * 
+	 * @param imagePlus
+	 *            the image to process
+	 * @param weights
+	 *            the set of weights for propagating distances
+	 * @return an array of objects with results
+	 */
     public Object[] exec(ImagePlus imagePlus, short[] weights) 
     {
         // Check validity of parameters
@@ -133,8 +139,15 @@ public class MaxInscribedCirclePlugin implements PlugIn
     }
     
 	/**
-	 * Display the result of maximal inscribed circle extraction as overlay on
-	 * a given image.
+	 * Display the result of maximal inscribed circle extraction as overlay on a
+	 * given image.
+	 * 
+	 * @param target
+	 *            the ImagePlus used to display result
+	 * @param table
+	 *            the ResultsTable containing columns "xi", "yi" and "Radius"
+	 * @param the
+	 *            resolution in each direction
 	 */
 	private void showResultsAsOverlay(ImagePlus target, ResultsTable table,
 			double[] resol)	

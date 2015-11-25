@@ -86,8 +86,14 @@ public class MaxInscribedSpherePlugin implements PlugIn
 	}
 	   
     /**
-     * Main body of the plugin. 
-     */
+	 * Main body of the plugin.
+	 * 
+	 * @param imagePlus
+	 *            the image to analyze
+	 * @param weights
+	 *            the set of weights for propagating distances
+	 * @return an array of objects containing the results
+	 */
     public Object[] exec(ImagePlus imagePlus, short[] weights) 
     {
         // Check validity of parameters

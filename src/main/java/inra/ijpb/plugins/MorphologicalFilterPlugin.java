@@ -237,9 +237,6 @@ public class MorphologicalFilterPlugin implements ExtendedPlugInFilter,
 		strelDisplay.show();
 	}
 
-	
-	/**
-	 */
 	public ImagePlus exec(ImagePlus image, Operation op, Strel strel)
 	{
 		// Check validity of parameters

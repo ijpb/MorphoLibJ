@@ -78,6 +78,9 @@ public class InertiaEllipsePlugin implements PlugInFilter {
     
     /**
      * Main body of the plugin. 
+     * 
+     * @param inputImage the image to analyze
+     * @return the ResutlsTable describing each label
      */
     public ResultsTable exec(ImagePlus inputImage) {
         // Check validity of parameters

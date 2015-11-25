@@ -78,7 +78,12 @@ public class SetLabelMapPlugin implements PlugIn, DialogListener {
 		
 		/**
 		 * Determines the operation type from its label.
-		 * @throws IllegalArgumentException if label is not recognized.
+		 * 
+		 * @param label
+		 *            the name of the color
+		 * @return the Colors enumeration corresponding to the name
+		 * @throws IllegalArgumentException
+		 *             if color name is not recognized.
 		 */
 		public static Colors fromLabel(String label) {
 			if (label != null)

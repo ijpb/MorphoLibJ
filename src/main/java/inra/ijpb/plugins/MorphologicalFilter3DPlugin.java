@@ -127,9 +127,6 @@ public class MorphologicalFilter3DPlugin implements PlugIn {
 		maskImage.show();
 	}
 
-	
-	/**
-	 */
 	public ImagePlus exec(ImagePlus image, Operation op, Strel3D strel) {
 		// Check validity of parameters
 		if (image == null)
