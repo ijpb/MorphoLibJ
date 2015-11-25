@@ -37,7 +37,7 @@ public class MinimaAndMaxima3D
 	/**
 	 * The default connectivity used by reconstruction algorithms in 3D images.
 	 */
-	public final static int DEFAULT_CONNECTIVITY_3D = 6;
+	private final static int DEFAULT_CONNECTIVITY = 6;
 
 	/**
 	 * Private constructor to prevent class instantiation.
@@ -56,7 +56,7 @@ public class MinimaAndMaxima3D
 	 */
 	public final static ImageStack regionalMaxima(ImageStack image) 
 	{
-		return regionalMaxima(image, DEFAULT_CONNECTIVITY_3D);
+		return regionalMaxima(image, DEFAULT_CONNECTIVITY);
 	}
 
 	/**
@@ -153,7 +153,7 @@ public class MinimaAndMaxima3D
 	 */
 	public final static ImageStack regionalMinima(ImageStack image) 
 	{
-		return regionalMinima(image, DEFAULT_CONNECTIVITY_3D);
+		return regionalMinima(image, DEFAULT_CONNECTIVITY);
 	}
 
 	/**
@@ -257,7 +257,7 @@ public class MinimaAndMaxima3D
 	public final static ImageStack extendedMaxima(ImageStack image,
 			int dynamic) 
 	{
-		return extendedMaxima(image, dynamic, DEFAULT_CONNECTIVITY_3D);
+		return extendedMaxima(image, dynamic, DEFAULT_CONNECTIVITY);
 	}
 
 	/**
@@ -303,7 +303,7 @@ public class MinimaAndMaxima3D
 			int dynamic, 
 			ImageStack binaryMask ) 
 	{
-		return extendedMaxima( image, dynamic, DEFAULT_CONNECTIVITY_3D, binaryMask );
+		return extendedMaxima( image, dynamic, DEFAULT_CONNECTIVITY, binaryMask );
 	}
 
 	/**
@@ -349,7 +349,7 @@ public class MinimaAndMaxima3D
 	 */
 	public final static ImageStack extendedMinima(ImageStack image, int dynamic)
 	{
-		return extendedMinima(image, dynamic, DEFAULT_CONNECTIVITY_3D);
+		return extendedMinima(image, dynamic, DEFAULT_CONNECTIVITY);
 	}
 
 	/**
@@ -392,7 +392,7 @@ public class MinimaAndMaxima3D
 	public final static ImageStack imposeMaxima(ImageStack image,
 			ImageStack maxima)
 	{
-		return imposeMaxima(image, maxima, DEFAULT_CONNECTIVITY_3D);
+		return imposeMaxima(image, maxima, DEFAULT_CONNECTIVITY);
 	}
 
 	/**
@@ -453,7 +453,7 @@ public class MinimaAndMaxima3D
 	public final static ImageStack imposeMinima(ImageStack image,
 			ImageStack minima) 
 	{
-		return imposeMinima(image, minima, DEFAULT_CONNECTIVITY_3D);
+		return imposeMinima(image, minima, DEFAULT_CONNECTIVITY);
 	}
 
 	/**

@@ -41,17 +41,17 @@ import inra.ijpb.morphology.geodrec.GeodesicReconstructionType;
 public class MinimaAndMaxima
 {
 	/**
+	 * The default connectivity used by reconstruction algorithms in 2D images.
+	 */
+	private final static int DEFAULT_CONNECTIVITY = 4;
+	
+	/**
 	 * Private constructor to prevent class instantiation.
 	 */
 	private MinimaAndMaxima()
 	{
 	}
 
-	/**
-	 * The default connectivity used by reconstruction algorithms in 2D images.
-	 */
-	public final static int DEFAULT_CONNECTIVITY_2D = 4;
-	
 	/**
 	 * Computes the regional maxima in grayscale image <code>image</code>, using
 	 * the default connectivity.
@@ -62,7 +62,7 @@ public class MinimaAndMaxima
 	 */
 	public final static ImageProcessor regionalMaxima(ImageProcessor image)
 	{
-		return regionalMaxima(image, DEFAULT_CONNECTIVITY_2D);
+		return regionalMaxima(image, DEFAULT_CONNECTIVITY);
 	}
 
 	/**
@@ -136,7 +136,7 @@ public class MinimaAndMaxima
 	 */
 	public final static ImageProcessor regionalMinima(ImageProcessor image) 
 	{
-		return regionalMinima(image, DEFAULT_CONNECTIVITY_2D);
+		return regionalMinima(image, DEFAULT_CONNECTIVITY);
 	}
 
 	/**
@@ -212,7 +212,7 @@ public class MinimaAndMaxima
 	public final static ImageProcessor extendedMaxima(ImageProcessor image,
 			int dynamic)
 	{
-		return extendedMaxima(image, dynamic, DEFAULT_CONNECTIVITY_2D);
+		return extendedMaxima(image, dynamic, DEFAULT_CONNECTIVITY);
 	}
 
 	/**
@@ -254,7 +254,7 @@ public class MinimaAndMaxima
 	 * @return the extended minima of input image
 	 */
 	public final static ImageProcessor extendedMinima(ImageProcessor image, int dynamic) {
-		return extendedMinima(image, dynamic, DEFAULT_CONNECTIVITY_2D);
+		return extendedMinima(image, dynamic, DEFAULT_CONNECTIVITY);
 	}
 
 	/**
@@ -297,7 +297,7 @@ public class MinimaAndMaxima
 	public final static ImageProcessor imposeMaxima(ImageProcessor image,
 			ImageProcessor maxima)
 	{
-		return imposeMaxima(image, maxima, DEFAULT_CONNECTIVITY_2D);
+		return imposeMaxima(image, maxima, DEFAULT_CONNECTIVITY);
 	}
 	
 	/**
@@ -353,7 +353,7 @@ public class MinimaAndMaxima
 	public final static ImageProcessor imposeMinima(ImageProcessor image,
 			ImageProcessor minima)
 	{
-		return imposeMinima(image, minima, DEFAULT_CONNECTIVITY_2D);
+		return imposeMinima(image, minima, DEFAULT_CONNECTIVITY);
 	}
 	
 	/**
