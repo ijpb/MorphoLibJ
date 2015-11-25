@@ -60,7 +60,7 @@ public class GeodesicDiameterPlugin implements PlugIn
 		String selectedImageName = IJ.getImage().getTitle();
 		
 		// create the dialog
-		GenericDialog gd = new GenericDialog("Geodesic Lengths");
+		GenericDialog gd = new GenericDialog("Geodesic Diameter");
 		gd.addChoice("Label Image:", imageNames, selectedImageName);
 		// Set Chessknight weights as default
 		gd.addChoice("Distances", ChamferWeights.getAllLabels(), 
@@ -84,26 +84,26 @@ public class GeodesicDiameterPlugin implements PlugIn
 			return;
 		}
 		
-		// Execute the plugin
-		String newName = createResultImageName(labelImage);
+		// Compute geodesic diameters, using floating-point calculations
+		ResultsTable table;
+//		boolean useIntegers = false;
+//		if (useIntegers) 
+//		{
+//			table = process(labelImage.getProcessor(), weights.getShortWeights());
+//		} 
+//		else 
+//		{
+			table = process(labelImage.getProcessor(), weights.getFloatWeights());
+//		}
 
-		Object[] results;
-		boolean useIntegers = false;
-		if (useIntegers) 
-		{
-			results = exec(labelImage, newName, weights.getShortWeights());
-		} 
-		else 
-		{
-			results = exec(labelImage, newName, weights.getFloatWeights());
-		}
+		
+		// display the result table
+		String tableName = labelImage.getShortTitle() + "-GeodDiameters"; 
+		table.show(tableName);
 
 		// Check if results must be displayed on an image
 		if (gd.getNextBoolean()) 
 		{
-			// Extract result table
-			ResultsTable table = (ResultsTable) results[1];
-			
 			// New image for displaying geometric overlays
 			int resultImageIndex = gd.getNextChoiceIndex();
 			ImagePlus resultImage = WindowManager.getImage(resultImageIndex+1);
@@ -134,7 +134,7 @@ public class GeodesicDiameterPlugin implements PlugIn
 		if (weights==null) 
 			return null;
 		
-		ResultsTable table = computeGeodesicLengthTable(labels.getProcessor(),
+		ResultsTable table = process(labels.getProcessor(),
 				weights);
 
 		// create string for indexing results
@@ -168,7 +168,7 @@ public class GeodesicDiameterPlugin implements PlugIn
 		if (weights==null) 
 			return null;
 		
-		ResultsTable table = computeGeodesicLengthTable(labels.getProcessor(),
+		ResultsTable table = process(labels.getProcessor(),
 				weights);
 		
 		// create string for indexing results
@@ -181,6 +181,75 @@ public class GeodesicDiameterPlugin implements PlugIn
 		return new Object[]{"Geodesic Lengths", table};
 	}
 	
+	
+	
+	
+	// ====================================================
+	// Computing functions 
+	
+	/**
+	 * Compute the table of geodesic parameters, when the weights are given as
+	 * floating point values.
+	 * 
+	 * @param labels
+	 *            the label image of the particles
+	 * @param weights
+	 *            the weights to use
+	 * @return a new ResultsTable object containing the geodesic diameter of
+	 *         each label
+	 */
+	public ResultsTable process(ImageProcessor labels, float[] weights)
+	{
+		GeodesicDiameterFloat algo = new GeodesicDiameterFloat(weights);
+		ResultsTable table = algo.analyzeImage(labels);
+		return table;
+	}
+
+	/**
+	 * Compute the table of geodesic parameters, when the weights are given as
+	 * integer values.
+	 * 
+	 * @param labels
+	 *            the label image of the particles
+	 * @param weights
+	 *            the weights to use
+	 * @return a new ResultsTable object containing the geodesic diameter of
+	 *         each label
+	 */
+	public ResultsTable process(ImageProcessor labels, short[] weights)
+	{
+		GeodesicDiameterShort algo = new GeodesicDiameterShort(weights);
+		ResultsTable table = algo.analyzeImage(labels);
+		return table;
+	}
+
+	// ====================================================
+	// Computing functions 
+	
+	/**
+	 * Compute geodesic length of particles, using imageProcessor as input and
+	 * weights as array of float
+	 * 
+	 * @param labels
+	 *            the label image of the particles
+	 * @param weights
+	 *            the weights to use
+	 * @return an array of objects (image name, ImagePlus object)
+	 * @deprecated use process method instead
+	 */
+	@Deprecated
+	public Object[] exec(ImageProcessor labels, float[] weights) 
+	{
+		ResultsTable table = process(labels, weights);
+		
+		// show result
+		table.show("Geodesic Diameters");
+		
+		// return the created array
+		return new Object[]{"Geodesic Diameters", table};
+	}
+
+
 	/**
 	 * Display the result of geodesic parameter extraction as overlay on a given
 	 * image.
@@ -227,56 +296,7 @@ public class GeodesicDiameterPlugin implements PlugIn
 		
 		target.setOverlay(overlay);
 	}
-	
-	
-	// ====================================================
-	// Computing functions 
-	
-	/**
-	 * Compute geodesic length of particles, using imageProcessor as input and
-	 * weights as array of float
-	 * 
-	 * @param labels
-	 *            the label image of the particles
-	 * @param weights
-	 *            the weights to use
-	 * @return an array of objects (image name, ImagePlus object)
-	 */
-	public Object[] exec(ImageProcessor labels, float[] weights) 
-	{
-		ResultsTable table = computeGeodesicLengthTable(labels, weights);
-		
-		// show result
-		table.show("Geodesic Diameters");
-		
-		// return the created array
-		return new Object[]{"Geodesic Diameters", table};
-	}
-	
-	/**
-	 * Compute the table of geodesic parameters, when the weights are given as
-	 * floating point values.
-	 */
-	private ResultsTable computeGeodesicLengthTable(ImageProcessor labels, 
-			float[] weights)
-	{
-		GeodesicDiameterFloat algo = new GeodesicDiameterFloat(weights);
-		ResultsTable table = algo.analyzeImage(labels);
-		return table;
-	}
 
-	/**
-	 * Compute the table of geodesic parameters, when the weights are given as
-	 * integer values.
-	 */
-	private ResultsTable computeGeodesicLengthTable(ImageProcessor labels, 
-			short[] weights)
-	{
-		GeodesicDiameterShort algo = 
-			new GeodesicDiameterShort(weights);
-		ResultsTable table = algo.analyzeImage(labels);
-		return table;
-	}
 
 	private static String createResultImageName(ImagePlus baseImage) 
 	{

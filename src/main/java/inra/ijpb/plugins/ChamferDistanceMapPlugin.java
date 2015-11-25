@@ -205,6 +205,7 @@ public class ChamferDistanceMapPlugin implements ExtendedPlugInFilter,
 	 *            normalized
 	 * @return an array of objects containing the new name, and the result image
 	 */
+    @Deprecated
 	public Object[] exec(ImagePlus image, String newName, float[] weights, boolean normalize) {
 		// Check validity of parameters
 		if (image == null) {
@@ -249,6 +250,7 @@ public class ChamferDistanceMapPlugin implements ExtendedPlugInFilter,
 	 *            normalized
 	 * @return an array of objects containing the new name, and the result image
 	 */
+    @Deprecated
 	public Object[] exec(ImagePlus image, String newName, short[] weights, boolean normalize) {
 		// Check validity of parameters
 		if (image == null) {

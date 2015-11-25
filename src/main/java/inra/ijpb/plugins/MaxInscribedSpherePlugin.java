@@ -77,8 +77,7 @@ public class MaxInscribedSpherePlugin implements PlugIn
         }
         
 		// Execute the plugin
-        Object[] results = exec(labelImage, weights.getShortWeights());
-        ResultsTable table = (ResultsTable) results[1];
+		ResultsTable table = process(labelImage, weights.getShortWeights());
         
         // Display plugin result
 		String tableName = labelImage.getShortTitle() + "-MaxInscribedSphere"; 
@@ -93,7 +92,9 @@ public class MaxInscribedSpherePlugin implements PlugIn
 	 * @param weights
 	 *            the set of weights for propagating distances
 	 * @return an array of objects containing the results
+	 * @deprecated replaced by process method
 	 */
+	@Deprecated
     public Object[] exec(ImagePlus imagePlus, short[] weights) 
     {
         // Check validity of parameters
@@ -110,6 +111,33 @@ public class MaxInscribedSpherePlugin implements PlugIn
         
 		// return the created array
 		return new Object[]{"Morphometry", results};
+    }
+    
+    /**
+	 * Main body of the plugin.
+	 * 
+	 * @param imagePlus
+	 *            the image to analyze
+	 * @param weights
+	 *            the set of weights for propagating distances
+	 * @return an array of objects containing the results
+	 */
+    public ResultsTable process(ImagePlus imagePlus, short[] weights) 
+    {
+        // Check validity of parameters
+        if (imagePlus==null) 
+            return null;
+
+        ImageStack image = imagePlus.getStack();
+        
+        // Extract spatial calibration
+        double[] resol = getVoxelSize(imagePlus);
+
+        ResultsTable results = GeometricMeasures3D.maximumInscribedSphere(image, 
+        		resol);
+        
+		// return the results table
+		return results;
     }
     
     private static final double[] getVoxelSize(ImagePlus imagePlus)

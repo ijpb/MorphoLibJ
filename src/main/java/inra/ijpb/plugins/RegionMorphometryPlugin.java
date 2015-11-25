@@ -74,9 +74,41 @@ public class RegionMorphometryPlugin implements PlugInFilter {
         }
         
         // Execute the plugin
-        exec(imagePlus, 4);
+        ResultsTable table = process(imagePlus, 4);
+        
+        // show result
+		String tableName = imagePlus.getShortTitle() + "-Morphometry"; 
+		table.show(tableName);
     }
     
+    public ResultsTable process(ImagePlus inputImage, int nDirs) 
+    {
+        // Check validity of parameters
+        if (inputImage==null) 
+            return null;
+
+        if (debug) {
+        	System.out.println("Compute Crofton perimeter on image '" 
+        			+ inputImage.getTitle());
+        }
+        
+        ImageProcessor proc = inputImage.getProcessor();
+        
+        // Extract spatial calibration
+        Calibration cal = inputImage.getCalibration();
+        double[] resol = new double[]{1, 1};
+        if (cal.scaled()) {
+        	resol[0] = cal.pixelWidth;
+        	resol[1] = cal.pixelHeight;
+        }
+
+        ResultsTable results = GeometricMeasures2D.analyzeRegions(proc, resol);
+
+		// return the created array
+		return results;
+    }
+    
+    @Deprecated
     public Object[] exec(ImagePlus inputImage, int nDirs) {
         // Check validity of parameters
         if (inputImage==null) 

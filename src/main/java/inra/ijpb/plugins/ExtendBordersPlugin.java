@@ -61,14 +61,15 @@ public class ExtendBordersPlugin implements PlugIn {
 		BorderManager border = borderType.createBorderManager(proc);
 
 		// Execute core of the plugin
-		ImagePlus res = exec(image, left, right, top, bottom, border);
+		ImageProcessor res = process(proc, left, right, top, bottom, border);
+		ImagePlus resPlus = new ImagePlus(image.getShortTitle()+"-ext", res);
 
-		// show new image if needed
-		if (res != null) {
-			res.show();
-		}
-		
+		// display result image
+		resPlus.copyAttributes(image);
+		resPlus.show();
 	}
+	
+	@Deprecated
 	public ImagePlus exec(ImagePlus image, 
 			int left, int right, int top, int bottom, BorderManager border) {
 		ImageProcessor proc = image.getProcessor();
@@ -77,7 +78,8 @@ public class ExtendBordersPlugin implements PlugIn {
 	}
 
 	/**
-	 * Assumes reference image contains a GRAY Processor.
+	 * Adds the specified number of pixels around the input image, and returns
+	 * the resulting image. Assumes reference image contains a BYTE Processor.
 	 * 
 	 * @param image
 	 *            the input image
@@ -94,12 +96,14 @@ public class ExtendBordersPlugin implements PlugIn {
 	 *            pixels to be added
 	 * @return a new image with extended borders
 	 */
-	public static ImageProcessor process(ImageProcessor image, 
-			int left, int right, int top, int bottom, BorderManager border) {
-		
+	public static final ImageProcessor process(ImageProcessor image, 
+			int left, int right, int top, int bottom, BorderManager border)
+	{
+		// get image dimensions
 		int width = image.getWidth(); 
 		int height = image.getHeight(); 
 		
+		// compute result dimensions
 		int width2 = width + left + right;
 		int height2 = height + top + bottom;
 		ImageProcessor result = image.createProcessor(width2 , height2);

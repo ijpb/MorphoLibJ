@@ -67,7 +67,7 @@ public class MorphologicalFilterCross3DPlugin implements PlugIn {
 		}
 		
 		// Execute core of the plugin
-		ImagePlus resPlus = exec(imagePlus, op, strel);
+		ImagePlus resPlus = process(imagePlus, op, strel);
 
 		if (resPlus == null)
 			return;
@@ -110,7 +110,7 @@ public class MorphologicalFilterCross3DPlugin implements PlugIn {
 		maskImage.show();
 	}
 
-	public ImagePlus exec(ImagePlus image, Operation op, Strel3D strel) {
+	public ImagePlus process(ImagePlus image, Operation op, Strel3D strel) {
 		// Check validity of parameters
 		if (image == null)
 			return null;

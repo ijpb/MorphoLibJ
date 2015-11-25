@@ -129,7 +129,7 @@ public class ParticleAnalysis3DPlugin implements PlugIn
         connectivity = connectivityValues[gd.getNextChoiceIndex()];
         
         // Execute the plugin
-        ResultsTable table = computeFeatures(imagePlus);
+        ResultsTable table = process(imagePlus);
         
  		// create string for indexing results
 		String tableName = imagePlus.getShortTitle() + "-morpho"; 
@@ -145,7 +145,7 @@ public class ParticleAnalysis3DPlugin implements PlugIn
      * @param imagePlus the label image to analyze
      * @return the results in a new ResultsTable
      */
-    public ResultsTable computeFeatures(ImagePlus imagePlus)
+    public ResultsTable process(ImagePlus imagePlus)
     {
     	// Check validity of parameters
         if (imagePlus==null) 
@@ -155,7 +155,7 @@ public class ParticleAnalysis3DPlugin implements PlugIn
         ImageStack image = imagePlus.getStack();
         Calibration calib = imagePlus.getCalibration();
         
-        return computeFeatures(image, calib);
+        return process(image, calib);
     }
     
     /**
@@ -167,7 +167,7 @@ public class ParticleAnalysis3DPlugin implements PlugIn
 	 *            the spatial calibration of the image
 	 * @return the results in a new ResultsTable
 	 */
-    public ResultsTable computeFeatures(ImageStack image, Calibration calib)
+    public ResultsTable process(ImageStack image, Calibration calib)
     {
     	// Extract spatial calibration
         double[] resol = new double[]{1, 1, 1};

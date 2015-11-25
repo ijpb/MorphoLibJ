@@ -19,8 +19,8 @@ public class MicrostructureAnalysisPlugin implements PlugInFilter {
      * List of available numbers of directions
      */
     public final static String[] dirNumberLabels = {
-            "2 directions", 
-            "4 directions" 
+            "Crofton (2 dirs.)", 
+            "Crofton (4 dirs.)" 
     }; 
     
     /**
@@ -66,8 +66,8 @@ public class MicrostructureAnalysisPlugin implements PlugInFilter {
     @Override
     public void run(ImageProcessor ip) {
         // create the dialog, here an image input and a boolean option
-        GenericDialog gd = new GenericDialog("Crofton Densities");
-        gd.addChoice("Number of Directions:", dirNumberLabels, dirNumberLabels[1]);
+        GenericDialog gd = new GenericDialog("Binary Microstructure");
+        gd.addChoice("Perimeter method:", dirNumberLabels, dirNumberLabels[1]);
         gd.addCheckbox("Add_Porosity", false);
         gd.showDialog();
         
@@ -87,7 +87,11 @@ public class MicrostructureAnalysisPlugin implements PlugInFilter {
         }
         
         // Execute the plugin
-        exec(imagePlus, nDirs, addPorosity);
+        ResultsTable table = process(imagePlus, nDirs, addPorosity);
+     
+        // Display the results table
+        String tableName = removeImageExtension(imagePlus.getShortTitle()) + "-Microstructure"; 
+        table.show(tableName);
     }
   
     /**
@@ -116,9 +120,11 @@ public class MicrostructureAnalysisPlugin implements PlugInFilter {
 	 * @param nDirs
 	 *            the number of directions to consider, either 2 or 4
 	 * @param addPorosity
-	 *            specifiy if porpsoity should be added
+ 	 *            specifies if porosity should be computed
 	 * @return an array of objects
+	 * @deprecated use process method instead
 	 */
+    @Deprecated
     public Object[] exec(ImagePlus image, int nDirs, boolean addPorosity) {
         // Check validity of parameters
         if (image==null) 
@@ -161,12 +167,64 @@ public class MicrostructureAnalysisPlugin implements PlugInFilter {
 		return new Object[]{"Crofton Densties", results};
     }
 
-
     /**
-     * Remove the extension of the filename if it belongs to a set of known
-     * image formats.
-     */
-    private static String removeImageExtension(String name) {
+ 	 * Main body of the plugin. Computes geometric measures on the image
+ 	 * contained in <code>image</code>, using <code>nDirs</code> discrete
+ 	 * directions. If the addPorosity flag is set to true, an additional column
+ 	 * equal to 1-area density is added.
+ 	 * 
+ 	 * @param image
+ 	 *            the image to process
+ 	 * @param nDirs
+ 	 *            the number of directions to consider, either 2 or 4
+ 	 * @param addPorosity
+ 	 *            specifies if porosity should be computed
+ 	 * @return a new ResultsTable containing microstructure characterization of binary image
+ 	 */
+     public ResultsTable process(ImagePlus image, int nDirs, boolean addPorosity)
+     {
+         // Check validity of parameters
+         if (image==null) 
+             return null;
+
+         if (debug) 
+         {
+         	System.out.println("Compute Crofton densities on image '" 
+         			+ image.getTitle() + "' using " + nDirs 
+         			+ " directions.");
+         }
+         
+         ImageProcessor proc = image.getProcessor();
+         
+         // Extract spatial calibration
+         Calibration cal = image.getCalibration();
+         double[] resol = new double[]{1, 1};
+         if (cal.scaled()) {
+         	resol[0] = cal.pixelWidth;
+         	resol[1] = cal.pixelHeight;
+         }
+         
+         // Compute basis measures
+         ResultsTable results = GeometricMeasures2D.perimeterDensity(proc, resol, nDirs);
+         
+         // eventually add the porosity for those who do not want to subtract by hand...
+         if (addPorosity) {
+         	int nRows = results.getColumn(0).length;
+         	for (int i = 0; i < nRows; i++) {
+         		double areaDensity = results.getValue("A. Density", i);
+         		results.setValue("Porosity", i, 1-areaDensity);
+         	}
+         }
+ 	
+         // return the created table
+         return results;
+     }
+
+     /**
+      * Remove the extension of the filename if it belongs to a set of known
+      * image formats.
+      */
+     private static String removeImageExtension(String name) {
         if (name.endsWith(".tif"))
             name = name.substring(0, name.length()-4);
         if (name.endsWith(".png"))

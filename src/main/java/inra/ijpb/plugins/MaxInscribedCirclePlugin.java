@@ -82,9 +82,8 @@ public class MaxInscribedCirclePlugin implements PlugIn
         }
         
 		// Execute the plugin
-        Object[] results = exec(labelImage, weights.getShortWeights());
-        ResultsTable table = (ResultsTable) results[1];
-        
+		ResultsTable table = process(labelImage, weights.getShortWeights());
+       
         // Display plugin result
 		String tableName = labelImage.getShortTitle() + "-MaxInscribedCircle"; 
 		table.show(tableName);
@@ -106,7 +105,9 @@ public class MaxInscribedCirclePlugin implements PlugIn
 	 * @param weights
 	 *            the set of weights for propagating distances
 	 * @return an array of objects with results
+	 * @deprecated replaced by process method
 	 */
+	@Deprecated
     public Object[] exec(ImagePlus imagePlus, short[] weights) 
     {
         // Check validity of parameters
@@ -123,6 +124,33 @@ public class MaxInscribedCirclePlugin implements PlugIn
         
 		// return the created array
 		return new Object[]{"Morphometry", results};
+    }
+    
+    /**
+	 * Main body of the plugin.
+	 * 
+	 * @param imagePlus
+	 *            the image to process
+	 * @param weights
+	 *            the set of weights for propagating distances
+	 * @return an array of objects with results
+	 */
+    public ResultsTable process(ImagePlus imagePlus, short[] weights) 
+    {
+        // Check validity of parameters
+        if (imagePlus==null) 
+            return null;
+
+        ImageProcessor image = imagePlus.getProcessor();
+        
+        // Extract spatial calibration
+        double[] resol = getPixelSize(imagePlus);
+
+        ResultsTable results = GeometricMeasures2D.maximumInscribedCircle(image, 
+        		resol);
+        
+		// return the created array
+		return results;
     }
     
     private static final double[] getPixelSize(ImagePlus imagePlus)

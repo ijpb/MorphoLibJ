@@ -186,7 +186,7 @@ public class MorphologicalFilterPlugin implements ExtendedPlugInFilter,
 				"http://imagejdocu.tudor.lu/doku.php?id=plugin:morphology:fast_morphological_filters:start\n" +
 				"\n" +
 				"by David Legland\n" +
-				"(david.legland@grignon.inra.fr)");
+				"(david.legland@nantes.inra.fr)");
 	}
 
 	private void resetPreview()
@@ -237,7 +237,56 @@ public class MorphologicalFilterPlugin implements ExtendedPlugInFilter,
 		strelDisplay.show();
 	}
 
+	/**
+	 * Applies the specified morphological operation with specified structuring
+	 * element to the input image.
+	 * 
+	 * @param image
+	 *            the input image (grayscale or color)
+	 * @param op
+	 *            the operation to apply
+	 * @param strel
+	 *            the structuring element to use for the operation
+	 * @return the result of morphological operation applied to the input image
+	 * @deprecated use the process method instead
+	 */
+	@Deprecated
 	public ImagePlus exec(ImagePlus image, Operation op, Strel strel)
+	{
+		// Check validity of parameters
+		if (image == null)
+			return null;
+		
+		// extract the input processor
+		ImageProcessor inputProcessor = image.getProcessor();
+		
+		// apply morphological operation
+		ImageProcessor resultProcessor = op.apply(inputProcessor, strel);
+		
+		// Keep same color model
+		resultProcessor.setColorModel(inputProcessor.getColorModel());
+		
+		// create the new image plus from the processor
+		ImagePlus resultImage = new ImagePlus(op.toString(), resultProcessor);
+		resultImage.copyScale(image);
+					
+		// return the created array
+		return resultImage;
+	}
+	
+	/**
+	 * Applies the specified morphological operation with specified structuring
+	 * element to the input image.
+	 * 
+	 * @param image
+	 *            the input image (grayscale or color)
+	 * @param op
+	 *            the operation to apply
+	 * @param strel
+	 *            the structuring element to use for the operation
+	 * @return the result of morphological operation applied to the input image
+	 */
+	public ImagePlus process(ImagePlus image, Operation op, Strel strel)
 	{
 		// Check validity of parameters
 		if (image == null)

@@ -49,16 +49,6 @@ public class InertiaEllipsePlugin implements PlugInFilter {
      * @see ij.plugin.PlugIn#run(java.lang.String)
      */
     public void run(ImageProcessor ip) {
-        
-//        // create the dialog, with operator options
-//        GenericDialog gd = new GenericDialog("Crofton Perimeter");
-//        gd.addChoice("Number of Directions:", dirNumberLabels, dirNumberLabels[1]);
-//        gd.showDialog();
-//        
-//        // If cancel was clicked, do nothing
-//        if (gd.wasCanceled())
-//            return;
-        
         // check if image is a label image
         if(imagePlus.getType() != ImagePlus.GRAY8 && 
         		imagePlus.getType() != ImagePlus.GRAY16) {
@@ -67,7 +57,7 @@ public class InertiaEllipsePlugin implements PlugInFilter {
         }
         
         // Execute the plugin
-        ResultsTable results = exec(imagePlus);
+        ResultsTable results = process(imagePlus);
         
 		// create string for indexing results
 		String tableName = imagePlus.getShortTitle() + "-Ellipses"; 
@@ -82,7 +72,7 @@ public class InertiaEllipsePlugin implements PlugInFilter {
      * @param inputImage the image to analyze
      * @return the ResutlsTable describing each label
      */
-    public ResultsTable exec(ImagePlus inputImage) {
+    public ResultsTable process(ImagePlus inputImage) {
         // Check validity of parameters
         if (inputImage==null) 
             return null;
