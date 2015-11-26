@@ -43,7 +43,7 @@ public class GeodesicReconstructionByDilation3DScanningTiming {
 		dt = (t1 - t0) / 1000.0;
 		System.out.println("Algo scanning C6 int: " + dt + " s");
 		
-		GeodesicReconstructionByDilation3DGray8Scanning algo2 = new GeodesicReconstructionByDilation3DGray8Scanning();
+		GeodesicReconstructionByDilation3DScanningGray8 algo2 = new GeodesicReconstructionByDilation3DScanningGray8();
 		algo2.setConnectivity(6);
 		algo2.verbose = false;
 
@@ -94,7 +94,7 @@ public class GeodesicReconstructionByDilation3DScanningTiming {
 		double dt = (t1 - t0) / 1000.0;
 		System.out.println("Algo scanning C26 int: " + dt + " s");
 		
-		GeodesicReconstruction3DAlgo algo2 = new GeodesicReconstructionByDilation3DGray8Scanning();
+		GeodesicReconstruction3DAlgo algo2 = new GeodesicReconstructionByDilation3DScanningGray8();
 		algo2.setConnectivity(26);
 //		algo2.verbose = false;
 

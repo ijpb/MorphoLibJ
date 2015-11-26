@@ -21,7 +21,7 @@ import ij.ImageStack;
  * @author David Legland
  * 
  */
-public class GeodesicReconstructionByDilation3DGray8Scanning extends GeodesicReconstruction3DAlgoStub
+public class GeodesicReconstructionByDilation3DScanningGray8 extends GeodesicReconstruction3DAlgoStub
 {
 	ImageStack marker;
 	ImageStack mask;
@@ -45,7 +45,7 @@ public class GeodesicReconstructionByDilation3DGray8Scanning extends GeodesicRec
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * using the default connectivity 6.
 	 */
-	public GeodesicReconstructionByDilation3DGray8Scanning()
+	public GeodesicReconstructionByDilation3DScanningGray8()
 	{
 	}
 	
@@ -53,7 +53,7 @@ public class GeodesicReconstructionByDilation3DGray8Scanning extends GeodesicRec
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * that specifies the connectivity to use.
 	 */
-	public GeodesicReconstructionByDilation3DGray8Scanning(int connectivity)
+	public GeodesicReconstructionByDilation3DScanningGray8(int connectivity)
 	{
 		this.connectivity = connectivity;
 	}

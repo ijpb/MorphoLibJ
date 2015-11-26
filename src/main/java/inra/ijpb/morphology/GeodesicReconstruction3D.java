@@ -7,8 +7,8 @@ import ij.ImageStack;
 import inra.ijpb.morphology.geodrec.GeodesicReconstruction3DAlgo;
 import inra.ijpb.morphology.geodrec.GeodesicReconstruction3DHybrid0Float;
 import inra.ijpb.morphology.geodrec.GeodesicReconstruction3DHybrid0Gray8;
-import inra.ijpb.morphology.geodrec.GeodesicReconstructionByDilation3DGray8Scanning;
 import inra.ijpb.morphology.geodrec.GeodesicReconstructionByDilation3DScanning;
+import inra.ijpb.morphology.geodrec.GeodesicReconstructionByDilation3DScanningGray8;
 import inra.ijpb.morphology.geodrec.GeodesicReconstructionByErosion3DScanning;
 import inra.ijpb.morphology.geodrec.GeodesicReconstructionType;
 
@@ -204,7 +204,7 @@ public abstract class GeodesicReconstruction3D
 			ImageStack binaryMask ) 
 	{
 		//TODO: add support for non gray8 stacks
-		GeodesicReconstruction3DAlgo algo = new GeodesicReconstructionByDilation3DGray8Scanning(
+		GeodesicReconstruction3DAlgo algo = new GeodesicReconstructionByDilation3DScanningGray8(
 				connectivity);
 		return algo.applyTo( marker, mask, binaryMask );
 	}

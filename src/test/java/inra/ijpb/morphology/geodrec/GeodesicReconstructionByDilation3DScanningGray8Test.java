@@ -11,7 +11,7 @@ import inra.ijpb.morphology.strel.CubeStrel;
 
 import org.junit.Test;
 
-public class GeodesicReconstructionByDilation3DGray8ScanningTest {
+public class GeodesicReconstructionByDilation3DScanningGray8Test {
 
 	@Test
 	public final void testCubicMeshC26() {
@@ -20,7 +20,7 @@ public class GeodesicReconstructionByDilation3DGray8ScanningTest {
 		ImageStack marker = ImageStack.create(20, 20, 20, 8);
 		marker.setVoxel(5, 5, 5, 255);
 		
-		GeodesicReconstructionByDilation3DGray8Scanning algo = new GeodesicReconstructionByDilation3DGray8Scanning();
+		GeodesicReconstructionByDilation3DScanningGray8 algo = new GeodesicReconstructionByDilation3DScanningGray8();
 		algo.setConnectivity(26);
 		
 		ImageStack result = algo.applyTo(marker, mask);
@@ -35,7 +35,7 @@ public class GeodesicReconstructionByDilation3DGray8ScanningTest {
 		ImageStack marker = ImageStack.create(20, 20, 20, 8);
 		marker.setVoxel(5, 5, 5, 255);
 		
-		GeodesicReconstructionByDilation3DGray8Scanning algo = new GeodesicReconstructionByDilation3DGray8Scanning();
+		GeodesicReconstructionByDilation3DScanningGray8 algo = new GeodesicReconstructionByDilation3DScanningGray8();
 		algo.setConnectivity(6);
 
 		ImageStack result = algo.applyTo(marker, mask);
@@ -57,7 +57,7 @@ public class GeodesicReconstructionByDilation3DGray8ScanningTest {
 		}
 		marker.setVoxel(5, 5, 5, 0);
 		
-		GeodesicReconstructionByErosion3DGray8Scanning algo = new GeodesicReconstructionByErosion3DGray8Scanning();
+		GeodesicReconstructionByErosion3DScanningGray8 algo = new GeodesicReconstructionByErosion3DScanningGray8();
 
 		ImageStack result = algo.applyTo(marker, mask);
 		
@@ -81,7 +81,7 @@ public class GeodesicReconstructionByDilation3DGray8ScanningTest {
 
 		marker.setVoxel(20, 80, 50, 255);
 
-		GeodesicReconstructionByDilation3DGray8Scanning algo = new GeodesicReconstructionByDilation3DGray8Scanning();
+		GeodesicReconstructionByDilation3DScanningGray8 algo = new GeodesicReconstructionByDilation3DScanningGray8();
 		algo.setConnectivity(26);
 		algo.verbose = false;
 
@@ -119,7 +119,7 @@ public class GeodesicReconstructionByDilation3DGray8ScanningTest {
 
 		marker.setVoxel(20, 80, 50, 255);
 
-		GeodesicReconstructionByDilation3DGray8Scanning algo = new GeodesicReconstructionByDilation3DGray8Scanning();
+		GeodesicReconstructionByDilation3DScanningGray8 algo = new GeodesicReconstructionByDilation3DScanningGray8();
 		algo.setConnectivity(6);
 		algo.verbose = false;
 
