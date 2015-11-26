@@ -863,7 +863,7 @@ public class GeometricMeasures3D
 	 * @param image
 	 *            the input 3D image of labels
 	 * @param labels
-	 *            the set of lables to process
+	 *            the set of labels to process
 	 * @param lut
 	 *            the look-up-table containing the measure contribution for each
 	 *            of the 256 configuration of 8 voxels
