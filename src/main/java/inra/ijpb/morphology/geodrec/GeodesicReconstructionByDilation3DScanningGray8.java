@@ -5,7 +5,6 @@ package inra.ijpb.morphology.geodrec;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import ij.IJ;
 import ij.ImageStack;
 
 
@@ -103,15 +102,9 @@ public class GeodesicReconstructionByDilation3DScanningGray8 extends GeodesicRec
 			modif = false;
 
 			// Display current status
-			if (verbose)
-			{
-				System.out.println("Forward iteration " + iter);
-			}
-			if (showStatus)
-			{
-				IJ.showStatus("Geod. Rec. by Dil. Fwd " + iter);
-			}
-
+			trace("Forward iteration " + iter);
+			showStatus("Geod. Rec. by Dil. Fwd " + iter);
+			
 			// forward iteration
 			switch (connectivity)
 			{
@@ -124,15 +117,9 @@ public class GeodesicReconstructionByDilation3DScanningGray8 extends GeodesicRec
 			}
 
 			// Display current status
-			if (verbose)
-			{
-				System.out.println("Backward iteration " + iter);
-			}
-			if (showStatus)
-			{
-				IJ.showStatus("Geod. Rec. by Dil. Bwd " + iter);
-			}
-
+			trace("Backward iteration " + iter);
+			showStatus("Geod. Rec. by Dil. Bwd " + iter);
+			
 			// backward iteration
 			switch (connectivity)
 			{
@@ -147,6 +134,9 @@ public class GeodesicReconstructionByDilation3DScanningGray8 extends GeodesicRec
 			iter++;
 		} while (modif);
 	
+		// clear progression display
+		showProgress(1, 1, "");
+
 		return this.result;
 	}
 
@@ -192,15 +182,9 @@ public class GeodesicReconstructionByDilation3DScanningGray8 extends GeodesicRec
 			modif = false;
 
 			// Display current status
-			if (verbose)
-			{
-				System.out.println("Forward iteration " + iter);
-			}
-			if (showStatus)
-			{
-				IJ.showStatus("Geod. Rec. by Dil. Fwd " + iter);
-			}
-
+			trace("Forward iteration " + iter);
+			showStatus("Geod. Rec. by Dil. Fwd " + iter);
+			
 			// forward iteration
 			switch (connectivity)
 			{
@@ -213,15 +197,9 @@ public class GeodesicReconstructionByDilation3DScanningGray8 extends GeodesicRec
 			}
 
 			// Display current status
-			if (verbose)
-			{
-				System.out.println("Backward iteration " + iter);
-			}
-			if (showStatus)
-			{
-				IJ.showStatus("Geod. Rec. by Dil. Bwd " + iter);
-			}
-
+			trace("Backward iteration " + iter);
+			showStatus("Geod. Rec. by Dil. Bwd " + iter);
+			
 			// backward iteration
 			switch (connectivity)
 			{
@@ -329,19 +307,10 @@ public class GeodesicReconstructionByDilation3DScanningGray8 extends GeodesicRec
 		byte[] slice;
 		byte[] slice2;
 		
-		if (showProgress) 
-		{
-			IJ.showProgress(0, sizeZ);
-		}
-
 		// Iterate over pixels
 		for (int z = 0; z < sizeZ; z++) 
 		{
-			if (showProgress)
-			{
-				IJ.showProgress(z + 1, sizeZ);
-				System.out.println("z = " + z);
-			}
+			showProgress(z, sizeZ, "z = " + z);
 			
 			slice = (byte[]) stack[z];
 			for (int y = 0; y < sizeY; y++)
@@ -388,19 +357,10 @@ public class GeodesicReconstructionByDilation3DScanningGray8 extends GeodesicRec
 		byte[] slice2;
 		byte[] binarySlice;
 		
-		if (showProgress)
-		{
-			IJ.showProgress(0, sizeZ);
-		}
-
 		// Iterate over pixels
 		for (int z = 0; z < sizeZ; z++)
 		{
-			if (showProgress)
-			{
-				IJ.showProgress(z + 1, sizeZ);
-				System.out.println("z = " + z);
-			}
+			showProgress(z, sizeZ, "z = " + z);
 			
 			slice = (byte[]) stack[z];
 			binarySlice = (byte[]) binaryStack[z];
@@ -452,20 +412,11 @@ public class GeodesicReconstructionByDilation3DScanningGray8 extends GeodesicRec
 		byte[] slice;
 		byte[] slice2;
 		
-		if (showProgress) 
-		{
-			IJ.showProgress(0, sizeZ);
-		}
-
 		// Iterate over pixels
 		for (int z = 0; z < sizeZ; z++)
 		{
-			if (showProgress)
-			{
-				IJ.showProgress(z + 1, sizeZ);
-				System.out.println("z = " + z);
-			}
-
+			showProgress(z, sizeZ, "z = " + z);
+			
 			slice = (byte[]) stack[z];
 			for (int y = 0; y < sizeY; y++)
 			{
@@ -521,19 +472,10 @@ public class GeodesicReconstructionByDilation3DScanningGray8 extends GeodesicRec
 		byte[] slice2;
 		byte[] binarySlice;
 		
-		if (showProgress)
-		{
-			IJ.showProgress(0, sizeZ);
-		}
-
 		// Iterate over pixels
 		for (int z = 0; z < sizeZ; z++) 
 		{
-			if (showProgress) 
-			{
-				IJ.showProgress(z + 1, sizeZ);
-				System.out.println("z = " + z);
-			}
+			showProgress(z, sizeZ, "z = " + z);
 
 			slice = (byte[]) stack[z];
 			binarySlice = (byte[]) binaryStack[ z ];
@@ -593,20 +535,11 @@ public class GeodesicReconstructionByDilation3DScanningGray8 extends GeodesicRec
 		byte[] slice;
 		byte[] slice2;
 
-		if (showProgress)
-		{
-			IJ.showProgress(0, sizeZ);
-		}
-
 		// Iterate over voxels
 		for (int z = sizeZ - 1; z >= 0; z--) 
 		{
-			if (showProgress) 
-			{
-				IJ.showProgress(sizeZ - z, sizeZ);
-				System.out.println("z = " + z);
-			}
-
+			showProgress(sizeZ - 1 - z, sizeZ, "z = " + z);
+			
 			slice = (byte[]) stack[z];
 			for (int y = sizeY - 1; y >= 0; y--) 
 			{
@@ -653,19 +586,10 @@ public class GeodesicReconstructionByDilation3DScanningGray8 extends GeodesicRec
 		byte[] slice2;
 		byte[] binarySlice;
 
-		if (showProgress) 
-		{
-			IJ.showProgress(0, sizeZ);
-		}
-
 		// Iterate over voxels
 		for (int z = sizeZ - 1; z >= 0; z--)
 		{
-			if (showProgress) 
-			{
-				IJ.showProgress(sizeZ - z, sizeZ);
-				System.out.println("z = " + z);
-			}
+			showProgress(sizeZ - 1 - z, sizeZ, "z = " + z);
 
 			slice = (byte[]) stack[z];
 			binarySlice = (byte[]) binaryStack[ z ];
@@ -718,18 +642,10 @@ public class GeodesicReconstructionByDilation3DScanningGray8 extends GeodesicRec
 		byte[] slice2;
 		byte[] binarySlice;
 
-		if (showProgress) {
-			IJ.showProgress(0, sizeZ);
-		}
-
 		// Iterate over voxels
 		for (int z = sizeZ - 1; z >= 0; z--)
 		{
-			if (showProgress)
-			{
-				IJ.showProgress(sizeZ - z, sizeZ);
-				System.out.println("z = " + z);
-			}
+			showProgress(sizeZ - 1 - z, sizeZ, "z = " + z);
 
 			slice = (byte[]) stack[z];
 			binarySlice = (byte[]) binaryStack[z];
@@ -765,7 +681,8 @@ public class GeodesicReconstructionByDilation3DScanningGray8 extends GeodesicRec
 
 						// update value of current voxel
 						maxValue = Math.min(maxValue, (int) mask.getVoxel(x, y, z));
-						if (maxValue > currentValue) {
+						if (maxValue > currentValue)
+						{
 							slice[y * sizeX + x] = (byte) (maxValue & 0x00FF);
 							modif = true;
 						}
@@ -789,20 +706,11 @@ public class GeodesicReconstructionByDilation3DScanningGray8 extends GeodesicRec
 		byte[] slice;
 		byte[] slice2;
 
-		if (showProgress) 
-		{
-			IJ.showProgress(0, sizeZ);
-		}
-
 		// Iterate over voxels
 		for (int z = sizeZ - 1; z >= 0; z--) 
 		{
-			if (showProgress) 
-			{
-				IJ.showProgress(sizeZ - z, sizeZ);
-				System.out.println("z = " + z);
-			}
-
+			showProgress(sizeZ - 1 - z, sizeZ, "z = " + z);
+			
 			slice = (byte[]) stack[z];
 			for (int y = sizeY - 1; y >= 0; y--)
 			{

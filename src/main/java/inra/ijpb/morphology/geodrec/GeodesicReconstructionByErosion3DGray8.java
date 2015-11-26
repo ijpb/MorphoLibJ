@@ -5,7 +5,6 @@ package inra.ijpb.morphology.geodrec;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import ij.IJ;
 import ij.ImageStack;
 
 import java.util.LinkedList;
@@ -187,13 +186,9 @@ public class GeodesicReconstructionByErosion3DGray8 extends GeodesicReconstructi
 		//			modif = false;
 
 		// Display current status
-		if (verbose) {
-			System.out.println("Forward iteration");
-		}
-		if (showStatus) {
-			IJ.showStatus("Geod. Rec. by Dil. Fwd ");
-		}
-
+		trace("Forward iteration");
+		showStatus("Geod. Rec. by Ero. Fwd ");
+		
 		// forward iteration
 		//			switch (connectivity) {
 		//			case 6:
@@ -205,13 +200,9 @@ public class GeodesicReconstructionByErosion3DGray8 extends GeodesicReconstructi
 		//			}
 
 		// Display current status
-		if (verbose) {
-			System.out.println("Backward iteration ");
-		}
-		if (showStatus) {
-			IJ.showStatus("Geod. Rec. by Dil. Bwd ");
-		}
-
+		trace("Backward iteration ");
+		showStatus("Geod. Rec. by Dil. Bwd ");
+		
 		// backward iteration
 		//			switch (connectivity) {
 		//			case 4:
@@ -230,6 +221,9 @@ public class GeodesicReconstructionByErosion3DGray8 extends GeodesicReconstructi
 
 		processQueueC26();
 		
+		// clear progression display
+		showProgress(1, 1, "");
+
 		return this.result;
 	}
 
@@ -448,16 +442,10 @@ public class GeodesicReconstructionByErosion3DGray8 extends GeodesicReconstructi
 		byte[] slice;
 		byte[] slice2;
 
-		if (showProgress)
-		{
-			IJ.showProgress(0, size3);
-		}
-
 		// Iterate over pixels
 		for (int z = 0; z < size3; z++) 
 		{
-//			IJ.showProgress(z + 1, size3);
-//			System.out.println("z = " + z);
+			showProgress(z, size3, "z = " + z);
 			slice = (byte[]) stack[z];
 			for (int y = 0; y < size2; y++)
 			{
@@ -511,16 +499,10 @@ public class GeodesicReconstructionByErosion3DGray8 extends GeodesicReconstructi
 		byte[] slice;
 		byte[] slice2;
 		
-		if (showProgress) 
-		{
-			IJ.showProgress(0, size3);
-		}
-
 		// Iterate over pixels
 		for (int z = 0; z < size3; z++) 
 		{
-			//			IJ.showProgress(z + 1, size3);
-			//			System.out.println("z = " + z);
+			showProgress(z, size3, "z = " + z);
 			slice = (byte[]) stack[z];
 			for (int y = 0; y < size2; y++) 
 			{
@@ -550,7 +532,7 @@ public class GeodesicReconstructionByErosion3DGray8 extends GeodesicReconstructi
 							}
 						}
 
-						//					geodesicDilationUpdate(x, y, z, minValue);
+						// update value of current voxel
 						minValue = Math.max(minValue, (int) mask.getVoxel(x, y, z));
 						if (minValue < currentValue) 
 						{
@@ -576,18 +558,12 @@ public class GeodesicReconstructionByErosion3DGray8 extends GeodesicReconstructi
 		byte[] slice2;
 		byte[] maskSlice;
 		
-		if (showProgress)
-		{
-			IJ.showProgress(0, size3);
-		}
-
 		this.queue = new LinkedList<int[]>();
 		
 		// Iterate over pixels
 		for (int z = 0; z < size3; z++) 
 		{
-//			IJ.showProgress(z + 1, size3);
-//			System.out.println("z = " + z);
+			showProgress(z, size3, "z = " + z);
 			slice = (byte[]) stack[z];
 			for (int y = 0; y < size2; y++)
 			{
@@ -675,18 +651,12 @@ public class GeodesicReconstructionByErosion3DGray8 extends GeodesicReconstructi
 		byte[] slice2;
 		byte[] maskSlice;
 		
-		if (showProgress)
-		{
-			IJ.showProgress(0, size3);
-		}
-
 		this.queue = new LinkedList<int[]>();
 		
 		// Iterate over pixels
 		for (int z = 0; z < size3; z++) 
 		{
-			//			IJ.showProgress(z + 1, size3);
-			//			System.out.println("z = " + z);
+			showProgress(z, size3, "z = " + z);
 			slice = (byte[]) stack[z];
 			for (int y = 0; y < size2; y++) 
 			{
@@ -778,15 +748,11 @@ public class GeodesicReconstructionByErosion3DGray8 extends GeodesicReconstructi
 		byte[] slice;
 		byte[] slice2;
 
-		if (showProgress) {
-			IJ.showProgress(0, size3);
-		}
-
 		// Iterate over voxels
 		for (int z = size3 - 1; z >= 0; z--) 
 		{
 			slice = (byte[]) stack[z];
-//			IJ.showProgress(size3 - z, size3);
+			showProgress(size3 - 1 - z, size3);
 			for (int y = size2 - 1; y >= 0; y--) 
 			{
 				for (int x = size1 - 1; x >= 0; x--) 
@@ -840,16 +806,11 @@ public class GeodesicReconstructionByErosion3DGray8 extends GeodesicReconstructi
 		byte[] slice;
 		byte[] slice2;
 
-		if (showProgress)
-		{
-			IJ.showProgress(0, size3);
-		}
-
 		// Iterate over voxels
 		for (int z = size3 - 1; z >= 0; z--) 
 		{
 			slice = (byte[]) stack[z];
-			//			IJ.showProgress(size3 - z, size3);
+			showProgress(size3 - 1 - z, size3);
 			for (int y = size2 - 1; y >= 0; y--) 
 			{
 				for (int x = size1 - 1; x >= 0; x--) 
@@ -998,14 +959,8 @@ public class GeodesicReconstructionByErosion3DGray8 extends GeodesicReconstructi
 
 		// iterate until queue is empty
 		while (!this.queue.isEmpty()) {
-			if (showProgress)
-			{
-				IJ.showProgress( iter, total );
-			}
-			if (verbose)
-			{
-				System.out.println("iter " + (iter++) + " over " + total);
-			}
+			showProgress(iter, total);
+			trace("iter " + (iter++) + " over " + total);
 			
 			int[] p = this.queue.pollFirst();
 			int x = p[0];
@@ -1086,14 +1041,8 @@ public class GeodesicReconstructionByErosion3DGray8 extends GeodesicReconstructi
 		// iterate until queue is empty
 		while (!this.queue.isEmpty()) 
 		{
-			if (showProgress) 
-			{
-				IJ.showProgress( iter, total );
-			}
-			if (verbose) 
-			{
-				System.out.println("iter " + (iter++) + " over " + total);
-			}
+			showProgress(iter, total);
+			trace("iter " + (iter++) + " over " + total);
 			
 			int[] p = this.queue.pollFirst();
 			int x = p[0];
@@ -1200,15 +1149,9 @@ public class GeodesicReconstructionByErosion3DGray8 extends GeodesicReconstructi
 		//			modif = false;
 
 		// Display current status
-		if (verbose)
-		{
-			System.out.println("Forward iteration");
-		}
-		if (showStatus) 
-		{
-			IJ.showStatus("Geod. Rec. by Dil. Fwd ");
-		}
-
+		trace("Forward iteration");
+		showStatus("Geod. Rec. by Ero. Fwd ");
+		
 		// forward iteration
 		//			switch (connectivity) {
 		//			case 6:
@@ -1220,15 +1163,9 @@ public class GeodesicReconstructionByErosion3DGray8 extends GeodesicReconstructi
 		//			}
 
 		// Display current status
-		if (verbose) 
-		{
-			System.out.println("Backward iteration ");
-		}
-		if (showStatus) 
-		{
-			IJ.showStatus("Geod. Rec. by Dil. Bwd ");
-		}
-
+		trace("Backward iteration ");
+		showStatus("Geod. Rec. by Ero. Bwd ");
+		
 		// backward iteration
 		//			switch (connectivity) {
 		//			case 4:
@@ -1243,7 +1180,7 @@ public class GeodesicReconstructionByErosion3DGray8 extends GeodesicReconstructi
 		//		} while (modif);
 
 		forwardDilationC26InitQueue( binaryMask ); 
-		System.out.println("queue size: " + this.queue.size());
+		trace("queue size: " + this.queue.size());
 
 		processQueueC26( binaryMask );
 

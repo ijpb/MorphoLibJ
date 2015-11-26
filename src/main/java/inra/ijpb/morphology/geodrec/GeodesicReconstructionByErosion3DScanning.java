@@ -5,7 +5,6 @@ package inra.ijpb.morphology.geodrec;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import ij.IJ;
 import ij.ImageStack;
 import inra.ijpb.data.image.Image3D;
 import inra.ijpb.data.image.Images3D;
@@ -13,7 +12,8 @@ import inra.ijpb.data.image.Images3D;
 
 /**
  * <p>
- * Geodesic reconstruction by erosion for 3D stacks using scanning algorithm.
+ * Geodesic reconstruction by erosion for 3D stacks using scanning algorithm,
+ * and Image3D access class.
  * </p>
  * 
  * <p>
@@ -28,6 +28,7 @@ import inra.ijpb.data.image.Images3D;
  * <code>GeodesicReconstructionByDilation3DGray8Scanning</code> may be faster.
  * </p>
  * 
+ * @see inra.ijpb.data.image.Image3D
  * @author David Legland
  * 
  */
@@ -117,15 +118,9 @@ public class GeodesicReconstructionByErosion3DScanning extends GeodesicReconstru
 			modif = false;
 
 			// Display current status
-			if (verbose)
-			{
-				System.out.println("Forward iteration " + iter);
-			}
-			if (showStatus)
-			{
-				IJ.showStatus("Geod. Rec. by Ero. Fwd " + iter);
-			}
-
+			trace("Forward iteration " + iter);
+			showStatus("Geod. Rec. by Ero. Fwd " + iter);
+			
 			if (integerStack)
 			{
 				forwardErosionInt();
@@ -135,15 +130,9 @@ public class GeodesicReconstructionByErosion3DScanning extends GeodesicReconstru
 			}
 
 			// Display current status
-			if (verbose)
-			{
-				System.out.println("Backward iteration " + iter);
-			}
-			if (showStatus)
-			{
-				IJ.showStatus("Geod. Rec. by Ero. Bwd " + iter);
-			}
-
+			trace("Backward iteration " + iter);
+			showStatus("Geod. Rec. by Ero. Bwd " + iter);
+			
 			if (integerStack)
 			{
 				backwardErosionInt();
@@ -154,7 +143,10 @@ public class GeodesicReconstructionByErosion3DScanning extends GeodesicReconstru
 
 			iter++;
 		} while (modif);
-	
+
+		// clear progression display
+		showProgress(1, 1, "");
+
 		return this.resultStack;
 	}
 
@@ -234,18 +226,10 @@ public class GeodesicReconstructionByErosion3DScanning extends GeodesicReconstru
 		// the minimal value around current pixel
 		int minValue;
 
-		if (showProgress)
-		{
-			IJ.showProgress(0, sizeZ);
-		}
-
 		// Iterate over pixels
 		for (int z = 0; z < sizeZ; z++)
 		{
-			if (showProgress)
-			{
-				IJ.showProgress(z + 1, sizeZ);
-			}
+			showProgress(z, sizeZ);
 			
 			for (int y = 0; y < sizeY; y++)
 			{
@@ -284,19 +268,10 @@ public class GeodesicReconstructionByErosion3DScanning extends GeodesicReconstru
 		// the minimal value around current pixel
 		int minValue;
 
-		if (showProgress)
-		{
-			IJ.showProgress(0, sizeZ);
-		}
-
 		// Iterate over pixels
 		for (int z = 0; z < sizeZ; z++)
 		{
-			if (showProgress)
-			{
-				IJ.showProgress(z + 1, sizeZ);
-				System.out.println("z = " + z);
-			}
+			showProgress(z, sizeZ, "z = " + z);
 
 			for (int y = 0; y < sizeY; y++)
 			{
@@ -352,19 +327,10 @@ public class GeodesicReconstructionByErosion3DScanning extends GeodesicReconstru
 		// the minimal value around current pixel
 		double minValue;
 
-		if (showProgress) 
-		{
-			IJ.showProgress(0, sizeZ);
-		}
-
 		// Iterate over pixels
 		for (int z = 0; z < sizeZ; z++) 
 		{
-			if (showProgress) 
-			{
-				IJ.showProgress(z + 1, sizeZ);
-				System.out.println("z = " + z);
-			}
+			showProgress(z, sizeZ, "z = " + z);
 			
 			for (int y = 0; y < sizeY; y++)
 			{
@@ -403,20 +369,11 @@ public class GeodesicReconstructionByErosion3DScanning extends GeodesicReconstru
 		// the minimal value around current pixel
 		double minValue;
 
-		if (showProgress)
-		{
-			IJ.showProgress(0, sizeZ);
-		}
-
 		// Iterate over pixels
 		for (int z = 0; z < sizeZ; z++)
 		{
-			if (showProgress)
-			{
-				IJ.showProgress(z + 1, sizeZ);
-				System.out.println("z = " + z);
-			}
-
+			showProgress(z, sizeZ, "z = " + z);
+			
 			for (int y = 0; y < sizeY; y++)
 			{
 				for (int x = 0; x < sizeX; x++)
@@ -470,19 +427,10 @@ public class GeodesicReconstructionByErosion3DScanning extends GeodesicReconstru
 		// the minimal value around current pixel
 		int minValue;
 
-		if (showProgress)
-		{
-			IJ.showProgress(0, sizeZ);
-		}
-
 		// Iterate over voxels
 		for (int z = sizeZ - 1; z >= 0; z--)
 		{
-			if (showProgress)
-			{
-				IJ.showProgress(sizeZ - z, sizeZ);
-				System.out.println("z = " + z);
-			}
+			showProgress(sizeZ - z, sizeZ, "z = " + z);
 
 			for (int y = sizeY - 1; y >= 0; y--)
 			{
@@ -522,19 +470,10 @@ public class GeodesicReconstructionByErosion3DScanning extends GeodesicReconstru
 		// the minimal value around current pixel
 		int minValue;
 	
-		if (showProgress) 
-		{
-			IJ.showProgress(0, sizeZ);
-		}
-	
 		// Iterate over voxels
 		for (int z = sizeZ - 1; z >= 0; z--)
 		{
-			if (showProgress)
-			{
-				IJ.showProgress(sizeZ - z, sizeZ);
-				System.out.println("z = " + z);
-			}
+			showProgress(sizeZ - 1 - z, sizeZ, "z = " + z);
 
 			for (int y = sizeY - 1; y >= 0; y--)
 			{
@@ -591,19 +530,10 @@ public class GeodesicReconstructionByErosion3DScanning extends GeodesicReconstru
 		// the maximal value around current pixel
 		double minValue;
 
-		if (showProgress)
-		{
-			IJ.showProgress(0, sizeZ);
-		}
-
 		// Iterate over voxels
-		for (int z = sizeZ - 1; z >= 0; z--)
+		for (int z = sizeZ - 1 - 1; z >= 0; z--)
 		{
-			if (showProgress)
-			{
-				IJ.showProgress(sizeZ - z, sizeZ);
-				System.out.println("z = " + z);
-			}
+			showProgress(sizeZ - 1 - z, sizeZ, "z = " + z);
 
 			for (int y = sizeY - 1; y >= 0; y--)
 			{
@@ -641,20 +571,11 @@ public class GeodesicReconstructionByErosion3DScanning extends GeodesicReconstru
 		// the minimal value around current pixel
 		double minValue;
 	
-		if (showProgress) 
-		{
-			IJ.showProgress(0, sizeZ);
-		}
-	
 		// Iterate over voxels
 		for (int z = sizeZ - 1; z >= 0; z--) 
 		{
-			if (showProgress) 
-			{
-				IJ.showProgress(sizeZ - z, sizeZ);
-				System.out.println("z = " + z);
-			}
-	
+			showProgress(sizeZ - 1 - z, sizeZ, "z = " + z);
+			
 			for (int y = sizeY - 1; y >= 0; y--)
 			{
 				for (int x = sizeX - 1; x >= 0; x--)

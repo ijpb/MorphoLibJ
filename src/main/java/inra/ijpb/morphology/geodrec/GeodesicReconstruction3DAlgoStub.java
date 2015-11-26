@@ -7,7 +7,14 @@ import ij.IJ;
 import inra.ijpb.algo.AlgoStub;
 
 /**
+ * <p>
  * Implementation basis for geodesic reconstruction algorithms for 3D images.
+ * </p>
+ * 
+ * <p>
+ * This class provides the management of the connectivity, several fields to
+ * manage algorithm monitoring, and protected utility methods.
+ * </p>
  * 
  * @author dlegland
  *
@@ -54,7 +61,13 @@ public abstract class GeodesicReconstruction3DAlgoStub extends AlgoStub implemen
 		this.connectivity = conn;
 	}
 
-	
+	/**
+	 * Displays the specified message in the status bar of the ImageJ frame, if
+	 * the <code>showStatus</code> flag is true.
+	 * 
+	 * @param status
+	 *            the message to display
+	 */
 	protected void showStatus(String status)
 	{
 		if (this.showStatus) 
@@ -62,7 +75,16 @@ public abstract class GeodesicReconstruction3DAlgoStub extends AlgoStub implemen
 			IJ.showStatus(status);
 		}
 	}
-	
+
+	/**
+	 * Displays the current progression of the algorithme in the status bar of
+	 * the ImageJ frame, if the <code>showProgress</code> flag is true.
+	 * 
+	 * @param current
+	 *            the current progression
+	 * @param max
+	 *            the maximum possible value for progression
+	 */            
 	protected void showProgress(double current, double max)
 	{
 		if (showProgress) 
@@ -71,6 +93,17 @@ public abstract class GeodesicReconstruction3DAlgoStub extends AlgoStub implemen
 		}
 	}
 	
+	/**
+	 * Displays the current progression of the algorithme in the status bar of
+	 * the ImageJ frame, if the <code>showProgress</code> flag is true.
+	 * 
+	 * @param current
+	 *            the current progression
+	 * @param max
+	 *            the maximum possible value for progression
+	 * @param msg
+	 *            an additional message that will be displayed in the console
+	 */            
 	protected void showProgress(double current, double max, String msg)
 	{
 		if (showProgress) 
@@ -83,6 +116,13 @@ public abstract class GeodesicReconstruction3DAlgoStub extends AlgoStub implemen
 		}
 	}
 
+	/**
+	 * Display a trace message in the console, if the <code>verbose</code> flag
+	 * is true.
+	 * 
+	 * @param traceMessage
+	 *            the message to display
+	 */
 	protected void trace(String traceMessage)
 	{
 		// Display current status

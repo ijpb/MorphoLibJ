@@ -162,7 +162,8 @@ public class GeodesicReconstruction3DHybrid0Gray8 extends GeodesicReconstruction
 		showStatus("Geod. Rec. Fwd ");
 		
 		forwardScan();
-		if (verbose) {
+		if (verbose) 
+		{
 			long t1 = System.currentTimeMillis();
 			System.out.println((t1 - t0) + " ms");
 			t0 = t1;
@@ -193,7 +194,9 @@ public class GeodesicReconstruction3DHybrid0Gray8 extends GeodesicReconstruction
 			t0 = t1;
 		}
 
-	
+		// clear progression display
+		showProgress(1, 1, "");
+		
 		return this.resultStack;
 	}
 
@@ -302,15 +305,13 @@ public class GeodesicReconstruction3DHybrid0Gray8 extends GeodesicReconstruction
 		
 		// the maximal value around current pixel
 		int maxValue;
-
-		showProgress(0, sizeZ);
 		
 		byte[] slice, maskSlice; 
 		
 		// Iterate over pixels
 		for (int z = 0; z < sizeZ; z++)
 		{
-			showProgress(z + 1, sizeZ);
+			showProgress(z, sizeZ);
 			
 			// Extract slices
 			slice = this.resultSlices[z];
@@ -354,14 +355,12 @@ public class GeodesicReconstruction3DHybrid0Gray8 extends GeodesicReconstruction
 		// the maximal value around current pixel
 		int maxValue;
 
-		showProgress(0, sizeZ, "");
-
 		byte[] slice, slice2, maskSlice;
 		
 		// Iterate over pixels
 		for (int z = 0; z < sizeZ; z++)
 		{
-			showProgress(z + 1, sizeZ, "z = " + z);
+			showProgress(z, sizeZ, "z = " + z);
 
 			// Extract slices
 			maskSlice = this.maskSlices[z];
@@ -427,14 +426,12 @@ public class GeodesicReconstruction3DHybrid0Gray8 extends GeodesicReconstruction
 		// the maximal value around current pixel
 		int maxValue;
 
-		showProgress(0, sizeZ);
-
 		byte[] slice, maskSlice; 
 		
 		// Iterate over voxels
 		for (int z = sizeZ - 1; z >= 0; z--) 
 		{
-			showProgress(sizeZ - z, sizeZ, "z = " + z);
+			showProgress(sizeZ - 1 - z, sizeZ, "z = " + z);
 
 			// Extract slices
 			slice = this.resultSlices[z];
@@ -490,14 +487,12 @@ public class GeodesicReconstruction3DHybrid0Gray8 extends GeodesicReconstruction
 		// the maximal value around current pixel
 		int maxValue;
 	
-		showProgress(0, sizeZ);
-			
 		byte[] slice, maskSlice;
 		
 		// Iterate over voxels
 		for (int z = sizeZ - 1; z >= 0; z--)
 		{
-			showProgress(sizeZ - z, sizeZ, "z = " + z);
+			showProgress(sizeZ - 1 - z, sizeZ, "z = " + z);
 	
 			// Extract slices
 			maskSlice = this.maskSlices[z];

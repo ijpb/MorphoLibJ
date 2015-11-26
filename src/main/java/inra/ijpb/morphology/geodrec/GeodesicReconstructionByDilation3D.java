@@ -5,7 +5,6 @@ package inra.ijpb.morphology.geodrec;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import ij.IJ;
 import ij.ImageStack;
 
 
@@ -108,14 +107,8 @@ public class GeodesicReconstructionByDilation3D extends GeodesicReconstruction3D
 			modif = false;
 
 			// Display current status
-			if (verbose)
-			{
-				System.out.println("Forward iteration " + iter);
-			}
-			if (showStatus)
-			{
-				IJ.showStatus("Geod. Rec. by Dil. Fwd " + (iter + 1));
-			}
+			trace("Forward iteration " + iter);
+			showStatus("Geod. Rec. by Dil. Fwd " + (iter + 1));
 			
 			// forward iteration
 //			switch (connectivity) {
@@ -128,14 +121,8 @@ public class GeodesicReconstructionByDilation3D extends GeodesicReconstruction3D
 //			}
 
 			// Display current status
-			if (verbose)
-			{
-				System.out.println("Backward iteration " + iter);
-			}
-			if (showStatus) 
-			{
-				IJ.showStatus("Geod. Rec. by Dil. Bwd " + (iter + 1));
-			}
+			trace("Backward iteration " + iter);
+			showStatus("Geod. Rec. by Dil. Bwd " + (iter + 1));
 			
 			// backward iteration
 //			switch (connectivity) {
@@ -150,6 +137,9 @@ public class GeodesicReconstructionByDilation3D extends GeodesicReconstruction3D
 			iter++;
 		} while (modif);
 	
+		// clear progression display
+		showProgress(1, 1, "");
+
 		return this.result;
 	}
 
@@ -306,16 +296,11 @@ public class GeodesicReconstructionByDilation3D extends GeodesicReconstruction3D
 		Object[] stack = result.getImageArray();
 		byte[] slice;
 		
-		if (showProgress)
-		{
-			IJ.showProgress(0, size3);
-		}
-
 		// Iterate over pixels
 		for (int z = 0; z < size3; z++)
 		{
-//			IJ.showProgress(z + 1, size3);
-//			System.out.println("z = " + z);
+			showProgress(z, size3, "z = " + z);
+			
 			for (int y = 0; y < size2; y++)
 			{
 				for (int x = 0; x < size1; x++)
@@ -359,16 +344,10 @@ public class GeodesicReconstructionByDilation3D extends GeodesicReconstruction3D
 		Object[] stack = result.getImageArray();
 		byte[] slice;
 		
-		if (showProgress)
-		{
-			IJ.showProgress(0, size3);
-		}
-
 		// Iterate over pixels
 		for (int z = 0; z < size3; z++) 
 		{
-//			IJ.showProgress(z + 1, size3);
-//			System.out.println("z = " + z);
+			showProgress(z, size3, "z = " + z);
 			for (int y = 0; y < size2; y++) 
 			{
 				for (int x = 0; x < size1; x++)
@@ -465,16 +444,10 @@ public class GeodesicReconstructionByDilation3D extends GeodesicReconstruction3D
 		Object[] stack = result.getImageArray();
 		short[] slice;
 		
-		if (showProgress) 
-		{
-			IJ.showProgress(0, size3);
-		}
-
 		// Iterate over pixels
 		for (int z = 0; z < size3; z++) 
 		{
-			IJ.showProgress(z + 1, size3);
-			System.out.println("z = " + z);
+			showProgress(z, size3, "z = " + z);
 			for (int y = 0; y < size2; y++)
 			{
 				for (int x = 0; x < size1; x++) 
@@ -521,15 +494,10 @@ public class GeodesicReconstructionByDilation3D extends GeodesicReconstruction3D
 		Object[] stack = result.getImageArray();
 		short[] slice;
 		
-		if (showProgress) {
-			IJ.showProgress(0, size3);
-		}
-
 		// Iterate over pixels
 		for (int z = 0; z < size3; z++) 
 		{
-			IJ.showProgress(z + 1, size3);
-			System.out.println("z = " + z);
+			showProgress(z, size3, "z = " + z);
 			for (int y = 0; y < size2; y++) 
 			{
 				for (int x = 0; x < size1; x++) 
@@ -573,16 +541,10 @@ public class GeodesicReconstructionByDilation3D extends GeodesicReconstruction3D
 		Object[] stack = result.getImageArray();
 		float[] slice;
 		
-		if (showProgress)
-		{
-			IJ.showProgress(0, size3);
-		}
-
 		// Iterate over voxels
 		for (int z = 0; z < size3; z++) 
 		{
-			IJ.showProgress(z + 1, size3);
-			System.out.println("z = " + z);
+			showProgress(z, size3, "z = " + z);
 			for (int y = 0; y < size2; y++) 
 			{
 				for (int x = 0; x < size1; x++)
@@ -625,16 +587,10 @@ public class GeodesicReconstructionByDilation3D extends GeodesicReconstruction3D
 		Object[] stack = result.getImageArray();
 		float[] slice;
 
-		if (showProgress)
-		{
-			IJ.showProgress(0, size3);
-		}
-
 		// Iterate over voxels
 		for (int z = 0; z < size3; z++)
 		{
-			IJ.showProgress(z + 1, size3);
-			System.out.println("z = " + z);
+			showProgress(z, size3, "z = " + z);
 			for (int y = 0; y < size2; y++)
 			{
 				for (int x = 0; x < size1; x++)
@@ -807,15 +763,10 @@ public class GeodesicReconstructionByDilation3D extends GeodesicReconstruction3D
 		Object[] stack = result.getImageArray();
 		byte[] slice;
 
-		if (showProgress) 
-		{
-			IJ.showProgress(0, size3);
-		}
-
 		// Iterate over voxels
 		for (int z = size3 - 1; z >= 0; z--) 
 		{
-			IJ.showProgress(size3 - z, size3);
+			showProgress(size3 - 1 - z, size3);
 			for (int y = size2 - 1; y >= 0; y--)
 			{
 				for (int x = size1 - 1; x >= 0; x--) 
@@ -860,15 +811,10 @@ public class GeodesicReconstructionByDilation3D extends GeodesicReconstruction3D
 		Object[] stack = result.getImageArray();
 		byte[] slice;
 
-		if (showProgress)
-		{
-			IJ.showProgress(0, size3);
-		}
-
 		// Iterate over voxels
 		for (int z = size3 - 1; z >= 0; z--)
 		{
-			IJ.showProgress(size3 - z, size3);
+			showProgress(size3 - 1 - z, size3);
 			for (int y = size2 - 1; y >= 0; y--) 
 			{
 				for (int x = size1 - 1; x >= 0; x--) 
@@ -913,14 +859,9 @@ public class GeodesicReconstructionByDilation3D extends GeodesicReconstruction3D
 		// the maximal value around current pixel
 		double value;
 
-		if (showProgress) 
-		{
-			IJ.showProgress(0, size3);
-		}
-
 		for (int k = size3 - 1; k >= 0; k--)
 		{
-			IJ.showProgress(size3 - k, size3);
+			showProgress(size3 - 1 - k, size3);
 
 			for (int j = size2 - 1; j >= 0; j--)
 			{
@@ -942,13 +883,8 @@ public class GeodesicReconstructionByDilation3D extends GeodesicReconstruction3D
 		// the maximal value around current pixel
 		double value;
 
-		if (showProgress) 
-		{
-			IJ.showProgress(0, size3);
-		}
-
 		for (int k = size3 - 1; k >= 0; k--) {
-			IJ.showProgress(size3 - k, size3);
+			showProgress(size3 - 1 - k, size3);
 
 			for (int j = size2 - 1; j >= 0; j--)
 				for (int i = size1 - 1; i >= 0; i--) 
@@ -1069,15 +1005,9 @@ public class GeodesicReconstructionByDilation3D extends GeodesicReconstruction3D
 			modif = false;
 
 			// Display current status
-			if (verbose) 
-			{
-				System.out.println("Forward iteration " + iter);
-			}
-			if (showStatus) 
-			{
-				IJ.showStatus("Geod. Rec. by Dil. Fwd " + (iter + 1));
-			}
-
+			trace("Forward iteration " + iter);
+			showStatus("Geod. Rec. by Dil. Fwd " + (iter + 1));
+			
 			// forward iteration
 			//					switch (connectivity) {
 			//					case 6:
@@ -1089,15 +1019,9 @@ public class GeodesicReconstructionByDilation3D extends GeodesicReconstruction3D
 			//					}
 
 			// Display current status
-			if (verbose)
-			{
-				System.out.println("Backward iteration " + iter);
-			}
-			if (showStatus)
-			{
-				IJ.showStatus("Geod. Rec. by Dil. Bwd " + (iter + 1));
-			}
-
+			trace("Backward iteration " + iter);
+			showStatus("Geod. Rec. by Dil. Bwd " + (iter + 1));
+			
 			// backward iteration
 			//					switch (connectivity) {
 			//					case 4:

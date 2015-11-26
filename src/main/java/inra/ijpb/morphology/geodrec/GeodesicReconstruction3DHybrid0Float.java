@@ -5,7 +5,6 @@ package inra.ijpb.morphology.geodrec;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import ij.IJ;
 import ij.ImageStack;
 import inra.ijpb.data.Cursor3D;
 
@@ -149,10 +148,8 @@ public class GeodesicReconstruction3DHybrid0Float extends GeodesicReconstruction
 		queue = new ArrayDeque<Cursor3D>();
 		
 		long t0 = System.currentTimeMillis();
-		if (verbose) 
-		{
-			System.out.print("Initialize result ");
-		}
+		trace("Initialize result ");
+		
 		initializeResult();
 		if (verbose) 
 		{
@@ -163,15 +160,9 @@ public class GeodesicReconstruction3DHybrid0Float extends GeodesicReconstruction
 
 		
 		// Display current status
-		if (verbose)
-		{
-			System.out.print("Forward iteration ");
-		}
-		if (showStatus)
-		{
-			IJ.showStatus("Geod. Rec. by Dil. Fwd ");
-		}
-
+		trace("Forward iteration ");
+		showStatus("Geod. Rec. Fwd ");
+		
 		forwardScan();
 		if (verbose) 
 		{
@@ -182,14 +173,9 @@ public class GeodesicReconstruction3DHybrid0Float extends GeodesicReconstruction
 
 
 		// Display current status
-		if (verbose) 
-		{
-			System.out.print("Backward iteration & Init Queue");
-		}
-		if (showStatus)
-		{
-			IJ.showStatus("Geod. Rec. by Dil. Bwd ");
-		}
+		trace("Backward iteration & Init Queue");
+		showStatus("Geod. Rec. Bwd ");
+		
 		backwardScanInitQueue();
 		if (verbose) 
 		{
@@ -199,15 +185,9 @@ public class GeodesicReconstruction3DHybrid0Float extends GeodesicReconstruction
 		}
 		
 		// Display current status
-		if (verbose) 
-		{
-			System.out.print("Process queue");
-		}
-		if (showStatus) 
-		{
-			IJ.showStatus("Process queue");
-		}
-
+		trace("Process queue");
+		showStatus("Process queue");
+		
 		processQueue();
 		if (verbose)
 		{
@@ -216,7 +196,9 @@ public class GeodesicReconstruction3DHybrid0Float extends GeodesicReconstruction
 			t0 = t1;
 		}
 
-	
+		// clear progression display
+		showProgress(1, 1, "");
+		
 		return this.resultStack;
 	}
 
@@ -326,21 +308,13 @@ public class GeodesicReconstruction3DHybrid0Float extends GeodesicReconstruction
 		// the maximal value around current pixel
 		float maxValue;
 
-		if (showProgress) 
-		{
-			IJ.showProgress(0, sizeZ);
-		}
-		
 		float[] slice, maskSlice; 
 		
 		// Iterate over pixels
 		for (int z = 0; z < sizeZ; z++) 
 		{
-			if (showProgress) 
-			{
-				IJ.showProgress(z + 1, sizeZ);
-			}
-			
+			showProgress(z, sizeZ);
+						
 			// Extract slices
 			slice = this.resultSlices[z];
 			maskSlice = this.maskSlices[z];
@@ -382,22 +356,13 @@ public class GeodesicReconstruction3DHybrid0Float extends GeodesicReconstruction
 		// the maximal value around current pixel
 		float maxValue;
 
-		if (showProgress) 
-		{
-			IJ.showProgress(0, sizeZ);
-		}
-
 		float[] slice, slice2, maskSlice;
 		
 		// Iterate over pixels
 		for (int z = 0; z < sizeZ; z++)
 		{
-			if (showProgress) 
-			{
-				IJ.showProgress(z + 1, sizeZ);
-				System.out.println("z = " + z);
-			}
-
+			showProgress(z, sizeZ, "z = " + z);
+			
 			// Extract slices
 			maskSlice = this.maskSlices[z];
 			slice = this.resultSlices[z];
@@ -462,21 +427,12 @@ public class GeodesicReconstruction3DHybrid0Float extends GeodesicReconstruction
 		// the maximal value around current pixel
 		float maxValue;
 
-		if (showProgress) 
-		{
-			IJ.showProgress(0, sizeZ);
-		}
-
 		float[] slice, maskSlice; 
 		
 		// Iterate over voxels
 		for (int z = sizeZ - 1; z >= 0; z--) 
 		{
-			if (showProgress) 
-			{
-				IJ.showProgress(sizeZ - z, sizeZ);
-				System.out.println("z = " + z);
-			}
+			showProgress(sizeZ - 1 - z, sizeZ, "z = " + z);
 
 			// Extract slices
 			slice = this.resultSlices[z];
@@ -532,21 +488,12 @@ public class GeodesicReconstruction3DHybrid0Float extends GeodesicReconstruction
 		// the maximal value around current pixel
 		float maxValue;
 	
-		if (showProgress) 
-		{
-			IJ.showProgress(0, sizeZ);
-		}
-	
 		float[] slice, maskSlice;
 		
 		// Iterate over voxels
 		for (int z = sizeZ - 1; z >= 0; z--)
 		{
-			if (showProgress)
-			{
-				IJ.showProgress(sizeZ - z, sizeZ);
-				System.out.println("z = " + z);
-			}
+			showProgress(sizeZ - 1 - z, sizeZ, "z = " + z);
 	
 			// Extract slices
 			maskSlice = this.maskSlices[z];
@@ -574,7 +521,7 @@ public class GeodesicReconstruction3DHybrid0Float extends GeodesicReconstruction
 							for (int x2 = min(x + 1, sizeX - 1); x2 >= xmin; x2--)
 							{
 								maxValue = max(maxValue, slice2[y2 * sizeX + x2] * sign);
-								}
+							}
 						}
 					}
 	
