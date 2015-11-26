@@ -7,7 +7,6 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import ij.IJ;
 import ij.ImageStack;
-import inra.ijpb.algo.AlgoStub;
 
 
 /**
@@ -22,8 +21,7 @@ import inra.ijpb.algo.AlgoStub;
  * @author David Legland
  * 
  */
-public class GeodesicReconstructionByDilation3DGray8Scanning extends AlgoStub
-		implements GeodesicReconstruction3DAlgo
+public class GeodesicReconstructionByDilation3DGray8Scanning extends GeodesicReconstruction3DAlgoStub
 {
 	ImageStack marker;
 	ImageStack mask;
@@ -37,21 +35,11 @@ public class GeodesicReconstructionByDilation3DGray8Scanning extends AlgoStub
 	/** image depth */
 	int sizeZ = 0;
 
-	int connectivity = 6;
-	
 	/**
 	 * The flag indicating whether the result image has been modified during
 	 * last image scan
 	 */
 	boolean modif;
-
-	/**
-	 * boolean flag for toggling the display of debugging infos.
-	 */
-	public boolean verbose = false;
-	
-	public boolean showStatus = true; 
-	public boolean showProgress = false; 
 
 	/**
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
@@ -69,17 +57,6 @@ public class GeodesicReconstructionByDilation3DGray8Scanning extends AlgoStub
 	{
 		this.connectivity = connectivity;
 	}
-
-	public int getConnectivity() 
-	{
-		return this.connectivity;
-	}
-	
-	public void setConnectivity(int conn)
-	{
-		this.connectivity = conn;
-	}
-
 
 	/**
 	 * Run the reconstruction by dilation algorithm using the images specified

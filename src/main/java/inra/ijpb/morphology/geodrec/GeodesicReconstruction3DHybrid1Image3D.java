@@ -7,7 +7,6 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import ij.IJ;
 import ij.ImageStack;
-import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.data.Cursor3D;
 import inra.ijpb.data.image.Image3D;
 import inra.ijpb.data.image.Images3D;
@@ -36,12 +35,9 @@ import java.util.ArrayDeque;
  * @author David Legland
  * 
  */
-public class GeodesicReconstruction3DHybrid1Image3D extends AlgoStub implements
-		GeodesicReconstruction3DAlgo
+public class GeodesicReconstruction3DHybrid1Image3D extends	GeodesicReconstruction3DAlgoStub
 {
 	GeodesicReconstructionType reconstructionType = GeodesicReconstructionType.BY_DILATION;
-	
-	int connectivity = 6;
 	
 	ImageStack markerStack;
 	ImageStack maskStack;
@@ -61,15 +57,6 @@ public class GeodesicReconstruction3DHybrid1Image3D extends AlgoStub implements
 	/** the queue containing the positions that need update */
 	ArrayDeque<Cursor3D> queue;
 	
-	/**
-	 * 
-	 * boolean flag for toggling the display of debugging infos.
-	 */
-	public boolean verbose = false;
-	
-	public boolean showStatus = true; 
-	public boolean showProgress = false; 
-
 	/**
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * using the default connectivity 6.
@@ -123,17 +110,6 @@ public class GeodesicReconstruction3DHybrid1Image3D extends AlgoStub implements
 	{
 	this.reconstructionType = reconstructionType;
 	}
-
-	public int getConnectivity()
-	{
-		return this.connectivity;
-	}
-	
-	public void setConnectivity(int conn)
-	{
-		this.connectivity = conn;
-	}
-
 
 	/**
 	 * Run the reconstruction by dilation algorithm using the images specified

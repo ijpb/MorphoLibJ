@@ -7,10 +7,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import ij.IJ;
 import ij.ImageStack;
-import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.data.Cursor3D;
-import inra.ijpb.data.image.Images3D;
-import inra.ijpb.morphology.GeodesicReconstruction3D;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -38,12 +35,9 @@ import java.util.Deque;
  * @author David Legland
  * 
  */
-public class GeodesicReconstruction3DHybrid0Float extends AlgoStub implements
-		GeodesicReconstruction3DAlgo 
+public class GeodesicReconstruction3DHybrid0Float extends GeodesicReconstruction3DAlgoStub 
 {
 	GeodesicReconstructionType reconstructionType = GeodesicReconstructionType.BY_DILATION;
-	
-	int connectivity = 6;
 	
 	ImageStack markerStack;
 	ImageStack maskStack;
@@ -62,15 +56,6 @@ public class GeodesicReconstruction3DHybrid0Float extends AlgoStub implements
 
 	/** the queue containing the positions that need update */
 	Deque<Cursor3D> queue;
-	
-	/**
-	 * 
-	 * boolean flag for toggling the display of debugging infos.
-	 */
-	public boolean verbose = false;
-	
-	public boolean showStatus = true; 
-	public boolean showProgress = false; 
 
 	/**
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
@@ -123,17 +108,6 @@ public class GeodesicReconstruction3DHybrid0Float extends AlgoStub implements
 	{
 		this.reconstructionType = reconstructionType;
 	}
-
-	public int getConnectivity() 
-	{
-		return this.connectivity;
-	}
-	
-	public void setConnectivity(int conn) 
-	{
-		this.connectivity = conn;
-	}
-
 
 	/**
 	 * Run the reconstruction by dilation algorithm using the images specified
@@ -794,92 +768,4 @@ public class GeodesicReconstruction3DHybrid0Float extends AlgoStub implements
 			queue.add(position);
 		}
 	}
-
-	public static final void main(String[] args) 
-	{
-		ImageStack mask = createInvertedLeveledCubeGraphImage();
-
-		ImageStack marker = mask.duplicate();
-		Images3D.fill(marker, 255);
-		marker.setVoxel(0, 0, 0, 0);
-		
-		System.out.println("=== mask ===");
-		Images3D.print(mask);
-		
-		ImageStack result = GeodesicReconstruction3D.reconstructByErosion(marker, mask, 6);
-		System.out.println("=== Result ===");
-		Images3D.print(result);
-		
-		if (((int)result.getVoxel(0, 4, 0)) != 224) 
-		{
-			System.out.println("Wrong result!");
-		}
-	}
-	
-	private static final ImageStack createInvertedLeveledCubeGraphImage() 
-	{
-		ImageStack stack = createCubeGraphImage();
-		for (int z = 0; z < stack.getSize(); z++) 
-		{
-			for (int y = 0; y < stack.getHeight(); y++) 
-			{
-				for (int x = 0; x < stack.getWidth(); x++) 
-				{
-					stack.setVoxel(x, y, z, 255 - stack.getVoxel(x, y, z));
-				}
-			}
-		}
-		stack.setVoxel(2, 0, 0,  32);
-		stack.setVoxel(4, 2, 0,  64);
-		stack.setVoxel(4, 4, 2,  96);
-		stack.setVoxel(4, 2, 4, 128);
-		stack.setVoxel(2, 0, 4, 160);
-		stack.setVoxel(0, 2, 4, 192);
-		stack.setVoxel(0, 4, 2, 224);
-
-		return stack;
-	}
-	
-	/**
-	 * Creates a 3D image containing thin cube mesh.
-	 */
-	private static final ImageStack createCubeGraphImage() {
-		int sizeX = 5;
-		int sizeY = 5;
-		int sizeZ = 5;
-		int bitDepth = 8;
-		
-		// create empty stack
-		ImageStack stack = ImageStack.create(sizeX, sizeY, sizeZ, bitDepth);
-		
-		// coordinates of the cube edges
-		int x1 = 0;
-		int x2 = 4;
-		int y1 = 0;
-		int y2 = 4;
-		int z1 = 0;
-		int z2 = 4;
-		
-		// First, the edges in the x direction
-		for (int x = x1; x <= x2; x++) {
-			stack.setVoxel(x, y1, z1, 255);
-			stack.setVoxel(x, y1, z2, 255);
-		}				
-		
-		// then, the edges in the y direction
-		for (int y = y1; y <= y2; y++) {
-			stack.setVoxel(x2, y, z1, 255);
-			stack.setVoxel(x1, y, z2, 255);
-			stack.setVoxel(x2, y, z2, 255);
-		}				
-
-		// Finally, the edges in the z direction
-		for (int z = z1; z <= z2; z++) {
-			stack.setVoxel(x1, y2, z, 255);
-			stack.setVoxel(x2, y2, z, 255);
-		}				
-		
-		return stack;
-	}
-
 }

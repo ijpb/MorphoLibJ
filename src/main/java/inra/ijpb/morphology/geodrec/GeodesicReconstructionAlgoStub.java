@@ -20,14 +20,21 @@ public abstract class GeodesicReconstructionAlgoStub extends AlgoStub implements
 	protected int connectivity = 4;
 	
 	/**
-	 * boolean flag for toggling the display of debugging infos.
+	 * Boolean flag for the display of debugging infos.
 	 */
 	public boolean verbose = false;
 	
+	/**
+	 * Boolean flag for the display of algorithm state in ImageJ status bar
+	 */
 	public boolean showStatus = true;
 	
+	/**
+	 * Boolean flag for the display of algorithm progress in ImageJ status bar
+	 */
 	public boolean showProgress = false; 
 
+	
 	/* (non-Javadoc)
 	 * @see inra.ijpb.morphology.geodrec.GeodesicReconstructionAlgo#getConnectivity()
 	 */

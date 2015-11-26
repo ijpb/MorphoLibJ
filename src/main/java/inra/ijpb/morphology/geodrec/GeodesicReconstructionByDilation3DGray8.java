@@ -5,12 +5,10 @@ package inra.ijpb.morphology.geodrec;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-
-import java.util.LinkedList;
-
 import ij.IJ;
 import ij.ImageStack;
-import inra.ijpb.algo.AlgoStub;
+
+import java.util.LinkedList;
 
 
 /**
@@ -18,8 +16,7 @@ import inra.ijpb.algo.AlgoStub;
  * @author David Legland
  *
  */
-public class GeodesicReconstructionByDilation3DGray8 extends AlgoStub implements
-		GeodesicReconstruction3DAlgo
+public class GeodesicReconstructionByDilation3DGray8 extends GeodesicReconstruction3DAlgoStub
 {
 	ImageStack marker;
 	ImageStack mask;
@@ -33,8 +30,6 @@ public class GeodesicReconstructionByDilation3DGray8 extends AlgoStub implements
 	/** image depth */
 	int size3 = 0;
 
-	int connectivity = 6;
-	
 	LinkedList<int[]> queue;
 	
 	/**
@@ -42,15 +37,6 @@ public class GeodesicReconstructionByDilation3DGray8 extends AlgoStub implements
 	 * last image scan
 	 */
 	boolean modif;
-
-	/**
-	 * 
-	 * boolean flag for toggling the display of debugging infos.
-	 */
-	public boolean verbose = false;
-	
-	public boolean showStatus = true; 
-	public boolean showProgress = false; 
 
 	/**
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
@@ -67,16 +53,6 @@ public class GeodesicReconstructionByDilation3DGray8 extends AlgoStub implements
 	public GeodesicReconstructionByDilation3DGray8(int connectivity)
 	{
 		this.connectivity = connectivity;
-	}
-
-	public int getConnectivity()
-	{
-		return this.connectivity;
-	}
-
-	public void setConnectivity(int conn)
-	{
-		this.connectivity = conn;
 	}
 
 	/**
