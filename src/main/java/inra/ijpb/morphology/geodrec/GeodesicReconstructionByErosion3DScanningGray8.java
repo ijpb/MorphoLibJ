@@ -9,7 +9,9 @@ import ij.ImageStack;
 
 
 /**
- * Geodesic reconstruction by erosion for 3D stacks of byte processors.
+ * Geodesic reconstruction by erosion for 3D stacks of byte processors, using
+ * scanning algorithm.
+ * 
  * @author David Legland
  *
  */
@@ -44,6 +46,9 @@ public class GeodesicReconstructionByErosion3DScanningGray8 extends GeodesicReco
 	/**
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * that specifies the connectivity to use.
+	 * 
+	 * @param connectivity
+	 *            the 3D connectivity to use (either 6 or 26)
 	 */
 	public GeodesicReconstructionByErosion3DScanningGray8(int connectivity)
 	{

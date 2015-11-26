@@ -65,6 +65,9 @@ public class GeodesicReconstructionHybrid extends GeodesicReconstructionAlgoStub
 	/**
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * that specifies the type of reconstruction, and using the connectivity 4.
+	 * 
+	 * @param type
+	 *            the type of reconstruction (erosion or dilation)
 	 */
 	public GeodesicReconstructionHybrid(GeodesicReconstructionType type) 
 	{
@@ -74,6 +77,9 @@ public class GeodesicReconstructionHybrid extends GeodesicReconstructionAlgoStub
 	/**
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * that specifies the connectivity to use.
+	 * 
+	 * @param connectivity
+	 *            the 2D connectivity to use (either 4 or 8)
 	 */
 	public GeodesicReconstructionHybrid(int connectivity)
 	{
@@ -83,6 +89,11 @@ public class GeodesicReconstructionHybrid extends GeodesicReconstructionAlgoStub
 	/**
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * that specifies the type of reconstruction, and the connectivity to use.
+	 * 
+	 * @param type
+	 *            the type of reconstruction (erosion or dilation)
+	 * @param connectivity
+	 *            the 2D connectivity to use (either 4 or 8)
 	 */
 	public GeodesicReconstructionHybrid(GeodesicReconstructionType type, int connectivity) 
 	{

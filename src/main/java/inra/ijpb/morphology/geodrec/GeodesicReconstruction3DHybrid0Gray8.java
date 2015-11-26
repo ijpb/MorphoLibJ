@@ -14,8 +14,8 @@ import java.util.Deque;
 
 /**
  * <p>
- * Geodesic reconstruction for 3D stacks using hybrid algorithm. This class
- * manages both reconstructions by dilation and erosion.
+ * Geodesic reconstruction for 3D stacks of bytes, using hybrid algorithm. This
+ * class manages both reconstructions by dilation and erosion.
  * </p>
  * 
  * <p>
@@ -67,6 +67,9 @@ public class GeodesicReconstruction3DHybrid0Gray8 extends GeodesicReconstruction
 	/**
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * that specifies the type of reconstruction, and using the connectivity 6.
+	 * 
+	 * @param type
+	 *            the type of reconstruction (erosion or dilation)
 	 */
 	public GeodesicReconstruction3DHybrid0Gray8(GeodesicReconstructionType type)
 	{
@@ -76,6 +79,11 @@ public class GeodesicReconstruction3DHybrid0Gray8 extends GeodesicReconstruction
 	/**
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * that specifies the type of reconstruction, and the connectivity to use.
+	 * 
+	 * @param type
+	 *            the type of reconstruction (erosion or dilation)
+	 * @param connectivity
+	 *            the 3D connectivity to use (either 6 or 26)
 	 */
 	public GeodesicReconstruction3DHybrid0Gray8(GeodesicReconstructionType type, int connectivity)
 	{
@@ -86,6 +94,9 @@ public class GeodesicReconstruction3DHybrid0Gray8 extends GeodesicReconstruction
 	/**
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * that specifies the connectivity to use.
+	 * 
+	 * @param connectivity
+	 *            the 3D connectivity to use (either 6 or 26)
 	 */
 	public GeodesicReconstruction3DHybrid0Gray8(int connectivity) 
 	{

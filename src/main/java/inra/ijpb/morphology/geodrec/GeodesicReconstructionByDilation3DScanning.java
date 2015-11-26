@@ -67,6 +67,9 @@ public class GeodesicReconstructionByDilation3DScanning extends GeodesicReconstr
 	/**
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * that specifies the connectivity to use.
+	 * 
+	 * @param connectivity
+	 *            the 3D connectivity to use (either 6 or 26)
 	 */
 	public GeodesicReconstructionByDilation3DScanning(int connectivity) 
 	{
@@ -77,6 +80,12 @@ public class GeodesicReconstructionByDilation3DScanning extends GeodesicReconstr
 	/**
 	 * Run the reconstruction by dilation algorithm using the images specified
 	 * as argument.
+	 * 
+	 * @param marker
+	 *            the image used as marker for reconstruction
+	 * @param mask
+	 *            the image used to constrain the reconstruction
+	 * @return the result of geodesic reconstruction
 	 */
 	public ImageStack applyTo(ImageStack marker, ImageStack mask)
 	{
@@ -154,6 +163,14 @@ public class GeodesicReconstructionByDilation3DScanning extends GeodesicReconstr
 	/**
 	 * Run the reconstruction by dilation algorithm using the images specified
 	 * as argument.
+	 * 
+	 * @param marker
+	 *            the image used as marker for reconstruction
+	 * @param mask
+	 *            the image used to constrain the reconstruction
+	 * @param binaryMask
+	 *            the region of intersect for processing input images
+	 * @return the result of geodesic reconstruction
 	 */
 	public ImageStack applyTo(
 			ImageStack marker, 

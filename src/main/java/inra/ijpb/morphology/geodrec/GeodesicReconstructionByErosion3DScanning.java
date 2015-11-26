@@ -66,6 +66,9 @@ public class GeodesicReconstructionByErosion3DScanning extends GeodesicReconstru
 	/**
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * that specifies the connectivity to use.
+	 * 
+	 * @param connectivity
+	 *            the 3D connectivity to use (either 6 or 26)
 	 */
 	public GeodesicReconstructionByErosion3DScanning(int connectivity) 
 	{

@@ -11,7 +11,9 @@ import java.util.LinkedList;
 
 
 /**
- * geodesic reconstruction by dilation for 3D stacks of byte processors.
+ * Geodesic reconstruction by dilation for 3D stacks of byte processors, using
+ * hybrid algorithm and implemented only for 26 connectivity.
+ * 
  * @author David Legland
  *
  */
@@ -48,7 +50,10 @@ public class GeodesicReconstructionByDilation3DGray8 extends GeodesicReconstruct
 	/**
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * that specifies the connectivity to use.
-	 */
+	 * 
+	 * @param connectivity
+	 *            the 3D connectivity to use (either 6 or 26)
+*/
 	public GeodesicReconstructionByDilation3DGray8(int connectivity)
 	{
 		this.connectivity = connectivity;
@@ -57,6 +62,12 @@ public class GeodesicReconstructionByDilation3DGray8 extends GeodesicReconstruct
 	/**
 	 * Run the reconstruction by dilation algorithm using the images specified
 	 * as argument.
+	 * 
+	 * @param marker
+	 *            the image used as marker for reconstruction
+	 * @param mask
+	 *            the image used to constrain the reconstruction
+	 * @return the result of geodesic reconstruction
 	 */
 	public ImageStack applyToTmp(ImageStack marker, ImageStack mask)
 	{
@@ -154,6 +165,12 @@ public class GeodesicReconstructionByDilation3DGray8 extends GeodesicReconstruct
 	/**
 	 * Run the reconstruction by dilation algorithm using the images specified
 	 * as argument.
+	 * 
+	 * @param marker
+	 *            the image used as marker for reconstruction
+	 * @param mask
+	 *            the image used to constrain the reconstruction
+	 * @return the result of geodesic reconstruction
 	 */
 	public ImageStack applyTo(ImageStack marker, ImageStack mask)
 	{
@@ -241,6 +258,12 @@ public class GeodesicReconstructionByDilation3DGray8 extends GeodesicReconstruct
 	/**
 	 * Run the reconstruction by dilation algorithm using the images specified
 	 * as argument.
+	 * 
+	 * @param marker
+	 *            the image used as marker for reconstruction
+	 * @param mask
+	 *            the image used to constrain the reconstruction
+	 * @return the result of geodesic reconstruction
 	 */
 	public ImageStack applyToOld(ImageStack marker, ImageStack mask) 
 	{

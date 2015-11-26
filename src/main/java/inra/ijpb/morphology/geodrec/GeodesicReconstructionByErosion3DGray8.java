@@ -11,9 +11,8 @@ import java.util.LinkedList;
 
 
 /**
- * Geodesic reconstruction by erosion for 3D stacks of byte processors.
- * 
- * Implemented only for the 26 connectivity.
+ * Geodesic reconstruction by erosion for 3D stacks of byte processors, using
+ * hybrid algorithm and implemented only for the 26 connectivity.
  * 
  * @author David Legland
  *
@@ -52,6 +51,9 @@ public class GeodesicReconstructionByErosion3DGray8 extends GeodesicReconstructi
 	/**
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * that specifies the connectivity to use.
+	 * 
+	 * @param connectivity
+	 *            the 3D connectivity to use (either 6 or 26)
 	 */
 	public GeodesicReconstructionByErosion3DGray8(int connectivity) 
 	{

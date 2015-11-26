@@ -36,12 +36,16 @@ public interface GeodesicReconstruction3DAlgo extends Algo
 	public ImageStack applyTo(ImageStack marker, ImageStack mask, ImageStack binaryMask );
 	
 	/**
-	 * Returns the chosen connectivity of the algorithm, either 6 or 26. 
+	 * Returns the chosen connectivity of the algorithm, either 6 or 26.
+	 * 
+	 * @return the current connectivity for this algorithm
 	 */
 	public int getConnectivity();
 
 	/**
 	 * Changes the connectivity of the algorithm to either 6 or 26. 
+	 * 
+	 * @param conn the 3D connectivity to use, either 6 or 26 
 	 */
 	public void setConnectivity(int conn);
 }

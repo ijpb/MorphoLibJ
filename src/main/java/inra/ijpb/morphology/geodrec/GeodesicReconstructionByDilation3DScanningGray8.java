@@ -9,7 +9,8 @@ import ij.ImageStack;
 
 
 /**
- * Geodesic reconstruction by dilation for 3D stacks of byte processors.
+ * Geodesic reconstruction by dilation for 3D stacks of byte processors, using
+ * scanning algorithm.
  * 
  * This version uses iterations of forward and backward passes until no more
  * modifications are made.
@@ -51,6 +52,9 @@ public class GeodesicReconstructionByDilation3DScanningGray8 extends GeodesicRec
 	/**
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * that specifies the connectivity to use.
+	 * 
+	 * @param connectivity
+	 *            the 3D connectivity to use (either 6 or 26)
 	 */
 	public GeodesicReconstructionByDilation3DScanningGray8(int connectivity)
 	{

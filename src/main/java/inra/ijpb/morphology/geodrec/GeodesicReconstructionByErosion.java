@@ -48,6 +48,9 @@ public class GeodesicReconstructionByErosion extends GeodesicReconstructionAlgoS
 	/**
 	 * Creates a new instance of geodesic reconstruction by erosion algorithm,
 	 * that specifies the connectivity to use.
+	 * 
+	 * @param connectivity
+	 *            the 2D connectivity to use (either 4 or 8)
 	 */
 	public GeodesicReconstructionByErosion(int connectivity)
 	{

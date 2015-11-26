@@ -9,9 +9,8 @@ import ij.ImageStack;
 
 
 /**
- * Implementation of geodesic reconstruction by dilation using scanning
- * algorithm, for 3D images of any type, implemented only for C26 connectivity.
- * 
+ * Geodesic reconstruction by dilation for 3D images of any type, using scanning
+ * algorithm and implemented only for C26 connectivity.
  * 
  * @author David Legland
  *
@@ -47,6 +46,9 @@ public class GeodesicReconstructionByDilation3D extends GeodesicReconstruction3D
 	/**
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * that specifies the connectivity to use.
+	 * 
+	 * @param connectivity
+	 *            the 3D connectivity to use (either 6 or 26)
 	 */
 	public GeodesicReconstructionByDilation3D(int connectivity)
 	{

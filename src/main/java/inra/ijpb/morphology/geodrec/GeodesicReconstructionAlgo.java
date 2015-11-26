@@ -43,11 +43,15 @@ public interface GeodesicReconstructionAlgo
 	
 	/**
 	 * Returns the chosen connectivity of the algorithm, either 4 or 8. 
+	 * 
+	 * @return the current connectivity for this algorithm
 	 */
 	public int getConnectivity();
 
 	/**
-	 * Changes the connectivity of the algorithm to either 4 or 8. 
+	 * Changes the connectivity of the algorithm to either 4 or 8.
+	 * 
+	 * @param conn the connectivity to use, either 4 or 8
 	 */
 	public void setConnectivity(int conn);
 }

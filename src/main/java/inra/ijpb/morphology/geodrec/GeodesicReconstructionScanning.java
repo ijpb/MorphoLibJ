@@ -57,6 +57,9 @@ public class GeodesicReconstructionScanning extends GeodesicReconstructionAlgoSt
 	/**
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * that specifies the type of reconstruction, and using the connectivity 4.
+	 * 
+	 * @param type
+	 *            the type of reconstruction (erosion or dilation)
 	 */
 	public GeodesicReconstructionScanning(GeodesicReconstructionType type) 
 	{
@@ -66,6 +69,9 @@ public class GeodesicReconstructionScanning extends GeodesicReconstructionAlgoSt
 	/**
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * that specifies the connectivity to use.
+	 * 
+	 * @param connectivity
+	 *            the 2D connectivity to use (either 4 or 8)
 	 */
 	public GeodesicReconstructionScanning(int connectivity)
 	{
@@ -75,6 +81,11 @@ public class GeodesicReconstructionScanning extends GeodesicReconstructionAlgoSt
 	/**
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * that specifies the type of reconstruction, and the connectivity to use.
+	 * 
+	 * @param type
+	 *            the type of reconstruction (erosion or dilation)
+	 * @param connectivity
+	 *            the 2D connectivity to use (either 4 or 8)
 	 */
 	public GeodesicReconstructionScanning(GeodesicReconstructionType type, int connectivity) 
 	{

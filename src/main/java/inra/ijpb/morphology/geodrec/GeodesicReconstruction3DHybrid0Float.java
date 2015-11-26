@@ -14,7 +14,7 @@ import java.util.Deque;
 
 /**
  * <p>
- * Geodesic reconstruction for 3D stacks using hybrid algorithm. This class
+ * Geodesic reconstruction for 3D stacks of floats, using hybrid algorithm. This class
  * manages both reconstructions by dilation and erosion.
  * </p>
  * 
@@ -67,6 +67,9 @@ public class GeodesicReconstruction3DHybrid0Float extends GeodesicReconstruction
 	/**
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * that specifies the type of reconstruction, and using the connectivity 6.
+	 * 
+	 * @param type
+	 *            the type of reconstruction (erosion or dilation)
 	 */
 	public GeodesicReconstruction3DHybrid0Float(GeodesicReconstructionType type) 
 	{
@@ -76,6 +79,11 @@ public class GeodesicReconstruction3DHybrid0Float extends GeodesicReconstruction
 	/**
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * that specifies the type of reconstruction, and the connectivity to use.
+	 * 
+	 * @param type
+	 *            the type of reconstruction (erosion or dilation)
+	 * @param connectivity
+	 *            the 3D connectivity to use (either 6 or 26)
 	 */
 	public GeodesicReconstruction3DHybrid0Float(GeodesicReconstructionType type, int connectivity)
 	{
@@ -86,6 +94,9 @@ public class GeodesicReconstruction3DHybrid0Float extends GeodesicReconstruction
 	/**
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * that specifies the connectivity to use.
+	 * 
+	 * @param connectivity
+	 *            the 3D connectivity to use (either 6 or 26)
 	 */
 	public GeodesicReconstruction3DHybrid0Float(int connectivity) 
 	{
@@ -117,7 +128,7 @@ public class GeodesicReconstruction3DHybrid0Float extends GeodesicReconstruction
 		// Check bit depth of input images
 		if (marker.getBitDepth() != 32 || mask.getBitDepth() != 32) 
 		{
-			throw new IllegalArgumentException("Requires both marker and mask images to have 8-bits depth");
+			throw new IllegalArgumentException("Requires both marker and mask images to have 32-bits depth");
 		}
 		
 		// Keep references to input images
