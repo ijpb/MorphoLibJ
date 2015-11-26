@@ -24,14 +24,15 @@ import ij.process.FloatProcessor;
  * @author David Legland
  *
  */
-public class GeodesicReconstructionByDilation implements GeodesicReconstructionAlgo 
+public class GeodesicReconstructionByDilation extends GeodesicReconstructionAlgoStub 
 {
+	// ==================================================
+	// Class variables
+	
 	ImageProcessor marker;
 	ImageProcessor mask;
 	
 	ImageProcessor result;
-	
-	int connectivity = 4;
 	
 	/**
 	 * The flag indicating whether the result image has been modified during
@@ -39,15 +40,10 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 	 */
 	boolean modif;
 
-	/**
-	 * 
-	 * boolean flag for toggling the display of debugging infos.
-	 */
-	public boolean verbose = false;
 	
-	public boolean showStatus = true; 
-	public boolean showProgress = false; 
-
+	// ==================================================
+	// Constructors 
+	
 	/**
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * using the default connectivity 4.
@@ -65,17 +61,10 @@ public class GeodesicReconstructionByDilation implements GeodesicReconstructionA
 		this.connectivity = connectivity;
 	}
 
-	public int getConnectivity()
-	{
-		return this.connectivity;
-	}
 	
-	public void setConnectivity(int conn) 
-	{
-		this.connectivity = conn;
-	}
+	// ==================================================
+	// Methods 
 	
-
 	/**
 	 * Run the reconstruction by dilation algorithm using the images specified
 	 * as argument.

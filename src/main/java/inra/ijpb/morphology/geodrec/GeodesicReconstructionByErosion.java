@@ -17,15 +17,15 @@ import ij.process.ImageProcessor;
  * @author David Legland
  *
  */
-public class GeodesicReconstructionByErosion implements
-		GeodesicReconstructionAlgo 
+public class GeodesicReconstructionByErosion extends GeodesicReconstructionAlgoStub 
 {
+	// ==================================================
+	// Class variables
+	
 	ImageProcessor marker;
 	ImageProcessor mask;
 	
 	ImageProcessor result;
-	
-	int connectivity = 4;
 	
 	/**
 	 * The flag indicating whether the result image has been modified during
@@ -33,13 +33,9 @@ public class GeodesicReconstructionByErosion implements
 	 */
 	boolean modif;
 
-	/**
-	 * boolean flag for toggling the display of debugging infos.
-	 */
-	public boolean verbose = false;
 	
-	public boolean showStatus = true; 
-	public boolean showProgress = false; 
+	// ==================================================
+	// Constructors 
 
 	/**
 	 * Creates a new instance of geodesic reconstruction by erosion algorithm,
@@ -57,17 +53,11 @@ public class GeodesicReconstructionByErosion implements
 	{
 		this.connectivity = connectivity;
 	}
-
-	public int getConnectivity()
-	{
-		return this.connectivity;
-	}
-
-	public void setConnectivity(int conn)
-	{
-		this.connectivity = conn;
-	}
 	
+	
+	// ==================================================
+	// Methods 
+
 	/**
 	 * Run the reconstruction by erosion algorithm using the images specified
 	 * as argument.

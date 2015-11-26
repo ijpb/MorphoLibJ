@@ -12,7 +12,6 @@ import java.util.Deque;
 import ij.IJ;
 import ij.process.ImageProcessor;
 import ij.process.FloatProcessor;
-import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.data.Cursor2D;
 
 /**
@@ -31,16 +30,13 @@ import inra.ijpb.data.Cursor2D;
  * @author David Legland
  *
  */
-public class GeodesicReconstructionHybrid extends AlgoStub implements
-		GeodesicReconstructionAlgo 
+public class GeodesicReconstructionHybrid extends GeodesicReconstructionAlgoStub 
 {
-	// ------------------------
-	// Class fields
+	// ==================================================
+	// Class variables 
 	
 	GeodesicReconstructionType reconstructionType = GeodesicReconstructionType.BY_DILATION;
 
-	int connectivity = 4;
-	
 	ImageProcessor marker;
 	ImageProcessor mask;
 	
@@ -54,18 +50,10 @@ public class GeodesicReconstructionHybrid extends AlgoStub implements
 	/** the queue containing the positions that need update */
 	Deque<Cursor2D> queue;
 
-	/**
-	 * 
-	 * boolean flag for toggling the display of debugging infos.
-	 */
-	public boolean verbose = false;
 	
-	public boolean showStatus = true; 
-	public boolean showProgress = false; 
-
-	// ------------------------
-	// Constructors
-	
+	// ==================================================
+	// Constructors 
+		
 	/**
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * using the default connectivity 4.
@@ -102,7 +90,7 @@ public class GeodesicReconstructionHybrid extends AlgoStub implements
 		this.connectivity = connectivity;
 	}
 
-	// ------------------------
+	// ==================================================
 	// Accesors and mutators
 	
 	/**
@@ -121,18 +109,8 @@ public class GeodesicReconstructionHybrid extends AlgoStub implements
 		this.reconstructionType = reconstructionType;
 	}
 
-	public int getConnectivity()
-	{
-		return this.connectivity;
-	}
 	
-	public void setConnectivity(int conn)
-{
-		this.connectivity = conn;
-	}
-	
-
-	// ------------------------
+	// ==================================================
 	// Methods implementing the GeodesicReconstruction interface
 	
 	/**

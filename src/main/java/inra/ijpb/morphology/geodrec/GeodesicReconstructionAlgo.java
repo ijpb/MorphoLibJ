@@ -49,5 +49,5 @@ public interface GeodesicReconstructionAlgo
 	/**
 	 * Changes the connectivity of the algorithm to either 4 or 8. 
 	 */
-	public void setConnectivity(int adj);
+	public void setConnectivity(int conn);
 }

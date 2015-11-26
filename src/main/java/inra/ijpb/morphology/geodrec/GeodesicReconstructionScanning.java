@@ -5,9 +5,8 @@ package inra.ijpb.morphology.geodrec;
 
 import static java.lang.Math.min;
 import ij.IJ;
-import ij.process.ImageProcessor;
 import ij.process.FloatProcessor;
-import inra.ijpb.algo.AlgoStub;
+import ij.process.ImageProcessor;
 
 /**
  * Geodesic reconstruction for planar images, using scanning algorithm.
@@ -19,17 +18,13 @@ import inra.ijpb.algo.AlgoStub;
  * @author David Legland
  *
  */
-public class GeodesicReconstructionScanning extends AlgoStub implements
-		GeodesicReconstructionAlgo
+public class GeodesicReconstructionScanning extends GeodesicReconstructionAlgoStub
 {
-	// ------------------------
-	// Class fields
+	// ==================================================
+	// Class variables
 	
 	GeodesicReconstructionType reconstructionType = GeodesicReconstructionType.BY_DILATION;
 
-	int connectivity = 4;
-
-	
 	ImageProcessor marker;
 	ImageProcessor mask;
 	
@@ -47,19 +42,10 @@ public class GeodesicReconstructionScanning extends AlgoStub implements
 	 */
 	boolean modif;
 
-	/**
-	 * 
-	 * boolean flag for toggling the display of debugging infos.
-	 */
-	public boolean verbose = false;
 	
-	public boolean showStatus = true; 
-	public boolean showProgress = false; 
+	// ==================================================
+	// Constructors 
 
-	
-	// ------------------------
-	// Constructors
-	
 	/**
 	 * Creates a new instance of geodesic reconstruction by dilation algorithm,
 	 * using the default connectivity 4.
@@ -96,8 +82,9 @@ public class GeodesicReconstructionScanning extends AlgoStub implements
 		this.connectivity = connectivity;
 	}
 
-	// ------------------------
-	// Accesors and mutators
+	
+	// ==================================================
+	// Accessors and mutators
 	
 	/**
 	 * @return the reconstructionType
@@ -115,18 +102,8 @@ public class GeodesicReconstructionScanning extends AlgoStub implements
 		this.reconstructionType = reconstructionType;
 	}
 
-	public int getConnectivity()
-	{
-		return this.connectivity;
-	}
 	
-	public void setConnectivity(int conn)
-{
-		this.connectivity = conn;
-	}
-	
-
-	// ------------------------
+	// ==================================================
 	// Methods implementing the GeodesicReconstruction interface
 	
 	/**
