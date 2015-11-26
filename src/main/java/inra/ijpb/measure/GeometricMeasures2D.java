@@ -1267,7 +1267,7 @@ public class GeometricMeasures2D
 		{
 			for (int x = 0; x < width; x++) 
 			{
-				int label = labelImage.get(x, y);
+				int label = (int) labelImage.getf(x, y);
 				
 				// do not process pixels that do not belong to particle
 				if (label==0)

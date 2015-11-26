@@ -184,7 +184,7 @@ public class GeometricMeasures2DTest
 	}
 	
 	/**
-//	 * Test method for {@link ijt.measure.geometric.GeometricMeasures2D#maxInscribedCircle(ij.process.ImageProcessor)}.
+	 * Test method for {@link ijt.measure.geometric.GeometricMeasures2D#maxInscribedCircle(ij.process.ImageProcessor)}.
 	 */
 	@Test
 	public final void testMaxInscribedCircle() 
