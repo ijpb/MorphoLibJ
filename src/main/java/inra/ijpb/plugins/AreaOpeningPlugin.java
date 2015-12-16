@@ -10,8 +10,10 @@ import ij.plugin.filter.ExtendedPlugInFilter;
 import ij.plugin.filter.PlugInFilterRunner;
 import ij.process.ImageProcessor;
 import inra.ijpb.binary.BinaryImages;
+import inra.ijpb.label.LabelImages;
 
 import java.awt.AWTEvent;
+import java.util.HashMap;
 
 /**
  * Select binary particles in a planar image based on number of pixels.
@@ -39,14 +41,17 @@ public class AreaOpeningPlugin implements ExtendedPlugInFilter, DialogListener
 	/** Keep instance of result image */
 	private ImageProcessor result;
 
+	private ImageProcessor labelImage;
+	private HashMap<Integer, Integer> labelMap;
+	private int[] pixelCountArray;
 	
-	int pixelNumber = 100;
-//	boolean keepLargest = false;
+	int minPixelCount = 100;
 	
 	
 	@Override
 	public int setup(String arg, ImagePlus imp)
 	{
+		this.imagePlus = imp;
 		// Called at the end for cleaning up the results
 		if (arg.equals("final")) 
 		{
@@ -54,16 +59,31 @@ public class AreaOpeningPlugin implements ExtendedPlugInFilter, DialogListener
 			imagePlus.setProcessor(baseImage);
 			imagePlus.draw();
 			
+			// Execute core of the plugin
+			result = BinaryImages.areaOpening(baseImage, this.minPixelCount);
 			// as result is binary, choose inverted LUT 
 			result.invertLut();
 			
 			// Create a new ImagePlus with the result
-			String newName = imagePlus.getShortTitle() + "areaOpen";
+			String newName = imagePlus.getShortTitle() + "-areaOpen";
 			ImagePlus resPlus = new ImagePlus(newName, result);
+			
+			// copy spatial calibration and display settings 
 			resPlus.copyScale(imagePlus);
+			result.setColorModel(baseImage.getColorModel());
 			resPlus.show();
 			return DONE;
 		}
+		
+		// Normal setup
+    	this.baseImage = imp.getProcessor().duplicate();
+    	
+		// pre-compute label image and pixel count
+		ImageProcessor image = imagePlus.getProcessor();
+		this.labelImage = BinaryImages.componentsLabeling(image, 4, 16);
+		int[] labels = LabelImages.findAllLabels(labelImage);
+		this.labelMap = LabelImages.mapLabelIndices(labels);
+		this.pixelCountArray = LabelImages.pixelCount(labelImage, labels);
 		
 		return flags;
 	}
@@ -71,15 +91,10 @@ public class AreaOpeningPlugin implements ExtendedPlugInFilter, DialogListener
 	@Override
 	public int showDialog(ImagePlus imp, String command, PlugInFilterRunner pfr)
 	{
-		// Normal setup
-    	this.imagePlus = imp;
-    	this.baseImage = imp.getProcessor().duplicate();
-
 		// Create the configuration dialog
 		GenericDialog gd = new GenericDialog("Area Opening");
 
 		gd.addNumericField("Pixel Number", 100, 0, 10, "pixels");
-//		gd.addCheckbox("Keep_Largest", false);
 		
 		gd.addPreviewCheckbox(pfr);
 		gd.addDialogListener(this);
@@ -100,16 +115,20 @@ public class AreaOpeningPlugin implements ExtendedPlugInFilter, DialogListener
 	@Override
 	public void run(ImageProcessor image)
 	{
-		// Execute core of the plugin
-		result = BinaryImages.areaOpening(image, this.pixelNumber);
-
 		if (previewing)
 		{
-			// Fill up the values of original image with the (binary) result
-			double valMax = result.getMax();
+			// Iterate over pixels to change value of reference image
+			boolean keepPixel;
 			for (int i = 0; i < image.getPixelCount(); i++)
 			{
-				image.set(i, (int) (255 * result.getf(i) / valMax));
+				keepPixel = false;
+				int label = (int) this.labelImage.get(i);
+				if (label > 0) 
+				{
+					int index = this.labelMap.get(label); 
+					keepPixel = this.pixelCountArray[index] > this.minPixelCount;
+				}
+				image.set(i, keepPixel ? 255 : 0);
 			}
 		}
 	}
@@ -123,8 +142,7 @@ public class AreaOpeningPlugin implements ExtendedPlugInFilter, DialogListener
 	
     private void parseDialogParameters(GenericDialog gd) {
 		// extract chosen parameters
-		this.pixelNumber	= (int) gd.getNextNumber();
-//		this.keepLargest 	= gd.getNextBoolean();
+		this.minPixelCount	= (int) gd.getNextNumber();
     }
 
 	@Override
