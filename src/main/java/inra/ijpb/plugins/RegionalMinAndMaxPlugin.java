@@ -91,14 +91,14 @@ public class RegionalMinAndMaxPlugin implements ExtendedPlugInFilter, DialogList
 	private final static int[] connectivityValues = {4, 8}; 
 	
 	
-	/** Apparently, it's better to store flags in plugin */
+	/** keep flags in plugin */
 	private int flags = DOES_ALL | KEEP_PREVIEW | FINAL_PROCESSING;
 	
 	PlugInFilterRunner pfr;
 	int nPasses;
 	boolean previewing = false;
 	
-	/** need to keep the instance of ImagePlus */ 
+	/** keep the instance of ImagePlus */ 
 	private ImagePlus imagePlus;
 	
 	/** keep the original image, to restore it after the preview */
@@ -122,7 +122,7 @@ public class RegionalMinAndMaxPlugin implements ExtendedPlugInFilter, DialogList
 			return DONE;
 		}
 
-		// Called at the end for cleaning the results
+		// Called at the end for cleaning up the results
 		if (arg.equals("final")) {
 			// replace the preview image by the original image 
 			imagePlus.setProcessor(baseImage);
