@@ -34,7 +34,7 @@ Documentation
 
 A more detailed presentation of the plugin for the user is available on the 
 [ImageJ Wiki](http://imagejdocu.tudor.lu/doku.php?id=plugin:segmentation:morphological_segmentation:start), 
-as well as on the [Fiji Wiki](http://fiji.sc/Morphological_Segmentation).
+as well as on the [Fiji Wiki](http://fiji.sc/MorphoLibJ).
 
 The main source code directory is [src/main/java/inra/ijpb](http://github.com/ijpb/MorphoLibJ/tree/master/src/main/java/inra/ijpb).
 
