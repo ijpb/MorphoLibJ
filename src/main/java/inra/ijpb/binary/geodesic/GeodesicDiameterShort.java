@@ -4,6 +4,7 @@ import ij.IJ;
 import ij.measure.ResultsTable;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
+import inra.ijpb.binary.ChamferWeights;
 
 import java.awt.Point;
 import java.util.Iterator;
@@ -11,12 +12,21 @@ import java.util.TreeSet;
 
 /**
  * Computes geodesic diameter of a set of labeled particles or regions, using 
- * integer values coded as short (16 bits) for propagating distances.
+ * integer values coded as short (16 bits) for propagating chamfer distances.
  * 
  * This version uses optimized algorithm, that propagates distances of all
  * particles during each pass. This reduces computation overhead due to 
  * iteration over particles.
  * 
+ * <p>
+ * Example of use:
+ *<pre>{@code
+ *	short[] weights = ChamferWeights.CHESSKNIGHT.getShortWeights();
+ *	GeodesicDiameterShort gd = new GeodesicDiameterShort(weights);
+ *	ResultsTable table = gd.analyseImage(inputLabelImage);
+ *	table.show("Geodesic Diameter");
+ *}</pre>
+ *
  * @see inra.ijpb.binary.geodesic.GeodesicDiameterFloat
  * @see inra.ijpb.binary.geodesic.GeodesicDistanceTransform
  * 
@@ -25,11 +35,29 @@ import java.util.TreeSet;
  */
 public class GeodesicDiameterShort 
 {
+	// ==================================================
+	// Class variables
+	
 	/**
 	 * The weights for orthogonal, diagonal, and eventually chess-knight moves
 	 * neighbors
 	 */
 	short[] weights;
+	
+	// ==================================================
+	// Constructors 
+	
+	/**
+	 * Creates a new geodesic diameter computation operator.
+	 * 
+	 * @param chamferWeights
+	 *            an instance of ChamferWeights, which provides the float values
+	 *            used for propagating distances
+	 */
+	public GeodesicDiameterShort(ChamferWeights chamferWeights)
+	{
+		this.weights = chamferWeights.getShortWeights();
+	}
 	
 	/**
 	 * Creates a new geodesic diameter computation operator.
@@ -42,6 +70,10 @@ public class GeodesicDiameterShort
 	{
 		this.weights = weights;
 	}
+	
+
+	// ==================================================
+	// General methods 
 	
 	/**
 	 * Computes the geodesic diameter of each particle within the given label
@@ -60,8 +92,6 @@ public class GeodesicDiameterShort
 		
 		int[] labels = findAllLabels(labelImage);
 		int nbLabels = labels.length;
-//		int maxLabel = labels[nbLabels-1];		
-//		System.out.println("Max label: " + maxLabel);
 
 		// Create calculator for propagating distances
 		GeodesicDistanceTransform calculator;

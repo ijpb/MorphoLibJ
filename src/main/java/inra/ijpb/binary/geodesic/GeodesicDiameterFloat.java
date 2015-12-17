@@ -4,6 +4,7 @@ import ij.IJ;
 import ij.measure.ResultsTable;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
+import inra.ijpb.binary.ChamferWeights;
 
 import java.awt.Point;
 import java.util.Iterator;
@@ -11,23 +12,50 @@ import java.util.TreeSet;
 
 /**
  * Computes geodesic diameter of a set of labeled particles or regions, using 
- * floating point values for propagating distances.
+ * floating point values for propagating chamfer distances.
  * 
  * This version uses optimized algorithm, that propagates distances of all
  * particles during each pass. This reduces computation overhead due to 
  * iteration over particles.
  * 
+ * <p>
+ * Example of use:
+ *<pre>{@code
+ *	float[] weights = ChamferWeights.CHESSKNIGHT.getFloatWeights();
+ *	GeodesicDiameterFloat gd = new GeodesicDiameterFloat(weights);
+ *	ResultsTable table = gd.analyseImage(inputLabelImage);
+ *	table.show("Geodesic Diameter");
+ *}</pre>
+ *
  * @see inra.ijpb.binary.geodesic.GeodesicDiameterShort
  * @author dlegland
  *
  */
 public class GeodesicDiameterFloat 
 {
+	// ==================================================
+	// Class variables
+	
 	/**
 	 * The weights for orthogonal, diagonal, and eventually chess-knight moves
 	 * neighbors
 	 */
 	float[] weights;
+	
+	// ==================================================
+	// Constructors 
+	
+	/**
+	 * Creates a new geodesic diameter computation operator.
+	 * 
+	 * @param chamferWeights
+	 *            an instance of ChamferWeights, which provides the float values
+	 *            used for propagating distances
+	 */
+	public GeodesicDiameterFloat(ChamferWeights chamferWeights)
+	{
+		this.weights = chamferWeights.getFloatWeights();
+	}
 	
 	/**
 	 * Creates a new geodesic diameter computation operator.
@@ -41,6 +69,10 @@ public class GeodesicDiameterFloat
 		this.weights = weights;
 	}
 	
+
+	// ==================================================
+	// General methods 
+
 	/**
 	 * Computes the geodesic diameter of each particle within the given label
 	 * image.
@@ -59,9 +91,6 @@ public class GeodesicDiameterFloat
 		// compute max label within image
 		int[] labels = findAllLabels(labelImage);
 		int nbLabels = labels.length;
-//		int maxLabel = labels[nbLabels-1];
-//		System.out.println("Max label: " + maxLabel);
-		
 		
 		// Create calculator for propagating distances
 		GeodesicDistanceTransform calculator;
