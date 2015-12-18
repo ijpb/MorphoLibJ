@@ -18,6 +18,26 @@ public class BinaryImagesTest {
 	 * Checks that the maximum number of labels is greater than 2^16.
 	 */
 	@Test
+	public final void testComputeLabels_Byte() 
+	{
+		ImageProcessor image = new ByteProcessor(300, 300);
+		for (int y = 0; y < 15; y++)
+		{
+			for (int x = 0; x < 15; x++)
+			{
+				image.set(20 * x + 1, 20 * y + 1, 255);
+			}
+		}
+		
+		ImageProcessor labels = BinaryImages.componentsLabeling(image, 4, 8);
+		
+		assertEquals(15*15, labels.get(281, 281), .1);
+	}
+
+	/**
+	 * Checks that the maximum number of labels is greater than 2^16.
+	 */
+	@Test
 	public final void testComputeLabelsManyLabels() 
 	{
 		ImageProcessor image = new ByteProcessor(600, 600);
@@ -32,6 +52,26 @@ public class BinaryImagesTest {
 		ImageProcessor labels = BinaryImages.componentsLabeling(image, 4, 32);
 		
 		assertEquals(300 * 300, labels.getf(599, 599), .1);
+	}
+
+	/**
+	 * Checks that the maximum number of labels is greater than 2^16.
+	 */
+	@Test
+	public final void testComputeLabelsManyLabels_Byte() 
+	{
+		ImageProcessor image = new ByteProcessor(600, 600);
+		for (int y = 0; y < 300; y++)
+		{
+			for (int x = 0; x < 300; x++)
+			{
+				image.set(2 * x + 1, 2 * y + 1, 255);
+			}
+		}
+		
+		ImageProcessor labels = BinaryImages.componentsLabeling(image, 4, 8);
+		
+		assertEquals(255, labels.get(599, 599), .1);
 	}
 
 	/**

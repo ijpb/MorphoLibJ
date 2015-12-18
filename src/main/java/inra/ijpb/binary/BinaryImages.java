@@ -98,13 +98,25 @@ public class BinaryImages
 		// get image size
 		int width = image.getWidth();
 		int height = image.getHeight();
+		int maxLabel;
 
 		ImageProcessor labels;
 		switch (bitDepth) {
-		case 8: labels = new ByteProcessor(width, height); break; 
-		case 16: labels = new ShortProcessor(width, height); break; 
-		case 32: labels = new FloatProcessor(width, height); break;
-		default: throw new IllegalArgumentException("Bit Depth should be 8, 16 or 32.");
+		case 8: 
+			labels = new ByteProcessor(width, height);
+			maxLabel = 255;
+			break; 
+		case 16: 
+			labels = new ShortProcessor(width, height);
+			maxLabel = 65535;
+			break;
+		case 32:
+			labels = new FloatProcessor(width, height);
+			maxLabel = 0x01 << 23;
+			break;
+		default:
+			throw new IllegalArgumentException(
+					"Bit Depth should be 8, 16 or 32.");
 		}
 
 		// the label counter
@@ -121,7 +133,9 @@ public class BinaryImages
 				if (labels.get(x, y) > 0)
 					continue;
 
-				nLabels++;
+				if (nLabels < maxLabel)
+					nLabels++;
+				
 				FloodFill.floodFillFloat(image, x, y, labels, nLabels, conn);
 			}
 		}
@@ -159,9 +173,24 @@ public class BinaryImages
 		IJ.showStatus("Allocate Memory");
 		ImageStack labels = ImageStack.create(sizeX, sizeY, sizeZ, bitDepth);
 
-		int nLabels = 0;
+		int maxLabel;
+		switch (bitDepth) {
+		case 8: 
+			maxLabel = 255;
+			break; 
+		case 16: 
+			maxLabel = 65535;
+			break;
+		case 32:
+			maxLabel = 0x01 << 23;
+			break;
+		default:
+			throw new IllegalArgumentException(
+					"Bit Depth should be 8, 16 or 32.");
+		}
 
 		IJ.showStatus("Compute Labels...");
+		int nLabels = 0;
 		for (int z = 0; z < sizeZ; z++) 
 		{
 			IJ.showProgress(z, sizeZ);
@@ -178,7 +207,8 @@ public class BinaryImages
 						continue;
 
 					// a new label is found: increment label index, and propagate 
-					nLabels++;
+					if (nLabels < maxLabel)
+						nLabels++;
 					FloodFill.floodFillFloat(image, x, y, z, labels, nLabels, conn);
 				}
 			}
