@@ -46,13 +46,22 @@ public class BinaryImages
 
 	/**
 	 * Computes the labels in the binary 2D or 3D image contained in the given
-	 * ImagePlus, and computes the maximum label to set up the display range
-	 * of the resulting ImagePlus.  
+	 * ImagePlus, and computes the maximum label to set up the display range of
+	 * the resulting ImagePlus.
 	 * 
-	 * @param imagePlus contains the 3D binary image stack
-	 * @param conn the connectivity, either 4 or 8 for planar images, or 6 or 26 for 3D images
-	 * @param bitDepth the number of bits used to create the result stack (8, 16 or 32)
+	 * @param imagePlus
+	 *            contains the 3D binary image stack
+	 * @param conn
+	 *            the connectivity, either 4 or 8 for planar images, or 6 or 26
+	 *            for 3D images
+	 * @param bitDepth
+	 *            the number of bits used to create the result stack (8, 16 or
+	 *            32)
 	 * @return an ImagePlus containing the label of each connected component.
+	 * @throws RuntimeException
+	 *             if the number of labels reaches the maximum number that can
+	 *             be represented with this bitDepth
+	 * @see inra.ijpb.morphology.FloodFill
 	 */
 	public final static ImagePlus componentsLabeling(ImagePlus imagePlus, 
 			int conn, int bitDepth)
@@ -82,6 +91,8 @@ public class BinaryImages
 	 * Computes the labels of the connected components in the given planar
 	 * binary image. The type of result is controlled by the bitDepth option.
 	 * 
+	 * Uses a Flood-fill type algorithm.
+	 * 
 	 * @param image
 	 *            contains the binary image (any type is accepted)
 	 * @param conn
@@ -91,6 +102,10 @@ public class BinaryImages
 	 *            32)
 	 * @return a new instance of ImageProcessor containing the label of each
 	 *         connected component.
+	 * @throws RuntimeException
+	 *             if the number of labels reaches the maximum number that can
+	 *             be represented with this bitDepth
+	 * @see inra.ijpb.morphology.FloodFill
 	 */
 	public final static ImageProcessor componentsLabeling(ImageProcessor image,
 			int conn, int bitDepth) 
@@ -100,6 +115,8 @@ public class BinaryImages
 		int height = image.getHeight();
 		int maxLabel;
 
+		// Depending on bitDepth, create result image, and choose max label 
+		// number
 		ImageProcessor labels;
 		switch (bitDepth) {
 		case 8: 
@@ -133,9 +150,14 @@ public class BinaryImages
 				if (labels.get(x, y) > 0)
 					continue;
 
-				if (nLabels < maxLabel)
-					nLabels++;
+				// a new label is found: check current label number  
+				if (nLabels == maxLabel)
+				{
+					throw new RuntimeException("Max number of label reached (" + maxLabel + ")");
+				}
 				
+				// increment label index, and propagate
+				nLabels++;
 				FloodFill.floodFillFloat(image, x, y, labels, nLabels, conn);
 			}
 		}
@@ -149,6 +171,8 @@ public class BinaryImages
 	 * Computes the labels of the connected components in the given 3D binary
 	 * image. The type of result is controlled by the bitDepth option.
 	 * 
+	 * Uses a Flood-fill type algorithm.
+	 * 
 	 * @param image
 	 *            contains the 3D binary image (any type is accepted)
 	 * @param conn
@@ -158,6 +182,10 @@ public class BinaryImages
 	 *            32)
 	 * @return a new instance of ImageStack containing the label of each
 	 *         connected component.
+	 * @throws RuntimeException
+	 *             if the number of labels reaches the maximum number that can
+	 *             be represented with this bitDepth
+	 * @see inra.ijpb.morphology.FloodFill
 	 */
 	public final static ImageStack componentsLabeling(ImageStack image, int conn,
 			int bitDepth) 
@@ -206,9 +234,14 @@ public class BinaryImages
 					if (labels.getVoxel(x, y, z) > 0)
 						continue;
 
-					// a new label is found: increment label index, and propagate 
-					if (nLabels < maxLabel)
-						nLabels++;
+					// a new label is found: check current label number  
+					if (nLabels == maxLabel)
+					{
+						throw new RuntimeException("Max number of label reached (" + maxLabel + ")");
+					}
+					
+					// increment label index, and propagate
+					nLabels++;
 					FloodFill.floodFillFloat(image, x, y, z, labels, nLabels, conn);
 				}
 			}

@@ -57,9 +57,10 @@ public class BinaryImagesTest {
 	/**
 	 * Checks that the maximum number of labels is greater than 2^16.
 	 */
-	@Test
+	@Test(expected=RuntimeException.class)
 	public final void testComputeLabelsManyLabels_Byte() 
 	{
+		// create an image with 300x300 = 90000 labels
 		ImageProcessor image = new ByteProcessor(600, 600);
 		for (int y = 0; y < 300; y++)
 		{
@@ -69,9 +70,8 @@ public class BinaryImagesTest {
 			}
 		}
 		
-		ImageProcessor labels = BinaryImages.componentsLabeling(image, 4, 8);
-		
-		assertEquals(255, labels.get(599, 599), .1);
+		// should throw an axception
+		BinaryImages.componentsLabeling(image, 4, 8);
 	}
 
 	/**
