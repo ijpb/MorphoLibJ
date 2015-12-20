@@ -55,7 +55,7 @@ public class BinaryImages
 	 *            the connectivity, either 4 or 8 for planar images, or 6 or 26
 	 *            for 3D images
 	 * @param bitDepth
-	 *            the number of bits used to create the result stack (8, 16 or
+	 *            the number of bits used to create the result image (8, 16 or
 	 *            32)
 	 * @return an ImagePlus containing the label of each connected component.
 	 * @throws RuntimeException
@@ -98,7 +98,7 @@ public class BinaryImages
 	 * @param conn
 	 *            the connectivity, either 4 or 8
 	 * @param bitDepth
-	 *            the number of bits used to create the result stack (8, 16 or
+	 *            the number of bits used to create the result image (8, 16 or
 	 *            32)
 	 * @return a new instance of ImageProcessor containing the label of each
 	 *         connected component.
