@@ -47,7 +47,17 @@ public class SizeOpeningPlugin implements PlugIn
         if (isPlanar) 
         {
             ImageProcessor image = imagePlus.getProcessor();
-            ImageProcessor result = BinaryImages.areaOpening(image, nPixelMin);
+            ImageProcessor result = null;
+    		try 
+    		{
+    			result = BinaryImages.areaOpening(image, nPixelMin);
+    		}
+    		catch(RuntimeException ex)
+    		{
+    			IJ.error("Too many particles", ex.getMessage());
+    			return;
+    		}
+
             if (!(result instanceof ColorProcessor))
     			result.setLut(image.getLut());
             resultPlus = new ImagePlus(newName, result);    		
@@ -55,7 +65,16 @@ public class SizeOpeningPlugin implements PlugIn
         else
         {
             ImageStack image = imagePlus.getStack();
-            ImageStack result = BinaryImages.volumeOpening(image, nPixelMin);
+            ImageStack result = null;
+    		try 
+    		{
+    			result = BinaryImages.volumeOpening(image, nPixelMin);
+    		}
+    		catch(RuntimeException ex)
+    		{
+    			IJ.error("Too many particles", ex.getMessage());
+    			return;
+    		}
         	result.setColorModel(image.getColorModel());
             resultPlus = new ImagePlus(newName, result);
         }

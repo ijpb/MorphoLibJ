@@ -129,7 +129,7 @@ public class BinaryImages
 			break;
 		case 32:
 			labels = new FloatProcessor(width, height);
-			maxLabel = 0x01 << 23;
+			maxLabel = 0x01 << 23 - 1;
 			break;
 		default:
 			throw new IllegalArgumentException(

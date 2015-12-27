@@ -3,6 +3,7 @@
  */
 package inra.ijpb.plugins;
 
+import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.DialogListener;
 import ij.gui.GenericDialog;
@@ -80,7 +81,16 @@ public class AreaOpeningPlugin implements ExtendedPlugInFilter, DialogListener
     	
 		// pre-compute label image and pixel count
 		ImageProcessor image = imagePlus.getProcessor();
-		this.labelImage = BinaryImages.componentsLabeling(image, 4, 16);
+		try 
+		{
+			this.labelImage = BinaryImages.componentsLabeling(image, 4, 16);
+		}
+		catch(RuntimeException ex)
+		{
+			IJ.error("Too many particles", ex.getMessage());
+			return flags;
+		}
+
 		int[] labels = LabelImages.findAllLabels(labelImage);
 		this.labelMap = LabelImages.mapLabelIndices(labels);
 		this.pixelCountArray = LabelImages.pixelCount(labelImage, labels);
