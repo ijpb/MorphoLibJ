@@ -876,13 +876,16 @@ public class MorphologicalSegmentation implements PlugIn {
 			if ( command.equals( segmentText ) ) 
 			{			
 				// read connectivity
-				int readConn = Integer.parseInt( (String) connectivityList.getSelectedItem() );
+				final int readConn = 
+						Integer.parseInt( (String) 
+								connectivityList.getSelectedItem() );
 
 				// convert connectivity to 3D if needed (2D images are processed as 3D)
+				final int connectivity;
 				if( inputIs2D )
-					readConn = readConn == 4 ? 6 : 26;
-				
-				final int connectivity = readConn;
+					connectivity = readConn == 4 ? 6 : 26;
+				else
+					connectivity = readConn;
 				
 				// read dynamic
 				final double dynamic;
@@ -1010,7 +1013,7 @@ public class MorphologicalSegmentation implements PlugIn {
 						final long step1 = System.currentTimeMillis();		
 						IJ.log( "Regional minima took " + (step1-step0) + " ms.");
 
-						IJ.log( "Imposing regional minima on original image (connectivity = " + connectivity + ")..." );
+						IJ.log( "Imposing regional minima on original image (connectivity = " + readConn + ")..." );
 
 						// Impose regional minima over the original image
 						ImageStack imposedMinima = MinimaAndMaxima3D.imposeMinima( image, regionalMinima, connectivity );
