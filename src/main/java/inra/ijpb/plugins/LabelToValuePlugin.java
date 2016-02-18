@@ -69,6 +69,9 @@ public class LabelToValuePlugin implements PlugIn, DialogListener {
 		
 		ImagePlus resultPlus = computeResultImage();
 		
+		if( null == resultPlus )
+			return;
+		
 		String newName = this.labelImagePlus.getShortTitle() + "-" + selectedHeaderName;
 		resultPlus.setTitle(newName);
 		resultPlus.show();
@@ -198,15 +201,20 @@ public class LabelToValuePlugin implements PlugIn, DialogListener {
 		int index = this.table.getColumnIndex(this.selectedHeaderName);
 		double[] values = table.getColumnAsDoubles(index);
 				
-		
-		if (this.resultPlus.getStackSize() == 1) {
-			ImageProcessor labelImage = this.labelImagePlus.getProcessor();
-			ImageProcessor resultImage = LabelImages.applyLut(labelImage, values);
-			this.resultPlus.setProcessor(resultImage);
-		} else {
-			ImageStack labelImage = this.labelImagePlus.getStack();
-			ImageStack resultImage = LabelImages.applyLut(labelImage, values);
-			this.resultPlus.setStack(resultImage);
+		try{
+			if (this.resultPlus.getStackSize() == 1) {
+				ImageProcessor labelImage = this.labelImagePlus.getProcessor();
+				ImageProcessor resultImage = LabelImages.applyLut(labelImage, values);
+				this.resultPlus.setProcessor(resultImage);
+			} else {
+				ImageStack labelImage = this.labelImagePlus.getStack();
+				ImageStack resultImage = LabelImages.applyLut(labelImage, values);
+				this.resultPlus.setStack(resultImage);
+			}
+		}catch( RuntimeException ex ){
+			IJ.error("Label to value error", "ERROR: label image values do not "
+					+ "correspond with table values!" );
+			return null;
 		}
 
 		this.resultPlus.setDisplayRange(this.minValue, this.maxValue);
