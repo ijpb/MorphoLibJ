@@ -25,7 +25,17 @@ public class KeepLargestLabelPlugin implements PlugIn {
 	public void run(String arg0) {
 		ImagePlus imagePlus = IJ.getImage();
 		
-		ImagePlus resultPlus = LabelImages.keepLargestLabel(imagePlus);
+		ImagePlus resultPlus;
+		try 
+		{
+			resultPlus = LabelImages.keepLargestLabel(imagePlus);
+		}
+		catch(RuntimeException ex)
+		{
+			// can throw an exception if no region is found
+			IJ.error("MorphoLibJ Error", ex.getMessage());
+			return;
+		}
 		
 		// Display with same settings as original image
 		resultPlus.show();

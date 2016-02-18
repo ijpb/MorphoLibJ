@@ -653,12 +653,14 @@ public class LabelImages
 		
 		TreeSet<Integer> labelSet = new TreeSet<Integer>();
 	
+		// find labels in top and bottom borders
 		for (int x = 0; x < sizeX; x++)
 		{
 			labelSet.add((int) image.get(x, 0));
 			labelSet.add((int) image.get(x, sizeY - 1));
 		}
 	
+		// find labels in left and right borders
 		for (int y = 0; y < sizeY; y++) 
 		{
 			labelSet.add((int) image.get(0, y));
@@ -698,6 +700,7 @@ public class LabelImages
 		
 		TreeSet<Integer> labelSet = new TreeSet<Integer>();
 	
+		// find labels in front (z=0) and back (z=sizeZ-1) slices
 		for (int y = 0; y < sizeY; y++) 
 		{
 			for (int x = 0; x < sizeX; x++) 
@@ -707,6 +710,7 @@ public class LabelImages
 			}
 		}
 		
+		// find labels in top  (y=0) and bottom (y=sizeY-1) borders
 		for (int z = 0; z < sizeZ; z++) 
 		{
 			for (int x = 0; x < sizeX; x++)
@@ -716,6 +720,7 @@ public class LabelImages
 			}
 		}
 		
+		// find labels in left (x=0) and right (x=sizeX-1) borders
 		for (int z = 0; z < sizeZ; z++)
 		{
 			for (int y = 0; y < sizeY; y++) 
@@ -777,6 +782,7 @@ public class LabelImages
 	 * @param image
 	 *            a label image
 	 * @return a new image containing only the largest label
+	 * @throw RuntimeException if the image is empty
 	 */
 	public static final ImageProcessor keepLargestLabel(ImageProcessor image)
 	{
@@ -785,18 +791,24 @@ public class LabelImages
 
 		ImageProcessor result = new ByteProcessor(sizeX, sizeY);
 		
-		// find the label of the largest particle
+		// identify labels of input image
 		int[] labels = findAllLabels(image);
+		if (labels.length == 0)
+		{
+			throw new RuntimeException("Can not select a label in an empty image");
+		}
+
+		// find the label of the largest particle
 		int[] areas = pixelCount(image, labels);
-		int indMax = labels[indexOfMax(areas)];
+		int largestLabel = labels[indexOfMax(areas)];
 
 		// convert label image to binary image
 		for (int y = 0; y < sizeY; y++) 
 		{
 			for (int x = 0; x < sizeX; x++) 
 			{
-				int value = (int) image.getf(x, y); 
-				if (value == indMax)
+				int label = (int) image.getf(x, y); 
+				if (label == largestLabel)
 					result.set(x, y, 255);
 				else
 					result.set(x, y, 0);
@@ -812,6 +824,7 @@ public class LabelImages
 	 * @param image
 	 *            a label image
 	 * @return a new image containing only the largest label
+	 * @throw RuntimeException if the image is empty
 	 */
 	public static final ImageStack keepLargestLabel(ImageStack image) 
 	{
@@ -820,11 +833,17 @@ public class LabelImages
 		int sizeZ = image.getSize();
 		
 		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
-				
-		// find the label of the largest particle
+		
+		// identify labels of input image
 		int[] labels = findAllLabels(image);
+		if (labels.length == 0)
+		{
+			throw new RuntimeException("Can not select a label in an empty image");
+		}
+		
+		// find the label of the largest particle
 		int[] volumes = voxelCount(image, labels);		
-		int indMax = labels[indexOfMax(volumes)];
+		int largestLabel = labels[indexOfMax(volumes)];
 		
 		// convert label image to binary image
 		for (int z = 0; z < sizeZ; z++) 
@@ -833,8 +852,8 @@ public class LabelImages
 			{
 				for (int x = 0; x < sizeX; x++) 
 				{
-					int value = (int) image.getVoxel(x, y, z); 
-					if (value == indMax)
+					int label = (int) image.getVoxel(x, y, z); 
+					if (label == largestLabel)
 						result.setVoxel(x, y, z, 255);
 					else
 						result.setVoxel(x, y, z, 0);
@@ -873,18 +892,25 @@ public class LabelImages
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 
-		// find the label of the largest particle
+		// identify labels of input image
 		int[] labels = findAllLabels(image);
+		if (labels.length == 0)
+		{
+			// if no label is found, there is nothing to remove...
+			return;
+		}
+		
+		// find the label of the largest particle
 		int[] areas = pixelCount(image, labels);
-		int indMax = labels[indexOfMax(areas)];
+		int largestLabel = labels[indexOfMax(areas)];
 		
 		// remove pixels belonging to the largest label
 		for (int y = 0; y < sizeY; y++) 
 		{
 			for (int x = 0; x < sizeX; x++) 
 			{
-				int value = (int) image.getf(x, y); 
-				if (value == indMax)
+				int label = (int) image.getf(x, y); 
+				if (label == largestLabel)
 					image.setf(x, y, 0);
 			}
 		}
@@ -904,10 +930,17 @@ public class LabelImages
 		int sizeY = image.getHeight();
 		int sizeZ = image.getSize();
 		
-		// find the label of the largest particle
+		// identify labels of input image
 		int[] labels = findAllLabels(image);
+		if (labels.length == 0)
+		{
+			// if no label is found, there is nothing to remove...
+			return;
+		}
+
+		// find the label of the largest particle
 		int[] volumes = voxelCount(image, labels);
-		int indMax = labels[indexOfMax(volumes)];
+		int largestLabel = labels[indexOfMax(volumes)];
 		
 		// remove voxels belonging to the largest label
 		for (int z = 0; z < sizeZ; z++)
@@ -916,14 +949,22 @@ public class LabelImages
 			{
 				for (int x = 0; x < sizeX; x++) 
 				{
-					int value = (int) image.getVoxel(x, y, z); 
-					if (value == indMax)
+					int label = (int) image.getVoxel(x, y, z); 
+					if (label == largestLabel)
 						image.setVoxel(x, y, z, 0);
 				}
 			}
 		}
 	}
 
+	/**
+	 * Returns the index of the maximum value within the integer array, or -1 if
+	 * the array has no element.
+	 * 
+	 * @param values
+	 *            the array of values
+	 * @return the index of the maximum value
+	 */
 	private static final int indexOfMax(int[] values)
 	{
 		int indMax = -1;

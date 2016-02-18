@@ -6,7 +6,7 @@ package inra.ijpb.plugins;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.plugin.PlugIn;
-import inra.ijpb.binary.BinaryImages;
+import inra.ijpb.label.LabelImages;
 
 /**
  * Removes all the regions in a binary 2D or 3D image but the largest one. 
@@ -24,7 +24,17 @@ public class KeepLargestRegionPlugin implements PlugIn {
 	public void run(String arg0) {
 		ImagePlus imagePlus = IJ.getImage();
 		
-		ImagePlus resultPlus = BinaryImages.keepLargestRegion(imagePlus);
+		ImagePlus resultPlus;
+		try 
+		{
+			resultPlus = LabelImages.keepLargestLabel(imagePlus);
+		}
+		catch(RuntimeException ex)
+		{
+			// can throw an exception if no region is found
+			IJ.error("MorphoLibJ Error", ex.getMessage());
+			return;
+		}
 		
 		// Display with same settings as original image
 		resultPlus.show();
