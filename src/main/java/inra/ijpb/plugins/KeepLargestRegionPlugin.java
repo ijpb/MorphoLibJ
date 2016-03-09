@@ -6,7 +6,7 @@ package inra.ijpb.plugins;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.plugin.PlugIn;
-import inra.ijpb.label.LabelImages;
+import inra.ijpb.binary.BinaryImages;
 
 /**
  * Removes all the regions in a binary 2D or 3D image but the largest one. 
@@ -15,19 +15,20 @@ import inra.ijpb.label.LabelImages;
  * Displays the result in a new ImagePlus.
  *
  */
-public class KeepLargestRegionPlugin implements PlugIn {
-
+public class KeepLargestRegionPlugin implements PlugIn 
+{
 	/* (non-Javadoc)
 	 * @see ij.plugin.PlugIn#run(java.lang.String)
 	 */
 	@Override
-	public void run(String arg0) {
+	public void run(String arg0) 
+	{
 		ImagePlus imagePlus = IJ.getImage();
 		
 		ImagePlus resultPlus;
 		try 
 		{
-			resultPlus = LabelImages.keepLargestLabel(imagePlus);
+			resultPlus = BinaryImages.keepLargestRegion(imagePlus);
 		}
 		catch(RuntimeException ex)
 		{
@@ -38,7 +39,8 @@ public class KeepLargestRegionPlugin implements PlugIn {
 		
 		// Display with same settings as original image
 		resultPlus.show();
-		if (imagePlus.getStackSize() > 1) {
+		if (imagePlus.getStackSize() > 1) 
+		{
 			resultPlus.setZ(imagePlus.getZ());
 			resultPlus.setSlice(imagePlus.getSlice());
 		}
