@@ -1,5 +1,5 @@
-#LyX 2.0 created this file. For more info see http://www.lyx.org/
-\lyxformat 413
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
 \begin_document
 \begin_header
 \textclass scrreprt
@@ -79,13 +79,13 @@
 \font_roman default
 \font_sans default
 \font_typewriter default
+\font_math auto
 \font_default_family default
 \use_non_tex_fonts false
 \font_sc false
 \font_osf false
 \font_sf_scale 100
 \font_tt_scale 100
-
 \graphics default
 \default_output_format pdf2
 \output_sync 0
@@ -106,22 +106,31 @@
 \pdf_pdfusetitle true
 \papersize a4paper
 \use_geometry false
-\use_amsmath 1
-\use_esint 1
-\use_mhchem 1
-\use_mathdots 1
-\cite_engine natbib_authoryear
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine natbib
+\cite_engine_type authoryear
+\biblio_style plainnat
 \use_bibtopic false
 \use_indices false
 \paperorientation portrait
 \suppress_date false
+\justification true
 \use_refstyle 0
 \index Index
 \shortcut idx
 \color #008000
 \end_index
 \secnumdepth 3
-\tocdepth 2
+\tocdepth 1
 \paragraph_separation indent
 \paragraph_indentation default
 \quotes_language english
@@ -183,6 +192,20 @@ finir de rédiger les paragraphes
 
 \begin_layout Itemize
 ajouter illustrations 
+\end_layout
+
+\begin_layout Itemize
+morphological reconstruction en niveaux de gris 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+exemple de sélection de grain
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+minima et maxima étendus
 \end_layout
 
 \begin_layout Itemize
@@ -397,67 +420,41 @@ Morphological filters
 \end_layout
 
 \begin_layout Standard
-Morphological filters consider the neighborhood of each pixel/voxel according
- to a structuring element of a given size and shape.
+Morphological filters are very common filters that can be combined together
+ to provide large variety of solutions.
+ They are local filters, in the sense they consider the neighborhood of
+ each pixel/voxel according to a structuring element of a given size and
+ shape.
  
+\end_layout
+
+\begin_layout Section
+Principles
 \end_layout
 
 \begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename images/binary/particles.png
-	width 3.5cm
-
-\end_inset
-
- 
-\begin_inset Graphics
-	filename images/binary/particles-DilationSq3.png
-	width 3.5cm
-
-\end_inset
-
- 
-\begin_inset Graphics
-	filename images/binary/particles-ErosionSq3.png
-	width 3.5cm
-
+The base filters are the 
+\series bold
+morphological dilation
+\series default
+, which considers the maximum within the neighborhood, and the 
+\series bold
+morphological erosion
+\series default
+, which considers the minimum value within the neighborhood (Fig
+\begin_inset space ~
 \end_inset
 
 
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption
-
-\begin_layout Plain Layout
-Some example of morphological filters.
- Original image (black over white), result of dilation, result of erosion.
- 
-\end_layout
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Morpho-Dilation-Erosion"
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-
-
+).
+ The dilation and the erosion changes the size of the structures in the
+ image.
 \end_layout
 
 \begin_layout Standard
@@ -469,22 +466,22 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename images/binary/particles-GradientSq2.png
-	width 3.5cm
+	filename images/grains/grains.png
+	width 30text%
 
 \end_inset
 
  
 \begin_inset Graphics
-	filename images/binary/particles-ClosingDsk6.png
-	width 3.5cm
+	filename images/grains/grains-Dilation-Sq2.png
+	width 30text%
 
 \end_inset
 
  
 \begin_inset Graphics
-	filename images/binary/particles-OpeningDsk6.png
-	width 3.5cm
+	filename images/grains/grains-Erosion-Sq2.png
+	width 30text%
 
 \end_inset
 
@@ -492,12 +489,103 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Morpho-Dilation-Erosion"
+
+\end_inset
+
+Some example of morphological filters on a gayscale image.
+ Original image, result of dilation with a square structuring element, and
+ result of erosion with the same structuring element.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Morphological dilation and erosion are often used in combination.
+ For example, the result of a dilation followed by an erosion is called
+ a 
+\series bold
+morphological closing
+\series default
+, and removes dark structures smaller than the structuring element (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Morpho-Opening-Closing"
+
+\end_inset
+
+).
+ It can also connect bright structures that were separated by a thin dark
+ space.
+\end_layout
+
+\begin_layout Standard
+In a symetric way, the result of an erosion followed by a dilation is called
+ a 
+\series bold
+morphological
+\series default
+ 
+\series bold
+opening
+\series default
+, and removes bright structures smaller than the structuring element.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/grains/grains-Closing-Sq2.tif
+	width 30text%
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/grains/grains-Opening-Sq2.tif
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Morpho-Opening-Closing"
+
+\end_inset
+
 Some example of composed morphological filters.
- Result of morphological gradient, result of morphological closing, result
- of morphological opening.
+ Morphological closing, and morphological opening.
 \end_layout
 
 \end_inset
@@ -507,8 +595,127 @@ Some example of composed morphological filters.
 
 \end_inset
 
-The following filters are implemented both for 2D and 3D images, and work
- for binary as well as grey level images:
+More complicated combinations of elementary operations can be used.
+ The 
+\series bold
+morphological gradient
+\series default
+, computed as the difference of the result of a morphological dilation with
+ the result of a morphological erosions, reveals the 
+\series bold
+boundaries
+\series default
+ of the structures within the image (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Morpho-Gradient-TopHat"
+
+\end_inset
+
+).
+ The 
+\series bold
+morphological laplacian
+\series default
+ is defined as half the sum of a morphological dilation and a morphological
+ erosion with the same structuring element, minus the original image.
+ It results in enhancing the edges of the image.
+ 
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+white top-hat 
+\series default
+first computes a morphological opening (resulting in removing bright structures
+ smaller than structuring elements), and removes the result from the original
+ image.
+ When applied with a large structuring element, the result is an homogeneization
+ of the background, making bright structures easier to segment.
+ Similarly, the 
+\series bold
+dark top-hat
+\series default
+ can be used to enhance dark structures observed on an inhomogenenous background.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/grains/grains-Gradient-Sq2.png
+	width 30text%
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/grains/grains-Laplacian-Sq2.png
+	width 30text%
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/grains/grains-WhiteTopHat-Sq20.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Morpho-Gradient-TopHat"
+
+\end_inset
+
+Some example of composed morphological filters.
+ Result of morphological gradient, result of morphological laplacian, result
+ of morphological white top-hat.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Usage
+\end_layout
+
+\begin_layout Standard
+A large collection of morphological is available in the 
+\begin_inset Quotes eld
+\end_inset
+
+Plugins->MorphoLibJ
+\begin_inset Quotes erd
+\end_inset
+
+ menu.
+ Filters are implemented for both 2D and 3D images, and work for binary
+ as well as grey level images.
 \end_layout
 
 \begin_layout Description
@@ -599,7 +806,8 @@ line with angle of 0, 90, 45 or 135 degrees
 
 \begin_layout Standard
 For 3D images, the same structuring elements can be used (the operation
- is simply repeated on each slice), as well as a cubic structuring element.
+ is simply repeated on each slice), as well as a cubic or spherical structuring
+ element.
 \end_layout
 
 \begin_layout Chapter
@@ -674,7 +882,7 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
 \begin_inset CommandInset label
@@ -744,7 +952,7 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
 \begin_inset CommandInset label
@@ -777,7 +985,7 @@ The following operations are available in the
 \begin_inset Quotes eld
 \end_inset
 
-Plugins->Fast Morphology
+Plugins->MorphoLibJ
 \begin_inset Quotes erd
 \end_inset
 
@@ -967,7 +1175,7 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
 \begin_inset CommandInset label
@@ -1221,10 +1429,10 @@ status open
 \begin_layout Plain Layout
 \begin_inset Tabular
 <lyxtabular version="3" rows="1" columns="3">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
 <row>
 <cell alignment="center" valignment="top" usebox="none">
 \begin_inset Text
@@ -1244,7 +1452,7 @@ status collapsed
 \end_inset
 
 
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
 Gaussian-blurred blobs image used as input (radius = 3).
@@ -1280,7 +1488,7 @@ status collapsed
 \end_inset
 
 
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
 Watershed segmentation on original image (
@@ -1324,7 +1532,7 @@ status collapsed
 \end_inset
 
 
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
 Watershed segmentation on Gaussian-blurred original image (radius = 3, 
@@ -1359,7 +1567,7 @@ Watershed segmentation on Gaussian-blurred original image (radius = 3,
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
 Input and result images from the macro example.
@@ -1434,7 +1642,7 @@ status open
 \end_inset
 
 
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
 \begin_inset CommandInset label
@@ -1592,7 +1800,7 @@ status open
 \end_inset
 
 
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
 Overview of the Morphological Segmentation plugin.
@@ -1877,7 +2085,7 @@ status open
 \end_inset
 
 
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
 Examples of the 4 different display options.
@@ -2404,7 +2612,7 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
 Connected components labeling, and computation of distance maps for binary
@@ -2479,7 +2687,7 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
 Utilities for binary images.
@@ -2586,7 +2794,7 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
 Utilities for label images.
@@ -2774,7 +2982,7 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
 Assign result of a measurement to a label image.
