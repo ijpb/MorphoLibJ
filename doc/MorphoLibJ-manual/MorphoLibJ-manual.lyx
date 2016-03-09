@@ -195,16 +195,6 @@ ajouter illustrations
 \end_layout
 
 \begin_layout Itemize
-morphological reconstruction en niveaux de gris 
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-exemple de sélection de grain
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
 minima et maxima étendus
 \end_layout
 
@@ -907,17 +897,34 @@ Principle of the geodesic reconstruction algorithm.
 \end_layout
 
 \begin_layout Section
-Applications
+Applications to binary images
 \end_layout
 
 \begin_layout Standard
 By choosing the marker image, several operations may be automatised.
  For example, computing geodesic reconstruction with image of borders, and
- combining with original image will remove particles or regions touching
- the borders.
+ combining with original image will 
+\series bold
+remove particles or regions touching the borders
+\series default
+ (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Geodesic-Reconstruction-Binary"
+
+\end_inset
+
+).
  In a similar way, combuting geodesic reconstruction by using the border
- of the complement of the image makes it possible to fill holes that may
- appear in particles.
+ of the complement of the image makes it possible to 
+\series bold
+fill holes
+\series default
+ that may appear in particles.
 \end_layout
 
 \begin_layout Standard
@@ -957,13 +964,82 @@ status open
 \begin_layout Plain Layout
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Geodesic-Reconstruction-Applications"
+name "fig:Geodesic-Reconstruction-Binary"
 
 \end_inset
 
 Some applications of geodesic reconstruction.
  From left to right: original image, result of kill borders, result of fill
  holes.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Applications to grey level images
+\end_layout
+
+\begin_layout Standard
+The principle of geodesic reconstruction can be applied to grey level images.
+ By manually chosing binary markers such that they overlay specific structures,
+ and after applying a geodesic reconstruction by dilation, it is possible
+ to obtain a grey level image containing only the chosen structures.
+ The border kill operation can also be applied on grey level images, making
+ ot possible to rapidly remove structures touching the image borders.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/grains/grains-binary-markers-ovr.png
+	width 30text%
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/grains/grains-geodRec-byDilation.png
+	width 30text%
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/grains/grains-killBorders.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Geodesic-Reconstruction-Grey"
+
+\end_inset
+
+Some applications of geodesic reconstruction on grey level images.
+ From left to right: original image with superimposed markers, result of
+ geodesic reconstruction by dilation, result of border kill operation.
 \end_layout
 
 \end_inset
