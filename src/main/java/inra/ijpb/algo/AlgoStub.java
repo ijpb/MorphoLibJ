@@ -12,8 +12,15 @@ import java.util.ArrayList;
  */
 public class AlgoStub implements Algo
 {
+	// ===================================================================
+	// Class variables
+	
 	private ArrayList<AlgoListener> algoListeners = new ArrayList<AlgoListener>();
 
+
+	// ===================================================================
+	// Management of listeners
+	
 	@Override
 	public void addAlgoListener(AlgoListener listener) 
 	{
@@ -25,8 +32,12 @@ public class AlgoStub implements Algo
 	{
 		this.algoListeners.remove(listener);
 	}
+
 	
-		protected void fireProgressChanged(Object source, double step, double total) 
+	// ===================================================================
+	// fire events
+	
+	protected void fireProgressChanged(Object source, double step, double total) 
 	{
 		if (!this.algoListeners.isEmpty()) 
 		{

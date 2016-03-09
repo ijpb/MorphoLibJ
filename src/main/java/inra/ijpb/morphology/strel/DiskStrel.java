@@ -14,9 +14,19 @@ import ij.process.ImageProcessor;
  * @author David Legland
  *
  */
-public class DiskStrel extends AbstractInPlaceStrel implements InPlaceStrel {
-
+public class DiskStrel extends AbstractInPlaceStrel implements InPlaceStrel
+{
+	// ===================================================================
+	// Class variables
+	
+	/**
+	 * The radius of the disk structuring element, in pixels.
+	 */
 	double radius;
+	
+	
+	// ===================================================================
+	// Constructors
 	
 	/**
 	 * Creates a structuring element with a circular shape of the given radius.
@@ -25,7 +35,8 @@ public class DiskStrel extends AbstractInPlaceStrel implements InPlaceStrel {
 	 *            the radius of the structuring element, in pixels
 	 * @return a new structuring element with disk shape and specified radius
 	 */
-	public final static DiskStrel fromRadius(int radius) {
+	public final static DiskStrel fromRadius(int radius)
+	{
 		return new DiskStrel(radius);
 	}
 	
@@ -40,7 +51,8 @@ public class DiskStrel extends AbstractInPlaceStrel implements InPlaceStrel {
 	 *            the diameter of the structuring element, in pixels
 	 * @return a new structuring element with disk shape and specified diameter
 	 */
-	public final static DiskStrel fromDiameter(int diam) {
+	public final static DiskStrel fromDiameter(int diam)
+	{
 		double radius = ((double) diam - 1.0) / 2;
 		return new DiskStrel(radius);
 	}
@@ -51,15 +63,21 @@ public class DiskStrel extends AbstractInPlaceStrel implements InPlaceStrel {
 	 * @param radius
 	 *            the radius of the structuring element, in pixels
 	 */
-	private DiskStrel(double radius) {
+	private DiskStrel(double radius)
+	{
 		this.radius = radius;
 	}
+	
+	
+	// ===================================================================
+	// Implementation of Strel interface 
 	
 	/* (non-Javadoc)
 	 * @see ijt.filter.morphology.Strel#getSize()
 	 */
 	@Override
-	public int[] getSize() {
+	public int[] getSize()
+	{
 		int radiusInt = (int) Math.round(radius);
 		int diam = 2 * radiusInt + 1;
 		return new int[]{diam, diam};
@@ -97,7 +115,8 @@ public class DiskStrel extends AbstractInPlaceStrel implements InPlaceStrel {
 	 * @see ijt.filter.morphology.Strel#getOffset()
 	 */
 	@Override
-	public int[] getOffset() {
+	public int[] getOffset()
+	{
 		int intRadius = (int) Math.round(radius);
 		return new int[]{intRadius, intRadius};
 	}
@@ -106,7 +125,8 @@ public class DiskStrel extends AbstractInPlaceStrel implements InPlaceStrel {
 	 * @see ijt.filter.morphology.Strel#getShifts()
 	 */
 	@Override
-	public int[][] getShifts() {
+	public int[][] getShifts()
+	{
 		int intRadius = (int) Math.round(radius);
 		int[][] mask = getMask();
 		int size = 2 * intRadius + 1;
@@ -143,18 +163,32 @@ public class DiskStrel extends AbstractInPlaceStrel implements InPlaceStrel {
 	 * @see ijt.filter.morphology.Strel#reverse()
 	 */
 	@Override
-	public DiskStrel reverse() {
+	public DiskStrel reverse()
+	{
 		return new DiskStrel(radius);
 	}
 
-
+	/**
+	 * Performs in-place dilation with a disk structuring element by calling the
+	 * ImageJ native RankFilters algorithm, using RankFilters.MAX option.
+	 * 
+	 * @param image the image to process
+	 */
 	@Override
-	public void inPlaceDilation(ImageProcessor image) {
+	public void inPlaceDilation(ImageProcessor image)
+	{
 		new RankFilters().rank(image, radius, RankFilters.MAX);
 	}
 
+	/**
+	 * Performs in-place erosion with a disk structuring element by calling the
+	 * ImageJ native RankFilters algorithm, using RankFilters.MIN option.
+	 * 
+	 * @param image the image to process
+	 */
 	@Override
-	public void inPlaceErosion(ImageProcessor image) {
+	public void inPlaceErosion(ImageProcessor image)
+	{
 		new RankFilters().rank(image, radius, RankFilters.MIN);
 	}
 }
