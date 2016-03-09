@@ -5,6 +5,7 @@ package inra.ijpb.morphology;
 
 import ij.ImageStack;
 import inra.ijpb.algo.Algo;
+import inra.ijpb.morphology.strel.BallStrel;
 import inra.ijpb.morphology.strel.Cross3x3Strel;
 import inra.ijpb.morphology.strel.CubeStrel;
 import inra.ijpb.morphology.strel.DiamondStrel;
@@ -39,7 +40,13 @@ public interface Strel3D extends Algo {
 	 */
 	public enum Shape {
 		/** 
-		 * Square of a given side
+		 * Ball of a given radius
+		 * @see SquareStrel 
+		 */
+		BALL("Ball"),
+		
+		/** 
+		 * Cube of a given side
 		 * @see SquareStrel 
 		 */
 		CUBE("Cube"),
@@ -79,13 +86,13 @@ public interface Strel3D extends Algo {
 		 * Diagonal line of a given length 
 		 * @see LinearDiagUpStrel
 		 */
-		LINE_DIAG_UP("Line 45�"),
+		LINE_DIAG_UP("Line 45°"),
 		
 		/** 
 		 * Diagonal line of a given length 
 		 * @see LinearDiagDownStrel
 		 */
-		LINE_DIAG_DOWN("Line 135�");
+		LINE_DIAG_DOWN("Line 135°");
 		
 		private final String label;
 		
@@ -120,6 +127,8 @@ public interface Strel3D extends Algo {
 		 * @return a new structuring element
 		 */
 		public Strel3D fromDiameter(int diam) {
+			if (this == BALL) 
+				return BallStrel.fromDiameter(diam);
 			if (this == CUBE) 
 				return CubeStrel.fromDiameter(diam);
 			if (this == SQUARE) 
