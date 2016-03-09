@@ -195,10 +195,6 @@ ajouter illustrations
 \end_layout
 
 \begin_layout Itemize
-minima et maxima étendus
-\end_layout
-
-\begin_layout Itemize
 peaufiner vocabulaire : regions / label, component / region...
 \end_layout
 
@@ -412,7 +408,7 @@ Morphological filters
 \begin_layout Standard
 Morphological filters are very common filters that can be combined together
  to provide large variety of solutions.
- They are local filters, in the sense they consider the neighborhood of
+ They are local filters, in the sense they consider the neighbourhood of
  each pixel/voxel according to a structuring element of a given size and
  shape.
  
@@ -427,11 +423,11 @@ The base filters are the
 \series bold
 morphological dilation
 \series default
-, which considers the maximum within the neighborhood, and the 
+, which considers the maximum within the neighbourhood, and the 
 \series bold
 morphological erosion
 \series default
-, which considers the minimum value within the neighborhood (Fig
+, which considers the minimum value within the neighbourhood (Fig
 \begin_inset space ~
 \end_inset
 
@@ -676,8 +672,7 @@ name "fig:Morpho-Gradient-TopHat"
 \end_inset
 
 Some examples of composed morphological filters.
- Result of morphological gradient, result of morphological laplacian, result
- of morphological white top-hat.
+ Morphological gradient, morphological laplacian, morphological white top-hat.
 \end_layout
 
 \end_inset
@@ -3141,7 +3136,7 @@ Label
 
 Map allows to choose the color map used to display a label image.
  In particular, shuffling the color map and/or choosing a specific color
- for background allows better visualisation that only grey levels
+ for background allows better visualisation than with only grey levels.
 \end_layout
 
 \begin_layout Description
@@ -3155,7 +3150,7 @@ To
 
 RGB converts a label image to true RGB image.
  Similar to ImageJ native conversion, but this plugin avoids confusion between
- background pixels and regions with low labels.
+ background pixels and labels with small values.
 \end_layout
 
 \begin_layout Standard
@@ -3280,11 +3275,10 @@ accolades sur une ligne
 \end_layout
 
 \begin_layout Standard
-s
 \begin_inset CommandInset bibtex
 LatexCommand bibtex
 bibfiles "bibliography"
-options "apalike2"
+options "bibtotoc,apalike2"
 
 \end_inset
 
