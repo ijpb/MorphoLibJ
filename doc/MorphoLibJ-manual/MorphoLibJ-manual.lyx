@@ -220,7 +220,7 @@ The library implements several functionalities that were missing in the
  ImageJ software (
 \begin_inset CommandInset citation
 LatexCommand citet
-key "schneider2012671"
+key "Schneider_2012_nmeth,Schindelin_2012_nmeth"
 
 \end_inset
 
@@ -302,7 +302,7 @@ Installation in Fiji
 If you use Fiji (
 \begin_inset CommandInset citation
 LatexCommand citet
-key "schindelin2012fiji"
+key "Schindelin_2012_nmeth,Schneider_2012_nmeth"
 
 \end_inset
 
@@ -1103,9 +1103,21 @@ extended maxima
 \series bold
 extended minima 
 \series default
-are defined in a similar way.
- Both extended maxima and minima are computed using geodesic reconstruction
+are defined in a similar way, and are efficiently used as pre-processing
+ step for watershed segmentation.
+\end_layout
+
+\begin_layout Standard
+Both extended maxima and minima are computed using geodesic reconstruction
  algorithm.
+ More details can be found in the book of 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Soille_2003"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -1295,7 +1307,7 @@ Classic Watershed is an ImageJ/Fiji plugin to perform watershed segmentation
  of grayscale 2D/3D images using flooding simulations as described by 
 \begin_inset CommandInset citation
 LatexCommand citet
-key "soille1990determining"
+key "Soille_1990,Vincent_1991_pami"
 
 \end_inset
 
@@ -3128,7 +3140,7 @@ Label
 \end_inset
 
 Map allows to choose the color map used to display a label image.
- In particular, suffling the color map and/or choosing a specific color
+ In particular, shuffling the color map and/or choosing a specific color
  for background allows better visualisation that only grey levels
 \end_layout
 
@@ -3268,10 +3280,11 @@ accolades sur une ligne
 \end_layout
 
 \begin_layout Standard
+s
 \begin_inset CommandInset bibtex
 LatexCommand bibtex
 bibfiles "bibliography"
-options "plainnat"
+options "apalike2"
 
 \end_inset
 
