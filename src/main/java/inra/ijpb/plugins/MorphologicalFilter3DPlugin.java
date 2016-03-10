@@ -139,7 +139,8 @@ public class MorphologicalFilter3DPlugin implements PlugIn {
 		ImageStack resultStack = op.apply(inputStack, strel);
 
 		// create the new image plus from the processor
-		ImagePlus resultPlus = new ImagePlus(op.toString(), resultStack);
+		String newName = image.getShortTitle() + "-" + op.toString();
+		ImagePlus resultPlus = new ImagePlus(newName, resultStack);
 		resultPlus.copyScale(image);
 		
 		// return the created array
