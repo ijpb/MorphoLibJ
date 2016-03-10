@@ -4,11 +4,12 @@
 package inra.ijpb.binary.distmap;
 
 import ij.ImageStack;
+import inra.ijpb.algo.Algo;
 
 /**
  * Interface for computing distance maps from binary 3D images.
  */
-public interface DistanceTransform3D 
+public interface DistanceTransform3D extends Algo
 {
 	/**
 	 * Computes the distance map from a 3D binary image. 

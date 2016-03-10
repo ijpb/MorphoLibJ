@@ -6,6 +6,7 @@ import ij.ImageStack;
 import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
+import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.binary.ChamferWeights3D;
 import inra.ijpb.binary.distmap.DistanceTransform3D;
 import inra.ijpb.binary.distmap.DistanceTransform3DFloat;
@@ -71,7 +72,8 @@ public class ChamferDistanceMap3DPlugin implements PlugIn {
     	else
     	{
     		algo = new DistanceTransform3DShort(weights.getShortWeights(), normalize);
-    	}
+        }
+		DefaultAlgoListener.monitor(algo);
     	
     	ImageStack image = imagePlus.getStack();
     	ImageStack res = algo.distanceMap(image);

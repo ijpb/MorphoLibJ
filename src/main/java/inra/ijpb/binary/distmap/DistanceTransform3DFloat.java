@@ -2,6 +2,7 @@ package inra.ijpb.binary.distmap;
 
 import static java.lang.Math.min;
 import ij.ImageStack;
+import inra.ijpb.algo.AlgoStub;
 
 /**
  * Computes Chamfer distances in a 3x3x3 neighborhood using floating point 
@@ -10,7 +11,7 @@ import ij.ImageStack;
  * @author David Legland
  * 
  */
-public class DistanceTransform3DFloat implements DistanceTransform3D 
+public class DistanceTransform3DFloat extends AlgoStub implements DistanceTransform3D 
 {
 	private final static int DEFAULT_MASK_LABEL = 255;
 
@@ -85,17 +86,19 @@ public class DistanceTransform3DFloat implements DistanceTransform3D
 		buffer = ImageStack.create(width, height, depth, 32);
 		
 		// initialize empty image with either 0 (background) or Inf (foreground)
-		for (int i = 0; i < width; i++) 
+		fireStatusChanged(this, "Initialization..."); 
+		for (int k = 0; k < depth; k++) 
 		{
 			for (int j = 0; j < height; j++) 
 			{
-				for (int k = 0; k < depth; k++) 
+				for (int i = 0; i < width; i++) 
 				{
 					double val = image.getVoxel(i, j, k);
 					buffer.setVoxel(i, j, k, val == 0 ? 0 : Float.MAX_VALUE);
 				}
 			}
 		}
+		fireProgressChanged(this, 1, 1); 
 		
 		// Two iterations are enough to compute distance map to boundary
 		forwardIteration();
@@ -103,11 +106,13 @@ public class DistanceTransform3DFloat implements DistanceTransform3D
 
 		// Normalize values by the first weight
 		if (this.normalizeMap) {
-			for (int i = 0; i < width; i++) 
+			fireStatusChanged(this, "Normalize map..."); 
+			for (int k = 0; k < depth; k++) 
 			{
+				fireProgressChanged(this, k, depth); 
 				for (int j = 0; j < height; j++) 
 				{
-					for (int k = 0; k < depth; k++) 
+					for (int i = 0; i < width; i++) 
 					{
 						if (maskProc.getVoxel(i, j, k) != 0)
 						{
@@ -116,6 +121,7 @@ public class DistanceTransform3DFloat implements DistanceTransform3D
 					}
 				}
 			}
+			fireProgressChanged(this, 1, 1); 
 		}
 				
 		return buffer;
@@ -123,9 +129,11 @@ public class DistanceTransform3DFloat implements DistanceTransform3D
 
 	private void forwardIteration() 
 	{
+		fireStatusChanged(this, "Forward scan..."); 
 		// iterate on image voxels
 		for (int z = 0; z < depth; z++)
 		{
+			fireProgressChanged(this, z, depth); 
 			for (int y = 0; y < height; y++)
 			{
 				for (int x = 0; x < width; x++)
@@ -193,13 +201,16 @@ public class DistanceTransform3DFloat implements DistanceTransform3D
 				}
 			}
 		}
+		fireProgressChanged(this, 1, 1); 
 	}
 
 	private void backwardIteration() 
 	{
+		fireStatusChanged(this, "Backward scan..."); 
 		// iterate on image voxels in backward order
 		for (int z = depth - 1; z >= 0; z--)
 		{
+			fireProgressChanged(this, depth-1-z, depth); 
 			for (int y = height - 1; y >= 0; y--)
 			{
 				for (int x = width - 1; x >= 0; x--)
@@ -267,6 +278,7 @@ public class DistanceTransform3DFloat implements DistanceTransform3D
 				}
 			}
 		}
+		fireProgressChanged(this, 1, 1); 
 	}
 	
 	/**

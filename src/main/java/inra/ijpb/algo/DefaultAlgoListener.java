@@ -6,7 +6,7 @@ package inra.ijpb.algo;
 import ij.IJ;
 
 /**
- * Utility class that catches algorithm events and displays them either on ImageJ
+ * Utility class that catches algorithm events and displays them on ImageJ
  * main Frame.<p>
  *  
  * Example of use:
