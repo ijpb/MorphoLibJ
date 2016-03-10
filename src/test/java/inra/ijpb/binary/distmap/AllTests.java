@@ -11,6 +11,8 @@ import org.junit.runners.Suite;
 	DistanceTransform3x3ShortTest.class,
 	DistanceTransform5x5FloatTest.class,
 	DistanceTransform5x5ShortTest.class,
+	DistanceTransform3DShortTest.class,
+	DistanceTransform3DFloatTest.class,
 })
 public class AllTests {
   //nothing
