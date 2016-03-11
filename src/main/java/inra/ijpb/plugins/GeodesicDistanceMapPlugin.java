@@ -6,6 +6,7 @@ import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
+import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.binary.ChamferWeights;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransform;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat;
@@ -71,6 +72,7 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 		int maskImageIndex = gd.getNextChoiceIndex();
 		ImagePlus maskImage = WindowManager.getImage(maskImageIndex + 1);
 		String weightLabel = gd.getNextChoice();
+		
 		// identify which weights should be used
 		ChamferWeights weights = ChamferWeights.fromLabel(weightLabel);
 		boolean resultAsFloat = gd.getNextChoiceIndex() == 0;
@@ -90,23 +92,18 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 
 		// Execute core of the plugin
 		String newName = createResultImageName(maskImage);
-		Object[] res;
+		ImagePlus res;
 		if (resultAsFloat)
 		{
-			res = exec(markerImage, maskImage, newName,
+			res = process(markerImage, maskImage, newName,
 					weights.getFloatWeights(), normalizeWeights);
 		} else
 		{
-			res = exec(markerImage, maskImage, newName,
+			res = process(markerImage, maskImage, newName,
 					weights.getShortWeights(), normalizeWeights);
 		}
 
-		// show new image if needed
-		if (res != null)
-		{
-			ImagePlus image = (ImagePlus) res[1];
-			image.show();
-		}
+		res.show();
 	}
 
 	@Deprecated
@@ -262,10 +259,10 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 	 * Computes the distance propagated from the boundary of the white
 	 * particles, within the white phase.
 	 * 
-	 * @param marker
+	 * @param markerPlus
 	 *            the binary marker image from which distances will be
 	 *            propagated
-	 * @param mask
+	 * @param maskPlus
 	 *            the binary mask image that will constrain the propagation
 	 * @param newName
 	 *            the name of the result image
@@ -277,20 +274,63 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 	 * @return an array of object, containing the name of the new image, and the
 	 *         new ImagePlus instance
 	 */
-	public ImagePlus process(ImagePlus marker, ImagePlus mask, String newName,
-			float[] weights, boolean normalize)
+	public ImagePlus process(ImagePlus markerPlus, ImagePlus maskPlus,
+			String newName, float[] weights, boolean normalize)
 	{
 		// Check validity of parameters
-		if (marker == null)
+		if (markerPlus == null)
 		{
 			throw new IllegalArgumentException("Marker image not specified");
 		}
-		if (mask == null)
+		if (maskPlus == null)
 		{
 			throw new IllegalArgumentException("Mask image not specified");
 		}
 		if (newName == null)
-			newName = createResultImageName(mask);
+			newName = createResultImageName(maskPlus);
+		if (weights == null)
+		{
+			throw new IllegalArgumentException("Weights not specified");
+		}
+
+		// size of image
+		int width = maskPlus.getWidth();
+		int height = maskPlus.getHeight();
+
+		// check input and mask have the same size
+		if (markerPlus.getWidth() != width || markerPlus.getHeight() != height)
+		{
+			IJ.showMessage("Error",
+					"Input and marker images\nshould have the same size");
+			return null;
+		}
+
+		// Initialize calculator
+		GeodesicDistanceTransform algo;
+		if (weights.length == 2)
+		{
+			algo = new GeodesicDistanceTransformFloat(weights, normalize);
+		} 
+		else
+		{
+			algo = new GeodesicDistanceTransformFloat5x5(weights, normalize);
+		}
+		DefaultAlgoListener.monitor(algo);
+    	
+
+		// Compute distance on specified images
+		ImageProcessor marker = markerPlus.getProcessor();
+		ImageProcessor mask = maskPlus.getProcessor();
+		ImageProcessor result = algo.geodesicDistanceMap(marker, mask);
+		ImagePlus resultPlus = new ImagePlus(newName, result);
+
+		// create result image
+		return resultPlus;
+	}
+
+	public ImageProcessor process(ImageProcessor marker, ImageProcessor mask,
+			float[] weights, boolean normalize)
+	{
 		if (weights == null)
 		{
 			throw new IllegalArgumentException("Weights not specified");
@@ -313,18 +353,19 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 		if (weights.length == 2)
 		{
 			algo = new GeodesicDistanceTransformFloat(weights, normalize);
-		} else
+		} 
+		else
 		{
 			algo = new GeodesicDistanceTransformFloat5x5(weights, normalize);
 		}
+		DefaultAlgoListener.monitor(algo);
+    	
 
 		// Compute distance on specified images
-		ImageProcessor result = algo.geodesicDistanceMap(marker.getProcessor(),
-				mask.getProcessor());
-		ImagePlus resultPlus = new ImagePlus(newName, result);
+		ImageProcessor result = algo.geodesicDistanceMap(marker, mask);
 
 		// create result image
-		return resultPlus;
+		return result;
 	}
 
 	/**
@@ -386,6 +427,7 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 		{
 			algo = new GeodesicDistanceTransformShort5x5(weights, normalize);
 		}
+		DefaultAlgoListener.monitor(algo);
 
 		// Compute distance on specified images
 		ImageProcessor result = algo.geodesicDistanceMap(marker.getProcessor(),

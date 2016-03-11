@@ -1,9 +1,9 @@
 package inra.ijpb.binary.geodesic;
 
 import static java.lang.Math.min;
-import ij.IJ;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
+import inra.ijpb.algo.AlgoStub;
 
 /**
  * Computation of Chamfer geodesic distances using floating point array for
@@ -12,7 +12,8 @@ import ij.process.ImageProcessor;
  * @author David Legland
  * 
  */
-public class GeodesicDistanceTransformFloat5x5 implements GeodesicDistanceTransform
+public class GeodesicDistanceTransformFloat5x5 extends AlgoStub implements
+		GeodesicDistanceTransform
 {
 	private final static int DEFAULT_MASK_LABEL = 255;
 
@@ -94,6 +95,7 @@ public class GeodesicDistanceTransformFloat5x5 implements GeodesicDistanceTransf
 		this.maskProc = mask;
 
 		// create new empty image, and fill it with black
+		fireStatusChanged(this, "Initialization..."); 
 		buffer = new FloatProcessor(width, height);
 		buffer.setValue(0);
 		buffer.fill();
@@ -114,11 +116,11 @@ public class GeodesicDistanceTransformFloat5x5 implements GeodesicDistanceTransf
 			modif = false;
 
 			// forward iteration
-			IJ.showStatus("Forward iteration " + iter);
+			fireStatusChanged(this, "Forward iteration " + iter);
 			forwardIteration();
 
 			// backward iteration
-			IJ.showStatus("Backward iteration " + iter);
+			fireStatusChanged(this, "Backward iteration " + iter); 
 			backwardIteration();
 
 			// Iterate while pixels have been modified
@@ -129,6 +131,7 @@ public class GeodesicDistanceTransformFloat5x5 implements GeodesicDistanceTransf
 		// Normalize values by the first weight
 		if (this.normalizeMap)
 		{
+			fireStatusChanged(this, "Normalize map"); 
 			for (int i = 0; i < width; i++)
 			{
 				for (int j = 0; j < height; j++) 
@@ -139,6 +142,7 @@ public class GeodesicDistanceTransformFloat5x5 implements GeodesicDistanceTransf
 		}
 		
 		// Compute max value within the mask
+		fireStatusChanged(this, "Normalize display"); 
 		float maxVal = 0;
 		for (int i = 0; i < width; i++)
 		{
@@ -212,6 +216,7 @@ public class GeodesicDistanceTransformFloat5x5 implements GeodesicDistanceTransf
 		// Process all other lines
 		for (int j = 2; j < height; j++)
 		{
+			fireProgressChanged(this, j, height); 
 			// process first pixel of current line: consider pixels up and
 			// upright
 			if (maskProc.get(0, j) == maskLabel)
@@ -279,6 +284,7 @@ public class GeodesicDistanceTransformFloat5x5 implements GeodesicDistanceTransf
 
 		} // end of processing for current line 
 		
+		fireProgressChanged(this, 1, 1); 
 	}
 
 	private void backwardIteration()
@@ -340,6 +346,8 @@ public class GeodesicDistanceTransformFloat5x5 implements GeodesicDistanceTransf
 		// Process regular lines
 		for (int j = height - 3; j >= 0; j--)
 		{
+			fireProgressChanged(this, height-3-j, height); 
+			
 			// process last pixel of the current line: consider pixels
 			// down and down-left
 			if (maskProc.getPixel(width - 1, j) == maskLabel) 
@@ -412,6 +420,8 @@ public class GeodesicDistanceTransformFloat5x5 implements GeodesicDistanceTransf
 			}
 
 		} // end of processing for current line
+		
+		fireProgressChanged(this, 1, 1); 
 	} // end of backward iteration
 
 	/**
