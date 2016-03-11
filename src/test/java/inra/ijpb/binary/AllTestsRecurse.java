@@ -9,6 +9,7 @@ import org.junit.runners.Suite;
 	// generic classes
 	AllTests.class,
 	inra.ijpb.binary.distmap.AllTests.class,
+	inra.ijpb.binary.geodesic.AllTests.class,
 	})
 public class AllTestsRecurse {
   //nothing
