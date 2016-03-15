@@ -34,6 +34,8 @@ Documentation
 
 A more detailed presentation of the library and its plugins is available on the [ImageJ/Fiji Wiki](http://imagej.net/MorphoLibJ). Some information may also be found on the [Internet page of MorphoLibJ](http://ijpb.github.io/MorphoLibJ/).
 
+We have as well a [User Manual](https://github.com/ijpb/MorphoLibJ/releases/download/v1.1.1/MorphoLibJ-manual-v1.1.1.pdf) in pdf format.
+
 The main source code directory is [src/main/java/inra/ijpb](http://github.com/ijpb/MorphoLibJ/tree/master/src/main/java/inra/ijpb).
 
 You can browse the [javadoc](http://ijpb.github.io/MorphoLibJ/javadoc/) for more information about its API.
