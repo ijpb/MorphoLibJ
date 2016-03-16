@@ -71,9 +71,10 @@
 % Added by lyx2lyx
 \usepackage[charter]{mathdesign}
 
-% Add possibility to encapsulate graphics within a frame
-% example: \includegraphics[frame]{file.png}
-\usepackage[export]{adjustbox}
+% setup of figure captions 
+\usepackage[format=plain,font=it,labelfont=bf]{caption}
+%\captionsetup[figure]{name=Figure}
+%\DeclareCaptionLabelSeparator{colon}{.}
 \end_preamble
 \use_default_options true
 \maintain_unincluded_children false
@@ -180,7 +181,7 @@ color{OliveGreen}
 \backslash
 itshape, stringstyle=
 \backslash
-color{BrickRed}}
+color{BrickRed}, showspaces=false}
 \end_layout
 
 \end_inset
@@ -267,27 +268,45 @@ key "Schneider_2012_nmeth,Schindelin_2012_nmeth"
 \end_layout
 
 \begin_layout Itemize
-morphological filtering for 2D/3D and binary or grey level images: erosion
- & dilation, closing & opening, morphological gradient & laplacian, top-hat...
+
+\series bold
+morphological filtering
+\series default
+ for 2D/3D and binary or grey level images: erosion & dilation, closing
+ & opening, morphological gradient & laplacian, top-hat...
 \end_layout
 
 \begin_layout Itemize
-morphological reconstruction, for 2D/3D and binary or grey level images,
- allowing fast detection of regional or extended extrema, removing of borders,
- or hole filling
+
+\series bold
+morphological reconstruction
+\series default
+, for 2D/3D and binary or grey level images, allowing fast detection of
+ regional or extended extrema, removing of borders, or hole filling
 \end_layout
 
 \begin_layout Itemize
-watershed segmentation + GUI, making it possible to segment 2D/3D images
- of cell tissues
+
+\series bold
+watershed segmentation
+\series default
+ + GUI, making it possible to segment 2D/3D images of cell tissues
 \end_layout
 
 \begin_layout Itemize
-2D/3D measurements: volume, surface area, inertia ellipse/ellipsoid...
+
+\series bold
+2D/3D measurements
+\series default
+: volume, surface area, inertia ellipse/ellipsoid...
 \end_layout
 
 \begin_layout Itemize
-several utilities for the manipulation of binary and label images
+
+\series bold
+several utilities
+\series default
+ for the manipulation of binary and label images
 \end_layout
 
 \begin_layout Standard
@@ -302,6 +321,28 @@ target "http://ijpb.github.io/MorphoLibJ/"
 \begin_inset CommandInset href
 LatexCommand href
 target "http://github.com/ijpb/MorphoLibJ"
+
+\end_inset
+
+.
+ The exhaustive code documentation includes many use-case examples, and
+ can be found online
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://ijpb.github.io/MorphoLibJ/javadoc/
+\end_layout
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
@@ -2716,7 +2757,9 @@ binary or label
 \begin_inset Quotes eld
 \end_inset
 
-Plugins > Analyze > Geometric Measurements 3D
+Plugins\SpecialChar \menuseparator
+Analyze\SpecialChar \menuseparator
+Geometric Measurements 3D
 \begin_inset Quotes erd
 \end_inset
 
@@ -2818,7 +2861,9 @@ Other measurements are provided for pairs of grayscale and label 2D or 3D
 \begin_inset Quotes eld
 \end_inset
 
-Plugins > Analyze > Measure 3D
+Plugins\SpecialChar \menuseparator
+Analyze\SpecialChar \menuseparator
+Measure 3D
 \begin_inset Quotes erd
 \end_inset
 
@@ -3288,12 +3333,13 @@ For final users, plugins provide graphical display and intuitive tuning
  of parameters.
  Such plugins can easily be incorporated into a macro:
 \begin_inset listings
+lstparams "showstringspaces=false"
 inline false
 status open
 
 \begin_layout Plain Layout
 
-// Calls the Regional Min/MAx plugin on current ImagePlus instance
+// Calls the Regional Min/Max plugin on current ImagePlus instance
 \end_layout
 
 \begin_layout Plain Layout
@@ -3312,6 +3358,7 @@ For plugins developers, operators are available through collections of static
  of code.
  Example:
 \begin_inset listings
+lstparams "showstringspaces=false"
 inline false
 status open
 
@@ -3335,6 +3382,7 @@ For core developers, algorithms are implementations of abstract interfaces,
  making it possible to choose or develop the most appropriate one, and to
  monitor execution events.
 \begin_inset listings
+lstparams "showstringspaces=false"
 inline false
 status open
 
@@ -3385,7 +3433,17 @@ ImageProcessor result = algo.applyTo(image);
 
 \begin_layout Standard
 In total, the library provides nearly two hundred classes and interfaces
- and the exhaustive code documentation includes use-case examples.
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+, for around 37000 lines of code
+\end_layout
+
+\end_inset
+
+.
+ 
 \end_layout
 
 \begin_layout Section
@@ -3650,88 +3708,7 @@ citep{Poulet_2015_bmc}, grey level granulometries
 citep{Devaux2014} or the description of binary microstructures 
 \backslash
 citep{Silva2015}.
- MorphoLibJ provides nearly two hundred classes, for around 35000 lines
- of Java code.
- The exhaustive code documentation includes use-case examples.
  
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Note Note
-status collapsed
-
-\begin_layout Chapter
-Developer section
-\end_layout
-
-\begin_layout Plain Layout
-ajouter une section 
-\begin_inset Quotes eld
-\end_inset
-
-developeur
-\begin_inset Quotes erd
-\end_inset
-
-, avec les différentes possibilités pour utiliser la bibliothèque dans un
- plugin.
-\end_layout
-
-\begin_layout Plain Layout
-En particulier, les différents niveaux d'accès aux fonctionnalités 
-\end_layout
-
-\begin_layout Description
-Plugin Affichage d'une boîte de dialogue, ce qui permet d'ajuster les options,
- lancer le traitement, et éventuellement (pour les images 2D) d'avoir une
- prévisualisation.
- Exemple runPlugin(
-\begin_inset Quotes eld
-\end_inset
-
-Morphological Filters...
-\begin_inset Quotes erd
-\end_inset
-
-, shape=square, radius=5);
-\end_layout
-
-\begin_layout Description
-Static
-\begin_inset space ~
-\end_inset
-
-factories Lancement du traitement sur une image ou un ensemble d'images
- donnée, et récupération du résultat dans une nouvelle image.
- On essaie d'avoir des appels similaires pour les ImageProcessor, les ImageStack
-, et les ImagePlus (dans ce dernier cas on teste la dimensionnalité et on
- appelle le traitement spécialisé correspondant).
- Exemple : MorphologicalFilter.gradient(image, se);
-\end_layout
-
-\begin_layout Description
-Algorithms Création d'une instance de classe qui sera responsable du traitement,
- et qui permettra de monitorer les différentes étapes de l'éxecution.
- Travaille sur des ImageProcessor ou des ImageStack.
- Exemple : algo = new GeodesicReconstruction3DScanningGray8(); algo.setConnectivi
-ty(26); result = algo.applyTo(marker, mask);
-\end_layout
-
-\begin_layout Plain Layout
-Quelques conventions de codage ?
-\end_layout
-
-\begin_layout Itemize
-TAB
-\end_layout
-
-\begin_layout Itemize
-accolades sur une ligne
 \end_layout
 
 \end_inset
