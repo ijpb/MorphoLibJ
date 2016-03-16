@@ -4,8 +4,12 @@
 \begin_header
 \textclass scrreprt
 \begin_preamble
+\usepackage[dvipsnames]{xcolor}
+
 \usepackage{hyperref}
 \usepackage{lstlinebgrd}
+
+\definecolor{bl}{rgb}{0.0,0.2,0.6} 
 
 \definecolor{mygreen}{rgb}{0,0.6,0}
 \definecolor{mygray}{rgb}{0.5,0.5,0.5}
@@ -13,9 +17,6 @@
 \definecolor{mymauve}{rgb}{0.58,0,0.82}
 
 \hypersetup{colorlinks=true, citecolor=blue}
-
-\usepackage{xcolor}
-\definecolor{bl}{rgb}{0.0,0.2,0.6} 
 
 
 % package that modifies style of section headers
@@ -78,7 +79,7 @@
 \fontencoding global
 \font_roman default
 \font_sans default
-\font_typewriter default
+\font_typewriter beramono
 \font_math auto
 \font_default_family default
 \use_non_tex_fonts false
@@ -145,6 +146,43 @@
 \end_header
 
 \begin_body
+
+\begin_layout Standard
+
+\lang french
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+lstset{numbers=left, tabsize=2, frame=single, breaklines=true, basicstyle=
+\backslash
+scriptsize
+\backslash
+ttfamily, aboveskip=5pt}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+lstset{language=java, keywordstyle=
+\backslash
+bfseries, commentstyle=
+\backslash
+color{OliveGreen}
+\backslash
+itshape, stringstyle=
+\backslash
+color{BrickRed}}
+\end_layout
+
+\end_inset
+
+
+\end_layout
 
 \begin_layout Title
 MorphoLibJ user manual
@@ -249,7 +287,14 @@ several utilities for the manipulation of binary and label images
 \end_layout
 
 \begin_layout Standard
-The home page of the project is hosted on GitHub: 
+The home page of the project is located at 
+\begin_inset CommandInset href
+LatexCommand href
+target "http://ijpb.github.io/MorphoLibJ/"
+
+\end_inset
+
+, and the source code can be found on GitHub: 
 \begin_inset CommandInset href
 LatexCommand href
 target "http://github.com/ijpb/MorphoLibJ"
@@ -819,6 +864,23 @@ conditional dilations
  image using a logical operation.
  Conditional dilations are repeated until no more modification occur (idempotenc
 e condition).
+ 
+\end_layout
+
+\begin_layout Standard
+The figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Geodesic-Reconstruction-Principle"
+
+\end_inset
+
+ shows several steps of a geodesic reconstruction by dilation on a pair
+ of binary images.
+ The mask image is shown in gray, and the marker image is shown in black
+ on the first image.
+ The reconstructed images at each step are shown in black.
+ The markers propagates within the mask until they fill the chosen regions.
 \end_layout
 
 \begin_layout Standard
@@ -831,35 +893,35 @@ status open
 \align center
 \begin_inset Graphics
 	filename images/binary/particles-Markers-ovr.png
-	width 2.4cm
+	width 3cm
 
 \end_inset
 
 
 \begin_inset Graphics
 	filename images/binary/particles-condDil01-ovr.png
-	width 2.4cm
+	width 3cm
 
 \end_inset
 
 
 \begin_inset Graphics
 	filename images/binary/particles-condDil02-ovr.png
-	width 2.4cm
+	width 3cm
 
 \end_inset
 
 
 \begin_inset Graphics
 	filename images/binary/particles-condDil03-ovr.png
-	width 2.4cm
+	width 3cm
 
 \end_inset
 
 
 \begin_inset Graphics
 	filename images/binary/particles-condDilIdemp-ovr.png
-	width 2.4cm
+	width 3cm
 
 \end_inset
 
@@ -2730,11 +2792,11 @@ pitch
 status open
 
 \begin_layout Plain Layout
-Region adjacency graph
+Region adjacency graph -> use maize image
 \end_layout
 
 \begin_layout Plain Layout
-geodesic diameter
+geodesic diameter -> use fiber image
 \end_layout
 
 \end_inset
@@ -2762,21 +2824,17 @@ Plugins > Analyze > Measure 3D
  The results are displayed as well in a ResultsTable.
 \end_layout
 
-\begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-Mapping of measures on 2D/3D image
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
 \begin_layout Chapter
-Binary image utilities
+Binary and label image utilities
+\end_layout
+
+\begin_layout Standard
+The MorphoLibJ library provides several utility functions for processing
+ binary and label images.
+\end_layout
+
+\begin_layout Section
+Utilities for binary images
 \end_layout
 
 \begin_layout Standard
@@ -2939,7 +2997,7 @@ Algorithms work for both 2D or 3D images.
  3D) images.
 \end_layout
 
-\begin_layout Chapter
+\begin_layout Section
 Utilities for label images
 \end_layout
 
@@ -3062,7 +3120,8 @@ clear
 \begin_inset Quotes erd
 \end_inset
 
- a label, by replacing its value by 0, or to merge to adjacent regions.
+ a label, by replacing its value by 0, or to merge to adjacent regions,
+ by replacing the value of a label by the value of its neighbour.
 \end_layout
 
 \begin_layout Description
@@ -3196,9 +3255,397 @@ Assign result of a measurement to a label image.
 
 \end_layout
 
+\begin_layout Chapter
+Library inter-operability
+\end_layout
+
+\begin_layout Standard
+A key design concept was the modularity of the implementation to facilitate
+ its reusability.
+ Three layers with different programming technicity can be identified :
+\end_layout
+
+\begin_layout Itemize
+For final users, plugins provide graphical display and intuitive tuning
+ of parameters.
+ Such plugins can easily be incorporated into a macro:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+// Calls the Regional Min/MAx plugin on current ImagePlus instance
+\end_layout
+
+\begin_layout Plain Layout
+
+run("Regional Min & Max", "operation=[Regional Maxima] connectivity=4");
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+For plugins developers, operators are available through collections of static
+ methods, making it possible to apply most operations with a single line
+ of code.
+ Example:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+// Computes regional maxima using the 4-connectivity
+\end_layout
+
+\begin_layout Plain Layout
+
+ImageProcessor maxima = MinimaAndMaxima.regionalMaxima(image, 4);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+For core developers, algorithms are implementations of abstract interfaces,
+ making it possible to choose or develop the most appropriate one, and to
+ monitor execution events.
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+// choose and setup the appropriate algorithm
+\end_layout
+
+\begin_layout Plain Layout
+
+RegionalExtremaAlgo algo = new RegionalExtremaByFlooding(); 
+\end_layout
+
+\begin_layout Plain Layout
+
+algo.setExtremaType(ExtremaType.MAXIMA);
+\end_layout
+
+\begin_layout Plain Layout
+
+algo.setConnectivity(4);
+\end_layout
+
+\begin_layout Plain Layout
+
+// add algorithm monitoring
+\end_layout
+
+\begin_layout Plain Layout
+
+algo.addAlgoListener(new DefaultAlgoListener());
+\end_layout
+
+\begin_layout Plain Layout
+
+// compute result on a given ImageProcessor
+\end_layout
+
+\begin_layout Plain Layout
+
+ImageProcessor result = algo.applyTo(image);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In total, the library provides nearly two hundred classes and interfaces
+ and the exhaustive code documentation includes use-case examples.
+\end_layout
+
+\begin_layout Section
+Library organisation
+\end_layout
+
+\begin_layout Standard
+The library follows a logic structure of folders divided by topics aiming
+ at their re-usability from other plugins or scripts, among others:
+\end_layout
+
+\begin_layout Description
+inra.ijpb.data contains generic data structures for manipulating 2D or 3D
+ images
+\end_layout
+
+\begin_layout Description
+inra.ijpb.binary contains the set of utilities for working on binary images
+ (connected component labeling, distance transform, geodesic distance transform...)
+\end_layout
+
+\begin_layout Description
+inra.ijpb.label contains the utilities for label images (cropping, size opening,
+ remove border labels, etc)
+\end_layout
+
+\begin_layout Description
+inra.ijpb.measure contains the tools for geometric and grey level characterization
+ of 2D or 3D images
+\end_layout
+
+\begin_layout Description
+inra.ijpb.morphology contains the collection of mathematical morphology operators
+\end_layout
+
+\begin_layout Description
+inra.ijpb.watershed contains the classes implementing the different versions
+ of the watershed algorithm
+\end_layout
+
+\begin_layout Description
+inra.ijpb.plugins contains the set of plugins that is accessible from ImageJ/Fiji
+ Plugins menu
+\end_layout
+
+\begin_layout Standard
+All major methods have a general class with static methods that allow calling
+ the methods on 2D and 3D images in a transparent way.
+\end_layout
+
+\begin_layout Section
+Scripting MorphoLibJ 
+\end_layout
+
+\begin_layout Standard
+One advantage of this organization of the library and the use of public
+ static methods is that it allows very easy and fast prototyping of morphologica
+l algorithms and pipelines.
+ 
+\end_layout
+
+\begin_layout Standard
+Let's see an example in a complete Beanshell script that takes the active
+ 2D or 3D image and finds a reasonable segmentation combining a set of morpholog
+ical operations (gradient, extended minima and watershed):
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "language=Java"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+// @ImagePlus imp
+\end_layout
+
+\begin_layout Plain Layout
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+// ImageJ imports
+\end_layout
+
+\begin_layout Plain Layout
+
+import ij.IJ;
+\end_layout
+
+\begin_layout Plain Layout
+
+import ij.ImagePlus;
+\end_layout
+
+\begin_layout Plain Layout
+
+import ij.ImageStack;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// MorphoLibJ imports
+\end_layout
+
+\begin_layout Plain Layout
+
+import inra.ijpb.binary.BinaryImages;
+\end_layout
+
+\begin_layout Plain Layout
+
+import inra.ijpb.morphology.MinimaAndMaxima3D;
+\end_layout
+
+\begin_layout Plain Layout
+
+import inra.ijpb.morphology.Morphology;
+\end_layout
+
+\begin_layout Plain Layout
+
+import inra.ijpb.morphology.Strel3D;
+\end_layout
+
+\begin_layout Plain Layout
+
+import inra.ijpb.watershed.Watershed;
+\end_layout
+
+\begin_layout Plain Layout
+
+  
+\end_layout
+
+\begin_layout Plain Layout
+
+// create structuring element (cube of radius 1)
+\end_layout
+
+\begin_layout Plain Layout
+
+strel = Strel3D.Shape.CUBE.fromRadius( 1 );
+\end_layout
+
+\begin_layout Plain Layout
+
+// apply morphological gradient to input image
+\end_layout
+
+\begin_layout Plain Layout
+
+image = Morphology.gradient( imp.getImageStack(), strel );
+\end_layout
+
+\begin_layout Plain Layout
+
+// find regional minima on gradient image with dynamic value of 30 and 6-connect
+ivity
+\end_layout
+
+\begin_layout Plain Layout
+
+regionalMinima = MinimaAndMaxima3D.extendedMinima( image, 30, 6 );
+\end_layout
+
+\begin_layout Plain Layout
+
+// impose minima on gradient image
+\end_layout
+
+\begin_layout Plain Layout
+
+imposedMinima = MinimaAndMaxima3D.imposeMinima( image, regionalMinima, 6
+ );
+\end_layout
+
+\begin_layout Plain Layout
+
+// label minima using connected components (32-bit output)
+\end_layout
+
+\begin_layout Plain Layout
+
+labeledMinima = BinaryImages.componentsLabeling( regionalMinima, 6, 32 );
+\end_layout
+
+\begin_layout Plain Layout
+
+// apply marker-based watershed using the labeled minima on the minima-imposed
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+// gradient image (the "true" value indicates the use of dams in the output)
+\end_layout
+
+\begin_layout Plain Layout
+
+resultStack = Watershed.computeWatershed( imposedMinima, labeledMinima, 6,
+ true );
+\end_layout
+
+\begin_layout Plain Layout
+
+  
+\end_layout
+
+\begin_layout Plain Layout
+
+// create image with watershed result
+\end_layout
+
+\begin_layout Plain Layout
+
+resultImage = new ImagePlus( "watershed", resultStack );
+\end_layout
+
+\begin_layout Plain Layout
+
+// assign right calibration
+\end_layout
+
+\begin_layout Plain Layout
+
+resultImage.setCalibration( imp.getCalibration() );
+\end_layout
+
+\begin_layout Plain Layout
+
+// and show it
+\end_layout
+
+\begin_layout Plain Layout
+
+resultImage.show();
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Standard
 \begin_inset Note Note
 status open
+
+\begin_layout Plain Layout
+This modularity permitted to develop other plugins devoted to the analysis
+ of nucleus images 
+\backslash
+citep{Poulet_2015_bmc}, grey level granulometries 
+\backslash
+citep{Devaux2014} or the description of binary microstructures 
+\backslash
+citep{Silva2015}.
+ MorphoLibJ provides nearly two hundred classes, for around 35000 lines
+ of Java code.
+ The exhaustive code documentation includes use-case examples.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status collapsed
 
 \begin_layout Chapter
 Developer section
