@@ -9,11 +9,12 @@ import ij.process.ImageProcessor;
 import inra.ijpb.data.border.BorderManager;
 import inra.ijpb.data.border.BorderManager3D;
 
-/**
- * 
- */
 
 /**
+ * Pads the current image with the specified value or color. Works for 2D or 3D
+ * images. In the latter case, it is possible to specify the number of slices to
+ * add in front of and behind the stack.
+ * 
  * @author David Legland
  *
  */
@@ -28,8 +29,6 @@ public class ExtendBordersPlugin implements PlugIn
 		// Get current image, and show error msg if no one is open
 		ImagePlus imagePlus = IJ.getImage();
 		
-		int imageType = imagePlus.getType();
-		
 		// Open a dialog to choose the different parameters
 		GenericDialog gd = new GenericDialog("Add Border");
 		gd.addNumericField("Left", 0, 0);
@@ -41,12 +40,8 @@ public class ExtendBordersPlugin implements PlugIn
 			gd.addNumericField("Front", 0, 0);
 			gd.addNumericField("Back", 0, 0);
 		}
-		switch (imageType) {
-		case ImagePlus.GRAY8:
-			gd.addChoice("Fill Value", BorderManager.Type.getAllLabels(),
-					BorderManager.Type.REPLICATED.toString());
-			break;
-		}
+		gd.addChoice("Fill Value", BorderManager.Type.getAllLabels(),
+				BorderManager.Type.REPLICATED.toString());
 
 		gd.showDialog();
 		
@@ -99,8 +94,9 @@ public class ExtendBordersPlugin implements PlugIn
 	}
 	
 	@Deprecated
-	public ImagePlus exec(ImagePlus image, 
-			int left, int right, int top, int bottom, BorderManager border) {
+	public ImagePlus exec(ImagePlus image, int left, int right, int top,
+			int bottom, BorderManager border)
+	{
 		ImageProcessor proc = image.getProcessor();
 		ImageProcessor result = process(proc, left, right, top, bottom, border);
 		return new ImagePlus(image.getTitle(), result);
@@ -108,18 +104,18 @@ public class ExtendBordersPlugin implements PlugIn
 
 	/**
 	 * Adds the specified number of pixels around the input image, and returns
-	 * the resulting image. Assumes reference image contains a BYTE Processor.
+	 * the resulting image. 
 	 * 
 	 * @param image
 	 *            the input image
 	 * @param left
-	 *            the number of pixels to add to the left
+	 *            the number of pixels to add to the left of the image
 	 * @param right
-	 *            the number of pixels to add to the right
+	 *            the number of pixels to add to the right of the image
 	 * @param top
-	 *            the number of pixels to add on top of image
+	 *            the number of pixels to add on top of the image
 	 * @param bottom
-	 *            the number of pixels to at the bottom of image
+	 *            the number of pixels to add at the bottom of the image
 	 * @param border
 	 *            an instance of BorderManager that specifies the value of
 	 *            pixels to be added
@@ -138,9 +134,11 @@ public class ExtendBordersPlugin implements PlugIn
 		ImageProcessor result = image.createProcessor(width2 , height2);
 		
 		// fill result image
-		for (int x = 0; x < width2; x++) {
-			for (int y = 0; y < height2; y++) {
-				result.set(x, y, border.get(x-left, y-top));
+		for (int x = 0; x < width2; x++)
+		{
+			for (int y = 0; y < height2; y++)
+			{
+				result.set(x, y, border.get(x - left, y - top));
 			}
 		}
 		
@@ -148,18 +146,22 @@ public class ExtendBordersPlugin implements PlugIn
 	}
 	/**
 	 * Adds the specified number of pixels around the input image, and returns
-	 * the resulting image. Assumes reference image contains a BYTE Processor.
+	 * the resulting image. 
 	 * 
 	 * @param image
-	 *            the input image
+	 *            the input image stack 
 	 * @param left
-	 *            the number of pixels to add to the left
+	 *            the number of voxels to add to the left
 	 * @param right
-	 *            the number of pixels to add to the right
+	 *            the number of voxels to add to the right
 	 * @param top
-	 *            the number of pixels to add on top of image
+	 *            the number of voxels to add on top of the stack
 	 * @param bottom
-	 *            the number of pixels to at the bottom of image
+	 *            the number of voxels to add at the bottom of the stack
+	 * @param front
+	 *            the number of slices to add in front of the stack
+	 * @param back
+	 *            the number of slices to add behind the stack
 	 * @param border
 	 *            an instance of BorderManager that specifies the value of
 	 *            pixels to be added
