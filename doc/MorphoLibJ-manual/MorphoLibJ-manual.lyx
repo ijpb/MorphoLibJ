@@ -70,6 +70,10 @@
 \renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
 % Added by lyx2lyx
 \usepackage[charter]{mathdesign}
+
+% Add possibility to encapsulate graphics within a frame
+% example: \includegraphics[frame]{file.png}
+\usepackage[export]{adjustbox}
 \end_preamble
 \use_default_options true
 \maintain_unincluded_children false
@@ -2850,14 +2854,21 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename images/binary/particles-lbl-rgb.png
+	filename images/grains/grains-binary-crop-ext.png
 	width 4cm
 
 \end_inset
 
  
 \begin_inset Graphics
-	filename images/binary/particles-dist-rgb.png
+	filename images/grains/grains-binary-crop-lbl-ext.png
+	width 4cm
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/grains/grains-binary-crop-inv-dist-ext.png
 	width 4cm
 
 \end_inset
@@ -2869,8 +2880,8 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Connected components labeling, and computation of distance maps for binary
- image.
+Binary image, result of connected components labeling, and computation of
+ distance map on the complement of binary image.
 \end_layout
 
 \end_inset
@@ -2918,22 +2929,29 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename images/binary/particles-largest.png
-	width 4cm
+	filename images/grains/grains-binary-crop-ext.png
+	width 3.5cm
 
 \end_inset
 
-
+ 
 \begin_inset Graphics
-	filename images/binary/particles-killLargest.png
-	width 4cm
+	filename images/grains/grains-binary-crop-largest-EXT.png
+	width 3.5cm
 
 \end_inset
 
-
+ 
 \begin_inset Graphics
-	filename images/binary/particles-sizeOpen1000.png
-	width 4cm
+	filename images/grains/grains-binary-crop-killLargest-ext.png
+	width 3.5cm
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/grains/grains-binary-crop-areaOpen-ext.png
+	width 3.5cm
 
 \end_inset
 
@@ -2945,8 +2963,8 @@ status open
 
 \begin_layout Plain Layout
 Utilities for binary images.
- From left to right: keep largest region, remove largest region, apply size
- opening for keeping only regions with at least 1000 pixels.
+ From left to right: original image, keep largest region, remove largest
+ region, apply size opening for keeping only regions with at least 150 pixels.
 \end_layout
 
 \end_inset
@@ -3018,29 +3036,29 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename images/binary/particles-lbl-rgb.png
-	width 3cm
+	filename images/grains/grains-binary-crop-lbl-ext.png
+	width 3.5cm
 
 \end_inset
 
-
+ 
 \begin_inset Graphics
-	filename images/binary/particles-lbl-killBorders.png
-	width 3cm
+	filename images/grains/grains-binary-crop-lbl-killBorders-ext.png
+	width 3.5cm
 
 \end_inset
 
-
+ 
 \begin_inset Graphics
-	filename images/binary/particles-lbl-killLargest.png
-	width 3cm
+	filename images/grains/grains-binary-crop-lbl-killLargest-ext.png
+	width 3.5cm
 
 \end_inset
 
-
+ 
 \begin_inset Graphics
-	filename images/binary/particles-lbl-sizeOpening.png
-	width 3cm
+	filename images/grains/grains-binary-crop-lbl-sizeOpening-ext.png
+	width 3.5cm
 
 \end_inset
 
@@ -3054,7 +3072,7 @@ status open
 Utilities for label images.
  From left to right: original label image, remove border labels, remove
  largest region, apply size opening for keeping only regions with at least
- 1000 pixels.
+ 150 pixels.
 \end_layout
 
 \end_inset
@@ -3221,14 +3239,14 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename images/binary/particles-lbl-rgb.png
+	filename images/grains/grains-binary-crop-lbl-ext.png
 	width 4cm
 
 \end_inset
 
-
+ 
 \begin_inset Graphics
-	filename images/binary/particles-lbl-Elong.png
+	filename images/grains/grains-binary-crop-1-lbl-Elong.png
 	width 4cm
 
 \end_inset
