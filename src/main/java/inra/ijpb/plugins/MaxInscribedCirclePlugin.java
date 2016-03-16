@@ -14,6 +14,7 @@ import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
 import inra.ijpb.binary.ChamferWeights;
+import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.GeometricMeasures2D;
 
 import java.awt.Color;
@@ -73,9 +74,7 @@ public class MaxInscribedCirclePlugin implements PlugIn
 		int resultImageIndex = gd.getNextChoiceIndex();
 		
 		// check if image is a label image
-		int type = labelImage.getType(); 
-		if (type != ImagePlus.GRAY8 && type != ImagePlus.GRAY16
-				&& type != ImagePlus.GRAY32)
+		if (!LabelImages.isLabelImageType(labelImage))
 		{
             IJ.showMessage("Input image should be a label image");
             return;

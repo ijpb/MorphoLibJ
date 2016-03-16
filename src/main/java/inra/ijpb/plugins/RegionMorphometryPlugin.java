@@ -7,6 +7,7 @@ import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
+import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.GeometricMeasures2D;
 
 public class RegionMorphometryPlugin implements PlugInFilter {
@@ -66,10 +67,10 @@ public class RegionMorphometryPlugin implements PlugInFilter {
     public void run(ImageProcessor ip) {
         
         // check if image is a label image
-        if(imagePlus.getType() != ImagePlus.GRAY8 && 
-        		imagePlus.getType() != ImagePlus.GRAY16 && 
-        		imagePlus.getType() != ImagePlus.GRAY32) {
-            IJ.showMessage("Input image should be a label image");
+		// Check if image may be a label image
+		if (!LabelImages.isLabelImageType(imagePlus))
+		{
+           IJ.showMessage("Input image should be a label image");
             return;
         }
         
@@ -87,7 +88,8 @@ public class RegionMorphometryPlugin implements PlugInFilter {
         if (inputImage==null) 
             return null;
 
-        if (debug) {
+        if (debug) 
+        {
         	System.out.println("Compute Crofton perimeter on image '" 
         			+ inputImage.getTitle());
         }
@@ -97,7 +99,8 @@ public class RegionMorphometryPlugin implements PlugInFilter {
         // Extract spatial calibration
         Calibration cal = inputImage.getCalibration();
         double[] resol = new double[]{1, 1};
-        if (cal.scaled()) {
+        if (cal.scaled()) 
+        {
         	resol[0] = cal.pixelWidth;
         	resol[1] = cal.pixelHeight;
         }
@@ -114,7 +117,8 @@ public class RegionMorphometryPlugin implements PlugInFilter {
         if (inputImage==null) 
             return null;
 
-        if (debug) {
+        if (debug) 
+        {
         	System.out.println("Compute Crofton perimeter on image '" 
         			+ inputImage.getTitle());
         }

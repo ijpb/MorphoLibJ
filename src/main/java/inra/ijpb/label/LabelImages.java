@@ -36,6 +36,21 @@ public class LabelImages
 	}
 
 	/**
+	 * Checks if the input image may be a label image, and returns false if the
+	 * type is not valid for label images.
+	 * 
+	 * @param imagePlus
+	 *            the input image to check
+	 * @return true if the type of the input image is valid for label images
+	 */
+	public static final boolean isLabelImageType(ImagePlus imagePlus)
+	{
+		int type = imagePlus.getType();
+		return type == ImagePlus.GRAY8 || type == ImagePlus.COLOR_256
+				|| type == ImagePlus.GRAY16 || type == ImagePlus.GRAY32;
+	}
+
+	/**
 	 * Creates a label image with the appropriate class to store the required
 	 * number of labels.
 	 * 
@@ -1249,11 +1264,11 @@ public class LabelImages
 		{
 			for (int x = 0; x < sizeX; x++)
 			{
-				int value = (int) image.getf(x, y); 
+				int value = image.get(x, y); 
 				if (value == newLabel)
 					continue;
 				if (labelSet.contains(value)) 
-					image.setf(x, y, newLabel);
+					image.set(x, y, newLabel);
 			}
 		}
 	}

@@ -15,6 +15,7 @@ import ij.process.ImageProcessor;
 import inra.ijpb.binary.geodesic.GeodesicDiameterFloat;
 import inra.ijpb.binary.geodesic.GeodesicDiameterShort;
 import inra.ijpb.binary.ChamferWeights;
+import inra.ijpb.label.LabelImages;
 
 import java.awt.Color;
 
@@ -76,9 +77,9 @@ public class GeodesicDiameterPlugin implements PlugIn
 		int labelImageIndex = gd.getNextChoiceIndex();
 		ImagePlus labelImage = WindowManager.getImage(labelImageIndex+1);
 		ChamferWeights weights = ChamferWeights.fromLabel(gd.getNextChoice());
-		// check image types
-		if (labelImage.getType() != ImagePlus.GRAY8
-				&& labelImage.getType() != ImagePlus.GRAY16)
+		
+		// check if image is a label image
+		if (!LabelImages.isLabelImageType(labelImage))
 		{
 			IJ.showMessage("Input image should be a label image");
 			return;
@@ -86,16 +87,7 @@ public class GeodesicDiameterPlugin implements PlugIn
 		
 		// Compute geodesic diameters, using floating-point calculations
 		ResultsTable table;
-//		boolean useIntegers = false;
-//		if (useIntegers) 
-//		{
-//			table = process(labelImage.getProcessor(), weights.getShortWeights());
-//		} 
-//		else 
-//		{
-			table = process(labelImage.getProcessor(), weights.getFloatWeights());
-//		}
-
+		table = process(labelImage.getProcessor(), weights.getFloatWeights());
 		
 		// display the result table
 		String tableName = labelImage.getShortTitle() + "-GeodDiameters"; 

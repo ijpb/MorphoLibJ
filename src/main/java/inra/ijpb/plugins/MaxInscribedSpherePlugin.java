@@ -10,6 +10,7 @@ import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
 import inra.ijpb.binary.ChamferWeights3D;
+import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.GeometricMeasures3D;
 
 public class MaxInscribedSpherePlugin implements PlugIn 
@@ -68,9 +69,9 @@ public class MaxInscribedSpherePlugin implements PlugIn
             IJ.showMessage("Input image should be a 3D label image");
             return;
 		}
-		int type = labelImage.getType(); 
-		if (type != ImagePlus.GRAY8 && type != ImagePlus.GRAY16
-				&& type != ImagePlus.GRAY32)
+		
+		// Check if image may be a label image
+		if (!LabelImages.isLabelImageType(labelImage))
 		{
             IJ.showMessage("Input image should be a 3D label image");
             return;
