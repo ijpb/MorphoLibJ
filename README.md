@@ -17,7 +17,7 @@ The library implements several functionalities that were missing in the ImageJ s
 
 Installation
 ------------
-* In ImageJ, download the latest released jar into the _plugins_ folder.
+* In ImageJ, download the [latest released jar](https://github.com/ijpb/MorphoLibJ/releases) into the _plugins_ folder.
 
 * In Fiji, you just need to add the IJPB-plugins update site:
 
