@@ -517,7 +517,7 @@ morphological dilation
 \series bold
 morphological erosion
 \series default
-, which considers the minimum value within the neighbourhood (Fig
+, which considers the minimum value within the neighborhood (Fig
 \begin_inset space ~
 \end_inset
 
@@ -1021,7 +1021,7 @@ reference "fig:Geodesic-Reconstruction-Binary"
 \end_inset
 
 ).
- In a similar way, combuting geodesic reconstruction by using the border
+ In a similar way, computing geodesic reconstruction by using the border
  of the complement of the image makes it possible to 
 \series bold
 fill holes
@@ -1090,12 +1090,16 @@ Applications to grey level images
 \end_layout
 
 \begin_layout Standard
-The principle of geodesic reconstruction can be applied to grey level images.
+Geodesic reconstructions can be applied to grey level images.
  By manually chosing binary markers such that they overlay specific structures,
  and after applying a geodesic reconstruction by dilation, it is possible
  to obtain a grey level image containing only the chosen structures.
- The border kill operation can also be applied on grey level images, making
- ot possible to rapidly remove structures touching the image borders.
+ The 
+\series bold
+border kill 
+\series default
+operation can also be applied on grey level images, making ot possible to
+ rapidly remove structures touching the image borders.
 \end_layout
 
 \begin_layout Standard
