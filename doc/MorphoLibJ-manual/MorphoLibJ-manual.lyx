@@ -529,8 +529,7 @@ reference "fig:Morpho-Dilation-Erosion"
 \end_inset
 
 ).
- The dilation and the erosion changes the size of the structures in the
- image.
+ The dilation and the erosion change the size of the structures in the image.
 \end_layout
 
 \begin_layout Standard
@@ -613,7 +612,7 @@ reference "fig:Morpho-Opening-Closing"
 \end_layout
 
 \begin_layout Standard
-In a symetric way, the result of an erosion followed by a dilation is called
+In a symmetric way, the result of an erosion followed by a dilation is called
  a 
 \series bold
 morphological
@@ -695,7 +694,7 @@ reference "fig:Morpho-Gradient-TopHat"
 ).
  The 
 \series bold
-morphological laplacian
+morphological Laplacian
 \series default
  is defined as half the sum of a morphological dilation and a morphological
  erosion with the same structuring element, minus the original image.
@@ -711,13 +710,14 @@ white top-hat
 first computes a morphological opening (resulting in removing bright structures
  smaller than structuring elements), and removes the result from the original
  image.
- When applied with a large structuring element, the result is an homogeneization
+ When applied with a large structuring element, the result is an homogenization
  of the background, making bright structures easier to segment.
  Similarly, the 
 \series bold
 dark top-hat
 \series default
- can be used to enhance dark structures observed on an inhomogenenous background.
+ can be used to enhance dark structures observed on an non-homogeneous backgroun
+d.
 \end_layout
 
 \begin_layout Standard
@@ -762,7 +762,7 @@ name "fig:Morpho-Gradient-TopHat"
 \end_inset
 
 Some examples of composed morphological filters.
- Morphological gradient, morphological laplacian, morphological white top-hat.
+ Morphological gradient, morphological Laplacian, morphological white top-hat.
 \end_layout
 
 \end_inset
@@ -830,7 +830,7 @@ morphological
 \begin_inset space ~
 \end_inset
 
-laplacien is defined as half the sum of a morphological dilation and a morpholog
+Laplacian is defined as half the sum of a morphological dilation and a morpholog
 ical erosion with the same structuring element, minus the original image,
  and enhances edges of the image.
 \end_layout
@@ -1091,15 +1091,15 @@ Applications to grey level images
 
 \begin_layout Standard
 Geodesic reconstructions can be applied to grey level images.
- By manually chosing binary markers such that they overlay specific structures,
+ By manually choosing binary markers such that they overlay specific structures,
  and after applying a geodesic reconstruction by dilation, it is possible
  to obtain a grey level image containing only the chosen structures.
  The 
 \series bold
 border kill 
 \series default
-operation can also be applied on grey level images, making ot possible to
- rapidly remove structures touching the image borders.
+operation can also be applied on grey level images, making possible to rapidly
+ remove structures touching the image borders.
 \end_layout
 
 \begin_layout Standard
@@ -1199,7 +1199,7 @@ One problem arising with regional minima or maxima is that they are very
 extended maxima
 \series default
  are defined as a connected region containing elements such that the difference
- of the value of each element within the region with the maximal value wihtin
+ of the value of each element within the region with the maximal value within
  the region is lower than the tolerance, and such that the neighbors of
  the regions all have values smaller than the maximum within the region
  minus the tolerance.
