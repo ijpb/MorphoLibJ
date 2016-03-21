@@ -183,7 +183,7 @@ public class LabelImages
 	 * boundaries between two labels.
 	 * 
 	 * @param image
-	 *            a 3D image containig label regions
+	 *            a 3D image containing label regions
 	 * @return a new 3D binary image with white voxels at label boundaries
 	 */
 	public static final ImageStack labelBoundaries(ImageStack image) 

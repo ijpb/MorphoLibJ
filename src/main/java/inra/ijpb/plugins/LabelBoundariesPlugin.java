@@ -28,7 +28,7 @@ public class LabelBoundariesPlugin implements PlugIn {
 		String newName = imagePlus.getShortTitle() + "-bnd";
 		ImagePlus resultPlus = new ImagePlus(newName, boundaries);
 		
-		// udpate meta information of result image
+		// Update meta information of result image
 		resultPlus.copyScale(imagePlus);
 		
 		// Display with same settings as original image
