@@ -1214,7 +1214,7 @@ are defined in a similar way, and are efficiently used as pre-processing
 \end_layout
 
 \begin_layout Standard
-Both extended maxima and minima are computed using geodesic reconstruction
+Both extended maxima and minima are computed using the geodesic reconstruction
  algorithm.
  More details can be found in the book of 
 \begin_inset CommandInset citation
