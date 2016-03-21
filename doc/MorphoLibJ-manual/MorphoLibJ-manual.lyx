@@ -1908,7 +1908,7 @@ Marker-controlled Watershed is an ImageJ/Fiji plugin to segment grayscale
 ed watershed algorithm by 
 \begin_inset CommandInset citation
 LatexCommand citet
-key "meyer1990morphological"
+key "Meyer_1990_jvcir"
 
 \end_inset
 
