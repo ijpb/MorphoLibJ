@@ -181,7 +181,7 @@ public class LabelImages
 	/**
 	 * Creates a binary 3D image that contains 255 for voxels that are
 	 * boundaries between two labels.
-	 * 
+	 *
 	 * @param image
 	 *            a 3D image containing label regions
 	 * @return a new 3D binary image with white voxels at label boundaries
@@ -214,6 +214,37 @@ public class LabelImages
 		return result;
 	}
 	
+	/**
+	 * Creates a binary 2D image that contains 255 for pixels that are
+	 * boundaries between two labels.
+	 *
+	 * @param image
+	 *            a 2D image containing label regions
+	 * @return a new 2D binary image with white pixels at label boundaries
+	 */
+	public static final ImageProcessor labelBoundaries( ImageProcessor image )
+	{
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+
+		ByteProcessor result = new ByteProcessor( sizeX, sizeY );
+
+			for (int y = 0; y < sizeY - 1; y++)
+			{
+				for (int x = 0; x < sizeX - 1; x++)
+				{
+					double value = image.getf( x, y );
+					if (image.getf( x+1, y ) != value )
+						result.setf( x, y, 255 );
+					if (image.getf( x, y+1 ) != value )
+						result.setf( x, y, 255 );
+					if (image.getf( x, y ) != value )
+						result.setf( x, y, 255 );
+				}
+			}
+		return result;
+	}
+
 	/**
 	 * Returns a binary image that contains only the selected particle or
 	 * region, by automatically cropping the image and eventually adding some

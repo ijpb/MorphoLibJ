@@ -7,6 +7,7 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.plugin.PlugIn;
+import ij.process.ImageProcessor;
 import inra.ijpb.label.LabelImages;
 
 /**
@@ -24,10 +25,22 @@ public class LabelBoundariesPlugin implements PlugIn {
 		
 		ImageStack stack = imagePlus.getStack();
 		
-		ImageStack boundaries = LabelImages.labelBoundaries(stack);
-		String newName = imagePlus.getShortTitle() + "-bnd";
-		ImagePlus resultPlus = new ImagePlus(newName, boundaries);
+		ImagePlus resultPlus;
+		if( stack.getSize() > 1 )
+		{
+			ImageStack boundaries = LabelImages.labelBoundaries(stack);
 		
+			String newName = imagePlus.getShortTitle() + "-bnd";
+			resultPlus = new ImagePlus(newName, boundaries);
+		}
+		else
+		{
+			ImageProcessor boundaries = LabelImages.labelBoundaries(
+					stack.getProcessor( 1 ) );
+
+			String newName = imagePlus.getShortTitle() + "-bnd";
+			resultPlus = new ImagePlus( newName, boundaries );
+		}
 		// Update meta information of result image
 		resultPlus.copyScale(imagePlus);
 		
