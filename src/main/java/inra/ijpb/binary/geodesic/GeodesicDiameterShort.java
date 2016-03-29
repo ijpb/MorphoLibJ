@@ -4,6 +4,7 @@ import ij.IJ;
 import ij.measure.ResultsTable;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
+import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.binary.ChamferWeights;
 
 import java.awt.Point;
@@ -21,8 +22,7 @@ import java.util.TreeSet;
  * <p>
  * Example of use:
  *<pre>{@code
- *	short[] weights = ChamferWeights.CHESSKNIGHT.getShortWeights();
- *	GeodesicDiameterShort gd = new GeodesicDiameterShort(weights);
+ *	GeodesicDiameterShort gd = new GeodesicDiameterShort(ChamferWeights.CHESSKNIGHT);
  *	ResultsTable table = gd.analyseImage(inputLabelImage);
  *	table.show("Geodesic Diameter");
  *}</pre>
@@ -33,7 +33,7 @@ import java.util.TreeSet;
  * @author David Legland
  *
  */
-public class GeodesicDiameterShort 
+public class GeodesicDiameterShort extends AlgoStub implements GeodesicDiameter
 {
 	// ==================================================
 	// Class variables
@@ -111,17 +111,13 @@ public class GeodesicDiameterShort
 		Point[] pos1;
 		Point[] pos2;
 		
-		// Starting time
-		long start = System.currentTimeMillis();
-		
 		// Initialize mask as binarisation of labels
 		ImageProcessor mask = binariseImage(labelImage);
 		
 		// Initialize marker as complement of all labels
 		ImageProcessor marker = createMarkerOutsideLabels(labelImage);
 
-		IJ.showStatus("Initializing pseudo geodesic centers...");
-		//System.out.println("Initialize pseudo geodesic centers");
+		this.fireStatusChanged(this, "Initializing pseudo geodesic centers...");
 
 		// first distance propagation to find an arbitrary center
 		distance = calculator.geodesicDistanceMap(marker, mask);
@@ -146,7 +142,7 @@ public class GeodesicDiameterShort
 		}
 		
 		
-		IJ.showStatus("Computing first geodesic extremities...");
+		this.fireStatusChanged(this, "Computing first geodesic extremities...");
 
 		// Second distance propagation from first maximum
 		distance = calculator.geodesicDistanceMap(marker, mask);
@@ -169,7 +165,7 @@ public class GeodesicDiameterShort
 			marker.set(pos1[i].x, pos1[i].y, 255);
 		}
 		
-		IJ.showStatus("Computing second geodesic extremities...");
+		this.fireStatusChanged(this, "Computing second geodesic extremities...");
 
 		// third distance propagation from second maximum
 		distance = calculator.geodesicDistanceMap(marker, mask);
@@ -200,11 +196,6 @@ public class GeodesicDiameterShort
 			table.addValue("x2", pos2[i].x);
 			table.addValue("y2", pos2[i].y);
 		}
-
-		// Final time, displayed in seconds
-		long finalTime = System.currentTimeMillis();
-		float elapsedTime = (finalTime - start) / 1000.0f;
-		IJ.showStatus(String.format("Elapsed time: %7.2f s", elapsedTime));
 
 		return table;
 	}
