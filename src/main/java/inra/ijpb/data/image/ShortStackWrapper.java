@@ -55,6 +55,19 @@ public class ShortStackWrapper implements Image3D
 		}
 	}
 	
+	@Override
+	public int getSize(int dim)
+	{
+		switch(dim)
+		{
+		case 0: return this.sizeX;
+		case 1: return this.sizeY;
+		case 2: return this.sizeZ;
+		default:
+			throw new IllegalArgumentException("Dimension must be comprised between 0 and 2, not " + dim);
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see inra.ijpb.data.image.Image3D#get(int, int, int)
 	 */

@@ -22,6 +22,15 @@ package inra.ijpb.data.image;
 public interface Image3D 
 {
 	/**
+	 * Returns the number of voxels along the specified dimension.
+	 * 
+	 * @param dim
+	 *            the dimension, between 0 and 2
+	 * @return the size along the given dimension, as a number of voxels
+	 */
+	public int getSize(int dim);
+	
+	/**
 	 * Returns the value at the specified coordinates as an integer.
 	 * 
 	 * @param x
