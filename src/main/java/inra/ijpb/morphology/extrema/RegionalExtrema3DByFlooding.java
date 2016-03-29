@@ -65,15 +65,19 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo
 		int sizeZ = image.getSize();
 
 		// create binary image for result, filled with 255.
+		fireStatusChanged(this, "Initialize regional extrema");
 		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
 		fillStack(result, 255);
 
+		fireStatusChanged(this, "Compute regional extrema");
+		
 		// initialize local data depending on extrema type
 		final int sign = this.extremaType == ExtremaType.MINIMA ? 1 : -1;
 
 		// iterate on image voxels
 		for (int z = 0; z < sizeZ; z++) 
 		{
+			fireProgressChanged(this, z, sizeZ);
 			for (int y = 0; y < sizeY; y++) 
 			{
 				for (int x = 0; x < sizeX; x++) 
@@ -110,6 +114,7 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo
 			}
 		}		
 
+		fireProgressChanged(this, 1, 1);
 		return result;
 	}
 
@@ -124,15 +129,19 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo
 		int sizeZ = image.getSize();
 
 		// create binary image for result, filled with 255.
+		fireStatusChanged(this, "Initialize regional extrema");
 		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
 		fillStack(result, 255);
 
+		fireStatusChanged(this, "Compute regional extrema");
 		// initialize local data depending on extrema type
 		final int sign = this.extremaType == ExtremaType.MINIMA ? 1 : -1;
 
 		// iterate on image voxels
 		for (int z = 0; z < sizeZ; z++) 
 		{
+			fireProgressChanged(this, z, sizeZ);
+			
 			for (int y = 0; y < sizeY; y++) 
 			{
 				for (int x = 0; x < sizeX; x++)
@@ -157,8 +166,8 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo
 						}
 					}
 					
-					// if one of the neighbors has lower value, the local pixel 
-					// is not a minima. All connected pixels with same value are 
+					// if one of the neighbors has lower value, the local voxel
+					// is not a minima. All connected pixels with same value are
 					// set to the marker for non-minima.
 					if (value < currentValue) 
 					{
@@ -166,8 +175,10 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo
 					}
 				}
 			}
-		}		
-
+		}
+		
+		fireProgressChanged(this, 1, 1);
+		
 		return result;
 	}
 	
@@ -201,8 +212,11 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo
 		int sizeZ = image.getSize();
 
 		// create binary image for result, filled with 255.
+		fireStatusChanged(this, "Initialize regional extrema");
 		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
 		fillStack(result, 255);
+
+		fireStatusChanged(this, "Compute regional extrema");
 
 		// initialize local data depending on extrema type
 		final int sign = this.extremaType == ExtremaType.MINIMA ? 1 : -1;
@@ -210,6 +224,7 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo
 		// iterate on image voxels
 		for (int z = 0; z < sizeZ; z++) 
 		{
+			fireProgressChanged(this, z, sizeZ);
 			for (int y = 0; y < sizeY; y++) 
 			{
 				for (int x = 0; x < sizeX; x++) 
@@ -256,6 +271,7 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo
 			}
 		}		
 
+		fireProgressChanged(this, 1, 1);
 		return result;
 	}
 
@@ -273,8 +289,11 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo
 		int sizeZ = image.getSize();
 
 		// create binary image for result, filled with 255.
+		fireStatusChanged(this, "Initialize regional extrema");
 		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
 		fillStack(result, 255);
+
+		fireStatusChanged(this, "Compute regional extrema");
 
 		// initialize local data depending on extrema type
 		final int sign = this.extremaType == ExtremaType.MINIMA ? 1 : -1;
@@ -282,6 +301,7 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo
 		// iterate on image voxels
 		for (int z = 0; z < sizeZ; z++) 
 		{
+			fireProgressChanged(this, z, sizeZ);
 			for (int y = 0; y < sizeY; y++) 
 			{
 				for (int x = 0; x < sizeX; x++)
@@ -322,6 +342,7 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo
 			}
 		}		
 
+		fireProgressChanged(this, 1, 1);
 		return result;
 	}
 	

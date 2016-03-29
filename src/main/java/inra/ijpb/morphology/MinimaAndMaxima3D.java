@@ -4,6 +4,7 @@
 package inra.ijpb.morphology;
 
 import ij.ImageStack;
+import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.morphology.extrema.ExtremaType;
 import inra.ijpb.morphology.extrema.RegionalExtrema3DAlgo;
 import inra.ijpb.morphology.extrema.RegionalExtrema3DByFlooding;
@@ -75,6 +76,7 @@ public class MinimaAndMaxima3D
 		RegionalExtrema3DAlgo algo = new RegionalExtrema3DByFlooding();
 		algo.setConnectivity(conn);
 		algo.setExtremaType(ExtremaType.MAXIMA);
+		DefaultAlgoListener.monitor(algo);
 		
 		return algo.applyTo(image);
 	}
@@ -139,6 +141,7 @@ public class MinimaAndMaxima3D
 		RegionalExtrema3DAlgo algo = new RegionalExtrema3DByFlooding();
 		algo.setConnectivity(conn);
 		algo.setExtremaType(ExtremaType.MAXIMA);
+		DefaultAlgoListener.monitor(algo);
 		
 		return algo.applyTo(image, mask);
 	}
@@ -175,6 +178,7 @@ public class MinimaAndMaxima3D
 		RegionalExtrema3DAlgo algo = new RegionalExtrema3DByFlooding();
 		algo.setConnectivity(conn);
 		algo.setExtremaType(ExtremaType.MINIMA);
+		DefaultAlgoListener.monitor(algo);
 		
 		return algo.applyTo(image);
 	}
@@ -239,6 +243,7 @@ public class MinimaAndMaxima3D
 		RegionalExtrema3DAlgo algo = new RegionalExtrema3DByFlooding();
 		algo.setConnectivity(conn);
 		algo.setExtremaType(ExtremaType.MINIMA);
+		DefaultAlgoListener.monitor(algo);
 		
 		return algo.applyTo(image, mask);
 	}

@@ -4,9 +4,10 @@
 package inra.ijpb.morphology.extrema;
 
 import ij.ImageStack;
+import inra.ijpb.algo.AlgoStub;
 
 /**
- * Interface for appying regional extrema (regional mininma and regional maxima).
+ * Interface for computing regional extrema (regional minima and regional maxima).
  * 
  * Example of use:
  * <pre><code>
@@ -19,10 +20,12 @@ import ij.ImageStack;
  * resPlus.show(); 
  * </code></pre>
  *
+ * @see RegionalExtrema3DByFlooding
+ * 
  * @author David Legland
  *
  */
-public abstract class RegionalExtrema3DAlgo 
+public abstract class RegionalExtrema3DAlgo extends AlgoStub
 {
 	// ==============================================================
 	// class variables
