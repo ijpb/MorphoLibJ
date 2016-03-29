@@ -173,7 +173,7 @@ public class GeodesicReconstruction3DHybrid0Float extends GeodesicReconstruction
 		// Display current status
 		trace("Forward iteration ");
 		showStatus("Geod. Rec. Fwd ");
-		
+
 		forwardScan();
 		if (verbose) 
 		{
@@ -207,9 +207,6 @@ public class GeodesicReconstruction3DHybrid0Float extends GeodesicReconstruction
 			t0 = t1;
 		}
 
-		// clear progression display
-		showProgress(1, 1, "");
-		
 		return this.resultStack;
 	}
 
@@ -355,6 +352,8 @@ public class GeodesicReconstruction3DHybrid0Float extends GeodesicReconstruction
 				}
 			}
 		} // end of pixel iteration
+		
+		showProgress(1, 1);
 	}
 
 	/**
@@ -414,6 +413,8 @@ public class GeodesicReconstruction3DHybrid0Float extends GeodesicReconstruction
 				}
 			}
 		}
+		
+		showProgress(1, 1);
 	}
 
 
@@ -487,6 +488,8 @@ public class GeodesicReconstruction3DHybrid0Float extends GeodesicReconstruction
 				}
 			}
 		}	
+		
+		showProgress(1, 1);
 	}
 	
 	/**
@@ -562,6 +565,8 @@ public class GeodesicReconstruction3DHybrid0Float extends GeodesicReconstruction
 				}
 			}
 		}	
+		
+		showProgress(1, 1);
 	}
 	
 	private void processQueue()
