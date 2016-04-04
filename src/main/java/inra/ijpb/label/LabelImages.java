@@ -1093,8 +1093,7 @@ public class LabelImages
 		int sizeZ = image.getSize();
 
 		// iterate on image voxels
-		IJ.showStatus("Count label voxels...");
-        for (int z = 0; z < sizeZ; z++) 
+		for (int z = 0; z < sizeZ; z++) 
         {
         	IJ.showProgress(z, sizeZ);
         	for (int y = 0; y < sizeY; y++)
@@ -1111,8 +1110,7 @@ public class LabelImages
         	}
         }
         
-		IJ.showStatus("");
-        return counts;
+		return counts;
 	}
 	
     /**
@@ -1148,7 +1146,6 @@ public class LabelImages
         // iterate on image pixels
         for (int z = 0; z < sizeZ; z++) 
         {
-        	IJ.showProgress(z, sizeZ);
         	for (int y = 0; y < sizeY; y++)  
         	{
         		for (int x = 0; x < sizeX; x++)
@@ -1157,7 +1154,6 @@ public class LabelImages
         		}
         	}
         }
-        IJ.showProgress(1);
         
         // remove 0 if it exists
         if (labels.contains(0))
@@ -1193,7 +1189,6 @@ public class LabelImages
         	// For float processor, use explicit case to int from float value  
         	for (int y = 0; y < sizeY; y++) 
         	{
-        		IJ.showProgress(y, sizeY);
         		for (int x = 0; x < sizeX; x++) 
         			labels.add((int) image.getf(x, y));
         	}
@@ -1203,12 +1198,10 @@ public class LabelImages
         	// for integer-based images, simply use integer result
         	for (int y = 0; y < sizeY; y++) 
         	{
-        		IJ.showProgress(y, sizeY);
         		for (int x = 0; x < sizeX; x++) 
         			labels.add(image.get(x, y));
         	}
         }
-        IJ.showProgress(1);
         
         // remove 0 if it exists
         if (labels.contains(0))
