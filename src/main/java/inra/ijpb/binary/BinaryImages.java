@@ -10,6 +10,9 @@ import ij.process.ByteProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
+import inra.ijpb.algo.DefaultAlgoListener;
+import inra.ijpb.binary.conncomp.ConnectedComponentsLabeling;
+import inra.ijpb.binary.conncomp.FloodFillComponentsLabeling;
 import inra.ijpb.binary.distmap.DistanceTransform;
 import inra.ijpb.binary.distmap.DistanceTransform3D;
 import inra.ijpb.binary.distmap.DistanceTransform3DFloat;
@@ -24,7 +27,6 @@ import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat5x5;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort5x5;
 import inra.ijpb.label.LabelImages;
-import inra.ijpb.morphology.FloodFill;
 import inra.ijpb.morphology.FloodFill3D;
 
 /**
@@ -111,61 +113,9 @@ public class BinaryImages
 	public final static ImageProcessor componentsLabeling(ImageProcessor image,
 			int conn, int bitDepth) 
 	{
-		// get image size
-		int width = image.getWidth();
-		int height = image.getHeight();
-		int maxLabel;
-
-		// Depending on bitDepth, create result image, and choose max label 
-		// number
-		ImageProcessor labels;
-		switch (bitDepth) {
-		case 8: 
-			labels = new ByteProcessor(width, height);
-			maxLabel = 255;
-			break; 
-		case 16: 
-			labels = new ShortProcessor(width, height);
-			maxLabel = 65535;
-			break;
-		case 32:
-			labels = new FloatProcessor(width, height);
-			maxLabel = 0x01 << 23 - 1;
-			break;
-		default:
-			throw new IllegalArgumentException(
-					"Bit Depth should be 8, 16 or 32.");
-		}
-
-		// the label counter
-		int nLabels = 0;
-
-		// iterate on image pixels to fin new regions
-		for (int y = 0; y < height; y++) 
-		{
-			IJ.showProgress(y, height);
-			for (int x = 0; x < width; x++) 
-			{
-				if (image.get(x, y) == 0)
-					continue;
-				if (labels.get(x, y) > 0)
-					continue;
-
-				// a new label is found: check current label number  
-				if (nLabels == maxLabel)
-				{
-					throw new RuntimeException("Max number of label reached (" + maxLabel + ")");
-				}
-				
-				// increment label index, and propagate
-				nLabels++;
-				FloodFill.floodFillFloat(image, x, y, labels, nLabels, conn);
-			}
-		}
-		IJ.showProgress(1);
-
-		labels.setMinAndMax(0, nLabels);
-		return labels;
+		ConnectedComponentsLabeling algo = new FloodFillComponentsLabeling(conn, bitDepth);
+		DefaultAlgoListener.monitor(algo);
+		return algo.computeLabels(image);
 	}
 
 	/**
@@ -648,7 +598,8 @@ public class BinaryImages
 			int nPixelMin) 
 	{
 		// Labeling
-		ImageProcessor labelImage = componentsLabeling(image, 4, 16);
+		ConnectedComponentsLabeling algo = new FloodFillComponentsLabeling(4, 16);	
+		ImageProcessor labelImage = algo.computeLabels(image);
 
 		// keep only necessary labels and binarize
 		return binarize(LabelImages.areaOpening(labelImage, nPixelMin));
