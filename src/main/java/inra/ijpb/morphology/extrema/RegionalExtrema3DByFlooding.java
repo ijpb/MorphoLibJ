@@ -5,7 +5,7 @@ import static java.lang.Math.min;
 import ij.ImageStack;
 import inra.ijpb.data.image.Image3D;
 import inra.ijpb.data.image.Images3D;
-import inra.ijpb.morphology.FloodFill;
+import inra.ijpb.morphology.FloodFill3D;
 
 /**
  * Computes regional extrema in 3D images using flooding algorithm. 
@@ -114,7 +114,7 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo
 					// set to the marker for non-minima.
 					if (value < currentValue) 
 					{
-						FloodFill.floodFillFloat(image2, x, y, z, result2, 0, 6);
+						FloodFill3D.floodFillFloat(image2, x, y, z, result2, 0, 6);
 					}
 				}
 			}
@@ -180,7 +180,7 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo
 					// set to the marker for non-minima.
 					if (value < currentValue) 
 					{
-						FloodFill.floodFillFloat(image2, x, y, z, result2, 0, 26);
+						FloodFill3D.floodFillFloat(image2, x, y, z, result2, 0, 26);
 					}
 				}
 			}
@@ -274,7 +274,7 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo
 					// set to the marker for non-minima.
 					if (value < currentValue) 
 					{
-						FloodFill.floodFillFloat(image, x, y, z, result, 0, 6);
+						FloodFill3D.floodFillFloat(image, x, y, z, result, 0, 6);
 					}
 				}
 			}
@@ -345,7 +345,7 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo
 					// set to the marker for non-minima.
 					if (value < currentValue * sign) 
 					{
-						FloodFill.floodFillFloat(image, x, y, z, result, 0, 26);
+						FloodFill3D.floodFillFloat(image, x, y, z, result, 0, 26);
 					}
 				}
 			}

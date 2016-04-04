@@ -25,6 +25,7 @@ import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort5x5;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.morphology.FloodFill;
+import inra.ijpb.morphology.FloodFill3D;
 
 /**
  * A collection of static methods for operating on binary images (2D/3D).
@@ -242,7 +243,7 @@ public class BinaryImages
 					
 					// increment label index, and propagate
 					nLabels++;
-					FloodFill.floodFillFloat(image, x, y, z, labels, nLabels, conn);
+					FloodFill3D.floodFillFloat(image, x, y, z, labels, nLabels, conn);
 				}
 			}
 		}
