@@ -175,7 +175,6 @@ public class MinimaAndMaxima
 		ImageProcessor marker = image.duplicate();
 		marker.add(1);
 		
-//		GeodesicReconstructionAlgo algo = new GeodesicReconstructionByErosion(conn);
 		GeodesicReconstructionAlgo algo = new GeodesicReconstructionHybrid(
 				GeodesicReconstructionType.BY_EROSION, conn);
 		ImageProcessor rec = algo.applyTo(marker, image);
@@ -234,7 +233,6 @@ public class MinimaAndMaxima
 		ImageProcessor mask = image.duplicate();
 		mask.add(dynamic);
 		
-//		GeodesicReconstructionAlgo algo = new GeodesicReconstructionByDilation(conn);
 		GeodesicReconstructionAlgo algo = new GeodesicReconstructionHybrid(
 				GeodesicReconstructionType.BY_DILATION, conn);
 		ImageProcessor rec = algo.applyTo(image, mask);
@@ -253,7 +251,9 @@ public class MinimaAndMaxima
 	 *            the minimal difference between a minima and its boundary 
 	 * @return the extended minima of input image
 	 */
-	public final static ImageProcessor extendedMinima(ImageProcessor image, int dynamic) {
+	public final static ImageProcessor extendedMinima(ImageProcessor image,
+			int dynamic)
+	{
 		return extendedMinima(image, dynamic, DEFAULT_CONNECTIVITY);
 	}
 
@@ -273,10 +273,9 @@ public class MinimaAndMaxima
 	public final static ImageProcessor extendedMinima(ImageProcessor image,
 			int dynamic, int conn)
 	{
-	ImageProcessor marker = image.duplicate();
+		ImageProcessor marker = image.duplicate();
 		marker.add(dynamic);
 		
-//		GeodesicReconstructionAlgo algo = new GeodesicReconstructionByErosion(conn);
 		GeodesicReconstructionAlgo algo = new GeodesicReconstructionHybrid(
 				GeodesicReconstructionType.BY_EROSION, conn);
 		ImageProcessor rec = algo.applyTo(marker, image);
