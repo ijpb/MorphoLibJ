@@ -3,7 +3,6 @@
  */
 package inra.ijpb.binary;
 
-import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ByteProcessor;
@@ -12,7 +11,9 @@ import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.binary.conncomp.ConnectedComponentsLabeling;
+import inra.ijpb.binary.conncomp.ConnectedComponentsLabeling3D;
 import inra.ijpb.binary.conncomp.FloodFillComponentsLabeling;
+import inra.ijpb.binary.conncomp.FloodFillComponentsLabeling3D;
 import inra.ijpb.binary.distmap.DistanceTransform;
 import inra.ijpb.binary.distmap.DistanceTransform3D;
 import inra.ijpb.binary.distmap.DistanceTransform3DFloat;
@@ -27,7 +28,6 @@ import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat5x5;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort5x5;
 import inra.ijpb.label.LabelImages;
-import inra.ijpb.morphology.FloodFill3D;
 
 /**
  * A collection of static methods for operating on binary images (2D/3D).
@@ -64,6 +64,9 @@ public class BinaryImages
 	 * @throws RuntimeException
 	 *             if the number of labels reaches the maximum number that can
 	 *             be represented with this bitDepth
+	 * 
+	 * @see inra.ijpb.morphology.conncomp.ConnectedComponentsLabeling
+	 * @see inra.ijpb.morphology.conncomp.ConnectedComponentsLabeling3D
 	 * @see inra.ijpb.morphology.FloodFill
 	 */
 	public final static ImagePlus componentsLabeling(ImagePlus imagePlus, 
@@ -72,22 +75,75 @@ public class BinaryImages
 		ImagePlus labelPlus;
 		int nLabels;
 	
+		// Dispatch processing depending on input image dimensionality
 		if (imagePlus.getStackSize() == 1)
 		{
 			ImageProcessor labels = componentsLabeling(imagePlus.getProcessor(),
 					conn, bitDepth);
 			labelPlus = new ImagePlus("Labels", labels);
 			nLabels = findMax(labels);
-		} else 
+		}
+		else 
 		{
 			ImageStack labels = componentsLabeling(imagePlus.getStack(), conn,
 					bitDepth);
 			labelPlus = new ImagePlus("Labels", labels);
 			nLabels = findMax(labels);
 		}
-		
+
+		// setup display range to show largest label as white
 		labelPlus.setDisplayRange(0, nLabels);
 		return labelPlus;
+	}
+
+	/**
+	 * Computes maximum value in the input 2D image.
+	 * This method is used to compute display range of result ImagePlus.
+	 */
+	private final static int findMax(ImageProcessor image) 
+	{
+		// get image size
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		
+		// find maximum value over voxels
+		int maxVal = 0;
+		for (int y = 0; y < sizeY; y++) 
+		{
+			for (int x = 0; x < sizeX; x++) 
+			{
+				maxVal = Math.max(maxVal, image.get(x, y));
+			}
+		}
+		
+		return maxVal;
+	}
+
+	/**
+	 * Computes maximum value in the input 3D image.
+	 * This method is used to compute display range of result ImagePlus.
+	 */
+	private final static int findMax(ImageStack image) 
+	{
+		// get image size
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		int sizeZ = image.getSize();
+	
+		// find maximum value over voxels
+		int maxVal = 0;
+		for (int z = 0; z < sizeZ; z++) 
+		{
+			for (int y = 0; y < sizeY; y++) 
+			{
+				for (int x = 0; x < sizeX; x++) 
+				{
+					maxVal = Math.max(maxVal, (int) image.getVoxel(x, y, z));
+				}
+			}
+		}
+		
+		return maxVal;
 	}
 
 	/**
@@ -108,7 +164,8 @@ public class BinaryImages
 	 * @throws RuntimeException
 	 *             if the number of labels reaches the maximum number that can
 	 *             be represented with this bitDepth
-	 * @see inra.ijpb.morphology.FloodFill
+	 *             
+	 * @see inra.ijpb.morphology.conncomp.ConnectedComponentsLabeling     
 	 */
 	public final static ImageProcessor componentsLabeling(ImageProcessor image,
 			int conn, int bitDepth) 
@@ -136,127 +193,17 @@ public class BinaryImages
 	 * @throws RuntimeException
 	 *             if the number of labels reaches the maximum number that can
 	 *             be represented with this bitDepth
-	 * @see inra.ijpb.morphology.FloodFill
+	 *             
+	 * @see inra.ijpb.morphology.conncomp.ConnectedComponentsLabeling3D     
 	 */
-	public final static ImageStack componentsLabeling(ImageStack image, int conn,
-			int bitDepth) 
+	public final static ImageStack componentsLabeling(ImageStack image,
+			int conn, int bitDepth)
 	{
-		if ( Thread.currentThread().isInterrupted() )					
-			return null;
-		
-		// get image size
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-		int sizeZ = image.getSize();
-
-		IJ.showStatus("Allocate Memory");
-		ImageStack labels = ImageStack.create(sizeX, sizeY, sizeZ, bitDepth);
-
-		int maxLabel;
-		switch (bitDepth) {
-		case 8: 
-			maxLabel = 255;
-			break; 
-		case 16: 
-			maxLabel = 65535;
-			break;
-		case 32:
-			maxLabel = 0x01 << 23;
-			break;
-		default:
-			throw new IllegalArgumentException(
-					"Bit Depth should be 8, 16 or 32.");
-		}
-
-		IJ.showStatus("Compute Labels...");
-		int nLabels = 0;
-		for (int z = 0; z < sizeZ; z++) 
-		{
-			IJ.showProgress(z, sizeZ);
-			for (int y = 0; y < sizeY; y++) 
-			{
-				for (int x = 0; x < sizeX; x++) 
-				{
-					// Do not process background voxels
-					if (image.getVoxel(x, y, z) == 0)
-						continue;
-
-					// Do not process voxels already labeled
-					if (labels.getVoxel(x, y, z) > 0)
-						continue;
-
-					// a new label is found: check current label number  
-					if (nLabels == maxLabel)
-					{
-						throw new RuntimeException("Max number of label reached (" + maxLabel + ")");
-					}
-					
-					// increment label index, and propagate
-					nLabels++;
-					FloodFill3D.floodFillFloat(image, x, y, z, labels, nLabels, conn);
-				}
-			}
-		}
-		
-		IJ.showStatus("");
-		IJ.showProgress(1);
-		return labels;
+		ConnectedComponentsLabeling3D algo = new FloodFillComponentsLabeling3D(conn, bitDepth);
+		DefaultAlgoListener.monitor(algo);
+		return algo.computeLabels(image);
 	}
 
-	/**
-	 * Computes maximum value in the input 2D image.
-	 * This method is used to compute display range of result ImagePlus.
-	 */
-	private final static int findMax(ImageProcessor image) 
-	{
-		// get image size
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-		
-		// find maximum value over voxels
-		int maxVal = 0;
-		for (int y = 0; y < sizeY; y++) 
-		{
-			IJ.showProgress(y, sizeY);
-			for (int x = 0; x < sizeX; x++) 
-			{
-				maxVal = Math.max(maxVal, image.get(x, y));
-			}
-		}
-		IJ.showProgress(1);
-		
-		return maxVal;
-	}
-	
-	/**
-	 * Computes maximum value in the input 3D image.
-	 * This method is used to compute display range of result ImagePlus.
-	 */
-	private final static int findMax(ImageStack image) 
-	{
-		// get image size
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-		int sizeZ = image.getSize();
-
-		// find maximum value over voxels
-		int maxVal = 0;
-		for (int z = 0; z < sizeZ; z++) 
-		{
-			IJ.showProgress(z, sizeZ);
-			for (int y = 0; y < sizeY; y++) 
-			{
-				for (int x = 0; x < sizeX; x++) 
-				{
-					maxVal = Math.max(maxVal, (int) image.getVoxel(x, y, z));
-				}
-			}
-		}
-		IJ.showProgress(1);
-		
-		return maxVal;
-	}
-	
 	/**
 	 * Computes the distance map (or distance transform) from a binary image
 	 * processor. Distance is computed for each foreground (white) pixel or
@@ -264,8 +211,11 @@ public class BinaryImages
 	 * voxel.
 	 * 
 	 * @param imagePlus
-	 *            an ImagePlus object containing a 3D binary stack
-	 * @return a new ImagePlus containing the 3D distance map
+	 *            an ImagePlus object containing a binary image 
+	 * @return a new ImagePlus containing the distance map
+	 * 
+	 * @see inra.ijpb.binary.distmap.DistanceTransform
+	 * @see inra.ijpb.binary.distmap.DistanceTransform3D
 	 */
 	public static final ImagePlus distanceMap(ImagePlus imagePlus)
 	{

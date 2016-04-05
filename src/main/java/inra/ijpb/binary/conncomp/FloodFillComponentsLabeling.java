@@ -11,25 +11,58 @@ import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.morphology.FloodFill;
 
 /**
+ * Computes the labels of the connected components in a binary image. The type
+ * of result is controlled by the bitDepth option.
+ * 
+ * Uses a Flood-fill type algorithm. The image pixels are iterated, and each
+ * time a foreground pixel not yet associated with a label is encountered, its
+ * connected component is associated with a new label.
+ *
+ * @see inra.ijpb.morphology.FloodFill
  * @author dlegland
  *
  */
 public class FloodFillComponentsLabeling extends AlgoStub implements
 		ConnectedComponentsLabeling
 {
+	/** 
+	 * The connectivity of the components, either 4 (default) or 8.
+	 */
 	int connectivity = 4;
-	
+
+	/**
+	 * The number of bits for representing the result label image. Can be 8, 16
+	 * (default), or 32.
+	 */
 	int bitDepth = 16;
 	
+	/**
+	 * Constructor with default connectivity 4 and default output bitdepth equal to 16.  
+	 */
 	public FloodFillComponentsLabeling()
 	{
 	}
 	
+	/**
+	 * Constructor specifying the connectivity and using default output bitdepth equal to 16.  
+	 * 
+	 * @param connectivity
+	 *            the connectivity of connected components (4 or 8)
+	 */
 	public FloodFillComponentsLabeling(int connectivity)
 	{
 		this.connectivity = connectivity;
 	}
 	
+	/**
+	 * Constructor specifying the connectivity and the bitdepth of result label
+	 * image
+	 * 
+	 * @param connectivity
+	 *            the connectivity of connected components (4 or 8)
+	 * @param bitDepth
+	 *            the bit depth of the result (8, 16, or 32)
+	 */
 	public FloodFillComponentsLabeling(int connectivity, int bitDepth)
 	{
 		this.bitDepth = bitDepth;

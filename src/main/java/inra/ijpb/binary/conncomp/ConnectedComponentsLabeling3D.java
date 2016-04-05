@@ -3,18 +3,17 @@
  */
 package inra.ijpb.binary.conncomp;
 
-import ij.process.ImageProcessor;
+import ij.ImageStack;
 import inra.ijpb.algo.Algo;
 
 /**
- * Computes labels corresponding to connected components in input image.
+ * Computes labels corresponding to connected components in input 3D image.
  *
- * @see ConnectedComponentsLabeling3D
+ * @see ConnectedComponentsLabeling
  * 
  * @author dlegland
- *
  */
-public interface ConnectedComponentsLabeling extends Algo
+public interface ConnectedComponentsLabeling3D extends Algo
 {
 	/**
 	 * Computes labels corresponding to connected components in input image.
@@ -23,5 +22,5 @@ public interface ConnectedComponentsLabeling extends Algo
 	 *            binary image containing components
 	 * @return the label image of the components
 	 */
-	public ImageProcessor computeLabels(ImageProcessor binaryImage);
+	public ImageStack computeLabels(ImageStack binaryImage);
 }
