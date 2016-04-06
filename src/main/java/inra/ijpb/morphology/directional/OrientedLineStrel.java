@@ -5,6 +5,8 @@ package inra.ijpb.morphology.directional;
 
 import static java.lang.Math.*;
 import ij.process.ImageProcessor;
+import inra.ijpb.data.border.BorderManager;
+import inra.ijpb.data.border.MirroringBorder;
 import inra.ijpb.morphology.Strel;
 import inra.ijpb.morphology.strel.AbstractStrel;
 
@@ -14,7 +16,10 @@ import inra.ijpb.morphology.strel.AbstractStrel;
  */
 public class OrientedLineStrel extends AbstractStrel implements Strel
 {
+	/** The length of the line, in pixels */
 	double length;
+
+	/** orientation of the line, in degrees, counted CCW from horizontal. */
 	double theta;
 		
 	int[][] shifts;
@@ -29,7 +34,7 @@ public class OrientedLineStrel extends AbstractStrel implements Strel
 
 	private void computeShifts()
 	{
-	// Components of diection vector
+		// Components of diection vector
 		double thetaRads = Math.toRadians(this.theta);
 		double dx = Math.cos(thetaRads);
 		double dy = Math.sin(thetaRads);
@@ -117,19 +122,66 @@ public class OrientedLineStrel extends AbstractStrel implements Strel
 		return this.shifts;
 	}
 
-	//TODO: well... should implement own version of morphological filters, 
-	// or create an abstract class "SparseStrel" ?
-	
 	@Override
 	public ImageProcessor dilation(ImageProcessor image)
 	{
-		return Filters.dilation(image, this);
+		// Allocate memory for result
+		ImageProcessor result = image.duplicate();
+
+		BorderManager bm = new MirroringBorder(image);
+
+		// Iterate on image pixels
+		for (int y = 0; y < image.getHeight(); y++)
+		{
+			for (int x = 0; x < image.getWidth(); x++)
+			{
+				// reset accumulator
+				double res = Double.MIN_VALUE;
+	
+				// iterate on neighbors
+				for (int i = 0; i < shifts.length; i++) 
+				{
+					double value = bm.get(x + shifts[i][0], y + shifts[i][1]);
+					res = Math.max(res, value);
+				}
+				
+				// compute result
+				result.setf(x, y, (float) res);
+			}			
+		}
+		
+		return result;
 	}
 
 	@Override
 	public ImageProcessor erosion(ImageProcessor image)
 	{
-		return Filters.erosion(image, this);
+		// Allocate memory for result
+		ImageProcessor result = image.duplicate();
+		
+		BorderManager bm = new MirroringBorder(image);
+		
+		// Iterate on image pixels
+		for (int y = 0; y < image.getHeight(); y++)
+		{
+			for (int x = 0; x < image.getWidth(); x++)
+			{
+				// reset accumulator
+				double res = Double.MAX_VALUE;
+
+				// iterate on neighbors
+				for (int i = 0; i < shifts.length; i++)
+				{
+					double value = bm.get(x + shifts[i][0], y + shifts[i][1]);
+					res = Math.min(res, value);
+				}
+				
+				// compute result
+				result.setf(x, y, (float) res);
+			}			
+		}
+		
+		return result;
 	}
 
 	@Override
