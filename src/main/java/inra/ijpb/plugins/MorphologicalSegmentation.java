@@ -4,11 +4,17 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.WindowManager;
+import ij.gui.FreehandRoi;
 import ij.gui.ImageCanvas;
 import ij.gui.ImageRoi;
 import ij.gui.ImageWindow;
 import ij.gui.Overlay;
+import ij.gui.PlotWindow;
+import ij.gui.PointRoi;
+import ij.gui.ProfilePlot;
+import ij.gui.Roi;
 import ij.gui.StackWindow;
+import ij.gui.Toolbar;
 import ij.plugin.PlugIn;
 import ij.plugin.frame.Recorder;
 import ij.process.ImageProcessor;
@@ -16,6 +22,7 @@ import ij.process.LUT;
 import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.data.image.ColorImages;
 import inra.ijpb.data.image.Images3D;
+import inra.ijpb.label.LabelImages;
 import inra.ijpb.morphology.MinimaAndMaxima3D;
 import inra.ijpb.morphology.Morphology;
 import inra.ijpb.morphology.Strel;
@@ -40,7 +47,9 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowEvent;
 import java.awt.image.ColorModel;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -254,6 +263,11 @@ public class MorphologicalSegmentation implements PlugIn {
 	/** executor service to launch threads for the plugin methods and events */
 	final ExecutorService exec = Executors.newFixedThreadPool(1);
 
+	/** post-processing panel */
+	JPanel postProcessPanel = new JPanel();
+	JButton mergeButton = null;
+	JButton shuffleColorsButton = null;
+
 	/** thread to run the segmentation */
 	private Thread segmentationThread = null;
 
@@ -375,6 +389,14 @@ public class MorphologicalSegmentation implements PlugIn {
 							String[] arg = new String[] { type };
 							record( SET_INPUT_TYPE, arg );
 						}
+						else if( e.getSource()  == mergeButton )
+						{
+							mergeLabels();
+						}
+						else if( e.getSource()  == shuffleColorsButton )
+						{
+							shuffleColors();
+						}
 					}
 
 					
@@ -401,6 +423,9 @@ public class MorphologicalSegmentation implements PlugIn {
 				IJ.run( imp, "In","" );
 
 			setTitle( "Morphological Segmentation" );
+
+			// select freehand tool for manual label merging
+			Toolbar.getInstance().setTool( Toolbar.FREELINE );
 
 			// === Input Image panel ===
 
@@ -614,6 +639,35 @@ public class MorphologicalSegmentation implements PlugIn {
 			displayConstraints.fill = GridBagConstraints.NONE;
 			displayPanel.add( resultButton, displayConstraints );
 
+			// === Post-processing panel ===
+			mergeButton = new JButton( "Merge labels" );
+			mergeButton.setEnabled( false );
+			mergeButton.setToolTipText( "Merge labels selected by line ROI" );
+			mergeButton.addActionListener( listener );
+
+			shuffleColorsButton = new JButton( "Shuffle colors" );
+			shuffleColorsButton.setEnabled( false );
+			shuffleColorsButton.setToolTipText( "Shuffle color labels" );
+			shuffleColorsButton.addActionListener( listener );
+
+			GridBagLayout mergingLayout = new GridBagLayout();
+			postProcessPanel.setLayout( mergingLayout );
+
+			GridBagConstraints ppConstraints = new GridBagConstraints();
+			ppConstraints.anchor = GridBagConstraints.NORTHWEST;
+			ppConstraints.fill = GridBagConstraints.HORIZONTAL;
+			ppConstraints.gridwidth = 1;
+			ppConstraints.gridheight = 1;
+			ppConstraints.gridx = 0;
+			ppConstraints.gridy = 0;
+			ppConstraints.insets = new Insets( 5, 5, 6, 6 );
+
+			postProcessPanel.add( mergeButton, ppConstraints );
+			ppConstraints.gridy++;
+			postProcessPanel.add( shuffleColorsButton, ppConstraints );
+			postProcessPanel.setBorder( BorderFactory.createTitledBorder(
+					"Post-processing" ) );
+
 
 			// Parameter panel (left side of the GUI, it includes the 
 			// three main panels: Input Image, Watershed Segmentation
@@ -633,6 +687,8 @@ public class MorphologicalSegmentation implements PlugIn {
 			paramsPanel.add( segmentationPanel, paramsConstraints);
 			paramsConstraints.gridy++;
 			paramsPanel.add( displayPanel, paramsConstraints);
+			paramsConstraints.gridy++;
+			paramsPanel.add( postProcessPanel, paramsConstraints);
 			paramsConstraints.gridy++;
 
 
@@ -1195,6 +1251,126 @@ public class MorphologicalSegmentation implements PlugIn {
 				record( CREATE_IMAGE );
 			}
 		}
+		/**
+		 * Merge labels selected by free-hand or point ROIs
+		 */
+		void mergeLabels()
+		{
+			if( resultImage == null )
+			{
+				IJ.error( "You need to run the segmentation before merging "
+						+ "labels!" );
+				return;
+			}
+			final Roi roi = displayImage.getRoi();
+			if( roi == null )
+			{
+				IJ.showMessage( "Please select some labels to merge using any "
+						+ "of the selection tools" );
+				return;
+			}
+
+			final ArrayList<Float> list = new ArrayList<Float>();
+
+			// set the same ROI and slice from the display image to the
+			// result image
+			resultImage.setRoi( displayImage.getRoi() );
+			resultImage.setSlice( displayImage.getSlice() );
+
+			// if the user makes point selections
+			if( roi instanceof PointRoi )
+			{
+				int[] xpoints = roi.getPolygon().xpoints;
+
+				if( xpoints.length < 2 )
+				{
+					IJ.error( "Please select two or more labels to merge" );
+					return;
+				}
+
+				int[] ypoints = roi.getPolygon().ypoints;
+
+				final ImageProcessor slice = resultImage.getImageStack().
+						getProcessor( resultImage.getSlice() );
+
+				// read label values at those positions
+				for ( int i = 0; i<xpoints.length; i ++ )
+				{
+					float value = slice.getf( xpoints[ i ], ypoints[ i ] );
+					if( Float.compare( 0f, value ) != 0 &&
+							list.contains( value ) == false )
+						list.add( value );
+				}
+			}
+			else if( roi instanceof FreehandRoi )
+			{
+				// read values from ROI using a profile plot
+				// save interpolation option
+				boolean interpolateOption = PlotWindow.interpolate;
+				// do not interpolate pixel values
+				PlotWindow.interpolate = false;
+				// get label values from line roi (different from 0)
+				float[] values = (new ProfilePlot( resultImage ))
+						.getPlot().getYValues();
+				PlotWindow.interpolate = interpolateOption;
+
+				for( int i=0; i<values.length; i++ )
+				{
+					if( Float.compare( 0f, values[ i ] ) != 0 &&
+							list.contains( values[ i ]) == false )
+						list.add( values[ i ]);
+				}
+			}
+
+			// if more than one value is selected, merge
+			if( list.size() > 1 )
+			{
+				float finalValue = list.remove( 0 );
+				float[] labelArray = new float[ list.size() ];
+				int i = 0;
+
+				for ( Float f : list )
+					labelArray[i++] = f != null ? f : Float.NaN;
+
+				String sLabels = new String( ""+ (long) labelArray[ 0 ] );
+				for( int j=1; j < labelArray.length; j++ )
+					sLabels += ", " + (long) labelArray[ j ];
+
+				IJ.log( "Merging label(s) " + sLabels + " to label "
+								+ (long) finalValue );
+				LabelImages.replaceLabels( resultImage,
+						labelArray, finalValue );
+				if ( showColorOverlay )
+					updateResultOverlay();
+			}
+			else
+				IJ.error( "Please select two or more different"
+						+ " labels to merge" );
+		}
+
+		/**
+		 * Shuffle colors of current result image
+		 */
+		void shuffleColors()
+		{
+			if( null != resultImage )
+			{
+				byte[][] colorMap = CommonLabelMaps.fromLabel(
+						CommonLabelMaps.GOLDEN_ANGLE.getLabel() )
+						.computeLut( 255, false );
+				// shuffle color map
+				long seed = (long) (new Random()).nextInt();
+				colorMap = ColorMaps.shuffleLut( colorMap, seed );
+
+				ColorModel cm = ColorMaps.createColorModel(
+						colorMap, Color.BLACK );
+				resultImage.getProcessor().setColorModel( cm );
+				resultImage.getImageStack().setColorModel( cm );
+				resultImage.updateAndDraw();
+				if ( showColorOverlay )
+					updateResultOverlay();
+			}
+		}
 
 		/**
 		 * Set input image type depending on the button that is selected
@@ -1420,6 +1596,8 @@ public class MorphologicalSegmentation implements PlugIn {
 			enableAdvancedOptions( enabled );
 		if( applyGradient )
 			enableGradientOptions( enabled );
+		this.mergeButton.setEnabled( enabled );
+		this.shuffleColorsButton.setEnabled( enabled );
 	}
 
 	/**
