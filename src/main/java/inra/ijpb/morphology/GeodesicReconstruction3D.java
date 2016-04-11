@@ -4,6 +4,7 @@
 package inra.ijpb.morphology;
 
 import ij.ImageStack;
+import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.morphology.geodrec.GeodesicReconstruction3DAlgo;
 import inra.ijpb.morphology.geodrec.GeodesicReconstruction3DHybrid0Float;
 import inra.ijpb.morphology.geodrec.GeodesicReconstruction3DHybrid0Gray8;
@@ -154,6 +155,8 @@ public abstract class GeodesicReconstruction3D
 		{
 			algo = new GeodesicReconstructionByDilation3DScanning();
 		}
+
+		DefaultAlgoListener.monitor(algo);
 		return algo.applyTo(marker, mask);
 	}
 
@@ -184,6 +187,8 @@ public abstract class GeodesicReconstruction3D
 		{
 			algo = new GeodesicReconstructionByDilation3DScanning(connectivity);
 		}
+		
+		DefaultAlgoListener.monitor(algo);
 		return algo.applyTo(marker, mask);
 	}
 
@@ -206,6 +211,7 @@ public abstract class GeodesicReconstruction3D
 		//TODO: add support for non gray8 stacks
 		GeodesicReconstruction3DAlgo algo = new GeodesicReconstructionByDilation3DScanningGray8(
 				connectivity);
+		DefaultAlgoListener.monitor(algo);
 		return algo.applyTo( marker, mask, binaryMask );
 	}
 	
@@ -237,6 +243,8 @@ public abstract class GeodesicReconstruction3D
 		{
 			algo = new GeodesicReconstructionByErosion3DScanning();
 		}
+		
+		DefaultAlgoListener.monitor(algo);
 		return algo.applyTo(marker, mask);
 	}
 
@@ -271,6 +279,8 @@ public abstract class GeodesicReconstruction3D
 		{
 			algo = new GeodesicReconstructionByErosion3DScanning(connectivity);
 		}
+		
+		DefaultAlgoListener.monitor(algo);
 		return algo.applyTo(marker, mask);
 	}
 }

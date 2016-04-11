@@ -3,7 +3,9 @@ package inra.ijpb.morphology.extrema;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import ij.ImageStack;
-import inra.ijpb.morphology.FloodFill;
+import inra.ijpb.data.image.Image3D;
+import inra.ijpb.data.image.Images3D;
+import inra.ijpb.morphology.FloodFill3D;
 
 /**
  * Computes regional extrema in 3D images using flooding algorithm. 
@@ -65,51 +67,60 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo
 		int sizeZ = image.getSize();
 
 		// create binary image for result, filled with 255.
+		fireStatusChanged(this, "Initialize regional extrema");
 		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
 		fillStack(result, 255);
 
+		fireStatusChanged(this, "Compute regional extrema");
+		
 		// initialize local data depending on extrema type
 		final int sign = this.extremaType == ExtremaType.MINIMA ? 1 : -1;
 
+		Image3D image2 = Images3D.createWrapper(image);
+		Image3D result2 = Images3D.createWrapper(result);
+		
 		// iterate on image voxels
 		for (int z = 0; z < sizeZ; z++) 
 		{
+			fireProgressChanged(this, z, sizeZ);
 			for (int y = 0; y < sizeY; y++) 
 			{
 				for (int x = 0; x < sizeX; x++) 
 				{
 					// Check if current voxel was already processed
-					if (result.getVoxel(x, y, z) == 0)
+					if (result2.getValue(x, y, z) == 0)
 						continue;
 					
 					// current value
-					double currentValue = image.getVoxel(x, y, z) * sign;
+					double currentValue = image2.getValue(x, y, z) * sign;
 					
 					// compute extremum value in 6-neighborhood
 					double value = currentValue;
 					if (x > 0) 
-						value = min(value, image.getVoxel(x-1, y, z) * sign); 
+						value = min(value, image2.getValue(x-1, y, z) * sign); 
 					if (x < sizeX - 1) 
-						value = min(value, image.getVoxel(x+1, y, z) * sign); 
+						value = min(value, image2.getValue(x+1, y, z) * sign); 
 					if (y > 0) 
-						value = min(value, image.getVoxel(x, y-1, z) * sign); 
+						value = min(value, image2.getValue(x, y-1, z) * sign); 
 					if (y < sizeY - 1) 
-						value = min(value, image.getVoxel(x, y+1, z) * sign);
+						value = min(value, image2.getValue(x, y+1, z) * sign);
 					if (z > 0) 
-						value = min(value, image.getVoxel(x, y, z-1) * sign); 
+						value = min(value, image2.getValue(x, y, z-1) * sign); 
 					if (z < sizeZ - 1) 
-						value = min(value, image.getVoxel(x, y, z+1) * sign); 
+						value = min(value, image2.getValue(x, y, z+1) * sign); 
 
 					// if one of the neighbors has lower value, the local pixel 
 					// is not a minima. All connected pixels with same value are 
 					// set to the marker for non-minima.
-					if (value < currentValue) {
-						FloodFill.floodFillFloat(image, x, y, z, result, 0, 6);
+					if (value < currentValue) 
+					{
+						FloodFill3D.floodFillFloat(image2, x, y, z, result2, 0, 6);
 					}
 				}
 			}
 		}		
 
+		fireProgressChanged(this, 1, 1);
 		return result;
 	}
 
@@ -124,25 +135,32 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo
 		int sizeZ = image.getSize();
 
 		// create binary image for result, filled with 255.
+		fireStatusChanged(this, "Initialize regional extrema");
 		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
 		fillStack(result, 255);
 
+		fireStatusChanged(this, "Compute regional extrema");
 		// initialize local data depending on extrema type
 		final int sign = this.extremaType == ExtremaType.MINIMA ? 1 : -1;
 
+		Image3D image2 = Images3D.createWrapper(image);
+		Image3D result2 = Images3D.createWrapper(result);
+		
 		// iterate on image voxels
 		for (int z = 0; z < sizeZ; z++) 
 		{
+			fireProgressChanged(this, z, sizeZ);
+			
 			for (int y = 0; y < sizeY; y++) 
 			{
 				for (int x = 0; x < sizeX; x++)
 				{
 					// Check if current voxel was already processed
-					if (result.getVoxel(x, y, z) == 0)
+					if (result2.getValue(x, y, z) == 0)
 						continue;
 					
 					// current value
-					double currentValue = image.getVoxel(x, y, z) * sign;
+					double currentValue = image2.getValue(x, y, z) * sign;
 					
 					// compute extremum value in 26-neighborhood
 					double value = currentValue;
@@ -152,22 +170,24 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo
 						{
 							for (int x2 = max(x-1, 0); x2 <= min(x+1, sizeX-1); x2++) 
 							{
-								value = min(value, image.getVoxel(x2, y2, z2) * sign);
+								value = min(value, image2.getValue(x2, y2, z2) * sign);
 							}
 						}
 					}
 					
-					// if one of the neighbors has lower value, the local pixel 
-					// is not a minima. All connected pixels with same value are 
+					// if one of the neighbors has lower value, the local voxel
+					// is not a minima. All connected pixels with same value are
 					// set to the marker for non-minima.
 					if (value < currentValue) 
 					{
-						FloodFill.floodFillFloat(image, x, y, z, result, 0, 26);
+						FloodFill3D.floodFillFloat(image2, x, y, z, result2, 0, 26);
 					}
 				}
 			}
-		}		
-
+		}
+		
+		fireProgressChanged(this, 1, 1);
+		
 		return result;
 	}
 	
@@ -201,8 +221,11 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo
 		int sizeZ = image.getSize();
 
 		// create binary image for result, filled with 255.
+		fireStatusChanged(this, "Initialize regional extrema");
 		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
 		fillStack(result, 255);
+
+		fireStatusChanged(this, "Compute regional extrema");
 
 		// initialize local data depending on extrema type
 		final int sign = this.extremaType == ExtremaType.MINIMA ? 1 : -1;
@@ -210,6 +233,7 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo
 		// iterate on image voxels
 		for (int z = 0; z < sizeZ; z++) 
 		{
+			fireProgressChanged(this, z, sizeZ);
 			for (int y = 0; y < sizeY; y++) 
 			{
 				for (int x = 0; x < sizeX; x++) 
@@ -250,12 +274,13 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo
 					// set to the marker for non-minima.
 					if (value < currentValue) 
 					{
-						FloodFill.floodFillFloat(image, x, y, z, result, 0, 6);
+						FloodFill3D.floodFillFloat(image, x, y, z, result, 0, 6);
 					}
 				}
 			}
 		}		
 
+		fireProgressChanged(this, 1, 1);
 		return result;
 	}
 
@@ -273,8 +298,11 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo
 		int sizeZ = image.getSize();
 
 		// create binary image for result, filled with 255.
+		fireStatusChanged(this, "Initialize regional extrema");
 		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
 		fillStack(result, 255);
+
+		fireStatusChanged(this, "Compute regional extrema");
 
 		// initialize local data depending on extrema type
 		final int sign = this.extremaType == ExtremaType.MINIMA ? 1 : -1;
@@ -282,6 +310,7 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo
 		// iterate on image voxels
 		for (int z = 0; z < sizeZ; z++) 
 		{
+			fireProgressChanged(this, z, sizeZ);
 			for (int y = 0; y < sizeY; y++) 
 			{
 				for (int x = 0; x < sizeX; x++)
@@ -316,12 +345,13 @@ public class RegionalExtrema3DByFlooding extends RegionalExtrema3DAlgo
 					// set to the marker for non-minima.
 					if (value < currentValue * sign) 
 					{
-						FloodFill.floodFillFloat(image, x, y, z, result, 0, 26);
+						FloodFill3D.floodFillFloat(image, x, y, z, result, 0, 26);
 					}
 				}
 			}
 		}		
 
+		fireProgressChanged(this, 1, 1);
 		return result;
 	}
 	

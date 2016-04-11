@@ -205,9 +205,6 @@ public class GeodesicReconstruction3DHybrid0Gray8 extends GeodesicReconstruction
 			t0 = t1;
 		}
 
-		// clear progression display
-		showProgress(1, 1, "");
-		
 		return this.resultStack;
 	}
 
@@ -354,6 +351,8 @@ public class GeodesicReconstruction3DHybrid0Gray8 extends GeodesicReconstruction
 				}
 			}
 		} // end of pixel iteration
+		
+		showProgress(1, 1);
 	}
 
 	/**
@@ -372,7 +371,7 @@ public class GeodesicReconstruction3DHybrid0Gray8 extends GeodesicReconstruction
 		for (int z = 0; z < sizeZ; z++)
 		{
 			showProgress(z, sizeZ, "z = " + z);
-
+			
 			// Extract slices
 			maskSlice = this.maskSlices[z];
 			slice = this.resultSlices[z];
@@ -412,6 +411,8 @@ public class GeodesicReconstruction3DHybrid0Gray8 extends GeodesicReconstruction
 				}
 			}
 		}
+		
+		showProgress(1, 1);
 	}
 
 
@@ -443,7 +444,7 @@ public class GeodesicReconstruction3DHybrid0Gray8 extends GeodesicReconstruction
 		for (int z = sizeZ - 1; z >= 0; z--) 
 		{
 			showProgress(sizeZ - 1 - z, sizeZ, "z = " + z);
-
+			
 			// Extract slices
 			slice = this.resultSlices[z];
 			maskSlice = this.maskSlices[z];
@@ -485,7 +486,9 @@ public class GeodesicReconstruction3DHybrid0Gray8 extends GeodesicReconstruction
 					}
 				}
 			}
-		}	
+		}
+
+		showProgress(1, 1);
 	}
 	
 	/**
@@ -504,7 +507,7 @@ public class GeodesicReconstruction3DHybrid0Gray8 extends GeodesicReconstruction
 		for (int z = sizeZ - 1; z >= 0; z--)
 		{
 			showProgress(sizeZ - 1 - z, sizeZ, "z = " + z);
-	
+			
 			// Extract slices
 			maskSlice = this.maskSlices[z];
 			slice = this.resultSlices[z];
@@ -557,7 +560,9 @@ public class GeodesicReconstruction3DHybrid0Gray8 extends GeodesicReconstruction
 					}
 				}
 			}
-		}	
+		}
+		
+		showProgress(1, 1);
 	}
 	
 	private void processQueue()

@@ -213,9 +213,6 @@ public class GeodesicReconstruction3DHybrid1Image3D extends	GeodesicReconstructi
 			t0 = t1;
 		}
 
-		// clear progression display
-		showProgress(1, 1, "");
-
 		return this.resultStack;
 	}
 
@@ -362,6 +359,9 @@ public class GeodesicReconstruction3DHybrid1Image3D extends	GeodesicReconstructi
 				}
 			}
 		} // end of pixel iteration
+
+		// clear progression display
+		showProgress(1, 1, "");
 	}
 
 	/**
@@ -410,6 +410,9 @@ public class GeodesicReconstruction3DHybrid1Image3D extends	GeodesicReconstructi
 				}
 			}
 		}
+
+		// clear progression display
+		showProgress(1, 1, "");
 	}
 
 
@@ -464,6 +467,9 @@ public class GeodesicReconstruction3DHybrid1Image3D extends	GeodesicReconstructi
 				}
 			}
 		}	
+
+		// clear progression display
+		showProgress(1, 1, "");
 	}
 	
 	/**
@@ -513,6 +519,9 @@ public class GeodesicReconstruction3DHybrid1Image3D extends	GeodesicReconstructi
 				}
 			}
 		}	
+
+		// clear progression display
+		showProgress(1, 1, "");
 	}
 	
 	private void initQueue()

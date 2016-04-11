@@ -12,6 +12,7 @@ import ij.gui.TextRoi;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
+import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.binary.geodesic.GeodesicDiameterFloat;
 import inra.ijpb.binary.geodesic.GeodesicDiameterShort;
 import inra.ijpb.binary.ChamferWeights;
@@ -85,10 +86,18 @@ public class GeodesicDiameterPlugin implements PlugIn
 			return;
 		}
 		
+		// Starting time
+		long start = System.nanoTime();
+		
 		// Compute geodesic diameters, using floating-point calculations
 		ResultsTable table;
 		table = process(labelImage.getProcessor(), weights.getFloatWeights());
 		
+		// Final time, displayed in seconds
+		long finalTime = System.nanoTime();
+		float elapsedTime = (finalTime - start) / 1000000.0f;
+		IJ.showStatus(String.format("Elapsed time: %8.2f ms", elapsedTime));
+
 		// display the result table
 		String tableName = labelImage.getShortTitle() + "-GeodDiameters"; 
 		table.show(tableName);
@@ -160,8 +169,7 @@ public class GeodesicDiameterPlugin implements PlugIn
 		if (weights==null) 
 			return null;
 		
-		ResultsTable table = process(labels.getProcessor(),
-				weights);
+		ResultsTable table = process(labels.getProcessor(), weights);
 		
 		// create string for indexing results
 		String tableName = labels.getShortTitle() + "-Geodesics"; 
@@ -193,6 +201,7 @@ public class GeodesicDiameterPlugin implements PlugIn
 	public ResultsTable process(ImageProcessor labels, float[] weights)
 	{
 		GeodesicDiameterFloat algo = new GeodesicDiameterFloat(weights);
+		DefaultAlgoListener.monitor(algo);
 		ResultsTable table = algo.analyzeImage(labels);
 		return table;
 	}
@@ -211,6 +220,7 @@ public class GeodesicDiameterPlugin implements PlugIn
 	public ResultsTable process(ImageProcessor labels, short[] weights)
 	{
 		GeodesicDiameterShort algo = new GeodesicDiameterShort(weights);
+		DefaultAlgoListener.monitor(algo);
 		ResultsTable table = algo.analyzeImage(labels);
 		return table;
 	}

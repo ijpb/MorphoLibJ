@@ -70,6 +70,8 @@ public abstract class GeodesicReconstruction3DAlgoStub extends AlgoStub implemen
 	 */
 	protected void showStatus(String status)
 	{
+		fireStatusChanged(this, status);
+
 		if (this.showStatus) 
 		{
 			IJ.showStatus(status);
@@ -77,7 +79,7 @@ public abstract class GeodesicReconstruction3DAlgoStub extends AlgoStub implemen
 	}
 
 	/**
-	 * Displays the current progression of the algorithme in the status bar of
+	 * Displays the current progression of the algorithm in the status bar of
 	 * the ImageJ frame, if the <code>showProgress</code> flag is true.
 	 * 
 	 * @param current
@@ -87,6 +89,7 @@ public abstract class GeodesicReconstruction3DAlgoStub extends AlgoStub implemen
 	 */            
 	protected void showProgress(double current, double max)
 	{
+		fireProgressChanged(this, current, max);
 		if (showProgress) 
 		{
 			IJ.showProgress(current / max);
@@ -94,7 +97,7 @@ public abstract class GeodesicReconstruction3DAlgoStub extends AlgoStub implemen
 	}
 	
 	/**
-	 * Displays the current progression of the algorithme in the status bar of
+	 * Displays the current progression of the algorithm in the status bar of
 	 * the ImageJ frame, if the <code>showProgress</code> flag is true.
 	 * 
 	 * @param current
@@ -106,6 +109,7 @@ public abstract class GeodesicReconstruction3DAlgoStub extends AlgoStub implemen
 	 */            
 	protected void showProgress(double current, double max, String msg)
 	{
+		fireProgressChanged(this, current, max);
 		if (showProgress) 
 		{
 			IJ.showProgress(current / max);
