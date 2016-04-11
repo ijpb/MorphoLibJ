@@ -1252,7 +1252,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			}
 		}
 		/**
-		 * Merge labels selected by line ROI
+		 * Merge labels selected by free-hand or point ROIs
 		 */
 		void mergeLabels()
 		{
@@ -1348,6 +1348,9 @@ public class MorphologicalSegmentation implements PlugIn {
 						+ " labels to merge" );
 		}
 
+		/**
+		 * Shuffle colors of current result image
+		 */
 		void shuffleColors()
 		{
 			if( null != resultImage )
