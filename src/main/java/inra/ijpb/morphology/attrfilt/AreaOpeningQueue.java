@@ -25,6 +25,36 @@ public class AreaOpeningQueue extends AlgoStub implements AreaOpening
 	/** Default connectivity is 4 */
 	int conn  = 4;
 	
+	// the pixel shifts used to identify neighbors
+	private int[] dx = new int[]{0, -1, +1, 0};
+	private int[] dy = new int[]{-1, 0, 0, +1};
+
+	public void setConnectivity(int connectivity)
+	{
+		switch(connectivity)
+		{
+		case 4:
+			this.dx = new int[]{0, -1, +1, 0};
+			this.dy = new int[]{-1, 0, 0, +1};
+			break;
+			
+		case 8:
+			this.dx = new int[]{-1, 0, +1, -1, +1, -1, 0, +1};
+			this.dy = new int[]{-1, -1, -1, 0, 0, +1, +1, +1};
+			break;
+			
+		default:
+			throw new IllegalArgumentException("Connectivity must be either 4 or 8, not " + connectivity);
+		}
+		
+		this.conn = connectivity;
+	}
+
+	public int getConnectivity()
+	{
+		return this.conn;
+	}
+	
 	/* (non-Javadoc)
 	 * @see inra.ijpb.morphology.attrfilt.AreaOpening#process(ij.process.ImageProcessor, int)
 	 */
@@ -73,13 +103,7 @@ public class AreaOpeningQueue extends AlgoStub implements AreaOpening
 				maximaPositionArray.set(label - 1, pos);
 			}
 		}
-		
-		
-		// the pixel shifts used to identify neighbors
-		// TODO: write it more generic
-		int[] dx = new int[]{0, -1, +1, 0};
-		int[] dy = new int[]{-1, 0, 0, +1};
-		
+				
 		ImageProcessor result = image.duplicate();
 		
 		// iterate over maxima
@@ -121,10 +145,10 @@ public class AreaOpeningQueue extends AlgoStub implements AreaOpening
 				}
 				
 				// add neighbors to queue
-				for (int iNeigh = 0; iNeigh < dx.length; iNeigh++)
+				for (int iNeigh = 0; iNeigh < this.dx.length; iNeigh++)
 				{
-					int x2 = pos.x + dx[iNeigh];
-					int y2 = pos.y + dy[iNeigh];
+					int x2 = pos.x + this.dx[iNeigh];
+					int y2 = pos.y + this.dy[iNeigh];
 					if (x2 >= 0 && x2 < sizeX && y2 >= 0 && y2 < sizeY)
 					{
 						Point pos2 = new Point(x2, y2);
@@ -140,9 +164,9 @@ public class AreaOpeningQueue extends AlgoStub implements AreaOpening
 			}
 			
 			// Replace the value of all pixel in maxim neighborhood by the last visited level
-			for (Point pos2 : positions)
+			for (Point pos : positions)
 			{
-				result.set(pos2.x, pos2.y, currentLevel);
+				result.set(pos.x, pos.y, currentLevel);
 			}
 		}
 		
