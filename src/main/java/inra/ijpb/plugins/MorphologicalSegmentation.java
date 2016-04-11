@@ -4,12 +4,15 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.WindowManager;
+import ij.gui.FreehandRoi;
 import ij.gui.ImageCanvas;
 import ij.gui.ImageRoi;
 import ij.gui.ImageWindow;
 import ij.gui.Overlay;
 import ij.gui.PlotWindow;
+import ij.gui.PointRoi;
 import ij.gui.ProfilePlot;
+import ij.gui.Roi;
 import ij.gui.StackWindow;
 import ij.gui.Toolbar;
 import ij.plugin.PlugIn;
@@ -1259,32 +1262,66 @@ public class MorphologicalSegmentation implements PlugIn {
 						+ "labels!" );
 				return;
 			}
-			if( displayImage.getRoi() == null )
+			final Roi roi = displayImage.getRoi();
+			if( roi == null )
 			{
 				IJ.showMessage( "Please select some labels to merge using any "
 						+ "of the selection tools" );
 				return;
 			}
 
-			// read values from ROI using a profile plot
+			final ArrayList<Float> list = new ArrayList<Float>();
+
+			// set the same ROI and slice from the display image to the
+			// result image
 			resultImage.setRoi( displayImage.getRoi() );
 			resultImage.setSlice( displayImage.getSlice() );
 
-			// save interpolation option
-			boolean interpolateOption = PlotWindow.interpolate;
-			// do not interpolate pixel values
-			PlotWindow.interpolate = false;
-			// get label values from line roi (different from 0)
-			float[] values = (new ProfilePlot( resultImage ))
-					.getPlot().getYValues();
-			PlotWindow.interpolate = interpolateOption;
-			ArrayList<Float> list = new ArrayList<Float>();
-			for( int i=0; i<values.length; i++ )
+			// if the user makes point selections
+			if( roi instanceof PointRoi )
 			{
-				if( Float.compare( 0f, values[ i ] ) != 0 &&
-					list.contains( values[ i ]) == false )
-					list.add( values[ i ]);
+				int[] xpoints = roi.getPolygon().xpoints;
+
+				if( xpoints.length < 2 )
+				{
+					IJ.error( "Please select two or more labels to merge" );
+					return;
+				}
+
+				int[] ypoints = roi.getPolygon().ypoints;
+
+				final ImageProcessor slice = resultImage.getImageStack().
+						getProcessor( resultImage.getSlice() );
+
+				// read label values at those positions
+				for ( int i = 0; i<xpoints.length; i ++ )
+				{
+					float value = slice.getf( xpoints[ i ], ypoints[ i ] );
+					if( Float.compare( 0f, value ) != 0 &&
+							list.contains( value ) == false )
+						list.add( value );
+				}
 			}
+			else if( roi instanceof FreehandRoi )
+			{
+				// read values from ROI using a profile plot
+				// save interpolation option
+				boolean interpolateOption = PlotWindow.interpolate;
+				// do not interpolate pixel values
+				PlotWindow.interpolate = false;
+				// get label values from line roi (different from 0)
+				float[] values = (new ProfilePlot( resultImage ))
+						.getPlot().getYValues();
+				PlotWindow.interpolate = interpolateOption;
+
+				for( int i=0; i<values.length; i++ )
+				{
+					if( Float.compare( 0f, values[ i ] ) != 0 &&
+							list.contains( values[ i ]) == false )
+						list.add( values[ i ]);
+				}
+			}
+
 			// if more than one value is selected, merge
 			if( list.size() > 1 )
 			{
@@ -1306,6 +1343,9 @@ public class MorphologicalSegmentation implements PlugIn {
 				if ( showColorOverlay )
 					updateResultOverlay();
 			}
+			else
+				IJ.error( "Please select two or more different"
+						+ " labels to merge" );
 		}
 
 		void shuffleColors()
