@@ -1,13 +1,10 @@
 package inra.ijpb.morphology.attrfilt;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
-import inra.ijpb.morphology.extrema.ExtremaType;
-import inra.ijpb.morphology.extrema.RegionalExtremaAlgo;
-import inra.ijpb.morphology.extrema.RegionalExtremaByFlooding;
 
 import org.junit.Test;
 
@@ -71,4 +68,20 @@ public class AreaOpeningQueueTest
 	
 	}
 
+	@Test
+	public void testProcessGrains()
+	{
+		String fileName = getClass().getResource("/files/grains.tif").getFile();
+		ImagePlus imagePlus = IJ.openImage(fileName);
+		assertNotNull(imagePlus);
+		ImageProcessor image = imagePlus.getProcessor();
+		
+		AreaOpening algo = new AreaOpeningQueue2();
+
+		long t0 = System.nanoTime();
+		algo.process(image, 4);
+		long t1 = System.nanoTime();
+		double dt = (t1 - t0) / 1000000.0;
+		System.out.println("Elapsed time: " + dt + " ms");
+	}
 }

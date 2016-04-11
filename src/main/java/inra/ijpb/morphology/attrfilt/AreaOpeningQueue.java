@@ -3,17 +3,16 @@
  */
 package inra.ijpb.morphology.attrfilt;
 
-import java.awt.Point;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Queue;
-import java.util.TreeMap;
-
-import ij.IJ;
 import ij.process.ImageProcessor;
 import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.morphology.MinimaAndMaxima;
+
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 /**
  * Area opening using priority queue for updating each regional maxima.
@@ -34,7 +33,10 @@ public class AreaOpeningQueue extends AlgoStub implements AreaOpening
 	{
 		// identify each maxima
 		ImageProcessor maxima = MinimaAndMaxima.regionalMaxima(image, conn);
-		ImageProcessor labelImage = BinaryImages.componentsLabeling(maxima, conn, 16);
+		
+		// TODO: should be possible to replace computation of labels by
+		// extraction of initial position for each regional maxima
+		ImageProcessor labelImage = BinaryImages.componentsLabeling(maxima, conn, 32);
 		
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
@@ -45,7 +47,7 @@ public class AreaOpeningQueue extends AlgoStub implements AreaOpening
 		{
 			for (int x = 0; x < sizeX; x++)
 			{
-				nMaxima = Math.max(nMaxima, labelImage.get(x, y));
+				nMaxima = Math.max(nMaxima, (int) labelImage.getf(x, y));
 			}
 		}
 		
@@ -61,7 +63,7 @@ public class AreaOpeningQueue extends AlgoStub implements AreaOpening
 		{
 			for (int x = 0; x < sizeX; x++)
 			{
-				int label = labelImage.get(x, y);
+				int label = (int) labelImage.getf(x, y);
 				if (label == 0)
 				{
 					continue;
@@ -72,6 +74,9 @@ public class AreaOpeningQueue extends AlgoStub implements AreaOpening
 			}
 		}
 		
+		
+		// the pixel shifts used to identify neighbors
+		// TODO: write it more generic
 		int[] dx = new int[]{0, -1, +1, 0};
 		int[] dy = new int[]{-1, 0, 0, +1};
 		
@@ -82,83 +87,59 @@ public class AreaOpeningQueue extends AlgoStub implements AreaOpening
 		{
 			// get current maxima
 			Point pos0 = maximaPositionArray.get(iMaxima);
-			int initialLevel = result.get(pos0.x, pos0.y);
-			IJ.log("Process maxima at (" + pos0.x + "," + pos0.y + ")=" + initialLevel);
 			
 			// all the positions of the current maxima, all levels
 			ArrayList<Point> positions = new ArrayList<Point>();
 
-			// create the data structure to store neighbors, ordered by value, then
-			// containing all positions of a given value connected to current
-			// maxima
-			TreeMap<Integer, Queue<Point>> mapQueue = new TreeMap<Integer, Queue<Point>>();
-
 			// initialize neighbor list
-			Queue<Point> queue = new ArrayDeque<Point>();
+			Queue<Point> queue = new PriorityQueue<Point>(new PositionValueComparator(result));
 			queue.add(pos0);
-			mapQueue.put(initialLevel, queue);
 
 			int nPixels = 0;
-			int currentLevel;
-			while(true)
+			int currentLevel = image.get(pos0.x, pos0.y);
+			while(!queue.isEmpty())
 			{
-				// process current gray level
-				currentLevel = mapQueue.lastKey();
-//				IJ.log("  Process level: " + currentLevel);
-				queue = mapQueue.get(currentLevel);
-				
-				// iterate over neighbors with same gray level
-				while(!queue.isEmpty())
+				// extract next neighbor around current regional maxim, in decreasing order of image value
+				Point pos = queue.remove();
+
+				// if neighbor corresponds to another maxima, stop iteration
+				int neighborValue = result.get(pos.x, pos.y);
+				if (neighborValue > currentLevel)
 				{
-					Point pos = queue.remove();
-					positions.add(pos);
-					nPixels++;
-					
-					
-					// add neighbors to queue
-					for (int iNeigh = 0; iNeigh < dx.length; iNeigh++)
-					{
-						int x2 = pos.x + dx[iNeigh];
-						int y2 = pos.y + dy[iNeigh];
-						if (x2 >= 0 && x2 < sizeX && y2 >= 0 && y2 < sizeY)
-						{
-							Point pos2 = new Point(x2, y2);
-							if (positions.contains(pos2))
-							{
-								continue;
-							}
-							
-							int val = result.get(x2, y2);
-							Queue<Point> queue2 = null;
-							if (mapQueue.containsKey(val))
-							{
-								queue2 = mapQueue.get(val);
-							}
-							else
-							{
-								queue2 = new ArrayDeque<Point>();
-								mapQueue.put(val, queue2);
-							}
-							queue2.add(pos2);
-						}
-					}
+					break;					
 				}
-				
-				mapQueue.remove(currentLevel);
-				
+
+				// add current neighbor to maxim neighborhood, and update level if necessary
+				positions.add(pos);
+				nPixels++;
+				currentLevel = neighborValue;
+
+				// check size condition
 				if (nPixels >= minArea)
 				{
-//					IJ.log("  max number of pixels reached");
 					break; 
 				}
 				
-				if (mapQueue.lastKey() > currentLevel)
+				// add neighbors to queue
+				for (int iNeigh = 0; iNeigh < dx.length; iNeigh++)
 				{
-//					IJ.log("  touches another maximum");
-					break;					
+					int x2 = pos.x + dx[iNeigh];
+					int y2 = pos.y + dy[iNeigh];
+					if (x2 >= 0 && x2 < sizeX && y2 >= 0 && y2 < sizeY)
+					{
+						Point pos2 = new Point(x2, y2);
+						// Check if position was already processed
+						if (positions.contains(pos2))
+						{
+							continue;
+						}
+
+						queue.add(pos2);
+					}
 				}
 			}
 			
+			// Replace the value of all pixel in maxim neighborhood by the last visited level
 			for (Point pos2 : positions)
 			{
 				result.set(pos2.x, pos2.y, currentLevel);
@@ -168,21 +149,35 @@ public class AreaOpeningQueue extends AlgoStub implements AreaOpening
 		return result;
 	}
 
-//	private Collection<Point> findComponentPositions(ImageProcessor image, Point pos0)
-//	{
-//		ArrayList<Point> positions = new ArrayList<Point>();
-//		Queue<Point> queue = new ArrayDeque<Point>();
-//
-//		queue.add(pos0);
-//		while (!queue.isEmpty())
-//		{
-//			Point pos = queue.remove();
-//			positions.add(pos);
-//			
-//		}
-//		
-//		return positions;
-//	}
-	
-
+	/**
+	 * Compares positions within an image, by considering largest values with
+	 * higher priority than smallest ones.
+	 * 
+	 * @author dlegland
+	 *
+	 */
+	class PositionValueComparator implements Comparator<Point>
+	{
+		ImageProcessor image;
+		PositionValueComparator(ImageProcessor image)
+		{
+			this.image = image;
+		}
+		
+		@Override
+		public int compare(Point pos1, Point pos2)
+		{
+			int val1 = image.get(pos1.x, pos1.y);
+			int val2 = image.get(pos2.x, pos2.y);
+			if (val1 > val2)
+			{
+				return -1;
+			}
+			if (val2 > val1)
+			{
+				return +1;
+			}
+			return 0;
+		}
+	}
 }

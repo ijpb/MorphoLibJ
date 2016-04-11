@@ -6,7 +6,6 @@ package inra.ijpb.morphology;
 import ij.process.ImageProcessor;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.morphology.attrfilt.AreaOpening;
-import inra.ijpb.morphology.attrfilt.AreaOpeningNaive;
 import inra.ijpb.morphology.attrfilt.AreaOpeningQueue;
 
 /**
