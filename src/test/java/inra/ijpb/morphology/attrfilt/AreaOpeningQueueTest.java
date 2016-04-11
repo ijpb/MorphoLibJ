@@ -10,7 +10,6 @@ import org.junit.Test;
 
 public class AreaOpeningQueueTest
 {
-
 	@Test
 	public void testProcess()
 	{
@@ -23,8 +22,6 @@ public class AreaOpeningQueueTest
 		image.set(2, 2, 2);
 		
 		AreaOpening algo = new AreaOpeningQueue();
-//		algo.setConnectivity(4);
-//		algo.setExtremaType(ExtremaType.MAXIMA);
 
 		ImageProcessor output = algo.process(image, 4);
 		
@@ -38,6 +35,7 @@ public class AreaOpeningQueueTest
 		}
 	
 	}
+	
 	@Test
 	public void testProcessTwoMaxima()
 	{
@@ -52,8 +50,6 @@ public class AreaOpeningQueueTest
 		image.set(3, 2, 5);
 		
 		AreaOpening algo = new AreaOpeningQueue();
-//		algo.setConnectivity(4);
-//		algo.setExtremaType(ExtremaType.MAXIMA);
 
 		ImageProcessor output = algo.process(image, 4);
 		
@@ -76,7 +72,7 @@ public class AreaOpeningQueueTest
 		assertNotNull(imagePlus);
 		ImageProcessor image = imagePlus.getProcessor();
 		
-		AreaOpening algo = new AreaOpeningQueue2();
+		AreaOpening algo = new AreaOpeningQueue();
 
 		long t0 = System.nanoTime();
 		algo.process(image, 4);

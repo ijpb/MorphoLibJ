@@ -123,17 +123,17 @@ public class AreaOpeningQueue extends AlgoStub implements AreaOpening
 			int currentLevel = image.get(pos0.x, pos0.y);
 			while(!queue.isEmpty())
 			{
-				// extract next neighbor around current regional maxim, in decreasing order of image value
+				// extract next neighbor around current regional maximum, in decreasing order of image value
 				Point pos = queue.remove();
 
-				// if neighbor corresponds to another maxima, stop iteration
+				// if neighbor corresponds to another regional maximum, stop iteration
 				int neighborValue = result.get(pos.x, pos.y);
 				if (neighborValue > currentLevel)
 				{
 					break;					
 				}
 
-				// add current neighbor to maxim neighborhood, and update level if necessary
+				// add current neighbor to regional maximum neighborhood, and update level if necessary
 				positions.add(pos);
 				nPixels++;
 				currentLevel = neighborValue;
@@ -153,17 +153,15 @@ public class AreaOpeningQueue extends AlgoStub implements AreaOpening
 					{
 						Point pos2 = new Point(x2, y2);
 						// Check if position was already processed
-						if (positions.contains(pos2))
+						if (!positions.contains(pos2) && !queue.contains(pos2))
 						{
-							continue;
+							queue.add(pos2);
 						}
-
-						queue.add(pos2);
 					}
 				}
 			}
 			
-			// Replace the value of all pixel in maxim neighborhood by the last visited level
+			// Replace the value of all pixel in regional maximum neighborhood by the last visited level
 			for (Point pos : positions)
 			{
 				result.set(pos.x, pos.y, currentLevel);
