@@ -305,6 +305,11 @@ public class MorphologicalSegmentation implements PlugIn {
 	/** name of the macro method to set the gradient radius */
 	public static String SET_RADIUS = "setGradientRadius";
 	
+	/** name of the macro method to merge selected labels */
+	public static String MERGE_LABELS = "mergeLabels";
+	/** name of the macro method to shuffle color labels */
+	public static String SHUFFLE_COLORS = "shuffleColors";
+
 	/** opacity to display overlays */
 	double opacity = 1.0/3.0;
 
@@ -1349,6 +1354,9 @@ public class MorphologicalSegmentation implements PlugIn {
 			else
 				IJ.error( "Please select two or more different"
 						+ " labels to merge" );
+
+			// macro recording
+			record( MERGE_LABELS );
 		}
 
 		/**
@@ -1373,6 +1381,8 @@ public class MorphologicalSegmentation implements PlugIn {
 				if ( showColorOverlay )
 					updateResultOverlay();
 			}
+			// macro recording
+			record( SHUFFLE_COLORS );
 		}
 
 		/**
@@ -1773,6 +1783,31 @@ public class MorphologicalSegmentation implements PlugIn {
 		{
 			final CustomWindow win = (CustomWindow) iw;
 			win.toggleOverlay();
+		}
+	}
+	/**
+	 * Merge labels that are selected either by a freehand or a point ROI.
+	 * Label of value 0 (watershed line) is skipped.
+	 */
+	public static void mergeLabels()
+	{
+		final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
+		if( iw instanceof CustomWindow )
+		{
+			final CustomWindow win = (CustomWindow) iw;
+			win.mergeLabels();
+		}
+	}
+	/**
+	 * Shuffle LUT of current display image.
+	 */
+	public static void shuffleColors()
+	{
+		final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
+		if( iw instanceof CustomWindow )
+		{
+			final CustomWindow win = (CustomWindow) iw;
+			win.shuffleColors();
 		}
 	}
 
