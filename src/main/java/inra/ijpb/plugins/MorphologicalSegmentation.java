@@ -265,7 +265,9 @@ public class MorphologicalSegmentation implements PlugIn {
 
 	/** post-processing panel */
 	JPanel postProcessPanel = new JPanel();
+	/** button to merge selected labels */
 	JButton mergeButton = null;
+	/** button to shuffle LUT of display image */
 	JButton shuffleColorsButton = null;
 
 	/** thread to run the segmentation */
