@@ -180,7 +180,7 @@ public class AreaOpeningQueue extends AlgoStub implements AreaOpening
 	 * @author dlegland
 	 *
 	 */
-	class PositionValueComparator implements Comparator<Point>
+	private class PositionValueComparator implements Comparator<Point>
 	{
 		ImageProcessor image;
 		PositionValueComparator(ImageProcessor image)

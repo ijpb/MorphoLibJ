@@ -1,5 +1,6 @@
 package inra.ijpb.morphology.attrfilt;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import ij.IJ;
 import ij.ImagePlus;
@@ -25,15 +26,10 @@ public class AreaOpeningQueueTest
 
 		ImageProcessor output = algo.process(image, 4);
 		
-		for (int y = 0; y < sizeY; y++)
-		{
-			for (int x = 0; x < sizeX; x++)
-			{
-				System.out.print(String.format("%4d", output.get(x, y)));
-			}
-			System.out.println();
-		}
-	
+		assertEquals(2, output.get(1, 1));
+		assertEquals(2, output.get(2, 1));
+		assertEquals(2, output.get(1, 2));
+		assertEquals(2, output.get(2, 2));
 	}
 	
 	@Test
@@ -53,18 +49,14 @@ public class AreaOpeningQueueTest
 
 		ImageProcessor output = algo.process(image, 4);
 		
-		for (int y = 0; y < sizeY; y++)
-		{
-			for (int x = 0; x < sizeX; x++)
-			{
-				System.out.print(String.format("%4d", output.get(x, y)));
-			}
-			System.out.println();
-		}
-	
+		assertEquals(3, output.get(1, 1));
+		assertEquals(3, output.get(2, 1));
+		assertEquals(3, output.get(3, 1));
+		assertEquals(3, output.get(1, 2));
+		assertEquals(2, output.get(2, 2));
+		assertEquals(3, output.get(3, 2));
 	}
 
-	@Test
 	public void testProcessGrains()
 	{
 		String fileName = getClass().getResource("/files/grains.tif").getFile();
