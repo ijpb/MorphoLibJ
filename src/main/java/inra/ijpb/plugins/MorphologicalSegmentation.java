@@ -644,7 +644,8 @@ public class MorphologicalSegmentation implements PlugIn {
 			// === Post-processing panel ===
 			mergeButton = new JButton( "Merge labels" );
 			mergeButton.setEnabled( false );
-			mergeButton.setToolTipText( "Merge labels selected by line ROI" );
+			mergeButton.setToolTipText( "Merge labels selected by freehand or "
+					+ "point ROI" );
 			mergeButton.addActionListener( listener );
 
 			shuffleColorsButton = new JButton( "Shuffle colors" );
