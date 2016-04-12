@@ -673,8 +673,8 @@ public class MorphologicalSegmentation implements PlugIn {
 
 
 			// Parameter panel (left side of the GUI, it includes the 
-			// three main panels: Input Image, Watershed Segmentation
-			// and Results).
+			// four main panels: Input Image, Watershed Segmentation,
+			// Results and Post-processing).
 			GridBagLayout paramsLayout = new GridBagLayout();
 			GridBagConstraints paramsConstraints = new GridBagConstraints();
 			paramsConstraints.insets = new Insets( 5, 5, 6, 6 );
