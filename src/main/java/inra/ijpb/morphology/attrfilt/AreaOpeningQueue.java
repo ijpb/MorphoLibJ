@@ -5,11 +5,12 @@ package inra.ijpb.morphology.attrfilt;
 
 import ij.process.ImageProcessor;
 import inra.ijpb.algo.AlgoStub;
-import inra.ijpb.binary.BinaryImages;
+import inra.ijpb.morphology.FloodFill;
 import inra.ijpb.morphology.MinimaAndMaxima;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -29,6 +30,11 @@ public class AreaOpeningQueue extends AlgoStub implements AreaOpening
 	private int[] dx = new int[]{0, -1, +1, 0};
 	private int[] dy = new int[]{-1, 0, 0, +1};
 
+	/**
+	 * Changes the connectivity of this algorithm.
+	 * 
+	 * @param connectivity the connectivity to use, either 4 or 8
+	 */
 	public void setConnectivity(int connectivity)
 	{
 		switch(connectivity)
@@ -50,6 +56,11 @@ public class AreaOpeningQueue extends AlgoStub implements AreaOpening
 		this.conn = connectivity;
 	}
 
+	/**
+	 * Returns the current connectivity value for this algorithm.
+	 * 
+	 * @return the current connectivity value (either 4 or 8)
+	 */
 	public int getConnectivity()
 	{
 		return this.conn;
@@ -61,64 +72,27 @@ public class AreaOpeningQueue extends AlgoStub implements AreaOpening
 	@Override
 	public ImageProcessor process(ImageProcessor image, int minArea)
 	{
-		// identify each maxima
-		ImageProcessor maxima = MinimaAndMaxima.regionalMaxima(image, conn);
-		
-		// TODO: should be possible to replace computation of labels by
-		// extraction of initial position for each regional maxima
-		ImageProcessor labelImage = BinaryImages.componentsLabeling(maxima, conn, 32);
-		
+		// extract image size
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
+
+		// find position of maxima within image
+		Collection<Point> maximaPositions = findMaximaPositions(image);
 		
-		// count the number of maxima
-		int nMaxima = 0;
-		for (int y = 0; y < sizeY; y++)
-		{
-			for (int x = 0; x < sizeX; x++)
-			{
-				nMaxima = Math.max(nMaxima, (int) labelImage.getf(x, y));
-			}
-		}
-		
-		// initialize array of maxima position
-		ArrayList<Point> maximaPositionArray = new ArrayList<Point>(nMaxima);
-		for (int i = 0; i < nMaxima; i++)
-		{
-			maximaPositionArray.add(new Point());
-		}
-		
-		// for each maxima, find a position
-		for (int y = 0; y < sizeY; y++)
-		{
-			for (int x = 0; x < sizeX; x++)
-			{
-				int label = (int) labelImage.getf(x, y);
-				if (label == 0)
-				{
-					continue;
-				}
-				
-				Point pos = new Point(x, y);
-				maximaPositionArray.set(label - 1, pos);
-			}
-		}
-				
+		// initialize result as copy of input image
 		ImageProcessor result = image.duplicate();
-		
-		// iterate over maxima
-		for (int iMaxima = 0; iMaxima < nMaxima; iMaxima++)
+
+		// iterate over maxima and update result image by removing maxima with small area
+		for (Point pos0 : maximaPositions)
 		{
-			// get current maxima
-			Point pos0 = maximaPositionArray.get(iMaxima);
-			
-			// all the positions of the current maxima, all levels
+			// accumulator for the positions of the current maxima, all gray levels
 			ArrayList<Point> positions = new ArrayList<Point>();
 
-			// initialize neighbor list
+			// initialize list of neighbors of current maxima region
 			Queue<Point> queue = new PriorityQueue<Point>(new PositionValueComparator(result));
 			queue.add(pos0);
 
+			// process pixels in the neighborhood
 			int nPixels = 0;
 			int currentLevel = image.get(pos0.x, pos0.y);
 			while(!queue.isEmpty())
@@ -171,6 +145,34 @@ public class AreaOpeningQueue extends AlgoStub implements AreaOpening
 		return result;
 	}
 
+	private Collection<Point> findMaximaPositions(ImageProcessor image)
+	{
+		// identify each maxima
+		ImageProcessor maxima = MinimaAndMaxima.regionalMaxima(image, conn);
+		
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		
+		Collection<Point> positions = new ArrayList<Point>();
+		
+		for (int y = 0; y < sizeY; y++)
+		{
+			for (int x = 0; x < sizeX; x++)
+			{
+				// if current pixel is a regional maximum, keep the position,
+				// and remove the regional maximum
+				if (maxima.get(x, y) > 0)
+				{
+					positions.add(new Point(x, y));
+					FloodFill.floodFill(maxima, x, y, 0, this.conn);
+				}
+			}
+		}
+
+		return positions;
+	}
+
+	
 	/**
 	 * Compares positions within an image, by considering largest values with
 	 * higher priority than smallest ones.
