@@ -2746,28 +2746,259 @@ Measurements
 \end_layout
 
 \begin_layout Section
-Geometric measurements
+Particle analysis
 \end_layout
 
 \begin_layout Standard
-Several measurements are provided for 
+The MorphoLibJ contains several tools for quantifying the size, the shape,
+ or the spatial organization, from for 
 \series bold
 binary or label
 \series default
  2D or 3D images.
- The results are provided in a ResultsTable, whose name contains the name
- of the original image.
+ The aim is to facilitate the management of label images, contrary to the
+ built-in 
+\begin_inset Quotes eld
+\end_inset
+
+Analyze Particles...
+\begin_inset Quotes erd
+\end_inset
+
+ fonction that operates directly on a gray level image.
+ Most MorphoLibJ plugins consider the current image as input, that must
+ be either binary (only one region is considered), or label (typically the
+ result of a connected components labeling, see section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Binary-Images"
+
+\end_inset
+
+).
+ The result is a results table containing one row for each label actually
+ present within the image.
+ The spatial calibration of the image is taken into account for measurements.
+\end_layout
+
+\begin_layout Subsection
+Particle analysis
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+TODO : refonte des plugins d'analyse ?
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+global geometry
+\series default
+ of particles in 2D images can be characterized with the 
+\begin_inset Quotes eld
+\end_inset
+
+Plugins\SpecialChar \menuseparator
+MorphoLibJ\SpecialChar \menuseparator
+Analyze\SpecialChar \menuseparator
+Region Morphometry
+\begin_inset Quotes erd
+\end_inset
+
+.
+ The measurement of perimeter aims at providing better estimate of perimeter
+ than traditional boundary pixel count.
+ The principle is to consider set of lines with various orientations, and
+ count the number of intersections with the region(s) of interest
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Legland2007,Ohser2009"
+
+\end_inset
+
+.
+ The columns of the results table are:
+\end_layout
+
+\begin_layout Description
+Label the label of the particle measured on the current line (can be different
+ from the row number if some labels do no exist in original image)
+\end_layout
+
+\begin_layout Description
+Area the number of pixels within each region, mutliplied by the area of
+ each pixel.
+\end_layout
+
+\begin_layout Description
+Perimeter an estimate of the perimeter, using Crofton formula
+\end_layout
+
+\begin_layout Description
+Circularity the normalized ratio of area by the square of the perimeter
+ : 
+\begin_inset Formula $4\pi\cdot A/p^{2}$
+\end_inset
+
+.
+ The value should be comprised between 0 (very elongated) and 1 (close to
+ circular).
+ Values superior to 1 may appear due to discretization effect.
+\end_layout
+
+\begin_layout Description
+Elongation the normalized ratio of the squareof the perimeter by the area
+ : 
+\begin_inset Formula $p^{2}/\left(4\pi\cdot A\right)$
+\end_inset
+
+, corresponding to the inverse of the circularity.
+ The values range from 1 (round), and increase with elongation of the particle.
+\end_layout
+
+\begin_layout Standard
+Other measurements consider the 
+\series bold
+largest circle that can be inscribed within the particle
+\series default
+.
+ The plugin opens a dialog that allows to choose the label image to characterize
+, the choice of the method for computing distance, and eventually the image
+ on which overlaid circles can be drawn.
+ The results of the plugin comprise:
+\end_layout
+
+\begin_layout Description
+Label the label of the particle measured on the current line 
+\end_layout
+
+\begin_layout Description
+xi the x-coordinate of the inscibed circle
+\end_layout
+
+\begin_layout Description
+yi the y-coordinate of the inscribed circle
+\end_layout
+
+\begin_layout Description
+radius the radius of the inscribed circle
+\end_layout
+
+\begin_layout Standard
+For particles with complex shapes, the 
+\series bold
+geodesic diameter 
+\series default
+may be of interest.
+ It corresponds of the largest geodesic distance between two points within
+ a region, the geodesic distance being the length of the shortest path joining
+ the two points while staying inside the region.
+ Results :
+\end_layout
+
+\begin_layout Description
+Label the label of the particle measured on the current line 
+\end_layout
+
+\begin_layout Description
+Geod.
+\begin_inset space ~
+\end_inset
+
+Diam.
+ the value of the geodesic diameter
+\end_layout
+
+\begin_layout Description
+Radius the radius of the largest inscribed circle, which is computed during
+ the algorithm
+\end_layout
+
+\begin_layout Description
+Geod.
+\begin_inset space ~
+\end_inset
+
+Elong.
+ the ratio of geodesic diameter over the diameter of the largest inscribed
+ circle.
+ The value range from 1 for nearly round particles and increases for elongated
+ particles.
+\end_layout
+
+\begin_layout Description
+xi,
+\begin_inset space ~
+\end_inset
+
+yi coordinates of the margest inscribed circle
+\end_layout
+
+\begin_layout Description
+x1,
+\begin_inset space ~
+\end_inset
+
+y1 coordinates of one of the geodesic extremities of the particle
+\end_layout
+
+\begin_layout Description
+x2,
+\begin_inset space ~
+\end_inset
+
+y2 coordinates of another geodesic extremity of the particle 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+geodesic diameter -> use fiber image
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Particle analysis 3D
+\end_layout
+
+\begin_layout Standard
+These parameters focus on the shape of the region corresponding to each
+ particle or label.
  The plugin calculating these measurements is found under 
 \begin_inset Quotes eld
 \end_inset
 
 Plugins\SpecialChar \menuseparator
+MorphoLibJ\SpecialChar \menuseparator
 Analyze\SpecialChar \menuseparator
-Geometric Measurements 3D
+Particle Analysis 3D
 \begin_inset Quotes erd
 \end_inset
 
 .
+ The results are provided in a ResultsTable, whose name contains the name
+ of the original image.
+ 
+\end_layout
+
+\begin_layout Description
+Label the label of the particle measured on the current line (can be different
+ from the row number if some labels do no exist in original image)
 \end_layout
 
 \begin_layout Description
@@ -2780,27 +3011,31 @@ box returns the minimal and maximal coordinates in each direction for each
 \end_layout
 
 \begin_layout Description
-Volume
+Volume computes the number of voxels comprising the particle, multiplied
+ by the volume of an individual voxel 
+\end_layout
+
+\begin_layout Description
+Surface
 \begin_inset space ~
 \end_inset
 
-/
+area the surface area computed using a discretized version of the Crofton
+ formula, that computes intersections with line grids of various orientations
+ (currently either 3 or 13).
+\end_layout
+
+\begin_layout Description
+Sphericity
 \begin_inset space ~
 \end_inset
 
-surface
-\begin_inset space ~
-\end_inset
-
-area computes the volume, the surface area, and a sphericity index, defined
- as 
+index defined as 
 \begin_inset Formula $36\pi V^{2}/S^{3}$
 \end_inset
 
 .
- Surface area is computed using a discretized version of the Crofton formula,
- that computes intersections with line grids of various orientations (currently
- either 3 or 13).
+ 
 \end_layout
 
 \begin_layout Description
@@ -2838,24 +3073,7 @@ pitch
 ), and the roll around the main axis.
 \end_layout
 
-\begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-Region adjacency graph -> use maize image
-\end_layout
-
-\begin_layout Plain Layout
-geodesic diameter -> use fiber image
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Section
+\begin_layout Subsection
 Intensity measurements
 \end_layout
 
@@ -2866,6 +3084,7 @@ Other measurements are provided for pairs of grayscale and label 2D or 3D
 \end_inset
 
 Plugins\SpecialChar \menuseparator
+MorphoLibJ\SpecialChar \menuseparator
 Analyze\SpecialChar \menuseparator
 Measure 3D
 \begin_inset Quotes erd
@@ -2875,6 +3094,79 @@ Measure 3D
  The plugin calculates the mean, the standard deviation, the maximum and
  the minimum intensity value of each labeled region in the grayscale image.
  The results are displayed as well in a ResultsTable.
+\end_layout
+
+\begin_layout Subsection
+Spatial organisation
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+region adjacency graph 
+\series default
+plugin gives access to the neighborhood relationship between adjacent regions.
+ This can be particularly informative for exploring collections of cells
+ within cellular tissues.
+ 
+\end_layout
+
+\begin_layout Standard
+The plugin 
+\begin_inset Quotes eld
+\end_inset
+
+Plugins\SpecialChar \menuseparator
+MorphoLibJ\SpecialChar \menuseparator
+Analyze\SpecialChar \menuseparator
+Region Adjacency Graph
+\begin_inset Quotes erd
+\end_inset
+
+ works for both 2D and 3D images, and require label image as input.
+ Typical input is the result of a watershed segmentation, eventually followed
+ by manual edition of the labels.
+ The results is a results table with as many rows as the number of pairs
+ of adjacent regions, containing the labels of the two adjacencent regions.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Region adjacency graph -> use maize image
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Section
+Microstructure analysis
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Think about incorporating gray level granulometries
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Chapter
@@ -2891,7 +3183,24 @@ Utilities for binary images
 \end_layout
 
 \begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Binary-Images"
+
+\end_inset
+
 Some functions specific for the processing of binary images.
+ The plugins can be found in the 
+\begin_inset Quotes eld
+\end_inset
+
+Plugins\SpecialChar \menuseparator
+MorphoLibJ\SpecialChar \menuseparator
+Binary
+\begin_inset Quotes erd
+\end_inset
+
+ menu.
 \end_layout
 
 \begin_layout Standard
@@ -2965,8 +3274,25 @@ Distance
 \begin_inset space ~
 \end_inset
 
-Map computes an approximate distance map between each foreground pixel to
- the nearest background pixel
+Map computes an approximate distance from a binary imag map between each
+ foreground pixel to the nearest background pixel
+\end_layout
+
+\begin_layout Description
+Chamfer
+\begin_inset space ~
+\end_inset
+
+Distance
+\begin_inset space ~
+\end_inset
+
+Map
+\begin_inset space ~
+\end_inset
+
+3D computes an approximate distance map from a 3D binary image between each
+ foreground voxel to the nearest background voxel
 \end_layout
 
 \begin_layout Standard
@@ -3066,6 +3392,16 @@ Algorithms work for both 2D or 3D images.
 
 \begin_layout Section
 Utilities for label images
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Label-Images"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -3496,6 +3832,29 @@ inra.ijpb.plugins contains the set of plugins that is accessible from ImageJ/Fij
 \begin_layout Standard
 All major methods have a general class with static methods that allow calling
  the methods on 2D and 3D images in a transparent way.
+ This modularity permitted to develop other plugins devoted to the analysis
+ of nucleus images
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Poulet_2015_bmc"
+
+\end_inset
+
+, grey level granulometries 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Devaux2014"
+
+\end_inset
+
+ or the description of binary microstructures 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Silva2015"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Section
@@ -3713,6 +4072,64 @@ citep{Devaux2014} or the description of binary microstructures
 \backslash
 citep{Silva2015}.
  
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Chapter
+Applications
+\end_layout
+
+\begin_layout Section
+Segmentation and analysis of Arabidospis early embryo
+\end_layout
+
+\begin_layout Plain Layout
+[morphological filtering : directional ?]
+\end_layout
+
+\begin_layout Plain Layout
+[detection of minima by extended min]
+\end_layout
+
+\begin_layout Plain Layout
+[watershed -> set of labels]
+\end_layout
+
+\begin_layout Plain Layout
+[manual edition of labels]
+\end_layout
+
+\begin_layout Plain Layout
+[morphometry of indivdual particles]
+\end_layout
+
+\begin_layout Plain Layout
+[create 3D result image of parametric mapping]
+\end_layout
+
+\begin_layout Section
+Analysis of hemp fibre morphology
+\end_layout
+
+\begin_layout Plain Layout
+[geodesic diameter, tortuosity of particles]
+\end_layout
+
+\begin_layout Section
+Characterization of dairy matrix microstructure
+\end_layout
+
+\begin_layout Plain Layout
+[computation of tortuosity for binary microstructure, granulometry, area
+ and boundary length densities]
 \end_layout
 
 \end_inset
