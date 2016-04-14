@@ -24,6 +24,9 @@ import ij.gui.StackWindow;
 import ij.gui.Toolbar;
 import ij.plugin.PlugIn;
 import inra.ijpb.label.LabelImages;
+import inra.ijpb.morphology.Morphology;
+import inra.ijpb.morphology.Strel;
+import inra.ijpb.morphology.Strel3D;
 
 public class LabelEdition implements PlugIn 
 {			
@@ -84,6 +87,10 @@ public class LabelEdition implements PlugIn
 						if( e.getSource() == mergeButton )
 						{
 							mergeLabels( );
+						}
+						else if( e.getSource() == dilateButton )
+						{
+							dilateLabels( );
 						}
 					}
 				});
@@ -234,6 +241,26 @@ public class LabelEdition implements PlugIn
 		{
 			LabelImages.mergeLabels( displayImage, displayImage.getRoi(),
 					true );
+			displayImage.updateAndDraw();
+		}
+
+		/**
+		 * Dilate labels using a square/cube of radius 1 as structuring element
+		 */
+		void dilateLabels()
+		{
+			if( inputIs2D )
+			{
+				displayImage.setProcessor( Morphology.dilation(
+						displayImage.getProcessor(),
+						Strel.Shape.SQUARE.fromRadius( 1 ) ) );
+			}
+			else
+			{
+				displayImage.setStack( Morphology.dilation(
+						displayImage.getImageStack(),
+						Strel3D.Shape.CUBE.fromRadius( 1 ) ) );
+			}
 			displayImage.updateAndDraw();
 		}
 
