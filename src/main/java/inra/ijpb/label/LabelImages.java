@@ -8,6 +8,11 @@ import static java.lang.Math.min;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
+import ij.gui.FreehandRoi;
+import ij.gui.PlotWindow;
+import ij.gui.PointRoi;
+import ij.gui.ProfilePlot;
+import ij.gui.Roi;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
@@ -1635,4 +1640,98 @@ public class LabelImages
 
         return labelIndices;
 	}
-}
+	/**
+	 * Merge labels selected by freehand or point tool. Labels are merged
+	 * in place (i.e., the input image is modified). Zero-value label is never
+	 * merged.
+	 *
+	 * @param labelImage  label image to modify
+	 * @param roi  selection indicating the labels to merge
+	 * @param verbose  option to write in the log window the labels merged
+	 */
+	public static final void mergeLabels(
+			final ImagePlus labelImage,
+			final Roi roi,
+			final boolean verbose )
+	{
+		if( roi == null )
+		{
+			IJ.showMessage( "Please select some labels to merge using the "
+					+ "freehand or point selection tool." );
+			return;
+		}
+
+		final ArrayList<Float> list = new ArrayList<Float>();
+
+		// if the user makes point selections
+		if( roi instanceof PointRoi )
+		{
+			int[] xpoints = roi.getPolygon().xpoints;
+
+			if( xpoints.length < 2 )
+			{
+				IJ.error( "Please select two or more labels to merge" );
+				return;
+			}
+
+			int[] ypoints = roi.getPolygon().ypoints;
+
+			final ImageStack labelStack = labelImage.getImageStack();
+
+			// read label values at those positions
+			for ( int i = 0; i<xpoints.length; i ++ )
+			{
+				double value = labelStack.getVoxel(
+						xpoints[ i ],
+						ypoints[ i ],
+						((PointRoi) roi).getPointPosition( i )-1 );
+				if( Double.compare( 0, value ) != 0 &&
+						list.contains( value ) == false )
+					list.add( (float) value );
+			}
+		}
+		else if( roi instanceof FreehandRoi )
+		{
+			// read values from ROI using a profile plot
+			// save interpolation option
+			boolean interpolateOption = PlotWindow.interpolate;
+			// do not interpolate pixel values
+			PlotWindow.interpolate = false;
+			// get label values from line roi (different from 0)
+			float[] values = (new ProfilePlot( labelImage ))
+					.getPlot().getYValues();
+			PlotWindow.interpolate = interpolateOption;
+
+			for( int i=0; i<values.length; i++ )
+			{
+				if( Float.compare( 0f, values[ i ] ) != 0 &&
+						list.contains( values[ i ]) == false )
+					list.add( values[ i ]);
+			}
+		}
+
+		// if more than one value is selected, merge
+		if( list.size() > 1 )
+		{
+			float finalValue = list.remove( 0 );
+			float[] labelArray = new float[ list.size() ];
+			int i = 0;
+
+			for ( Float f : list )
+				labelArray[i++] = f != null ? f : Float.NaN;
+
+			String sLabels = new String( ""+ (long) labelArray[ 0 ] );
+			for( int j=1; j < labelArray.length; j++ )
+				sLabels += ", " + (long) labelArray[ j ];
+			if( verbose )
+				IJ.log( "Merging label(s) " + sLabels + " to label "
+							+ (long) finalValue );
+			LabelImages.replaceLabels( labelImage,
+					labelArray, finalValue );
+		}
+		else
+			IJ.error( "Please select two or more different"
+					+ " labels to merge" );
+	}// end method mergeLabels
+
+}// end class LabelImages
