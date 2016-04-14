@@ -200,31 +200,28 @@ public class LabelEdition implements PlugIn
 		}// end CustomWindow constructor
 		
 		/**
-		 * Overwrite windowClosing to display the input image after closing 
+		 * Overwrite windowClosing to display the result image after closing
 		 * the GUI and shut down the executor service
 		 */
 		@Override
-		public void windowClosing( WindowEvent e ) 
+		public void windowClosing( WindowEvent e )
 		{							
 			super.windowClosing( e );
 
-			if( null != inputImage )
+			if( null != displayImage )
 			{
-				if( null != displayImage )
-					inputImage.setSlice( displayImage.getCurrentSlice() );
-				
-				// display input image
-				inputImage.getWindow().setVisible( true );
+				final ImagePlus result = displayImage.duplicate();
+				result.setTitle( inputImage.getShortTitle() + "-edited" );
+				result.setSlice( displayImage.getSlice() );
+				result.show();
 			}
 
 			// remove listeners
-			
-			
-			if( null != displayImage )
-			{
-				//displayImage.close();
-				displayImage = null;
-			}
+			mergeButton.removeActionListener( listener );
+			dilateButton.removeActionListener( listener );
+			erodeButton.removeActionListener( listener );
+			exitButton.removeActionListener( listener );
+
 			// shut down executor service
 			exec.shutdownNow();
 		}
