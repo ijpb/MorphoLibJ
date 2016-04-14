@@ -51,8 +51,8 @@ public class LabelEdition implements PlugIn
 	JButton mergeButton = null;
 	JButton dilateButton = null;
 	JButton erodeButton = null;
-	JButton exitButton = null;	
-	
+	JButton doneButton = null;
+
 	JPanel buttonsPanel = new JPanel();
 	
 	/** main panel */
@@ -96,6 +96,10 @@ public class LabelEdition implements PlugIn
 						{
 							erodeLabels( );
 						}
+						else if( e.getSource() == doneButton )
+						{
+							win.windowClosing( null );
+						}
 					}
 				});
 			}
@@ -127,8 +131,8 @@ public class LabelEdition implements PlugIn
 			erodeButton = new JButton( "Erode" );
 			erodeButton.addActionListener( listener );
 
-			exitButton = new JButton( "Exit" );
-			exitButton.addActionListener( listener );
+			doneButton = new JButton( "Done" );
+			doneButton.addActionListener( listener );
 			
 			// Training panel (left side of the GUI)
 			buttonsPanel.setBorder(
@@ -150,7 +154,7 @@ public class LabelEdition implements PlugIn
 			buttonsConstraints.gridy++;
 			buttonsPanel.add( erodeButton, buttonsConstraints);
 			buttonsConstraints.gridy++;
-			buttonsPanel.add( exitButton, buttonsConstraints );
+			buttonsPanel.add( doneButton, buttonsConstraints );
 			buttonsConstraints.gridy++;
 			
 			GridBagLayout layout = new GridBagLayout();
@@ -231,7 +235,7 @@ public class LabelEdition implements PlugIn
 			mergeButton.removeActionListener( listener );
 			dilateButton.removeActionListener( listener );
 			erodeButton.removeActionListener( listener );
-			exitButton.removeActionListener( listener );
+			doneButton.removeActionListener( listener );
 
 			// shut down executor service
 			exec.shutdownNow();
