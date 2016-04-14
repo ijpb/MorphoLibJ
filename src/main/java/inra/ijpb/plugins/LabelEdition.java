@@ -92,6 +92,10 @@ public class LabelEdition implements PlugIn
 						{
 							dilateLabels( );
 						}
+						else if( e.getSource() == erodeButton )
+						{
+							erodeLabels( );
+						}
 					}
 				});
 			}
@@ -258,6 +262,26 @@ public class LabelEdition implements PlugIn
 			else
 			{
 				displayImage.setStack( Morphology.dilation(
+						displayImage.getImageStack(),
+						Strel3D.Shape.CUBE.fromRadius( 1 ) ) );
+			}
+			displayImage.updateAndDraw();
+		}
+
+		/**
+		 * Erode labels using a square/cube of radius 1 as structuring element
+		 */
+		void erodeLabels()
+		{
+			if( inputIs2D )
+			{
+				displayImage.setProcessor( Morphology.erosion(
+						displayImage.getProcessor(),
+						Strel.Shape.SQUARE.fromRadius( 1 ) ) );
+			}
+			else
+			{
+				displayImage.setStack( Morphology.erosion(
 						displayImage.getImageStack(),
 						Strel3D.Shape.CUBE.fromRadius( 1 ) ) );
 			}
