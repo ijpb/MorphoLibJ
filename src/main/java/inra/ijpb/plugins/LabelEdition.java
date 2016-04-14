@@ -51,6 +51,7 @@ public class LabelEdition implements PlugIn
 	JButton mergeButton = null;
 	JButton dilateButton = null;
 	JButton erodeButton = null;
+	JButton resetButton = null;
 	JButton doneButton = null;
 
 	JPanel buttonsPanel = new JPanel();
@@ -96,6 +97,10 @@ public class LabelEdition implements PlugIn
 						{
 							erodeLabels( );
 						}
+						else if( e.getSource() == resetButton )
+						{
+							resetLabels( );
+						}
 						else if( e.getSource() == doneButton )
 						{
 							win.windowClosing( null );
@@ -131,6 +136,9 @@ public class LabelEdition implements PlugIn
 			erodeButton = new JButton( "Erode" );
 			erodeButton.addActionListener( listener );
 
+			resetButton = new JButton( "Reset" );
+			resetButton.addActionListener( listener );
+
 			doneButton = new JButton( "Done" );
 			doneButton.addActionListener( listener );
 			
@@ -153,6 +161,8 @@ public class LabelEdition implements PlugIn
 			buttonsPanel.add( dilateButton, buttonsConstraints );
 			buttonsConstraints.gridy++;
 			buttonsPanel.add( erodeButton, buttonsConstraints);
+			buttonsConstraints.gridy++;
+			buttonsPanel.add( resetButton, buttonsConstraints);
 			buttonsConstraints.gridy++;
 			buttonsPanel.add( doneButton, buttonsConstraints );
 			buttonsConstraints.gridy++;
@@ -289,6 +299,15 @@ public class LabelEdition implements PlugIn
 						displayImage.getImageStack(),
 						Strel3D.Shape.CUBE.fromRadius( 1 ) ) );
 			}
+			displayImage.updateAndDraw();
+		}
+
+		/**
+		 * Reset labels to original form
+		 */
+		void resetLabels()
+		{
+			displayImage.setStack( inputImage.getImageStack().duplicate() );
 			displayImage.updateAndDraw();
 		}
 
