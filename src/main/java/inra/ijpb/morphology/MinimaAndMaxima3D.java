@@ -260,7 +260,7 @@ public class MinimaAndMaxima3D
 	 * @return the extended maxima of input image
 	 */
 	public final static ImageStack extendedMaxima(ImageStack image,
-			int dynamic) 
+			double dynamic) 
 	{
 		return extendedMaxima(image, dynamic, DEFAULT_CONNECTIVITY);
 	}
@@ -279,7 +279,7 @@ public class MinimaAndMaxima3D
 	 * @return the extended maxima of input image
 	 */
 	public final static ImageStack extendedMaxima(ImageStack image,
-			int dynamic, int conn) 
+			double dynamic, int conn) 
 	{
 		ImageStack mask = addValue(image, dynamic);
 
@@ -304,7 +304,7 @@ public class MinimaAndMaxima3D
 	 */
 	public final static ImageStack extendedMaxima(
 			ImageStack image,
-			int dynamic, 
+			double dynamic, 
 			ImageStack binaryMask ) 
 	{
 		return extendedMaxima( image, dynamic, DEFAULT_CONNECTIVITY, binaryMask );
@@ -328,7 +328,7 @@ public class MinimaAndMaxima3D
 	 */
 	public final static ImageStack extendedMaxima(
 			ImageStack image,
-			int dynamic, 
+			double dynamic, 
 			int conn,
 			ImageStack binaryMask ) 
 	{
@@ -350,7 +350,7 @@ public class MinimaAndMaxima3D
 	 *            the difference between minima and minima boundary
 	 * @return the extended minima of input image
 	 */
-	public final static ImageStack extendedMinima(ImageStack image, int dynamic)
+	public final static ImageStack extendedMinima(ImageStack image, double dynamic)
 	{
 		return extendedMinima(image, dynamic, DEFAULT_CONNECTIVITY);
 	}
@@ -369,7 +369,7 @@ public class MinimaAndMaxima3D
 	 * @return the extended minima of input image
 	 */
 	public final static ImageStack extendedMinima(ImageStack image,
-			int dynamic, int conn) 
+			double dynamic, int conn) 
 	{
 		ImageStack marker = addValue(image, dynamic);
 
