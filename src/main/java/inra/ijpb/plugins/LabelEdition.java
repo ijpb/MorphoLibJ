@@ -21,6 +21,7 @@ import ij.ImageStack;
 import ij.WindowManager;
 import ij.gui.ImageCanvas;
 import ij.gui.StackWindow;
+import ij.gui.Toolbar;
 import ij.plugin.PlugIn;
 import inra.ijpb.label.LabelImages;
 
@@ -272,6 +273,9 @@ public class LabelEdition implements PlugIn
 			return;
 		}
 		
+		// select point tool for manual label merging
+		Toolbar.getInstance().setTool( Toolbar.POINT );
+
 		inputStackCopy = inputImage.getImageStack().duplicate();
 		displayImage = new ImagePlus( inputImage.getTitle(), 
 				inputStackCopy );
