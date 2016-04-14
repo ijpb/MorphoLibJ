@@ -54,6 +54,26 @@ public class CuboidStrel extends AbstractSeparableStrel3D
 		return new CuboidStrel(diamX, diamY, diamZ, radiusX, radiusY, radiusZ);
 	}
 	
+	/**
+	 * Creates a 3D structuring element with a cuboid shape and different sizes
+	 * depending on direction.
+	 * 
+	 * @param diamX
+	 *            diameter in x direction
+	 * @param diamY
+	 *            diameter in y direction
+	 * @param diamZ
+	 *            diameter in z direction
+	 * @return a new 3D cuboidal structuring element
+	 */
+	public final static CuboidStrel fromDiameterList(int diamX, int diamY, int diamZ)
+	{
+		int offsetX = (diamX - 1) / 2;
+		int offsetY = (diamY - 1) / 2;
+		int offsetZ = (diamZ - 1) / 2;
+		return new CuboidStrel(diamX, diamY, diamZ, offsetX, offsetY, offsetZ);
+	}
+	
 	// ==================================================
 	// Class variables
 	

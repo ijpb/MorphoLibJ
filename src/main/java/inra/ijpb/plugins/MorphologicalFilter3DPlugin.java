@@ -28,14 +28,14 @@ import inra.ijpb.util.IJUtils;
  *
  */
 
-public class MorphologicalFilter3DPlugin implements PlugIn {
-
+public class MorphologicalFilter3DPlugin implements PlugIn 
+{
 	/* (non-Javadoc)
 	 * @see ij.plugin.PlugIn#run(java.lang.String)
 	 */
 	@Override
-	public void run(String arg) {
-		
+	public void run(String arg) 
+	{
 		if ( IJ.getVersion().compareTo("1.48a") < 0 )
 		{
 			IJ.error( "Morphological Filter 3D", "ERROR: detected ImageJ version " + IJ.getVersion()  
@@ -44,19 +44,22 @@ public class MorphologicalFilter3DPlugin implements PlugIn {
 		}
 		
 		ImagePlus imagePlus = WindowManager.getCurrentImage();
-		if (imagePlus == null) {
+		if (imagePlus == null) 
+		{
 			IJ.error("No image", "Need at least one image to work");
 			return;
 		}
 		
 		// create the dialog
-		GenericDialog gd = new GenericDialog("Morphological Filter");
+		GenericDialog gd = new GenericDialog("Morphological Filter 3D");
 		
 		gd.addChoice("Operation", Operation.getAllLabels(), 
 				Operation.DILATION.toString());
-		gd.addChoice("Element", Strel3D.Shape.getAllLabels(), 
+		gd.addChoice("Element Shape", Strel3D.Shape.getAllLabels(), 
 				Strel3D.Shape.CUBE.toString());
-		gd.addNumericField("Radius (in pixels)", 2, 0);
+		gd.addNumericField("X-Radius (in pixels)", 2, 0);
+		gd.addNumericField("Y-Radius (in pixels)", 2, 0);
+		gd.addNumericField("Z-Radius (in pixels)", 2, 0);
 		gd.addCheckbox("Show Element", false);
 		
 		// Could also add an option for the type of operation
@@ -69,17 +72,20 @@ public class MorphologicalFilter3DPlugin implements PlugIn {
 
 		// extract chosen parameters
 		Operation op = Operation.fromLabel(gd.getNextChoice());
-		Strel3D.Shape type = Strel3D.Shape.fromLabel(gd.getNextChoice());
-		int radius = (int) gd.getNextNumber();		
+		Strel3D.Shape strelShape = Strel3D.Shape.fromLabel(gd.getNextChoice());
+		int radiusX = (int) gd.getNextNumber();		
+		int radiusY = (int) gd.getNextNumber();		
+		int radiusZ = (int) gd.getNextNumber();		
 		boolean showStrel = gd.getNextBoolean();
 		
 		// Create structuring element of the given size
-		Strel3D strel = type.fromRadius(radius);
+		Strel3D strel = strelShape.fromRadiusList(radiusX, radiusY, radiusZ);
 		strel.showProgress(true);
 		DefaultAlgoListener.monitor(strel);
 		
 		// Eventually display the structuring element used for processing 
-		if (showStrel) {
+		if (showStrel)
+		{
 			showStrelImage(strel);
 		}
 		
@@ -102,9 +108,10 @@ public class MorphologicalFilter3DPlugin implements PlugIn {
 
 	/**
 	 * Displays the current structuring element in a new ImagePlus. 
-	 * @param strel the structuring element to display
+	 * @param strel the 3D structuring element to display
 	 */
-	private void showStrelImage(Strel3D strel) {
+	private void showStrelImage(Strel3D strel) 
+	{
 		// Size of the strel image (little bit larger than strel)
 		int[] dim = strel.getSize();
 		int width = dim[0] + 20; 
@@ -118,16 +125,19 @@ public class MorphologicalFilter3DPlugin implements PlugIn {
 		stack = Morphology.dilation(stack, strel);
 		maskProcessor = stack.getProcessor(1);
 		
-		// Forces the display to inverted LUT (display a black over white)
+		// Forces the display to inverted LUT (display a black foreground over white background)
 		if (!maskProcessor.isInvertedLut())
+		{
 			maskProcessor.invertLut();
+		}
 		
 		// Display strel image
 		ImagePlus maskImage = new ImagePlus("Element", maskProcessor);
 		maskImage.show();
 	}
 
-	public ImagePlus process(ImagePlus image, Operation op, Strel3D strel) {
+	public ImagePlus process(ImagePlus image, Operation op, Strel3D strel) 
+	{
 		// Check validity of parameters
 		if (image == null)
 			return null;

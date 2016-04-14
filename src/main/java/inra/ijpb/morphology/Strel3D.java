@@ -8,7 +8,10 @@ import inra.ijpb.algo.Algo;
 import inra.ijpb.morphology.strel.BallStrel;
 import inra.ijpb.morphology.strel.Cross3x3Strel;
 import inra.ijpb.morphology.strel.CubeStrel;
+import inra.ijpb.morphology.strel.CuboidStrel;
 import inra.ijpb.morphology.strel.DiamondStrel;
+import inra.ijpb.morphology.strel.EllipsoidStrel;
+import inra.ijpb.morphology.strel.ExtrudedStrel;
 import inra.ijpb.morphology.strel.LinearDiagDownStrel;
 import inra.ijpb.morphology.strel.LinearDiagUpStrel;
 import inra.ijpb.morphology.strel.LinearHorizontalStrel;
@@ -122,11 +125,46 @@ public interface Strel3D extends Algo {
 		
 		/**
 		 * Creates a structuring element of the given type and with the
+		 * specified radius for each dimension. The final size is given for each
+		 * dimension by 2 * radius + 1, to take into account the central pixel.
+		 * 
+		 * @param radiusX
+		 *            the radius of the structuring element in the x-direction, in pixels
+		 * @param radiusY
+		 *            the radius of the structuring element in the y-direction, in pixels
+		 * @param radiusX
+		 *            the radius of the structuring element in the z-direction, in pixels
+		 * @return a new structuring element
+		 * 
+		 */
+		public Strel3D fromRadiusList(int radiusX, int radiusY, int radiusZ) 
+		{
+			if (this == BALL) 
+				return EllipsoidStrel.fromRadiusList(radiusX, radiusY, radiusZ);
+			if (this == CUBE) 
+				return CuboidStrel.fromRadiusList(radiusX, radiusY, radiusZ);
+			
+			if (radiusX != radiusY)
+			{
+				throw new IllegalArgumentException("For 2D structuring elements, radiusX and radiusY must be equal");
+			}
+			
+			// create the planar shape with specified size in largest direction
+			Strel.Shape shape2d = Strel.Shape.fromLabel(this.label);
+			Strel strel2d = shape2d.fromRadius(radiusX);
+			
+			int diamZ = 2 * radiusZ + 1;
+			return new ExtrudedStrel(strel2d, diamZ, radiusZ);
+		}
+		
+		/**
+		 * Creates a structuring element of the given type and with the
 		 * specified diameter.
 		 * @param diam the orthogonal diameter of the structuring element (max of x and y sizes), in pixels
 		 * @return a new structuring element
 		 */
-		public Strel3D fromDiameter(int diam) {
+		public Strel3D fromDiameter(int diam) 
+		{
 			if (this == BALL) 
 				return BallStrel.fromDiameter(diam);
 			if (this == CUBE) 
@@ -150,6 +188,31 @@ public interface Strel3D extends Algo {
 				return new LinearDiagDownStrel(diam);
 			
 			throw new IllegalArgumentException("No default method for creating element of type " + this.label);
+		}
+		
+		/**
+		 * Creates a structuring element of the given type and with the
+		 * specified diameter.
+		 * @param diam the orthogonal diameter of the structuring element (max of x and y sizes), in pixels
+		 * @return a new structuring element
+		 */
+		public Strel3D fromDiameterList(int diamX, int diamY, int diamZ) 
+		{
+			if (this == BALL) 
+				return EllipsoidStrel.fromDiameterList(diamX, diamY, diamZ);
+			if (this == CUBE) 
+				return CuboidStrel.fromDiameterList(diamX, diamY, diamZ);
+			
+			if (diamX != diamY)
+			{
+				throw new IllegalArgumentException("For 2D structuring elements, radiusX and radiusY must be equal");
+			}
+			
+			// create the planar shape with specified size in largest direction
+			Strel.Shape shape2d = Strel.Shape.fromLabel(this.label);
+			Strel strel2d = shape2d.fromDiameter(diamX);
+			
+			return new ExtrudedStrel(strel2d, diamZ, (diamZ - 1) / 2);
 		}
 		
 		/**

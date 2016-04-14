@@ -56,6 +56,14 @@ public class EllipsoidStrel extends AbstractStrel3D
 		return new EllipsoidStrel((diam - 1.0) / 2);
 	}
 	
+	public final static EllipsoidStrel fromDiameterList(double diamX, double diamY, double diamZ)
+	{
+		double radiusX = (diamX - 1) / 2;
+		double radiusY = (diamY - 1) / 2;
+		double radiusZ = (diamZ - 1) / 2;
+		return new EllipsoidStrel(radiusX, radiusY, radiusZ);
+	}
+	
 	/**
 	 * Private constructor of Ball structuring element.
 	 * 
@@ -83,10 +91,10 @@ public class EllipsoidStrel extends AbstractStrel3D
 	@Override
 	public int[] getSize()
 	{
-		int xDiam = 2 * ((int) Math.round(xRadius)) + 1;
-		int yDiam = 2 * ((int) Math.round(yRadius)) + 1;
-		int zDiam = 2 * ((int) Math.round(zRadius)) + 1;
-		return new int[]{xDiam, yDiam, zDiam};
+		int diamX = 2 * ((int) Math.round(xRadius)) + 1;
+		int diamY = 2 * ((int) Math.round(yRadius)) + 1;
+		int diamZ = 2 * ((int) Math.round(zRadius)) + 1;
+		return new int[]{diamX, diamY, diamZ};
 	}
 
 	@Override
