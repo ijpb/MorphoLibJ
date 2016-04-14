@@ -4,12 +4,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Panel;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -26,6 +22,7 @@ import ij.WindowManager;
 import ij.gui.ImageCanvas;
 import ij.gui.StackWindow;
 import ij.plugin.PlugIn;
+import inra.ijpb.label.LabelImages;
 
 public class LabelEdition implements PlugIn 
 {			
@@ -69,6 +66,30 @@ public class LabelEdition implements PlugIn
 		private static final long serialVersionUID = 7356632113911531536L;
 
 		/**
+		 * Listener for the GUI buttons
+		 */
+		private ActionListener listener = new ActionListener() {
+
+			@Override
+			public void actionPerformed( final ActionEvent e )
+			{
+				// listen to the buttons on separate threads not to block
+				// the event dispatch thread
+				exec.submit(new Runnable() {
+
+					public void run()
+					{
+						// Merge button
+						if( e.getSource() == mergeButton )
+						{
+							mergeLabels( );
+						}
+					}
+				});
+			}
+		};
+
+		/**
 		 * Custom window to create plugin GUI
 		 * @param imp input label image (2d or 3d)
 		 */
@@ -86,9 +107,16 @@ public class LabelEdition implements PlugIn
 			setTitle( "Label Edition" );
 
 			mergeButton = new JButton( "Merge" );
+			mergeButton.addActionListener( listener );
+
 			dilateButton = new JButton( "Dilate" );
+			dilateButton.addActionListener( listener );
+
 			erodeButton = new JButton( "Erode" );
+			erodeButton.addActionListener( listener );
+
 			exitButton = new JButton( "Exit" );
+			exitButton.addActionListener( listener );
 			
 			// Training panel (left side of the GUI)
 			buttonsPanel.setBorder(
@@ -168,79 +196,6 @@ public class LabelEdition implements PlugIn
 			// Fix minimum size to the preferred size at this point
 			pack();
 			setMinimumSize( getPreferredSize() );
-			
-			// add especial listener if the input image is a stack
-			if( null != sliceSelector )
-			{
-				// add adjustment listener to the scroll bar
-				sliceSelector.addAdjustmentListener( new AdjustmentListener() 
-				{
-					public void adjustmentValueChanged(
-							final AdjustmentEvent e ) {
-						exec.submit(new Runnable() {
-							public void run() {							
-								if( e.getSource() == sliceSelector )
-								{
-									//IJ.log("moving scroll");
-									displayImage.killRoi();
-								}
-
-							}							
-						});
-					}
-				});
-
-				// mouse wheel listener to update the rois while scrolling
-				addMouseWheelListener( new MouseWheelListener() {
-
-					@Override
-					public void mouseWheelMoved( final MouseWheelEvent e ) {
-
-						exec.submit( new Runnable() {
-							public void run() 
-							{
-								//IJ.log("moving scroll");
-								displayImage.killRoi();
-							}
-						});
-
-					}
-				});
-
-				// key listener to repaint the display image and the traces
-				// when using the keys to scroll the stack
-				KeyListener keyListener = new KeyListener() {
-
-					@Override
-					public void keyTyped(KeyEvent e) {}
-
-					@Override
-					public void keyReleased( final KeyEvent e ) {
-						exec.submit( new Runnable() {
-							public void run() 
-							{
-								if( e.getKeyCode() == KeyEvent.VK_LEFT ||
-									e.getKeyCode() == KeyEvent.VK_RIGHT ||
-									e.getKeyCode() == KeyEvent.VK_LESS ||
-									e.getKeyCode() == KeyEvent.VK_GREATER ||
-									e.getKeyCode() == KeyEvent.VK_COMMA ||
-									e.getKeyCode() == KeyEvent.VK_PERIOD)
-								{
-									//IJ.log("moving scroll");
-									displayImage.killRoi();
-								}
-							}
-						});
-
-					}
-
-					@Override
-					public void keyPressed( KeyEvent e ) {}
-				};
-				// add key listener to the window and the canvas
-				addKeyListener( keyListener );
-				canvas.addKeyListener( keyListener );
-			}
 		}// end CustomWindow constructor
 		
 		/**
@@ -273,6 +228,13 @@ public class LabelEdition implements PlugIn
 			exec.shutdownNow();
 		}
 		
+		void mergeLabels()
+		{
+			LabelImages.mergeLabels( displayImage, displayImage.getRoi(),
+					true );
+			displayImage.updateAndDraw();
+		}
+
 	}// end CustomWindow class
 	
 	
