@@ -51,6 +51,7 @@ public class LabelEdition implements PlugIn
 	JButton mergeButton = null;
 	JButton dilateButton = null;
 	JButton erodeButton = null;
+	JButton removeLargestButton = null;
 	JButton resetButton = null;
 	JButton doneButton = null;
 
@@ -97,6 +98,10 @@ public class LabelEdition implements PlugIn
 						{
 							erodeLabels( );
 						}
+						else if( e.getSource() == removeLargestButton )
+						{
+							removeLargestLabel();
+						}
 						else if( e.getSource() == resetButton )
 						{
 							resetLabels( );
@@ -136,6 +141,9 @@ public class LabelEdition implements PlugIn
 			erodeButton = new JButton( "Erode" );
 			erodeButton.addActionListener( listener );
 
+			removeLargestButton = new JButton( "Remove largest" );
+			removeLargestButton.addActionListener( listener );
+
 			resetButton = new JButton( "Reset" );
 			resetButton.addActionListener( listener );
 
@@ -161,6 +169,8 @@ public class LabelEdition implements PlugIn
 			buttonsPanel.add( dilateButton, buttonsConstraints );
 			buttonsConstraints.gridy++;
 			buttonsPanel.add( erodeButton, buttonsConstraints);
+			buttonsConstraints.gridy++;
+			buttonsPanel.add( removeLargestButton, buttonsConstraints);
 			buttonsConstraints.gridy++;
 			buttonsPanel.add( resetButton, buttonsConstraints);
 			buttonsConstraints.gridy++;
@@ -299,6 +309,15 @@ public class LabelEdition implements PlugIn
 						displayImage.getImageStack(),
 						Strel3D.Shape.CUBE.fromRadius( 1 ) ) );
 			}
+			displayImage.updateAndDraw();
+		}
+
+		/**
+		 * Remove largest label
+		 */
+		void removeLargestLabel()
+		{
+			LabelImages.removeLargestLabel( displayImage );
 			displayImage.updateAndDraw();
 		}
 
