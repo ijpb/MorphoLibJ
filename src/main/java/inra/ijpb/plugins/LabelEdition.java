@@ -229,6 +229,10 @@ public class LabelEdition implements PlugIn
 			exec.shutdownNow();
 		}
 		
+		/**
+		 * Merge labels of current image that have been selected by either point
+		 * or freehand ROIs.
+		 */
 		void mergeLabels()
 		{
 			LabelImages.mergeLabels( displayImage, displayImage.getRoi(),
