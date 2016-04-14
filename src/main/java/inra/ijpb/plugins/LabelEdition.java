@@ -265,8 +265,8 @@ public class LabelEdition implements PlugIn
 		else
 			inputImage = WindowManager.getCurrentImage();
 
-		if( inputImage.getType() == ImagePlus.COLOR_256 || 
-				inputImage.getType() == ImagePlus.COLOR_RGB )
+		// Check if input image is a label image
+		if( LabelImages.isLabelImageType( inputImage ) == false )
 		{
 			IJ.error( "Label Edition", "This plugin only works on"
 				+ " label images.\nPlease convert it to 8, 16 or 32-bit." );
