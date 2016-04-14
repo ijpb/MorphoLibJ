@@ -1676,18 +1676,31 @@ public class LabelImages
 
 			int[] ypoints = roi.getPolygon().ypoints;
 
-			final ImageStack labelStack = labelImage.getImageStack();
-
 			// read label values at those positions
-			for ( int i = 0; i<xpoints.length; i ++ )
+			if( labelImage.getImageStackSize() > 1 )
 			{
-				double value = labelStack.getVoxel(
-						xpoints[ i ],
-						ypoints[ i ],
-						((PointRoi) roi).getPointPosition( i )-1 );
-				if( Double.compare( 0, value ) != 0 &&
-						list.contains( value ) == false )
-					list.add( (float) value );
+				final ImageStack labelStack = labelImage.getImageStack();
+				for ( int i = 0; i<xpoints.length; i ++ )
+				{
+					float value = (float) labelStack.getVoxel(
+							xpoints[ i ],
+							ypoints[ i ],
+							((PointRoi) roi).getPointPosition( i )-1 );
+					if( Float.compare( 0f, value ) != 0 &&
+							list.contains( value ) == false )
+						list.add( (float) value );
+				}
+			}
+			else
+			{
+				final ImageProcessor ip = labelImage.getProcessor();
+				for ( int i = 0; i<xpoints.length; i ++ )
+				{
+					float value = ip.getf( xpoints[ i ], ypoints[ i ]);
+					if( Float.compare( 0f, value ) != 0 &&
+							list.contains( value ) == false )
+						list.add( (float) value );
+				}
 			}
 		}
 		else if( roi instanceof FreehandRoi )
