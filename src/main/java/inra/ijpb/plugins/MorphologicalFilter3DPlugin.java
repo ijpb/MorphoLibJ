@@ -9,20 +9,19 @@ import ij.ImageStack;
 import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
-import ij.process.ByteProcessor;
-import ij.process.ImageProcessor;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.morphology.Morphology;
 import inra.ijpb.morphology.Morphology.Operation;
 import inra.ijpb.morphology.Strel3D;
 import inra.ijpb.util.IJUtils;
 
-/**
- * 
- */
 
 /**
  * Various morphological filters for 3D images.
+ * 
+ * It is possible to specify shapes that correspond to planar structuring
+ * elements. In this case, the planar structuring element is stacked as many
+ * times as necessary to fit the specified z size.
  * 
  * @author David Legland
  *
@@ -102,7 +101,6 @@ public class MorphologicalFilter3DPlugin implements PlugIn
 		// Display elapsed time
 		long t1 = System.currentTimeMillis();
 		IJUtils.showElapsedTime(op.toString(), t1 - t0, imagePlus);
-//		IJ.showStatus("Elapsed time: " + (t1 - t0) / 1000. + "s");
 	}
 
 
@@ -114,26 +112,19 @@ public class MorphologicalFilter3DPlugin implements PlugIn
 	{
 		// Size of the strel image (little bit larger than strel)
 		int[] dim = strel.getSize();
-		int width = dim[0] + 20; 
-		int height = dim[1] + 20;
+		int sizeX = dim[0] + 10; 
+		int sizeY = dim[1] + 10;
+		int sizeZ = dim[2] + 10;
 		
 		// Creates strel image by dilating a point
-		ImageProcessor maskProcessor = new ByteProcessor(width, height);
-		maskProcessor.set(width / 2, height / 2, 255);
-		ImageStack stack = new ImageStack();
-		stack.addSlice(maskProcessor);
+		ImageStack stack = ImageStack.create(sizeX, sizeY, sizeZ, 8);
+		stack.setVoxel(sizeX / 2, sizeY / 2, sizeZ / 2, 255);
 		stack = Morphology.dilation(stack, strel);
-		maskProcessor = stack.getProcessor(1);
-		
-		// Forces the display to inverted LUT (display a black foreground over white background)
-		if (!maskProcessor.isInvertedLut())
-		{
-			maskProcessor.invertLut();
-		}
 		
 		// Display strel image
-		ImagePlus maskImage = new ImagePlus("Element", maskProcessor);
-		maskImage.show();
+		ImagePlus strelImage = new ImagePlus("Structuring Element", stack);
+		strelImage.setSlice(((sizeZ - 1) / 2) + 1);
+		strelImage.show();
 	}
 
 	public ImagePlus process(ImagePlus image, Operation op, Strel3D strel) 

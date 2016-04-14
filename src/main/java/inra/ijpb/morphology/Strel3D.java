@@ -89,13 +89,13 @@ public interface Strel3D extends Algo {
 		 * Diagonal line of a given length 
 		 * @see LinearDiagUpStrel
 		 */
-		LINE_DIAG_UP("Line 45°"),
+		LINE_DIAG_UP("Line 45 degrees"),
 		
 		/** 
 		 * Diagonal line of a given length 
 		 * @see LinearDiagDownStrel
 		 */
-		LINE_DIAG_DOWN("Line 135°");
+		LINE_DIAG_DOWN("Line 135 degrees");
 		
 		private final String label;
 		
