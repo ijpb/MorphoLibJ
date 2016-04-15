@@ -8,6 +8,11 @@ import static java.lang.Math.min;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
+import ij.gui.FreehandRoi;
+import ij.gui.PlotWindow;
+import ij.gui.PointRoi;
+import ij.gui.ProfilePlot;
+import ij.gui.Roi;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
@@ -1635,4 +1640,162 @@ public class LabelImages
 
         return labelIndices;
 	}
-}
+	/**
+	 * Merge labels selected by freehand or point tool. Labels are merged
+	 * in place (i.e., the input image is modified). Zero-value label is never
+	 * merged.
+	 *
+	 * @param labelImage  label image to modify
+	 * @param roi  selection indicating the labels to merge
+	 * @param verbose  option to write in the log window the labels merged
+	 */
+	public static final void mergeLabels(
+			final ImagePlus labelImage,
+			final Roi roi,
+			final boolean verbose )
+	{
+		if( roi == null )
+		{
+			IJ.showMessage( "Please select some labels to merge using the "
+					+ "freehand or point selection tool." );
+			return;
+		}
+
+		final ArrayList<Float> list = getSelectedLabels( labelImage, roi );
+
+		// if more than one value is selected, merge
+		if( list.size() > 1 )
+		{
+			float finalValue = list.remove( 0 );
+			float[] labelArray = new float[ list.size() ];
+			int i = 0;
+
+			for ( Float f : list )
+				labelArray[i++] = f != null ? f : Float.NaN;
+
+			String sLabels = new String( ""+ (long) labelArray[ 0 ] );
+			for( int j=1; j < labelArray.length; j++ )
+				sLabels += ", " + (long) labelArray[ j ];
+			if( verbose )
+				IJ.log( "Merging label(s) " + sLabels + " to label "
+							+ (long) finalValue );
+			LabelImages.replaceLabels( labelImage,
+					labelArray, finalValue );
+		}
+		else
+			IJ.error( "Please select two or more different"
+					+ " labels to merge" );
+	}// end method mergeLabels
+
+	/**
+	 * Remove labels selected by freehand or point ROIs (in place).
+	 *
+	 * @param labelImage  input label image
+	 * @param roi  FreehandRoi or PointRoi with selected labels
+	 * @param verbose  flag to print deleted labels in log window
+	 */
+	public static void removeLabels(
+			final ImagePlus labelImage,
+			final Roi roi,
+			final boolean verbose )
+	{
+		if( roi == null )
+		{
+			IJ.showMessage( "Please select at least one label to be removed"
+					+ " using the freehand or point selection tools." );
+			return;
+		}
+
+		final ArrayList<Float> list = getSelectedLabels( labelImage, roi );
+
+		if( list.size() > 0 )
+		{
+			// move list values into an array
+			float[] labelArray = new float[ list.size() ];
+			int i = 0;
+			for ( Float f : list )
+				labelArray[ i++ ] = f != null ? f : Float.NaN;
+
+			String sLabels = new String( ""+ (long) labelArray[ 0 ] );
+			for( int j=1; j < labelArray.length; j++ )
+				sLabels += ", " + (long) labelArray[ j ];
+			if( verbose )
+				IJ.log( "Removing label(s) " + sLabels + "..." );
+
+			LabelImages.replaceLabels( labelImage,
+					labelArray, 0 );
+		}
+		else
+			IJ.error( "Please select at least one label to remove." );
+	}
+
+	/**
+	 * Get list of selected labels in label image. Labels are selected by
+	 * either a freehand ROI or point ROIs. Zero-value label is skipped.
+	 *
+	 * @param labelImage  label image
+	 * @param roi  FreehandRoi or PointRoi with selected labels
+	 * @return list of selected labels
+	 */
+	public static ArrayList<Float> getSelectedLabels(
+			final ImagePlus labelImage,
+			final Roi roi )
+	{
+		final ArrayList<Float> list = new ArrayList<Float>();
+
+		// if the user makes point selections
+		if( roi instanceof PointRoi )
+		{
+			int[] xpoints = roi.getPolygon().xpoints;
+			int[] ypoints = roi.getPolygon().ypoints;
+
+			// read label values at those positions
+			if( labelImage.getImageStackSize() > 1 )
+			{
+				final ImageStack labelStack = labelImage.getImageStack();
+				for ( int i = 0; i<xpoints.length; i ++ )
+				{
+					float value = (float) labelStack.getVoxel(
+							xpoints[ i ],
+							ypoints[ i ],
+							((PointRoi) roi).getPointPosition( i )-1 );
+					if( Float.compare( 0f, value ) != 0 &&
+							list.contains( value ) == false )
+						list.add( (float) value );
+				}
+			}
+			else
+			{
+				final ImageProcessor ip = labelImage.getProcessor();
+				for ( int i = 0; i<xpoints.length; i ++ )
+				{
+					float value = ip.getf( xpoints[ i ], ypoints[ i ]);
+					if( Float.compare( 0f, value ) != 0 &&
+							list.contains( value ) == false )
+						list.add( (float) value );
+				}
+			}
+		}
+		else if( roi instanceof FreehandRoi )
+		{
+			// read values from ROI using a profile plot
+			// save interpolation option
+			boolean interpolateOption = PlotWindow.interpolate;
+			// do not interpolate pixel values
+			PlotWindow.interpolate = false;
+			// get label values from line roi (different from 0)
+			float[] values = ( new ProfilePlot( labelImage ) )
+					.getPlot().getYValues();
+			PlotWindow.interpolate = interpolateOption;
+
+			for( int i=0; i<values.length; i++ )
+			{
+				if( Float.compare( 0f, values[ i ] ) != 0 &&
+						list.contains( values[ i ]) == false )
+					list.add( values[ i ]);
+			}
+		}
+		return list;
+	}
+
+}// end class LabelImages
