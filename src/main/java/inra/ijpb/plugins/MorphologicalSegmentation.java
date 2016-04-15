@@ -769,8 +769,6 @@ public class MorphologicalSegmentation implements PlugIn {
 							public void run() {							
 								if(e.getSource() == sliceSelector)
 								{
-									//IJ.log("moving scroll");
-									displayImage.killRoi();
 									if( showColorOverlay )
 									{
 										updateResultOverlay();
@@ -792,8 +790,6 @@ public class MorphologicalSegmentation implements PlugIn {
 						exec.submit(new Runnable() {
 							public void run() 
 							{
-								//IJ.log("moving scroll");
-								displayImage.killRoi();
 								if( showColorOverlay )
 								{
 									updateResultOverlay();
@@ -824,8 +820,6 @@ public class MorphologicalSegmentation implements PlugIn {
 										e.getKeyCode() == KeyEvent.VK_COMMA ||
 										e.getKeyCode() == KeyEvent.VK_PERIOD)
 								{
-									//IJ.log("moving scroll");
-									displayImage.killRoi();
 									if( showColorOverlay )
 									{
 										updateResultOverlay();
@@ -1446,7 +1440,6 @@ public class MorphologicalSegmentation implements PlugIn {
 		{
 			if( null != resultImage )
 			{
-				displayImage.deleteRoi();
 				int slice = displayImage.getCurrentSlice();
 
 				final String displayOption = (String) resultDisplayList.getSelectedItem();							
