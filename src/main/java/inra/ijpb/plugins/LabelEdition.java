@@ -141,21 +141,28 @@ public class LabelEdition implements PlugIn
 
 			mergeButton = new JButton( "Merge" );
 			mergeButton.addActionListener( listener );
+			mergeButton.setToolTipText( "Merge labels selected by point or "
+					+ "freehand ROIs" );
 
 			dilateButton = new JButton( "Dilate" );
 			dilateButton.addActionListener( listener );
+			dilateButton.setToolTipText( "Dilate all labels" );
 
 			erodeButton = new JButton( "Erode" );
 			erodeButton.addActionListener( listener );
+			erodeButton.setToolTipText( "Erode all labels" );
 
 			removeLargestButton = new JButton( "Remove largest" );
 			removeLargestButton.addActionListener( listener );
+			removeLargestButton.setToolTipText( "Remove largest label" );
 
 			resetButton = new JButton( "Reset" );
 			resetButton.addActionListener( listener );
+			resetButton.setToolTipText( "Reset labels to initial state" );
 
 			doneButton = new JButton( "Done" );
 			doneButton.addActionListener( listener );
+			doneButton.setToolTipText( "Close plugin and return result" );
 			
 			// Training panel (left side of the GUI)
 			buttonsPanel.setBorder(
