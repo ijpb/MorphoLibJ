@@ -54,6 +54,8 @@ public class LabelEdition implements PlugIn
 	JButton dilateButton = null;
 	/** button to erode all labels */
 	JButton erodeButton = null;
+	/** button to remove selected label(s) */
+	JButton removeSelectedButton = null;
 	/** button to remove largest label */
 	JButton removeLargestButton = null;
 	/** button to reset image to initial form */
@@ -105,6 +107,10 @@ public class LabelEdition implements PlugIn
 						{
 							erodeLabels( );
 						}
+						else if( e.getSource() == removeSelectedButton )
+						{
+							removeSelectedLabels();
+						}
 						else if( e.getSource() == removeLargestButton )
 						{
 							removeLargestLabel();
@@ -152,6 +158,10 @@ public class LabelEdition implements PlugIn
 			erodeButton.addActionListener( listener );
 			erodeButton.setToolTipText( "Erode all labels" );
 
+			removeSelectedButton = new JButton( "Remove selected" );
+			removeSelectedButton.addActionListener( listener );
+			removeSelectedButton.setToolTipText( "Remove selected label(s)" );
+
 			removeLargestButton = new JButton( "Remove largest" );
 			removeLargestButton.addActionListener( listener );
 			removeLargestButton.setToolTipText( "Remove largest label" );
@@ -183,6 +193,8 @@ public class LabelEdition implements PlugIn
 			buttonsPanel.add( dilateButton, buttonsConstraints );
 			buttonsConstraints.gridy++;
 			buttonsPanel.add( erodeButton, buttonsConstraints);
+			buttonsConstraints.gridy++;
+			buttonsPanel.add( removeSelectedButton, buttonsConstraints);
 			buttonsConstraints.gridy++;
 			buttonsPanel.add( removeLargestButton, buttonsConstraints);
 			buttonsConstraints.gridy++;
@@ -326,6 +338,15 @@ public class LabelEdition implements PlugIn
 			displayImage.updateAndDraw();
 		}
 
+		/**
+		 * Remove labels selected by point ROIs
+		 */
+		void removeSelectedLabels()
+		{
+			LabelImages.removeLabels( displayImage, displayImage.getRoi(),
+					true );
+			displayImage.updateAndDraw();
+		}
 		/**
 		 * Remove largest label
 		 */
