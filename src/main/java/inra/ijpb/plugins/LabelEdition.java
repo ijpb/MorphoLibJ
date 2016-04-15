@@ -465,8 +465,6 @@ public class LabelEdition implements PlugIn
 
 	}// end CustomWindow class
 	
-	
-
 	/**
 	 * Plug-in run method
 	 * 
