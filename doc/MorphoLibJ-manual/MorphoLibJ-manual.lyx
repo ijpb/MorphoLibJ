@@ -509,9 +509,9 @@ Morphological filters are defined according to a
 structuring element
 \series default
  of a given size and shape.
- Common structuring element include square, discrete disks, octogons.
- Linear strucuring element of various orientations may also be used to assess
- local orientation of the structures.
+ Common structuring element include squares, discrete disks and octogons.
+ Linear structuring element of various orientations may also be used to
+ assess local orientation of the structures.
 \end_layout
 
 \begin_layout Section
@@ -523,7 +523,7 @@ Erosion and dilation
 \end_layout
 
 \begin_layout Standard
-The most basic morphological filters are 
+The most basic morphological filters are the 
 \series bold
 morphological dilation
 \series default
@@ -606,7 +606,7 @@ Some examples of morphological filters on a grey level image.
 
 \begin_layout Standard
 Applying a  dilation or an erosion changes the size of the structures in
- the image : the grains in the result of the dilated image are larger.
+ the image: the grains in the result of the dilated image are larger.
  Morphological erosion can also be used on binary images to help separating
  touching particles.
 \end_layout
@@ -701,7 +701,7 @@ Some examples of composed morphological filters.
 \end_layout
 
 \begin_layout Standard
-Note that even if opening and closing bette preserve the size of the structures
+Note that even if opening and closing better preserve the size of the structures
  in the original image, the shape is slightly altered.
  For example, the result of morphological closing on Figure
 \begin_inset space ~
@@ -715,8 +715,8 @@ reference "fig:Morpho-Opening-Closing"
 \end_inset
 
  creates artificial connections between grains.
- Choosing the best size for structuring element is often a compromise between
- noise removal and preservation of structure shape.
+ Choosing the best size for the structuring element is often a compromise
+ between noise removal and preservation of structure shape.
 \end_layout
 
 \begin_layout Subsection
@@ -878,7 +878,7 @@ Morphological filters
 .
  The dialog let the user choose the structuring element shape, radius, and
  eventually preview the result.
- The following list of operations can be chosen :
+ The following list of operations can be chosen:
 \end_layout
 
 \begin_layout Description
@@ -1416,7 +1416,7 @@ MorphoLibJ
 
  menu.
  Some plugins correspond to common operations and encompass several processing
- steps :
+ steps:
 \end_layout
 
 \begin_layout Description
@@ -1439,8 +1439,8 @@ Holes remove holes inside particles in binary images, or remove dark regions
 \end_layout
 
 \begin_layout Standard
-Several plugins allows the computation of binary minima or maxima from grey
- level images, and their combination with grey level images :
+Several plugins allow the computation of binary minima or maxima from grey
+ level images, and their combination with grey level images:
 \end_layout
 
 \begin_layout Description
@@ -1556,8 +1556,8 @@ Max
 \end_layout
 
 \begin_layout Standard
-The geodesic reconstruction algorithm is provided as plugin for allowing
- their inclusion in user macro or plugin :
+The geodesic reconstruction algorithm is provided as a plugin to allow its
+ inclusion in user-designed macros or plugins:
 \end_layout
 
 \begin_layout Description
@@ -1579,7 +1579,7 @@ Reconstruction
 \begin_inset space ~
 \end_inset
 
-3D compute the geodesic reconstruction by erosion or dilation on a 3D image
+3D compute the geodesic reconstruction by erosion or dilation on a 3D image.
 \end_layout
 
 \begin_layout Chapter
