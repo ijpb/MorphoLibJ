@@ -426,8 +426,8 @@ public class MorphologicalSegmentation implements PlugIn {
 
 			setTitle( "Morphological Segmentation" );
 
-			// select freehand tool for manual label merging
-			Toolbar.getInstance().setTool( Toolbar.FREELINE );
+			// select point tool for manual label merging
+			Toolbar.getInstance().setTool( Toolbar.POINT );
 
 			// === Input Image panel ===
 
