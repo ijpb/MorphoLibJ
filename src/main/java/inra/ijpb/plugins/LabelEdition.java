@@ -101,31 +101,45 @@ public class LabelEdition implements PlugIn
 						// Merge button
 						if( e.getSource() == mergeButton )
 						{
+							setButtonsEnabled( false );
 							mergeLabels( );
+							setButtonsEnabled( true );
 						}
 						else if( e.getSource() == dilateButton )
 						{
+							setButtonsEnabled( false );
 							dilateLabels( );
+							setButtonsEnabled( true );
 						}
 						else if( e.getSource() == erodeButton )
 						{
+							setButtonsEnabled( false );
 							erodeLabels( );
+							setButtonsEnabled( true );
 						}
 						else if( e.getSource() == openButton )
 						{
+							setButtonsEnabled( false );
 							openLabels( );
+							setButtonsEnabled( true );
 						}
 						else if( e.getSource() == closeButton )
 						{
+							setButtonsEnabled( false );
 							closeLabels( );
+							setButtonsEnabled( true );
 						}
 						else if( e.getSource() == removeSelectedButton )
 						{
+							setButtonsEnabled( false );
 							removeSelectedLabels();
+							setButtonsEnabled( true );
 						}
 						else if( e.getSource() == removeLargestButton )
 						{
+							setButtonsEnabled( false );
 							removeLargestLabel();
+							setButtonsEnabled( true );
 						}
 						else if( e.getSource() == resetButton )
 						{
@@ -429,6 +443,24 @@ public class LabelEdition implements PlugIn
 		{
 			displayImage.setStack( inputImage.getImageStack().duplicate() );
 			displayImage.updateAndDraw();
+		}
+
+		/**
+		 * Enable/disable all buttons
+		 *
+		 * @param enable flag to enable/disable buttons
+		 */
+		void setButtonsEnabled( boolean enable )
+		{
+			mergeButton.setEnabled( enable );
+			erodeButton.setEnabled( enable );
+			dilateButton.setEnabled( enable );
+			openButton.setEnabled( enable );
+			closeButton.setEnabled( enable );
+			removeSelectedButton.setEnabled( enable );
+			removeLargestButton.setEnabled( enable );
+			resetButton.setEnabled( enable );
+			doneButton.setEnabled( enable );
 		}
 
 	}// end CustomWindow class
