@@ -48,13 +48,20 @@ public class LabelEdition implements PlugIn
 	final ExecutorService exec = Executors.newFixedThreadPool( 1 );
 
 	// Button panel components
+	/** button to merge selected labels */
 	JButton mergeButton = null;
+	/** button to dilate all labels */
 	JButton dilateButton = null;
+	/** button to erode all labels */
 	JButton erodeButton = null;
+	/** button to remove largest label */
 	JButton removeLargestButton = null;
+	/** button to reset image to initial form */
 	JButton resetButton = null;
+	/** button to finish plugin and exit */
 	JButton doneButton = null;
 
+	/** panel to include all buttons */
 	JPanel buttonsPanel = new JPanel();
 	
 	/** main panel */
