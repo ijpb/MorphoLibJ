@@ -54,6 +54,10 @@ public class LabelEdition implements PlugIn
 	JButton dilateButton = null;
 	/** button to erode all labels */
 	JButton erodeButton = null;
+	/** button to open all labels */
+	JButton openButton = null;
+	/** button to close all labels */
+	JButton closeButton = null;
 	/** button to remove selected label(s) */
 	JButton removeSelectedButton = null;
 	/** button to remove largest label */
@@ -107,6 +111,14 @@ public class LabelEdition implements PlugIn
 						{
 							erodeLabels( );
 						}
+						else if( e.getSource() == openButton )
+						{
+							openLabels( );
+						}
+						else if( e.getSource() == closeButton )
+						{
+							closeLabels( );
+						}
 						else if( e.getSource() == removeSelectedButton )
 						{
 							removeSelectedLabels();
@@ -158,6 +170,16 @@ public class LabelEdition implements PlugIn
 			erodeButton.addActionListener( listener );
 			erodeButton.setToolTipText( "Erode all labels" );
 
+			openButton = new JButton( "Open" );
+			openButton.addActionListener( listener );
+			openButton.setToolTipText( "Apply morphological opening to all "
+					+ "labels" );
+
+			closeButton = new JButton( "Close" );
+			closeButton.addActionListener( listener );
+			closeButton.setToolTipText( "Apply morphological closing to all "
+					+ "labels" );
+
 			removeSelectedButton = new JButton( "Remove selected" );
 			removeSelectedButton.addActionListener( listener );
 			removeSelectedButton.setToolTipText( "Remove selected label(s)" );
@@ -193,6 +215,10 @@ public class LabelEdition implements PlugIn
 			buttonsPanel.add( dilateButton, buttonsConstraints );
 			buttonsConstraints.gridy++;
 			buttonsPanel.add( erodeButton, buttonsConstraints);
+			buttonsConstraints.gridy++;
+			buttonsPanel.add( openButton, buttonsConstraints );
+			buttonsConstraints.gridy++;
+			buttonsPanel.add( closeButton, buttonsConstraints);
 			buttonsConstraints.gridy++;
 			buttonsPanel.add( removeSelectedButton, buttonsConstraints);
 			buttonsConstraints.gridy++;
@@ -332,6 +358,46 @@ public class LabelEdition implements PlugIn
 			else
 			{
 				displayImage.setStack( Morphology.erosion(
+						displayImage.getImageStack(),
+						Strel3D.Shape.CUBE.fromRadius( 1 ) ) );
+			}
+			displayImage.updateAndDraw();
+		}
+
+		/**
+		 * Open labels using a square/cube of radius 1 as structuring element
+		 */
+		void openLabels()
+		{
+			if( inputIs2D )
+			{
+				displayImage.setProcessor( Morphology.opening(
+						displayImage.getProcessor(),
+						Strel.Shape.SQUARE.fromRadius( 1 ) ) );
+			}
+			else
+			{
+				displayImage.setStack( Morphology.opening(
+						displayImage.getImageStack(),
+						Strel3D.Shape.CUBE.fromRadius( 1 ) ) );
+			}
+			displayImage.updateAndDraw();
+		}
+
+		/**
+		 * Close labels using a square/cube of radius 1 as structuring element
+		 */
+		void closeLabels()
+		{
+			if( inputIs2D )
+			{
+				displayImage.setProcessor( Morphology.closing(
+						displayImage.getProcessor(),
+						Strel.Shape.SQUARE.fromRadius( 1 ) ) );
+			}
+			else
+			{
+				displayImage.setStack( Morphology.closing(
 						displayImage.getImageStack(),
 						Strel3D.Shape.CUBE.fromRadius( 1 ) ) );
 			}
