@@ -1661,19 +1661,92 @@ public class LabelImages
 			return;
 		}
 
+		final ArrayList<Float> list = getSelectedLabels( labelImage, roi );
+
+		// if more than one value is selected, merge
+		if( list.size() > 1 )
+		{
+			float finalValue = list.remove( 0 );
+			float[] labelArray = new float[ list.size() ];
+			int i = 0;
+
+			for ( Float f : list )
+				labelArray[i++] = f != null ? f : Float.NaN;
+
+			String sLabels = new String( ""+ (long) labelArray[ 0 ] );
+			for( int j=1; j < labelArray.length; j++ )
+				sLabels += ", " + (long) labelArray[ j ];
+			if( verbose )
+				IJ.log( "Merging label(s) " + sLabels + " to label "
+							+ (long) finalValue );
+			LabelImages.replaceLabels( labelImage,
+					labelArray, finalValue );
+		}
+		else
+			IJ.error( "Please select two or more different"
+					+ " labels to merge" );
+	}// end method mergeLabels
+
+	/**
+	 * Remove labels selected by freehand or point ROIs (in place).
+	 *
+	 * @param labelImage  input label image
+	 * @param roi  FreehandRoi or PointRoi with selected labels
+	 * @param verbose  flag to print deleted labels in log window
+	 */
+	public static void removeLabels(
+			final ImagePlus labelImage,
+			final Roi roi,
+			final boolean verbose )
+	{
+		if( roi == null )
+		{
+			IJ.showMessage( "Please select at least one label to be removed"
+					+ " using the freehand or point selection tools." );
+			return;
+		}
+
+		final ArrayList<Float> list = getSelectedLabels( labelImage, roi );
+
+		if( list.size() > 0 )
+		{
+			// move list values into an array
+			float[] labelArray = new float[ list.size() ];
+			int i = 0;
+			for ( Float f : list )
+				labelArray[ i++ ] = f != null ? f : Float.NaN;
+
+			String sLabels = new String( ""+ (long) labelArray[ 0 ] );
+			for( int j=1; j < labelArray.length; j++ )
+				sLabels += ", " + (long) labelArray[ j ];
+			if( verbose )
+				IJ.log( "Removing label(s) " + sLabels + "..." );
+
+			LabelImages.replaceLabels( labelImage,
+					labelArray, 0 );
+		}
+		else
+			IJ.error( "Please select at least one label to remove." );
+	}
+
+	/**
+	 * Get list of selected labels in label image. Labels are selected by
+	 * either a freehand ROI or point ROIs. Zero-value label is skipped.
+	 *
+	 * @param labelImage  label image
+	 * @param roi  FreehandRoi or PointRoi with selected labels
+	 * @return list of selected labels
+	 */
+	public static ArrayList<Float> getSelectedLabels(
+			final ImagePlus labelImage,
+			final Roi roi )
+	{
 		final ArrayList<Float> list = new ArrayList<Float>();
 
 		// if the user makes point selections
 		if( roi instanceof PointRoi )
 		{
 			int[] xpoints = roi.getPolygon().xpoints;
-
-			if( xpoints.length < 2 )
-			{
-				IJ.error( "Please select two or more labels to merge" );
-				return;
-			}
-
 			int[] ypoints = roi.getPolygon().ypoints;
 
 			// read label values at those positions
@@ -1711,7 +1784,7 @@ public class LabelImages
 			// do not interpolate pixel values
 			PlotWindow.interpolate = false;
 			// get label values from line roi (different from 0)
-			float[] values = (new ProfilePlot( labelImage ))
+			float[] values = ( new ProfilePlot( labelImage ) )
 					.getPlot().getYValues();
 			PlotWindow.interpolate = interpolateOption;
 
@@ -1722,29 +1795,7 @@ public class LabelImages
 					list.add( values[ i ]);
 			}
 		}
-
-		// if more than one value is selected, merge
-		if( list.size() > 1 )
-		{
-			float finalValue = list.remove( 0 );
-			float[] labelArray = new float[ list.size() ];
-			int i = 0;
-
-			for ( Float f : list )
-				labelArray[i++] = f != null ? f : Float.NaN;
-
-			String sLabels = new String( ""+ (long) labelArray[ 0 ] );
-			for( int j=1; j < labelArray.length; j++ )
-				sLabels += ", " + (long) labelArray[ j ];
-			if( verbose )
-				IJ.log( "Merging label(s) " + sLabels + " to label "
-							+ (long) finalValue );
-			LabelImages.replaceLabels( labelImage,
-					labelArray, finalValue );
-		}
-		else
-			IJ.error( "Please select two or more different"
-					+ " labels to merge" );
-	}// end method mergeLabels
+		return list;
+	}
 
 }// end class LabelImages
