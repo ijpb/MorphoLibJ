@@ -36,7 +36,7 @@ public class GeodesicDistanceTransformFloat extends AlgoStub implements
 	 * The value assigned to result pixels that do not belong to the mask. 
 	 * Default is Float.MAX_VALUE.
 	 */
-	float backgroundValue = Float.MAX_VALUE;
+	float backgroundValue = Float.POSITIVE_INFINITY;
 	
 	float[][] array;
 
