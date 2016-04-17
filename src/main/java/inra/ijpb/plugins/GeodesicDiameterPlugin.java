@@ -89,17 +89,14 @@ public class GeodesicDiameterPlugin implements PlugIn
 			IJ.showMessage("Input image should be a label image");
 			return;
 		}
-		
-		// Starting time
-		long start = System.nanoTime();
+		ImageProcessor labelImage = labelPlus.getProcessor();
 		
 		// Compute geodesic diameters, using floating-point calculations
-		ResultsTable table;
-		ImageProcessor labelImage = labelPlus.getProcessor();
-		table = process(labelImage, weights.getFloatWeights());
-		
-		// Final time, displayed in seconds
+		long start = System.nanoTime();
+		ResultsTable table = process(labelImage, weights.getFloatWeights());
 		long finalTime = System.nanoTime();
+		
+		// Final time, displayed in milli-sseconds
 		float elapsedTime = (finalTime - start) / 1000000.0f;
 		IJ.showStatus(String.format("Elapsed time: %8.2f ms", elapsedTime));
 
@@ -107,8 +104,23 @@ public class GeodesicDiameterPlugin implements PlugIn
 		String tableName = labelPlus.getShortTitle() + "-GeodDiameters"; 
 		table.show(tableName);
 
+		int gdIndex = table.getColumnIndex("Geod. Diam");
+		double[] geodDiamArray = table.getColumnAsDoubles(gdIndex);
+		
+		boolean validPaths = true;
+		for (double geodDiam : geodDiamArray)
+		{
+			if (Float.isInfinite((float) geodDiam))
+			{
+				IJ.showMessage("Geodesic Diameter Warning", "Some geodesic diameters are infinite,\n"
+						+ "meaning that some particles are not connected.\n" + "Maybe labeling was not performed?");
+				validPaths = false;
+				break;
+			}
+		}
+		
 		// Check if results must be displayed on an image
-		if (gd.getNextBoolean()) 
+		if (gd.getNextBoolean() && validPaths) 
 		{
 			// New image for displaying geometric overlays
 			int resultImageIndex = gd.getNextChoiceIndex();
@@ -189,8 +201,6 @@ public class GeodesicDiameterPlugin implements PlugIn
 	}
 	
 	
-	
-	
 	// ====================================================
 	// Computing functions 
 	
@@ -232,12 +242,12 @@ public class GeodesicDiameterPlugin implements PlugIn
 		return table;
 	}
 
-	private Map<Integer, List<Point>> computePaths(ImageProcessor labels, short[] weights)
-	{
-		GeodesicDiameterShort algo = new GeodesicDiameterShort(weights);
-		DefaultAlgoListener.monitor(algo);
-		return algo.longestGeodesicPaths(labels);
-	}
+//	private Map<Integer, List<Point>> computePaths(ImageProcessor labels, short[] weights)
+//	{
+//		GeodesicDiameterShort algo = new GeodesicDiameterShort(weights);
+//		DefaultAlgoListener.monitor(algo);
+//		return algo.longestGeodesicPaths(labels);
+//	}
 
 	private Map<Integer, List<Point>> computePaths(ImageProcessor labels, float[] weights)
 	{
