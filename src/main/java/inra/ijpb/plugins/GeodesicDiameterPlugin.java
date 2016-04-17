@@ -98,7 +98,6 @@ public class GeodesicDiameterPlugin implements PlugIn
 		
 		// Final time, displayed in milli-sseconds
 		float elapsedTime = (finalTime - start) / 1000000.0f;
-		IJ.showStatus(String.format("Elapsed time: %8.2f ms", elapsedTime));
 
 		// display the result table
 		String tableName = labelPlus.getShortTitle() + "-GeodDiameters"; 
@@ -130,6 +129,8 @@ public class GeodesicDiameterPlugin implements PlugIn
 			drawPaths(resultImage, pathMap);
 //			showResultsAsOverlay(resultImage, table);
 		}
+		
+		IJ.showStatus(String.format("Elapsed time: %8.2f ms", elapsedTime));	
 	}
 
 	

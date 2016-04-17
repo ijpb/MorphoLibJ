@@ -224,10 +224,26 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 
 		// Create calculator for propagating distances
 		GeodesicDistanceTransform calculator;
-		if (weights.length == 3) {
+		int[][] shifts;
+		if (weights.length == 3)
+		{
 			calculator = new GeodesicDistanceTransformFloat5x5(weights, false);
-		} else {
+			shifts = new int[][]{
+					          {-1, -2}, {0, -2}, {+1, -2},  
+					{-2, -1}, {-1, -1}, {0, -1}, {+1, -1}, {+2, -1}, 
+					{-2,  0}, {-1,  0},          {+1,  0}, {+2,  0},  
+					{-2, +1}, {-1, +1}, {0, +1}, {+1, +1}, {+2, +1},  
+					          {-1, +2}, {0, +2}, {+1, +2},  
+			};
+		} 
+		else 
+		{
 			calculator = new GeodesicDistanceTransformFloat(weights, false);
+			shifts = new int[][]{
+					{-1, -1}, {0, -1}, {+1, -1}, 
+					{-1,  0},          {+1,  0}, 
+					{-1, +1}, {0, +1}, {+1, +1}, 
+			};
 		}
 
 		// Initialize a new result table
@@ -307,10 +323,9 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 			path.add(pos2[i]);
 			
 			Point pos = pos2[i];
-			
 			while (!pos.equals(pos1[i]))
 			{
-				pos = findNextPosition(distance, pos);
+				pos = findNextPosition(distance, pos, shifts);
 				path.add(pos);
 			}
 			
@@ -320,32 +335,71 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 		return result;
 	}
 	
-	private Point findNextPosition(ImageProcessor distMap, Point pos)
+//	private Point findNextPosition(ImageProcessor distMap, Point pos)
+//	{
+//		Point nextPos = pos;
+//		float minDist = distMap.getf(pos.x, pos.y);
+//
+//		// iterate over neighbors of current pixel
+//		for (int y = pos.y - 1; y <= pos.y + 1; y++)
+//		{
+//			if (y < 0 || y >= distMap.getHeight())
+//			{
+//				continue;
+//			}
+//			
+//			for (int x = pos.x - 1; x <= pos.x + 1; x++)
+//			{
+//				if (x < 0 || x >= distMap.getWidth())
+//				{
+//					continue;
+//				}
+//				
+//				float dist = distMap.getf(x, y);
+//				if (dist < minDist)
+//				{
+//					minDist = dist;
+//					nextPos = new Point(x, y);
+//				}
+//			}
+//		}
+//
+//		if (nextPos.equals(pos))
+//		{
+//			throw new RuntimeException("Could not find a neighbor with smaller value");
+//		}
+//		
+//		return nextPos;
+//	}
+	
+	private Point findNextPosition(ImageProcessor distMap, Point pos, int[][] shifts)
 	{
 		Point nextPos = pos;
 		float minDist = distMap.getf(pos.x, pos.y);
-
+		
 		// iterate over neighbors of current pixel
-		for (int y = pos.y - 1; y <= pos.y + 1; y++)
+		for (int i = 0; i < shifts.length; i++)
 		{
+			// Compute neighbor coordinates
+			int x = pos.x + shifts[i][0];
+			int y = pos.y + shifts[i][1];
+			
+			// check neighbor is within image bounds
+			if (x < 0 || x >= distMap.getWidth())
+			{
+				continue;
+			}
 			if (y < 0 || y >= distMap.getHeight())
 			{
 				continue;
 			}
-			
-			for (int x = pos.x - 1; x <= pos.x + 1; x++)
+		
+			// compute neighbor value, and compare with current min
+			float dist = distMap.getf(x, y);
+			if (dist < minDist)
 			{
-				if (x < 0 || x >= distMap.getWidth())
-				{
-					continue;
-				}
-				
-				float dist = distMap.getf(x, y);
-				if (dist < minDist)
-				{
-					minDist = dist;
-					nextPos = new Point(x, y);
-				}
+				minDist = dist;
+				nextPos = new Point(x, y);
 			}
 		}
 
