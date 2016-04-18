@@ -4,6 +4,7 @@
 package inra.ijpb.data.image;
 
 import ij.ImageStack;
+import inra.ijpb.data.Cursor3D;
 
 /**
  * Access the data of a 3D image containing gray8 values stored as bytes.
@@ -97,6 +98,12 @@ public class ByteStackWrapper implements Image3D
 		return (double) (slices[z][y * sizeX + x] & 0x00FF);
 	}
 
+	@Override
+	public double getValue(Cursor3D pos)
+	{
+		return getValue(pos.getX(), pos.getY(), pos.getZ());
+	}
+
 	/* (non-Javadoc)
 	 * @see inra.ijpb.data.image.Image3D#setValue(int, int, int, double)
 	 */
@@ -110,4 +117,9 @@ public class ByteStackWrapper implements Image3D
 		slices[z][y * sizeX + x] = (byte) (value + .5);
 	}
 
+	@Override
+	public void setValue(Cursor3D pos, double value)
+	{
+		setValue(pos.getX(), pos.getY(), pos.getZ(), value);
+	}
 }

@@ -4,6 +4,7 @@
 package inra.ijpb.data.image;
 
 import ij.ImageStack;
+import inra.ijpb.data.Cursor3D;
 
 /**
  * Access the data of a 3D image containing intensity values stored as float.
@@ -93,6 +94,12 @@ public class FloatStackWrapper implements Image3D
 		return slices[z][y * sizeX + x];
 	}
 
+	@Override
+	public double getValue(Cursor3D pos)
+	{
+		return getValue(pos.getX(), pos.getY(), pos.getZ());
+	}
+
 	/* (non-Javadoc)
 	 * @see inra.ijpb.data.image.Image3D#setValue(int, int, int, double)
 	 */
@@ -100,6 +107,12 @@ public class FloatStackWrapper implements Image3D
 	public void setValue(int x, int y, int z, double value) 
 	{
 		slices[z][y * sizeX + x] = (float) value;
+	}
+
+	@Override
+	public void setValue(Cursor3D pos, double value)
+	{
+		setValue(pos.getX(), pos.getY(), pos.getZ(), value);
 	}
 
 }
