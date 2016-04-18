@@ -2616,6 +2616,74 @@ Examples of the 4 different display options.
 
 \end_layout
 
+\begin_layout Subsubsection
+Post-processing panel
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename images/Morphological-segmentation-post-processing-panel.png
+	width 40text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Similarly to the Results panel, this panel only gets enabled after running
+ the segmentation pipeline.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Merge labels
+\series default
+: merge together labels selected by either the 
+\series bold
+
+\begin_inset Quotes eld
+\end_inset
+
+freehand
+\begin_inset Quotes erd
+\end_inset
+
+ selection tool
+\series default
+ (on a single slice) 
+\series bold
+or the point tool
+\series default
+ (on single or multiple slices).
+ The zero-value label belongs to the watershed dams, therefore it will ignored
+ in case of being selected.
+ The first selected label value will be assigned to the rest of selected
+ labels, which will share its color.
+ 
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+Note
+\series default
+: to select labels on different slices, use the point selection tool and
+ keep the SHIFT key pressed each time you click on a new label.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Shuffle colors
+\series default
+: randomly re-assign colors to the labels.
+ This is a very handy option whenever two adjacent labels present a similar
+ color.
+\end_layout
+
 \begin_layout Subsection
 Macro language compatibility
 \end_layout

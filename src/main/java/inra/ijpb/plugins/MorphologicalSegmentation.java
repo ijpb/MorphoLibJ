@@ -393,7 +393,9 @@ public class MorphologicalSegmentation implements PlugIn {
 						}
 						else if( e.getSource()  == mergeButton )
 						{
+							setParamsEnabled( false );
 							mergeLabels();
+							setParamsEnabled( true );
 						}
 						else if( e.getSource()  == shuffleColorsButton )
 						{
@@ -1266,11 +1268,6 @@ public class MorphologicalSegmentation implements PlugIn {
 						+ "of the selection tools" );
 				return;
 			}
-
-			// set the same ROI and slice from the display image to the
-			// result image
-			resultImage.setRoi( displayImage.getRoi() );
-			resultImage.setSlice( displayImage.getSlice() );
 
 			// merge labels under the ROI
 			LabelImages.mergeLabels( resultImage, roi, true );
