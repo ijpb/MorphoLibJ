@@ -393,7 +393,9 @@ public class MorphologicalSegmentation implements PlugIn {
 						}
 						else if( e.getSource()  == mergeButton )
 						{
+							setParamsEnabled( false );
 							mergeLabels();
+							setParamsEnabled( true );
 						}
 						else if( e.getSource()  == shuffleColorsButton )
 						{
