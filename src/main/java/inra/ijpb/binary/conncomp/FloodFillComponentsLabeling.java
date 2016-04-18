@@ -65,6 +65,7 @@ public class FloodFillComponentsLabeling extends AlgoStub implements
 	 */
 	public FloodFillComponentsLabeling(int connectivity, int bitDepth)
 	{
+		this.connectivity = connectivity;
 		this.bitDepth = bitDepth;
 	}
 	

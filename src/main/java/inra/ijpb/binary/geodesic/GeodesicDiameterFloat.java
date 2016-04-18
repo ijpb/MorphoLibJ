@@ -8,7 +8,11 @@ import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.binary.ChamferWeights;
 
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
@@ -199,6 +203,212 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 		}
 
 		return table;
+	}
+	
+	/**
+	 * Computes the geodesic path of each particle within the given label image.
+	 * 
+	 * @param labelImage
+	 *            a label image, containing either the label of a particle or
+	 *            region, or zero for background
+	 * @return A map that associate to each integer label the list of positions
+	 *         that constitutes the geodesic path
+	 */
+	public Map<Integer, List<Point>> longestGeodesicPaths(ImageProcessor labelImage) 
+	{
+		// Check validity of parameters
+		if (labelImage==null) return null;
+		
+		int[] labels = findAllLabels(labelImage);
+		int nbLabels = labels.length;
+
+		// Create calculator for propagating distances
+		GeodesicDistanceTransform calculator;
+		int[][] shifts;
+		if (weights.length == 3)
+		{
+			calculator = new GeodesicDistanceTransformFloat5x5(weights, false);
+			shifts = new int[][]{
+					          {-1, -2}, {0, -2}, {+1, -2},  
+					{-2, -1}, {-1, -1}, {0, -1}, {+1, -1}, {+2, -1}, 
+					{-2,  0}, {-1,  0},          {+1,  0}, {+2,  0},  
+					{-2, +1}, {-1, +1}, {0, +1}, {+1, +1}, {+2, +1},  
+					          {-1, +2}, {0, +2}, {+1, +2},  
+			};
+		} 
+		else 
+		{
+			calculator = new GeodesicDistanceTransformFloat(weights, false);
+			shifts = new int[][]{
+					{-1, -1}, {0, -1}, {+1, -1}, 
+					{-1,  0},          {+1,  0}, 
+					{-1, +1}, {0, +1}, {+1, +1}, 
+			};
+		}
+
+		// Initialize a new result table
+		Map<Integer, List<Point>> result = new TreeMap<Integer, List<Point>>();
+
+		// The array that stores Chamfer distances 
+		ImageProcessor distance;
+		
+		Point[] posCenter;
+		Point[] pos1;
+		Point[] pos2;
+		
+		// Initialize mask as binarisation of labels
+		ImageProcessor mask = binariseImage(labelImage);
+		
+		// Initialize marker as complement of all labels
+		ImageProcessor marker = createMarkerOutsideLabels(labelImage);
+
+		this.fireStatusChanged(this, "Initializing pseudo geodesic centers...");
+
+		// first distance propagation to find an arbitrary center
+		distance = calculator.geodesicDistanceMap(marker, mask);
+		
+		// Extract position of maxima
+		posCenter = findPositionOfMaxValues(distance, labelImage, labels);
+		
+		// Create new marker image with position of maxima
+		marker.setValue(0);
+		marker.fill();
+		for (int i = 0; i < nbLabels; i++) 
+		{
+			if (posCenter[i].x == -1)
+			{
+				IJ.showMessage("Particle Not Found", 
+						"Could not find maximum for particle label " + i);
+				continue;
+			}
+			marker.set(posCenter[i].x, posCenter[i].y, 255);
+		}
+		
+		
+		this.fireStatusChanged(this, "Computing first geodesic extremities...");
+
+		// Second distance propagation from first maximum
+		distance = calculator.geodesicDistanceMap(marker, mask);
+
+		// find position of maximal value,
+		// this is expected to correspond to a geodesic extremity 
+		pos1 = findPositionOfMaxValues(distance, labelImage, labels);
+		
+		// Create new marker image with position of maxima
+		marker.setValue(0);
+		marker.fill();
+		for (int i = 0; i < nbLabels; i++)
+		{
+			if (pos1[i].x == -1) 
+			{
+				IJ.showMessage("Particle Not Found", 
+						"Could not find maximum for particle label " + i);
+				continue;
+			}
+			marker.set(pos1[i].x, pos1[i].y, 255);
+		}
+		
+		this.fireStatusChanged(this, "Computing second geodesic extremities...");
+
+		// third distance propagation from second maximum
+		distance = calculator.geodesicDistanceMap(marker, mask);
+		
+		// compute paths starting from points with larger distance value
+		pos2 = findPositionOfMaxValues(distance, labelImage, labels);
+		for (int i = 0; i < labels.length; i++)
+		{
+			int label = labels[i];
+			
+			List<Point> path = new ArrayList<Point>();
+			path.add(pos2[i]);
+			
+			Point pos = pos2[i];
+			while (!pos.equals(pos1[i]))
+			{
+				pos = findNextPosition(distance, pos, shifts);
+				path.add(pos);
+			}
+			
+			result.put(label, path);
+		}
+
+		return result;
+	}
+	
+//	private Point findNextPosition(ImageProcessor distMap, Point pos)
+//	{
+//		Point nextPos = pos;
+//		float minDist = distMap.getf(pos.x, pos.y);
+//
+//		// iterate over neighbors of current pixel
+//		for (int y = pos.y - 1; y <= pos.y + 1; y++)
+//		{
+//			if (y < 0 || y >= distMap.getHeight())
+//			{
+//				continue;
+//			}
+//			
+//			for (int x = pos.x - 1; x <= pos.x + 1; x++)
+//			{
+//				if (x < 0 || x >= distMap.getWidth())
+//				{
+//					continue;
+//				}
+//				
+//				float dist = distMap.getf(x, y);
+//				if (dist < minDist)
+//				{
+//					minDist = dist;
+//					nextPos = new Point(x, y);
+//				}
+//			}
+//		}
+//
+//		if (nextPos.equals(pos))
+//		{
+//			throw new RuntimeException("Could not find a neighbor with smaller value");
+//		}
+//		
+//		return nextPos;
+//	}
+	
+	private Point findNextPosition(ImageProcessor distMap, Point pos, int[][] shifts)
+	{
+		Point nextPos = pos;
+		float minDist = distMap.getf(pos.x, pos.y);
+		
+		// iterate over neighbors of current pixel
+		for (int i = 0; i < shifts.length; i++)
+		{
+			// Compute neighbor coordinates
+			int x = pos.x + shifts[i][0];
+			int y = pos.y + shifts[i][1];
+			
+			// check neighbor is within image bounds
+			if (x < 0 || x >= distMap.getWidth())
+			{
+				continue;
+			}
+			if (y < 0 || y >= distMap.getHeight())
+			{
+				continue;
+			}
+		
+			// compute neighbor value, and compare with current min
+			float dist = distMap.getf(x, y);
+			if (dist < minDist)
+			{
+				minDist = dist;
+				nextPos = new Point(x, y);
+			}
+		}
+
+		if (nextPos.equals(pos))
+		{
+			throw new RuntimeException("Could not find a neighbor with smaller value");
+		}
+		
+		return nextPos;
 	}
 	
 	/**

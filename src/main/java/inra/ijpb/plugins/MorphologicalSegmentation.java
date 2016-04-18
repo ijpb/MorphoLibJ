@@ -4,14 +4,10 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.WindowManager;
-import ij.gui.FreehandRoi;
 import ij.gui.ImageCanvas;
 import ij.gui.ImageRoi;
 import ij.gui.ImageWindow;
 import ij.gui.Overlay;
-import ij.gui.PlotWindow;
-import ij.gui.PointRoi;
-import ij.gui.ProfilePlot;
 import ij.gui.Roi;
 import ij.gui.StackWindow;
 import ij.gui.Toolbar;
@@ -47,7 +43,6 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowEvent;
 import java.awt.image.ColorModel;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
@@ -398,7 +393,9 @@ public class MorphologicalSegmentation implements PlugIn {
 						}
 						else if( e.getSource()  == mergeButton )
 						{
+							setParamsEnabled( false );
 							mergeLabels();
+							setParamsEnabled( true );
 						}
 						else if( e.getSource()  == shuffleColorsButton )
 						{
@@ -431,8 +428,8 @@ public class MorphologicalSegmentation implements PlugIn {
 
 			setTitle( "Morphological Segmentation" );
 
-			// select freehand tool for manual label merging
-			Toolbar.getInstance().setTool( Toolbar.FREELINE );
+			// select point tool for manual label merging
+			Toolbar.getInstance().setTool( Toolbar.POINT );
 
 			// === Input Image panel ===
 
@@ -774,8 +771,6 @@ public class MorphologicalSegmentation implements PlugIn {
 							public void run() {							
 								if(e.getSource() == sliceSelector)
 								{
-									//IJ.log("moving scroll");
-									displayImage.killRoi();
 									if( showColorOverlay )
 									{
 										updateResultOverlay();
@@ -797,8 +792,6 @@ public class MorphologicalSegmentation implements PlugIn {
 						exec.submit(new Runnable() {
 							public void run() 
 							{
-								//IJ.log("moving scroll");
-								displayImage.killRoi();
 								if( showColorOverlay )
 								{
 									updateResultOverlay();
@@ -829,8 +822,6 @@ public class MorphologicalSegmentation implements PlugIn {
 										e.getKeyCode() == KeyEvent.VK_COMMA ||
 										e.getKeyCode() == KeyEvent.VK_PERIOD)
 								{
-									//IJ.log("moving scroll");
-									displayImage.killRoi();
 									if( showColorOverlay )
 									{
 										updateResultOverlay();
@@ -1278,82 +1269,11 @@ public class MorphologicalSegmentation implements PlugIn {
 				return;
 			}
 
-			final ArrayList<Float> list = new ArrayList<Float>();
+			// merge labels under the ROI
+			LabelImages.mergeLabels( resultImage, roi, true );
 
-			// set the same ROI and slice from the display image to the
-			// result image
-			resultImage.setRoi( displayImage.getRoi() );
-			resultImage.setSlice( displayImage.getSlice() );
-
-			// if the user makes point selections
-			if( roi instanceof PointRoi )
-			{
-				int[] xpoints = roi.getPolygon().xpoints;
-
-				if( xpoints.length < 2 )
-				{
-					IJ.error( "Please select two or more labels to merge" );
-					return;
-				}
-
-				int[] ypoints = roi.getPolygon().ypoints;
-
-				final ImageProcessor slice = resultImage.getImageStack().
-						getProcessor( resultImage.getSlice() );
-
-				// read label values at those positions
-				for ( int i = 0; i<xpoints.length; i ++ )
-				{
-					float value = slice.getf( xpoints[ i ], ypoints[ i ] );
-					if( Float.compare( 0f, value ) != 0 &&
-							list.contains( value ) == false )
-						list.add( value );
-				}
-			}
-			else if( roi instanceof FreehandRoi )
-			{
-				// read values from ROI using a profile plot
-				// save interpolation option
-				boolean interpolateOption = PlotWindow.interpolate;
-				// do not interpolate pixel values
-				PlotWindow.interpolate = false;
-				// get label values from line roi (different from 0)
-				float[] values = (new ProfilePlot( resultImage ))
-						.getPlot().getYValues();
-				PlotWindow.interpolate = interpolateOption;
-
-				for( int i=0; i<values.length; i++ )
-				{
-					if( Float.compare( 0f, values[ i ] ) != 0 &&
-							list.contains( values[ i ]) == false )
-						list.add( values[ i ]);
-				}
-			}
-
-			// if more than one value is selected, merge
-			if( list.size() > 1 )
-			{
-				float finalValue = list.remove( 0 );
-				float[] labelArray = new float[ list.size() ];
-				int i = 0;
-
-				for ( Float f : list )
-					labelArray[i++] = f != null ? f : Float.NaN;
-
-				String sLabels = new String( ""+ (long) labelArray[ 0 ] );
-				for( int j=1; j < labelArray.length; j++ )
-					sLabels += ", " + (long) labelArray[ j ];
-
-				IJ.log( "Merging label(s) " + sLabels + " to label "
-								+ (long) finalValue );
-				LabelImages.replaceLabels( resultImage,
-						labelArray, finalValue );
-				if ( showColorOverlay )
-					updateResultOverlay();
-			}
-			else
-				IJ.error( "Please select two or more different"
-						+ " labels to merge" );
+			if ( showColorOverlay )
+				updateResultOverlay();
 
 			// macro recording
 			record( MERGE_LABELS );
@@ -1517,7 +1437,6 @@ public class MorphologicalSegmentation implements PlugIn {
 		{
 			if( null != resultImage )
 			{
-				displayImage.deleteRoi();
 				int slice = displayImage.getCurrentSlice();
 
 				final String displayOption = (String) resultDisplayList.getSelectedItem();							

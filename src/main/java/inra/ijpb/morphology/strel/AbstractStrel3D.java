@@ -10,11 +10,9 @@ import inra.ijpb.morphology.Strel3D;
 
 
 /**
- * Implementation basis for structuring elements, that mainly manages a flag
- * for progress display.
+ * Implementation basis for 3D structuring elements
  * 
  * @author David Legland
- *
  */
 public abstract class AbstractStrel3D extends AlgoStub implements Strel3D
 {

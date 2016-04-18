@@ -209,7 +209,7 @@ public class MinimaAndMaxima
 	 * @return the extended maxima of input image
 	 */
 	public final static ImageProcessor extendedMaxima(ImageProcessor image,
-			int dynamic)
+			double dynamic)
 	{
 		return extendedMaxima(image, dynamic, DEFAULT_CONNECTIVITY);
 	}
@@ -228,7 +228,7 @@ public class MinimaAndMaxima
 	 * @return the extended maxima of input image
 	 */
 	public final static ImageProcessor extendedMaxima(ImageProcessor image,
-			int dynamic, int conn)
+			double dynamic, int conn)
 	{
 		ImageProcessor mask = image.duplicate();
 		mask.add(dynamic);
@@ -252,7 +252,7 @@ public class MinimaAndMaxima
 	 * @return the extended minima of input image
 	 */
 	public final static ImageProcessor extendedMinima(ImageProcessor image,
-			int dynamic)
+			double dynamic)
 	{
 		return extendedMinima(image, dynamic, DEFAULT_CONNECTIVITY);
 	}
@@ -271,7 +271,7 @@ public class MinimaAndMaxima
 	 * @return the extended minima of input image
 	 */
 	public final static ImageProcessor extendedMinima(ImageProcessor image,
-			int dynamic, int conn)
+			double dynamic, int conn)
 	{
 		ImageProcessor marker = image.duplicate();
 		marker.add(dynamic);

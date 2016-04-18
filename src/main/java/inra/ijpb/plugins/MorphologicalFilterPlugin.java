@@ -102,7 +102,7 @@ public class MorphologicalFilterPlugin implements ExtendedPlugInFilter,
 		gd.addPreviewCheckbox(pfr);
 		gd.addDialogListener(this);
         previewing = true;
-		gd.addHelp("http://imagejdocu.tudor.lu/doku.php?id=plugin:morphology:fast_morphological_filters:start");
+		gd.addHelp("http://imagej.net/MorphoLibJ#Morphological_filters");
         gd.showDialog();
         previewing = false;
         
