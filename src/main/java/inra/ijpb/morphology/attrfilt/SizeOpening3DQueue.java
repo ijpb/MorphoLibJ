@@ -21,7 +21,8 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 
 /**
- * Area opening using priority queue for updating each regional maxima.
+ * Volume opening on 3D grayscale image using priority queue for updating each
+ * 3D regional maxima.
  * 
  * @author dlegland
  *
@@ -97,7 +98,7 @@ public class SizeOpening3DQueue extends AlgoStub implements SizeOpening3D
 			Queue<Cursor3D> queue = new PriorityQueue<Cursor3D>(new Position3DValueComparator(result));
 			queue.add(pos0);
 
-			// process pixels in the neighborhood
+			// process voxels in the neighborhood
 			int nPixels = 0;
 			double currentLevel = result2.getValue(pos0.getX(), pos0.getY(), pos0.getZ());
 			while(!queue.isEmpty())
@@ -127,11 +128,6 @@ public class SizeOpening3DQueue extends AlgoStub implements SizeOpening3D
 				neigh.setCursor(pos);
 				for (Cursor3D pos2 : neigh.getNeighbors())
 				{
-//				for (int iNeigh = 0; iNeigh < this.dx.length; iNeigh++)
-//				{
-//					int x2 = pos.getX() + this.dx[iNeigh];
-//					int y2 = pos.getY() + this.dy[iNeigh];
-//					int z2 = pos.getZ() + this.dz[iNeigh];
 					int x2 = pos2.getX();
 					int y2 = pos2.getY();
 					int z2 = pos2.getZ();
@@ -146,7 +142,8 @@ public class SizeOpening3DQueue extends AlgoStub implements SizeOpening3D
 				}
 			}
 			
-			// Replace the value of all pixel in regional maximum neighborhood by the last visited level
+			// Replace the value of all voxel in regional maximum neighborhood
+			// by the value of the lowest level
 			for (Cursor3D pos : positions)
 			{
 				result2.setValue(pos.getX(), pos.getY(), pos.getZ(), currentLevel);
