@@ -1267,11 +1267,6 @@ public class MorphologicalSegmentation implements PlugIn {
 				return;
 			}
 
-			// set the same ROI and slice from the display image to the
-			// result image
-			resultImage.setRoi( displayImage.getRoi() );
-			resultImage.setSlice( displayImage.getSlice() );
-
 			// merge labels under the ROI
 			LabelImages.mergeLabels( resultImage, roi, true );
 
