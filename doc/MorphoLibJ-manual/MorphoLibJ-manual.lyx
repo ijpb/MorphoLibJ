@@ -3895,7 +3895,7 @@ RGB converts a label image to true RGB image.
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -4144,6 +4144,10 @@ l algorithms and pipelines.
  
 \end_layout
 
+\begin_layout Subsection
+Segmentation pipeline prototype
+\end_layout
+
 \begin_layout Standard
 Let's see an example in a complete Beanshell script that takes the active
  2D or 3D image and finds a reasonable segmentation combining a set of morpholog
@@ -4334,9 +4338,346 @@ resultImage.show();
 
 \end_layout
 
+\begin_layout Subsection
+Label visualization in 3D viewer
+\end_layout
+
+\begin_layout Standard
+Making use of MorphoLibJ's label methods and the ImageJ 3D Viewer's visualizatio
+n tools it is quite simple to create a script to display each label of an
+ image as 3D surfaces of the corresponding colors provided by the image
+ look-up table:
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "language=Java"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+// @ImagePlus imp   
+\end_layout
+
+\begin_layout Plain Layout
+
+import inra.ijpb.label.LabelImages; 
+\end_layout
+
+\begin_layout Plain Layout
+
+import ij3d.Image3DUniverse; 
+\end_layout
+
+\begin_layout Plain Layout
+
+import ij3d.ContentConstants; 
+\end_layout
+
+\begin_layout Plain Layout
+
+import org.scijava.vecmath.Color3f; 
+\end_layout
+
+\begin_layout Plain Layout
+
+import ij.IJ; 
+\end_layout
+
+\begin_layout Plain Layout
+
+import isosurface.SmoothControl;   
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// set to true to display messages in log window 
+\end_layout
+
+\begin_layout Plain Layout
+
+verbose = false;   
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// set display range to 0-255 so the displayed colors 
+\end_layout
+
+\begin_layout Plain Layout
+
+// correspond to the LUT values 
+\end_layout
+
+\begin_layout Plain Layout
+
+imp.setDisplayRange( 0, 255 ); imp.updateAndDraw();   
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// calculate array of all labels in image 
+\end_layout
+
+\begin_layout Plain Layout
+
+labels = LabelImages.findAllLabels( imp );   
+\end_layout
+
+\begin_layout Plain Layout
+
+// create 3d universe univ = new Image3DUniverse(); 
+\end_layout
+
+\begin_layout Plain Layout
+
+univ.show();   
+\end_layout
+
+\begin_layout Plain Layout
+
+// read LUT from input image lut = imp.getLuts()[0];   
+\end_layout
+
+\begin_layout Plain Layout
+
+// add all labels different from zero (background) 
+\end_layout
+
+\begin_layout Plain Layout
+
+// to 3d universe 
+\end_layout
+
+\begin_layout Plain Layout
+
+for( i=0; i<labels.length; i++ ) 
+\end_layout
+
+\begin_layout Plain Layout
+
+{        
+\end_layout
+
+\begin_layout Plain Layout
+
+	if( labels[ i ] > 0 )     
+\end_layout
+
+\begin_layout Plain Layout
+
+	{         
+\end_layout
+
+\begin_layout Plain Layout
+
+		labelToKeep = new int[ 1 ];         
+\end_layout
+
+\begin_layout Plain Layout
+
+		labelToKeep[ 0 ] = labels[ i ];         
+\end_layout
+
+\begin_layout Plain Layout
+
+		if( verbose )             
+\end_layout
+
+\begin_layout Plain Layout
+
+		IJ.log( "Reconstructing label " + labels[ i ] + "..." );         
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\end_layout
+
+\begin_layout Plain Layout
+
+		// create new image containing only that label         
+\end_layout
+
+\begin_layout Plain Layout
+
+		labelImp = LabelImages.keepLabels( imp, labelToKeep );         
+\end_layout
+
+\begin_layout Plain Layout
+
+		// convert image to 8-bit         
+\end_layout
+
+\begin_layout Plain Layout
+
+		IJ.run( labelImp, "8-bit", "" );                   
+\end_layout
+
+\begin_layout Plain Layout
+
+		// use LUT label color         
+\end_layout
+
+\begin_layout Plain Layout
+
+		color = new Color3f( new java.awt.Color( lut.getRed( labels[ i ] ),     
+        
+\end_layout
+
+\begin_layout Plain Layout
+
+							lut.getGreen( labels[ i ] ),             
+\end_layout
+
+\begin_layout Plain Layout
+
+							lut.getBlue( labels[ i ] ) ) );                       
+\end_layout
+
+\begin_layout Plain Layout
+
+		if ( verbose )             
+\end_layout
+
+\begin_layout Plain Layout
+
+			IJ.log( "RGB( " + lut.getRed( labels[ i ] ) +", "
+\end_layout
+
+\begin_layout Plain Layout
+
+							+ lut.getGreen( labels[ i ] )                 
+\end_layout
+
+\begin_layout Plain Layout
+
+							+ ", " + lut.getBlue( labels[ i ] ) + ")" );           
+\end_layout
+
+\begin_layout Plain Layout
+
+		channels = new boolean[3];         
+\end_layout
+
+\begin_layout Plain Layout
+
+		channels[ 0 ] = false;         
+\end_layout
+
+\begin_layout Plain Layout
+
+		channels[ 1 ] = false;         
+\end_layout
+
+\begin_layout Plain Layout
+
+		channels[ 2 ] = false;                   
+\end_layout
+
+\begin_layout Plain Layout
+
+		// add label image with corresponding color as an isosurface         
+\end_layout
+
+\begin_layout Plain Layout
+
+		univ.addContent( labelImp, color, "label-"+labels[i], 0, channels, 2, ContentCo
+nstants.SURFACE);     
+\end_layout
+
+\begin_layout Plain Layout
+
+	} 
+\end_layout
+
+\begin_layout Plain Layout
+
+}   
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// launch smooth control 
+\end_layout
+
+\begin_layout Plain Layout
+
+sc = new SmoothControl( univ );
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+At the end of the script a dialog is shown to smooth the surfaces at will.
+ Each label is added to the 3D scene independently with the nanme "label-X"
+ where X is its label value.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/MorphoLibJ-visualize-labels-in-3d-viewer.png
+	lyxscale 25
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+From left to right: input label image, script output, smoothed label surfaces
+ and example of individually translated surfaces in the 3D viewer.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Standard
 \begin_inset Note Note
-status open
+status collapsed
 
 \begin_layout Chapter
 Applications
