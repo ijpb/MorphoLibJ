@@ -19,6 +19,7 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.WindowManager;
+import ij.gui.GenericDialog;
 import ij.gui.ImageCanvas;
 import ij.gui.StackWindow;
 import ij.gui.Toolbar;
@@ -62,6 +63,8 @@ public class LabelEdition implements PlugIn
 	JButton removeSelectedButton = null;
 	/** button to remove largest label */
 	JButton removeLargestButton = null;
+	/** button to apply label area opening */
+	JButton sizeOpeningButton = null;
 	/** button to reset image to initial form */
 	JButton resetButton = null;
 	/** button to finish plugin and exit */
@@ -141,6 +144,12 @@ public class LabelEdition implements PlugIn
 							removeLargestLabel();
 							setButtonsEnabled( true );
 						}
+						else if( e.getSource() == sizeOpeningButton )
+						{
+							setButtonsEnabled( false );
+							labelSizeOpening();
+							setButtonsEnabled( true );
+						}
 						else if( e.getSource() == resetButton )
 						{
 							resetLabels( );
@@ -202,6 +211,11 @@ public class LabelEdition implements PlugIn
 			removeLargestButton.addActionListener( listener );
 			removeLargestButton.setToolTipText( "Remove largest label" );
 
+			sizeOpeningButton = new JButton( "Size opening" );
+			sizeOpeningButton.addActionListener( listener );
+			sizeOpeningButton.setToolTipText( "Remove labels under a certain"
+					+ " size" );
+
 			resetButton = new JButton( "Reset" );
 			resetButton.addActionListener( listener );
 			resetButton.setToolTipText( "Reset labels to initial state" );
@@ -237,6 +251,8 @@ public class LabelEdition implements PlugIn
 			buttonsPanel.add( removeSelectedButton, buttonsConstraints);
 			buttonsConstraints.gridy++;
 			buttonsPanel.add( removeLargestButton, buttonsConstraints);
+			buttonsConstraints.gridy++;
+			buttonsPanel.add( sizeOpeningButton, buttonsConstraints);
 			buttonsConstraints.gridy++;
 			buttonsPanel.add( resetButton, buttonsConstraints);
 			buttonsConstraints.gridy++;
@@ -436,6 +452,27 @@ public class LabelEdition implements PlugIn
 			displayImage.updateAndDraw();
 		}
 
+		void labelSizeOpening()
+		{
+			String title = inputIs2D ? "Area Opening" : "Volume Opening";
+			GenericDialog gd = new GenericDialog( title );
+	        String label = inputIs2D ? "Min Pixel Number:" :
+	        	"Min Voxel Number:";
+	        gd.addNumericField( label, 100, 0 );
+	        gd.showDialog();
+
+	        // If cancel was clicked, do nothing
+	        if ( gd.wasCanceled() )
+	            return;
+
+	        int nPixelMin = (int) gd.getNextNumber();
+
+	        // Apply size opening
+	        ImagePlus res = LabelImages.sizeOpening( displayImage, nPixelMin );
+	        displayImage.setStack( res.getImageStack() );
+	        displayImage.updateAndDraw();
+		}
+
 		/**
 		 * Reset labels to original form
 		 */
@@ -459,6 +496,7 @@ public class LabelEdition implements PlugIn
 			closeButton.setEnabled( enable );
 			removeSelectedButton.setEnabled( enable );
 			removeLargestButton.setEnabled( enable );
+			sizeOpeningButton.setEnabled( enable );
 			resetButton.setEnabled( enable );
 			doneButton.setEnabled( enable );
 		}
