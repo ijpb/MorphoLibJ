@@ -77,7 +77,12 @@ public class ExpandLabelsPlugin implements PlugIn
 			resultPlus.setSlice(newSlice);
 		}
 	}
-	
+	/**
+	 * Expand labels by a given factor
+	 * @param image  input label image
+	 * @param ratio  percentage of expansion (values between 0 and 100)
+	 * @return expanded image
+	 */
 	public static final ImageProcessor expandLabels(ImageProcessor image,
 			float ratio) 
 	{
@@ -130,6 +135,12 @@ public class ExpandLabelsPlugin implements PlugIn
 		return result;
 	}
 
+	/**
+	 * Expand labels by a given factor
+	 * @param image  input label image
+	 * @param ratio  percentage of expansion (values between 0 and 100)
+	 * @return expanded image
+	 */
 	public static final ImageStack expandLabels(ImageStack image,
 			float ratio) 
 	{
