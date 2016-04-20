@@ -62,7 +62,7 @@ public class ExpandLabelsPlugin implements PlugIn
         // copy spatial calibration
         resultPlus.copyScale(imagePlus);
         
-        // copy disp^lay range
+        // copy display range
         double vmin = imagePlus.getDisplayRangeMin();
         double vmax = imagePlus.getDisplayRangeMax();
         resultPlus.setDisplayRange(vmin, vmax);
