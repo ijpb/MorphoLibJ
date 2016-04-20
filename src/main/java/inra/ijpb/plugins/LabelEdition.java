@@ -452,6 +452,9 @@ public class LabelEdition implements PlugIn
 			displayImage.updateAndDraw();
 		}
 
+		/**
+		 * Remove labels under a certain size
+		 */
 		void labelSizeOpening()
 		{
 			String title = inputIs2D ? "Area Opening" : "Volume Opening";
