@@ -121,14 +121,14 @@ public class ExpandLabelsPlugin implements PlugIn
 		{
 			for (int x = 0; x < sizeX; x++)
 			{
-				int label = (int) image.getf(x, y);
-				if (label == 0)
+				float label = image.getf(x, y);
+				if ( Float.compare( label, 0f ) == 0 )
 					continue;
 
-				int index = labelIndices.get(label);
+				int index = labelIndices.get((int)label);
 				int x2 = x + shifts[index][0];
 				int y2 = y + shifts[index][1];
-				result.set(x2, y2, label);
+				result.setf( x2, y2, label );
 			}
 		}
 		
@@ -185,15 +185,15 @@ public class ExpandLabelsPlugin implements PlugIn
         	{
         		for (int x = 0; x < sizeX; x++)
         		{
-        			int label = (int) image.getVoxel(x, y, z);
-        			if (label == 0)
+        			double label = image.getVoxel( x, y, z );
+        			if ( Double.compare( label,  0 ) == 0 )
         				continue;
 
-        			int index = labelIndices.get(label);
+        			int index = labelIndices.get( (int) label );
         			int x2 = x + shifts[index][0];
         			int y2 = y + shifts[index][1];
         			int z2 = z + shifts[index][2];
-        			result.setVoxel(x2, y2, z2, label);
+        			result.setVoxel( x2, y2, z2, label );
         		}
         	}
         }
