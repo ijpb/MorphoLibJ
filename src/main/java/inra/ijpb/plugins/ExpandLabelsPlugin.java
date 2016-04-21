@@ -74,7 +74,7 @@ public class ExpandLabelsPlugin implements PlugIn
         // copy spatial calibration
         resultPlus.copyScale(imagePlus);
         
-        // copy disp^lay range
+        // copy display range
         double vmin = imagePlus.getDisplayRangeMin();
         double vmax = imagePlus.getDisplayRangeMax();
         resultPlus.setDisplayRange(vmin, vmax);
@@ -89,7 +89,12 @@ public class ExpandLabelsPlugin implements PlugIn
 			resultPlus.setSlice(newSlice);
 		}
 	}
-	
+	/**
+	 * Expand labels by a given factor
+	 * @param image  input label image
+	 * @param ratio  percentage of expansion (values between 0 and 100)
+	 * @return expanded image
+	 */
 	public static final ImageProcessor expandLabels(ImageProcessor image,
 			float ratio) 
 	{
@@ -128,20 +133,26 @@ public class ExpandLabelsPlugin implements PlugIn
 		{
 			for (int x = 0; x < sizeX; x++)
 			{
-				int label = (int) image.getf(x, y);
-				if (label == 0)
+				float label = image.getf(x, y);
+				if ( Float.compare( label, 0f ) == 0 )
 					continue;
 
-				int index = labelIndices.get(label);
+				int index = labelIndices.get((int)label);
 				int x2 = x + shifts[index][0];
 				int y2 = y + shifts[index][1];
-				result.set(x2, y2, label);
+				result.setf( x2, y2, label );
 			}
 		}
 		
 		return result;
 	}
 
+	/**
+	 * Expand labels by a given factor
+	 * @param image  input label image
+	 * @param ratio  percentage of expansion (values between 0 and 100)
+	 * @return expanded image
+	 */
 	public static final ImageStack expandLabels(ImageStack image,
 			float ratio) 
 	{
@@ -186,15 +197,15 @@ public class ExpandLabelsPlugin implements PlugIn
         	{
         		for (int x = 0; x < sizeX; x++)
         		{
-        			int label = (int) image.getVoxel(x, y, z);
-        			if (label == 0)
+        			double label = image.getVoxel( x, y, z );
+        			if ( Double.compare( label,  0 ) == 0 )
         				continue;
 
-        			int index = labelIndices.get(label);
+        			int index = labelIndices.get( (int) label );
         			int x2 = x + shifts[index][0];
         			int y2 = y + shifts[index][1];
         			int z2 = z + shifts[index][2];
-        			result.setVoxel(x2, y2, z2, label);
+        			result.setVoxel( x2, y2, z2, label );
         		}
         	}
         }
