@@ -2310,6 +2310,7 @@ status open
 \align center
 \begin_inset Graphics
 	filename images/Morphological-segmentation-front.png
+	lyxscale 50
 	width 90text%
 
 \end_inset
@@ -2454,6 +2455,22 @@ Tolerance
  Increasing the tolerance value reduces the number of segments in the final
  result, while decreasing its value produces more object splits.
  
+\series bold
+\color red
+
+\begin_inset Newline newline
+\end_inset
+
+Note
+\series default
+\color inherit
+: since the tolerance is an intensity parameter, it is sensitive to the
+ input image type.
+ A tolerance value of 10 is a good starting point for 8-bit images (with
+ 0-255 intensity range) but it should be drastically increased when using
+ image types with larger intensity ranges.
+ For example to ~2000 when working on a 16-bit image (intensity values between
+ 0 and 65535).
 \end_layout
 
 \begin_layout Itemize
@@ -2668,8 +2685,10 @@ or the point tool
 
 
 \series bold
+\color red
 Note
 \series default
+\color inherit
 : to select labels on different slices, use the point selection tool and
  keep the SHIFT key pressed each time you click on a new label.
 \end_layout
