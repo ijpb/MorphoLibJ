@@ -138,11 +138,14 @@ public class GeodesicDistanceTransformShort5x5 extends AlgoStub implements Geode
 		if (this.normalizeMap) 
 		{
 			fireStatusChanged(this, "Normalize map"); 
-			for (int i = 0; i < width; i++) 
+			for (int j = 0; j < height; j++)
 			{
-				for (int j = 0; j < height; j++)
+				for (int i = 0; i < width; i++) 
 				{
-					buffer.set(i,j, buffer.get(i, j) / this.weights[0]);
+					if (maskProc.getPixel(i, j) != 0)
+					{
+						buffer.set(i,j, buffer.get(i, j) / this.weights[0]);
+					}
 				}
 			}
 		}
@@ -164,7 +167,10 @@ public class GeodesicDistanceTransformShort5x5 extends AlgoStub implements Geode
 		buffer.setMinAndMax(0, maxVal);
 		// Forces the display to non-inverted LUT
 		if (buffer.isInvertedLut())
+		{
 			buffer.invertLut();
+		}
+		
 		return buffer;
 	}
 

@@ -141,7 +141,10 @@ public class GeodesicDistanceTransformShort extends AlgoStub implements Geodesic
 			{
 				for (int j = 0; j < height; j++) 
 				{
-					buffer.set(i,j, buffer.get(i, j) / this.weights[0]);
+					if (maskProc.getPixel(i, j) != 0)
+					{
+						buffer.set(i,j, buffer.get(i, j) / this.weights[0]);
+					}
 				}
 			}
 		}
