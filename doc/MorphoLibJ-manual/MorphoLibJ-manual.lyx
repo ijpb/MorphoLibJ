@@ -273,7 +273,7 @@ key "Schneider_2012_nmeth,Schindelin_2012_nmeth"
 morphological filtering
 \series default
  for 2D/3D and binary or grey level images: erosion & dilation, closing
- & opening, morphological gradient & laplacian, top-hat...
+ & opening, morphological gradient & Laplacian, top-hat...
 \end_layout
 
 \begin_layout Itemize
@@ -2166,8 +2166,11 @@ name "fig:Example-of-marker-controlled-watershed"
 
 \end_inset
 
-Example of marker-controlled watershed segmentation on nucleus of Arabidopsis
- thaliana (image by courtesy of Kaori Sakai and Javier Arpon, INRA-Versailles).
+Example of marker-controlled watershed segmentation on nucleus of 
+\emph on
+Arabidopsis thaliana
+\emph default
+ (image by courtesy of Kaori Sakai and Javier Arpon, INRA-Versailles).
 \end_layout
 
 \end_inset
@@ -3130,7 +3133,7 @@ Label the label of the particle measured on the current line (can be different
 \end_layout
 
 \begin_layout Description
-Area the number of pixels within each region, mutliplied by the area of
+Area the number of pixels within each region, multiplied by the area of
  each pixel.
 \end_layout
 
@@ -3151,7 +3154,7 @@ Circularity the normalized ratio of area by the square of the perimeter
 \end_layout
 
 \begin_layout Description
-Elongation the normalized ratio of the squareof the perimeter by the area
+Elongation the normalized ratio of the square of the perimeter by the area
  : 
 \begin_inset Formula $p^{2}/\left(4\pi\cdot A\right)$
 \end_inset
@@ -3177,7 +3180,7 @@ Label the label of the particle measured on the current line
 \end_layout
 
 \begin_layout Description
-xi the x-coordinate of the inscibed circle
+xi the x-coordinate of the inscribed circle
 \end_layout
 
 \begin_layout Description
@@ -3286,7 +3289,7 @@ xi,
 \begin_inset space ~
 \end_inset
 
-yi coordinates of the margest inscribed circle
+yi coordinates of the largest inscribed circle
 \end_layout
 
 \begin_layout Description
@@ -3460,7 +3463,7 @@ Region Adjacency Graph
  Typical input is the result of a watershed segmentation, eventually followed
  by manual edition of the labels.
  The results is a results table with as many rows as the number of pairs
- of adjacent regions, containing the labels of the two adjacencent regions.
+ of adjacent regions, containing the labels of the two adjacent regions.
 \end_layout
 
 \begin_layout Standard
@@ -3607,7 +3610,7 @@ Distance
 \begin_inset space ~
 \end_inset
 
-Map computes an approximate distance from a binary imag map between each
+Map computes an approximate distance from a binary image map between each
  foreground pixel to the nearest background pixel
 \end_layout
 
@@ -3697,9 +3700,9 @@ Distance
 \begin_inset space ~
 \end_inset
 
-Map computes the geodesic distance between each forground pixel of a binary
+Map computes the geodesic distance between each foreground pixel of a binary
  mask image to the closest pixel of a marker image, while staying within
- the particle represented b ythe mask image (See Figure
+ the particle represented by the mask image (See Figure
 \begin_inset space ~
 \end_inset
 
@@ -4083,7 +4086,7 @@ Library inter-operability
 \begin_layout Standard
 A key design concept was the modularity of the implementation to facilitate
  its reusability.
- Three layers with different programming technicity can be identified :
+ Three layers with different programming abstraction can be identified :
 \end_layout
 
 \begin_layout Itemize
