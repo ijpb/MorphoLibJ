@@ -1584,6 +1584,13 @@ Reconstruction
 
 \begin_layout Chapter
 Watershed segmentation
+\begin_inset CommandInset label
+LatexCommand label
+name "chap:Watershed-segmentation"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -3043,16 +3050,16 @@ Measurements
 \end_layout
 
 \begin_layout Section
-Particle analysis
+Label analysis
 \end_layout
 
 \begin_layout Standard
-The MorphoLibJ contains several tools for quantifying the size, the shape,
- or the spatial organization, from for 
+MorphoLibJ contains several tools for quantifying the size, the shape, or
+ the spatial organization, from 
 \series bold
 binary or label
 \series default
- 2D or 3D images.
+ 2D and 3D images.
  The aim is to facilitate the management of label images, contrary to the
  built-in 
 \begin_inset Quotes eld
@@ -3062,7 +3069,7 @@ Analyze Particles...
 \begin_inset Quotes erd
 \end_inset
 
- fonction that operates directly on a gray level image.
+ function that operates directly on a gray level image.
  Most MorphoLibJ plugins consider the current image as input, that must
  be either binary (only one region is considered), or label (typically the
  result of a connected components labeling, see section 
@@ -3073,9 +3080,12 @@ reference "sec:Binary-Images"
 \end_inset
 
 ).
- The result is a results table containing one row for each label actually
- present within the image.
- The spatial calibration of the image is taken into account for measurements.
+ The output is a results table (ImageJ 
+\emph on
+ResultsTable
+\emph default
+) containing one row for each label actually present within the image.
+ The spatial calibration of the image is taken into account in all measurements.
 \end_layout
 
 \begin_layout Subsection
@@ -3100,7 +3110,8 @@ The
 \series bold
 global geometry
 \series default
- of particles in 2D images can be characterized with the 
+ of particles in 2D images can be characterized with the Region Morphometry
+ plugin (under 
 \begin_inset Quotes eld
 \end_inset
 
@@ -3111,11 +3122,11 @@ Region Morphometry
 \begin_inset Quotes erd
 \end_inset
 
-.
- The measurement of perimeter aims at providing better estimate of perimeter
- than traditional boundary pixel count.
- The principle is to consider set of lines with various orientations, and
- count the number of intersections with the region(s) of interest
+).
+ The implemented perimeter measurement aims at providing a better estimate
+ of the perimeter than traditional boundary pixel count.
+ The principle is to consider a set of lines with various orientations,
+ and count the number of intersections with the region(s) of interest 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Legland2007,Ohser2009"
@@ -3127,8 +3138,8 @@ key "Legland2007,Ohser2009"
 \end_layout
 
 \begin_layout Description
-Label the label of the particle measured on the current line (can be different
- from the row number if some labels do no exist in original image)
+Label the label of the particle measured on the current line (it can be
+ different from the row number if some labels do no exist in original image)
 \end_layout
 
 \begin_layout Description
@@ -3171,7 +3182,7 @@ largest circle that can be inscribed within the particle
  The plugin opens a dialog that allows to choose the label image to characterize
 , the choice of the method for computing distance, and eventually the image
  on which overlaid circles can be drawn.
- The results of the plugin comprise:
+ The output of the plugin includes the following information:
 \end_layout
 
 \begin_layout Description
@@ -3228,7 +3239,8 @@ key "Staal_2004_tmi"
 
 .
  Each connected component was associated to a label, then the longest geodesic
- path within each connected comonent was computed and displayed as red overlay.
+ path within each connected component was computed and displayed as red
+ overlay.
 \end_layout
 
 \end_inset
@@ -3250,7 +3262,7 @@ may be of interest.
  It corresponds of the largest geodesic distance between two points within
  a region, the geodesic distance being the length of the shortest path joining
  the two points while staying inside the region.
- Results :
+ Results:
 \end_layout
 
 \begin_layout Description
@@ -3279,7 +3291,7 @@ Geod.
 Elong.
  the ratio of geodesic diameter over the diameter of the largest inscribed
  circle.
- The value range from 1 for nearly round particles and increases for elongated
+ The values range from 1 for nearly round particles and increases for elongated
  particles.
 \end_layout
 
@@ -3326,14 +3338,17 @@ Particle Analysis 3D
 \end_inset
 
 .
- The results are provided in a ResultsTable, whose name contains the name
- of the original image.
+ The results are provided in an ImageJ 
+\emph on
+ResultsTable
+\emph default
+, whose name contains the name of the original image.
  
 \end_layout
 
 \begin_layout Description
-Label the label of the particle measured on the current line (can be different
- from the row number if some labels do no exist in original image)
+Label the label of the particle measured on the current line (it can be
+ different from the row number if some labels do no exist in original image)
 \end_layout
 
 \begin_layout Description
@@ -3388,7 +3403,7 @@ ellipse
 
 ellipsoid returns the centroid (center of gravity) as well as the size and
  the orientation of the inertia ellipse or ellipsoid of each particle.
- Radiuses are sorted in decreasing order.
+ Radii are sorted in decreasing order.
  Angles are given in degrees, and correspond to the azimut (
 \begin_inset Quotes eld
 \end_inset
@@ -3428,7 +3443,11 @@ Measure 3D
 ).
  The plugin calculates the mean, the standard deviation, the maximum and
  the minimum intensity value of each labeled region in the grayscale image.
- The results are displayed as well in a ResultsTable.
+ The results are displayed as well in an ImageJ 
+\emph on
+ResultsTable
+\emph default
+.
 \end_layout
 
 \begin_layout Subsection
@@ -3447,7 +3466,7 @@ plugin gives access to the neighborhood relationship between adjacent regions.
 \end_layout
 
 \begin_layout Standard
-The plugin 
+The plugin (under 
 \begin_inset Quotes eld
 \end_inset
 
@@ -3458,11 +3477,26 @@ Region Adjacency Graph
 \begin_inset Quotes erd
 \end_inset
 
- works for both 2D and 3D images, and require label image as input.
- Typical input is the result of a watershed segmentation, eventually followed
- by manual edition of the labels.
- The results is a results table with as many rows as the number of pairs
- of adjacent regions, containing the labels of the two adjacent regions.
+) works for both 2D and 3D images, and requires a label image as input.
+ A typical input is the result of a watershed segmentation (see section
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "chap:Watershed-segmentation"
+
+\end_inset
+
+), eventually followed by manual edition of the labels (see section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Label-Edition-plugin"
+
+\end_inset
+
+).
+ The output of the plugin is a results table with as many rows as the number
+ of pairs of adjacent regions, containing the labels of the two adjacent
+ regions.
 \end_layout
 
 \begin_layout Standard
@@ -4080,6 +4114,13 @@ Assign result of a measurement to a label image.
 
 \begin_layout Section
 Label Edition plugin
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Label-Edition-plugin"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
