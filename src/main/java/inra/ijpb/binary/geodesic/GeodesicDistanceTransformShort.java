@@ -137,11 +137,15 @@ public class GeodesicDistanceTransformShort extends AlgoStub implements Geodesic
 		if (this.normalizeMap)
 		{
 			fireStatusChanged(this, "Normalize map"); 
-			for (int i = 0; i < width; i++)
+			for (int j = 0; j < height; j++) 
 			{
-				for (int j = 0; j < height; j++) 
+				for (int i = 0; i < width; i++)
 				{
-					buffer.set(i,j, buffer.get(i, j) / this.weights[0]);
+					short val = (short) buffer.get(i, j);
+					if (val != this.backgroundValue)
+					{
+						buffer.set(i, j, val / this.weights[0]);
+					}
 				}
 			}
 		}
@@ -153,14 +157,17 @@ public class GeodesicDistanceTransformShort extends AlgoStub implements Geodesic
 		{
 			for (int i = 0; i < width; i++)
 			{
-				if (maskProc.getPixel(i, j) != 0)
-					maxVal = Math.max(maxVal, buffer.get(i, j));
+				short val = (short) buffer.get(i, j);
+				if (val != this.backgroundValue)
+				{
+					maxVal = Math.max(maxVal, val);
+				}
 			}
 		}
-		// System.out.println("max value: " + Float.toString(maxVal));
 
 		// update and return resulting Image processor
 		buffer.setMinAndMax(0, maxVal);
+		
 		// Forces the display to non-inverted LUT
 		if (buffer.isInvertedLut())
 			buffer.invertLut();
@@ -219,6 +226,7 @@ public class GeodesicDistanceTransformShort extends AlgoStub implements Geodesic
 				updateIfNeeded(width-1, j, ortho, diago);
 			}
 		} // end of forward iteration
+		
 		fireProgressChanged(this, 1, 1); 
 	}
 

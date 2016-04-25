@@ -36,7 +36,7 @@ public class GeodesicDistanceTransformFloat5x5 extends AlgoStub implements
 	 * The value assigned to result pixels that do not belong to the mask. 
 	 * Default is Float.MAX_VALUE.
 	 */
-	float backgroundValue = Float.MAX_VALUE;
+	float backgroundValue = Float.POSITIVE_INFINITY;
 	
 	/**
 	 * The inner buffer that will store the distance map. The content
@@ -132,9 +132,9 @@ public class GeodesicDistanceTransformFloat5x5 extends AlgoStub implements
 		if (this.normalizeMap)
 		{
 			fireStatusChanged(this, "Normalize map"); 
-			for (int i = 0; i < width; i++)
+			for (int j = 0; j < height; j++) 
 			{
-				for (int j = 0; j < height; j++) 
+				for (int i = 0; i < width; i++)
 				{
 					buffer.setf(i,j, buffer.getf(i, j) / this.weights[0]);
 				}
@@ -144,23 +144,23 @@ public class GeodesicDistanceTransformFloat5x5 extends AlgoStub implements
 		// Compute max value within the mask
 		fireStatusChanged(this, "Normalize display"); 
 		float maxVal = 0;
-		for (int i = 0; i < width; i++)
+		for (int j = 0; j < height; j++)
 		{
-			for (int j = 0; j < height; j++)
+			for (int i = 0; i < width; i++)
 			{
-				if (maskProc.getPixel(i, j) != 0)
-					maxVal = Math.max(maxVal, buffer.getf(i, j));
+				float val = buffer.getf(i, j);
+				if (Float.isFinite(val))
+					maxVal = Math.max(maxVal, val);
 			}
 		}
-//		 System.out.println("max value: " + Float.toString(maxVal));
-
+		
 		// update and return resulting Image processor
 		buffer.setMinAndMax(0, maxVal);
+		
 		// Forces the display to non-inverted LUT
 		if (buffer.isInvertedLut())
 			buffer.invertLut();
 		return buffer;
-
 	}
 
 	private void forwardIteration() 
