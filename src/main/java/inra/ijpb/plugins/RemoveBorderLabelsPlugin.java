@@ -69,10 +69,41 @@ public class RemoveBorderLabelsPlugin implements PlugIn {
 		}
 		
 		IJ.showStatus("Identifies border labels");
+
+		ImagePlus resultPlus = remove( imagePlus, removeLeft, removeRight,
+				removeTop, removeBottom, removeFront, removeBack);
 		
+		// Display with same settings as original image
+		resultPlus.show();
+		if (isStack)
+		{
+			resultPlus.setZ(imagePlus.getZ());
+			resultPlus.setSlice(imagePlus.getSlice());
+		}
+	}
+	/**
+	 * Remove labels in the border of the image
+	 * @param labelImage  input label image
+	 * @param removeLeft  flag to remove labels in the left border
+	 * @param removeRight  flag to remove labels in the right border
+	 * @param removeTop  flag to remove labels in the top border
+	 * @param removeBottom  flag to remove labels in the bottom border
+	 * @param removeFront  flag to remove labels in the front border
+	 * @param removeBack  flag to remove labels in the back border
+	 * @return label image without border labels
+	 */
+	public static ImagePlus remove(
+			ImagePlus labelImage,
+			boolean removeLeft,
+			boolean removeRight,
+			boolean removeTop,
+			boolean removeBottom,
+			boolean removeFront,
+			boolean removeBack )
+	{
 		// identifies the set of labels that need to be removed
 		TreeSet<Integer> labelSet = new TreeSet<Integer>();
-		ImageStack image = imagePlus.getStack();
+		ImageStack image = labelImage.getStack();
 		if (removeLeft)
 			labelSet.addAll(findBorderLabelsLeft(image));
 		if (removeRight)
@@ -97,22 +128,15 @@ public class RemoveBorderLabelsPlugin implements PlugIn {
 
 		// create result image
 		IJ.showStatus("Duplicates image");
-		ImagePlus resultPlus = imagePlus.duplicate();
+		ImagePlus resultPlus = labelImage.duplicate();
 
-		// remove labels direclty within result image
+		// remove labels directly within result image
 		IJ.showStatus("Remove border labels");
 		LabelImages.replaceLabels(resultPlus, labels, 0);
 		IJ.showStatus("");
 		
-		resultPlus.setTitle(imagePlus.getShortTitle() + "-killBorders");
-		
-		// Display with same settings as original image
-		resultPlus.show();
-		if (isStack) 
-		{
-			resultPlus.setZ(imagePlus.getZ());
-			resultPlus.setSlice(imagePlus.getSlice());
-		}
+		resultPlus.setTitle(labelImage.getShortTitle() + "-killBorders");
+		return resultPlus;
 	}
 	
 	private static final Collection<Integer> findBorderLabelsLeft(ImageStack image) {
