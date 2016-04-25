@@ -694,7 +694,7 @@ public class LabelImages
 	public static final void removeBorderLabels(ImageProcessor image) 
 	{
 		int[] labels = findBorderLabels(image);
-		removeLabels(image, labels, 0);
+		replaceLabels(image, labels, 0);
 	}
 
 	private static final int[] findBorderLabels(ImageProcessor image) 
@@ -740,7 +740,7 @@ public class LabelImages
 	public static final void removeBorderLabels(ImageStack image) 
 	{
 		int[] labels = findBorderLabels(image);
-		removeLabels(image, labels, 0);
+		replaceLabels(image, labels, 0);
 	}
 
 	private static final int[] findBorderLabels(ImageStack image) 
@@ -1222,7 +1222,7 @@ public class LabelImages
     }
 
 	/**
-	 * Replace all values specified in label array by the value 0. 
+	 * Replace all values specified in label array by a new value. 
 	 * This method changes directly the values within the image.
 	 * 
 	 * @param imagePlus an ImagePlus containing a 3D label image
@@ -1236,13 +1236,13 @@ public class LabelImages
 		{
 			// process planar image
 			ImageProcessor image = imagePlus.getProcessor();
-			removeLabels(image, labels, newLabel);
+			replaceLabels(image, labels, newLabel);
 		} 
 		else 
 		{
 			// process image stack
 			ImageStack image = imagePlus.getStack();
-			removeLabels(image, labels, newLabel);
+			replaceLabels(image, labels, newLabel);
 		}
 	}
 
@@ -1272,13 +1272,13 @@ public class LabelImages
 	}
 
 	/**
-	 * Replace all values specified in label array by the value 0.
+	 * Replace all values specified in label array by a new value.
 	 *  
 	 * @param image a label planar image
 	 * @param labels the list of labels to replace 
 	 * @param newLabel the new value for labels 
 	 */
-	public static final void removeLabels(ImageProcessor image, int[] labels, int newLabel)
+	public static final void replaceLabels(ImageProcessor image, int[] labels, int newLabel)
 	{
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
@@ -1334,13 +1334,13 @@ public class LabelImages
 	}
 
 	/**
-	 * Replace all values specified in label array by the value 0.
+	 * Replace all values specified in label array by a new value.
 	 *  
 	 * @param image a label 3D image
 	 * @param labels the list of labels to replace 
 	 * @param newLabel the new value for labels 
 	 */
-	public static final void removeLabels(ImageStack image, int[] labels, int newLabel)
+	public static final void replaceLabels(ImageStack image, int[] labels, int newLabel)
 	{
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
