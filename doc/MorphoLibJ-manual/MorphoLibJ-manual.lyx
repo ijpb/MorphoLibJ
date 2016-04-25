@@ -2362,8 +2362,7 @@ Image pre-processing
 \series default
 : some pre-processing is included in the plugin to facilitate the segmentation
  task.
- However, other pre-preprocessing may be required depending on the input
- image.
+ However, other pre-processing may be required depending on the input image.
  It is up to the user to decide what filtering may be most appropriate upstream.
 \end_layout
 
@@ -4040,7 +4039,7 @@ RGB converts a label image to true RGB image.
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -4080,7 +4079,7 @@ Assign result of a measurement to a label image.
 \end_layout
 
 \begin_layout Chapter
-Library inter-operability
+Library interoperability
 \end_layout
 
 \begin_layout Standard
