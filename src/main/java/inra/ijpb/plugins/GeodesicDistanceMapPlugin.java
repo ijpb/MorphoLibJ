@@ -1,11 +1,14 @@
 package inra.ijpb.plugins;
 
+import java.awt.image.IndexColorModel;
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
+import ij.process.LUT;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.binary.ChamferWeights;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransform;
@@ -13,6 +16,7 @@ import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat5x5;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort5x5;
+import inra.ijpb.util.ColorMaps;
 
 /**
  * Plugin for computing geodesic distance map from binary images using chamfer
@@ -166,14 +170,7 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 		}
 
 		// Initialize calculator
-		GeodesicDistanceTransform algo;
-		if (weights.length == 2)
-		{
-			algo = new GeodesicDistanceTransformFloat(weights, normalize);
-		} else
-		{
-			algo = new GeodesicDistanceTransformFloat5x5(weights, normalize);
-		}
+		GeodesicDistanceTransform algo = chooseAlgo(weights, normalize);
 
 		// Compute distance on specified images
 		ImageProcessor result = algo.geodesicDistanceMap(marker.getProcessor(),
@@ -306,15 +303,7 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 		}
 
 		// Initialize calculator
-		GeodesicDistanceTransform algo;
-		if (weights.length == 2)
-		{
-			algo = new GeodesicDistanceTransformFloat(weights, normalize);
-		} 
-		else
-		{
-			algo = new GeodesicDistanceTransformFloat5x5(weights, normalize);
-		}
+		GeodesicDistanceTransform algo = chooseAlgo(weights, normalize);
 		DefaultAlgoListener.monitor(algo);
     	
 
@@ -323,8 +312,13 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 		ImageProcessor mask = maskPlus.getProcessor();
 		ImageProcessor result = algo.geodesicDistanceMap(marker, mask);
 		ImagePlus resultPlus = new ImagePlus(newName, result);
-
-		// create result image
+		
+		// setup display options
+		double maxVal = result.getMax();
+		resultPlus.setLut(createFireLUT(maxVal));
+		resultPlus.setDisplayRange(0, maxVal);
+		
+		// return result image
 		return resultPlus;
 	}
 
@@ -349,15 +343,7 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 		}
 
 		// Initialize calculator
-		GeodesicDistanceTransform algo;
-		if (weights.length == 2)
-		{
-			algo = new GeodesicDistanceTransformFloat(weights, normalize);
-		} 
-		else
-		{
-			algo = new GeodesicDistanceTransformFloat5x5(weights, normalize);
-		}
+		GeodesicDistanceTransform algo = chooseAlgo(weights, normalize);
 		DefaultAlgoListener.monitor(algo);
     	
 
@@ -434,10 +420,53 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 				mask.getProcessor());
 		ImagePlus resultPlus = new ImagePlus(newName, result);
 
+		// setup display options
+		double maxVal = result.getMax();
+		resultPlus.setLut(createFireLUT(maxVal));
+		resultPlus.setDisplayRange(0, maxVal);
+		
 		// create result array
 		return resultPlus;
 	}
 
+	/**
+	 * Choose the appropriate algorithm depending on the length of the weight
+	 * array.
+	 * 
+	 * @param weights
+	 *            the array of chamfer weights
+	 * @param normalize
+	 *            a boolean indicating whether the map should be normalized
+	 * @return an instance of GeodesicDistanceTransform operator
+	 */
+	private GeodesicDistanceTransform chooseAlgo(float[] weights, boolean normalize)
+	{
+		if (weights.length == 2)
+		{
+			return new GeodesicDistanceTransformFloat(weights, normalize);
+		} 
+		else
+		{
+			return new GeodesicDistanceTransformFloat5x5(weights, normalize);
+		}
+	}
+	
+	private LUT createFireLUT(double maxVal)
+	{
+		byte[][] lut = ColorMaps.createFireLut(256);
+		byte[] red = new byte[256];
+		byte[] green = new byte[256];
+		byte[] blue = new byte[256];
+		for (int i = 0; i < 256; i++)
+		{
+			red[i] 		= lut[i][0];
+			green[i] 	= lut[i][1];
+			blue[i] 	= lut[i][2];
+		}
+		IndexColorModel cm = new IndexColorModel(8, 256, red, green, blue);
+		return new LUT(cm, 0, maxVal);
+	}
+	
 	private static String createResultImageName(ImagePlus baseImage)
 	{
 		return baseImage.getShortTitle() + "-geoddist";
