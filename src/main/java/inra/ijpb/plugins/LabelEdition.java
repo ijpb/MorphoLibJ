@@ -224,7 +224,7 @@ public class LabelEdition implements PlugIn
 			doneButton.addActionListener( listener );
 			doneButton.setToolTipText( "Close plugin and return result" );
 			
-			// Training panel (left side of the GUI)
+			// Buttons panel (left side of the GUI)
 			buttonsPanel.setBorder(
 					BorderFactory.createTitledBorder( "Options" ) );
 			GridBagLayout buttonsLayout = new GridBagLayout();
