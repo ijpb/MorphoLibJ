@@ -4078,6 +4078,107 @@ Assign result of a measurement to a label image.
 
 \end_layout
 
+\begin_layout Section
+Label Edition plugin
+\end_layout
+
+\begin_layout Standard
+To ease the processing of label images, MorphoLibJ provides the Label Edition
+ plugin (available under 
+\begin_inset Quotes eld
+\end_inset
+
+Plugins\SpecialChar \menuseparator
+MorphoLibJ\SpecialChar \menuseparator
+Labels\SpecialChar \menuseparator
+Label Edition
+\begin_inset Quotes erd
+\end_inset
+
+).
+ This plugin contains a graphical user interface (GUI) where the users can
+ perform the following set of editing tasks:
+\end_layout
+
+\begin_layout Itemize
+Manually merge labels after their selection using the point selection tool
+ (in 2D and 3D).
+\end_layout
+
+\begin_layout Itemize
+Apply morphological erosion, dilation, opening and closing with a square/cube
+ of radius 1 as structuring element.
+\end_layout
+
+\begin_layout Itemize
+Remove labels by area or volume (size opening operation), largest size,
+ manual selection or border location.
+\end_layout
+
+\begin_layout Standard
+All operations are performed 
+\begin_inset Quotes eld
+\end_inset
+
+in place
+\begin_inset Quotes erd
+\end_inset
+
+, i.e., the input image gets directly modified.
+ However, the initial status of the label image can be recovered by clicking
+ on 
+\begin_inset Quotes eld
+\end_inset
+
+Reset
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/Label-Edition-plugin.png
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Label Edition plugin.
+ From left to right and from top to bottom: overview of the plugin GUI on
+ a 2D label image, result of label merging by manual selection, removal
+ of selected labels, label erosion and removal of largest label.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Chapter
 Library interoperability
 \end_layout
@@ -4085,7 +4186,7 @@ Library interoperability
 \begin_layout Standard
 A key design concept was the modularity of the implementation to facilitate
  its reusability.
- Three layers with different programming abstraction can be identified :
+ Three layers with different programming abstraction can be identified:
 \end_layout
 
 \begin_layout Itemize
