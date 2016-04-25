@@ -707,15 +707,15 @@ public class LabelImages
 		// find labels in top and bottom borders
 		for (int x = 0; x < sizeX; x++)
 		{
-			labelSet.add((int) image.get(x, 0));
-			labelSet.add((int) image.get(x, sizeY - 1));
+			labelSet.add((int) image.getf(x, 0));
+			labelSet.add((int) image.getf(x, sizeY - 1));
 		}
 	
 		// find labels in left and right borders
 		for (int y = 0; y < sizeY; y++) 
 		{
-			labelSet.add((int) image.get(0, y));
-			labelSet.add((int) image.get(sizeX - 1, y));
+			labelSet.add((int) image.getf(0, y));
+			labelSet.add((int) image.getf(sizeX - 1, y));
 		}
 	
 		// remove label for the background
@@ -1293,11 +1293,11 @@ public class LabelImages
 		{
 			for (int x = 0; x < sizeX; x++)
 			{
-				int value = image.get(x, y); 
+				int value = (int) image.getf(x, y);
 				if (value == newLabel)
 					continue;
 				if (labelSet.contains(value)) 
-					image.set(x, y, newLabel);
+					image.setf( x, y, newLabel );
 			}
 		}
 	}
