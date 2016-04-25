@@ -63,6 +63,8 @@ public class LabelEdition implements PlugIn
 	JButton removeSelectedButton = null;
 	/** button to remove largest label */
 	JButton removeLargestButton = null;
+	/** button to remove all border labels */
+	JButton removeBorderLabelsButton = null;
 	/** button to apply label area opening */
 	JButton sizeOpeningButton = null;
 	/** button to reset image to initial form */
@@ -144,6 +146,12 @@ public class LabelEdition implements PlugIn
 							removeLargestLabel();
 							setButtonsEnabled( true );
 						}
+						else if( e.getSource() == removeBorderLabelsButton )
+						{
+							setButtonsEnabled( false );
+							removeBorderLabels();
+							setButtonsEnabled( true );
+						}
 						else if( e.getSource() == sizeOpeningButton )
 						{
 							setButtonsEnabled( false );
@@ -211,6 +219,11 @@ public class LabelEdition implements PlugIn
 			removeLargestButton.addActionListener( listener );
 			removeLargestButton.setToolTipText( "Remove largest label" );
 
+			removeBorderLabelsButton = new JButton( "Remove in border" );
+			removeBorderLabelsButton.addActionListener( listener );
+			removeBorderLabelsButton.setToolTipText( "Remove labels in the "
+					+ "borders of the image" );
+
 			sizeOpeningButton = new JButton( "Size opening" );
 			sizeOpeningButton.addActionListener( listener );
 			sizeOpeningButton.setToolTipText( "Remove labels under a certain"
@@ -251,6 +264,8 @@ public class LabelEdition implements PlugIn
 			buttonsPanel.add( removeSelectedButton, buttonsConstraints);
 			buttonsConstraints.gridy++;
 			buttonsPanel.add( removeLargestButton, buttonsConstraints);
+			buttonsConstraints.gridy++;
+			buttonsPanel.add( removeBorderLabelsButton, buttonsConstraints);
 			buttonsConstraints.gridy++;
 			buttonsPanel.add( sizeOpeningButton, buttonsConstraints);
 			buttonsConstraints.gridy++;
@@ -451,7 +466,14 @@ public class LabelEdition implements PlugIn
 			LabelImages.removeLargestLabel( displayImage );
 			displayImage.updateAndDraw();
 		}
-
+		/**
+		 * Remove all labels in the border of the image
+		 */
+		void removeBorderLabels()
+		{
+			LabelImages.removeBorderLabels( displayImage );
+			displayImage.updateAndDraw();
+		}
 		/**
 		 * Remove labels under a certain size
 		 */
@@ -499,6 +521,7 @@ public class LabelEdition implements PlugIn
 			closeButton.setEnabled( enable );
 			removeSelectedButton.setEnabled( enable );
 			removeLargestButton.setEnabled( enable );
+			removeBorderLabelsButton.setEnabled( enable );
 			sizeOpeningButton.setEnabled( enable );
 			resetButton.setEnabled( enable );
 			doneButton.setEnabled( enable );
