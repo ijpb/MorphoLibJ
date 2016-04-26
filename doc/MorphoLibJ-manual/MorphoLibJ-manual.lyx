@@ -216,7 +216,7 @@ MorphoLibJ
 \end_inset
 
  library for ImageJ/Fiji contains a variety of plugins for processing and
- analysing 2D or 3D images.
+ analyzing 2D or 3D images.
  It was originally designed for the study of plant cell images, but the
  algorithms are generic and can be applied to any type of image.
 \end_layout
@@ -498,7 +498,7 @@ Morphological filters
 \begin_layout Standard
 Morphological filters are very common filters that can be combined together
  to provide large variety of solutions.
- They are local filters, in the sense they consider the neighbourhood of
+ They are local filters, in the sense they consider the neighborhood of
  each pixel/voxel.
  
 \end_layout
@@ -533,7 +533,7 @@ morphological erosion
 \series default
 .
  The morphological dilation computes for each pixel the maximum within its
- neighbourhood (defined by the structuring element), whereas the morphological
+ neighborhood (defined by the structuring element), whereas the morphological
  erosion considers the minimum value within the neighborhood (Fig
 \begin_inset space ~
 \end_inset
@@ -1108,7 +1108,7 @@ Applications to binary images
 \end_layout
 
 \begin_layout Standard
-By choosing the marker image, several operations may be automatised.
+By choosing the marker image, several operations may be automatized.
  For example, computing geodesic reconstruction with image of borders, and
  combining with original image will 
 \series bold
@@ -1834,7 +1834,7 @@ pre-process the image before
 or merge regions based on a similarity criterion afterwards
 \series default
 .
- Several denoising methods are available in Fiji/ImageJ, namely: median
+ Several de-noising methods are available in Fiji/ImageJ, namely: median
  filtering, Gaussian blur, bilateral filtering, etc.
 \end_layout
 
@@ -3348,7 +3348,7 @@ ResultsTable
 
 \begin_layout Description
 Label the label of the particle measured on the current line (it can be
- different from the row number if some labels do no exist in original image)
+ different from the row number if some labels do no exist in original image).
 \end_layout
 
 \begin_layout Description
@@ -3357,12 +3357,12 @@ Bounding
 \end_inset
 
 box returns the minimal and maximal coordinates in each direction for each
- label
+ label.
 \end_layout
 
 \begin_layout Description
 Volume computes the number of voxels comprising the particle, multiplied
- by the volume of an individual voxel 
+ by the volume of an individual voxel.
 \end_layout
 
 \begin_layout Description
@@ -3451,7 +3451,7 @@ ResultsTable
 \end_layout
 
 \begin_layout Subsection
-Spatial organisation
+Spatial organization
 \end_layout
 
 \begin_layout Standard
@@ -3978,7 +3978,7 @@ clear
 \end_inset
 
  a label, by replacing its value by 0, or to merge to adjacent regions,
- by replacing the value of a label by the value of its neighbour.
+ by replacing the value of a label by the value of its neighbor.
 \end_layout
 
 \begin_layout Description
@@ -3987,7 +3987,7 @@ Label
 \end_inset
 
 Boundaries creates a new binary image containing value 255 for pixels/voxels
- having a neighbour with a different value.
+ having a neighbor with a different value.
 \end_layout
 
 \begin_layout Description
@@ -4052,7 +4052,7 @@ Label
 
 Map allows to choose the color map used to display a label image.
  In particular, shuffling the color map and/or choosing a specific color
- for background allows better visualisation than with only grey levels.
+ for background allows better visualization than with only grey levels.
 \end_layout
 
 \begin_layout Description
@@ -4349,7 +4349,7 @@ status open
 \end_layout
 
 \begin_layout Section
-Library organisation
+Library organization
 \end_layout
 
 \begin_layout Standard
@@ -4920,7 +4920,7 @@ sc = new SmoothControl( univ );
 
 \begin_layout Standard
 At the end of the script a dialog is shown to smooth the surfaces at will.
- Each label is added to the 3D scene independently with the nanme "label-X"
+ Each label is added to the 3D scene independently with the name "label-X"
  where X is its label value.
  
 \end_layout
@@ -4990,7 +4990,7 @@ Segmentation and analysis of Arabidospis early embryo
 \end_layout
 
 \begin_layout Plain Layout
-[morphometry of indivdual particles]
+[morphometry of individual particles]
 \end_layout
 
 \begin_layout Plain Layout
