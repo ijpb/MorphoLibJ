@@ -3582,21 +3582,21 @@ status open
 \align center
 \begin_inset Graphics
 	filename images/grains/grains-binary-crop-ext.png
-	width 4cm
+	width 31text%
 
 \end_inset
 
  
 \begin_inset Graphics
 	filename images/grains/grains-binary-crop-lbl-ext.png
-	width 4cm
+	width 31text%
 
 \end_inset
 
  
 \begin_inset Graphics
 	filename images/grains/grains-binary-crop-inv-dist-ext.png
-	width 4cm
+	width 31text%
 
 \end_inset
 
