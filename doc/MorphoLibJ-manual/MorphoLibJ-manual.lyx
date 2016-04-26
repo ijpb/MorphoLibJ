@@ -2775,7 +2775,7 @@ Select input image:
 
 
 \begin_inset listings
-lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
 status open
 
@@ -4235,7 +4235,7 @@ For final users, plugins provide graphical display and intuitive tuning
  of parameters.
  Such plugins can easily be incorporated into a macro:
 \begin_inset listings
-lstparams "showstringspaces=false"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
 status open
 
@@ -4260,7 +4260,7 @@ For plugins developers, operators are available through collections of static
  of code.
  Example:
 \begin_inset listings
-lstparams "showstringspaces=false"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
 status open
 
@@ -4284,7 +4284,7 @@ For core developers, algorithms are implementations of abstract interfaces,
  making it possible to choose or develop the most appropriate one, and to
  monitor execution events.
 \begin_inset listings
-lstparams "showstringspaces=false"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
 status open
 
@@ -4442,7 +4442,7 @@ ical operations (gradient, extended minima and watershed):
 
 \begin_layout Standard
 \begin_inset listings
-lstparams "language=Java"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
 status open
 
@@ -4641,7 +4641,7 @@ n tools it is quite simple to create a script to display each label of an
 
 \begin_layout Standard
 \begin_inset listings
-lstparams "language=Java"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
 status open
 
