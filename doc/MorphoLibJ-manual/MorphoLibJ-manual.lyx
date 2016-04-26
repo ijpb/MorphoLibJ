@@ -1042,14 +1042,36 @@ local
 
 , as the result in a given position do not depend on image values located
  at a sufficient distance.
- Connected components operators are more general as they propagate information
+ 
+\end_layout
+
+\begin_layout Standard
+Connected components operators are more general as they propagate information
  within image based on connectivity between pixels or voxels.
- This leads to powerful operators, such as morphological reconstruction
+ More details can be found in the review of 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Breen_1996_cviu"
+
+\end_inset
+
+.
+ Connecterd components operators encompass powerful operators, such as 
+\series bold
+morphological reconstruction
+\series default
  that allows to reconstruct a marker image by constraining it to a mask.
- An extension of morphological reconstruction is the detection of extended
- minima and maxima, that can be useful as marker detection for segmentation.
- Finally, attribute opening algorithms can filter images based on size or
- range properties, with better preservation of edges than classical filtering.
+ An extension of morphological reconstruction is the detection of 
+\series bold
+extended minima and maxima
+\series default
+, that can be useful as marker detection for segmentation.
+ Finally, 
+\series bold
+attribute opening and filtering
+\series default
+ algorithms can filter images based on size or range properties, with better
+ preservation of edges than classical filtering.
  
 \end_layout
 
@@ -1078,22 +1100,6 @@ conditional dilations or erosions
  Conditional dilations are repeated until no more modification occur (idempotenc
 e condition).
  
-\end_layout
-
-\begin_layout Standard
-The figure 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Geodesic-Reconstruction-Principle"
-
-\end_inset
-
- shows several steps of a geodesic reconstruction by dilation on a pair
- of binary images.
- The mask image is shown in gray, and the marker image is shown in black
- on the first image.
- The reconstructed images at each step are shown in black.
- The markers propagates within the mask until they fill the chosen regions.
 \end_layout
 
 \begin_layout Standard
@@ -1164,6 +1170,22 @@ Principle of the geodesic reconstruction algorithm.
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+The figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Geodesic-Reconstruction-Principle"
+
+\end_inset
+
+ shows several steps of a geodesic reconstruction by dilation on a pair
+ of binary images.
+ The mask image is shown in gray, and the marker image is shown in black
+ on the first image.
+ The reconstructed images at each step are shown in black.
+ The markers propagates within the mask until they fill the chosen regions.
 \end_layout
 
 \begin_layout Subsection
@@ -1426,6 +1448,30 @@ reference "fig:Regional-And-Extended-Maxima"
 \end_layout
 
 \begin_layout Standard
+One problem arising with regional minima or maxima is that they are very
+ sensitive to noise.
+ It is often more convenient to use so-called extended extrema.
+ The principle is to define a tolerance value for filtering the extrema.
+ For example, 
+\series bold
+extended maxima
+\series default
+ are defined as a connected region containing elements such that the difference
+ of the value of each element within the region with the maximal value within
+ the region is lower than the tolerance, and such that the neighbors of
+ the regions all have values smaller than the maximum within the region
+ minus the tolerance.
+ This definition allows the identification of larger extrema, that better
+ takes into account the noise within the image.
+ The 
+\series bold
+extended minima 
+\series default
+are defined in a similar way, and are efficiently used as pre-processing
+ step for watershed segmentation.
+\end_layout
+
+\begin_layout Standard
 \begin_inset Float figure
 wide false
 sideways false
@@ -1480,30 +1526,6 @@ Regional and extended maxima on a grey-level image.
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
-One problem arising with regional minima or maxima is that they are very
- sensitive to noise.
- It is often more convenient to use so-called extended extrema.
- The principle is to define a tolerance value for filtering the extrema.
- For example, 
-\series bold
-extended maxima
-\series default
- are defined as a connected region containing elements such that the difference
- of the value of each element within the region with the maximal value within
- the region is lower than the tolerance, and such that the neighbors of
- the regions all have values smaller than the maximum within the region
- minus the tolerance.
- This definition allows the identification of larger extrema, that better
- takes into account the noise within the image.
- The 
-\series bold
-extended minima 
-\series default
-are defined in a similar way, and are efficiently used as pre-processing
- step for watershed segmentation.
 \end_layout
 
 \begin_layout Standard
@@ -1646,13 +1668,34 @@ Max
 \end_layout
 
 \begin_layout Section
-Attribute filters
+Attribute filtering
 \end_layout
 
 \begin_layout Standard
 Attribute filters aim at removing components of an image based on a size
  criterion, rather than on intensity.
- 
+\end_layout
+
+\begin_layout Subsection
+Application to binary images
+\end_layout
+
+\begin_layout Standard
+When applied to a binary image, size opening consists in identifying each
+ connected components, computing the size of each components, and retain
+ only the connected components whose size is above a specified value (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Area-Opening-Binary"
+
+\end_inset
+
+).
+ This kind of processing is often used to clean-up segmentation results.
 \end_layout
 
 \begin_layout Standard
@@ -1713,22 +1756,8 @@ Example of area opening on a binary image.
 
 \end_layout
 
-\begin_layout Standard
-When applied to a binary image, size opening consists in identifying each
- connected components, computing the size of each components, and retain
- only the connected components whose size is above a specified value (Figure
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Area-Opening-Binary"
-
-\end_inset
-
-).
- This kind of processing is often used to clean-up segmentation results.
+\begin_layout Subsection
+Application to gray scale images
 \end_layout
 
 \begin_layout Standard
@@ -1751,6 +1780,31 @@ reference "fig:Area-Opening-Gray"
 \end_inset
 
 ).
+\end_layout
+
+\begin_layout Standard
+The 
+\begin_inset Quotes eld
+\end_inset
+
+size
+\begin_inset Quotes erd
+\end_inset
+
+ of the components to remove can be defined in various ways, and corresponds
+ to the 
+\begin_inset Quotes eld
+\end_inset
+
+attribute
+\begin_inset Quotes erd
+\end_inset
+
+ of the filter.
+ A typical choice is the number of pixels or voxels of the component.
+ The length of diagonal of the bounding box can also be of interest to discrimin
+ate elongated versus round component shapes.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -1795,7 +1849,8 @@ name "fig:Area-Opening-Gray"
 \end_inset
 
 Example of area opening on a grayscale image.
- Left: original grayscale image of a leaf.
+ Left: original grayscale image of a leaf (image courtesy of Eric Biot,
+ INRA Versailles).
  Middle: grayscale size opening making bright spots disappear.
  Right: comparison with morphological closing with square structuring element
  of radius 1: bright spots are removed, but some veins also disappear.
@@ -1809,6 +1864,22 @@ Example of area opening on a grayscale image.
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+As for classical morphological filters, grayscale attribute closing or tophat
+ can be defined.
+ Grayscale attribute closing consists in removing dark connected components
+ whose size is smaller than a specified value.
+ White [resp.
+ Black] Attribute Top-Hat consider the difference of the attribute opening
+ [resp.
+ closing] with the original image, and can help identify bright [resp.
+ dark] structures with small size.
+\end_layout
+
+\begin_layout Subsection
+Usage
 \end_layout
 
 \begin_layout Standard
@@ -3535,8 +3606,27 @@ geodesic diameter
 may be of interest.
  It corresponds of the largest geodesic distance between two points within
  a region, the geodesic distance being the length of the shortest path joining
- the two points while staying inside the region.
- Results:
+ the two points while staying inside the region 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Lantuejoul1981"
+
+\end_inset
+
+.
+ An example is given on Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Geodesic-Diameter"
+
+\end_inset
+
+.
+ The result of the plugin comprises the following features:
 \end_layout
 
 \begin_layout Description
