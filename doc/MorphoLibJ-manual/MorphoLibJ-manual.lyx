@@ -16,7 +16,7 @@
 \definecolor{lightgray}{rgb}{0.95,0.95,0.95}
 \definecolor{mymauve}{rgb}{0.58,0,0.82}
 
-\hypersetup{colorlinks=true, citecolor=blue}
+\hypersetup{colorlinks=true, citecolor=blue, linkcolor=blue}
 
 
 % package that modifies style of section headers
@@ -493,6 +493,16 @@ Apply changes
 
 \begin_layout Chapter
 Morphological filters
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "chap:Morphological-Filters"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -991,6 +1001,59 @@ Morphological filters (3D)
 \end_layout
 
 \begin_layout Chapter
+Connected components operators
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "chap:Connected-Operators"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The 
+\begin_inset Quotes eld
+\end_inset
+
+classical
+\begin_inset Quotes erd
+\end_inset
+
+ morphological filters presented in chapter 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "chap:Morphological-Filters"
+
+\end_inset
+
+ transform an input image by using the values of pixels or voxels located
+ in a close neighborhood, defined by the structuring element.
+ Such filters can be seen as 
+\begin_inset Quotes eld
+\end_inset
+
+local
+\begin_inset Quotes erd
+\end_inset
+
+, as the result in a given position do not depend on image values located
+ at a sufficient distance.
+ Connected components operators are more general as they propagate information
+ within image based on connectivity between pixels or voxels.
+ This leads to powerful operators, such as morphological reconstruction
+ that allows to reconstruct a marker image by constraining it to a mask.
+ An extension of morphological reconstruction is the detection of extended
+ minima and maxima, that can be useful as marker detection for segmentation.
+ Finally, attribute opening algorithms can filter images based on size or
+ range properties, with better preservation of edges than classical filtering.
+ 
+\end_layout
+
+\begin_layout Section
 Morphological reconstruction
 \end_layout
 
@@ -1000,7 +1063,7 @@ The morphological reconstruction is at the basis of many useful algorithms,
  or maxima in grey level images.
 \end_layout
 
-\begin_layout Section
+\begin_layout Subsection
 Principle
 \end_layout
 
@@ -1103,7 +1166,7 @@ Principle of the geodesic reconstruction algorithm.
 
 \end_layout
 
-\begin_layout Section
+\begin_layout Subsection
 Applications to binary images
 \end_layout
 
@@ -1190,7 +1253,7 @@ Some applications of geodesic reconstruction.
 
 \end_layout
 
-\begin_layout Section
+\begin_layout Subsection
 Applications to grey level images
 \end_layout
 
@@ -1273,6 +1336,62 @@ Some applications of geodesic reconstruction on grey level images.
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+The geodesic reconstruction algorithm is often used within other operators.
+ It is however provided as a plugin to allow its inclusion in user-designed
+ macros or plugins:
+\end_layout
+
+\begin_layout Description
+Geodesic
+\begin_inset space ~
+\end_inset
+
+Reconstruction compute the geodesic reconstruction by erosion or dilation
+ using a marker image and a mask image, and a specified connectivity.
+ 
+\end_layout
+
+\begin_layout Description
+Geodesic
+\begin_inset space ~
+\end_inset
+
+Reconstruction
+\begin_inset space ~
+\end_inset
+
+3D compute the geodesic reconstruction by erosion or dilation on a 3D image.
+\end_layout
+
+\begin_layout Standard
+The kill borders and fill holes are also provided as plugin.
+ Both works for 2D or 3D images of 8, 16 or 32 bits.
+\end_layout
+
+\begin_layout Description
+Kill
+\begin_inset space ~
+\end_inset
+
+Borders remove the particles touching the border of a binary or grey level
+ image, in 2D or 3D
+\end_layout
+
+\begin_layout Description
+Fill
+\begin_inset space ~
+\end_inset
+
+Holes remove holes inside particles in binary images, or remove dark regions
+ surrounded by bright crests in grey level images.
+ Works for both 2D and 3D images.
 \end_layout
 
 \begin_layout Section
@@ -1400,47 +1519,18 @@ key "Soille_2003"
 .
 \end_layout
 
-\begin_layout Section
-Usage
-\end_layout
-
 \begin_layout Standard
 The following operations are available in the 
 \begin_inset Quotes eld
 \end_inset
 
 Plugins\SpecialChar \menuseparator
-MorphoLibJ
+MorphoLibJ\SpecialChar \menuseparator
+Minima and Maxima
 \begin_inset Quotes erd
 \end_inset
 
- menu.
- Some plugins correspond to common operations and encompass several processing
- steps:
-\end_layout
-
-\begin_layout Description
-Kill
-\begin_inset space ~
-\end_inset
-
-Borders remove the particles touching the border of a binary or grey level
- image, in 2D or 3D
-\end_layout
-
-\begin_layout Description
-Fill
-\begin_inset space ~
-\end_inset
-
-Holes remove holes inside particles in binary images, or remove dark regions
- surrounded by bright crests in grey level images.
- Works for both 2D and 3D images.
-\end_layout
-
-\begin_layout Standard
-Several plugins allow the computation of binary minima or maxima from grey
- level images, and their combination with grey level images:
+ menu :
 \end_layout
 
 \begin_layout Description
@@ -1555,31 +1645,215 @@ Max
 3D impose binary minima or maxima on a 3D grey level image.
 \end_layout
 
-\begin_layout Standard
-The geodesic reconstruction algorithm is provided as a plugin to allow its
- inclusion in user-designed macros or plugins:
+\begin_layout Section
+Attribute filters
 \end_layout
 
-\begin_layout Description
-Geodesic
-\begin_inset space ~
-\end_inset
-
-Reconstruction compute the geodesic reconstruction by erosion or dilation
- using a marker image and a mask image, and a specified connectivity.
+\begin_layout Standard
+Attribute filters aim at removing components of an image based on a size
+ criterion, rather than on intensity.
  
 \end_layout
 
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/grains/grains-binary-crop-ext.png
+	width 31text%
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/grains/grains-binary-crop-lbl-ext.png
+	width 31text%
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/grains/grains-binary-crop-lbl-sizeOpening-ext.png
+	width 31text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Area-Opening-Binary"
+
+\end_inset
+
+Example of area opening on a binary image.
+ Left: original binary image.
+ Middle: identification of connected components.
+ Right: only the connected components with a sufficient size (defined by
+ the area), have been retained.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+When applied to a binary image, size opening consists in identifying each
+ connected components, computing the size of each components, and retain
+ only the connected components whose size is above a specified value (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Area-Opening-Binary"
+
+\end_inset
+
+).
+ This kind of processing is often used to clean-up segmentation results.
+\end_layout
+
+\begin_layout Standard
+When applied to a gray level image, size opening each gray level in the
+ image computes the connected components of the binary image of values greater
+ than or equal to this threshold, retains the components whose size is greater
+ than a specified value, and recombines the individual results.
+ The result is a gray scale image whose bright structures with size below
+ a given value have disappeared.
+ A great advantage of this filter is that the contours of the structures
+ area better preserved than opening with a structuring element (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Area-Opening-Gray"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/leaf/leaf_crop400.tif
+	width 31text%
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/leaf/leaf_crop400-areaOpen.tif
+	width 31text%
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/leaf/leaf_crop400-OpeningSq1.tif
+	width 31text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Area-Opening-Gray"
+
+\end_inset
+
+Example of area opening on a grayscale image.
+ Left: original grayscale image of a leaf.
+ Middle: grayscale size opening making bright spots disappear.
+ Right: comparison with morphological closing with square structuring element
+ of radius 1: bright spots are removed, but some veins also disappear.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The following plugins are available within MorphoLibJ:
+\end_layout
+
 \begin_layout Description
-Geodesic
+Gray
 \begin_inset space ~
 \end_inset
 
-Reconstruction
+Scale
 \begin_inset space ~
 \end_inset
 
-3D compute the geodesic reconstruction by erosion or dilation on a 3D image.
+Attribute
+\begin_inset space ~
+\end_inset
+
+Filtering opens a dialog to performs between attribute opening, closing,
+ and black or white top-hat on a planar grayscale image.
+ Two size criteria can be used : the area (number of pixel), or the diameter
+ (length of the diagonal of the bounding box).
+\end_layout
+
+\begin_layout Description
+Gray
+\begin_inset space ~
+\end_inset
+
+Scale
+\begin_inset space ~
+\end_inset
+
+Size
+\begin_inset space ~
+\end_inset
+
+Opening
+\begin_inset space ~
+\end_inset
+
+(2D/3D) opens a dialog to performs size opening, closing, and black or white
+ top-hat on a 2D or 3D grayscale image.
+ Two size criterium is the number of pixles or voxels.
 \end_layout
 
 \begin_layout Chapter
