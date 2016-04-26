@@ -3,7 +3,6 @@
  */
 package inra.ijpb.plugins;
 
-import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.DialogListener;
 import ij.gui.GenericDialog;
