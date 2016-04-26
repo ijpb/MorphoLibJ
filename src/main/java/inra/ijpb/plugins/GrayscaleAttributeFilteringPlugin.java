@@ -153,7 +153,6 @@ public class GrayscaleAttributeFilteringPlugin implements ExtendedPlugInFilter, 
 	@Override
 	public int setup(String arg, ImagePlus imp)
 	{
-		this.imagePlus = imp;
 		// Called at the end for cleaning up the results
 		if (arg.equals("final")) 
 		{
@@ -202,8 +201,8 @@ public class GrayscaleAttributeFilteringPlugin implements ExtendedPlugInFilter, 
         	return DONE;
         }	
         parseDialogParameters(gd);
-			
-		// clean up an return 
+
+        // clean up an return
 		gd.dispose();
 		return flags;
 	}
@@ -236,7 +235,8 @@ public class GrayscaleAttributeFilteringPlugin implements ExtendedPlugInFilter, 
 		}
 		
 		// For top-hat and bottom-hat, we consider difference with original image
-		if (this.operation == Operation.BOTTOM_HAT || this.operation == Operation.BOTTOM_HAT)
+		if (this.operation == Operation.TOP_HAT ||
+				this.operation == Operation.BOTTOM_HAT)
 		{
 			double maxDiff = 0;
 			for (int i = 0; i < image.getPixelCount(); i++)
@@ -250,17 +250,17 @@ public class GrayscaleAttributeFilteringPlugin implements ExtendedPlugInFilter, 
 		}
 		
 		// For closing, invert back the result
-		if (this.operation == Operation.CLOSING)
+		else if (this.operation == Operation.CLOSING)
 		{
 			this.result.invert();
 		}
-		
+
 		if (previewing)
 		{
 			// Iterate over pixels to change value of reference image
 			for (int i = 0; i < image.getPixelCount(); i++)
 			{
-				image.set(i, result.get(i));
+				image.setf(i, result.getf(i));
 			}
 			image.setMinAndMax(result.getMin(), result.getMax());
 		}
@@ -293,6 +293,7 @@ public class GrayscaleAttributeFilteringPlugin implements ExtendedPlugInFilter, 
 			for (int i = 0; i < image.getPixelCount(); i++)
 				image.set(i, this.baseImage.get(i));
 		}
+		image.resetMinAndMax();
 		imagePlus.updateAndDraw();
 	}
 	
@@ -306,6 +307,7 @@ public class GrayscaleAttributeFilteringPlugin implements ExtendedPlugInFilter, 
 		this.attribute 		= Attribute.fromLabel(gd.getNextChoice());
 		this.minimumValue	= (int) gd.getNextNumber();
 		this.connectivity 	= connectivityValues[gd.getNextChoiceIndex()];
+		this.previewing 	= gd.getPreviewCheckbox().getState();
     }
 
 	@Override
