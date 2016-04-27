@@ -1899,9 +1899,9 @@ Attribute
 \begin_inset space ~
 \end_inset
 
-Filtering opens a dialog to performs between attribute opening, closing,
+Filtering opens a dialog to perform between attribute opening, closing,
  and black or white top-hat on a planar grayscale image.
- Two size criteria can be used : the area (number of pixel), or the diameter
+ Two size criteria can be used : the area (number of pixels), or the diameter
  (length of the diagonal of the bounding box).
 \end_layout
 
@@ -1922,7 +1922,7 @@ Opening
 \begin_inset space ~
 \end_inset
 
-(2D/3D) opens a dialog to performs size opening, closing, and black or white
+(2D/3D) opens a dialog to perform size opening, closing, and black or white
  top-hat on a 2D or 3D grayscale image.
  Two size criteria is the number of pixels or voxels.
 \end_layout
