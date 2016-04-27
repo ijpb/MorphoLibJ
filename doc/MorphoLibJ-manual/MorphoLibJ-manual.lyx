@@ -272,8 +272,8 @@ key "Schneider_2012_nmeth,Schindelin_2012_nmeth"
 \series bold
 morphological filtering
 \series default
- for 2D/3D and binary or grey level images: erosion & dilation, closing
- & opening, morphological gradient & Laplacian, top-hat...
+ for 2D/3D and binary or grayscale images: erosion & dilation, closing &
+ opening, morphological gradient & Laplacian, top-hat...
 \end_layout
 
 \begin_layout Itemize
@@ -281,8 +281,8 @@ morphological filtering
 \series bold
 morphological reconstruction
 \series default
-, for 2D/3D and binary or grey level images, allowing fast detection of
- regional or extended extrema, removing of borders, or hole filling
+, for 2D/3D and binary or grayscale images, allowing fast detection of regional
+ or extended extrema, removing of borders, or hole filling
 \end_layout
 
 \begin_layout Itemize
@@ -599,7 +599,7 @@ name "fig:Morpho-Dilation-Erosion"
 
 \end_inset
 
-Some examples of morphological filters on a grey level image.
+Some examples of morphological filters on a grayscale image.
  Original image, result of dilation with a square structuring element, and
  result of erosion with the same structuring element.
 \end_layout
@@ -867,7 +867,7 @@ MorphoLibJ
 
  menu.
  Filters are implemented for both 2D and 3D images, and work for binary,
- gray level or color (RGB) images.
+ grayscale or color (RGB) images.
 \end_layout
 
 \begin_layout Subsection
@@ -1082,7 +1082,7 @@ Morphological reconstruction
 \begin_layout Standard
 The morphological reconstruction is at the basis of many useful algorithms,
  such as border removing, hole filling, or detection of regional minima
- or maxima in grey level images.
+ or maxima in grayscale images.
 \end_layout
 
 \begin_layout Subsection
@@ -1276,14 +1276,14 @@ Some applications of geodesic reconstruction.
 \end_layout
 
 \begin_layout Subsection
-Applications to grey level images
+Applications to grayscale images
 \end_layout
 
 \begin_layout Standard
-Geodesic reconstructions can be applied to grey level images.
+Geodesic reconstructions can be applied to grayscale images.
  By manually choosing binary markers such that they overlay specific structures,
  and after applying a geodesic reconstruction by dilation, it is possible
- to obtain a grey level image containing only the chosen structures (Figure
+ to obtain a grayscale image containing only the chosen structures (Figure
 \begin_inset space ~
 \end_inset
 
@@ -1299,7 +1299,7 @@ reference "fig:Geodesic-Reconstruction-Grey"
 \series bold
 border kill 
 \series default
-operation can also be applied on grey level images, making possible to rapidly
+operation can also be applied on grayscale images, making possible to rapidly
  remove structures touching the image borders, while keeping the intensity
  information within the structures.
 \end_layout
@@ -1345,7 +1345,7 @@ name "fig:Geodesic-Reconstruction-Grey"
 
 \end_inset
 
-Some applications of geodesic reconstruction on grey level images.
+Some applications of geodesic reconstruction on grayscale images.
  From left to right: original image with superimposed markers, result of
  geodesic reconstruction by dilation, result of border kill operation.
 \end_layout
@@ -1402,7 +1402,7 @@ Kill
 \begin_inset space ~
 \end_inset
 
-Borders remove the particles touching the border of a binary or grey level
+Borders remove the particles touching the border of a binary or grayscale
  image, in 2D or 3D
 \end_layout
 
@@ -1412,7 +1412,7 @@ Fill
 \end_inset
 
 Holes remove holes inside particles in binary images, or remove dark regions
- surrounded by bright crests in grey level images.
+ surrounded by bright crests in grayscale images.
  Works for both 2D and 3D images.
 \end_layout
 
@@ -1512,7 +1512,7 @@ name "fig:Regional-And-Extended-Maxima"
 
 \end_inset
 
-Regional and extended maxima on a grey-level image.
+Regional and extended maxima on a grayscale image.
  Left: original image.
  Middle: result of regional maxima.
  Right: result of extended maxima.
@@ -1568,7 +1568,7 @@ Min
 \begin_inset space ~
 \end_inset
 
-Max compute regional minima or extrema in grey level or binary image, with
+Max compute regional minima or extrema in grayscale or binary image, with
  specified connectivity
 \end_layout
 
@@ -1589,8 +1589,8 @@ Max
 \begin_inset space ~
 \end_inset
 
-3D compute regional minima or extrema in 3D grey level or binary image,
- with specified connectivity
+3D compute regional minima or extrema in 3D grayscale or binary image, with
+ specified connectivity
 \end_layout
 
 \begin_layout Description
@@ -1606,7 +1606,7 @@ Min
 \begin_inset space ~
 \end_inset
 
-Max compute extended minima or extrema in grey level or binary image, with
+Max compute extended minima or extrema in grayscale or binary image, with
  specified connectivity
 \end_layout
 
@@ -1627,8 +1627,8 @@ Max
 \begin_inset space ~
 \end_inset
 
-3D compute extended minima or extrema in 3D grey level or binary image,
- with specified connectivity
+3D compute extended minima or extrema in 3D grayscale or binary image, with
+ specified connectivity
 \end_layout
 
 \begin_layout Description
@@ -1644,7 +1644,7 @@ Min
 \begin_inset space ~
 \end_inset
 
-Max impose binary minima or maxima on a grey level image.
+Max impose binary minima or maxima on a grayscale image.
 \end_layout
 
 \begin_layout Description
@@ -1664,7 +1664,7 @@ Max
 \begin_inset space ~
 \end_inset
 
-3D impose binary minima or maxima on a 3D grey level image.
+3D impose binary minima or maxima on a 3D grayscale image.
 \end_layout
 
 \begin_layout Section
@@ -1757,15 +1757,15 @@ Example of area opening on a binary image.
 \end_layout
 
 \begin_layout Subsection
-Application to gray scale images
+Application to grayscale images
 \end_layout
 
 \begin_layout Standard
-When applied to a gray level image, size opening each gray level in the
- image computes the connected components of the binary image of values greater
+When applied to a grayscale image, size opening each gray level in the image
+ computes the connected components of the binary image of values greater
  than or equal to this threshold, retains the components whose size is greater
  than a specified value, and recombines the individual results.
- The result is a gray scale image whose bright structures with size below
+ The result is a grayscale image whose bright structures with size below
  a given value have disappeared.
  A great advantage of this filter is that the contours of the structures
  area better preserved than opening with a structuring element (Figure
@@ -1924,7 +1924,7 @@ Opening
 
 (2D/3D) opens a dialog to perform size opening, closing, and black or white
  top-hat on a 2D or 3D grayscale image.
- Two size criteria is the number of pixels or voxels.
+ The size criterium is the number of pixels or voxels.
 \end_layout
 
 \begin_layout Chapter
@@ -1943,9 +1943,9 @@ The
 \series bold
 watershed algorithm
 \series default
- assimilates the grey level image to a digital elevation model, and aims
+ assimilates the grayscale image to a digital elevation model, and aims
  at detecting the different catchment basins.
- In the grey-level image, the catchment basins correspond to dark regions
+ In the grayscale image, the catchment basins correspond to dark regions
  surrounded by bright structures (the 
 \begin_inset Quotes eld
 \end_inset
@@ -3414,7 +3414,7 @@ Analyze Particles...
 \begin_inset Quotes erd
 \end_inset
 
- function that operates directly on a gray level image.
+ function that operates directly on a grayscale image.
  Most MorphoLibJ plugins consider the current image as input, that must
  be either binary (only one region is considered), or label (typically the
  result of a connected components labeling, see section 
@@ -4563,7 +4563,7 @@ Label
 
 Map allows to choose the color map used to display a label image.
  In particular, shuffling the color map and/or choosing a specific color
- for background allows better visualization than with only grey levels.
+ for background allows better visualization than with only gray levels.
 \end_layout
 
 \begin_layout Description
@@ -4884,7 +4884,7 @@ inra.ijpb.label contains the utilities for label images (cropping, size opening,
 \end_layout
 
 \begin_layout Description
-inra.ijpb.measure contains the tools for geometric and grey level characterization
+inra.ijpb.measure contains the tools for geometric and gray level characterization
  of 2D or 3D images
 \end_layout
 
@@ -4913,7 +4913,7 @@ key "Poulet_2015_bmc"
 
 \end_inset
 
-, grey level granulometries 
+, gray level granulometries 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Devaux2014"
