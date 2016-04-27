@@ -3395,7 +3395,7 @@ Measurements
 \end_layout
 
 \begin_layout Section
-Label analysis
+Particle analysis
 \end_layout
 
 \begin_layout Standard
@@ -3434,7 +3434,7 @@ ResultsTable
 \end_layout
 
 \begin_layout Subsection
-Particle analysis
+Particle analysis 2D
 \end_layout
 
 \begin_layout Standard
@@ -3442,7 +3442,8 @@ Particle analysis
 status open
 
 \begin_layout Plain Layout
-TODO : refonte des plugins d'analyse ?
+TODO : refonte des plugins d'analyse ? d'abord présenter les mesures dans
+ un cadre général, puis les plugins ?
 \end_layout
 
 \end_inset
@@ -3472,7 +3473,19 @@ Region Morphometry
  The implemented method for perimeter measurement aims at providing a better
  estimate of the perimeter than traditional boundary pixel count.
  The principle is to consider a set of lines with various orientations,
- and to count the number of intersections with the region(s) of interest.
+ and to count the number of intersections with the region(s) of interest
+ (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Measurements-Principles"
+
+\end_inset
+
+).
  The number of intersections is proportional to the perimeter 
 \begin_inset CommandInset citation
 LatexCommand citep
@@ -3482,8 +3495,59 @@ key "Legland2007,Ohser2009"
 
 .
  By averaging over all possible directions, the estimate is unbiased.
- Perimeter is usually estiamted using two (horizontal and vertical) or four
- (adding diagonals) directions.
+ Perimeter is usually estimated using either two directions (horizontal
+ and vertical), or four directions (by adding the diagonals).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/analysis/crofton-principle-2d.png
+	lyxscale 50
+	height 4.5cm
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/analysis/geodesic-diameter.png
+	height 4.5cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Measurements-Principles"
+
+\end_inset
+
+Computation of the perimeter and of geodesic diameter.
+ Left: principle of perimeter estimation by counting intersections with
+ set of lines.
+ Right: illustration of the geodesic diameter measured on a non convex particle.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -3563,13 +3627,6 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename images/analysis/crofton-principle-2d.png
-	width 6cm
-
-\end_inset
-
-
-\begin_inset Graphics
 	filename images/analysis/36_manual1-geodiam.png
 	lyxscale 75
 	width 6cm
@@ -3589,10 +3646,8 @@ name "fig:Geodesic-Diameter"
 
 \end_inset
 
-Computation of the perimeter and of geodesic diameter.
- Left: principle of perimeter estimation by counting intersections with
- set of lines.
- Right: geodesic diameter on a segmented image from the DRIVE database 
+Computation of the geodesic diameter on a segmented image from the DRIVE
+ database 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Staal_2004_tmi"
@@ -3840,10 +3895,98 @@ The
 \series bold
 region adjacency graph 
 \series default
-plugin gives access to the neighborhood relationship between adjacent regions.
+plugin gives access to the neighborhood relationship between adjacent regions
+ (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Region-Adjacency-Graph"
+
+\end_inset
+
+).
  This can be particularly informative for exploring collections of cells
- within cellular tissues.
+ within cellular tissues 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Florindo_2016_botanique"
+
+\end_inset
+
+.
  
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/analysis/maize-clsm.png
+	lyxscale 60
+	width 31text%
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/analysis/maize-clsm-watDyn10.png
+	lyxscale 60
+	width 31text%
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/analysis/maize-clsm-rag.png
+	lyxscale 60
+	width 31text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Region-Adjacency-Graph"
+
+\end_inset
+
+Computation of the Region Adjacency Graph on a microscopy image of plant
+ tissue.
+ Left: original image.
+ Middle: result of watershed segmentation.
+ Right: overlay of edges representing adjacent regions.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -3878,19 +4021,6 @@ reference "sec:Label-Edition-plugin"
  The output of the plugin is a results table with as many rows as the number
  of pairs of adjacent regions, containing the labels of the two adjacent
  regions.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-Region adjacency graph -> use maize image
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
