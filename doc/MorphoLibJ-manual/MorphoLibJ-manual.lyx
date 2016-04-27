@@ -1056,7 +1056,7 @@ key "Breen_1996_cviu"
 \end_inset
 
 .
- Connecterd components operators encompass powerful operators, such as 
+ Connected components operators encompass powerful operators, such as 
 \series bold
 morphological reconstruction
 \series default
@@ -1682,8 +1682,8 @@ Application to binary images
 
 \begin_layout Standard
 When applied to a binary image, size opening consists in identifying each
- connected components, computing the size of each components, and retain
- only the connected components whose size is above a specified value (Figure
+ connected component, computing the size of each component, and retain only
+ the connected components whose size is above a specified value (Figure
 \begin_inset space ~
 \end_inset
 
@@ -1872,9 +1872,9 @@ As for classical morphological filters, grayscale attribute closing or tophat
  Grayscale attribute closing consists in removing dark connected components
  whose size is smaller than a specified value.
  White [resp.
- Black] Attribute Top-Hat consider the difference of the attribute opening
+ Black] Attribute Top-Hat considers the difference of the attribute opening
  [resp.
- closing] with the original image, and can help identify bright [resp.
+ closing] with the original image, and can help identifying bright [resp.
  dark] structures with small size.
 \end_layout
 
@@ -1924,7 +1924,7 @@ Opening
 
 (2D/3D) opens a dialog to performs size opening, closing, and black or white
  top-hat on a 2D or 3D grayscale image.
- Two size criterium is the number of pixles or voxels.
+ Two size criteria is the number of pixels or voxels.
 \end_layout
 
 \begin_layout Chapter
