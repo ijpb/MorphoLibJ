@@ -15,14 +15,14 @@ import inra.ijpb.measure.GeometricMeasures3D;
 /**
  * Creates a new image larger than the original one, and copies each label identically
  * but shifted by a given dilation coefficient. This results in 2D or 3D images with 
- * fewer labels touching each other, making them easier to visualize.</p>  
+ * fewer labels touching each other, making them easier to visualize.  
  *
- * The idea is to transform a label image in the following way:
+ * <p>The idea is to transform a label image in the following way:
  * <pre><code>
  *                  1 1 1 0 0 0 0 0
  * 1 1 1 0 2 2      1 1 1 0 0 0 2 2
  * 1 1 1 0 2 2      0 0 0 0 0 0 2 2
- * 0 0 0 0 2 2  =>  0 0 0 0 0 0 2 2
+ * 0 0 0 0 2 2  =&gt;  0 0 0 0 0 0 2 2
  * 3 3 3 0 2 2      0 0 0 0 0 0 2 2     
  * 3 3 3 0 2 2      3 3 3 0 0 0 2 2
  *                  3 3 3 0 0 0 0 0

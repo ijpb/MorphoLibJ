@@ -81,8 +81,8 @@ public class AttributeFiltering
 	 * 
 	 * @param image
 	 *            input 3D grayscale image
-	 * @param minArea
-	 *            the minimum number of pixels at a given gray level
+	 * @param minVolume
+	 *            the minimum number of voxels at a given gray level
 	 * @return the result of grayscale size opening on the input image
 	 */
 	public static final ImageStack volumeOpening(ImageStack image, int minVolume)

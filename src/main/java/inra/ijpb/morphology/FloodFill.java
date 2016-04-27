@@ -777,7 +777,7 @@ public class FloodFill
 	 *            the new value of the connected component at (x,y,z)
 	 * @param conn
 	 * 			  the connectivity to use, either 6 or 26
-	 * @dperecated use FloodFill3D.floodFill instead.
+	 * @deprecated use FloodFill3D.floodFill instead.
 	 */
 	@Deprecated
 	public final static void floodFill(ImageStack image, int x, int y, int z,

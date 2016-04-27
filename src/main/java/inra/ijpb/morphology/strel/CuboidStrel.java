@@ -151,7 +151,7 @@ public class CuboidStrel extends AbstractSeparableStrel3D
 	 * 
 	 * @return a collection of three in place structuring elements
 	 * 
-	 * @see ijt.morphology.SeparableStrel#separate()
+	 * @see inra.ijpb.morphology.strel.SeparableStrel#separate()
 	 */
 	@Override
 	public Collection<InPlaceStrel3D> decompose()

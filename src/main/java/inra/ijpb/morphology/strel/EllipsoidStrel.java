@@ -8,7 +8,7 @@ import ij.plugin.Filters3D;
 import inra.ijpb.morphology.Strel3D;
 
 /**
- * A 3D structuring element with an ellipsoid shape, oriented along the three
+ * A 3D structuring element with an ellipsoidal shape, oriented along the three
  * main axes of the image.
  *
  * @see BallStrel
@@ -28,7 +28,7 @@ public class EllipsoidStrel extends AbstractStrel3D
 	// Constructors
 	
 	/**
-	 * Creates a structuring element with a spherical shape of the given radius.
+	 * Creates a structuring element with an ellipsoidal shape of the given radius.
 	 * 
 	 * @param radius
 	 *            the radius of the structuring element, in pixels
@@ -45,10 +45,10 @@ public class EllipsoidStrel extends AbstractStrel3D
 	}
 	
 	/**
-	 * Creates a structuring element with a spherical shape of the given radius.
+	 * Creates a structuring element with an ellipsoidal shape of the given diameter.
 	 * 
-	 * @param xRadius
-	 *            the radius of the structuring element, in pixels
+	 * @param diam
+	 *            the diameter of the structuring element, in pixels
 	 * @return a new structuring element with spherical shape and specified diameter
 	 */
 	public final static EllipsoidStrel fromDiameter(double diam)
@@ -65,7 +65,7 @@ public class EllipsoidStrel extends AbstractStrel3D
 	}
 	
 	/**
-	 * Private constructor of Ball structuring element.
+	 * Private constructor of Ellipsoid structuring element.
 	 * 
 	 * @param radius
 	 *            the radius of the structuring element, in pixels
@@ -176,9 +176,9 @@ public class EllipsoidStrel extends AbstractStrel3D
 	}
 
 	/**
-	 * Returns this instance, as a ball is symmetric.
+	 * Returns this instance, as an ellipsoid is symmetric.
 	 * 
-	 * @return this instance of BallStrel
+	 * @return this instance of EllipsoidStrel
 	 */
 	@Override
 	public Strel3D reverse()

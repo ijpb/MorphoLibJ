@@ -132,7 +132,7 @@ public interface Strel3D extends Algo {
 		 *            the radius of the structuring element in the x-direction, in pixels
 		 * @param radiusY
 		 *            the radius of the structuring element in the y-direction, in pixels
-		 * @param radiusX
+		 * @param radiusZ
 		 *            the radius of the structuring element in the z-direction, in pixels
 		 * @return a new structuring element
 		 * 
@@ -193,7 +193,13 @@ public interface Strel3D extends Algo {
 		/**
 		 * Creates a structuring element of the given type and with the
 		 * specified diameter.
-		 * @param diam the orthogonal diameter of the structuring element (max of x and y sizes), in pixels
+		 * 
+		 * @param diamX
+		 *            the diameter of the structuring element in the X direction
+		 * @param diamY
+		 *            the diameter of the structuring element in the Y direction
+		 * @param diamZ
+		 *            the diameter of the structuring element in the Z direction
 		 * @return a new structuring element
 		 */
 		public Strel3D fromDiameterList(int diamX, int diamY, int diamZ) 

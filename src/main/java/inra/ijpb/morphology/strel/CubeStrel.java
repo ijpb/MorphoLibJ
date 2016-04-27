@@ -102,7 +102,7 @@ public class CubeStrel extends AbstractSeparableStrel3D
 	 * 
 	 * @return a collection of three in place structuring elements
 	 * 
-	 * @see ijt.morphology.SeparableStrel#separate()
+	 * @see inra.ijpb.morphology.strel.SeparableStrel#separate()
 	 */
 	@Override
 	public Collection<InPlaceStrel3D> decompose()
@@ -115,7 +115,7 @@ public class CubeStrel extends AbstractSeparableStrel3D
 	}
 
 	/* (non-Javadoc)
-	 * @see ijt.morphology.Strel#getMask()
+	 * @see inra.ijpb.morphology.Strel#getMask()
 	 */
 	@Override
 	public int[][][] getMask3D()
@@ -135,7 +135,7 @@ public class CubeStrel extends AbstractSeparableStrel3D
 	}
 
 	/* (non-Javadoc)
-	 * @see ijt.morphology.Strel#getOffset()
+	 * @see inra.ijpb.morphology.Strel#getOffset()
 	 */
 	@Override
 	public int[] getOffset()
@@ -170,7 +170,7 @@ public class CubeStrel extends AbstractSeparableStrel3D
 	}
 
 	/* (non-Javadoc)
-	 * @see ijt.morphology.Strel#getSize()
+	 * @see inra.ijpb.morphology.Strel#getSize()
 	 */
 	@Override
 	public int[] getSize()
@@ -179,7 +179,7 @@ public class CubeStrel extends AbstractSeparableStrel3D
 	}
 
 	/* (non-Javadoc)
-	 * @see ijt.morphology.Strel#reverse()
+	 * @see inra.ijpb.morphology.Strel#reverse()
 	 */
 	@Override
 	public CubeStrel reverse()

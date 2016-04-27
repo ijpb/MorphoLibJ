@@ -38,10 +38,10 @@ public class BallStrel extends AbstractStrel3D
 	}
 	
 	/**
-	 * Creates a structuring element with a spherical shape of the given radius.
+	 * Creates a structuring element with a spherical shape of the given diameter.
 	 * 
-	 * @param radius
-	 *            the radius of the structuring element, in pixels
+	 * @param diam
+	 *            the diameter of the ball, in pixels
 	 * @return a new structuring element with ball shape and specified radius
 	 */
 	public final static BallStrel fromDiameter(double diam)

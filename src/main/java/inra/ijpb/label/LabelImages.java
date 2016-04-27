@@ -833,7 +833,7 @@ public class LabelImages
 	 * @param image
 	 *            a label image
 	 * @return a new image containing only the largest label
-	 * @throw RuntimeException if the image is empty
+	 * @throws RuntimeException if the image is empty
 	 */
 	public static final ImageProcessor keepLargestLabel(ImageProcessor image)
 	{
@@ -875,7 +875,7 @@ public class LabelImages
 	 * @param image
 	 *            a label image
 	 * @return a new image containing only the largest label
-	 * @throw RuntimeException if the image is empty
+	 * @throws RuntimeException if the image is empty
 	 */
 	public static final ImageStack keepLargestLabel(ImageStack image) 
 	{
