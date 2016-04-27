@@ -3468,10 +3468,12 @@ Region Morphometry
 \end_inset
 
 ).
- The implemented perimeter measurement aims at providing a better estimate
- of the perimeter than traditional boundary pixel count.
+ For 2D particles, the area, the perimeter and derived features are implemened.
+ The implemented method for perimeter measurement aims at providing a better
+ estimate of the perimeter than traditional boundary pixel count.
  The principle is to consider a set of lines with various orientations,
- and count the number of intersections with the region(s) of interest 
+ and to count the number of intersections with the region(s) of interest.
+ The number of intersections is proportional to the perimeter 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Legland2007,Ohser2009"
@@ -3479,7 +3481,13 @@ key "Legland2007,Ohser2009"
 \end_inset
 
 .
- The columns of the results table are:
+ By averaging over all possible directions, the estimate is unbiased.
+ Perimeter is usually estiamted using two (horizontal and vertical) or four
+ (adding diagonals) directions.
+\end_layout
+
+\begin_layout Standard
+The columns of the results table are:
 \end_layout
 
 \begin_layout Description
@@ -3555,6 +3563,13 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
+	filename images/analysis/crofton-principle-2d.png
+	width 6cm
+
+\end_inset
+
+
+\begin_inset Graphics
 	filename images/analysis/36_manual1-geodiam.png
 	lyxscale 75
 	width 6cm
@@ -3574,8 +3589,10 @@ name "fig:Geodesic-Diameter"
 
 \end_inset
 
-Computation of the geodesic diameter on a segmented image from the DRIVE
- database 
+Computation of the perimeter and of geodesic diameter.
+ Left: principle of perimeter estimation by counting intersections with
+ set of lines.
+ Right: geodesic diameter on a segmented image from the DRIVE database 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Staal_2004_tmi"
@@ -3814,7 +3831,7 @@ ResultsTable
 .
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Spatial organization
 \end_layout
 
