@@ -1672,8 +1672,15 @@ Attribute filtering
 \end_layout
 
 \begin_layout Standard
-Attribute filters aim at removing components of an image based on a size
- criterion, rather than on intensity.
+Attribute filters aim at removing components of an image based on a certain
+ size criterion, rather than on intensity.
+ The most common and useful criterion is the number of pixels/voxels (i.e.,
+ the area or volume).
+ For example, a morphological size opening operation with a threshold value
+ of 20 will remove all blobs containing fewer than 20 voxels.
+ The length of the diagonal of the bounding box can also be of interest
+ to discriminate elongated versus round component shapes.
+ 
 \end_layout
 
 \begin_layout Subsection
@@ -1681,9 +1688,10 @@ Application to binary images
 \end_layout
 
 \begin_layout Standard
-When applied to a binary image, size opening consists in identifying each
- connected component, computing the size of each component, and retain only
- the connected components whose size is above a specified value (Figure
+When applied to a binary image, attribute opening consists in identifying
+ each connected component, computing the attribute measurement of each component
+, and retain only the connected components whose measurement is above a
+ specified value (Figure
 \begin_inset space ~
 \end_inset
 
@@ -1761,12 +1769,14 @@ Application to grayscale images
 \end_layout
 
 \begin_layout Standard
-When applied to a grayscale image, size opening each gray level in the image
- computes the connected components of the binary image of values greater
- than or equal to this threshold, retains the components whose size is greater
- than a specified value, and recombines the individual results.
- The result is a grayscale image whose bright structures with size below
- a given value have disappeared.
+When applied to a grayscale image, attribute opening consists in generating
+ a series of binary images by thresholding at each distinct gray level in
+ the image.
+ The binary attribute opening described above is then applied independently
+ to each binary image and the grayscale output is computed as the union
+ of the binary results.
+ The final output is a grayscale image whose bright structures with the
+ attribute below a given value have disappeared.
  A great advantage of this filter is that the contours of the structures
  area better preserved than opening with a structuring element (Figure
 \begin_inset space ~
@@ -1780,31 +1790,6 @@ reference "fig:Area-Opening-Gray"
 \end_inset
 
 ).
-\end_layout
-
-\begin_layout Standard
-The 
-\begin_inset Quotes eld
-\end_inset
-
-size
-\begin_inset Quotes erd
-\end_inset
-
- of the components to remove can be defined in various ways, and corresponds
- to the 
-\begin_inset Quotes eld
-\end_inset
-
-attribute
-\begin_inset Quotes erd
-\end_inset
-
- of the filter.
- A typical choice is the number of pixels or voxels of the component.
- The length of diagonal of the bounding box can also be of interest to discrimin
-ate elongated versus round component shapes.
- 
 \end_layout
 
 \begin_layout Standard
@@ -1883,7 +1868,8 @@ Usage
 \end_layout
 
 \begin_layout Standard
-The following plugins are available within MorphoLibJ:
+So far, the following attribute filtering plugins are available within MorphoLib
+J:
 \end_layout
 
 \begin_layout Description
@@ -1900,8 +1886,8 @@ Attribute
 \end_inset
 
 Filtering opens a dialog to perform between attribute opening, closing,
- and black or white top-hat on a planar grayscale image.
- Two size criteria can be used : the area (number of pixels), or the diameter
+ and black or white top-hat on a planar (2D) grayscale image.
+ Two size criteria can be used: the area (number of pixels), or the diameter
  (length of the diagonal of the bounding box).
 \end_layout
 
@@ -1922,9 +1908,8 @@ Opening
 \begin_inset space ~
 \end_inset
 
-(2D/3D) opens a dialog to perform size opening, closing, and black or white
- top-hat on a 2D or 3D grayscale image.
- The size criterium is the number of pixels or voxels.
+(2D/3D) opens a dialog to perform size opening on a 2D or 3D grayscale image.
+ The size criterion is the number of pixels or voxels.
 \end_layout
 
 \begin_layout Chapter
