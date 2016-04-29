@@ -135,10 +135,10 @@ public class GrayscaleAttributeFiltering3D implements PlugIn
         	IJ.run( resultPlus, "Invert", "stack" );
 
         // show result
+        resultPlus.copyScale( imagePlus );
+		Images3D.optimizeDisplayRange( resultPlus );
 		resultPlus.setSlice( imagePlus.getSlice() );
 		resultPlus.updateAndDraw();
-		resultPlus.copyScale( imagePlus );
-		Images3D.optimizeDisplayRange( resultPlus );
         resultPlus.show();
 	}// end run method
 } // end class
