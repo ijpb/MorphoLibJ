@@ -1960,16 +1960,17 @@ Scale
 \begin_inset space ~
 \end_inset
 
-Size
+Attribute
 \begin_inset space ~
 \end_inset
 
-Opening
+Filtering
 \begin_inset space ~
 \end_inset
 
-(2D/3D) opens a dialog to perform size opening on a 2D or 3D grayscale image.
- The size criterion is the number of pixels or voxels.
+3D opens a dialog to perform between attribute opening, closing, and black
+ or white top-hat on a 3D grayscale image.
+ The size criterion is the number of voxels.
 \end_layout
 
 \begin_layout Chapter
@@ -6172,7 +6173,7 @@ reference "sec:Morphological-Reconstruction"
 \begin_inset Text
 
 \begin_layout Plain Layout
-Geodesic Reconstruction(3D)
+Geodesic Reconstruction (3D)
 \end_layout
 
 \end_inset
@@ -6368,7 +6369,7 @@ reference "sec:Attribute-Filtering"
 \begin_inset Text
 
 \begin_layout Plain Layout
-Grayscale Size Opening (2D/3D)
+Grayscale Attribute Filtering 3D
 \end_layout
 
 \end_inset
@@ -6422,7 +6423,7 @@ Grayscale Size Opening (2D/3D)
 \begin_inset Text
 
 \begin_layout Plain Layout
-*
+
 \end_layout
 
 \end_inset
