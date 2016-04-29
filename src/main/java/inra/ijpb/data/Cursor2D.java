@@ -30,4 +30,14 @@ public class Cursor2D {
 		return y;
 	}
 
+	@Override
+	public boolean equals( Object other )
+	{
+	    if (other == null) return false;
+	    if (other == this) return true;
+	    if ( !( other instanceof Cursor2D ) )
+	    	return false;
+	    Cursor2D c = (Cursor2D) other;
+	    return c.x == this.x && c.y == this.y;
+	}
 }
