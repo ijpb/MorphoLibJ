@@ -9,12 +9,12 @@ import inra.ijpb.data.image.Images3D;
 import inra.ijpb.morphology.AttributeFiltering;
 
 /**
- * Removes connected components whose size is inferior to the given number of
- * elements, in a 2D or 3D grayscale image.
+ * Plugin to perform between attribute opening, closing, and black or white
+ * top-hat on a 3D grayscale image. The size criterion is the number of voxels. 
  *
  * @see AreaOpeningPlugin
  *
- * @author David Legland
+ * @author David Legland, Ignacio Arganda-Carreras
  *
  */
 public class GrayscaleAttributeFiltering3D implements PlugIn
