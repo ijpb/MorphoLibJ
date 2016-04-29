@@ -19,6 +19,9 @@ import inra.ijpb.morphology.AttributeFiltering;
  */
 public class GrayscaleAttributeFiltering3D implements PlugIn
 {
+	/**
+	 * Morphological operations that can be done using this plugin
+	 */
 	enum Operation
 	{
 		CLOSING( "Closing" ),
@@ -69,6 +72,55 @@ public class GrayscaleAttributeFiltering3D implements PlugIn
 		}
 	};
 	/**
+	 * Attributes that can be used as filtering criterion in the plugin
+	 */
+	enum Attribute
+	{
+		VOLUME("Volume");
+
+		String label;
+
+		Attribute(String label)
+		{
+			this.label = label;
+		}
+
+		public static String[] getAllLabels()
+		{
+			int n = Attribute.values().length;
+			String[] result = new String[n];
+
+			int i = 0;
+			for (Attribute att : Attribute.values())
+				result[i++] = att.label;
+			return result;
+		}
+
+		/**
+		 * Determines the Attribute type from its label.
+		 *
+		 * @param opLabel
+		 *            the label of the Attribute
+		 * @return the parsed Attribute
+		 * @throws IllegalArgumentException
+		 *             if label is not recognized.
+		 */
+		public static Attribute fromLabel(String attrLabel)
+		{
+			if (attrLabel != null)
+				attrLabel = attrLabel.toLowerCase();
+			for (Attribute op : Attribute.values())
+			{
+				String cmp = op.label.toLowerCase();
+				if (cmp.equals(attrLabel))
+					return op;
+			}
+			throw new IllegalArgumentException( "Unable to parse Attribute with "
+					+ "label: " + attrLabel );
+		}
+	};
+
+	/**
 	 * Connectivity labels to be displayed
 	 */
 	final static String[] connectivityLabels = { "6", "26" };
@@ -79,6 +131,7 @@ public class GrayscaleAttributeFiltering3D implements PlugIn
 	final static int[] connectivityValues = { 6, 26 };
 
 	static Operation operation = Operation.OPENING;
+	static Attribute attribute = Attribute.VOLUME;
     static int nPixelMin = 100;
     static int connectivityChoice = 0; // 0 -> 6 connectivity
 
@@ -102,6 +155,8 @@ public class GrayscaleAttributeFiltering3D implements PlugIn
         GenericDialog gd = new GenericDialog( title );
         gd.addChoice( "Operation", Operation.getAllLabels(),
         					operation.label );
+        gd.addChoice( "Attribute", Attribute.getAllLabels(),
+				attribute.label );
         String label = "Min Voxel Number:";
         gd.addNumericField( label, nPixelMin, 0 );
         gd.addChoice( "Connectivity", connectivityLabels,
@@ -114,6 +169,7 @@ public class GrayscaleAttributeFiltering3D implements PlugIn
 
         // read options
         operation = Operation.fromLabel( gd.getNextChoice() );
+        attribute = Attribute.fromLabel( gd.getNextChoice() );
         nPixelMin = (int) gd.getNextNumber();
         connectivityChoice = gd.getNextChoiceIndex();
         int connectivity = connectivityValues[ connectivityChoice ];
