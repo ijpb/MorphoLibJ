@@ -68,7 +68,19 @@ public class GrayscaleAttributeFiltering3D implements PlugIn
 					+ "label: " + opLabel);
 		}
 	};
+	/**
+	 * Connectivity labels to be displayed
+	 */
+	final static String[] connectivityLabels = { "6", "26" };
 
+	/**
+	 * Available 3D connectivity values
+	 */
+	final static int[] connectivityValues = { 6, 26 };
+
+	/**
+	 * Plugin run method
+	 */
 	@Override
 	public void run(String arg0)
 	{
@@ -87,7 +99,9 @@ public class GrayscaleAttributeFiltering3D implements PlugIn
         gd.addChoice( "Operation", Operation.getAllLabels(),
         		Operation.OPENING.toString());
         String label = "Min Voxel Number:";
-        gd.addNumericField(label, 100, 0);
+        gd.addNumericField( label, 100, 0 );
+        gd.addChoice(
+        		"Connectivity", connectivityLabels, connectivityLabels[ 0 ] );
         gd.showDialog();
 
         // If cancel was clicked, do nothing
@@ -97,6 +111,7 @@ public class GrayscaleAttributeFiltering3D implements PlugIn
         // read options
         Operation operation = Operation.fromLabel( gd.getNextChoice() );
         int nPixelMin = (int) gd.getNextNumber();
+        int connectivity = connectivityValues[ gd.getNextChoiceIndex() ];
 
         ImagePlus resultPlus;
         String newName = imagePlus.getShortTitle() + "-attrFilt";
@@ -112,7 +127,8 @@ public class GrayscaleAttributeFiltering3D implements PlugIn
         // apply volume opening
         final ImageStack image = image2.getStack();
         final ImageStack result =
-        		AttributeFiltering.volumeOpening( image, nPixelMin );
+        		AttributeFiltering.volumeOpening(
+        				image, nPixelMin, connectivity );
         resultPlus = new ImagePlus( newName, result );
 
         // For top-hat and bottom-hat, we consider the difference with the
