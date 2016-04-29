@@ -184,8 +184,8 @@ public class GrayscaleAttributeFilteringPlugin implements ExtendedPlugInFilter, 
 		// Create the configuration dialog
 		GenericDialog gd = new GenericDialog("Attribute Filtering");
 
-		gd.addChoice("Operation", Operation.getAllLabels(), Operation.OPENING.toString());
-		gd.addChoice("Attribute", Attribute.getAllLabels(), Attribute.AREA.toString());
+		gd.addChoice("Operation", Operation.getAllLabels(), Operation.OPENING.label);
+		gd.addChoice("Attribute", Attribute.getAllLabels(), Attribute.AREA.label);
 		gd.addNumericField("Minimum Value", 100, 0, 10, "pixels");
 		gd.addChoice("Connectivity", connectivityLabels, connectivityLabels[0]);
 		

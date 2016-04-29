@@ -38,4 +38,15 @@ public class Cursor3D
 	{
 		return z;
 	}
+
+	@Override
+	public boolean equals( Object other )
+	{
+	    if (other == null) return false;
+	    if (other == this) return true;
+	    if ( !( other instanceof Cursor3D ) )
+	    	return false;
+	    Cursor3D c = (Cursor3D) other;
+	    return c.x == this.x && c.y == this.y && c.z == this.z;
+	}
 }

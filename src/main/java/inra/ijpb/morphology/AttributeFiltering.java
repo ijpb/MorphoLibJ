@@ -91,4 +91,25 @@ public class AttributeFiltering
 		DefaultAlgoListener.monitor(algo);
 		return algo.process(image, minVolume);
 	}
+	/**
+	 * Applies grayscale volume opening on input 3D image, by retaining only the
+	 * connected components that contain at least the specified number of voxels.
+	 *
+	 * @param image
+	 *            input 3D grayscale image
+	 * @param minVolume
+	 *            the minimum number of voxels at a given gray level
+	 * @param connectivity  3D connectivity to use
+	 * @return the result of grayscale size opening on the input image
+	 */
+	public static final ImageStack volumeOpening(
+			ImageStack image,
+			int minVolume,
+			int connectivity )
+	{
+		SizeOpening3DQueue algo = new SizeOpening3DQueue();
+		algo.setConnectivity( connectivity );
+		DefaultAlgoListener.monitor( algo );
+		return algo.process( image, minVolume );
+	}
 }
