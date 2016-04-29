@@ -158,8 +158,8 @@ public class GrayscaleAttributeFiltering3D implements PlugIn
         // show result
         resultPlus.copyScale( imagePlus );
 		Images3D.optimizeDisplayRange( resultPlus );
-		resultPlus.setSlice( imagePlus.getSlice() );
 		resultPlus.updateAndDraw();
         resultPlus.show();
+        resultPlus.setSlice( imagePlus.getSlice() );
 	}// end run method
 } // end class
