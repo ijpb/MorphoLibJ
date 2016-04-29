@@ -78,6 +78,10 @@ public class GrayscaleAttributeFiltering3D implements PlugIn
 	 */
 	final static int[] connectivityValues = { 6, 26 };
 
+	static Operation operation = Operation.OPENING;
+    static int nPixelMin = 100;
+    static int connectivityChoice = 0; // 0 -> 6 connectivity
+
 	/**
 	 * Plugin run method
 	 */
@@ -97,11 +101,11 @@ public class GrayscaleAttributeFiltering3D implements PlugIn
 		String title = "Attribute Filtering 3D";
         GenericDialog gd = new GenericDialog( title );
         gd.addChoice( "Operation", Operation.getAllLabels(),
-        		Operation.OPENING.toString());
+        					operation.label );
         String label = "Min Voxel Number:";
-        gd.addNumericField( label, 100, 0 );
-        gd.addChoice(
-        		"Connectivity", connectivityLabels, connectivityLabels[ 0 ] );
+        gd.addNumericField( label, nPixelMin, 0 );
+        gd.addChoice( "Connectivity", connectivityLabels,
+        					connectivityLabels[ connectivityChoice ] );
         gd.showDialog();
 
         // If cancel was clicked, do nothing
@@ -109,9 +113,10 @@ public class GrayscaleAttributeFiltering3D implements PlugIn
             return;
 
         // read options
-        Operation operation = Operation.fromLabel( gd.getNextChoice() );
-        int nPixelMin = (int) gd.getNextNumber();
-        int connectivity = connectivityValues[ gd.getNextChoiceIndex() ];
+        operation = Operation.fromLabel( gd.getNextChoice() );
+        nPixelMin = (int) gd.getNextNumber();
+        connectivityChoice = gd.getNextChoiceIndex();
+        int connectivity = connectivityValues[ connectivityChoice ];
 
         ImagePlus resultPlus;
         String newName = imagePlus.getShortTitle() + "-attrFilt";
