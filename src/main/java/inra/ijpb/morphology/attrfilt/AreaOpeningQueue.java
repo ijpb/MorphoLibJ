@@ -76,16 +76,24 @@ public class AreaOpeningQueue extends AlgoStub implements AreaOpening
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 
+		fireStatusChanged( this, "Finding maxima positions..." );
 		// find position of maxima within image
 		Collection<Point> maximaPositions = findMaximaPositions(image);
 		
 		// initialize result as copy of input image
 		ImageProcessor result = image.duplicate();
 
-		// iterate over maxima and update result image by removing maxima with small area
+		fireStatusChanged( this, "Iterating over maxima..." );
+		double iter = 0;
+		final double maxIter = maximaPositions.size();
+		// iterate over maxima and update result image by removing maxima
+		// with small area
 		for (Point pos0 : maximaPositions)
 		{
-			// accumulator for the positions of the current maxima, all gray levels
+			iter++;
+			fireProgressChanged( this, iter, maxIter );
+			// accumulator for the positions of the current minimum,
+			// all gray levels
 			ArrayList<Point> positions = new ArrayList<Point>();
 
 			// initialize list of neighbors of current maxima region
@@ -141,7 +149,7 @@ public class AreaOpeningQueue extends AlgoStub implements AreaOpening
 				result.set(pos.x, pos.y, currentLevel);
 			}
 		}
-		
+		fireProgressChanged( this, 1, 1 );
 		return result;
 	}
 

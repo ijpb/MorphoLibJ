@@ -82,15 +82,21 @@ public class SizeOpening3DQueue extends AlgoStub implements SizeOpening3D
 		}
 
 		// find position of maxima within image
+		fireStatusChanged( this, "Finding maxima positions..." );
 		Collection<Cursor3D> maximaPositions = findMaximaPositions(image);
 		
 		// initialize result as copy of input image
 		ImageStack result = image.duplicate();
 		Image3D result2 = Images3D.createWrapper(result);
-		
+
+		fireStatusChanged( this, "Iterating over maxima..." );
+		double iter = 0;
+		final double maxIter = maximaPositions.size();
 		// iterate over maxima and update result image by removing maxima with small area
 		for (Cursor3D pos0 : maximaPositions)
 		{
+			iter++;
+			fireProgressChanged( this, iter, maxIter );
 			// accumulator for the positions of the current maxima, all gray levels
 			ArrayList<Cursor3D> positions = new ArrayList<Cursor3D>();
 
@@ -149,7 +155,7 @@ public class SizeOpening3DQueue extends AlgoStub implements SizeOpening3D
 				result2.setValue(pos.getX(), pos.getY(), pos.getZ(), currentLevel);
 			}
 		}
-		
+		fireProgressChanged( this, 1, 1 );
 		return result;
 	}
 
