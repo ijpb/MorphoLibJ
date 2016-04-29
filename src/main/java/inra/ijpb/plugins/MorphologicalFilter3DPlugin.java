@@ -56,9 +56,9 @@ public class MorphologicalFilter3DPlugin implements PlugIn
 				Operation.DILATION.toString());
 		gd.addChoice("Element Shape", Strel3D.Shape.getAllLabels(), 
 				Strel3D.Shape.CUBE.toString());
-		gd.addNumericField("X-Radius (in pixels)", 2, 0);
-		gd.addNumericField("Y-Radius (in pixels)", 2, 0);
-		gd.addNumericField("Z-Radius (in pixels)", 2, 0);
+		gd.addNumericField("X-Radius (in voxels)", 2, 0);
+		gd.addNumericField("Y-Radius (in voxels)", 2, 0);
+		gd.addNumericField("Z-Radius (in voxels)", 2, 0);
 		gd.addCheckbox("Show Element", false);
 		
 		// Could also add an option for the type of operation
