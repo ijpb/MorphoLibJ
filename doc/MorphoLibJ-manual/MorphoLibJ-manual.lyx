@@ -57,7 +57,7 @@
 \rhead[\fancyplain{}{}]{\fancyplain{}{\slshape\rightmark}}
 
 % Footer (you may change this to your own needs)
-\lfoot{\footnotesize \jobname.lyx}
+\lfoot{\footnotesize MorphoLibJ user manual}
 \cfoot{}
 \rfoot{\footnotesize page \thepage\ / \pageref{LastPage}}	% "Page 1 / 2"
 \renewcommand{\headrulewidth}{0.0pt}
