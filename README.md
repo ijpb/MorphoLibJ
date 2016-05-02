@@ -1,3 +1,4 @@
+[![DOI](https://zenodo.org/badge/21349/ijpb/MorphoLibJ.svg)](https://zenodo.org/badge/latestdoi/21349/ijpb/MorphoLibJ)
 MorphoLibJ
 ============
 
