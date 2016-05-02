@@ -1063,14 +1063,14 @@ local
 \begin_inset Quotes erd
 \end_inset
 
-, as the result in a given position do not depend on image values located
+, as the result in a given position does not depend on image values located
  at a sufficient distance.
  
 \end_layout
 
 \begin_layout Standard
 Connected components operators are more general as they propagate information
- within image based on connectivity between pixels or voxels.
+ within the image based on connectivity between pixels or voxels.
  More details can be found in the review of 
 \begin_inset CommandInset citation
 LatexCommand citet
