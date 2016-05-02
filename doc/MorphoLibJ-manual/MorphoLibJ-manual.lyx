@@ -1446,7 +1446,7 @@ Kill
 \end_inset
 
 Borders remove the particles touching the border of a binary or grayscale
- image, in 2D or 3D.
+ image.
 \end_layout
 
 \begin_layout Description
@@ -1456,7 +1456,6 @@ Fill
 
 Holes remove holes inside particles in binary images, or remove dark regions
  surrounded by bright crests in grayscale images.
- Works for both 2D and 3D images.
 \end_layout
 
 \begin_layout Section
