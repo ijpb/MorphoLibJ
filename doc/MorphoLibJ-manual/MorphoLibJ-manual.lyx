@@ -1436,8 +1436,8 @@ Reconstruction
 \end_layout
 
 \begin_layout Standard
-The kill borders and fill holes are also provided as plugin.
- Both works for 2D or 3D images of 8, 16 or 32 bits.
+The kill borders and fill holes operations are also provided as plugins.
+ Both work for 2D and 3D images of 8, 16 or 32 bits.
 \end_layout
 
 \begin_layout Description
@@ -1446,7 +1446,7 @@ Kill
 \end_inset
 
 Borders remove the particles touching the border of a binary or grayscale
- image, in 2D or 3D
+ image, in 2D or 3D.
 \end_layout
 
 \begin_layout Description
@@ -1932,7 +1932,16 @@ Usage
 
 \begin_layout Standard
 So far, the following attribute filtering plugins are available within MorphoLib
-J:
+J (under 
+\begin_inset Quotes eld
+\end_inset
+
+Plugins\SpecialChar \menuseparator
+MorphoLibJ
+\begin_inset Quotes erd
+\end_inset
+
+):
 \end_layout
 
 \begin_layout Description
