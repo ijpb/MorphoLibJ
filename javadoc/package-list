@@ -1,5 +1,6 @@
 inra.ijpb.algo
 inra.ijpb.binary
+inra.ijpb.binary.conncomp
 inra.ijpb.binary.distmap
 inra.ijpb.binary.geodesic
 inra.ijpb.data
@@ -9,6 +10,7 @@ inra.ijpb.label
 inra.ijpb.math
 inra.ijpb.measure
 inra.ijpb.morphology
+inra.ijpb.morphology.attrfilt
 inra.ijpb.morphology.extrema
 inra.ijpb.morphology.geodrec
 inra.ijpb.morphology.strel
