@@ -3556,7 +3556,7 @@ Region Morphometry
 \end_inset
 
 ).
- For 2D particles, the area, the perimeter and derived features are implemened.
+ For 2D particles, the area, the perimeter and derived features are implemented.
  The implemented method for perimeter measurement aims at providing a better
  estimate of the perimeter than traditional boundary pixel count.
  The principle is to consider a set of lines with various orientations,
