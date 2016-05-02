@@ -63,7 +63,7 @@
 \renewcommand{\headrulewidth}{0.0pt}
 \renewcommand{\footrulewidth}{0.4pt}
 
-% chapter left no number, nothing on the right
+% left chapter no number, nothing on the right
 %\renewcommand{\chaptermark}[1]{\markboth{\textit{#1}}{}}
 \renewcommand{\chaptermark}[1]{\markboth{\thechapter\ #1}{}}
 % right section with number
