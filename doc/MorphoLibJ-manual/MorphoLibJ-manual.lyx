@@ -3621,7 +3621,7 @@ name "fig:Measurements-Principles"
 
 \end_inset
 
-Computation of the perimeter and of geodesic diameter.
+Computation of perimeter and geodesic diameter.
  Left: principle of perimeter estimation by counting intersections with
  set of lines.
  Right: illustration of the geodesic diameter measured on a non convex particle.
@@ -3643,7 +3643,7 @@ The columns of the results table are:
 
 \begin_layout Description
 Label the label of the particle measured on the current line (it can be
- different from the row number if some labels do no exist in original image)
+ different from the row number if some labels do no exist in original image).
 \end_layout
 
 \begin_layout Description
@@ -3652,12 +3652,12 @@ Area the number of pixels within each region, multiplied by the area of
 \end_layout
 
 \begin_layout Description
-Perimeter an estimate of the perimeter, using Crofton formula
+Perimeter an estimate of the perimeter, using Crofton formula.
 \end_layout
 
 \begin_layout Description
-Circularity the normalized ratio of area by the square of the perimeter
- : 
+Circularity the normalized ratio of area by the square of the perimeter:
+ 
 \begin_inset Formula $4\pi\cdot A/p^{2}$
 \end_inset
 
@@ -3668,8 +3668,8 @@ Circularity the normalized ratio of area by the square of the perimeter
 \end_layout
 
 \begin_layout Description
-Elongation the normalized ratio of the square of the perimeter by the area
- : 
+Elongation the normalized ratio of the square of the perimeter by the area:
+ 
 \begin_inset Formula $p^{2}/\left(4\pi\cdot A\right)$
 \end_inset
 
@@ -3690,19 +3690,19 @@ largest circle that can be inscribed within the particle
 \end_layout
 
 \begin_layout Description
-Label the label of the particle measured on the current line 
+Label the label of the particle measured on the current line.
 \end_layout
 
 \begin_layout Description
-xi the x-coordinate of the inscribed circle
+xi the x-coordinate of the inscribed circle.
 \end_layout
 
 \begin_layout Description
-yi the y-coordinate of the inscribed circle
+yi the y-coordinate of the inscribed circle.
 \end_layout
 
 \begin_layout Description
-radius the radius of the inscribed circle
+radius the radius of the inscribed circle.
 \end_layout
 
 \begin_layout Standard
@@ -3789,7 +3789,7 @@ reference "fig:Geodesic-Diameter"
 \end_layout
 
 \begin_layout Description
-Label the label of the particle measured on the current line 
+Label the label of the particle measured on the current line.
 \end_layout
 
 \begin_layout Description
@@ -3798,12 +3798,12 @@ Geod.
 \end_inset
 
 Diam.
- the value of the geodesic diameter
+ the value of the geodesic diameter.
 \end_layout
 
 \begin_layout Description
 Radius the radius of the largest inscribed circle, which is computed during
- the algorithm
+ the algorithm.
 \end_layout
 
 \begin_layout Description
@@ -3823,7 +3823,7 @@ xi,
 \begin_inset space ~
 \end_inset
 
-yi coordinates of the largest inscribed circle
+yi coordinates of the largest inscribed circle.
 \end_layout
 
 \begin_layout Description
@@ -3831,7 +3831,7 @@ x1,
 \begin_inset space ~
 \end_inset
 
-y1 coordinates of one of the geodesic extremities of the particle
+y1 coordinates of one of the geodesic extremities of the particle.
 \end_layout
 
 \begin_layout Description
@@ -3839,7 +3839,7 @@ x2,
 \begin_inset space ~
 \end_inset
 
-y2 coordinates of another geodesic extremity of the particle 
+y2 coordinates of another geodesic extremity of the particle.
 \end_layout
 
 \begin_layout Subsection
