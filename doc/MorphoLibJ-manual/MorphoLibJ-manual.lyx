@@ -49,11 +49,11 @@
 \pagestyle{fancy}
 \usepackage{lastpage}	
 % Header (empty)
-% Haut a gauche - page g : chapitre (sl), page d : page (bf) - plain : rien
+% left side of the header - page g : chapter (sl), page d : page (bf) - plain : nothing
 \lhead[\fancyplain{}{\slshape\leftmark}]{\fancyplain{}{}}
-% rien au centre
+% nothing in the center
 \chead{}
-% Haut a droite - page g : page (bf), page d : section (sl) - plain : rien
+% right side of the header - page g : page (bf), page d : section (sl) - plain : nothing
 \rhead[\fancyplain{}{}]{\fancyplain{}{\slshape\rightmark}}
 
 % Footer (you may change this to your own needs)
@@ -63,10 +63,10 @@
 \renewcommand{\headrulewidth}{0.0pt}
 \renewcommand{\footrulewidth}{0.4pt}
 
-% chap a gauche sans numero, rien a droite
+% chapter left no number, nothing on the right
 %\renewcommand{\chaptermark}[1]{\markboth{\textit{#1}}{}}
 \renewcommand{\chaptermark}[1]{\markboth{\thechapter\ #1}{}}
-% section à droite avec numero
+% right section with number
 \renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
 % Added by lyx2lyx
 \usepackage[charter]{mathdesign}
@@ -101,6 +101,9 @@
 \paperfontsize default
 \spacing single
 \use_hyperref true
+\pdf_title "MorphoLibJ user manual"
+\pdf_author "David Legland and Ignacio Arganda-Carreras"
+\pdf_keywords "ImageJ, mathematical morphology, image segmentation, image analysis"
 \pdf_bookmarks true
 \pdf_bookmarksnumbered false
 \pdf_bookmarksopen false
