@@ -1338,13 +1338,7 @@ reference "fig:Geodesic-Reconstruction-Grayscale"
 \end_inset
 
 ).
- The 
-\series bold
-border kill 
-\series default
-operation can also be applied on grayscale images, making possible to rapidly
- remove structures touching the image borders, while keeping the intensity
- information within the structures.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -1401,6 +1395,293 @@ Some applications of geodesic reconstruction on grayscale images.
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+border kill 
+\series default
+operation can also be applied on grayscale images, making possible to rapidly
+ remove structures touching the image borders, while keeping the intensity
+ information within the structures.
+\end_layout
+
+\begin_layout Subsection
+Application to the segmentation of centromeres in 3D image
+\end_layout
+
+\begin_layout Standard
+An example of application is presented in figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Geodesic-Reconstruction-Grayscale-3d"
+
+\end_inset
+
+.
+ The original 3D image represents the nucleus of a plant cell, with centromeres
+ appearing as bright structures (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Geodesic-Reconstruction-Grayscale-3d"
+
+\end_inset
+
+-a).
+ In order to discriminate the centromeres, the the nucleus is first identified
+ by manually selection a region of interest (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Geodesic-Reconstruction-Grayscale-3d"
+
+\end_inset
+
+-b) used as a marker for a morphological reconstruction with the original
+ image used as mask.
+ The result of the morphological reconstruction retains the shape of the
+ nucleus, while 
+\begin_inset Quotes eld
+\end_inset
+
+clearing
+\begin_inset Quotes erd
+\end_inset
+
+ the bright centromeres (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Geodesic-Reconstruction-Grayscale-3d"
+
+\end_inset
+
+-c).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/nucleus/nucleus-gray8-z14.png
+	height 3.5cm
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/nucleus/nucleus-gray8-z14-ovr.png
+	height 3.5cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/nucleus/nucleus-geodRec-BG-z14.png
+	height 3.5cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/nucleus/nucleus-subtract-geoRec-BG-z14-adjHist.png
+	height 3.5cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/nucleus/nucleus-geodRecBG-3d3.png
+	lyxscale 50
+	height 3.5cm
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Geodesic-Reconstruction-Grayscale-3d"
+
+\end_inset
+
+Application of 3D geodesic reconstruction for isolating centromeres within
+ a nucleus.
+ (a) Sample slice of a 3 image of nucleus with centromeres represented as
+ bright blobs.
+ (b) Manual selection of a marker region within the nucleus.
+ (c) Morphological reconstruction of 3D marker image using original 3D image
+ as mask.
+ (d) Difference of original image with the reconstruction.
+ (e) 3D representation of the centromeres within the nucleus.
+ Image by courtesy of Kaori Sakai and Javier Arpon, INRA-Versailles.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+By computing the difference of the original image with the result of the
+ morphological reconstruction, the centromeres can be easily isolated and
+ segmented (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Geodesic-Reconstruction-Grayscale-3d"
+
+\end_inset
+
+-d).
+ 
 \end_layout
 
 \begin_layout Subsection
