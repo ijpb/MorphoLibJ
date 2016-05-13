@@ -9,6 +9,7 @@ import ij.ImageStack;
 import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
+import inra.ijpb.data.image.Images3D;
 import inra.ijpb.morphology.GeodesicReconstruction3D;
 import inra.ijpb.util.IJUtils;
 
@@ -169,38 +170,37 @@ public class GeodesicReconstruction3DPlugin implements PlugIn {
 
 		// set up current parameters
 		int markerImageIndex = gd.getNextChoiceIndex();
-		ImagePlus markerImage = WindowManager.getImage(markerImageIndex + 1);
+		ImagePlus markerPlus = WindowManager.getImage(markerImageIndex + 1);
 		int maskImageIndex = gd.getNextChoiceIndex();
-		ImagePlus maskImage = WindowManager.getImage(maskImageIndex + 1);
+		ImagePlus maskPlus = WindowManager.getImage(maskImageIndex + 1);
 		Operation op = Operation.fromLabel(gd.getNextChoice());
 		int conn = Conn3D.fromLabel(gd.getNextChoice()).getValue();
 
 		// Extract image procesors
-		ImageStack markerProc = markerImage.getStack();
-		ImageStack maskProc = maskImage.getStack();
+		ImageStack marker = markerPlus.getStack();
+		ImageStack mask = maskPlus.getStack();
+		if (!Images3D.isSameSize(marker, mask))
+		{
+			IJ.error("Image Size Error", "Both marker and mask images must have same size");
+		}
 		
 		long t0 = System.currentTimeMillis();
 		
 		// Compute geodesic reconstruction
-		ImageStack recProc = op.applyTo(markerProc, maskProc, conn);
+		ImageStack result = op.applyTo(marker, mask, conn);
 		
 		// Keep same color model
-		recProc.setColorModel(maskProc.getColorModel());
+		result.setColorModel(mask.getColorModel());
 
 		// create resulting image
-		String newName = createResultImageName(maskImage);
-		ImagePlus resultImage = new ImagePlus(newName, recProc);
-		resultImage.copyScale(maskImage);
-		resultImage.show();
+		String newName = maskPlus.getShortTitle() + "-geodRec";
+		ImagePlus resultPlus = new ImagePlus(newName, result);
+		resultPlus.copyScale(maskPlus);
+		resultPlus.show();
 		
-		resultImage.setSlice(maskImage.getSlice());
+		resultPlus.setSlice(maskPlus.getSlice());
 
 		long t1 = System.currentTimeMillis();
-		IJUtils.showElapsedTime(op.toString(), t1 - t0, markerImage);
+		IJUtils.showElapsedTime(op.toString(), t1 - t0, markerPlus);
 	}
-
-	private static String createResultImageName(ImagePlus baseImage) {
-		return baseImage.getShortTitle() + "-geodRec";
-	}
-	
 }
