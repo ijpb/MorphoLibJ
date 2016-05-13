@@ -4858,8 +4858,14 @@ Crop
 \begin_inset space ~
 \end_inset
 
-Label creates a new binary image containing only the label specified by
- the user.
+Label 
+\begin_inset CommandInset label
+LatexCommand label
+name "op:Crop-Label"
+
+\end_inset
+
+creates a new binary image containing only the label specified by the user.
  The size of the new image is fitted to the region.
 \end_layout
 
@@ -5102,7 +5108,8 @@ status open
 Label Edition plugin.
  From left to right and from top to bottom: overview of the plugin GUI on
  a 2D label image, result of label merging by manual selection, removal
- of selected labels, label erosion and removal of largest label.
+ of selected labels, label erosion and removal of largest label (in this
+ case, the largest label corresponds to the background).
  
 \end_layout
 
@@ -9515,7 +9522,7 @@ n.a.
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "sec:Label-Images"
+reference "op:Crop-Label"
 
 \end_inset
 
@@ -9613,7 +9620,7 @@ n.a.
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "sec:Label-Images"
+reference "op:Crop-Label"
 
 \end_inset
 
@@ -9629,104 +9636,6 @@ reference "sec:Label-Images"
 
 \begin_layout Plain Layout
 Labels Boundary
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-n.a.
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-*
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-*
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-*
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-n.a.
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-*
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-*
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-*
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset CommandInset ref
-LatexCommand pageref
-reference "sec:Label-Images"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Label Edition
 \end_layout
 
 \end_inset
@@ -10103,7 +10012,7 @@ n.a.
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "sec:Label-Images"
+reference "op:Crop-Label"
 
 \end_inset
 
@@ -10201,7 +10110,7 @@ n.a.
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "sec:Label-Images"
+reference "op:Crop-Label"
 
 \end_inset
 
@@ -10299,7 +10208,7 @@ n.a.
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "sec:Label-Images"
+reference "op:Crop-Label"
 
 \end_inset
 
@@ -10397,7 +10306,7 @@ n.a.
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "sec:Label-Images"
+reference "op:Crop-Label"
 
 \end_inset
 
@@ -10495,7 +10404,7 @@ n.a.
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "sec:Label-Images"
+reference "op:Crop-Label"
 
 \end_inset
 
@@ -10593,7 +10502,7 @@ n.a.
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "sec:Label-Images"
+reference "op:Crop-Label"
 
 \end_inset
 
@@ -10691,7 +10600,105 @@ n.a.
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "sec:Label-Images"
+reference "op:Crop-Label"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Label Edition
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "sec:Label-Edition-plugin"
 
 \end_inset
 
