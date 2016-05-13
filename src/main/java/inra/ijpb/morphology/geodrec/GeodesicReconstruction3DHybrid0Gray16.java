@@ -7,6 +7,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import ij.ImageStack;
 import inra.ijpb.data.Cursor3D;
+import inra.ijpb.data.image.Images3D;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -146,7 +147,7 @@ public class GeodesicReconstruction3DHybrid0Gray16 extends GeodesicReconstructio
 		this.sizeX 	= marker.getWidth();
 		this.sizeY 	= marker.getHeight();
 		this.sizeZ 	= marker.getSize();
-		if (sizeX != mask.getWidth() || sizeY != mask.getHeight() || sizeZ != mask.getSize()) 
+		if (!Images3D.isSameSize(marker, mask)) 
 		{
 			throw new IllegalArgumentException("Marker and Mask images must have the same size");
 		}

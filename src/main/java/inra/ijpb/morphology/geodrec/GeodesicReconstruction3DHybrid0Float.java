@@ -7,6 +7,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import ij.ImageStack;
 import inra.ijpb.data.Cursor3D;
+import inra.ijpb.data.image.Images3D;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -20,7 +21,7 @@ import java.util.Deque;
  * 
  * <p>
  * This version first performs forward scan, then performs a backward scan that
- * also add lower-right neighbors to the queue, and finally processes pixels in
+ * also add lower-right neighbors to the queue, and finally processes voxels in
  * the queue. It is intended to work on float 3D images, using 6 or 26
  * adjacencies.
  * </p>
@@ -143,7 +144,7 @@ public class GeodesicReconstruction3DHybrid0Float extends GeodesicReconstruction
 		this.sizeX 	= marker.getWidth();
 		this.sizeY 	= marker.getHeight();
 		this.sizeZ 	= marker.getSize();
-		if (sizeX != mask.getWidth() || sizeY != mask.getHeight() || sizeZ != mask.getSize()) 
+		if (!Images3D.isSameSize(marker, mask)) 
 		{
 			throw new IllegalArgumentException("Marker and Mask images must have the same size");
 		}

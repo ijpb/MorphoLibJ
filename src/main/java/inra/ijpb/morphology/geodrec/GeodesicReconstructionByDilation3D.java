@@ -6,6 +6,7 @@ package inra.ijpb.morphology.geodrec;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import ij.ImageStack;
+import inra.ijpb.data.image.Images3D;
 
 
 /**
@@ -69,7 +70,7 @@ public class GeodesicReconstructionByDilation3D extends GeodesicReconstruction3D
 		this.size1 	= marker.getWidth();
 		this.size2 	= marker.getHeight();
 		this.size3 	= marker.getSize();
-		if (size1 != mask.getWidth() || size2 != mask.getHeight() || size3 != mask.getSize())
+		if (!Images3D.isSameSize(marker, mask)) 
 		{
 			throw new IllegalArgumentException("Marker and Mask images must have the same size");
 		}
