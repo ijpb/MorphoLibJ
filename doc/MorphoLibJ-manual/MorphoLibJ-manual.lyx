@@ -1408,7 +1408,7 @@ operation can also be applied on grayscale images, making possible to rapidly
 \end_layout
 
 \begin_layout Subsection
-Application to the segmentation of centromeres in 3D image
+Application to the segmentation of chromocenters in a 3D image
 \end_layout
 
 \begin_layout Standard
@@ -1424,8 +1424,8 @@ reference "fig:Geodesic-Reconstruction-Grayscale-3d"
 \end_inset
 
 .
- The original 3D image represents the nucleus of a plant cell, with centromeres
- appearing as bright structures (Fig.
+ The original 3D image represents the nucleus of a plant cell, with chromocenter
+s appearing as bright structures (Fig.
 \begin_inset space ~
 \end_inset
 
@@ -1437,7 +1437,7 @@ reference "fig:Geodesic-Reconstruction-Grayscale-3d"
 \end_inset
 
 -a).
- In order to discriminate the centromeres, the nucleus is first identified
+ In order to discriminate the chromocenters, the nucleus is first identified
  by manually selecting a region of interest (Fig.
 \begin_inset space ~
 \end_inset
@@ -1460,7 +1460,7 @@ clearing
 \begin_inset Quotes erd
 \end_inset
 
- the bright centromeres (Fig.
+ the bright chromocenters (Fig.
 \begin_inset space ~
 \end_inset
 
@@ -1644,15 +1644,15 @@ name "fig:Geodesic-Reconstruction-Grayscale-3d"
 
 \end_inset
 
-Application of 3D geodesic reconstruction for isolating centromeres within
+Application of 3D geodesic reconstruction for isolating chromocenters within
  a nucleus.
- (a) Sample slice of a 3 image of nucleus with centromeres represented as
- bright blobs.
+ (a) Sample slice of a 3 image of nucleus with chromocenters represented
+ as bright blobs.
  (b) Manual selection of a marker region within the nucleus.
  (c) Morphological reconstruction of 3D marker image using original 3D image
  as mask.
  (d) Difference of original image with the reconstruction.
- (e) 3D representation of the centromeres within the nucleus.
+ (e) 3D representation of the chromocenters within the nucleus.
  Image by courtesy of Kaori Sakai and Javier Arpon, INRA-Versailles.
 \end_layout
 
@@ -1668,8 +1668,8 @@ Application of 3D geodesic reconstruction for isolating centromeres within
 
 \begin_layout Standard
 By computing the difference of the original image with the result of the
- morphological reconstruction, the centromeres can be easily isolated and
- segmented (Fig.
+ morphological reconstruction, the chromocenters can be easily isolated
+ and segmented (Fig.
 \begin_inset space ~
 \end_inset
 
