@@ -858,7 +858,8 @@ public class GeometricMeasures3D
 
 	/**
 	 * Applies a look-up-table for each of the 2x2x2 voxel configuration, and
-	 * returns the sum of contribution for each label.
+	 * returns the sum of contributions for each label.
+	 * This method is used for computing Euler number and surface area.
 	 * 
 	 * @param image
 	 *            the input 3D image of labels
@@ -867,20 +868,26 @@ public class GeometricMeasures3D
 	 * @param lut
 	 *            the look-up-table containing the measure contribution for each
 	 *            of the 256 configuration of 8 voxels
-	 * @return the sum of measure contribution for each label
+	 * @return the sum of measure contributions for each label
 	 * 
 	 * @see #surfaceAreaCrofton(ImageStack, int[], double[], int)
 	 * @see #eulerNumber(ImageStack, int[], int)
 	 */
 	private final static double[] sumOfLutContributions(ImageStack image, int[] labels, 
 			double[] lut)
-	{    
+	{   
+		// Algorithm:
+		// iterate on configurations of 2-by-2-by-2 voxels within 3D image. 
+		// For each configuration, identify the labels within the configuration.
+		// For each label, compute the equivalent binary configuration index, 
+		// and adds is contribution to the measure associated to the label. 
+		
         // create associative array to know index of each label
 		HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
 
-       // initialize result
+		// initialize the result array containing one measure for each label
 		int nLabels = labels.length;
-        double[] surfaces = new double[nLabels];
+        double[] measures = new double[nLabels];
 
 		// size of image
 		int sizeX = image.getWidth();
@@ -890,7 +897,6 @@ public class GeometricMeasures3D
 		// for each configuration of 2x2x2 voxels, we identify the labels
 		ArrayList<Integer> localLabels = new ArrayList<Integer>(8);
 		
-		// iterate on image voxel configurations
         for (int z = 0; z < sizeZ - 1; z++) 
         {
         	IJ.showProgress(z, sizeZ);
@@ -917,7 +923,8 @@ public class GeometricMeasures3D
             			}
         			}
 
-					// if no label in local configuration contribution is zero
+					// if there is no label in the local configuration then the
+					// contribution is zero
 					if (localLabels.size() == 0) 
 					{
 						continue;
@@ -937,16 +944,19 @@ public class GeometricMeasures3D
 	        			index += image.getVoxel(x, y + 1, z + 1) 	== label ? 64 : 0;
 	        			index += image.getVoxel(x + 1, y + 1, z + 1) == label ? 128 : 0;
 
+						// add the contribution of the configuration to the
+						// accumulator for the label
 	        			int labelIndex = labelIndices.get(label);
-	        			surfaces[labelIndex] += lut[index];
+	        			measures[labelIndex] += lut[index];
 					}
         		}
         	}
         }
         
+        // reset progress display
 		IJ.showStatus("");
     	IJ.showProgress(1);
-        return surfaces;
+        return measures;
 	}
 	
 	/**
