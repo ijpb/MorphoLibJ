@@ -3762,10 +3762,6 @@ call("inra.ijpb.plugins.MorphologicalSegmentation.setDisplayFormat", "Overlaid
 Measurements
 \end_layout
 
-\begin_layout Section
-Particle analysis
-\end_layout
-
 \begin_layout Standard
 MorphoLibJ contains several tools for quantifying the size, the shape, or
  the spatial organization, from 
@@ -3783,63 +3779,170 @@ Analyze Particles...
 \end_inset
 
  function that operates directly on a grayscale image.
- Most MorphoLibJ plugins consider the current image as input, that must
- be either binary (only one region is considered), or label (typically the
- result of a connected components labeling, see section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:Binary-Images"
-
-\end_inset
-
-).
- The output is a results table (ImageJ 
-\emph on
-ResultsTable
-\emph default
-) containing one row for each label actually present within the image.
- The spatial calibration of the image is taken into account in all measurements.
+ 
 \end_layout
 
-\begin_layout Subsection
-Particle analysis 2D
+\begin_layout Section
+Particle analysis
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-TODO : refonte des plugins d'analyse ? d'abord présenter les mesures dans
- un cadre général, puis les plugins ?
+This sections describes the methods implemented in MorphoLibJ for describing
+ individual particles, represented as label images (one label for each particle).
+ We first define and describe the implemented features, then we present
+ the plugins that integrate them.
 \end_layout
 
-\end_inset
-
-
+\begin_layout Subsection
+Intrinsic volumes
 \end_layout
 
 \begin_layout Standard
 The 
 \series bold
-global geometry
+intrinsic volumes 
 \series default
- of particles in 2D images can be characterized with the Region Morphometry
- plugin (under 
-\begin_inset Quotes eld
+are a set of features with interesting mathematical properties that are
+ commonly used for describing individual particles as well as binary microstruct
+rues.
+ In the planar case, they correspond to the area, the perimeter and the
+ Euler number.
+ The Euler number is a topological characteristic that equals the number
+ of connected components minus the number of holes (Fig.
+\begin_inset space ~
 \end_inset
 
-Plugins\SpecialChar \menuseparator
-MorphoLibJ\SpecialChar \menuseparator
-Analyze\SpecialChar \menuseparator
-Region Morphometry
-\begin_inset Quotes erd
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Intrinsic-Volumes"
+
 \end_inset
 
 ).
- For 2D particles, the area, the perimeter and derived features are implemented.
- The implemented method for perimeter measurement aims at providing a better
- estimate of the perimeter than traditional boundary pixel count.
+ 
+\end_layout
+
+\begin_layout Standard
+For 3D particles, intrinsic volumes correspond to the volume, the surface
+ area, the mean breadth (a quantity proportional to the integral of the
+ mean curvature over the surface) and the Euler number.
+ In 3D the Euler number equals the number of connected components minus
+ the number of 
+\begin_inset Quotes eld
+\end_inset
+
+handels
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+tunnels
+\begin_inset Quotes eld
+\end_inset
+
+ through the structure, plus the number of bubbles within the particles
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Serra_1982,Ohser2009"
+
+\end_inset
+
+, see Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Measurements-Principles"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/analysis/negativeEulerNumber.png
+	height 4.5cm
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/analysis/crofton-principle-2d.png
+	lyxscale 50
+	height 4.5cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Intrinsic-Volumes"
+
+\end_inset
+
+Measurement of some intrinsic volume.
+ Left: example of a particle with an Euler number equal to 1, corresponding
+ to the subtraction of 1 connected componentss minus two handles.Right: principle
+ of perimeter estimation by counting intersections with set of lines.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Estimation from 2D or 3D images
+\end_layout
+
+\begin_layout Standard
+In image analysis, the 
+\series bold
+estimation of area 
+\series default
+of 2D particles and of 
+\series bold
+volume of 3D particles 
+\series default
+simply consists in counting the number of pixels or voxels that constitute
+ it, weighted by the area of an individual pixel or the volume of an individual
+ voxel.
+ 
+\end_layout
+
+\begin_layout Standard
+The implemented method for 
+\series bold
+perimeter measurement 
+\series default
+aims at providing a better estimate of the perimeter than traditional boundary
+ pixel count.
  The principle is to consider a set of lines with various orientations,
  and to count the number of intersections with the region(s) of interest
  (Figure
@@ -3865,6 +3968,274 @@ key "Legland2007,Ohser2009"
  By averaging over all possible directions, the estimate is unbiased.
  Perimeter is usually estimated using either two directions (horizontal
  and vertical), or four directions (by adding the diagonals).
+ 
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+estimation of surface area 
+\series default
+follows the same principle.
+ The number of directions is typically chosen equal to 3 (the three main
+ axes in image), or 13 (by considering also diagonals).
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Local estimators for perimeter and surface are not multigrid convergent.
+ This need more explanations...
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Euler number
+\end_layout
+
+\begin_layout Standard
+The measurement of Euler number depends on the choice of the connectivity.
+ For planar images, typical choices are the 4-connectivity, corresponding
+ to the orthogonal neighbors, and the 8-connectivity, that also consider
+ the diagonal neighbors.
+ In 3D, the 6-connectivity considers the neighbors in the three main directions
+ within the image, whereas the 26 connectivity also consider the diagonals.
+ Other connectivities have been proposed but are not implemented in MorphoLibJ
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Ohser2009"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+In current implementation in MorphoLibJ, the Euler number is not taen into
+ account for intersection of particles with image borders.
+\end_layout
+
+\begin_layout Subsubsection
+Shape factors
+\end_layout
+
+\begin_layout Standard
+Intrinsic volumes characterize the size of the particles, from different
+ points of view.
+ Several indices are sometimes used to describe the shape of the particles,
+ independently of their size.
+\end_layout
+
+\begin_layout Standard
+In 2D, the 
+\series bold
+isoperimetric deficit index
+\series default
+ (or 
+\begin_inset Quotes eld
+\end_inset
+
+shape factor
+\begin_inset Quotes erd
+\end_inset
+
+, or 
+\begin_inset Quotes eld
+\end_inset
+
+circularity
+\begin_inset Quotes erd
+\end_inset
+
+) is defined as the ratio of area over the square of the perimeter.
+ The MorphoLibJ library also considers its inverse, refered to as 
+\begin_inset Quotes eld
+\end_inset
+
+elongation
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+In 3D, one defines the 
+\series bold
+sphericity index
+\series default
+ as the ratio of the squared volume over the cubeof the surface area, normalized
+ such that the value for a ball equals one.
+\end_layout
+
+\begin_layout Subsection
+Inertia ellipse and ellipsoid
+\end_layout
+
+\begin_layout Standard
+A binary particle may be described mathematically by its moments which correspon
+ds to an integral of its indicator function, with various degrees along
+ the directions.
+ The first moment corresponds to the area or to the volume of the particle.
+ The normalization of the first-order indicator functions leads to the 2D
+ or 3D centroid of the particle.
+ The second order moments can be used to compute the equivalent inertia
+ ellipse or ellipsoid.
+\end_layout
+
+\begin_layout Subsection
+Geodesic measurements
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/analysis/geodesic-diameter.png
+	height 4.5cm
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/analysis/36_manual1-geodiam.png
+	lyxscale 75
+	width 6cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Geodesic-Diameter"
+
+\end_inset
+
+Geodesic diameter.
+ Left: illustration of the geodesic diameter on a simple particle.
+ Right: computation of the geodesic diameter on a segmented image from the
+ DRIVE database 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Staal_2004_tmi"
+
+\end_inset
+
+.
+ Each connected component was associated to a label, then the longest geodesic
+ path within each connected component was computed and displayed as red
+ overlay.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For particles with complex shapes, the 
+\series bold
+geodesic diameter 
+\series default
+may be of interest.
+ It corresponds of the largest geodesic distance between two points within
+ a region, the geodesic distance being the length of the shortest path joining
+ the two points while staying inside the region 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Lantuejoul1981"
+
+\end_inset
+
+.
+ An example is given on Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Geodesic-Diameter"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Other measurements consider the 
+\series bold
+largest circle that can be inscribed within the particle
+\series default
+.
+ 
+\end_layout
+
+\begin_layout Subsection
+ImageJ plugins
+\end_layout
+
+\begin_layout Standard
+Most MorphoLibJ plugins consider the current image as input, that must be
+ either binary (only one region is considered), or label (typically the
+ result of a connected components labeling, see section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Binary-Images"
+
+\end_inset
+
+).
+ The output is a results table (ImageJ 
+\emph on
+ResultsTable
+\emph default
+) containing one row for each label actually present within the image.
+ The spatial calibration of the image is taken into account in all measurements.
+\end_layout
+
+\begin_layout Subsubsection
+Global geometry
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+global geometry
+\series default
+ of particles in 2D images can be characterized with the Region Morphometry
+ plugin (under 
+\begin_inset Quotes eld
+\end_inset
+
+Plugins\SpecialChar \menuseparator
+MorphoLibJ\SpecialChar \menuseparator
+Analyze\SpecialChar \menuseparator
+Region Morphometry
+\begin_inset Quotes erd
+\end_inset
+
+).
+ For 2D particles, the area, the perimeter and derived features are implemented.
 \end_layout
 
 \begin_layout Standard
@@ -3878,13 +4249,6 @@ status open
 \begin_inset Graphics
 	filename images/analysis/crofton-principle-2d.png
 	lyxscale 50
-	height 4.5cm
-
-\end_inset
-
-
-\begin_inset Graphics
-	filename images/analysis/geodesic-diameter.png
 	height 4.5cm
 
 \end_inset
@@ -3958,6 +4322,10 @@ Elongation the normalized ratio of the square of the perimeter by the area:
  The values range from 1 (round), and increase with elongation of the particle.
 \end_layout
 
+\begin_layout Subsubsection
+Largest inscribed circle or ball
+\end_layout
+
 \begin_layout Standard
 Other measurements consider the 
 \series bold
@@ -3986,87 +4354,12 @@ yi the y-coordinate of the inscribed circle.
 radius the radius of the inscribed circle.
 \end_layout
 
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename images/analysis/36_manual1-geodiam.png
-	lyxscale 75
-	width 6cm
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:Geodesic-Diameter"
-
-\end_inset
-
-Computation of the geodesic diameter on a segmented image from the DRIVE
- database 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Staal_2004_tmi"
-
-\end_inset
-
-.
- Each connected component was associated to a label, then the longest geodesic
- path within each connected component was computed and displayed as red
- overlay.
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
+\begin_layout Subsubsection
+Geodesic diameter
 \end_layout
 
 \begin_layout Standard
-For particles with complex shapes, the 
-\series bold
-geodesic diameter 
-\series default
-may be of interest.
- It corresponds of the largest geodesic distance between two points within
- a region, the geodesic distance being the length of the shortest path joining
- the two points while staying inside the region 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Lantuejoul1981"
-
-\end_inset
-
-.
- An example is given on Figure
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Geodesic-Diameter"
-
-\end_inset
-
-.
- The result of the plugin comprises the following features:
+The result of the plugin comprises the following features:
 \end_layout
 
 \begin_layout Description
@@ -4123,14 +4416,12 @@ x2,
 y2 coordinates of another geodesic extremity of the particle.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 Particle analysis 3D
 \end_layout
 
 \begin_layout Standard
-These parameters focus on the shape of the region corresponding to each
- particle or label.
- The plugin calculating these measurements is found under 
+The plugin calculating these measurements is found under 
 \begin_inset Quotes eld
 \end_inset
 
@@ -4227,7 +4518,7 @@ pitch
 ), and the roll around the main axis.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Intensity measurements
 \end_layout
 
@@ -4245,7 +4536,12 @@ Measure 3D
 \end_inset
 
 ).
- The plugin calculates the mean, the standard deviation, the maximum and
+ The label image can correspond to a segmented particle, or to a more generic
+ region of interest.
+\end_layout
+
+\begin_layout Standard
+The plugin calculates the mean, the standard deviation, the maximum and
  the minimum intensity value of each labeled region in the grayscale image.
  The results are displayed as well in an ImageJ 
 \emph on
