@@ -253,35 +253,6 @@ grayscale images
 
 \end_layout
 
-\begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-TODO:
-\end_layout
-
-\begin_layout Itemize
-finir de rédiger les paragraphes
-\end_layout
-
-\begin_layout Itemize
-ajouter illustrations 
-\end_layout
-
-\begin_layout Itemize
-peaufiner vocabulaire : regions / label, component / region...
-\end_layout
-
-\begin_layout Itemize
-adresses Ignacio+David
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
 \begin_layout Chapter
 Overview
 \end_layout
@@ -3854,19 +3825,6 @@ reference "fig:Euler-Number"
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-add here a figure with euler number in 2D and 3D
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
 \begin_inset Float figure
 wide false
 sideways false
@@ -3875,8 +3833,15 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
+	filename images/analysis/euler-number-2d.png
+	height 4cm
+
+\end_inset
+
+
+\begin_inset Graphics
 	filename images/analysis/negativeEulerNumber.png
-	height 4.5cm
+	height 4cm
 
 \end_inset
 
@@ -3893,8 +3858,10 @@ name "fig:Euler-Number"
 
 \end_inset
 
-Example of a 3D particle with an Euler number equal to -1, corresponding
- to the subtraction of 1 connected componentss minus two handles.
+Illustration of Euler Number definition.
+ Left: three particles with Euler numbers equal to 1, 0 and -1, respectively.
+ Right: example of a 3D particle with an Euler number equal to -1, corresponding
+ to the subtraction of 1 connected components minus two handles.
 \end_layout
 
 \end_inset
@@ -3916,7 +3883,7 @@ For 3D particles, intrinsic volumes correspond to the volume, the surface
 \begin_inset Quotes eld
 \end_inset
 
-handels
+handles
 \begin_inset Quotes erd
 \end_inset
 
@@ -3992,26 +3959,12 @@ reference "fig:Perimeter-Estimation-With-Crofton"
  The number of intersections is proportional to the perimeter 
 \begin_inset CommandInset citation
 LatexCommand citep
-key "Legland2007,Ohser2009"
+key "Serra_1982,Legland2007,Ohser2009"
 
 \end_inset
 
 .
  By averaging over all possible directions, the estimate is unbiased.
-\end_layout
-
-\begin_layout Standard
-Perimeter is usually estimated using either two directions (horizontal and
- vertical), or four directions (by adding the diagonals).
- Restricing the number of directions introduces an estimation bias, with
- known theoretical bounds
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Moran1966,Legland2007"
-
-\end_inset
-
-.
 \end_layout
 
 \begin_layout Standard
@@ -4060,6 +4013,27 @@ Principle of perimeter estimation by counting the number of intersections
 \end_layout
 
 \begin_layout Standard
+Perimeter can be estimated using either two directions (horizontal and vertical)
+, or four directions (by adding the diagonals).
+ Restricting the number of directions introduces an estimation bias, with
+ known theoretical bounds 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Moran1966,Legland2007"
+
+\end_inset
+
+, that is usually better than boundary pixel count 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Lehmann_2012_ij"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
 The 
 \series bold
 estimation of surface area 
@@ -4067,17 +4041,16 @@ estimation of surface area
 follows the same principle.
  The number of directions is typically chosen equal to 3 (the three main
  axes in image), or 13 (by considering also diagonals).
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-Local estimators for perimeter and surface are not multigrid convergent.
- This need more explanations...
-\end_layout
+ As for perimeter estimation, surface area estimation in usually biased,
+ but is usually more precise than measuring the surface area of the polygonal
+ mesh reconstructed from binary images 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Lehmann_2012_ij"
 
 \end_inset
 
-
+.
 \end_layout
 
 \begin_layout Subsubsection
@@ -4092,6 +4065,7 @@ The measurement of Euler number depends on the choice of the connectivity.
  In 3D, the 6-connectivity considers the neighbors in the three main directions
  within the image, whereas the 26 connectivity also consider the diagonals.
  Other connectivities have been proposed but are not implemented in MorphoLibJ
+ 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Ohser2009"
@@ -4158,7 +4132,7 @@ While values of circularity range theoretically within the interval
 \end_inset
 
 , the measurements errors of the perimeter may produce circularity values
- above 1
+ above 1 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Lehmann_2012_ij"
@@ -4193,12 +4167,12 @@ elongation index
 \end_layout
 
 \begin_layout Standard
-In 3D, one defines the 
+In 3D, the 
 \series bold
 sphericity index
 \series default
- as the ratio of the squared volume over the cubeof the surface area, normalized
- such that the value for a ball equals one:
+ can be defined as the ratio of the squared volume over the cube of the
+ surface area, normalized such that the value for a ball equals one:
 \begin_inset Formula 
 \begin{eqnarray}
 \mbox{sphericity} & = & 36\pi\frac{V^{2}}{S^{3}}
@@ -4229,6 +4203,36 @@ Geodesic measurements
 \end_layout
 
 \begin_layout Standard
+For particles with complex shapes, the 
+\series bold
+geodesic diameter 
+\series default
+may be of interest.
+ It corresponds of the largest geodesic distance between two points within
+ a region, the geodesic distance being the length of the shortest path joining
+ the two points while staying inside the region 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Lantuejoul1981"
+
+\end_inset
+
+.
+ An example is given on Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Geodesic-Diameter"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
 \begin_inset Float figure
 wide false
 sideways false
@@ -4246,7 +4250,7 @@ status open
 \begin_inset Graphics
 	filename images/analysis/36_manual1-geodiam.png
 	lyxscale 75
-	width 6cm
+	width 5cm
 
 \end_inset
 
@@ -4290,36 +4294,6 @@ key "Staal_2004_tmi"
 \end_layout
 
 \begin_layout Standard
-For particles with complex shapes, the 
-\series bold
-geodesic diameter 
-\series default
-may be of interest.
- It corresponds of the largest geodesic distance between two points within
- a region, the geodesic distance being the length of the shortest path joining
- the two points while staying inside the region 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Lantuejoul1981"
-
-\end_inset
-
-.
- An example is given on Figure
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Geodesic-Diameter"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
 Other measurements consider the 
 \series bold
 largest circle that can be inscribed within the particle
@@ -4349,6 +4323,17 @@ ResultsTable
 \emph default
 ) containing one row for each label actually present within the image.
  The spatial calibration of the image is taken into account in all measurements.
+ All plugisn can be found under the 
+\begin_inset Quotes eld
+\end_inset
+
+Plugins\SpecialChar \menuseparator
+MorphoLibJ\SpecialChar \menuseparator
+Analyze
+\begin_inset Quotes erd
+\end_inset
+
+ menu.
 \end_layout
 
 \begin_layout Subsubsection
@@ -4374,10 +4359,7 @@ Region Morphometry
 
 ).
  For 2D particles, the area, the perimeter and derived features are implemented.
-\end_layout
-
-\begin_layout Standard
-The columns of the results table are:
+ The columns of the results table are:
 \end_layout
 
 \begin_layout Description
@@ -4421,11 +4403,8 @@ Largest inscribed circle or ball
 \end_layout
 
 \begin_layout Standard
-Other measurements consider the 
-\series bold
-largest circle that can be inscribed within the particle
-\series default
-.
+This plugins computes for each label the largest disk that can be enclosed
+ within the corresponding particle.
  The plugin opens a dialog that allows to choose the label image to characterize
 , the choice of the method for computing distance, and eventually the image
  on which overlaid circles can be drawn.
@@ -4453,7 +4432,9 @@ Geodesic diameter
 \end_layout
 
 \begin_layout Standard
-The result of the plugin comprises the following features:
+This plugin computes several geodesic measures for each particle in a label
+ image.
+ The result of the plugin comprises the following features:
 \end_layout
 
 \begin_layout Description
