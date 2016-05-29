@@ -229,6 +229,35 @@ MorphoLibJ
 status open
 
 \begin_layout Plain Layout
+Some conventions:
+\end_layout
+
+\begin_layout Itemize
+use american english
+\end_layout
+
+\begin_layout Itemize
+use 
+\begin_inset Quotes eld
+\end_inset
+
+grayscale images
+\begin_inset Quotes erd
+\end_inset
+
+ (instead of gray level) 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
 TODO:
 \end_layout
 
@@ -1116,6 +1145,7 @@ name "sec:Morphological-Reconstruction"
 The morphological reconstruction is at the basis of many useful algorithms,
  such as border removing, hole filling, or detection of regional minima
  or maxima in grayscale images.
+ It may be defined for binary as well as for grayscale images.
 \end_layout
 
 \begin_layout Subsection
@@ -3815,12 +3845,66 @@ rues.
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Intrinsic-Volumes"
+reference "fig:Euler-Number"
 
 \end_inset
 
 ).
  
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+add here a figure with euler number in 2D and 3D
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/analysis/negativeEulerNumber.png
+	height 4.5cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Euler-Number"
+
+\end_inset
+
+Example of a 3D particle with an Euler number equal to -1, corresponding
+ to the subtraction of 1 connected componentss minus two handles.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -3858,63 +3942,11 @@ key "Serra_1982,Ohser2009"
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Measurements-Principles"
+reference "fig:Euler-Number"
 
 \end_inset
 
 .
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename images/analysis/negativeEulerNumber.png
-	height 4.5cm
-
-\end_inset
-
-
-\begin_inset Graphics
-	filename images/analysis/crofton-principle-2d.png
-	lyxscale 50
-	height 4.5cm
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:Intrinsic-Volumes"
-
-\end_inset
-
-Measurement of some intrinsic volume.
- Left: example of a particle with an Euler number equal to 1, corresponding
- to the subtraction of 1 connected componentss minus two handles.Right: principle
- of perimeter estimation by counting intersections with set of lines.
- 
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Subsubsection
@@ -3952,7 +3984,7 @@ aims at providing a better estimate of the perimeter than traditional boundary
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Measurements-Principles"
+reference "fig:Perimeter-Estimation-With-Crofton"
 
 \end_inset
 
@@ -3966,9 +3998,65 @@ key "Legland2007,Ohser2009"
 
 .
  By averaging over all possible directions, the estimate is unbiased.
- Perimeter is usually estimated using either two directions (horizontal
- and vertical), or four directions (by adding the diagonals).
+\end_layout
+
+\begin_layout Standard
+Perimeter is usually estimated using either two directions (horizontal and
+ vertical), or four directions (by adding the diagonals).
+ Restricing the number of directions introduces an estimation bias, with
+ known theoretical bounds
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Moran1966,Legland2007"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/analysis/crofton-principle-2d.png
+	lyxscale 50
+	height 4.5cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Perimeter-Estimation-With-Crofton"
+
+\end_inset
+
+Principle of perimeter estimation by counting the number of intersections
+ with a set of lines.
+ The number of intersection points is proportional to the perimeter of the
+ particle.
  
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -4014,8 +4102,10 @@ key "Ohser2009"
 \end_layout
 
 \begin_layout Standard
-In current implementation in MorphoLibJ, the Euler number is not taen into
- account for intersection of particles with image borders.
+In the current implementation in MorphoLibJ, the Euler number is not taken
+ into account for intersection of particles with image borders.
+ This may result in non-integer result if the particle(s) of interest touches
+ image border.
 \end_layout
 
 \begin_layout Subsubsection
@@ -4050,16 +4140,56 @@ circularity
 \begin_inset Quotes erd
 \end_inset
 
-) is defined as the ratio of area over the square of the perimeter.
- The MorphoLibJ library also considers its inverse, refered to as 
+) is defined as the ratio of area over the square of the perimeter, normalized
+ such that the value for a disk equals one:
+\begin_inset Formula 
+\begin{eqnarray}
+\mbox{circularity} & = & 4\pi\frac{A}{P^{2}}
+\end{eqnarray}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+While values of circularity range theoretically within the interval 
+\begin_inset Formula $[0;1]$
+\end_inset
+
+, the measurements errors of the perimeter may produce circularity values
+ above 1
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Lehmann_2012_ij"
+
+\end_inset
+
+.
+ The MorphoLibJ library also considers the inverse of the circularity, refered
+ to as 
 \begin_inset Quotes eld
 \end_inset
 
-elongation
+
+\series bold
+elongation index
+\series default
+
 \begin_inset Quotes erd
 \end_inset
 
 .
+ The values of elongation range from 1 for round particles and increase
+ for elongated particles.
+\begin_inset Formula 
+\begin{eqnarray}
+\mbox{elongation} & = & \frac{P^{2}}{4\pi\cdot A}
+\end{eqnarray}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -4068,7 +4198,15 @@ In 3D, one defines the
 sphericity index
 \series default
  as the ratio of the squared volume over the cubeof the surface area, normalized
- such that the value for a ball equals one.
+ such that the value for a ball equals one:
+\begin_inset Formula 
+\begin{eqnarray}
+\mbox{sphericity} & = & 36\pi\frac{V^{2}}{S^{3}}
+\end{eqnarray}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -4236,50 +4374,6 @@ Region Morphometry
 
 ).
  For 2D particles, the area, the perimeter and derived features are implemented.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename images/analysis/crofton-principle-2d.png
-	lyxscale 50
-	height 4.5cm
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:Measurements-Principles"
-
-\end_inset
-
-Computation of perimeter and geodesic diameter.
- Left: principle of perimeter estimation by counting intersections with
- set of lines.
- Right: illustration of the geodesic diameter measured on a non convex particle.
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -4591,10 +4685,6 @@ sideways false
 status open
 
 \begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
 \align center
 \begin_inset Graphics
 	filename images/analysis/maize-clsm.png
@@ -4641,10 +4731,6 @@ Computation of the Region Adjacency Graph on a microscopy image of plant
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Plain Layout
 
 \end_layout
 
