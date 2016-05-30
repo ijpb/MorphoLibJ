@@ -1,5 +1,7 @@
 package inra.ijpb.measure;
 
+import java.util.Collections;
+
 import ij.ImagePlus;
 import ij.measure.ResultsTable;
 
@@ -60,7 +62,37 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 
 		return table;
 	}
-	
+
+	/**
+	 * Get median voxel values per label
+	 *
+	 * @return result table with median values per label
+	 */
+	public ResultsTable getMedian()
+	{
+		final int numLabels = objectVoxels.length;
+
+		double[] median = new double[ numLabels ];
+
+		// calculate median voxel value per object
+		for( int i=0; i<numLabels; i++ )
+		{
+			Collections.sort( objectVoxels[ i ] );
+			median[ i ] = objectVoxels[ i ].get( objectVoxels[ i ].size() / 2 );
+		}
+
+
+		// create data table
+		ResultsTable table = new ResultsTable();
+		for (int i = 0; i < numLabels; i++) {
+			table.incrementCounter();
+			table.addLabel( Integer.toString( labels[i] ));
+			table.addValue( "Median", median[i] );
+		}
+
+		return table;
+	}
+
 	/**
 	 * Get standard deviation of voxel values per label
 	 * 

@@ -14,9 +14,12 @@ public class Measure3DPlugin implements PlugIn{
 
 	static int inputIndex = 0;
 	static int labelsIndex = 1;
-	static String[] measureLabels = new String[]{ "Mean", "StdDev", "Max", "Min", "NumberOfVoxels", "Volume" };
-	static boolean[] measureStates = new boolean[]{ true, true, true, true, true, true };
-	
+	static String[] measureLabels = new String[]{ "Mean", "StdDev", "Max",
+			"Min", "Median", "NumberOfVoxels", "Volume" };
+
+	static boolean[] measureStates = new boolean[]{ true, true, true, true,
+			true, true, true };
+
 	@Override
 	public void run(String arg) 
 	{		
@@ -43,7 +46,7 @@ public class Measure3DPlugin implements PlugIn{
         gd.addChoice( "Input", names, names[ inputIndex ] );
         gd.addChoice( "Labels", names, names[ labelsIndex ] );
         gd.addMessage("Measurements:");
-        gd.addCheckboxGroup(3, 2, measureLabels, measureStates );
+        gd.addCheckboxGroup( 4, 2, measureLabels, measureStates );
         
         gd.showDialog();
         
@@ -90,10 +93,13 @@ public class Measure3DPlugin implements PlugIn{
             if( measureStates[ 3 ] ) // Min            	
             	results.add( im.getMin() );
 
-            if( measureStates[ 4 ] ) // Number of voxels            	
+            if( measureStates[ 4 ] ) // Median
+            	results.add( im.getMedian() );
+
+            if( measureStates[ 5 ] ) // Number of voxels
             	results.add( im.getNumberOfVoxels() );
 
-            if( measureStates[ 5 ] ) // Volume	
+            if( measureStates[ 6 ] ) // Volume
             	results.add( im.getVolume() );
 
             ResultsTable mergedTable = new ResultsTable();
