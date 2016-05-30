@@ -34,6 +34,10 @@ public class Measure3DPlugin implements PlugIn{
         for (int i = 0; i < nbima; i++)         
             names[ i ] = WindowManager.getImage(i + 1).getShortTitle();
         
+        if( inputIndex > nbima-1 )
+        	inputIndex = nbima - 1;
+        if( labelsIndex > nbima-1 )
+        	labelsIndex = nbima - 1;
         
         GenericDialog gd = new GenericDialog( "Measure 3D" );
         gd.addChoice( "Input", names, names[ inputIndex ] );
