@@ -4,8 +4,6 @@
 package inra.ijpb.binary.geodesic;
 
 import ij.ImageStack;
-import ij.process.FloatProcessor;
-import ij.process.ImageProcessor;
 import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.binary.ChamferWeights3D;
 import inra.ijpb.data.image.Image3D;
@@ -87,14 +85,14 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 		fireStatusChanged(this, "Initialization..."); 
 		// create new empty image, and fill it with black
 		ImageStack resultStack = ImageStack.create(sizeX, sizeY, sizeZ, 32);
-		Image3D result = Images3D.createWrapper(resultStack);
+		this.result = Images3D.createWrapper(resultStack);
 		
 		// initialize empty image with either 0 (foreground) or Inf (background)
 		for (int z = 0; z < sizeZ; z++)
 		{
 			for (int y = 0; y < sizeY; y++)
 			{
-				for (int x = 0; x < sizeX; z++)
+				for (int x = 0; x < sizeX; x++)
 				{
 					if (marker.getVoxel(x, y, z) == 0)
 					{
@@ -104,6 +102,7 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 			}
 		}
 		
+		// Iterate forward and backward passes until no more modification occur
 		int iter = 0;
 		do 
 		{
@@ -121,7 +120,7 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 			iter++;
 		} while (modif);
 
-		// Normalize values by the first weight
+		// Normalize values by the first weight value
 		if (this.normalizeMap) 
 		{
 			fireStatusChanged(this, "Normalize map"); 
@@ -129,7 +128,7 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 			{
 				for (int y = 0; y < sizeY; y++)
 				{
-					for (int x = 0; x < sizeX; z++)
+					for (int x = 0; x < sizeX; x++)
 					{
 						double val = result.getValue(x, y, z) / weights[0];
 						result.setValue(x, y, z, val);
@@ -208,9 +207,9 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 					for (int i = 0; i < shifts.length; i++)
 					{
 						int[] shift = shifts[i];
-						int x2 = x - shift[0];
-						int y2 = y - shift[1];
-						int z2 = z - shift[2];
+						int x2 = x + shift[0];
+						int y2 = y + shift[1];
+						int z2 = z + shift[2];
 						
 						if (x2 < 0 || x2 >= sizeX)
 							continue;
@@ -262,7 +261,7 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 		for (int z = sizeZ-1; z >= 0; z--)
 		{
 			fireProgressChanged(this, z, sizeZ);
-			for (int y = sizeY - 1; y >= 0; y++)
+			for (int y = sizeY - 1; y >= 0; y--)
 			{
 				for (int x = sizeX - 1; x >= 0; x--)
 				{
@@ -279,9 +278,9 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 					for (int i = 0; i < shifts.length; i++)
 					{
 						int[] shift = shifts[i];
-						int x2 = x - shift[0];
-						int y2 = y - shift[1];
-						int z2 = z - shift[2];
+						int x2 = x + shift[0];
+						int y2 = y + shift[1];
+						int z2 = z + shift[2];
 						
 						if (x2 < 0 || x2 >= sizeX)
 							continue;
