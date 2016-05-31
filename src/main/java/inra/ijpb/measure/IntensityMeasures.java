@@ -1,6 +1,7 @@
 package inra.ijpb.measure;
 
 import java.util.Collections;
+import java.util.HashMap;
 
 import ij.ImagePlus;
 import ij.measure.ResultsTable;
@@ -88,6 +89,55 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 			table.incrementCounter();
 			table.addLabel( Integer.toString( labels[i] ));
 			table.addValue( "Median", median[i] );
+		}
+
+		return table;
+	}
+
+	/**
+	 * Get mode voxel values per label
+	 *
+	 * @return result table with median values per label
+	 */
+	public ResultsTable getMode()
+	{
+		final int numLabels = objectVoxels.length;
+
+		double[] mode = new double[ numLabels ];
+
+		// calculate mode voxel value per object
+		for( int i=0; i<numLabels; i++ )
+		{
+			HashMap<Double,Integer> hm = new HashMap< Double,Integer >();
+			int max = 1;
+			double temp = objectVoxels[ i ].get( 0 );
+
+			for(int j=0; j < objectVoxels[ i ].size(); j++ )
+			{
+				double val = objectVoxels[ i ].get( j );
+				if( hm.get( val ) != null )
+				{
+					int count = hm.get( val );
+					count++;
+					hm.put( val, count );
+					if( count>max )
+					{
+						max = count;
+						temp = val;
+					}
+				}
+				else
+					hm.put( val, 1 );
+			}
+			mode[ i ] = temp;
+		}
+
+		// create data table
+		ResultsTable table = new ResultsTable();
+		for (int i = 0; i < numLabels; i++) {
+			table.incrementCounter();
+			table.addLabel( Integer.toString( labels[i] ));
+			table.addValue( "Mode", mode[i] );
 		}
 
 		return table;

@@ -15,10 +15,10 @@ public class Measure3DPlugin implements PlugIn{
 	static int inputIndex = 0;
 	static int labelsIndex = 1;
 	static String[] measureLabels = new String[]{ "Mean", "StdDev", "Max",
-			"Min", "Median", "NumberOfVoxels", "Volume" };
+			"Min", "Median", "Mode", "NumberOfVoxels", "Volume" };
 
 	static boolean[] measureStates = new boolean[]{ true, true, true, true,
-			true, true, true };
+			true, true, true, true };
 
 	@Override
 	public void run(String arg) 
@@ -96,10 +96,13 @@ public class Measure3DPlugin implements PlugIn{
             if( measureStates[ 4 ] ) // Median
             	results.add( im.getMedian() );
 
-            if( measureStates[ 5 ] ) // Number of voxels
+            if( measureStates[ 5 ] ) // Mode
+            	results.add( im.getMode() );
+
+            if( measureStates[ 6 ] ) // Number of voxels
             	results.add( im.getNumberOfVoxels() );
 
-            if( measureStates[ 6 ] ) // Volume
+            if( measureStates[ 7 ] ) // Volume
             	results.add( im.getVolume() );
 
             ResultsTable mergedTable = new ResultsTable();
