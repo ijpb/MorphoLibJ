@@ -1,7 +1,9 @@
-#LyX 2.1 created this file. For more info see http://www.lyx.org/
-\lyxformat 474
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
 \begin_document
 \begin_header
+\save_transient_properties true
+\origin unavailable
 \textclass scrreprt
 \begin_preamble
 \usepackage[dvipsnames]{xcolor}
@@ -82,16 +84,16 @@
 \language_package default
 \inputencoding auto
 \fontencoding global
-\font_roman default
-\font_sans default
-\font_typewriter beramono
-\font_math auto
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "beramono" "default"
+\font_math "auto" "auto"
 \font_default_family default
 \use_non_tex_fonts false
 \font_sc false
 \font_osf false
-\font_sf_scale 100
-\font_tt_scale 100
+\font_sf_scale 100 100
+\font_tt_scale 100 100
 \graphics default
 \default_output_format pdf2
 \output_sync 0
@@ -538,7 +540,7 @@ Erosion and dilation
 \begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:Erosion-Dilation"
+name "subsec:Erosion-Dilation"
 
 \end_inset
 
@@ -641,7 +643,7 @@ Opening and closing
 \begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:Opening-Closing"
+name "subsec:Opening-Closing"
 
 \end_inset
 
@@ -883,7 +885,7 @@ The collection of morphological filters is available in the
 \begin_inset Quotes eld
 \end_inset
 
-Plugins\SpecialChar \menuseparator
+Plugins\SpecialChar menuseparator
 MorphoLibJ
 \begin_inset Quotes erd
 \end_inset
@@ -902,8 +904,8 @@ Morphological filters for planar images are available
 \begin_inset Quotes eld
 \end_inset
 
-Plugins\SpecialChar \menuseparator
-MorphoLibJ\SpecialChar \menuseparator
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
 Morphological filters
 \begin_inset Quotes erd
 \end_inset
@@ -1009,8 +1011,8 @@ Morphological filters for 3D images are available
 \begin_inset Quotes eld
 \end_inset
 
-Plugins\SpecialChar \menuseparator
-MorphoLibJ\SpecialChar \menuseparator
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
 Morphological filters (3D)
 \begin_inset Quotes erd
 \end_inset
@@ -1316,7 +1318,7 @@ Applications to grayscale images
 \begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:Morphological-Reconstruction-Grayscale"
+name "subsec:Morphological-Reconstruction-Grayscale"
 
 \end_inset
 
@@ -1880,8 +1882,8 @@ The following operations are available in the
 \begin_inset Quotes eld
 \end_inset
 
-Plugins\SpecialChar \menuseparator
-MorphoLibJ\SpecialChar \menuseparator
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
 Minima and Maxima
 \begin_inset Quotes erd
 \end_inset
@@ -2217,7 +2219,7 @@ J (under
 \begin_inset Quotes eld
 \end_inset
 
-Plugins\SpecialChar \menuseparator
+Plugins\SpecialChar menuseparator
 MorphoLibJ
 \begin_inset Quotes erd
 \end_inset
@@ -2422,6 +2424,10 @@ The Classic Watershed plugin runs on any grayscale image (8, 16 and 32-bit)
  in 2D and 3D.
  At least one image needs to be open in order for the plugin to run.
  If that's the case, a dialog like the following will pop up: 
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -2441,6 +2447,10 @@ Let's have a look at the different parameters:
 
 \begin_layout Itemize
 Image parameters: 
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
@@ -2466,6 +2476,10 @@ Mask image
 \end_deeper
 \begin_layout Itemize
 Morphological parameters: 
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
@@ -2645,7 +2659,7 @@ status open
 \begin_layout Plain Layout
 \begin_inset Tabular
 <lyxtabular version="3" rows="1" columns="3">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -2905,6 +2919,10 @@ Usage
 \begin_layout Standard
 Marker-controlled Watershed needs at least two images to run.
  If that's the case, a dialog like the following will pop up:
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -2924,6 +2942,10 @@ Let's have a look at the different parameters:
 
 \begin_layout Itemize
 Image parameters:
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
@@ -2952,6 +2974,10 @@ Marker image
 \end_deeper
 \begin_layout Itemize
 And it can optionally admit a third image:
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
@@ -2969,6 +2995,10 @@ Mask image
 \end_deeper
 \begin_layout Itemize
 Rest of parameters:
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
@@ -3260,6 +3290,10 @@ Display
 \series default
 : list of options to display the segmentation results.
  
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
@@ -4327,8 +4361,8 @@ ResultsTable
 \begin_inset Quotes eld
 \end_inset
 
-Plugins\SpecialChar \menuseparator
-MorphoLibJ\SpecialChar \menuseparator
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
 Analyze
 \begin_inset Quotes erd
 \end_inset
@@ -4350,9 +4384,9 @@ global geometry
 \begin_inset Quotes eld
 \end_inset
 
-Plugins\SpecialChar \menuseparator
-MorphoLibJ\SpecialChar \menuseparator
-Analyze\SpecialChar \menuseparator
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
+Analyze\SpecialChar menuseparator
 Region Morphometry
 \begin_inset Quotes erd
 \end_inset
@@ -4500,9 +4534,9 @@ The plugin calculating these measurements is found under
 \begin_inset Quotes eld
 \end_inset
 
-Plugins\SpecialChar \menuseparator
-MorphoLibJ\SpecialChar \menuseparator
-Analyze\SpecialChar \menuseparator
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
+Analyze\SpecialChar menuseparator
 Particle Analysis 3D
 \begin_inset Quotes erd
 \end_inset
@@ -4603,9 +4637,9 @@ Other measurements are provided for pairs of grayscale and label 2D or 3D
 \begin_inset Quotes eld
 \end_inset
 
-Plugins\SpecialChar \menuseparator
-MorphoLibJ\SpecialChar \menuseparator
-Analyze\SpecialChar \menuseparator
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
+Analyze\SpecialChar menuseparator
 Measure 3D
 \begin_inset Quotes erd
 \end_inset
@@ -4616,8 +4650,9 @@ Measure 3D
 \end_layout
 
 \begin_layout Standard
-The plugin calculates the mean, the standard deviation, the maximum and
- the minimum intensity value of each labeled region in the grayscale image.
+The plugin calculates the mean, standard deviation, maximum, minimum, median,
+ mode, skewness and kurtosis of the intensity value distribution of each
+ labeled region in the grayscale image.
  The results are displayed as well in an ImageJ 
 \emph on
 ResultsTable
@@ -4725,9 +4760,9 @@ The plugin (under
 \begin_inset Quotes eld
 \end_inset
 
-Plugins\SpecialChar \menuseparator
-MorphoLibJ\SpecialChar \menuseparator
-Analyze\SpecialChar \menuseparator
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
+Analyze\SpecialChar menuseparator
 Region Adjacency Graph
 \begin_inset Quotes erd
 \end_inset
@@ -4805,8 +4840,8 @@ Some functions specific for the processing of binary images.
 \begin_inset Quotes eld
 \end_inset
 
-Plugins\SpecialChar \menuseparator
-MorphoLibJ\SpecialChar \menuseparator
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
 Binary
 \begin_inset Quotes erd
 \end_inset
@@ -5398,9 +5433,9 @@ To ease the processing of label images, MorphoLibJ provides the Label Edition
 \begin_inset Quotes eld
 \end_inset
 
-Plugins\SpecialChar \menuseparator
-MorphoLibJ\SpecialChar \menuseparator
-Labels\SpecialChar \menuseparator
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
+Labels\SpecialChar menuseparator
 Label Edition
 \begin_inset Quotes erd
 \end_inset
@@ -6319,7 +6354,7 @@ status open
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="24" columns="10">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="left" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -8376,7 +8411,7 @@ Fill Holes (Binary / Gray)
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "sub:Morphological-Reconstruction-Grayscale"
+reference "subsec:Morphological-Reconstruction-Grayscale"
 
 \end_inset
 
@@ -8474,7 +8509,7 @@ Kill Borders
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "sub:Morphological-Reconstruction-Grayscale"
+reference "subsec:Morphological-Reconstruction-Grayscale"
 
 \end_inset
 
@@ -8702,7 +8737,7 @@ status open
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="24" columns="10">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="left" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
