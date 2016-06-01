@@ -97,7 +97,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 	/**
 	 * Get mode voxel values per label
 	 *
-	 * @return result table with median values per label
+	 * @return result table with mode values per label
 	 */
 	public ResultsTable getMode()
 	{
@@ -146,7 +146,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 	/**
 	 * Get skewness voxel values per label
 	 *
-	 * @return result table with median values per label
+	 * @return result table with skewness values per label
 	 */
 	public ResultsTable getSkewness()
 	{
@@ -182,6 +182,50 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 			table.incrementCounter();
 			table.addLabel( Integer.toString( labels[i] ));
 			table.addValue( "Skewness", skewness[i] );
+		}
+
+		return table;
+	}
+	/**
+	 * Get kurtosis voxel values per label
+	 *
+	 * @return result table with kurtosis values per label
+	 */
+	public ResultsTable getKurtosis()
+	{
+		final int numLabels = objectVoxels.length;
+
+		double[] kurtosis = new double[ numLabels ];
+
+		// calculate skewness voxel value per object
+		for( int i=0; i<numLabels; i++ )
+		{
+			final double voxelCount = objectVoxels[ i ].size();
+			double v, v2, sum2 = 0, sum3 = 0, sum4 = 0;
+			double mean = 0;
+			for( int j=0; j<voxelCount; j++ )
+			{
+				mean += objectVoxels[ i ].get( j );
+				v = objectVoxels[ i ].get( j ) + Double.MIN_VALUE;
+				v2 = v * v;
+				sum2 += v2;
+				sum3 += v * v2;
+				sum4 += v2 * v2;
+			}
+			mean /= voxelCount;
+			double mean2 = mean*mean;
+			double variance = sum2 / voxelCount - mean2;
+			kurtosis[ i ] = (((sum4 - 4.0 * mean * sum3 + 6.0 * mean2 * sum2 )
+					/ voxelCount - 3.0 * mean2 * mean2 )
+					/ ( variance * variance ) -3.0 );
+		}
+
+		// create data table
+		ResultsTable table = new ResultsTable();
+		for (int i = 0; i < numLabels; i++) {
+			table.incrementCounter();
+			table.addLabel( Integer.toString( labels[ i ] ) );
+			table.addValue( "Kurtosis", kurtosis[ i ] );
 		}
 
 		return table;

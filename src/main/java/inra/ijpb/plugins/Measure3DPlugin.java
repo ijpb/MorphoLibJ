@@ -15,10 +15,11 @@ public class Measure3DPlugin implements PlugIn{
 	static int inputIndex = 0;
 	static int labelsIndex = 1;
 	static String[] measureLabels = new String[]{ "Mean", "StdDev", "Max",
-			"Min", "Median", "Mode", "Skewness", "NumberOfVoxels", "Volume" };
+			"Min", "Median", "Mode", "Skewness", "Kurtosis",
+			"NumberOfVoxels", "Volume" };
 
 	static boolean[] measureStates = new boolean[]{ true, true, true, true,
-			true, true, true, true, true };
+			true, true, true, true, true, true };
 
 	@Override
 	public void run(String arg) 
@@ -103,10 +104,13 @@ public class Measure3DPlugin implements PlugIn{
             if( measureStates[ 6 ] ) // Skewness
             	results.add( im.getSkewness() );
 
-            if( measureStates[ 7 ] ) // Number of voxels
+            if( measureStates[ 7 ] ) // Kurtosis
+            	results.add( im.getKurtosis() );
+
+            if( measureStates[ 8 ] ) // Number of voxels
             	results.add( im.getNumberOfVoxels() );
 
-            if( measureStates[ 8 ] ) // Volume
+            if( measureStates[ 9 ] ) // Volume
             	results.add( im.getVolume() );
 
             ResultsTable mergedTable = new ResultsTable();
