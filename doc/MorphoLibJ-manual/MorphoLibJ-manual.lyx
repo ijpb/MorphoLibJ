@@ -3822,7 +3822,7 @@ Particle analysis
 \end_layout
 
 \begin_layout Standard
-This sections describes the methods implemented in MorphoLibJ for describing
+This section describes the methods implemented in MorphoLibJ for describing
  individual particles, represented as label images (one label for each particle).
  We first define and describe the implemented features, then we present
  the plugins that integrate them.
