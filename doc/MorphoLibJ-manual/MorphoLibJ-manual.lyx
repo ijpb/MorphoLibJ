@@ -4174,7 +4174,7 @@ key "Lehmann_2012_ij"
 \end_inset
 
 .
- The MorphoLibJ library also considers the inverse of the circularity, refered
+ The MorphoLibJ library also considers the inverse of the circularity, referred
  to as 
 \begin_inset Quotes eld
 \end_inset
@@ -4357,7 +4357,7 @@ ResultsTable
 \emph default
 ) containing one row for each label actually present within the image.
  The spatial calibration of the image is taken into account in all measurements.
- All plugisn can be found under the 
+ All plugins can be found under the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -4437,7 +4437,7 @@ Largest inscribed circle or ball
 \end_layout
 
 \begin_layout Standard
-This plugins computes for each label the largest disk that can be enclosed
+This plugin computes for each label the largest disk that can be enclosed
  within the corresponding particle.
  The plugin opens a dialog that allows to choose the label image to characterize
 , the choice of the method for computing distance, and eventually the image
