@@ -144,6 +144,49 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 	}
 
 	/**
+	 * Get skewness voxel values per label
+	 *
+	 * @return result table with median values per label
+	 */
+	public ResultsTable getSkewness()
+	{
+		final int numLabels = objectVoxels.length;
+
+		double[] skewness = new double[ numLabels ];
+
+		// calculate skewness voxel value per object
+		for( int i=0; i<numLabels; i++ )
+		{
+			final double voxelCount = objectVoxels[ i ].size();
+			double v, v2, sum2 = 0, sum3 = 0;
+			double mean = 0;
+			for( int j=0; j<voxelCount; j++ )
+			{
+				mean += objectVoxels[ i ].get( j );
+				v = objectVoxels[ i ].get( j ) + Double.MIN_VALUE;
+				v2 = v * v;
+				sum2 += v2;
+				sum3 += v * v2;
+			}
+			mean /= voxelCount;
+			double mean2 = mean*mean;
+			double variance = sum2 / voxelCount - mean2;
+			double sDeviation = Math.sqrt( variance );
+			skewness[ i ] = ((sum3 - 3.0 * mean * sum2 ) / voxelCount
+					+ 2.0 * mean * mean2 ) / ( variance * sDeviation );
+		}
+
+		// create data table
+		ResultsTable table = new ResultsTable();
+		for (int i = 0; i < numLabels; i++) {
+			table.incrementCounter();
+			table.addLabel( Integer.toString( labels[i] ));
+			table.addValue( "Skewness", skewness[i] );
+		}
+
+		return table;
+	}
+	/**
 	 * Get standard deviation of voxel values per label
 	 * 
 	 * @return result table with standard deviation values per label
