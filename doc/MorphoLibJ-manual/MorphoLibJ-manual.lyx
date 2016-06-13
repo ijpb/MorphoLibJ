@@ -4640,7 +4640,7 @@ Other measurements are provided for pairs of grayscale and label 2D or 3D
 Plugins\SpecialChar menuseparator
 MorphoLibJ\SpecialChar menuseparator
 Analyze\SpecialChar menuseparator
-Measure 3D
+Intensity Measurements 2D/3D
 \begin_inset Quotes erd
 \end_inset
 

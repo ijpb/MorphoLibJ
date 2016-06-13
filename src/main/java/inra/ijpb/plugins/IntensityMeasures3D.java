@@ -10,7 +10,14 @@ import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
 import inra.ijpb.measure.IntensityMeasures;
 
-public class Measure3DPlugin implements PlugIn{
+/**
+ * This class implements a set of photometric (intensity) measurements over
+ * an input grayscale image (2D or 3D) and its set of corresponding labels.
+ *
+ * @author Ignacio Arganda-Carreras (ignacio.arganda@ehu.eus)
+ *
+ */
+public class IntensityMeasures3D implements PlugIn{
 
 	static int inputIndex = 0;
 	static int labelsIndex = 1;
@@ -28,11 +35,12 @@ public class Measure3DPlugin implements PlugIn{
 		
 		if( nbima < 2 )
 		{
-			IJ.error( "Measure 3D I/O error", 
-					"ERROR: At least two images need to be open to run measure 3D");
+			IJ.error( "Intensity Measures 2D/3D input error",
+					"ERROR: At least two images need to be open to run "
+							+ "Intensity Measures 2D/3D" );
 			return;
 		}
-		
+
         String[] names = new String[ nbima ];        
         
         for (int i = 0; i < nbima; i++)         
@@ -72,12 +80,13 @@ public class Measure3DPlugin implements PlugIn{
             ImagePlus labelImage = WindowManager.getImage( labelsIndex + 1 );
             
             if( inputImage.getWidth() != labelImage.getWidth() || 
-            	inputImage.getHeight() != labelImage.getHeight() )
+            		inputImage.getHeight() != labelImage.getHeight() )
             {
-            	IJ.error( "Measure 3D I/O error", "Error: input and label images must have the same size" );
+            	IJ.error( "Intensity Measures 2D/3D input error", "Error: input"
+            			+ " and label images must have the same size" );
             	return;
             }
-            
+
             ArrayList< ResultsTable > results = new ArrayList<ResultsTable>(); 
             
             
@@ -130,10 +139,8 @@ public class Measure3DPlugin implements PlugIn{
             	}
             }
             
-            mergedTable.show( "3D measurements" );
+            mergedTable.show( inputImage.getShortTitle() +
+            		"-intensity-measurements" );
         }
-
-		
 	}
-
 }
