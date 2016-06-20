@@ -2,7 +2,7 @@
 MorphoLibJ
 ============
 
-Collection of mathematical morphology methods and plugins for [ImageJ](http://imagej.net/Welcome), created at INRA-IJPB Modeling and Digital Imaging lab.
+Collection of mathematical morphology methods and plugins for [ImageJ](http://imagej.net/Welcome), created at the [INRA-IJPB Modeling and Digital Imaging lab](http://www-ijpb.versailles.inra.fr/en/bc/equipes/modelisation-imagerie/).
 
 The library implements several functionalities that were missing in the ImageJ software, and that were not or only partially covered by other plugins. Namely:
 
