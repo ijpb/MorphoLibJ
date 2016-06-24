@@ -238,7 +238,34 @@ public class Watershed
 			int connectivity,
 			boolean getDams )
 	{															
-		MarkerControlledWatershedTransform2D wt = new MarkerControlledWatershedTransform2D( input, marker, binaryMask, connectivity );
+		return computeWatershed( input, marker, binaryMask, connectivity,
+				getDams, true );
+	}
+
+	/**
+	 * Compute watershed with markers with an optional binary mask
+	 * to restrict the regions of application
+	 *
+	 * @param input original grayscale image (usually a gradient image)
+	 * @param marker image with labeled markers
+	 * @param binaryMask binary mask to restrict the regions of interest
+	 * @param connectivity voxel connectivity to define neighborhoods
+	 * @param getDams select/deselect the calculation of dams
+	 * @param verbose flag to display log messages
+	 * @return image of labeled catchment basins (labels are 1, 2, ...)
+	 */
+	public static ImageProcessor computeWatershed(
+			ImageProcessor input,
+			ImageProcessor marker,
+			ImageProcessor binaryMask,
+			int connectivity,
+			boolean getDams,
+			boolean verbose )
+	{
+		MarkerControlledWatershedTransform2D wt =
+				new MarkerControlledWatershedTransform2D( input, marker,
+						binaryMask, connectivity );
+		wt.setVerbose( verbose );
 		if( getDams )
 			return wt.applyWithPriorityQueueAndDams();
 		else 
