@@ -142,7 +142,7 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 	    	
 	    	change = false;
 			final int count = voxelList.size();
-	      	IJ.log( "  Flooding " + count + " voxels..." );
+			if( verbose ) IJ.log( "  Flooding " + count + " voxels..." );
 	      	IJ.showStatus("Flooding " + count + " voxels...");	      		      	
 	      	
 			for (int p = 0; p < count; ++p)
@@ -292,7 +292,7 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 	    	
 	    	change = false;
 			final int count = voxelList.size();
-	      	IJ.log( "  Flooding " + count + " voxels..." );
+			if( verbose ) IJ.log( "  Flooding " + count + " voxels..." );
 	      	IJ.showStatus("Flooding " + count + " voxels...");	      		      	
 	      	
 			for (int p = 0; p < count; ++p)
@@ -429,7 +429,7 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
        			new Neighborhood3DC26() : new Neighborhood3DC6();
 
 	    final int count = voxelList.size();
-	    IJ.log( "  Flooding from " + count + " voxels..." );
+	    if( verbose ) IJ.log( "  Flooding from " + count + " voxels..." );
       	IJ.showStatus("Flooding from " + count + " voxels...");
 	    
       	final int numVoxels = size1 * size2 * size3;
@@ -639,7 +639,7 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
        			new Neighborhood3DC26() : new Neighborhood3DC6();
 
 	    final int count = voxelList.size();
-	    IJ.log( "  Flooding from " + count + " voxels..." );
+	    if( verbose ) IJ.log( "  Flooding from " + count + " voxels..." );
       	IJ.showStatus("Flooding from " + count + " voxels...");
 	    
 //      	final int numVoxels = size1 * size2 * size3;

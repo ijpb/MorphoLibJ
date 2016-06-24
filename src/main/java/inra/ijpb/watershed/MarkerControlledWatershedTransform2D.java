@@ -273,7 +273,7 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 	    	
 	    	change = false;
 			final int count = pixelList.size();
-	      	IJ.log( "  Flooding " + count + " pixels..." );
+			if( verbose )  IJ.log( "  Flooding " + count + " pixels..." );
 	      	IJ.showStatus("Flooding " + count + " pixels...");	      		      	
 	      	
 			for (int p = 0; p < count; ++p)
@@ -421,7 +421,7 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 	    	
 	    	change = false;
 			final int count = pixelList.size();
-	      	IJ.log( "  Flooding " + count + " pixels..." );
+			if( verbose )  IJ.log( "  Flooding " + count + " pixels..." );
 	      	IJ.showStatus("Flooding " + count + " pixels...");	      		      	
 	      	
 			for (int p = 0; p < count; ++p)
@@ -701,7 +701,7 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
        			new Neighborhood2DC8() : new Neighborhood2DC4();
 
 	    final int count = pixelList.size();
-	    IJ.log( "  Flooding from " + count + " pixels..." );
+	    if( verbose )  IJ.log( "  Flooding from " + count + " pixels..." );
       	IJ.showStatus("Flooding from " + count + " pixels...");
 	    
       	final int numPixels = size1 * size2;
@@ -860,7 +860,7 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
        			new Neighborhood2DC8() : new Neighborhood2DC4();
 
 	    final int count = pixelList.size();
-	    IJ.log( "  Flooding from " + count + " pixels..." );
+	    if( verbose )  IJ.log( "  Flooding from " + count + " pixels..." );
       	IJ.showStatus("Flooding from " + count + " pixels...");
 	    
       	final int numPixels = size1 * size2;
@@ -1078,7 +1078,7 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
        			new Neighborhood2DC8() : new Neighborhood2DC4();
 
 	    final int count = pixelList.size();
-	    IJ.log( "  Flooding from " + count + " pixels..." );
+	    if( verbose ) IJ.log( "  Flooding from " + count + " pixels..." );
       	IJ.showStatus("Flooding from " + count + " pixels...");
 	    
       	double maxValue = inputImage.getMax();
@@ -1328,7 +1328,7 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
        			new Neighborhood2DC8() : new Neighborhood2DC4();
 
 	    final int count = pixelList.size();
-	    IJ.log( "  Flooding from " + count + " pixels..." );
+	    if( verbose )  IJ.log( "  Flooding from " + count + " pixels..." );
       	IJ.showStatus("Flooding from " + count + " pixels...");
 	    
       	double maxValue = inputImage.getMax();
