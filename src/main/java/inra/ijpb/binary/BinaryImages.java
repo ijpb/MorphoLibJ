@@ -48,6 +48,38 @@ public class BinaryImages
 	}
 
 	/**
+	 * Check if input image is binary
+	 * @param image input image
+	 * @return true if image is binary
+	 */
+	public final static boolean isBinaryImage( ImagePlus image )
+	{
+		for(int n=1; n<=image.getImageStackSize(); n++ )
+		{
+			final int[] hist =
+					image.getImageStack().getProcessor( n ).getHistogram();
+			for( int i=1; i<hist.length-1; i++ )
+				if( hist[ i ] > 0 )
+					return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Check if input image is binary
+	 * @param image input image
+	 * @return true if image is binary
+	 */
+	public final static boolean isBinaryImage( ImageProcessor image )
+	{
+		final int[] hist = image.getHistogram();
+		for( int i=1; i<hist.length-1; i++ )
+			if( hist[ i ] > 0 )
+				return false;
+		return true;
+	}
+
+	/**
 	 * Computes the labels in the binary 2D or 3D image contained in the given
 	 * ImagePlus, and computes the maximum label to set up the display range of
 	 * the resulting ImagePlus.

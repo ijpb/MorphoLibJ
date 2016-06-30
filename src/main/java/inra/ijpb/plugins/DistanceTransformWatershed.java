@@ -1,5 +1,6 @@
 package inra.ijpb.plugins;
 
+import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.DialogListener;
 import ij.gui.GenericDialog;
@@ -128,6 +129,12 @@ DialogListener
 			String command,
 			PlugInFilterRunner pfr )
 	{
+		if( !BinaryImages.isBinaryImage( imp ) )
+		{
+			IJ.error( "Distance Transform Watershed",
+					"Input image is not binary" );
+			return DONE;
+		}
 		// Store user data
 		this.imagePlus = imp;
 		this.baseImage = imp.getProcessor().duplicate();
