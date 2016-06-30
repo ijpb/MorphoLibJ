@@ -6,13 +6,8 @@ import ij.gui.GenericDialog;
 import ij.plugin.filter.ExtendedPlugInFilter;
 import ij.plugin.filter.PlugInFilterRunner;
 import ij.process.ImageProcessor;
-import inra.ijpb.algo.DefaultAlgoListener;
+import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.binary.ChamferWeights;
-import inra.ijpb.binary.distmap.DistanceTransform;
-import inra.ijpb.binary.distmap.DistanceTransform3x3Float;
-import inra.ijpb.binary.distmap.DistanceTransform3x3Short;
-import inra.ijpb.binary.distmap.DistanceTransform5x5Float;
-import inra.ijpb.binary.distmap.DistanceTransform5x5Short;
 import inra.ijpb.watershed.ExtendedMinimaWatershed;
 
 import java.awt.AWTEvent;
@@ -227,19 +222,8 @@ DialogListener
 			float[] weights,
 			boolean normalize )
 	{
-		// Initialize calculator
-		DistanceTransform algo;
-		if (weights.length == 2) {
-			algo = new DistanceTransform3x3Float(weights, normalize);
-		} else {
-			algo = new DistanceTransform5x5Float(weights, normalize);
-		}
-
-		// add monitoring
-		DefaultAlgoListener.monitor(algo);
-
-		// Compute distance on specified image
-		final ImageProcessor dist = algo.distanceMap( image );
+		final ImageProcessor dist =
+				BinaryImages.distanceMap( image, weights, normalize );
 		dist.invert();
 
 		return ExtendedMinimaWatershed.extendedMinimaWatershed(
@@ -251,19 +235,9 @@ DialogListener
 			short[] weights,
 			boolean normalize )
 	{
-		// Initialize calculator
-		DistanceTransform algo;
-		if (weights.length == 2) {
-			algo = new DistanceTransform3x3Short(weights, normalize);
-		} else {
-			algo = new DistanceTransform5x5Short(weights, normalize);
-		}
-
-		// add monitoring
-		DefaultAlgoListener.monitor(algo);
-
 		// Compute distance on specified image
-		final ImageProcessor dist = algo.distanceMap( image );
+		final ImageProcessor dist =
+				BinaryImages.distanceMap( image, weights, normalize );
 		dist.invert();
 
 		return ExtendedMinimaWatershed.extendedMinimaWatershed(
