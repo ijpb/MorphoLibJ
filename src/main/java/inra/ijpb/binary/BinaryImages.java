@@ -48,12 +48,15 @@ public class BinaryImages
 	}
 
 	/**
-	 * Check if input image is binary
+	 * Check if input image is binary (8-bit with only 0 or 255 values)
 	 * @param image input image
 	 * @return true if image is binary
 	 */
 	public final static boolean isBinaryImage( ImagePlus image )
 	{
+		if( image.getType() != ImagePlus.GRAY8 &&
+				image.getType() != ImagePlus.COLOR_256 )
+			return false;
 		for(int n=1; n<=image.getImageStackSize(); n++ )
 		{
 			final int[] hist =
@@ -66,12 +69,14 @@ public class BinaryImages
 	}
 
 	/**
-	 * Check if input image is binary
+	 * Check if input image is binary (8-bit with only 0 or 255 values)
 	 * @param image input image
 	 * @return true if image is binary
 	 */
 	public final static boolean isBinaryImage( ImageProcessor image )
 	{
+		if( ! (image instanceof ByteProcessor) )
+			return false;
 		final int[] hist = image.getHistogram();
 		for( int i=1; i<hist.length-1; i++ )
 			if( hist[ i ] > 0 )
