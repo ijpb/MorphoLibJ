@@ -131,8 +131,8 @@ DialogListener
 	{
 		if( !BinaryImages.isBinaryImage( imp ) )
 		{
-			IJ.error( "Distance Transform Watershed",
-					"Input image is not binary" );
+			IJ.error( "Distance Transform Watershed", "Input image is not"
+					+ " binary (8-bit with only 0 or 255 values)" );
 			return DONE;
 		}
 		// Store user data
