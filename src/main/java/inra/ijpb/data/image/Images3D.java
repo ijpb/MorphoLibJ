@@ -101,7 +101,28 @@ public class Images3D
 		}
 		return new double[]{ min, max };				
 	}
-	
+	/**
+	 * Find minimum and maximum value of input image
+	 *
+	 * @param image input 2d/3d image
+	 * @return array of 2 extreme values
+	 */
+	public static final double[] findMinAndMax( ImageStack image )
+	{
+		// Adjust min and max values to display
+		double min = 0;
+		double max = 0;
+		for( int slice=1; slice<=image.getSize(); slice++ )
+		{
+			ImageProcessor ip = image.getProcessor(slice);
+			ip.resetMinAndMax();
+			if( max < ip.getMax() )
+				max = ip.getMax();
+			if( min > ip.getMin() )
+				min = ip.getMin();
+		}
+		return new double[]{ min, max };
+	}
 	/**
 	 * Optimize display range of 2d/3d image based on its
 	 * minimum and maximum values
@@ -234,5 +255,26 @@ public class Images3D
 			}
 		}
 	}
-	
+	/**
+	 * Invert the values of a 3D image
+	 *
+	 * @param image input image
+	 */
+	public static final void invert( ImageStack image )
+	{
+		double[] extrema = Images3D.findMinAndMax( image );
+		int nSlices = image.getSize();
+		for (int z = 0; z < nSlices; z++)
+		{
+			final ImageProcessor ip = image.getProcessor( z + 1 );
+			for (int y = 0; y < image.getHeight(); y++)
+			{
+				for (int x = 0; x < image.getWidth(); x++)
+				{
+					float value = ip.getf( x, y );
+					ip.setf( x,  y, (float) (extrema[1] - (value - extrema[0])));
+				}
+			}
+		}
+	}
 }
