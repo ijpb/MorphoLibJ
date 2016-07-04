@@ -149,9 +149,35 @@ public class Watershed
 			int connectivity,
 			boolean getDams )
 	{
+		return computeWatershed( input, marker, binaryMask, connectivity,
+				getDams, true );
+	}
+	/**
+	 * Compute watershed with markers with an optional binary mask
+	 * to restrict the regions of application
+	 *
+	 * @param input original grayscale image (usually a gradient image)
+	 * @param marker image with labeled markers
+	 * @param binaryMask binary mask to restrict the regions of interest
+	 * @param connectivity voxel connectivity to define neighborhoods (4 or 8 for 2D, 6 or 26 for 3D)
+	 * @param getDams select/deselect the calculation of dams
+	 * @param verbose flag to display messages in the log window
+	 * @return image of labeled catchment basins (labels are 1, 2, ...)
+	 */
+	public static ImagePlus computeWatershed(
+			ImagePlus input,
+			ImagePlus marker,
+			ImagePlus binaryMask,
+			int connectivity,
+			boolean getDams,
+			boolean verbose )
+	{
 		if( connectivity == 6 || connectivity == 26 )
 		{
-			MarkerControlledWatershedTransform3D wt = new MarkerControlledWatershedTransform3D( input, marker, binaryMask, connectivity );
+			MarkerControlledWatershedTransform3D wt =
+					new MarkerControlledWatershedTransform3D( input, marker,
+							binaryMask, connectivity );
+			wt.setVerbose( verbose );
 			if( getDams )
 				return wt.applyWithPriorityQueueAndDams();
 			else 
@@ -159,15 +185,18 @@ public class Watershed
 		}
 		else if( connectivity == 4 || connectivity == 8 )
 		{
-			MarkerControlledWatershedTransform2D wt = new MarkerControlledWatershedTransform2D( 
-					input.getProcessor(), marker.getProcessor(), 
-					null != binaryMask ? binaryMask.getProcessor() : null, connectivity );
+			MarkerControlledWatershedTransform2D wt =
+					new MarkerControlledWatershedTransform2D(
+							input.getProcessor(), marker.getProcessor(),
+							null != binaryMask ? binaryMask.getProcessor() :
+								null, connectivity );
+			wt.setVerbose( verbose );
 			ImageProcessor ip;
 			if( getDams )
 				ip = wt.applyWithPriorityQueueAndDams();
 			else 
 				ip = wt.applyWithPriorityQueue();
-			
+
 			if( null != ip )
 			{
 				String title = input.getTitle();
@@ -178,7 +207,7 @@ public class Watershed
 					ext = title.substring( index );
 					title = title.substring( 0, index );				
 				}
-				
+
 				final ImagePlus ws = new ImagePlus( title + "-watershed" + ext, ip );
 				ws.setCalibration( input.getCalibration() );
 				return ws;
@@ -189,7 +218,7 @@ public class Watershed
 		else
 			return null;
 	}
-	
+
 	/**
 	 * Compute watershed with markers with an optional binary mask
 	 * to restrict the regions of application
@@ -208,18 +237,42 @@ public class Watershed
 			int connectivity,
 			boolean getDams )
 	{		
+		return computeWatershed( input, marker, binaryMask, connectivity,
+				getDams, true );
+	}
+	/**
+	 * Compute watershed with markers with an optional binary mask
+	 * to restrict the regions of application
+	 *
+	 * @param input original grayscale image (usually a gradient image)
+	 * @param marker image with labeled markers
+	 * @param binaryMask binary mask to restrict the regions of interest
+	 * @param connectivity voxel connectivity to define neighborhoods
+	 * @param getDams select/deselect the calculation of dams
+	 * @param verbose flag to display messages in the log window
+	 * @return image of labeled catchment basins (labels are 1, 2, ...)
+	 */
+	public static ImageStack computeWatershed(
+			ImageStack input,
+			ImageStack marker,
+			ImageStack binaryMask,
+			int connectivity,
+			boolean getDams,
+			boolean verbose )
+	{
 				
 		final ImagePlus inputIP = new ImagePlus( "input", input );
 		final ImagePlus markerIP = new ImagePlus( "marker", marker );
-		final ImagePlus binaryMaskIP = ( null != binaryMask ) ? new ImagePlus( "binary mask", binaryMask ) : null;
+		final ImagePlus binaryMaskIP = ( null != binaryMask ) ?
+				new ImagePlus( "binary mask", binaryMask ) : null;
 
-		ImagePlus ws = computeWatershed( inputIP, markerIP, binaryMaskIP, connectivity, getDams );
+		ImagePlus ws = computeWatershed( inputIP, markerIP, binaryMaskIP,
+				connectivity, getDams, verbose );
 		if ( null != ws )
 			return ws.getImageStack();
 		else 
 			return null;
 	}
-	
 	/**
 	 * Compute watershed with markers with an optional binary mask
 	 * to restrict the regions of application
