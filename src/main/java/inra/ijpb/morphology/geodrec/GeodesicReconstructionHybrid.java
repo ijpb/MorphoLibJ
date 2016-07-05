@@ -250,7 +250,7 @@ public class GeodesicReconstructionHybrid extends GeodesicReconstructionAlgoStub
 	private void initializeResult()
 	{
 		// Create result image the same size as marker image
-		this.result = this.marker.createProcessor(this.sizeX, this.sizeY);
+		this.result = this.mask.createProcessor(this.sizeX, this.sizeY);
 	
 		int sign = this.reconstructionType.getSign();
 		for (int y = 0; y < this.sizeY; y++) 
@@ -267,7 +267,7 @@ public class GeodesicReconstructionHybrid extends GeodesicReconstructionAlgoStub
 	private void initializeResultFloat()
 	{
 		// Create result image the same size as marker image
-		this.result = this.marker.createProcessor(this.sizeX, this.sizeY);
+		this.result = this.mask.createProcessor(this.sizeX, this.sizeY);
 	
 		float sign = this.reconstructionType.getSign();
 		for (int y = 0; y < this.sizeY; y++) 
