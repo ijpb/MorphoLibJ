@@ -12,6 +12,7 @@ import inra.ijpb.binary.ChamferWeights;
 import inra.ijpb.watershed.ExtendedMinimaWatershed;
 
 import java.awt.AWTEvent;
+import java.awt.Font;
 
 /**
  * This plugin computes watershed on the inverse of the distance map of a
@@ -141,13 +142,21 @@ DialogListener
 		this.pfr = pfr;
 
 		// Create a new generic dialog with appropriate options
-		GenericDialog gd = new GenericDialog( "Distance Transform Watershed");
+		GenericDialog gd = new GenericDialog( "Distance Transform Watershed" );
+		gd.setInsets( 0, 0, 0 );
+		gd.addMessage( "Distance map options:",
+				new Font( "SansSerif", Font.BOLD, 12 ) );
 		gd.addChoice( "Distances", ChamferWeights.getAllLabels(), weightLabel );
 		String[] outputTypes = new String[]{"32 bits", "16 bits"};
 		gd.addChoice( "Output Type", outputTypes, outputTypes[ floatProcessing ? 0:1 ]);
+		gd.setInsets( 0, 0, 0 );
 		gd.addCheckbox( "Normalize weights", normalize );
+		gd.setInsets( 20, 0, 0 );
+		gd.addMessage( "Watershed options:",
+				new Font( "SansSerif", Font.BOLD, 12 ) );
 		gd.addNumericField( "Dynamic", dynamic, 2 );
 		gd.addChoice( "Connectivity", Conn2D.getAllLabels(), connLabel );
+		gd.setInsets( 20, 0, 0 );
 		gd.addPreviewCheckbox( pfr );
 		gd.addDialogListener(this);
 		previewing = true;

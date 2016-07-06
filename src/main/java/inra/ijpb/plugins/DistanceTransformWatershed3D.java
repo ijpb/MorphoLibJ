@@ -1,5 +1,7 @@
 package inra.ijpb.plugins;
 
+import java.awt.Font;
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
@@ -103,11 +105,18 @@ public class DistanceTransformWatershed3D implements PlugIn
 		}
 
 		// Create a new generic dialog with appropriate options
-		GenericDialog gd = new GenericDialog( "Distance Transform Watershed 3D");
+		GenericDialog gd = new GenericDialog( "Distance Transform Watershed 3D" );
+		gd.setInsets( 0, 0, 0 );
+		gd.addMessage( "Distance map options:",
+				new Font( "SansSerif", Font.BOLD, 12 ) );
 		gd.addChoice( "Distances", ChamferWeights3D.getAllLabels(), weightLabel );
 		String[] outputTypes = new String[]{"32 bits", "16 bits"};
 		gd.addChoice( "Output Type", outputTypes, outputTypes[ floatProcessing ? 0:1 ]);
+		gd.setInsets( 0, 0, 0 );
 		gd.addCheckbox( "Normalize weights", normalize );
+		gd.setInsets( 20, 0, 0 );
+		gd.addMessage( "Watershed options:",
+				new Font( "SansSerif", Font.BOLD, 12 ) );
 		gd.addNumericField( "Dynamic", dynamic, 2 );
 		gd.addChoice( "Connectivity", Conn3D.getAllLabels(), connLabel );
 		gd.addHelp( "http://imagej.net/MorphoLibJ#Utilities_for_binary_images" );
