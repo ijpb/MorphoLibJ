@@ -15,9 +15,9 @@ import inra.ijpb.util.IJUtils;
 import inra.ijpb.watershed.ExtendedMinimaWatershed;
 
 /**
- * This plugin computes watershed on the inverse of the distance map of a
+ * This plugin computes watershed on the inverse of the distance map of a 3D
  * binary image. Imposition of extended minima is used to control the number of
- * local minima. This way, touching objects can be interactively separated.
+ * local minima. This way, touching objects can be separated.
  *
  * @author Ignacio Arganda-Carreras (ignacio.arganda@ehu.eus)
  *
