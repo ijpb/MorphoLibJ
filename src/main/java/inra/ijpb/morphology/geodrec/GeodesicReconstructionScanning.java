@@ -143,8 +143,8 @@ public class GeodesicReconstructionScanning extends GeodesicReconstructionAlgoSt
 							+ connectivity);
 		}
 
-		// Create result image the same size as marker image
-		this.result = this.marker.createProcessor(sizeX, sizeY);
+		// Create result image the same size as the mask and marker images
+		this.result = this.mask.createProcessor(sizeX, sizeY);
 	
 		// Initialize the result image with the minimum value of marker and mask
 		// images
@@ -238,8 +238,8 @@ public class GeodesicReconstructionScanning extends GeodesicReconstructionAlgoSt
 
 	private void initializeResult()
 	{
-		// Create result image the same size as marker image
-		this.result = this.marker.createProcessor(this.sizeX, this.sizeY);
+		// Create result image the same size as mask image
+		this.result = this.mask.createProcessor(this.sizeX, this.sizeY);
 	
 		int sign = this.reconstructionType.getSign();
 		for (int y = 0; y < this.sizeY; y++) 

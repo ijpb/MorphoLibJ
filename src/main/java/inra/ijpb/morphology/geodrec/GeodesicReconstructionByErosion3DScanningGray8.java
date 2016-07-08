@@ -156,8 +156,8 @@ public class GeodesicReconstructionByErosion3DScanningGray8 extends GeodesicReco
 	 */
 	private void initializeResult()
 	{
-		// Create result image the same size as marker image
-		this.result = ImageStack.create(sizeX, sizeY, sizeZ, marker.getBitDepth());
+		// Create result image the same size as the mask image
+		this.result = ImageStack.create(sizeX, sizeY, sizeZ, mask.getBitDepth());
 
 		// Data access objects
 		Object[] stack = result.getImageArray();
@@ -192,8 +192,8 @@ public class GeodesicReconstructionByErosion3DScanningGray8 extends GeodesicReco
 	 */
 	private void initializeResult( ImageStack binaryMask ) 
 	{
-		// Create result image the same size as marker image
-		this.result = ImageStack.create(sizeX, sizeY, sizeZ, marker.getBitDepth());
+		// Create result image the same size as the mask image
+		this.result = ImageStack.create(sizeX, sizeY, sizeZ, mask.getBitDepth());
 
 		// Data access objects
 		Object[] stack = result.getImageArray();

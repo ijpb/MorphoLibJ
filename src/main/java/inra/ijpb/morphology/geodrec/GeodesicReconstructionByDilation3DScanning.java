@@ -188,12 +188,12 @@ public class GeodesicReconstructionByDilation3DScanning extends GeodesicReconstr
 	private void initializeResult()
 	{
 		// Create result image the same size as marker image
-		this.resultStack = ImageStack.create(sizeX, sizeY, sizeZ, markerStack.getBitDepth());
+		this.resultStack = ImageStack.create(sizeX, sizeY, sizeZ, maskStack.getBitDepth());
 		this.result = Images3D.createWrapper(this.resultStack);
 
 		// Initialize the result image with the minimum value of marker and mask
 		// images
-		if (this.markerStack.getBitDepth() == 32) 
+		if (this.maskStack.getBitDepth() == 32)
 		{
 			// Initialize float result stack
 			for (int z = 0; z < sizeZ; z++) 

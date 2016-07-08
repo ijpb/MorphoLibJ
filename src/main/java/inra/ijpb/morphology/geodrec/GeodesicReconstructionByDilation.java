@@ -94,8 +94,8 @@ public class GeodesicReconstructionByDilation extends GeodesicReconstructionAlgo
 							+ connectivity);
 		}
 
-		// Create result image the same size as marker image
-		this.result = this.marker.createProcessor(width, height);
+		// Create result image the same size as mask and marker image
+		this.result = this.mask.createProcessor(width, height);
 	
 		// Initialize the result image with the minimum value of marker and mask
 		// images

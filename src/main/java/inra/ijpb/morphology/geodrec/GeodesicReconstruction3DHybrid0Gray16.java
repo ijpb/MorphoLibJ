@@ -232,7 +232,7 @@ public class GeodesicReconstruction3DHybrid0Gray16 extends GeodesicReconstructio
 	private void initializeResult() 
 	{
 		// Create result image the same size as marker image
-		this.resultStack = ImageStack.create(sizeX, sizeY, sizeZ, markerStack.getBitDepth());
+		this.resultStack = ImageStack.create(sizeX, sizeY, sizeZ, maskStack.getBitDepth());
 		this.resultSlices = getShortProcessors(this.resultStack);
 
 		short[] markerSlice, maskSlice, resultSlice;

@@ -231,7 +231,7 @@ public class GeodesicReconstruction3DHybrid0Float extends GeodesicReconstruction
 	private void initializeResult() 
 	{
 		// Create result image the same size as marker image
-		this.resultStack = ImageStack.create(sizeX, sizeY, sizeZ, markerStack.getBitDepth());
+		this.resultStack = ImageStack.create(sizeX, sizeY, sizeZ, maskStack.getBitDepth());
 		this.resultSlices = getFloatProcessors(this.resultStack);
 
 		float[] markerSlice, maskSlice, resultSlice;

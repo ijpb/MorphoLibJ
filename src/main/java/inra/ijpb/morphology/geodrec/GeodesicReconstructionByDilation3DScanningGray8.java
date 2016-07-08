@@ -229,8 +229,8 @@ public class GeodesicReconstructionByDilation3DScanningGray8 extends GeodesicRec
 	 */
 	private void initializeResult() 
 	{
-		// Create result image the same size as marker image
-		this.result = ImageStack.create(sizeX, sizeY, sizeZ, marker.getBitDepth());
+		// Create result image the same size as the mask image
+		this.result = ImageStack.create(sizeX, sizeY, sizeZ, mask.getBitDepth());
 
 		Object[] stack = result.getImageArray();
 		Object[] markerStack = marker.getImageArray();
@@ -265,8 +265,8 @@ public class GeodesicReconstructionByDilation3DScanningGray8 extends GeodesicRec
 	 */
 	private void initializeResult( ImageStack binaryMask ) 
 	{
-		// Create result image the same size as marker image
-		this.result = ImageStack.create(sizeX, sizeY, sizeZ, marker.getBitDepth());
+		// Create result image the same size as the mask image
+		this.result = ImageStack.create(sizeX, sizeY, sizeZ, mask.getBitDepth());
 
 		Object[] stack = result.getImageArray();
 		Object[] markerStack = marker.getImageArray();

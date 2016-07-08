@@ -83,8 +83,8 @@ public class GeodesicReconstructionByDilation3D extends GeodesicReconstruction3D
 							+ connectivity);
 		}
 
-		// Create result image the same size as marker image
-		this.result = ImageStack.create(size1, size2, size3, marker.getBitDepth());
+		// Create result image the same size as the mask and marker images
+		this.result = ImageStack.create(size1, size2, size3, mask.getBitDepth());
 
 		// Initialize the result image with the minimum value of marker and mask
 		// images
@@ -980,8 +980,8 @@ public class GeodesicReconstructionByDilation3D extends GeodesicReconstruction3D
 							+ connectivity);
 		}
 
-		// Create result image the same size as marker image
-		this.result = ImageStack.create(size1, size2, size3, marker.getBitDepth());
+		// Create result image the same size as the mask and marker images
+		this.result = ImageStack.create(size1, size2, size3, mask.getBitDepth());
 
 		// Initialize the result image with the minimum value of marker and mask
 		// images
