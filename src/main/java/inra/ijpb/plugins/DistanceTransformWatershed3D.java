@@ -30,10 +30,9 @@ public class DistanceTransformWatershed3D implements PlugIn
 	private static boolean normalize = true;
 
 	private static int dynamic = 2;
-	private static String connLabel = Conn3D.C6.label;
 	private static String weightLabel = ChamferWeights3D.BORGEFORS.toString();
 
-	private int connectivity = 6;
+	private static Conn3D connectivity = Conn3D.C6;
 
 	/**
 	 * A pre-defined set of connectivities
@@ -118,7 +117,8 @@ public class DistanceTransformWatershed3D implements PlugIn
 		gd.addMessage( "Watershed options:",
 				new Font( "SansSerif", Font.BOLD, 12 ) );
 		gd.addNumericField( "Dynamic", dynamic, 2 );
-		gd.addChoice( "Connectivity", Conn3D.getAllLabels(), connLabel );
+		gd.addChoice( "Connectivity", Conn3D.getAllLabels(),
+				connectivity.label );
 		gd.addHelp( "http://imagej.net/MorphoLibJ#Utilities_for_binary_images" );
 		gd.showDialog();
 
@@ -131,8 +131,7 @@ public class DistanceTransformWatershed3D implements PlugIn
 		floatProcessing = gd.getNextChoiceIndex() == 0;
 		normalize = gd.getNextBoolean();
 		dynamic = (int) gd.getNextNumber();
-		connLabel = gd.getNextChoice();
-		connectivity = Conn3D.fromLabel( connLabel ).getValue();
+		connectivity = Conn3D.fromLabel( gd.getNextChoice() );
 
 		// identify which weights should be used
 		weights = ChamferWeights3D.fromLabel( weightLabel );
@@ -169,7 +168,7 @@ public class DistanceTransformWatershed3D implements PlugIn
 		Images3D.invert( dist );
 
 		ImageStack result = ExtendedMinimaWatershed.extendedMinimaWatershed(
-				dist, image.getImageStack(), dynamic, connectivity, false );
+				dist, image.getImageStack(), dynamic, connectivity.value, false );
 		ImagePlus ip = new ImagePlus( image.getShortTitle() + "dist-watershed",
 				result );
 		ip.setCalibration( image.getCalibration() );
@@ -189,7 +188,7 @@ public class DistanceTransformWatershed3D implements PlugIn
 		Images3D.invert( dist );
 
 		ImageStack result = ExtendedMinimaWatershed.extendedMinimaWatershed(
-				dist, image.getImageStack(), dynamic, connectivity, false );
+				dist, image.getImageStack(), dynamic, connectivity.value, false );
 		ImagePlus ip = new ImagePlus( image.getShortTitle() + "dist-watershed",
 				result );
 		ip.setCalibration( image.getCalibration() );
