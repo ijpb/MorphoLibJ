@@ -46,8 +46,8 @@ DialogListener
 	/** keep the original image, to restore it after the preview */
 	private ImageProcessor baseImage;
 
-	private int connectivity = 4;
-	private Operation operation = Operation.BY_DILATION;
+	private static Conn2D connectivity = Conn2D.C4;
+	private static Operation operation = Operation.BY_DILATION;
 
 	private NonBlockingGenericDialog gd;
 
@@ -235,10 +235,10 @@ DialogListener
 
 		gd.addChoice("Type of Reconstruction",
 				Operation.getAllLabels(),
-				Operation.BY_DILATION.label);
+				operation.label );
 		gd.addChoice("Connectivity",
 				Conn2D.getAllLabels(),
-				Conn2D.C4.label);
+				connectivity.label );
 		gd.addPreviewCheckbox( pfr );
 		gd.addDialogListener(this);
 		previewing = true;
@@ -251,7 +251,7 @@ DialogListener
 
 		// set up current parameters
 		operation = Operation.fromLabel(gd.getNextChoice());
-		connectivity = Conn2D.fromLabel(gd.getNextChoice()).getValue();
+		connectivity = Conn2D.fromLabel(gd.getNextChoice());
 
 		return flags;
 	}
@@ -265,7 +265,7 @@ DialogListener
 		synchronized (this){
 			// set up current parameters
 			operation = Operation.fromLabel(gd.getNextChoice());
-			connectivity = Conn2D.fromLabel(gd.getNextChoice()).getValue();
+			connectivity = Conn2D.fromLabel(gd.getNextChoice());
 		}
 		return true;
 	}
@@ -336,7 +336,7 @@ DialogListener
 		marker.draw( roi );
 
 		// Compute geodesic reconstruction
-		return operation.applyTo( marker, mask, connectivity );
+		return operation.applyTo( marker, mask, connectivity.getValue() );
 	}
 
 	private static String createResultImageName( ImagePlus baseImage ) {

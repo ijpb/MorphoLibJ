@@ -28,8 +28,8 @@ import inra.ijpb.util.IJUtils;
  */
 public class InteractiveGeodesicReconstruction3D implements PlugIn
 {
-	private int connectivity = 6;
-	private Operation operation = Operation.BY_DILATION;
+	private static Conn3D connectivity = Conn3D.C6;
+	private static Operation operation = Operation.BY_DILATION;
 
 	private NonBlockingGenericDialog gd;
 
@@ -172,10 +172,10 @@ public class InteractiveGeodesicReconstruction3D implements PlugIn
 
 		gd.addChoice("Type of Reconstruction",
 				Operation.getAllLabels(),
-				Operation.BY_DILATION.label);
+				operation.label);
 		gd.addChoice("Connectivity",
 				Conn3D.getAllLabels(),
-				Conn3D.C6.label);
+				connectivity.label);
 		gd.addHelp( "http://imagej.net/MorphoLibJ" );
 		gd.showDialog();
 
@@ -184,7 +184,7 @@ public class InteractiveGeodesicReconstruction3D implements PlugIn
 
 		// set up current parameters
 		operation = Operation.fromLabel( gd.getNextChoice() );
-		connectivity = Conn3D.fromLabel( gd.getNextChoice() ).getValue();
+		connectivity = Conn3D.fromLabel( gd.getNextChoice() );
 
 		long t0 = System.currentTimeMillis();
 
@@ -248,7 +248,7 @@ public class InteractiveGeodesicReconstruction3D implements PlugIn
 		// Compute geodesic reconstruction
 		ImageStack result =
 				operation.applyTo( markerStack, mask.getImageStack(),
-						connectivity );
+						connectivity.getValue() );
 		// Keep same color model
 		result.setColorModel( mask.getImageStack().getColorModel() );
 
