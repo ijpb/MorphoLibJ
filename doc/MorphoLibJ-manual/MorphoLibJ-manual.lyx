@@ -2297,8 +2297,8 @@ crests
 
 ).
  It is a very popular technique specially used to segment touching objects.
- The MorphoLibJ suite contains several implementations of the algorithm,
- described in the following sections.
+ The MorphoLibJ suite contains several implementations and applications
+ of the algorithm, described in the following sections.
 \end_layout
 
 \begin_layout Section
@@ -3791,6 +3791,41 @@ call("inra.ijpb.plugins.MorphologicalSegmentation.setDisplayFormat", "Overlaid
 \end_inset
 
 
+\end_layout
+
+\begin_layout Section
+Distance Transform Watershed
+\end_layout
+
+\begin_layout Standard
+A classic way of separating touching objects in binary images makes use
+ of the distance transform and the watershed method.
+ The idea is to create a border as far as possible from the center of the
+ overlapping objects.
+ This strategy works very well on rounded objects and it is called Distance
+ Transform Watershed.
+\end_layout
+
+\begin_layout Standard
+MorphoLibJ provides two plugins under the 
+\begin_inset Quotes eld
+\end_inset
+
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
+Binary Images...
+\begin_inset Quotes erd
+\end_inset
+
+ menu to apply this strategy on 2D and 3D images:
+\end_layout
+
+\begin_layout Subsection
+Distance Transform Watershed (2D)
+\end_layout
+
+\begin_layout Subsection
+Distance Transform Watershed (3D)
 \end_layout
 
 \begin_layout Chapter
