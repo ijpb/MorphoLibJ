@@ -3797,6 +3797,10 @@ call("inra.ijpb.plugins.MorphologicalSegmentation.setDisplayFormat", "Overlaid
 Distance Transform Watershed
 \end_layout
 
+\begin_layout Subsection
+Introduction
+\end_layout
+
 \begin_layout Standard
 A classic way of separating touching objects in binary images makes use
  of the distance transform and the watershed method.
@@ -3804,6 +3808,99 @@ A classic way of separating touching objects in binary images makes use
  overlapping objects.
  This strategy works very well on rounded objects and it is called Distance
  Transform Watershed.
+ It consists on calculating the distance transform of the binary image,
+ inverting it (so the darkest parts of the image are the centers of the
+ objects) and then applying watershed on it using the original image as
+ mask (see Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:distance-transform-watershed"
+
+\end_inset
+
+).
+ In our implementation, we include an option to use watershed with extended
+ minima so the user can control the number of object splits and merges.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/NucleiDAPIConfocal/NucleiDAPIconfocal.png
+	lyxscale 25
+	width 24text%
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/NucleiDAPIConfocal/NucleiDAPIconfocal-binary-mask.png
+	lyxscale 25
+	width 24text%
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/NucleiDAPIConfocal/NucleiDAPIconfocal-inverse-dist-chessknight-32bit-normalized.png
+	lyxscale 25
+	width 24text%
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/NucleiDAPIConfocal/NucleiDAPIconfocal-distance-transform-watershed.png
+	lyxscale 25
+	width 24text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\series bold
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:distance-transform-watershed"
+
+\end_inset
+
+Basics of the Distance Transform Watershed algorithm
+\series default
+.
+ From left to right: sample image of touching DAPI stained cell nuclei from
+ a confocal laser scanning microscope, binary mask calculated after filtering
+ and thresholding input image, inverse of the distance transform applied
+ to the binary mask (Chamfer distance map using normalized Chessknight weights
+ and 32-bit output) and resulting labeled image after applying watershed
+ to the inverse distance image using the binary mask (dynamic of 1 and 4-connect
+ivity).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -3821,11 +3918,345 @@ Binary Images...
 \end_layout
 
 \begin_layout Subsection
-Distance Transform Watershed (2D)
+Distance Transform Watershed
+\end_layout
+
+\begin_layout Standard
+Distance Transform Watershed needs one 2D 8-bit binary image to run.
+ If that's the case, a dialog like the following will pop up:
+\begin_inset Separator latexpar
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename images/Distance-Transform-Watershed-2D-menu.png
+	width 40text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The plugin parameters are divided between the distance transform and the
+ watershed options:
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Distance map options
+\series default
+:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\series bold
+Distances
+\series default
+: allows selecting among a pre-defined set of weights that can be used to
+ compute the distance transform using Chamfer approximations of the Euclidean
+ metric.
+ They affect the location but specially the shape of the border in the final
+ result.
+ The options are:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\series bold
+Chessboard (1,1)
+\series default
+: weight equal to 1 for all neighbors.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+City-Block (1,2)
+\series default
+: weights 1 for orthogonal neighbors and 2 for diagonal neighbors.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Quasi-Euclidean (1,1.41)
+\series default
+: weights 1 for orthogonal neighbors and 
+\begin_inset Formula $\sqrt{2}$
+\end_inset
+
+ for diagonal neighbors.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Borgefors (3,4)
+\series default
+: weights 3 for orthogonal neighbors and 4 for diagonal neighbors (best
+ approximation of Euclidean distance for 3-by-3 masks).
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Weights (2,3)
+\series default
+: weights 2 for orthogonal neighbors and 3 for diagonal neighbors.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Weights (5,7)
+\series default
+: weights 5 for orthogonal neighbors and 7 for diagonal neighbors.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Chessknight (5,7,11)
+\series default
+: weights 5 for orthogonal neighbors and 7 for diagonal neighbors, and 11
+ for chess-knight moves (best approximation for 5-by-5 masks).
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\series bold
+Output type
+\series default
+: 16 or 32-bit, to calculate distance with short or float precision.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Normalize weights
+\series default
+: indicates whether the resulting distance map should be normalized (divide
+ distances by the first Chamfer weight).
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\series bold
+Watershed options
+\series default
+:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\series bold
+Dynamic
+\series default
+: same as in the Morphological Segmentation plugin, this is the dynamic
+ of intensity for the search of regional minima in the inverse of the distance
+ transform image.
+ Basically, by increasing its value there will be more object merges and
+ by decreasing it there will be more object splits.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Connectivity
+\series default
+: pixel connectivity (4 or 8).
+ Selecting non-diagonal connectivity (4) usually provides more rounded objects.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+Finally, the result with the current plugin configuration can be visualize
+ clicking on the 
+\series bold
+Preview
+\series default
+ option.
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Result
+\series default
+: 2D 32-bit label image (one index value per object).
 \end_layout
 
 \begin_layout Subsection
 Distance Transform Watershed (3D)
+\end_layout
+
+\begin_layout Standard
+Distance Transform Watershed 3D needs one 3D 8-bit binary image to run.
+ If that's the case, a dialog like the following will pop up:
+\begin_inset Separator latexpar
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename images/Distance-Transform-Watershed-3D-menu.png
+	width 45text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The parameters are the same as in the 2D version but some of them are adapted
+ for 3D images:
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Distance map options
+\series default
+:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\series bold
+Distances
+\series default
+: Now the available options are:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\series bold
+Chessboard (1,1,1)
+\series default
+: weight equal to 1 for all neighbors.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+City-Block (1,2,3)
+\series default
+: weights 1 for orthogonal neighbors, 2 for diagonal neighbors and 3 for
+ cube-diagonals.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Quasi-Euclidean (1,1.41,1.73)
+\series default
+: weights 1 for orthogonal neighbors, 
+\begin_inset Formula $\sqrt{2}$
+\end_inset
+
+ for diagonal neighbors and 
+\begin_inset Formula $\sqrt{3}$
+\end_inset
+
+ for cube-diagonals.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Borgefors (3,4,5)
+\series default
+: weights 3 for orthogonal neighbors, 4 for diagonal neighbors and 5 for
+ cube-diagonals (best approximation of Euclidean distance for 3-by-3-by-3
+ masks).
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\series bold
+Output type
+\series default
+: 16 or 32-bit, to calculate distance with short or float precision.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Normalize weights
+\series default
+: indicates whether the resulting distance map should be normalized (divide
+ distances by the first Chamfer weight).
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\series bold
+Watershed options
+\series default
+:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\series bold
+Dynamic
+\series default
+: same as in the 2D version, this is the dynamic of intensity for the search
+ of regional minima in the inverse of the distance transform image.
+ Basically, by increasing its value there will be more object merges and
+ by decreasing it there will be more object splits.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Connectivity
+\series default
+: voxel connectivity (6 or 26).
+ Selecting non-diagonal connectivity (6) usually provides more rounded objects.
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+As it is usual in ImageJ, no preview is provided here since we are dealing
+ with 3D images.
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Result
+\series default
+: 3D 32-bit label image (one index value per object).
 \end_layout
 
 \begin_layout Chapter
