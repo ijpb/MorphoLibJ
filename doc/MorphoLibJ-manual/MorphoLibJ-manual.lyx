@@ -3008,7 +3008,16 @@ Rest of parameters:
 Calculate dams
 \series default
 : select to enable the calculation of watershed lines.
- Use diagonal connectivity: select to allow the flooding in diagonal directions.
+ 
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Use diagonal connectivity
+\series default
+: select to allow the flooding in diagonal directions (more rounded objects
+ are usually obtain by unchecking this option).
  
 \end_layout
 
