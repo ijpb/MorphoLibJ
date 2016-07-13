@@ -1708,6 +1708,22 @@ Reconstruction compute the geodesic reconstruction by erosion or dilation
 \end_layout
 
 \begin_layout Description
+Interactive
+\begin_inset space ~
+\end_inset
+
+Geodesic
+\begin_inset space ~
+\end_inset
+
+Reconstruction compute the geodesic reconstruction by erosion or dilation
+ taking the current 2D image as mask image, creating the marker image out
+ of user-defined ROIs (for example with the point selection tool) and using
+ a specified connectivity.
+ The plugin allows previewing the result.
+\end_layout
+
+\begin_layout Description
 Geodesic
 \begin_inset space ~
 \end_inset
@@ -1716,7 +1732,26 @@ Reconstruction
 \begin_inset space ~
 \end_inset
 
-3D compute the geodesic reconstruction by erosion or dilation on a 3D image.
+3D compute the geodesic reconstruction by erosion or dilation on a 3D image
+ (marker and mask images are defined by the user among the open ones).
+\end_layout
+
+\begin_layout Description
+Interactive
+\begin_inset space ~
+\end_inset
+
+Geodesic
+\begin_inset space ~
+\end_inset
+
+Reconstruction
+\begin_inset space ~
+\end_inset
+
+3D compute the geodesic reconstruction by erosion or dilation on using the
+ current 3D image as mask and creating the marker image from the user-defined
+ point selections.
 \end_layout
 
 \begin_layout Standard
