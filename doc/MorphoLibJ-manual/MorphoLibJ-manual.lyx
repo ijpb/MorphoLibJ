@@ -5550,6 +5550,25 @@ reference "fig:Geodesic-Distance-Map"
 ).
 \end_layout
 
+\begin_layout Description
+Interactive
+\begin_inset space ~
+\end_inset
+
+Geodesic
+\begin_inset space ~
+\end_inset
+
+Distance
+\begin_inset space ~
+\end_inset
+
+Map computes the geodesic distance between each foreground pixel of a the
+ currently selected image (considered the mask image) to the closest pixel
+ of a marker image defined by the user ROIs, while staying within the particle
+ represented by the mask image.
+\end_layout
+
 \begin_layout Standard
 \begin_inset Float figure
 wide false
