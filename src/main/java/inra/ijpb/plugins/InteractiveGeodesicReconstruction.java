@@ -262,11 +262,10 @@ DialogListener
 	 */
 	public boolean dialogItemChanged(GenericDialog gd, AWTEvent evt)
 	{
-		synchronized (this){
-			// set up current parameters
-			operation = Operation.fromLabel(gd.getNextChoice());
-			connectivity = Conn2D.fromLabel(gd.getNextChoice());
-		}
+		// set up current parameters
+		operation = Operation.fromLabel(gd.getNextChoice());
+		connectivity = Conn2D.fromLabel(gd.getNextChoice());
+
 		return true;
 	}
 
