@@ -9,7 +9,11 @@ import ij.gui.PointRoi;
 import ij.gui.Roi;
 import ij.gui.Toolbar;
 import ij.plugin.PlugIn;
+import ij.plugin.frame.RoiManager;
 import ij.process.ByteProcessor;
+import ij.process.FloatProcessor;
+import ij.process.ImageProcessor;
+import ij.process.ShortProcessor;
 import inra.ijpb.data.image.Images3D;
 import inra.ijpb.morphology.GeodesicReconstruction3D;
 import inra.ijpb.util.IJUtils;
@@ -205,10 +209,13 @@ public class InteractiveGeodesicReconstruction3D implements PlugIn
 	}
 	/**
 	 * Apply geodesic reconstruction to mask image based on current operation
-	 * and ROI
+	 * and ROI. The regions of interest in different slices can be set either
+	 * using the multi point selection tool or the ROI manager. When using the
+	 * ROI manager, only the currently selected ROIs will be used to create
+	 * the maker image.
 	 * @param mask mask image
 	 * @param roi region of interest to create marker image
-	 * @return reconstructed image
+	 * @return morphologically reconstructed image
 	 */
 	ImagePlus process( ImagePlus mask, Roi roi )
 	{
@@ -217,33 +224,93 @@ public class InteractiveGeodesicReconstruction3D implements PlugIn
 			IJ.showMessage( "Please run the plugin with an image open." );
 			return null;
 		}
-		if( roi == null || ! (roi instanceof PointRoi) )
+		if( roi == null )
 		{
 			IJ.showMessage( "Please define the markers using "
-					+ "the point selection tool." );
+					+ "the (multi) point selection tool or the ROI manager." );
 			return null;
 		}
-		// Create marker image from ROI
-		int[] xpoints = roi.getPolygon().xpoints;
-		int[] ypoints = roi.getPolygon().ypoints;
+
+		// create marker image from ROIs with the same bit depth as the
+		// mask image (otherwise the reconstruction based on the current
+		// methods won't work).
+		final int bitDepth = mask.getBitDepth();
+
+		final double maxValue;
+		if( bitDepth == 8 )
+			maxValue = 255;
+		else if ( bitDepth == 16 )
+			maxValue = 65535;
+		else
+			maxValue = Float.MAX_VALUE;
+
 		ImageStack markerStack =
 				new ImageStack( mask.getWidth(), mask.getHeight() );
+		ImageProcessor[] markerSlice = new ImageProcessor[ mask.getImageStackSize() ];
 		for( int n=0; n<mask.getImageStackSize(); n++ )
 		{
-			ByteProcessor markerSlice =
-					new ByteProcessor( mask.getWidth(), mask.getHeight() );
-			markerSlice.setColor( java.awt.Color.WHITE );
+			if( bitDepth == 8 )
+				markerSlice[ n ] = new ByteProcessor( mask.getWidth(), mask.getHeight() );			
+			else if( bitDepth == 16 )
+				markerSlice[ n ] = new ShortProcessor( mask.getWidth(), mask.getHeight() );			
+			else
+				markerSlice[ n ] = new FloatProcessor( mask.getWidth(), mask.getHeight() );			
+
+			markerSlice[ n ].setValue( maxValue );
+			markerSlice[ n ].setColor( maxValue );
+		}
+		// if input ROI is a point or multi-point ROI
+		if( roi instanceof PointRoi )
+		{
+			int[] xpoints = roi.getPolygon().xpoints;
+			int[] ypoints = roi.getPolygon().ypoints;
+
 			for( int i=0; i<xpoints.length; i++ )
 			{
-				int slice = ((PointRoi) roi).getPointPosition( i );
-				if ( slice == n )
+				markerSlice[ ((PointRoi) roi).getPointPosition( i ) -1 ].draw(
+						new PointRoi( xpoints[i], ypoints[i] ) );
+			}
+		}
+		// if not and ROI manager is open, read ROIs from ROI manager
+		else if ( null != RoiManager.getInstance() )
+		{
+			RoiManager manager = RoiManager.getInstance();
+			int[] selected = manager.getSelectedIndexes();
+			if( selected.length > 0 )
+			{
+				for( int i=0; i<selected.length; i++ )
 				{
-					markerSlice.draw( new PointRoi( xpoints[i], ypoints[i] ));
+					final Roi selectedRoi = manager.getRoi( i );
+					int slice =
+							manager.getSliceNumber( manager.getName( i ) );
+					if( selectedRoi.isArea() )
+						markerSlice[ slice-1 ].fill( selectedRoi );
+					else
+						markerSlice[ slice-1 ].draw( selectedRoi );
 				}
 			}
-
-			markerStack.addSlice( markerSlice );
+			else
+			{
+				IJ.error( "Please select the ROIs you want to use"
+						+ " as markers in the ROI manager." );
+				return null;
+			}
 		}
+		// otherwise paint ROI on the slice currently selected
+		// on the mask image
+		else
+		{
+			int slice = mask.getSlice();
+
+			if( roi.isArea() )
+				markerSlice[ slice-1 ].fill( roi );
+			else
+				markerSlice[ slice-1 ].draw( roi );
+		}
+
+		// add slices to stack
+		for( int n=0; n<mask.getImageStackSize(); n++ )
+			markerStack.addSlice( markerSlice[n] );
 
 		// Compute geodesic reconstruction
 		ImageStack result =

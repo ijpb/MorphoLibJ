@@ -14,7 +14,9 @@ import ij.gui.Toolbar;
 import ij.plugin.filter.ExtendedPlugInFilter;
 import ij.plugin.filter.PlugInFilterRunner;
 import ij.process.ByteProcessor;
+import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
+import ij.process.ShortProcessor;
 import inra.ijpb.morphology.GeodesicReconstruction;
 import inra.ijpb.util.IJUtils;
 
@@ -330,9 +332,28 @@ DialogListener
 			return null;
 		}
 		// Create marker image from ROI
-		ByteProcessor marker = new ByteProcessor( mask.getWidth(), mask.getHeight() );
-		marker.setColor( java.awt.Color.WHITE );
-		marker.draw( roi );
+		ImageProcessor marker;
+		if( mask instanceof ByteProcessor )
+		{
+			marker = new ByteProcessor( mask.getWidth(), mask.getHeight() );
+			marker.setValue( 255 );
+		}
+		else if( mask instanceof ShortProcessor )
+		{
+			marker = new ShortProcessor( mask.getWidth(), mask.getHeight() );
+			marker.setValue( 65535 );
+		}
+		else
+		{
+			marker = new FloatProcessor( mask.getWidth(), mask.getHeight() );
+			marker.setValue( Float.MAX_VALUE );
+		}
+
+		// paint ROI
+		if( roi.isArea() )
+			marker.fill( roi );
+		else
+			marker.draw( roi );
 
 		// Compute geodesic reconstruction
 		return operation.applyTo( marker, mask, connectivity.getValue() );
