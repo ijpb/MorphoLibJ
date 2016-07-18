@@ -40,3 +40,7 @@ We have as well a [User Manual](https://github.com/ijpb/MorphoLibJ/releases/down
 The main source code directory is [src/main/java/inra/ijpb](http://github.com/ijpb/MorphoLibJ/tree/master/src/main/java/inra/ijpb).
 
 You can browse the [javadoc](http://ijpb.github.io/MorphoLibJ/javadoc/) for more information about its API.
+Citation
+--------
+Please note that MorphoLibJ is based on a publication. If you use it successfully for your research please be so kind to cite our work:
+* David Legland, Ignacio Arganda-Carreras, and Philippe Andrey. [MorphoLibJ: integrated library and plugins for mathematical morphology with ImageJ](http://bioinformatics.oxfordjournals.org/content/early/2016/07/12/bioinformatics.btw413.abstract). Bioinformatics, btw413, 2016.
