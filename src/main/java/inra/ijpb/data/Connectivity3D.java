@@ -16,7 +16,24 @@ public interface Connectivity3D
 	 */
 	public static final Connectivity3D C6 = new Connectivity3D()
 	{
+		@Override
+		public Collection<Cursor3D> getNeighbors(Cursor3D cursor)
+		{
+			ArrayList<Cursor3D> array = new ArrayList<Cursor3D>(6);
+			int x = cursor.getX();
+			int y = cursor.getY();
+			int z = cursor.getZ();
 
+			array.add(new Cursor3D(x, y, z-1));
+			array.add(new Cursor3D(x, y-1, z));
+			array.add(new Cursor3D(x-1, y, z));
+			array.add(new Cursor3D(x+1, y, z));
+			array.add(new Cursor3D(x, y+1, z));
+			array.add(new Cursor3D(x, y, z+1));
+
+			return array;
+		}
+		
 		@Override
 		public Collection<Cursor3D> getNeighbors(int x, int y, int z)
 		{
@@ -42,7 +59,7 @@ public interface Connectivity3D
 			array.add(new Cursor3D( 0,  0, +1));
 			return array;
 		}
-		
+
 	};
 	
 	/**
@@ -50,6 +67,30 @@ public interface Connectivity3D
 	 */
 	public static final Connectivity3D C26 = new Connectivity3D()
 	{
+		@Override
+		public Collection<Cursor3D> getNeighbors(Cursor3D cursor)
+		{
+			ArrayList<Cursor3D> array = new ArrayList<Cursor3D>(26);
+			
+			int x = cursor.getX();
+			int y = cursor.getY();
+			int z = cursor.getZ();
+
+			for (int dz = -1; dz <= 1; dz++)
+			{
+				for (int dy = -1; dy <= 1; dy++)
+				{
+					for (int dx = -1; dx <= 1; dx++)
+					{
+						if (dx != 0 || dy != 0 || dz != 0)
+						{
+							array.add(new Cursor3D(x + dx, y + dy, z + dz));
+						}
+					}
+				}
+			}
+			return array;
+		}
 
 		@Override
 		public Collection<Cursor3D> getNeighbors(int x, int y, int z)
@@ -61,7 +102,7 @@ public interface Connectivity3D
 				{
 					for (int dx = -1; dx <= 1; dx++)
 					{
-						if (dx != 0 && dy != 0 && dz != 0)
+						if (dx != 0 || dy != 0 || dz != 0)
 						{
 							array.add(new Cursor3D(x + dx, y + dy, z + dz));
 						}
@@ -81,7 +122,7 @@ public interface Connectivity3D
 				{
 					for (int dx = -1; dx <= 1; dx++)
 					{
-						if (dx != 0 && dy != 0 && dz != 0)
+						if (dx != 0 || dy != 0 || dz != 0)
 						{
 							array.add(new Cursor3D(dx, dy, dz));
 						}
@@ -106,6 +147,15 @@ public interface Connectivity3D
 	 */
 	public Collection<Cursor3D> getNeighbors(int x, int y, int z);
 
+	/**
+	 * Returns the set of neighbors associated to a given position
+	 * 
+	 * @param cursor
+	 *            the position of the voxel
+	 * @return the list of neighbors of specified voxel
+	 */
+	public Collection<Cursor3D> getNeighbors(Cursor3D cursor);
+	
 	/**
 	 * @return the list of 3D offsets computed relative to the center voxel.
 	 */
