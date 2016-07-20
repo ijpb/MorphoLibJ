@@ -20,7 +20,7 @@ import java.util.Collection;
 public interface Connectivity2D
 {
 	/**
-	 * Planar connectivity that consider the four orthogonal neighbors of a pixel.
+	 * Planar connectivity that considers the four orthogonal neighbors of a pixel.
 	 */
 	public static final Connectivity2D C4 = new Connectivity2D()
 	{
@@ -238,8 +238,10 @@ public interface Connectivity2D
 		}
 		
 	};
+	
 	/**
-	 * Planar connectivity that consider the eight neighbors (orthogonal plus diagonal) of a pixel.
+	 * Planar connectivity that considers the eight neighbors (orthogonal plus
+	 * diagonal) of a pixel.
 	 */
 	public static final Connectivity2D C8 = new Connectivity2D()
 	{
@@ -362,8 +364,8 @@ public interface Connectivity2D
 	/**
 	 * Returns the set of neighbors associated to a given position
 	 * @param x the x position of the pixel
-	 * @param y the x position of the pixel
-	 * @return the list of niehggbors of specified pixel
+	 * @param y the y position of the pixel
+	 * @return the list of neighbors of specified pixel
 	 */
 	public Collection<Cursor2D> getNeighbors(int x, int y);
 
