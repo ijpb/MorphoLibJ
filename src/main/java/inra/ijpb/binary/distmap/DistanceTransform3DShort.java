@@ -179,6 +179,20 @@ public class DistanceTransform3DShort extends AlgoStub implements DistanceTransf
 						{
 							diago = Math.min(diago, buffer.getVoxel(x + 1, y, z - 1));
 						}
+
+						if (y < width - 1)
+						{
+							// voxels in the (y+1) line of  the (z-1) plane
+							if (x > 0) 
+							{
+								diag3 = Math.min(diag3, buffer.getVoxel(x - 1, y + 1, z - 1));
+							}
+							diago = Math.min(diago, buffer.getVoxel(x, y + 1, z - 1));
+							if (x < width - 1) 
+							{
+								diag3 = Math.min(diag3, buffer.getVoxel(x + 1, y + 1, z - 1));
+							}
+						}
 					}
 					
 					// voxels in the (y-1) line of the z-plane
@@ -195,7 +209,7 @@ public class DistanceTransform3DShort extends AlgoStub implements DistanceTransf
 						}
 					}
 					
-					// pixel to the left of the current voxel
+					// voxel to the left of the current voxel
 					if (x > 0) 
 					{
 						ortho = Math.min(ortho, buffer.getVoxel(x - 1, y, z));
@@ -255,6 +269,20 @@ public class DistanceTransform3DShort extends AlgoStub implements DistanceTransf
 						if (x > 0) 
 						{
 							diago = Math.min(diago, buffer.getVoxel(x - 1, y, z + 1));
+						}
+
+						if (y > 0)
+						{
+							// voxels in the (y-1) line of  the (z+1) plane
+							if (x < width - 1) 
+							{
+								diag3 = Math.min(diag3, buffer.getVoxel(x + 1, y - 1, z + 1));
+							}
+							diago = Math.min(diago, buffer.getVoxel(x, y - 1, z + 1));
+							if (x > 0) 
+							{
+								diag3 = Math.min(diag3, buffer.getVoxel(x - 1, y - 1, z + 1));
+							}
 						}
 					}
 					
