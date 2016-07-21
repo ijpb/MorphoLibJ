@@ -17,26 +17,28 @@ public class DistanceTransform3DFloat extends AlgoStub implements DistanceTransf
 
 	private float[] weights;
 
-	private int width;
-	private int height;
-	private int depth;
-
-	private ImageStack maskProc;
-
 	int maskLabel = DEFAULT_MASK_LABEL;
 
 	/**
 	 * Flag for dividing final distance map by the value first weight. 
-	 * This results in distance map values closer to euclidean, but with 
+	 * This results in distance map values closer to Euclidean, but with 
 	 * non integer values. 
 	 */
 	private boolean normalizeMap = true;
 
+	
+	private int sizeX;
+	private int sizeY;
+	private int sizeZ;
+
+	private byte[][] maskSlices;
+
 	/**
-	 * The inner buffer that will store the distance map. The content
+	 * The result image that will store the distance map. The content
 	 * of the buffer is updated during forward and backward iterations.
 	 */
-	private ImageStack buffer;
+	private float[][] resultSlices;
+	
 	
 	/**
 	 * Default constructor that specifies the chamfer weights.
@@ -62,39 +64,46 @@ public class DistanceTransform3DFloat extends AlgoStub implements DistanceTransf
 	}
 
 	/**
-	 * Computes the distance map from a 3D binary image. 
-	 * Distance is computed for each foreground (white) pixel, as the 
-	 * chamfer distance to the nearest background (black) pixel.
+	 * Computes the distance map from a 3D binary image. Distance is computed
+	 * for each foreground (white) pixel, as the chamfer distance to the nearest
+	 * background (black) pixel.
 	 * 
-	 * @param image a 3D binary image with white pixels (255) as foreground
-	 * @return a new 3D image containing: <ul>
-	 * <li> 0 for each background pixel </li>
-	 * <li> the distance to the nearest background pixel otherwise</li>
-	 * </ul>
+	 * @param image
+	 *            a 3D binary image with white pixels (255) as foreground
+	 * @return a new 3D image containing:
+	 *         <ul>
+	 *         <li>0 for each background pixel</li>
+	 *         <li>the distance to the nearest background pixel otherwise</li>
+	 *         </ul>
 	 */
 	public ImageStack distanceMap(ImageStack image) 
 	{
 		// size of image
-		width = image.getWidth();
-		height = image.getHeight();
-		depth = image.getSize();
+		sizeX = image.getWidth();
+		sizeY = image.getHeight();
+		sizeZ = image.getSize();
 		
-		// update mask
-		this.maskProc = image;
+		// store wrapper to mask image
+		this.maskSlices = getByteArrays(image);
 
 		// create new empty image, and fill it with black
-		buffer = ImageStack.create(width, height, depth, 32);
-		
-		// initialize empty image with either 0 (background) or Inf (foreground)
+		ImageStack buffer = ImageStack.create(sizeX, sizeY, sizeZ, 32);
+		this.resultSlices = getFloatArrays(buffer);
+
+		// initialize empty image with either 0 (background) or max value (foreground)
 		fireStatusChanged(this, "Initialization..."); 
-		for (int k = 0; k < depth; k++) 
+		for (int z = 0; z < sizeZ; z++) 
 		{
-			for (int j = 0; j < height; j++) 
+			byte[] maskSlice = this.maskSlices[z];
+			float[] resultSlice = this.resultSlices[z];
+			
+			for (int y = 0; y < sizeY; y++) 
 			{
-				for (int i = 0; i < width; i++) 
+				for (int x = 0; x < sizeX; x++) 
 				{
-					double val = image.getVoxel(i, j, k);
-					buffer.setVoxel(i, j, k, val == 0 ? 0 : Float.MAX_VALUE);
+					int index = sizeX * y + x;
+					int val = maskSlice[index];
+					resultSlice[index] = val == 0 ? 0 : Float.MAX_VALUE;
 				}
 			}
 		}
@@ -105,18 +114,24 @@ public class DistanceTransform3DFloat extends AlgoStub implements DistanceTransf
 		backwardIteration();
 
 		// Normalize values by the first weight
-		if (this.normalizeMap) {
+		if (this.normalizeMap) 
+		{
 			fireStatusChanged(this, "Normalize map..."); 
-			for (int k = 0; k < depth; k++) 
+			for (int z = 0; z < sizeZ; z++) 
 			{
-				fireProgressChanged(this, k, depth); 
-				for (int j = 0; j < height; j++) 
+				fireProgressChanged(this, z, sizeZ); 
+
+				byte[] maskSlice = this.maskSlices[z];
+				float[] resultSlice = this.resultSlices[z];
+				
+				for (int y = 0; y < sizeY; y++) 
 				{
-					for (int i = 0; i < width; i++) 
+					for (int x = 0; x < sizeX; x++) 
 					{
-						if (maskProc.getVoxel(i, j, k) != 0)
+						int index = sizeX * y + x;
+						if (maskSlice[index] != 0)
 						{
-							buffer.setVoxel(i, j, k, buffer.getVoxel(i, j, k) / weights[0]);
+							resultSlice[index] = resultSlice[index] / weights[0];
 						}
 					}
 				}
@@ -127,19 +142,65 @@ public class DistanceTransform3DFloat extends AlgoStub implements DistanceTransf
 		return buffer;
 	}
 
+	private static final byte[][] getByteArrays(ImageStack stack)
+	{
+		// Initialize result array
+		int size = stack.getSize();
+		byte[][] slices = new byte[size][];
+		
+		// Extract inner slice array and apply type conversion
+		Object[] array = stack.getImageArray();
+		for (int i = 0; i < size; i++)
+		{
+			slices[i] = (byte[]) array[i];
+		}
+		
+		// return slices
+		return slices;
+	}
+	
+	private static final float[][] getFloatArrays(ImageStack stack)
+	{
+		// Initialize result array
+		int size = stack.getSize();
+		float[][] slices = new float[size][];
+		
+		// Extract inner slice array and apply type conversion
+		Object[] array = stack.getImageArray();
+		for (int i = 0; i < size; i++)
+		{
+			slices[i] = (float[]) array[i];
+		}
+		
+		// return slices
+		return slices;
+	}
+	
 	private void forwardIteration() 
 	{
 		fireStatusChanged(this, "Forward scan..."); 
 		// iterate on image voxels
-		for (int z = 0; z < depth; z++)
+		for (int z = 0; z < sizeZ; z++)
 		{
-			fireProgressChanged(this, z, depth); 
-			for (int y = 0; y < height; y++)
+			fireProgressChanged(this, z, sizeZ);
+			
+			byte[] maskSlice = this.maskSlices[z];
+			float[] resultSlice = this.resultSlices[z];
+			
+			float[] resultSlice2 = null;
+			if (z > 0) 
 			{
-				for (int x = 0; x < width; x++)
+				resultSlice2 = this.resultSlices[z - 1];
+			}
+			
+			for (int y = 0; y < sizeY; y++)
+			{
+				for (int x = 0; x < sizeX; x++)
 				{
+					int index = sizeX * y + x;
+
 					// check if we need to update current voxel
-					if (maskProc.getVoxel(x, y, z) != maskLabel)
+					if ((maskSlice[index] & 0x00FF) != maskLabel)
 						continue;
 					
 					// init new values for current voxel
@@ -155,37 +216,37 @@ public class DistanceTransform3DFloat extends AlgoStub implements DistanceTransf
 							// voxels in the (y-1) line of  the (z-1) plane
 							if (x > 0) 
 							{
-								diag3 = Math.min(diag3, buffer.getVoxel(x - 1, y - 1, z - 1));
+								diag3 = Math.min(diag3, resultSlice2[sizeX * (y - 1) + x - 1]);
 							}
-							diago = Math.min(diago, buffer.getVoxel(x, y - 1, z - 1));
-							if (x < width - 1) 
+							diago = Math.min(diago, resultSlice2[sizeX * (y - 1) + x]);
+							if (x < sizeX - 1) 
 							{
-								diag3 = Math.min(diag3, buffer.getVoxel(x + 1, y - 1, z - 1));
+								diag3 = Math.min(diag3, resultSlice2[sizeX * (y - 1) + x + 1]);
 							}
 						}
 						
 						// voxels in the y line of the (z-1) plane
 						if (x > 0) 
 						{
-							diago = Math.min(diago, buffer.getVoxel(x - 1, y, z - 1));
+							diago = Math.min(diago, resultSlice2[sizeX * y + x - 1]);
 						}
-						ortho = Math.min(ortho, buffer.getVoxel(x, y, z - 1));
-						if (x < width - 1) 
+						ortho = Math.min(ortho, resultSlice2[sizeX * y + x]);
+						if (x < sizeX - 1) 
 						{
-							diago = Math.min(diago, buffer.getVoxel(x + 1, y, z - 1));
+							diago = Math.min(diago, resultSlice2[sizeX * y + x + 1]);
 						}
 
-						if (y < width - 1)
+						if (y < sizeX - 1)
 						{
 							// voxels in the (y+1) line of  the (z-1) plane
 							if (x > 0) 
 							{
-								diag3 = Math.min(diag3, buffer.getVoxel(x - 1, y + 1, z - 1));
+								diag3 = Math.min(diag3, resultSlice2[sizeX * (y + 1) + x - 1]);
 							}
-							diago = Math.min(diago, buffer.getVoxel(x, y + 1, z - 1));
-							if (x < width - 1) 
+							diago = Math.min(diago, resultSlice2[sizeX * (y + 1) + x]);
+							if (x < sizeX - 1) 
 							{
-								diag3 = Math.min(diag3, buffer.getVoxel(x + 1, y + 1, z - 1));
+								diag3 = Math.min(diag3, resultSlice2[sizeX * (y + 1) + x + 1]);
 							}
 						}
 						
@@ -196,19 +257,19 @@ public class DistanceTransform3DFloat extends AlgoStub implements DistanceTransf
 					{
 						if (x > 0) 
 						{
-							diago = Math.min(diago, buffer.getVoxel(x - 1, y - 1, z));
+							diago = Math.min(diago, resultSlice[sizeX * (y - 1) + x - 1]);
 						}
-						ortho = Math.min(ortho, buffer.getVoxel(x, y - 1, z));
-						if (x < width - 1) 
+						ortho = Math.min(ortho, resultSlice[sizeX * (y - 1) + x]);
+						if (x < sizeX - 1) 
 						{
-							diago = Math.min(diago, buffer.getVoxel(x + 1, y - 1, z));
+							diago = Math.min(diago, resultSlice[sizeX * (y - 1) + x + 1]);
 						}
 					}
 					
 					// pixel to the left of the current voxel
 					if (x > 0) 
 					{
-						ortho = Math.min(ortho, buffer.getVoxel(x - 1, y, z));
+						ortho = Math.min(ortho, resultSlice[index - 1]);
 					}
 					
 					double newVal = min3w(ortho, diago, diag3);
@@ -223,15 +284,27 @@ public class DistanceTransform3DFloat extends AlgoStub implements DistanceTransf
 	{
 		fireStatusChanged(this, "Backward scan..."); 
 		// iterate on image voxels in backward order
-		for (int z = depth - 1; z >= 0; z--)
+		for (int z = sizeZ - 1; z >= 0; z--)
 		{
-			fireProgressChanged(this, depth-1-z, depth); 
-			for (int y = height - 1; y >= 0; y--)
+			fireProgressChanged(this, sizeZ-1-z, sizeZ); 
+			
+			byte[] maskSlice = this.maskSlices[z];
+			float[] resultSlice = this.resultSlices[z];
+			
+			float[] resultSlice2 = null;
+			if (z < sizeZ - 1) 
 			{
-				for (int x = width - 1; x >= 0; x--)
+				resultSlice2 = this.resultSlices[z + 1];
+			}
+			
+			for (int y = sizeY - 1; y >= 0; y--)
+			{
+				for (int x = sizeX - 1; x >= 0; x--)
 				{
+					int index = sizeX * y + x;
+
 					// check if we need to update current voxel
-					if (maskProc.getVoxel(x, y, z) != maskLabel)
+					if ((maskSlice[index] & 0x00FF) != maskLabel)
 						continue;
 					
 					// init new values for current voxel
@@ -240,66 +313,66 @@ public class DistanceTransform3DFloat extends AlgoStub implements DistanceTransf
 					double diag3 = Double.MAX_VALUE;
 					
 					// process (z+1) slice
-					if (z < depth - 1) 
+					if (z < sizeZ - 1) 
 					{
-						if (y < height - 1)
+						if (y < sizeY - 1)
 						{
 							// voxels in the (y+1) line of  the (z+1) plane
-							if (x < width - 1) 
+							if (x < sizeX - 1) 
 							{
-								diag3 = Math.min(diag3, buffer.getVoxel(x + 1, y + 1, z + 1));
+								diag3 = Math.min(diag3, resultSlice2[sizeX * (y + 1) + x + 1]);
 							}
-							diago = Math.min(diago, buffer.getVoxel(x, y + 1, z + 1));
+							diago = Math.min(diago, resultSlice2[sizeX * (y + 1) + x]);
 							if (x > 0) 
 							{
-								diag3 = Math.min(diag3, buffer.getVoxel(x - 1, y + 1, z + 1));
+								diag3 = Math.min(diag3, resultSlice2[sizeX * (y + 1) + x - 1]);
 							}
 						}
 						
 						// voxels in the y line of the (z+1) plane
-						if (x < width - 1) 
+						if (x < sizeX - 1) 
 						{
-							diago = Math.min(diago, buffer.getVoxel(x + 1, y, z + 1));
+							diago = Math.min(diago, resultSlice2[sizeX * y + x + 1]);
 						}
-						ortho = Math.min(ortho, buffer.getVoxel(x, y, z + 1));
+						ortho = Math.min(ortho, resultSlice2[sizeX * y + x]);
 						if (x > 0) 
 						{
-							diago = Math.min(diago, buffer.getVoxel(x - 1, y, z + 1));
+							diago = Math.min(diago, resultSlice2[sizeX * y + x - 1]);
 						}
 
 						if (y > 0)
 						{
 							// voxels in the (y-1) line of  the (z+1) plane
-							if (x < width - 1) 
+							if (x < sizeX - 1) 
 							{
-								diag3 = Math.min(diag3, buffer.getVoxel(x + 1, y - 1, z + 1));
+								diag3 = Math.min(diag3, resultSlice2[sizeX * (y - 1) + x + 1]);
 							}
-							diago = Math.min(diago, buffer.getVoxel(x, y - 1, z + 1));
+							diago = Math.min(diago, resultSlice2[sizeX * (y - 1) + x]);
 							if (x > 0) 
 							{
-								diag3 = Math.min(diag3, buffer.getVoxel(x - 1, y - 1, z + 1));
+								diag3 = Math.min(diag3, resultSlice2[sizeX * (y - 1) + x - 1]);
 							}
 						}
 					}
 					
 					// voxels in the (y+1) line of the z-plane
-					if (y < height - 1)
+					if (y < sizeY - 1)
 					{
-						if (x < width - 1) 
+						if (x < sizeX - 1) 
 						{
-							diago = Math.min(diago, buffer.getVoxel(x + 1, y + 1, z));
+							diago = Math.min(diago, resultSlice[sizeX * (y + 1) + x + 1]);
 						}
-						ortho = Math.min(ortho, buffer.getVoxel(x, y + 1, z));
+						ortho = Math.min(ortho, resultSlice[sizeX * (y + 1) + x]);
 						if (x > 0) 
 						{
-							diago = Math.min(diago, buffer.getVoxel(x - 1, y + 1, z));
+							diago = Math.min(diago, resultSlice[sizeX * (y + 1) + x - 1]);
 						}
 					}
 					
 					// pixel to the left of the current voxel
-					if (x < width - 1) 
+					if (x < sizeX - 1) 
 					{
-						ortho = Math.min(ortho, buffer.getVoxel(x + 1, y, z));
+						ortho = Math.min(ortho, resultSlice[index + 1]);
 					}
 					
 					double newVal = min3w(ortho, diago, diag3);
@@ -326,10 +399,11 @@ public class DistanceTransform3DFloat extends AlgoStub implements DistanceTransf
 	 */
 	private void updateIfNeeded(int i, int j, int k, double newVal)
 	{
-		double value = buffer.getVoxel(i, j, k);
+		int index = j * sizeX + i;
+		double value = resultSlices[k][j * sizeX + i];
 		if (newVal < value) 
 		{
-			buffer.setVoxel(i, j, k, newVal);
+			resultSlices[k][index] = (float) newVal;
 		}
 	}
 }
