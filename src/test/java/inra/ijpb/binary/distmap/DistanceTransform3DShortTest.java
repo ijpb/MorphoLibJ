@@ -43,18 +43,18 @@ public class DistanceTransform3DShortTest
 	public void testDistanceMap_FromCenter()
 	{
 		// create 3D image containing a cube 
-		ImageStack image = ImageStack.create(21, 21, 21, 8);
-		for (int z = 0; z < 21; z++)
+		ImageStack image = ImageStack.create(11, 11, 11, 8);
+		for (int z = 0; z < 11; z++)
 		{
-			for (int y = 0; y < 21; y++)
+			for (int y = 0; y < 11; y++)
 			{
-				for (int x = 0; x < 21; x++)
+				for (int x = 0; x < 11; x++)
 				{
 					image.setVoxel(x, y, z, 255);
 				}
 			}
 		}
-		image.setVoxel(10, 10, 10, 0);
+		image.setVoxel(5, 5, 5, 0);
 
 		short[] weights = ChamferWeights3D.BORGEFORS.getShortWeights();
 		DistanceTransform3D algo = new DistanceTransform3DShort(weights, true);
@@ -62,21 +62,21 @@ public class DistanceTransform3DShortTest
 		ImageStack result = algo.distanceMap(image);
 		assertEquals(16, result.getBitDepth());
 		
-		assertEquals(1, result.getVoxel( 9, 10, 10), .1);
-		assertEquals(1, result.getVoxel(11, 10, 10), .1);
-		assertEquals(4/3, result.getVoxel( 9,  9, 10), .1);
-		assertEquals(Math.round(5./3.), result.getVoxel( 9,  9,  9), .1);
+		assertEquals(1, result.getVoxel( 4, 5, 5), .1);
+		assertEquals(1, result.getVoxel(6, 5, 5), .1);
+		assertEquals(4/3, result.getVoxel( 4,  4, 5), .1);
+		assertEquals(Math.floor(5./3.), result.getVoxel( 4,  4,  4), .1);
 		
 		// Test some voxels at the cube corners
-		int exp = (int) Math.round(10.0 * 5.0 / 3.0);
+		int exp = (int) Math.floor(5.0 * 5.0 / 3.0);
 		assertEquals(exp, result.getVoxel( 0,  0,  0), .01);
-		assertEquals(exp, result.getVoxel(20,  0,  0), .01);
-		assertEquals(exp, result.getVoxel( 0, 20,  0), .01);
-		assertEquals(exp, result.getVoxel(20, 20,  0), .01);
-		assertEquals(exp, result.getVoxel( 0,  0, 20), .01);
-		assertEquals(exp, result.getVoxel(20,  0, 20), .01);
-		assertEquals(exp, result.getVoxel( 0, 20, 20), .01);
-		assertEquals(exp, result.getVoxel(20, 20, 20), .01);
+		assertEquals(exp, result.getVoxel(10,  0,  0), .01);
+		assertEquals(exp, result.getVoxel( 0, 10,  0), .01);
+		assertEquals(exp, result.getVoxel(10, 10,  0), .01);
+		assertEquals(exp, result.getVoxel( 0,  0, 10), .01);
+		assertEquals(exp, result.getVoxel(10,  0, 10), .01);
+		assertEquals(exp, result.getVoxel( 0, 10, 10), .01);
+		assertEquals(exp, result.getVoxel(10, 10, 10), .01);
 	}
 
 }

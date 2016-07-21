@@ -20,14 +20,6 @@ public class DistanceTransform3DShort extends AlgoStub implements DistanceTransf
 
 	private short[] weights;
 
-	private int width;
-	private int height;
-	private int depth;
-
-	private ImageStack maskProc;
-
-	int maskLabel = DEFAULT_MASK_LABEL;
-
 	/**
 	 * Flag for dividing final distance map by the value first weight. 
 	 * This results in distance map values closer to euclidean, but with 
@@ -35,11 +27,19 @@ public class DistanceTransform3DShort extends AlgoStub implements DistanceTransf
 	 */
 	private boolean normalizeMap = true;
 
+	private int sizeX;
+	private int sizeY;
+	private int sizeZ;
+
+	private byte[][] maskSlices;
+
+	int maskLabel = DEFAULT_MASK_LABEL;
+
 	/**
-	 * The inner buffer that will store the distance map. The content
+	 * The result image that will store the distance map. The content
 	 * of the buffer is updated during forward and backward iterations.
 	 */
-	private ImageStack buffer;
+	private short[][] resultSlices;
 	
 	/**
 	 * Default constructor that specifies the chamfer weights.
@@ -78,27 +78,33 @@ public class DistanceTransform3DShort extends AlgoStub implements DistanceTransf
 	public ImageStack distanceMap(ImageStack image) 
 	{
 		// size of image
-		width = image.getWidth();
-		height = image.getHeight();
-		depth = image.getSize();
+		sizeX = image.getWidth();
+		sizeY = image.getHeight();
+		sizeZ = image.getSize();
 		
-		// update mask
-		this.maskProc = image;
+		// store wrapper to mask image
+		this.maskSlices = getByteArrays(image);
 
 		// create new empty image, and fill it with black
-		buffer = ImageStack.create(width, height, depth, 16);
-		fireStatusChanged(this, "Initialization..."); 
-		
+		ImageStack buffer = ImageStack.create(sizeX, sizeY, sizeZ, 16);
+		this.resultSlices = getShortArrays(buffer);
+
 		// initialize empty image with either 0 (background) or Inf (foreground)
-		for (int k = 0; k < depth; k++) 
+		fireStatusChanged(this, "Initialization..."); 
+		for (int z = 0; z < sizeZ; z++) 
 		{
-			fireProgressChanged(this, k, depth); 
-			for (int j = 0; j < height; j++) 
+			fireProgressChanged(this, z, sizeZ);
+			
+			byte[] maskSlice = this.maskSlices[z];
+			short[] resultSlice = this.resultSlices[z];
+
+			for (int y = 0; y < sizeY; y++) 
 			{
-				for (int i = 0; i < width; i++) 
+				for (int x = 0; x < sizeX; x++) 
 				{
-					double val = image.getVoxel(i, j, k);
-					buffer.setVoxel(i, j, k, val == 0 ? 0 : Short.MAX_VALUE);
+					int index = sizeX * y + x;
+					int val = maskSlice[index];
+					resultSlice[index] = val == 0 ? 0 : Short.MAX_VALUE;
 				}
 			}
 		}
@@ -112,16 +118,21 @@ public class DistanceTransform3DShort extends AlgoStub implements DistanceTransf
 		if (this.normalizeMap) 
 		{
 			fireStatusChanged(this, "Normalize map..."); 
-			for (int k = 0; k < depth; k++) 
+			for (int z = 0; z < sizeZ; z++) 
 			{
-				fireProgressChanged(this, k, depth); 
-				for (int j = 0; j < height; j++) 
+				fireProgressChanged(this, z, sizeZ);
+				
+				byte[] maskSlice = this.maskSlices[z];
+				short[] resultSlice = this.resultSlices[z];
+
+				for (int y = 0; y < sizeY; y++) 
 				{
-					for (int i = 0; i < width; i++) 
+					for (int x = 0; x < sizeX; x++) 
 					{
-						if (maskProc.getVoxel(i, j, k) != 0)
+						int index = sizeX * y + x;
+						if (maskSlice[index] != 0)
 						{
-							buffer.setVoxel(i, j, k, buffer.getVoxel(i, j, k) / weights[0]);
+							resultSlice[index] = (short) ((resultSlice[index] & 0x00FFFF) / weights[0]);
 						}
 					}
 				}
@@ -132,25 +143,71 @@ public class DistanceTransform3DShort extends AlgoStub implements DistanceTransf
 		return buffer;
 	}
 
+	private static final byte[][] getByteArrays(ImageStack stack)
+	{
+		// Initialize result array
+		int size = stack.getSize();
+		byte[][] slices = new byte[size][];
+		
+		// Extract inner slice array and apply type conversion
+		Object[] array = stack.getImageArray();
+		for (int i = 0; i < size; i++)
+		{
+			slices[i] = (byte[]) array[i];
+		}
+		
+		// return slices
+		return slices;
+	}
+	
+	private static final short[][] getShortArrays(ImageStack stack)
+	{
+		// Initialize result array
+		int size = stack.getSize();
+		short[][] slices = new short[size][];
+		
+		// Extract inner slice array and apply type conversion
+		Object[] array = stack.getImageArray();
+		for (int i = 0; i < size; i++)
+		{
+			slices[i] = (short[]) array[i];
+		}
+		
+		// return slices
+		return slices;
+	}
+	
 	private void forwardIteration() 
 	{
 		fireStatusChanged(this, "Forward scan..."); 
 		// iterate on image voxels
-		for (int z = 0; z < depth; z++)
+		for (int z = 0; z < sizeZ; z++)
 		{
-			fireProgressChanged(this, z, depth); 
-			for (int y = 0; y < height; y++)
+			fireProgressChanged(this, z, sizeZ); 
+			
+			byte[] maskSlice = this.maskSlices[z];
+			short[] resultSlice = this.resultSlices[z];
+			
+			short[] resultSlice2 = null;
+			if (z > 0) 
 			{
-				for (int x = 0; x < width; x++)
+				resultSlice2 = this.resultSlices[z - 1];
+			}
+			
+			for (int y = 0; y < sizeY; y++)
+			{
+				for (int x = 0; x < sizeX; x++)
 				{
+					int index = sizeX * y + x;
+
 					// check if we need to update current voxel
-					if (maskProc.getVoxel(x, y, z) != maskLabel)
+					if ((maskSlice[index] & 0x00FF) != maskLabel)
 						continue;
 					
 					// init new values for current voxel
-					double ortho = Double.MAX_VALUE;
-					double diago = Double.MAX_VALUE;
-					double diag3 = Double.MAX_VALUE;
+					int ortho = Short.MAX_VALUE;
+					int diago = Short.MAX_VALUE;
+					int diag3 = Short.MAX_VALUE;
 					
 					// process (z-1) slice
 					if (z > 0) 
@@ -160,37 +217,37 @@ public class DistanceTransform3DShort extends AlgoStub implements DistanceTransf
 							// voxels in the (y-1) line of  the (z-1) plane
 							if (x > 0) 
 							{
-								diag3 = Math.min(diag3, buffer.getVoxel(x - 1, y - 1, z - 1));
+								diag3 = Math.min(diag3, resultSlice2[sizeX * (y - 1) + x - 1] & 0x00FFFF);
 							}
-							diago = Math.min(diago, buffer.getVoxel(x, y - 1, z - 1));
-							if (x < width - 1) 
+							diago = Math.min(diago, resultSlice2[sizeX * (y - 1) + x] & 0x00FFFF);
+							if (x < sizeX - 1) 
 							{
-								diag3 = Math.min(diag3, buffer.getVoxel(x + 1, y - 1, z - 1));
+								diag3 = Math.min(diag3, resultSlice2[sizeX * (y - 1) + x + 1] & 0x00FFFF);
 							}
 						}
 						
 						// voxels in the y line of the (z-1) plane
 						if (x > 0) 
 						{
-							diago = Math.min(diago, buffer.getVoxel(x - 1, y, z - 1));
+							diago = Math.min(diago, resultSlice2[sizeX * y + x - 1] & 0x00FFFF);
 						}
-						ortho = Math.min(ortho, buffer.getVoxel(x, y, z - 1));
-						if (x < width - 1) 
+						ortho = Math.min(ortho, resultSlice2[sizeX * y + x] & 0x00FFFF);
+						if (x < sizeX - 1) 
 						{
-							diago = Math.min(diago, buffer.getVoxel(x + 1, y, z - 1));
+							diago = Math.min(diago, resultSlice2[sizeX * y + x + 1] & 0x00FFFF);
 						}
 
-						if (y < width - 1)
+						if (y < sizeX - 1)
 						{
 							// voxels in the (y+1) line of  the (z-1) plane
 							if (x > 0) 
 							{
-								diag3 = Math.min(diag3, buffer.getVoxel(x - 1, y + 1, z - 1));
+								diag3 = Math.min(diag3, resultSlice2[sizeX * (y + 1) + x - 1] & 0x00FFFF);
 							}
-							diago = Math.min(diago, buffer.getVoxel(x, y + 1, z - 1));
-							if (x < width - 1) 
+							diago = Math.min(diago, resultSlice2[sizeX * (y + 1) + x] & 0x00FFFF);
+							if (x < sizeX - 1) 
 							{
-								diag3 = Math.min(diag3, buffer.getVoxel(x + 1, y + 1, z - 1));
+								diag3 = Math.min(diag3, resultSlice2[sizeX * (y + 1) + x + 1] & 0x00FFFF);
 							}
 						}
 					}
@@ -200,22 +257,22 @@ public class DistanceTransform3DShort extends AlgoStub implements DistanceTransf
 					{
 						if (x > 0) 
 						{
-							diago = Math.min(diago, buffer.getVoxel(x - 1, y - 1, z));
+							diago = Math.min(diago, resultSlice[sizeX * (y - 1) + x - 1] & 0x00FFFF);
 						}
-						ortho = Math.min(ortho, buffer.getVoxel(x, y - 1, z));
-						if (x < width - 1) 
+						ortho = Math.min(ortho, resultSlice[sizeX * (y - 1) + x] & 0x00FFFF);
+						if (x < sizeX - 1) 
 						{
-							diago = Math.min(diago, buffer.getVoxel(x + 1, y - 1, z));
+							diago = Math.min(diago, resultSlice[sizeX * (y - 1) + x + 1] & 0x00FFFF);
 						}
 					}
 					
-					// voxel to the left of the current voxel
+					// pixel to the left of the current voxel
 					if (x > 0) 
 					{
-						ortho = Math.min(ortho, buffer.getVoxel(x - 1, y, z));
+						ortho = Math.min(ortho, resultSlice[sizeX * y + x - 1] & 0x00FFFF);
 					}
 					
-					double newVal = min3w(ortho, diago, diag3);
+					int newVal = min3w(ortho, diago, diag3);
 					updateIfNeeded(x, y, z, newVal);
 				}
 			}
@@ -227,86 +284,98 @@ public class DistanceTransform3DShort extends AlgoStub implements DistanceTransf
 	{
 		fireStatusChanged(this, "Backward scan..."); 
 		// iterate on image voxels in backward order
-		for (int z = depth - 1; z >= 0; z--)
+		for (int z = sizeZ - 1; z >= 0; z--)
 		{
-			fireProgressChanged(this, depth-1-z, depth); 
-			for (int y = height - 1; y >= 0; y--)
+			fireProgressChanged(this, sizeZ-1-z, sizeZ); 
+			
+			byte[] maskSlice = this.maskSlices[z];
+			short[] resultSlice = this.resultSlices[z];
+			
+			short[] resultSlice2 = null;
+			if (z < sizeZ - 1) 
 			{
-				for (int x = width - 1; x >= 0; x--)
+				resultSlice2 = this.resultSlices[z + 1];
+			}
+			
+			for (int y = sizeY - 1; y >= 0; y--)
+			{
+				for (int x = sizeX - 1; x >= 0; x--)
 				{
+					int index = sizeX * y + x;
+
 					// check if we need to update current voxel
-					if (maskProc.getVoxel(x, y, z) != maskLabel)
+					if ((maskSlice[index] & 0x00FF) != maskLabel)
 						continue;
 					
 					// init new values for current voxel
-					double ortho = Double.MAX_VALUE;
-					double diago = Double.MAX_VALUE;
-					double diag3 = Double.MAX_VALUE;
+					int ortho = Short.MAX_VALUE;
+					int diago = Short.MAX_VALUE;
+					int diag3 = Short.MAX_VALUE;
 					
 					// process (z+1) slice
-					if (z < depth - 1) 
+					if (z < sizeZ - 1) 
 					{
-						if (y < height - 1)
+						if (y < sizeY - 1)
 						{
 							// voxels in the (y+1) line of  the (z+1) plane
-							if (x < width - 1) 
+							if (x < sizeX - 1) 
 							{
-								diag3 = Math.min(diag3, buffer.getVoxel(x + 1, y + 1, z + 1));
+								diag3 = Math.min(diag3, resultSlice2[sizeX * (y + 1) + x + 1] & 0x00FFFF);
 							}
-							diago = Math.min(diago, buffer.getVoxel(x, y + 1, z + 1));
+							diago = Math.min(diago, resultSlice2[sizeX * (y + 1) + x] & 0x00FFFF);
 							if (x > 0) 
 							{
-								diag3 = Math.min(diag3, buffer.getVoxel(x - 1, y + 1, z + 1));
+								diag3 = Math.min(diag3, resultSlice2[sizeX * (y + 1) + x - 1] & 0x00FFFF);
 							}
 						}
 						
 						// voxels in the y line of the (z+1) plane
-						if (x < width - 1) 
+						if (x < sizeX - 1) 
 						{
-							diago = Math.min(diago, buffer.getVoxel(x + 1, y, z + 1));
+							diago = Math.min(diago, resultSlice2[sizeX * y + x + 1] & 0x00FFFF);
 						}
-						ortho = Math.min(ortho, buffer.getVoxel(x, y, z + 1));
+						ortho = Math.min(ortho, resultSlice2[sizeX * y + x] & 0x00FFFF);
 						if (x > 0) 
 						{
-							diago = Math.min(diago, buffer.getVoxel(x - 1, y, z + 1));
+							diago = Math.min(diago, resultSlice2[sizeX * y + x - 1] & 0x00FFFF);
 						}
 
 						if (y > 0)
 						{
 							// voxels in the (y-1) line of  the (z+1) plane
-							if (x < width - 1) 
+							if (x < sizeX - 1) 
 							{
-								diag3 = Math.min(diag3, buffer.getVoxel(x + 1, y - 1, z + 1));
+								diag3 = Math.min(diag3, resultSlice2[sizeX * (y - 1) + x + 1] & 0x00FFFF);
 							}
-							diago = Math.min(diago, buffer.getVoxel(x, y - 1, z + 1));
+							diago = Math.min(diago, resultSlice2[sizeX * (y - 1) + x] & 0x00FFFF);
 							if (x > 0) 
 							{
-								diag3 = Math.min(diag3, buffer.getVoxel(x - 1, y - 1, z + 1));
+								diag3 = Math.min(diag3, resultSlice2[sizeX * (y - 1) + x - 1] & 0x00FFFF);
 							}
 						}
 					}
 					
 					// voxels in the (y+1) line of the z-plane
-					if (y < height - 1)
+					if (y < sizeY - 1)
 					{
-						if (x < width - 1) 
+						if (x < sizeX - 1) 
 						{
-							diago = Math.min(diago, buffer.getVoxel(x + 1, y + 1, z));
+							diago = Math.min(diago, resultSlice[sizeX * (y + 1) + x + 1] & 0x00FFFF);
 						}
-						ortho = Math.min(ortho, buffer.getVoxel(x, y + 1, z));
+						ortho = Math.min(ortho, resultSlice[sizeX * (y + 1) + x] & 0x00FFFF);
 						if (x > 0) 
 						{
-							diago = Math.min(diago, buffer.getVoxel(x - 1, y + 1, z));
+							diago = Math.min(diago, resultSlice[sizeX * (y + 1) + x - 1] & 0x00FFFF);
 						}
 					}
 					
-					// pixel to the left of the current voxel
-					if (x < width - 1) 
+					// voxel to the right of the current voxel
+					if (x < sizeX - 1) 
 					{
-						ortho = Math.min(ortho, buffer.getVoxel(x + 1, y, z));
+						ortho = Math.min(ortho, resultSlice[sizeX *  y + x + 1] & 0x00FFFF);
 					}
 					
-					double newVal = min3w(ortho, diago, diag3);
+					int newVal = min3w(ortho, diago, diag3);
 					updateIfNeeded(x, y, z, newVal);
 				}
 			}
@@ -318,22 +387,22 @@ public class DistanceTransform3DShort extends AlgoStub implements DistanceTransf
 	 * Computes the weighted minima of orthogonal, diagonal, and 3D diagonal
 	 * values.
 	 */
-	private double min3w(double ortho, double diago, double diag2)
+	private int min3w(int ortho, int diago, int diag2)
 	{
-		return min(min(ortho + weights[0], diago + weights[1]), 
-				diag2 + weights[2]);
+		return min(min(ortho + weights[0], diago + weights[1]), diag2 + weights[2]);
 	}
 	
 	/**
 	 * Update the pixel at position (i,j,k) with the value newVal. If newVal is
 	 * greater or equal to current value at position (i,j,k), do nothing.
 	 */
-	private void updateIfNeeded(int i, int j, int k, double newVal)
+	private void updateIfNeeded(int i, int j, int k, int newVal)
 	{
-		double value = buffer.getVoxel(i, j, k);
+		int index = j * sizeX + i;
+		int value = resultSlices[k][index] & 0x00FFFF;
 		if (newVal < value) 
 		{
-			buffer.setVoxel(i, j, k, newVal);
+			resultSlices[k][index] = (short) newVal;
 		}
 	}
 }

@@ -204,9 +204,9 @@ public class DistanceTransform3DFloat extends AlgoStub implements DistanceTransf
 						continue;
 					
 					// init new values for current voxel
-					double ortho = Double.MAX_VALUE;
-					double diago = Double.MAX_VALUE;
-					double diag3 = Double.MAX_VALUE;
+					double ortho = Float.MAX_VALUE;
+					double diago = Float.MAX_VALUE;
+					double diag3 = Float.MAX_VALUE;
 					
 					// process (z-1) slice
 					if (z > 0) 
@@ -249,7 +249,6 @@ public class DistanceTransform3DFloat extends AlgoStub implements DistanceTransf
 								diag3 = Math.min(diag3, resultSlice2[sizeX * (y + 1) + x + 1]);
 							}
 						}
-						
 					}
 					
 					// voxels in the (y-1) line of the z-plane
@@ -389,8 +388,7 @@ public class DistanceTransform3DFloat extends AlgoStub implements DistanceTransf
 	 */
 	private double min3w(double ortho, double diago, double diag2)
 	{
-		return min(min(ortho + weights[0], diago + weights[1]), 
-				diag2 + weights[2]);
+		return min(min(ortho + weights[0], diago + weights[1]), diag2 + weights[2]);
 	}
 	
 	/**
