@@ -355,6 +355,10 @@ DialogListener
 		else
 			marker.draw( roi );
 
+		// invert marker image if reconstructing by erosion
+		if( operation == Operation.BY_EROSION )
+			marker.invert();
+
 		// Compute geodesic reconstruction
 		return operation.applyTo( marker, mask, connectivity.getValue() );
 	}
