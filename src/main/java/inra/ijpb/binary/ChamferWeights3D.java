@@ -48,7 +48,14 @@ public enum ChamferWeights3D
 	 * Use weights 3 for orthogonal neighbors and 4 for diagonal neighbors,
 	 * and 5 for cube-diagonals (best approximation for 3-by-3-by-3 masks).
 	 */
-	BORGEFORS("Borgefors (3,4,5)", new short[] { 3, 4, 5 });
+	BORGEFORS("Borgefors (3,4,5)", new short[] { 3, 4, 5 }),
+
+	/**
+	 * Use weights 3 for orthogonal neighbors and 4 for diagonal neighbors, and
+	 * 5 for cube-diagonals, and 7 for (2,1,1) shifts. Good approximation using
+	 * only four weights, and keeping low value of orthogonal weight.
+	 */
+	WEIGHTS_3_4_5_7("Svensson <3,4,5,7>", new short[] { 3, 4, 5, 7 });
 
 	private final String label;
 	private final short[] shortWeights;
