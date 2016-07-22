@@ -570,6 +570,7 @@ public class LabelEdition implements PlugIn
 				inputStackCopy );
 		displayImage.setTitle( "Label Edition" );
 		displayImage.setSlice( inputImage.getSlice() );
+		displayImage.setCalibration( inputImage.getCalibration() );
 
 		// hide input image (to avoid accidental closing)
 		inputImage.getWindow().setVisible( false );
