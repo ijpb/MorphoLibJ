@@ -137,8 +137,8 @@ public class GeodesicReconstruction3DHybrid0Float extends GeodesicReconstruction
 		this.maskStack = mask;
 
 		// convert to image processors
-		this.markerSlices = getFloatProcessors(marker);
-		this.maskSlices = getFloatProcessors(mask);
+		this.markerSlices = Images3D.getFloatArrays(marker);
+		this.maskSlices = Images3D.getFloatArrays(mask);
 		
 		// Check sizes are consistent
 		this.sizeX 	= marker.getWidth();
@@ -232,7 +232,7 @@ public class GeodesicReconstruction3DHybrid0Float extends GeodesicReconstruction
 	{
 		// Create result image the same size as marker image
 		this.resultStack = ImageStack.create(sizeX, sizeY, sizeZ, maskStack.getBitDepth());
-		this.resultSlices = getFloatProcessors(this.resultStack);
+		this.resultSlices = Images3D.getFloatArrays(this.resultStack);
 
 		float[] markerSlice, maskSlice, resultSlice;
 		
@@ -275,23 +275,6 @@ public class GeodesicReconstruction3DHybrid0Float extends GeodesicReconstruction
 				}
 			}
 		}
-	}
-	
-	private static final float[][] getFloatProcessors(ImageStack stack)
-	{
-		// Initialize result array
-		int size = stack.getSize();
-		float[][] slices = new float[size][];
-		
-		// Extract inner slice array and apply type conversion
-		Object[] array = stack.getImageArray();
-		for (int i = 0; i < size; i++)
-		{
-			slices[i] = (float[]) array[i];
-		}
-		
-		// return slices
-		return slices;
 	}
 	
 	private void forwardScan() 

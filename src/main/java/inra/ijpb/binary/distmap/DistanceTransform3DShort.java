@@ -3,6 +3,7 @@ package inra.ijpb.binary.distmap;
 import static java.lang.Math.min;
 import ij.ImageStack;
 import inra.ijpb.algo.AlgoStub;
+import inra.ijpb.data.image.Images3D;
 
 /**
  * Computes Chamfer distances in a 3x3x3 neighborhood using short point 
@@ -83,11 +84,11 @@ public class DistanceTransform3DShort extends AlgoStub implements DistanceTransf
 		sizeZ = image.getSize();
 		
 		// store wrapper to mask image
-		this.maskSlices = getByteArrays(image);
+		this.maskSlices = Images3D.getByteArrays(image);
 
 		// create new empty image, and fill it with black
 		ImageStack buffer = ImageStack.create(sizeX, sizeY, sizeZ, 16);
-		this.resultSlices = getShortArrays(buffer);
+		this.resultSlices = Images3D.getShortArrays(buffer);
 
 		// initialize empty image with either 0 (background) or Inf (foreground)
 		fireStatusChanged(this, "Initialization..."); 
@@ -141,40 +142,6 @@ public class DistanceTransform3DShort extends AlgoStub implements DistanceTransf
 		}
 				
 		return buffer;
-	}
-
-	private static final byte[][] getByteArrays(ImageStack stack)
-	{
-		// Initialize result array
-		int size = stack.getSize();
-		byte[][] slices = new byte[size][];
-		
-		// Extract inner slice array and apply type conversion
-		Object[] array = stack.getImageArray();
-		for (int i = 0; i < size; i++)
-		{
-			slices[i] = (byte[]) array[i];
-		}
-		
-		// return slices
-		return slices;
-	}
-	
-	private static final short[][] getShortArrays(ImageStack stack)
-	{
-		// Initialize result array
-		int size = stack.getSize();
-		short[][] slices = new short[size][];
-		
-		// Extract inner slice array and apply type conversion
-		Object[] array = stack.getImageArray();
-		for (int i = 0; i < size; i++)
-		{
-			slices[i] = (short[]) array[i];
-		}
-		
-		// return slices
-		return slices;
 	}
 	
 	private void forwardIteration() 
