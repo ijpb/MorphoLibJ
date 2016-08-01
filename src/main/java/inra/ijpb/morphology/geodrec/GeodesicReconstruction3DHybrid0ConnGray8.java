@@ -5,6 +5,7 @@ package inra.ijpb.morphology.geodrec;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+
 import ij.ImageStack;
 import inra.ijpb.data.Connectivity3D;
 import inra.ijpb.data.Cursor3D;
@@ -13,6 +14,8 @@ import inra.ijpb.data.image.Images3D;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Deque;
 
 
@@ -68,6 +71,7 @@ public class GeodesicReconstruction3DHybrid0ConnGray8 extends GeodesicReconstruc
 	/** the queue containing the positions that need update */
 	Deque<Cursor3D> queue;
 	
+	final static Cursor3D currentOffset = new Cursor3D( 0, 0, 0 );
 	
 	// ==================================================
 	// Constructors
@@ -209,7 +213,6 @@ public class GeodesicReconstruction3DHybrid0ConnGray8 extends GeodesicReconstruc
 			System.out.println((t1 - t0) + " ms");
 			t0 = t1;
 		}
-
 
 		// Display current status
 		trace("Backward iteration & Init Queue");
@@ -409,7 +412,26 @@ public class GeodesicReconstruction3DHybrid0ConnGray8 extends GeodesicReconstruc
 				continue;
 			}
 		}
-		
+		offsets.add( currentOffset );
+
+		// sort in raster order
+		Comparator<Cursor3D> comparator = new Comparator<Cursor3D>() {
+			public int compare( Cursor3D c1, Cursor3D c2 ) {
+				if( c1.getZ() > c2.getZ() )
+					return 1;
+				else if ( c1.getY() > c2.getY() )
+					return 1;
+				else if ( c1.getX() > c2.getX() )
+					return 1;
+				else if ( c1.getZ() == c2.getZ() && c1.getY() == c2.getY() &&
+						c1.getX() == c2.getX() )
+					return 0;
+				else
+					return -1;
+			}
+		};
+
+		Collections.sort( offsets, comparator );
 		return offsets;
 	}
 	
@@ -518,7 +540,27 @@ public class GeodesicReconstruction3DHybrid0ConnGray8 extends GeodesicReconstruc
 				continue;
 			}
 		}
-		
+		offsets.add( currentOffset );
+
+		// sort in anti-raster order
+		Comparator<Cursor3D> comparator = new Comparator<Cursor3D>() {
+			public int compare( Cursor3D c1, Cursor3D c2 ) {
+				if ( c1.getZ() > c2.getZ() )
+					return 1;
+				else if ( c1.getY() > c2.getY() )
+					return 1;
+				else if ( c1.getX() > c2.getX() )
+					return 1;
+				else if ( c1.getZ() == c2.getZ() && c1.getY() == c2.getY() &&
+						c1.getX() == c2.getX() )
+					return 0;
+				else
+					return -1;
+			}
+		};
+
+		Collections.sort( offsets, comparator );
+		Collections.reverse( offsets );
 		return offsets;
 	}
 
