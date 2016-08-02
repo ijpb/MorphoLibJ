@@ -412,22 +412,21 @@ public class GeodesicReconstruction3DHybrid0ConnGray8 extends GeodesicReconstruc
 				continue;
 			}
 		}
-		offsets.add( currentOffset );
 
 		// sort in raster order
 		Comparator<Cursor3D> comparator = new Comparator<Cursor3D>() {
 			public int compare( Cursor3D c1, Cursor3D c2 ) {
-				if( c1.getZ() > c2.getZ() )
-					return 1;
-				else if ( c1.getY() > c2.getY() )
-					return 1;
-				else if ( c1.getX() > c2.getX() )
-					return 1;
-				else if ( c1.getZ() == c2.getZ() && c1.getY() == c2.getY() &&
-						c1.getX() == c2.getX() )
-					return 0;
+
+				final int difX = Integer.compare( c1.getX(), c2.getX() );
+				final int difY = Integer.compare( c1.getY(), c2.getY() );
+				final int difZ = Integer.compare( c1.getZ(), c2.getZ() );
+
+				if( difZ != 0 )
+					return difZ;
+				if( difY != 0 )
+					return difY;
 				else
-					return -1;
+					return difX;
 			}
 		};
 
@@ -443,6 +442,10 @@ public class GeodesicReconstruction3DHybrid0ConnGray8 extends GeodesicReconstruc
 
 		Collection<Cursor3D> offsets = getBackwardOffsets(this.connectivity);
 		
+		Collection<Cursor3D> offsetsUcurrent = new ArrayList<Cursor3D>();
+		offsetsUcurrent.addAll( offsets );
+		offsetsUcurrent.add( currentOffset );
+
 		// the maximal value around current pixel
 		int maxValue;
 
@@ -466,8 +469,8 @@ public class GeodesicReconstruction3DHybrid0ConnGray8 extends GeodesicReconstruc
 					int currentValue = (slice[index] & 0x00FF) * sign;
 					maxValue = currentValue;
 
-					// iterate over neighbors
-					for (Cursor3D offset : offsets)
+					// iterate over neighbors and current voxel
+					for (Cursor3D offset : offsetsUcurrent)
 					{
 						int x2 = x + offset.getX();
 						int y2 = y + offset.getY();
@@ -540,22 +543,21 @@ public class GeodesicReconstruction3DHybrid0ConnGray8 extends GeodesicReconstruc
 				continue;
 			}
 		}
-		offsets.add( currentOffset );
 
 		// sort in anti-raster order
 		Comparator<Cursor3D> comparator = new Comparator<Cursor3D>() {
 			public int compare( Cursor3D c1, Cursor3D c2 ) {
-				if ( c1.getZ() > c2.getZ() )
-					return 1;
-				else if ( c1.getY() > c2.getY() )
-					return 1;
-				else if ( c1.getX() > c2.getX() )
-					return 1;
-				else if ( c1.getZ() == c2.getZ() && c1.getY() == c2.getY() &&
-						c1.getX() == c2.getX() )
-					return 0;
+
+				final int difX = Integer.compare( c1.getX(), c2.getX() );
+				final int difY = Integer.compare( c1.getY(), c2.getY() );
+				final int difZ = Integer.compare( c1.getZ(), c2.getZ() );
+
+				if( difZ != 0 )
+					return difZ;
+				if( difY != 0 )
+					return difY;
 				else
-					return -1;
+					return difX;
 			}
 		};
 
@@ -592,7 +594,7 @@ public class GeodesicReconstruction3DHybrid0ConnGray8 extends GeodesicReconstruc
 				int z2 = neighbor.getZ();
 				if (x2 >= 0 && x2 < sizeX && y2 >= 0 && y2 < sizeY && z2 >= 0 && z2 < sizeZ)
 				{
-					int index2 = y2 * sizeY + x2;
+					int index2 = y2 * sizeX + x2;
 					value = max(value, (resultSlices[z2][index2] & 0x00FF) * sign);
 				}
 			}
