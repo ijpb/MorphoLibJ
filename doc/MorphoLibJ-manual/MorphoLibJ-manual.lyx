@@ -1,7 +1,9 @@
-#LyX 2.1 created this file. For more info see http://www.lyx.org/
-\lyxformat 474
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
 \begin_document
 \begin_header
+\save_transient_properties true
+\origin unavailable
 \textclass scrreprt
 \begin_preamble
 \usepackage[dvipsnames]{xcolor}
@@ -16,7 +18,7 @@
 \definecolor{lightgray}{rgb}{0.95,0.95,0.95}
 \definecolor{mymauve}{rgb}{0.58,0,0.82}
 
-\hypersetup{colorlinks=true, citecolor=blue}
+\hypersetup{colorlinks=true, citecolor=blue, linkcolor=blue}
 
 
 % package that modifies style of section headers
@@ -49,24 +51,24 @@
 \pagestyle{fancy}
 \usepackage{lastpage}	
 % Header (empty)
-% Haut a gauche - page g : chapitre (sl), page d : page (bf) - plain : rien
+% left side of the header - page g : chapter (sl), page d : page (bf) - plain : nothing
 \lhead[\fancyplain{}{\slshape\leftmark}]{\fancyplain{}{}}
-% rien au centre
+% nothing in the center
 \chead{}
-% Haut a droite - page g : page (bf), page d : section (sl) - plain : rien
+% right side of the header - page g : page (bf), page d : section (sl) - plain : nothing
 \rhead[\fancyplain{}{}]{\fancyplain{}{\slshape\rightmark}}
 
 % Footer (you may change this to your own needs)
-\lfoot{\footnotesize \jobname.lyx}
+\lfoot{\footnotesize MorphoLibJ user manual}
 \cfoot{}
 \rfoot{\footnotesize page \thepage\ / \pageref{LastPage}}	% "Page 1 / 2"
 \renewcommand{\headrulewidth}{0.0pt}
 \renewcommand{\footrulewidth}{0.4pt}
 
-% chap a gauche sans numero, rien a droite
+% left chapter no number, nothing on the right
 %\renewcommand{\chaptermark}[1]{\markboth{\textit{#1}}{}}
 \renewcommand{\chaptermark}[1]{\markboth{\thechapter\ #1}{}}
-% section à droite avec numero
+% right section with number
 \renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
 % Added by lyx2lyx
 \usepackage[charter]{mathdesign}
@@ -82,16 +84,16 @@
 \language_package default
 \inputencoding auto
 \fontencoding global
-\font_roman default
-\font_sans default
-\font_typewriter beramono
-\font_math auto
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "beramono" "default"
+\font_math "auto" "auto"
 \font_default_family default
 \use_non_tex_fonts false
 \font_sc false
 \font_osf false
-\font_sf_scale 100
-\font_tt_scale 100
+\font_sf_scale 100 100
+\font_tt_scale 100 100
 \graphics default
 \default_output_format pdf2
 \output_sync 0
@@ -101,6 +103,9 @@
 \paperfontsize default
 \spacing single
 \use_hyperref true
+\pdf_title "MorphoLibJ user manual"
+\pdf_author "David Legland and Ignacio Arganda-Carreras"
+\pdf_keywords "ImageJ, mathematical morphology, image segmentation, image analysis"
 \pdf_bookmarks true
 \pdf_bookmarksnumbered false
 \pdf_bookmarksopen false
@@ -216,7 +221,7 @@ MorphoLibJ
 \end_inset
 
  library for ImageJ/Fiji contains a variety of plugins for processing and
- analysing 2D or 3D images.
+ analyzing 2D or 3D images.
  It was originally designed for the study of plant cell images, but the
  algorithms are generic and can be applied to any type of image.
 \end_layout
@@ -226,23 +231,23 @@ MorphoLibJ
 status open
 
 \begin_layout Plain Layout
-TODO:
+Some conventions:
 \end_layout
 
 \begin_layout Itemize
-finir de rédiger les paragraphes
+use american english
 \end_layout
 
 \begin_layout Itemize
-ajouter illustrations 
-\end_layout
+use 
+\begin_inset Quotes eld
+\end_inset
 
-\begin_layout Itemize
-peaufiner vocabulaire : regions / label, component / region...
-\end_layout
+grayscale images
+\begin_inset Quotes erd
+\end_inset
 
-\begin_layout Itemize
-adresses Ignacio+David
+ (instead of gray level) 
 \end_layout
 
 \end_inset
@@ -272,8 +277,8 @@ key "Schneider_2012_nmeth,Schindelin_2012_nmeth"
 \series bold
 morphological filtering
 \series default
- for 2D/3D and binary or grey level images: erosion & dilation, closing
- & opening, morphological gradient & laplacian, top-hat...
+ for 2D/3D and binary or grayscale images: erosion & dilation, closing &
+ opening, morphological gradient & Laplacian, top-hat...
 \end_layout
 
 \begin_layout Itemize
@@ -281,8 +286,8 @@ morphological filtering
 \series bold
 morphological reconstruction
 \series default
-, for 2D/3D and binary or grey level images, allowing fast detection of
- regional or extended extrema, removing of borders, or hole filling
+, for 2D/3D and binary or grayscale images, allowing fast detection of regional
+ or extended extrema, removing of borders, or hole filling
 \end_layout
 
 \begin_layout Itemize
@@ -496,28 +501,65 @@ Morphological filters
 \end_layout
 
 \begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "chap:Morphological-Filters"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 Morphological filters are very common filters that can be combined together
  to provide large variety of solutions.
- They are local filters, in the sense they consider the neighbourhood of
- each pixel/voxel according to a structuring element of a given size and
- shape.
+ They are local filters, in the sense they consider the neighborhood of
+ each pixel/voxel.
  
+\end_layout
+
+\begin_layout Standard
+Morphological filters are defined according to a 
+\series bold
+structuring element
+\series default
+ of a given size and shape.
+ Common structuring element include squares, discrete disks and octogons.
+ Linear structuring element of various orientations may also be used to
+ assess local orientation of the structures.
 \end_layout
 
 \begin_layout Section
 Principles
 \end_layout
 
+\begin_layout Subsection
+Erosion and dilation
+\end_layout
+
 \begin_layout Standard
-The base filters are the 
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Erosion-Dilation"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The most basic morphological filters are the 
 \series bold
 morphological dilation
 \series default
-, which considers the maximum within the neighbourhood, and the 
+ and the 
 \series bold
 morphological erosion
 \series default
-, which considers the minimum value within the neighborhood (Fig
+.
+ The morphological dilation computes for each pixel the maximum within its
+ neighborhood (defined by the structuring element), whereas the morphological
+ erosion considers the minimum value within the neighborhood (Fig
 \begin_inset space ~
 \end_inset
 
@@ -529,7 +571,6 @@ reference "fig:Morpho-Dilation-Erosion"
 \end_inset
 
 ).
- The dilation and the erosion change the size of the structures in the image.
 \end_layout
 
 \begin_layout Standard
@@ -573,7 +614,7 @@ name "fig:Morpho-Dilation-Erosion"
 
 \end_inset
 
-Some examples of morphological filters on a grey level image.
+Some examples of morphological filters on a grayscale image.
  Original image, result of dilation with a square structuring element, and
  result of erosion with the same structuring element.
 \end_layout
@@ -582,6 +623,27 @@ Some examples of morphological filters on a grey level image.
 
 
 \end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Applying a  dilation or an erosion changes the size of the structures in
+ the image: the grains in the result of the dilated image are larger.
+ Morphological erosion can also be used on binary images to help separating
+ touching particles.
+\end_layout
+
+\begin_layout Subsection
+Opening and closing
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Opening-Closing"
 
 \end_inset
 
@@ -660,7 +722,7 @@ name "fig:Morpho-Opening-Closing"
 \end_inset
 
 Some examples of composed morphological filters.
- Morphological closing, and morphological opening.
+ Morphological closing (left) and morphological opening (right).
 \end_layout
 
 \end_inset
@@ -670,6 +732,33 @@ Some examples of composed morphological filters.
 
 \end_inset
 
+
+\end_layout
+
+\begin_layout Standard
+Note that even if opening and closing better preserve the size of the structures
+ in the original image, the shape is slightly altered.
+ For example, the result of morphological closing on Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Morpho-Opening-Closing"
+
+\end_inset
+
+ creates artificial connections between grains.
+ Choosing the best size for the structuring element is often a compromise
+ between noise removal and preservation of structure shape.
+\end_layout
+
+\begin_layout Subsection
+Morphological gradients
+\end_layout
+
+\begin_layout Standard
 More complicated combinations of elementary operations can be used.
  The 
 \series bold
@@ -692,7 +781,11 @@ reference "fig:Morpho-Gradient-TopHat"
 \end_inset
 
 ).
- The 
+ 
+\end_layout
+
+\begin_layout Standard
+The 
 \series bold
 morphological Laplacian
 \series default
@@ -700,6 +793,10 @@ morphological Laplacian
  erosion with the same structuring element, minus the original image.
  It results in enhancing the edges of the image.
  
+\end_layout
+
+\begin_layout Subsection
+Top-hats
 \end_layout
 
 \begin_layout Standard
@@ -712,7 +809,11 @@ first computes a morphological opening (resulting in removing bright structures
  image.
  When applied with a large structuring element, the result is an homogenization
  of the background, making bright structures easier to segment.
- Similarly, the 
+ 
+\end_layout
+
+\begin_layout Standard
+Similarly, the 
 \series bold
 dark top-hat
 \series default
@@ -780,17 +881,39 @@ Usage
 \end_layout
 
 \begin_layout Standard
-A large collection of morphological filters is available in the 
+The collection of morphological filters is available in the 
 \begin_inset Quotes eld
 \end_inset
 
-Plugins->MorphoLibJ
+Plugins\SpecialChar menuseparator
+MorphoLibJ
 \begin_inset Quotes erd
 \end_inset
 
  menu.
- Filters are implemented for both 2D and 3D images, and work for binary
- as well as grey level images.
+ Filters are implemented for both 2D and 3D images, and work for binary,
+ grayscale or color (RGB) images.
+\end_layout
+
+\begin_layout Subsection
+Planar images
+\end_layout
+
+\begin_layout Standard
+Morphological filters for planar images are available 
+\begin_inset Quotes eld
+\end_inset
+
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
+Morphological filters
+\begin_inset Quotes erd
+\end_inset
+
+.
+ The dialog let the user choose the structuring element shape, radius, and
+ eventually preview the result.
+ The following list of operations can be chosen:
 \end_layout
 
 \begin_layout Description
@@ -879,53 +1002,140 @@ diamond
 line with angle of 0, 90, 45 or 135 degrees
 \end_layout
 
+\begin_layout Subsection
+3D images
+\end_layout
+
 \begin_layout Standard
-For 3D images, the same structuring elements can be used (the operation
- is simply repeated on each slice), as well as a cubic or spherical structuring
- element.
+Morphological filters for 3D images are available 
+\begin_inset Quotes eld
+\end_inset
+
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
+Morphological filters (3D)
+\begin_inset Quotes erd
+\end_inset
+
+.
+ The dialog let the user choose the structuring element shape and radius.
+ The same list of operations as for planar images is provided.
+ Planar structuring elements can be used (the operation is simply repeated
+ on each slice), as well as a cubic or spherical structuring element.
+ For most structuring elements, the size can be chosen for each direction.
 \end_layout
 
 \begin_layout Chapter
+Connected components operators
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "chap:Connected-Operators"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The 
+\begin_inset Quotes eld
+\end_inset
+
+classical
+\begin_inset Quotes erd
+\end_inset
+
+ morphological filters presented in chapter 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "chap:Morphological-Filters"
+
+\end_inset
+
+ transform an input image by using the values of pixels or voxels located
+ in a close neighborhood, defined by the structuring element.
+ Such filters can be seen as 
+\begin_inset Quotes eld
+\end_inset
+
+local
+\begin_inset Quotes erd
+\end_inset
+
+, as the result in a given position does not depend on image values located
+ at a sufficient distance.
+ 
+\end_layout
+
+\begin_layout Standard
+Connected components operators are more general as they propagate information
+ within the image based on connectivity between pixels or voxels.
+ More details can be found in the review of 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Breen_1996_cviu"
+
+\end_inset
+
+.
+ Connected components operators encompass powerful operators, such as 
+\series bold
+morphological reconstruction
+\series default
+ that allows to reconstruct a marker image by constraining it to a mask.
+ An extension of morphological reconstruction is the detection of 
+\series bold
+extended minima and maxima
+\series default
+, that can be useful as marker detection for segmentation.
+ Finally, 
+\series bold
+attribute opening and filtering
+\series default
+ algorithms can filter images based on size or range properties, with better
+ preservation of edges than classical filtering.
+ 
+\end_layout
+
+\begin_layout Section
 Morphological reconstruction
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Morphological-Reconstruction"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
 The morphological reconstruction is at the basis of many useful algorithms,
  such as border removing, hole filling, or detection of regional minima
- or maxima in grey level images.
+ or maxima in grayscale images.
+ It may be defined for binary as well as for grayscale images.
 \end_layout
 
-\begin_layout Section
+\begin_layout Subsection
 Principle
 \end_layout
 
 \begin_layout Standard
 The principle of geodesic reconstruction is to repeat 
 \series bold
-conditional dilations
+conditional dilations or erosions
 \series default
- or erosions until idempotence.
+ until idempotence.
  Conditional dilation is the result of a dilation, combined with a mask
  image using a logical operation.
  Conditional dilations are repeated until no more modification occur (idempotenc
 e condition).
  
-\end_layout
-
-\begin_layout Standard
-The figure 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Geodesic-Reconstruction-Principle"
-
-\end_inset
-
- shows several steps of a geodesic reconstruction by dilation on a pair
- of binary images.
- The mask image is shown in gray, and the marker image is shown in black
- on the first image.
- The reconstructed images at each step are shown in black.
- The markers propagates within the mask until they fill the chosen regions.
 \end_layout
 
 \begin_layout Standard
@@ -998,12 +1208,28 @@ Principle of the geodesic reconstruction algorithm.
 
 \end_layout
 
-\begin_layout Section
+\begin_layout Standard
+The figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Geodesic-Reconstruction-Principle"
+
+\end_inset
+
+ shows several steps of a geodesic reconstruction by dilation on a pair
+ of binary images.
+ The mask image is shown in gray, and the marker image is shown in black
+ on the first image.
+ The reconstructed images at each step are shown in black.
+ The markers propagates within the mask until they fill the chosen regions.
+\end_layout
+
+\begin_layout Subsection
 Applications to binary images
 \end_layout
 
 \begin_layout Standard
-By choosing the marker image, several operations may be automatised.
+By choosing the marker image, several operations may be automatized.
  For example, computing geodesic reconstruction with image of borders, and
  combining with original image will 
 \series bold
@@ -1085,21 +1311,37 @@ Some applications of geodesic reconstruction.
 
 \end_layout
 
-\begin_layout Section
-Applications to grey level images
+\begin_layout Subsection
+Applications to grayscale images
 \end_layout
 
 \begin_layout Standard
-Geodesic reconstructions can be applied to grey level images.
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Morphological-Reconstruction-Grayscale"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Geodesic reconstructions can be applied to grayscale images.
  By manually choosing binary markers such that they overlay specific structures,
  and after applying a geodesic reconstruction by dilation, it is possible
- to obtain a grey level image containing only the chosen structures.
- The 
-\series bold
-border kill 
-\series default
-operation can also be applied on grey level images, making possible to rapidly
- remove structures touching the image borders.
+ to obtain a grayscale image containing only the chosen structures (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Geodesic-Reconstruction-Grayscale"
+
+\end_inset
+
+).
+ 
 \end_layout
 
 \begin_layout Standard
@@ -1139,11 +1381,11 @@ status open
 \begin_layout Plain Layout
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Geodesic-Reconstruction-Grey"
+name "fig:Geodesic-Reconstruction-Grayscale"
 
 \end_inset
 
-Some applications of geodesic reconstruction on grey level images.
+Some applications of geodesic reconstruction on grayscale images.
  From left to right: original image with superimposed markers, result of
  geodesic reconstruction by dilation, result of border kill operation.
 \end_layout
@@ -1158,8 +1400,395 @@ Some applications of geodesic reconstruction on grey level images.
 
 \end_layout
 
+\begin_layout Standard
+The 
+\series bold
+border kill 
+\series default
+operation can also be applied on grayscale images, making possible to rapidly
+ remove structures touching the image borders, while keeping the intensity
+ information within the structures.
+\end_layout
+
+\begin_layout Subsection
+Application to the segmentation of chromocenters in a 3D image
+\end_layout
+
+\begin_layout Standard
+An example of application is presented in figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Geodesic-Reconstruction-Grayscale-3d"
+
+\end_inset
+
+.
+ The original 3D image represents the nucleus of a plant cell, with chromocenter
+s appearing as bright structures (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Geodesic-Reconstruction-Grayscale-3d"
+
+\end_inset
+
+-a).
+ In order to discriminate the chromocenters, the nucleus is first identified
+ by manually selecting a region of interest (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Geodesic-Reconstruction-Grayscale-3d"
+
+\end_inset
+
+-b) used as a marker for a morphological reconstruction with the original
+ image used as mask.
+ The result of the morphological reconstruction retains the shape of the
+ nucleus, while 
+\begin_inset Quotes eld
+\end_inset
+
+clearing
+\begin_inset Quotes erd
+\end_inset
+
+ the bright chromocenters (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Geodesic-Reconstruction-Grayscale-3d"
+
+\end_inset
+
+-c).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/nucleus/nucleus-gray8-z14.png
+	height 3.5cm
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/nucleus/nucleus-gray8-z14-ovr.png
+	height 3.5cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/nucleus/nucleus-geodRec-BG-z14.png
+	height 3.5cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/nucleus/nucleus-subtract-geoRec-BG-z14-adjHist.png
+	height 3.5cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/nucleus/nucleus-geodRecBG-3d3.png
+	lyxscale 50
+	height 3.5cm
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Geodesic-Reconstruction-Grayscale-3d"
+
+\end_inset
+
+Application of 3D geodesic reconstruction for isolating chromocenters within
+ a nucleus.
+ (a) Sample slice of a 3 image of nucleus with chromocenters represented
+ as bright blobs.
+ (b) Manual selection of a marker region within the nucleus.
+ (c) Morphological reconstruction of 3D marker image using original 3D image
+ as mask.
+ (d) Difference of original image with the reconstruction.
+ (e) 3D representation of the chromocenters within the nucleus.
+ Image by courtesy of Kaori Sakai and Javier Arpon, INRA-Versailles.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+By computing the difference of the original image with the result of the
+ morphological reconstruction, the chromocenters can be easily isolated
+ and segmented (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Geodesic-Reconstruction-Grayscale-3d"
+
+\end_inset
+
+-d).
+ 
+\end_layout
+
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+The geodesic reconstruction algorithm is often used within other operators.
+ It is however provided as a plugin to allow its inclusion in user-designed
+ macros or plugins:
+\end_layout
+
+\begin_layout Description
+Geodesic
+\begin_inset space ~
+\end_inset
+
+Reconstruction compute the geodesic reconstruction by erosion or dilation
+ using a marker image and a mask image, and a specified connectivity.
+ 
+\end_layout
+
+\begin_layout Description
+Interactive
+\begin_inset space ~
+\end_inset
+
+Geodesic
+\begin_inset space ~
+\end_inset
+
+Reconstruction compute the geodesic reconstruction by erosion or dilation
+ taking the current 2D image as mask image, creating the marker image out
+ of user-defined ROIs (for example with the point selection tool) and using
+ a specified connectivity.
+ The plugin allows previewing the result.
+\end_layout
+
+\begin_layout Description
+Geodesic
+\begin_inset space ~
+\end_inset
+
+Reconstruction
+\begin_inset space ~
+\end_inset
+
+3D compute the geodesic reconstruction by erosion or dilation on a 3D image
+ (marker and mask images are defined by the user among the open ones).
+\end_layout
+
+\begin_layout Description
+Interactive
+\begin_inset space ~
+\end_inset
+
+Geodesic
+\begin_inset space ~
+\end_inset
+
+Reconstruction
+\begin_inset space ~
+\end_inset
+
+3D compute the geodesic reconstruction by erosion or dilation on using the
+ current 3D image as mask and creating the marker image from the user-defined
+ point selections.
+\end_layout
+
+\begin_layout Standard
+The kill borders and fill holes operations are also provided as plugins.
+ Both work for 2D and 3D images of 8, 16 or 32 bits.
+\end_layout
+
+\begin_layout Description
+Kill
+\begin_inset space ~
+\end_inset
+
+Borders remove the particles touching the border of a binary or grayscale
+ image.
+\end_layout
+
+\begin_layout Description
+Fill
+\begin_inset space ~
+\end_inset
+
+Holes remove holes inside particles in binary images, or remove dark regions
+ surrounded by bright crests in grayscale images.
+\end_layout
+
 \begin_layout Section
 Regional and extended extrema
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Minima-Maxima"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -1214,19 +1843,6 @@ are defined in a similar way, and are efficiently used as pre-processing
 \end_layout
 
 \begin_layout Standard
-Both extended maxima and minima are computed using the geodesic reconstruction
- algorithm.
- More details can be found in the book of 
-\begin_inset CommandInset citation
-LatexCommand citet
-key "Soille_2003"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
 \begin_inset Float figure
 wide false
 sideways false
@@ -1267,7 +1883,7 @@ name "fig:Regional-And-Extended-Maxima"
 
 \end_inset
 
-Regional and extended maxima on a grey-level image.
+Regional and extended maxima on a grayscale image.
  Left: original image.
  Middle: result of regional maxima.
  Right: result of extended maxima.
@@ -1283,8 +1899,17 @@ Regional and extended maxima on a grey-level image.
 
 \end_layout
 
-\begin_layout Section
-Usage
+\begin_layout Standard
+Both extended maxima and minima are computed using the geodesic reconstruction
+ algorithm.
+ More details can be found in the book of 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Soille_2003"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -1292,40 +1917,13 @@ The following operations are available in the
 \begin_inset Quotes eld
 \end_inset
 
-Plugins->MorphoLibJ
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
+Minima and Maxima
 \begin_inset Quotes erd
 \end_inset
 
- menu:
-\end_layout
-
-\begin_layout Description
-Geodesic
-\begin_inset space ~
-\end_inset
-
-Reconstruction compute the geodesic reconstruction by erosion or dilation
- using a marker image and a mask image, and a specified connectivity.
- The same operation is available for 3D images.
-\end_layout
-
-\begin_layout Description
-Kill
-\begin_inset space ~
-\end_inset
-
-Borders remove the particles touching the border of a binary or grey level
- image, in 2D or 3D
-\end_layout
-
-\begin_layout Description
-Fill
-\begin_inset space ~
-\end_inset
-
-Holes remove holes inside particles in binary images, or remove dark regions
- surrounded by bright crests in grey level images.
- Works for both 2D and 3D images.
+ menu :
 \end_layout
 
 \begin_layout Description
@@ -1341,8 +1939,29 @@ Min
 \begin_inset space ~
 \end_inset
 
-Max compute regional minima or extrema in grey level image, with specified
- connectivity
+Max compute regional minima or extrema in grayscale or binary image, with
+ specified connectivity
+\end_layout
+
+\begin_layout Description
+Regional
+\begin_inset space ~
+\end_inset
+
+Min
+\begin_inset space ~
+\end_inset
+
+/
+\begin_inset space ~
+\end_inset
+
+Max
+\begin_inset space ~
+\end_inset
+
+3D compute regional minima or extrema in 3D grayscale or binary image, with
+ specified connectivity
 \end_layout
 
 \begin_layout Description
@@ -1358,8 +1977,29 @@ Min
 \begin_inset space ~
 \end_inset
 
-Max compute extended minima or extrema in grey level image, with specified
- connectivity
+Max compute extended minima or extrema in grayscale or binary image, with
+ specified connectivity
+\end_layout
+
+\begin_layout Description
+Extended
+\begin_inset space ~
+\end_inset
+
+Min
+\begin_inset space ~
+\end_inset
+
+/
+\begin_inset space ~
+\end_inset
+
+Max
+\begin_inset space ~
+\end_inset
+
+3D compute extended minima or extrema in 3D grayscale or binary image, with
+ specified connectivity
 \end_layout
 
 \begin_layout Description
@@ -1375,17 +2015,313 @@ Min
 \begin_inset space ~
 \end_inset
 
-Max impose minima or maxima on a grey level image.
+Max impose binary minima or maxima on a grayscale image.
+\end_layout
+
+\begin_layout Description
+Impose
+\begin_inset space ~
+\end_inset
+
+Min
+\begin_inset space ~
+\end_inset
+
+/
+\begin_inset space ~
+\end_inset
+
+Max
+\begin_inset space ~
+\end_inset
+
+3D impose binary minima or maxima on a 3D grayscale image.
+\end_layout
+
+\begin_layout Section
+Attribute filtering
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Attribute-Filtering"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Attribute filters aim at removing components of an image based on a certain
+ size criterion, rather than on intensity.
+ The most common and useful criterion is the number of pixels/voxels (i.e.,
+ the area or volume).
+ For example, a morphological size opening operation with a threshold value
+ of 20 will remove all blobs containing fewer than 20 voxels.
+ The length of the diagonal of the bounding box can also be of interest
+ to discriminate elongated versus round component shapes.
+ 
+\end_layout
+
+\begin_layout Subsection
+Application to binary images
+\end_layout
+
+\begin_layout Standard
+When applied to a binary image, attribute opening consists in identifying
+ each connected component, computing the attribute measurement of each component
+, and retain only the connected components whose measurement is above a
+ specified value (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Area-Opening-Binary"
+
+\end_inset
+
+).
+ This kind of processing is often used to clean-up segmentation results.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/grains/grains-binary-crop-ext.png
+	width 31text%
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/grains/grains-binary-crop-lbl-ext.png
+	width 31text%
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/grains/grains-binary-crop-lbl-sizeOpening-ext.png
+	width 31text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Area-Opening-Binary"
+
+\end_inset
+
+Example of area opening on a binary image.
+ Left: original binary image.
+ Middle: identification of connected components.
+ Right: only the connected components with a sufficient size (defined by
+ the area), have been retained.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Application to grayscale images
+\end_layout
+
+\begin_layout Standard
+When applied to a grayscale image, attribute opening consists in generating
+ a series of binary images by thresholding at each distinct gray level in
+ the image.
+ The binary attribute opening described above is then applied independently
+ to each binary image and the grayscale output is computed as the union
+ of the binary results.
+ The final output is a grayscale image whose bright structures with the
+ attribute below a given value have disappeared.
+ A great advantage of this filter is that the contours of the structures
+ area better preserved than opening with a structuring element (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Area-Opening-Gray"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/leaf/leaf_crop400.tif
+	width 31text%
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/leaf/leaf_crop400-areaOpen.tif
+	width 31text%
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/leaf/leaf_crop400-OpeningSq1.tif
+	width 31text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Area-Opening-Gray"
+
+\end_inset
+
+Example of area opening on a grayscale image.
+ Left: original grayscale image of a leaf (image courtesy of Eric Biot,
+ INRA Versailles).
+ Middle: grayscale size opening making bright spots disappear.
+ Right: comparison with morphological closing with square structuring element
+ of radius 1: bright spots are removed, but some veins also disappear.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+As for classical morphological filters, grayscale attribute closing or tophat
+ can be defined.
+ Grayscale attribute closing consists in removing dark connected components
+ whose size is smaller than a specified value.
+ White [resp.
+ Black] Attribute Top-Hat considers the difference of the attribute opening
+ [resp.
+ closing] with the original image, and can help identifying bright [resp.
+ dark] structures with small size.
+\end_layout
+
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+So far, the following attribute filtering plugins are available within MorphoLib
+J (under 
+\begin_inset Quotes eld
+\end_inset
+
+Plugins\SpecialChar menuseparator
+MorphoLibJ
+\begin_inset Quotes erd
+\end_inset
+
+):
+\end_layout
+
+\begin_layout Description
+Gray
+\begin_inset space ~
+\end_inset
+
+Scale
+\begin_inset space ~
+\end_inset
+
+Attribute
+\begin_inset space ~
+\end_inset
+
+Filtering opens a dialog to perform between attribute opening, closing,
+ and black or white top-hat on a planar (2D) grayscale image.
+ Two size criteria can be used: the area (number of pixels), or the diameter
+ (length of the diagonal of the bounding box).
+\end_layout
+
+\begin_layout Description
+Gray
+\begin_inset space ~
+\end_inset
+
+Scale
+\begin_inset space ~
+\end_inset
+
+Attribute
+\begin_inset space ~
+\end_inset
+
+Filtering
+\begin_inset space ~
+\end_inset
+
+3D opens a dialog to perform between attribute opening, closing, and black
+ or white top-hat on a 3D grayscale image.
+ The size criterion is the number of voxels.
 \end_layout
 
 \begin_layout Chapter
 Watershed segmentation
+\begin_inset CommandInset label
+LatexCommand label
+name "chap:Watershed-segmentation"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-The watershed algorithm assimilates the grey level image to a digital elevation
- model, and aims at detecting the different catchment basins.
- In the grey-level image, the catchment basins correspond to dark regions
+The 
+\series bold
+watershed algorithm
+\series default
+ assimilates the grayscale image to a digital elevation model, and aims
+ at detecting the different catchment basins.
+ In the grayscale image, the catchment basins correspond to dark regions
  surrounded by bright structures (the 
 \begin_inset Quotes eld
 \end_inset
@@ -1396,12 +2332,22 @@ crests
 
 ).
  It is a very popular technique specially used to segment touching objects.
- The MorphoLibJ suite contains several implementations of the algorithm,
- described in the following sections.
+ The MorphoLibJ suite contains several implementations and applications
+ of the algorithm, described in the following sections.
 \end_layout
 
 \begin_layout Section
 Classic Watershed plugin
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Classic-Watershed"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -1513,6 +2459,10 @@ The Classic Watershed plugin runs on any grayscale image (8, 16 and 32-bit)
  in 2D and 3D.
  At least one image needs to be open in order for the plugin to run.
  If that's the case, a dialog like the following will pop up: 
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -1532,6 +2482,10 @@ Let's have a look at the different parameters:
 
 \begin_layout Itemize
 Image parameters: 
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
@@ -1557,6 +2511,10 @@ Mask image
 \end_deeper
 \begin_layout Itemize
 Morphological parameters: 
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
@@ -1619,7 +2577,7 @@ pre-process the image before
 or merge regions based on a similarity criterion afterwards
 \series default
 .
- Several denoising methods are available in Fiji/ImageJ, namely: median
+ Several de-noising methods are available in Fiji/ImageJ, namely: median
  filtering, Gaussian blur, bilateral filtering, etc.
 \end_layout
 
@@ -1736,7 +2694,7 @@ status open
 \begin_layout Plain Layout
 \begin_inset Tabular
 <lyxtabular version="3" rows="1" columns="3">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -1898,6 +2856,16 @@ Input and result images from the macro example.
 Marker-controlled Watershed plugin
 \end_layout
 
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Marker-Controlled-Watershed"
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 Introduction
 \end_layout
@@ -1958,8 +2926,11 @@ name "fig:Example-of-marker-controlled-watershed"
 
 \end_inset
 
-Example of marker-controlled watershed segmentation on nucleus of Arabidopsis
- thaliana (image by courtesy of Kaori Sakai and Javier Arpon, INRA-Versailles).
+Example of marker-controlled watershed segmentation on nucleus of 
+\emph on
+Arabidopsis thaliana
+\emph default
+ (image by courtesy of Kaori Sakai and Javier Arpon, INRA-Versailles).
 \end_layout
 
 \end_inset
@@ -1983,6 +2954,10 @@ Usage
 \begin_layout Standard
 Marker-controlled Watershed needs at least two images to run.
  If that's the case, a dialog like the following will pop up:
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -2002,6 +2977,10 @@ Let's have a look at the different parameters:
 
 \begin_layout Itemize
 Image parameters:
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
@@ -2030,6 +3009,10 @@ Marker image
 \end_deeper
 \begin_layout Itemize
 And it can optionally admit a third image:
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
@@ -2047,6 +3030,10 @@ Mask image
 \end_deeper
 \begin_layout Itemize
 Rest of parameters:
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
@@ -2056,7 +3043,16 @@ Rest of parameters:
 Calculate dams
 \series default
 : select to enable the calculation of watershed lines.
- Use diagonal connectivity: select to allow the flooding in diagonal directions.
+ 
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Use diagonal connectivity
+\series default
+: select to allow the flooding in diagonal directions (more rounded objects
+ are usually obtain by unchecking this option).
  
 \end_layout
 
@@ -2075,6 +3071,16 @@ Labeled image
 
 \begin_layout Section
 Morphological Segmentation plugin
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Morphological-Segmentation-Plugin"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -2102,6 +3108,7 @@ status open
 \align center
 \begin_inset Graphics
 	filename images/Morphological-segmentation-front.png
+	lyxscale 50
 	width 90text%
 
 \end_inset
@@ -2150,8 +3157,7 @@ Image pre-processing
 \series default
 : some pre-processing is included in the plugin to facilitate the segmentation
  task.
- However, other pre-preprocessing may be required depending on the input
- image.
+ However, other pre-processing may be required depending on the input image.
  It is up to the user to decide what filtering may be most appropriate upstream.
 \end_layout
 
@@ -2246,6 +3252,22 @@ Tolerance
  Increasing the tolerance value reduces the number of segments in the final
  result, while decreasing its value produces more object splits.
  
+\series bold
+\color red
+
+\begin_inset Newline newline
+\end_inset
+
+Note
+\series default
+\color inherit
+: since the tolerance is an intensity parameter, it is sensitive to the
+ input image type.
+ A tolerance value of 10 is a good starting point for 8-bit images (with
+ 0-255 intensity range) but it should be drastically increased when using
+ image types with larger intensity ranges.
+ For example to ~2000 when working on a 16-bit image (intensity values between
+ 0 and 65535).
 \end_layout
 
 \begin_layout Itemize
@@ -2312,6 +3334,10 @@ Display
 \series default
 : list of options to display the segmentation results.
  
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
@@ -2408,6 +3434,76 @@ Examples of the 4 different display options.
 
 \end_layout
 
+\begin_layout Subsubsection
+Post-processing panel
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename images/Morphological-segmentation-post-processing-panel.png
+	width 40text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Similarly to the Results panel, this panel only gets enabled after running
+ the segmentation pipeline.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Merge labels
+\series default
+: merge together labels selected by either the 
+\series bold
+
+\begin_inset Quotes eld
+\end_inset
+
+freehand
+\begin_inset Quotes erd
+\end_inset
+
+ selection tool
+\series default
+ (on a single slice) 
+\series bold
+or the point tool
+\series default
+ (on single or multiple slices).
+ The zero-value label belongs to the watershed dams, therefore it will ignored
+ in case of being selected.
+ The first selected label value will be assigned to the rest of selected
+ labels, which will share its color.
+ 
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+\color red
+Note
+\series default
+\color inherit
+: to select labels on different slices, use the point selection tool and
+ keep the SHIFT key pressed each time you click on a new label.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Shuffle colors
+\series default
+: randomly re-assign colors to the labels.
+ This is a very handy option whenever two adjacent labels present a similar
+ color.
+\end_layout
+
 \begin_layout Subsection
 Macro language compatibility
 \end_layout
@@ -2471,7 +3567,7 @@ Select input image:
 
 
 \begin_inset listings
-lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
 status open
 
@@ -2741,33 +3837,1232 @@ call("inra.ijpb.plugins.MorphologicalSegmentation.setDisplayFormat", "Overlaid
 
 \end_layout
 
+\begin_layout Section
+Distance Transform Watershed
+\end_layout
+
+\begin_layout Subsection
+Introduction
+\end_layout
+
+\begin_layout Standard
+A classic way of separating touching objects in binary images makes use
+ of the distance transform and the watershed method.
+ The idea is to create a border as far as possible from the center of the
+ overlapping objects.
+ This strategy works very well on rounded objects and it is called Distance
+ Transform Watershed.
+ It consists on calculating the distance transform of the binary image,
+ inverting it (so the darkest parts of the image are the centers of the
+ objects) and then applying watershed on it using the original image as
+ mask (see Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:distance-transform-watershed"
+
+\end_inset
+
+).
+ In our implementation, we include an option to use watershed with extended
+ minima so the user can control the number of object splits and merges.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/NucleiDAPIConfocal/NucleiDAPIconfocal.png
+	lyxscale 25
+	width 24text%
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/NucleiDAPIConfocal/NucleiDAPIconfocal-binary-mask.png
+	lyxscale 25
+	width 24text%
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/NucleiDAPIConfocal/NucleiDAPIconfocal-inverse-dist-chessknight-32bit-normalized.png
+	lyxscale 25
+	width 24text%
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/NucleiDAPIConfocal/NucleiDAPIconfocal-distance-transform-watershed.png
+	lyxscale 25
+	width 24text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\series bold
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:distance-transform-watershed"
+
+\end_inset
+
+Basics of the Distance Transform Watershed algorithm
+\series default
+.
+ From left to right: sample image of touching DAPI stained cell nuclei from
+ a confocal laser scanning microscope, binary mask calculated after filtering
+ and thresholding input image, inverse of the distance transform applied
+ to the binary mask (Chamfer distance map using normalized Chessknight weights
+ and 32-bit output) and resulting labeled image after applying watershed
+ to the inverse distance image using the binary mask (dynamic of 1 and 4-connect
+ivity).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+MorphoLibJ provides two plugins under the 
+\begin_inset Quotes eld
+\end_inset
+
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
+Binary Images...
+\begin_inset Quotes erd
+\end_inset
+
+ menu to apply this strategy on 2D and 3D images:
+\end_layout
+
+\begin_layout Subsection
+Distance Transform Watershed
+\end_layout
+
+\begin_layout Standard
+Distance Transform Watershed needs one 2D 8-bit binary image to run.
+ If that's the case, a dialog like the following will pop up:
+\begin_inset Separator latexpar
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename images/Distance-Transform-Watershed-2D-menu.png
+	width 40text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The plugin parameters are divided between the distance transform and the
+ watershed options:
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Distance map options
+\series default
+:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\series bold
+Distances
+\series default
+: allows selecting among a pre-defined set of weights that can be used to
+ compute the distance transform using Chamfer approximations of the Euclidean
+ metric.
+ They affect the location but specially the shape of the border in the final
+ result.
+ The options are:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\series bold
+Chessboard (1,1)
+\series default
+: weight equal to 1 for all neighbors.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+City-Block (1,2)
+\series default
+: weights 1 for orthogonal neighbors and 2 for diagonal neighbors.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Quasi-Euclidean (1,1.41)
+\series default
+: weights 1 for orthogonal neighbors and 
+\begin_inset Formula $\sqrt{2}$
+\end_inset
+
+ for diagonal neighbors.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Borgefors (3,4)
+\series default
+: weights 3 for orthogonal neighbors and 4 for diagonal neighbors (best
+ approximation of Euclidean distance for 3-by-3 masks).
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Weights (2,3)
+\series default
+: weights 2 for orthogonal neighbors and 3 for diagonal neighbors.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Weights (5,7)
+\series default
+: weights 5 for orthogonal neighbors and 7 for diagonal neighbors.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Chessknight (5,7,11)
+\series default
+: weights 5 for orthogonal neighbors and 7 for diagonal neighbors, and 11
+ for chess-knight moves (best approximation for 5-by-5 masks).
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\series bold
+Output type
+\series default
+: 16 or 32-bit, to calculate distance with short or float precision.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Normalize weights
+\series default
+: indicates whether the resulting distance map should be normalized (divide
+ distances by the first Chamfer weight).
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\series bold
+Watershed options
+\series default
+:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\series bold
+Dynamic
+\series default
+: same as in the Morphological Segmentation plugin, this is the dynamic
+ of intensity for the search of regional minima in the inverse of the distance
+ transform image.
+ Basically, by increasing its value there will be more object merges and
+ by decreasing it there will be more object splits.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Connectivity
+\series default
+: pixel connectivity (4 or 8).
+ Selecting non-diagonal connectivity (4) usually provides more rounded objects.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+Finally, the result with the current plugin configuration can be visualize
+ clicking on the 
+\series bold
+Preview
+\series default
+ option.
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Result
+\series default
+: 2D 32-bit label image (one index value per object).
+\end_layout
+
+\begin_layout Subsection
+Distance Transform Watershed (3D)
+\end_layout
+
+\begin_layout Standard
+Distance Transform Watershed 3D needs one 3D 8-bit binary image to run.
+ If that's the case, a dialog like the following will pop up:
+\begin_inset Separator latexpar
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename images/Distance-Transform-Watershed-3D-menu.png
+	width 45text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The parameters are the same as in the 2D version but some of them are adapted
+ for 3D images:
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Distance map options
+\series default
+:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\series bold
+Distances
+\series default
+: Now the available options are:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\series bold
+Chessboard (1,1,1)
+\series default
+: weight equal to 1 for all neighbors.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+City-Block (1,2,3)
+\series default
+: weights 1 for orthogonal neighbors, 2 for diagonal neighbors and 3 for
+ cube-diagonals.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Quasi-Euclidean (1,1.41,1.73)
+\series default
+: weights 1 for orthogonal neighbors, 
+\begin_inset Formula $\sqrt{2}$
+\end_inset
+
+ for diagonal neighbors and 
+\begin_inset Formula $\sqrt{3}$
+\end_inset
+
+ for cube-diagonals.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Borgefors (3,4,5)
+\series default
+: weights 3 for orthogonal neighbors, 4 for diagonal neighbors and 5 for
+ cube-diagonals (best approximation of Euclidean distance for 3-by-3-by-3
+ masks).
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\series bold
+Output type
+\series default
+: 16 or 32-bit, to calculate distance with short or float precision.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Normalize weights
+\series default
+: indicates whether the resulting distance map should be normalized (divide
+ distances by the first Chamfer weight).
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\series bold
+Watershed options
+\series default
+:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\series bold
+Dynamic
+\series default
+: same as in the 2D version, this is the dynamic of intensity for the search
+ of regional minima in the inverse of the distance transform image.
+ Basically, by increasing its value there will be more object merges and
+ by decreasing it there will be more object splits.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Connectivity
+\series default
+: voxel connectivity (6 or 26).
+ Selecting non-diagonal connectivity (6) usually provides more rounded objects.
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+As it is usual in ImageJ, no preview is provided here since we are dealing
+ with 3D images.
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Result
+\series default
+: 3D 32-bit label image (one index value per object).
+\end_layout
+
 \begin_layout Chapter
 Measurements
 \end_layout
 
-\begin_layout Section
-Geometric measurements
-\end_layout
-
 \begin_layout Standard
-Several measurements are provided for 
+MorphoLibJ contains several tools for quantifying the size, the shape, or
+ the spatial organization, from 
 \series bold
 binary or label
 \series default
- 2D or 3D images.
- The results are provided in a ResultsTable, whose name contains the name
- of the original image.
- The plugin calculating these measurements is found under 
+ 2D and 3D images.
+ The aim is to facilitate the management of label images, contrary to the
+ built-in 
 \begin_inset Quotes eld
 \end_inset
 
-Plugins\SpecialChar \menuseparator
-Analyze\SpecialChar \menuseparator
-Geometric Measurements 3D
+Analyze Particles...
+\begin_inset Quotes erd
+\end_inset
+
+ function that operates directly on a grayscale image.
+ 
+\end_layout
+
+\begin_layout Section
+Particle analysis
+\end_layout
+
+\begin_layout Standard
+This section describes the methods implemented in MorphoLibJ for describing
+ individual particles, represented as label images (one label for each particle).
+ We first define and describe the implemented features, then we present
+ the plugins that integrate them.
+\end_layout
+
+\begin_layout Subsection
+Intrinsic volumes
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+intrinsic volumes 
+\series default
+are a set of features with interesting mathematical properties that are
+ commonly used for describing individual particles as well as binary microstruct
+rues.
+ In the planar case, they correspond to the area, the perimeter and the
+ Euler number.
+ The Euler number is a topological characteristic that equals the number
+ of connected components minus the number of holes (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Euler-Number"
+
+\end_inset
+
+).
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/analysis/euler-number-2d.png
+	height 4cm
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/analysis/negativeEulerNumber.png
+	height 4cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Euler-Number"
+
+\end_inset
+
+Illustration of Euler Number definition.
+ Left: three particles with Euler numbers equal to 1, 0 and -1, respectively.
+ Right: example of a 3D particle with an Euler number equal to -1, corresponding
+ to the subtraction of 1 connected components minus two handles.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For 3D particles, intrinsic volumes correspond to the volume, the surface
+ area, the mean breadth (a quantity proportional to the integral of the
+ mean curvature over the surface) and the Euler number.
+ In 3D the Euler number equals the number of connected components minus
+ the number of 
+\begin_inset Quotes eld
+\end_inset
+
+handles
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+tunnels
+\begin_inset Quotes eld
+\end_inset
+
+ through the structure, plus the number of bubbles within the particles
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Serra_1982,Ohser2009"
+
+\end_inset
+
+, see Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Euler-Number"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+Estimation from 2D or 3D images
+\end_layout
+
+\begin_layout Standard
+In image analysis, the 
+\series bold
+estimation of area 
+\series default
+of 2D particles and of 
+\series bold
+volume of 3D particles 
+\series default
+simply consists in counting the number of pixels or voxels that constitute
+ it, weighted by the area of an individual pixel or the volume of an individual
+ voxel.
+ 
+\end_layout
+
+\begin_layout Standard
+The implemented method for 
+\series bold
+perimeter measurement 
+\series default
+aims at providing a better estimate of the perimeter than traditional boundary
+ pixel count.
+ The principle is to consider a set of lines with various orientations,
+ and to count the number of intersections with the region(s) of interest
+ (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Perimeter-Estimation-With-Crofton"
+
+\end_inset
+
+).
+ The number of intersections is proportional to the perimeter 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Serra_1982,Legland2007,Ohser2009"
+
+\end_inset
+
+.
+ By averaging over all possible directions, the estimate is unbiased.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/analysis/crofton-principle-2d.png
+	lyxscale 50
+	height 4.5cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Perimeter-Estimation-With-Crofton"
+
+\end_inset
+
+Principle of perimeter estimation by counting the number of intersections
+ with a set of lines.
+ The number of intersection points is proportional to the perimeter of the
+ particle.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Perimeter can be estimated using either two directions (horizontal and vertical)
+, or four directions (by adding the diagonals).
+ Restricting the number of directions introduces an estimation bias, with
+ known theoretical bounds 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Moran1966,Legland2007"
+
+\end_inset
+
+, that is usually better than boundary pixel count 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Lehmann_2012_ij"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+estimation of surface area 
+\series default
+follows the same principle.
+ The number of directions is typically chosen equal to 3 (the three main
+ axes in image), or 13 (by considering also diagonals).
+ As for perimeter estimation, surface area estimation in usually biased,
+ but is usually more precise than measuring the surface area of the polygonal
+ mesh reconstructed from binary images 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Lehmann_2012_ij"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+Euler number
+\end_layout
+
+\begin_layout Standard
+The measurement of Euler number depends on the choice of the connectivity.
+ For planar images, typical choices are the 4-connectivity, corresponding
+ to the orthogonal neighbors, and the 8-connectivity, that also consider
+ the diagonal neighbors.
+ In 3D, the 6-connectivity considers the neighbors in the three main directions
+ within the image, whereas the 26 connectivity also consider the diagonals.
+ Other connectivities have been proposed but are not implemented in MorphoLibJ
+ 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Ohser2009"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+In the current implementation in MorphoLibJ, the Euler number is not taken
+ into account for intersection of particles with image borders.
+ This may result in non-integer result if the particle(s) of interest touches
+ image border.
+\end_layout
+
+\begin_layout Subsubsection
+Shape factors
+\end_layout
+
+\begin_layout Standard
+Intrinsic volumes characterize the size of the particles, from different
+ points of view.
+ Several indices are sometimes used to describe the shape of the particles,
+ independently of their size.
+\end_layout
+
+\begin_layout Standard
+In 2D, the 
+\series bold
+isoperimetric deficit index
+\series default
+ (or 
+\begin_inset Quotes eld
+\end_inset
+
+shape factor
+\begin_inset Quotes erd
+\end_inset
+
+, or 
+\begin_inset Quotes eld
+\end_inset
+
+circularity
+\begin_inset Quotes erd
+\end_inset
+
+) is defined as the ratio of area over the square of the perimeter, normalized
+ such that the value for a disk equals one:
+\begin_inset Formula 
+\begin{eqnarray}
+\mbox{circularity} & = & 4\pi\frac{A}{P^{2}}
+\end{eqnarray}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+While values of circularity range theoretically within the interval 
+\begin_inset Formula $[0;1]$
+\end_inset
+
+, the measurements errors of the perimeter may produce circularity values
+ above 1 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Lehmann_2012_ij"
+
+\end_inset
+
+.
+ The MorphoLibJ library also considers the inverse of the circularity, referred
+ to as 
+\begin_inset Quotes eld
+\end_inset
+
+
+\series bold
+elongation index
+\series default
+
 \begin_inset Quotes erd
 \end_inset
 
 .
+ The values of elongation range from 1 for round particles and increase
+ for elongated particles.
+\begin_inset Formula 
+\begin{eqnarray}
+\mbox{elongation} & = & \frac{P^{2}}{4\pi\cdot A}
+\end{eqnarray}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In 3D, the 
+\series bold
+sphericity index
+\series default
+ can be defined as the ratio of the squared volume over the cube of the
+ surface area, normalized such that the value for a ball equals one:
+\begin_inset Formula 
+\begin{eqnarray}
+\mbox{sphericity} & = & 36\pi\frac{V^{2}}{S^{3}}
+\end{eqnarray}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Inertia ellipse and ellipsoid
+\end_layout
+
+\begin_layout Standard
+A binary particle may be described mathematically by its moments which correspon
+ds to an integral of its indicator function, with various degrees along
+ the directions.
+ The first moment corresponds to the area or to the volume of the particle.
+ The normalization of the first-order indicator functions leads to the 2D
+ or 3D centroid of the particle.
+ The second order moments can be used to compute the equivalent inertia
+ ellipse or ellipsoid.
+\end_layout
+
+\begin_layout Subsection
+Geodesic measurements
+\end_layout
+
+\begin_layout Standard
+For particles with complex shapes, the 
+\series bold
+geodesic diameter 
+\series default
+may be of interest.
+ It corresponds of the largest geodesic distance between two points within
+ a region, the geodesic distance being the length of the shortest path joining
+ the two points while staying inside the region 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Lantuejoul1981"
+
+\end_inset
+
+.
+ An example is given on Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Geodesic-Diameter"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/analysis/geodesic-diameter.png
+	height 4.5cm
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/analysis/36_manual1-geodiam.png
+	lyxscale 75
+	width 5cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Geodesic-Diameter"
+
+\end_inset
+
+Geodesic diameter.
+ Left: illustration of the geodesic diameter on a simple particle.
+ Right: computation of the geodesic diameter on a segmented image from the
+ DRIVE database 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Staal_2004_tmi"
+
+\end_inset
+
+.
+ Each connected component was associated to a label, then the longest geodesic
+ path within each connected component was computed and displayed as red
+ overlay.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Other measurements consider the 
+\series bold
+largest circle that can be inscribed within the particle
+\series default
+.
+ 
+\end_layout
+
+\begin_layout Subsection
+ImageJ plugins
+\end_layout
+
+\begin_layout Standard
+Most MorphoLibJ plugins consider the current image as input, that must be
+ either binary (only one region is considered), or label (typically the
+ result of a connected components labeling, see section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Binary-Images"
+
+\end_inset
+
+).
+ The output is a results table (ImageJ 
+\emph on
+ResultsTable
+\emph default
+) containing one row for each label actually present within the image.
+ The spatial calibration of the image is taken into account in all measurements.
+ All plugins can be found under the 
+\begin_inset Quotes eld
+\end_inset
+
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
+Analyze
+\begin_inset Quotes erd
+\end_inset
+
+ menu.
+\end_layout
+
+\begin_layout Subsubsection
+Global geometry
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+global geometry
+\series default
+ of particles in 2D images can be characterized with the Region Morphometry
+ plugin (under 
+\begin_inset Quotes eld
+\end_inset
+
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
+Analyze\SpecialChar menuseparator
+Region Morphometry
+\begin_inset Quotes erd
+\end_inset
+
+).
+ For 2D particles, the area, the perimeter and derived features are implemented.
+ The columns of the results table are:
+\end_layout
+
+\begin_layout Description
+Label the label of the particle measured on the current line (it can be
+ different from the row number if some labels do no exist in original image).
+\end_layout
+
+\begin_layout Description
+Area the number of pixels within each region, multiplied by the area of
+ each pixel.
+\end_layout
+
+\begin_layout Description
+Perimeter an estimate of the perimeter, using Crofton formula.
+\end_layout
+
+\begin_layout Description
+Circularity the normalized ratio of area by the square of the perimeter:
+ 
+\begin_inset Formula $4\pi\cdot A/p^{2}$
+\end_inset
+
+.
+ The value should be comprised between 0 (very elongated) and 1 (close to
+ circular).
+ Values superior to 1 may appear due to discretization effect.
+\end_layout
+
+\begin_layout Description
+Elongation the normalized ratio of the square of the perimeter by the area:
+ 
+\begin_inset Formula $p^{2}/\left(4\pi\cdot A\right)$
+\end_inset
+
+, corresponding to the inverse of the circularity.
+ The values range from 1 (round), and increase with elongation of the particle.
+\end_layout
+
+\begin_layout Subsubsection
+Largest inscribed circle or ball
+\end_layout
+
+\begin_layout Standard
+This plugin computes for each label the largest disk that can be enclosed
+ within the corresponding particle.
+ The plugin opens a dialog that allows to choose the label image to characterize
+, the choice of the method for computing distance, and eventually the image
+ on which overlaid circles can be drawn.
+ The output of the plugin includes the following information:
+\end_layout
+
+\begin_layout Description
+Label the label of the particle measured on the current line.
+\end_layout
+
+\begin_layout Description
+xi the x-coordinate of the inscribed circle.
+\end_layout
+
+\begin_layout Description
+yi the y-coordinate of the inscribed circle.
+\end_layout
+
+\begin_layout Description
+radius the radius of the inscribed circle.
+\end_layout
+
+\begin_layout Subsubsection
+Geodesic diameter
+\end_layout
+
+\begin_layout Standard
+This plugin computes several geodesic measures for each particle in a label
+ image.
+ The result of the plugin comprises the following features:
+\end_layout
+
+\begin_layout Description
+Label the label of the particle measured on the current line.
+\end_layout
+
+\begin_layout Description
+Geod.
+\begin_inset space ~
+\end_inset
+
+Diam.
+ the value of the geodesic diameter.
+\end_layout
+
+\begin_layout Description
+Radius the radius of the largest inscribed circle, which is computed during
+ the algorithm.
+\end_layout
+
+\begin_layout Description
+Geod.
+\begin_inset space ~
+\end_inset
+
+Elong.
+ the ratio of geodesic diameter over the diameter of the largest inscribed
+ circle.
+ The values range from 1 for nearly round particles and increases for elongated
+ particles.
+\end_layout
+
+\begin_layout Description
+xi,
+\begin_inset space ~
+\end_inset
+
+yi coordinates of the largest inscribed circle.
+\end_layout
+
+\begin_layout Description
+x1,
+\begin_inset space ~
+\end_inset
+
+y1 coordinates of one of the geodesic extremities of the particle.
+\end_layout
+
+\begin_layout Description
+x2,
+\begin_inset space ~
+\end_inset
+
+y2 coordinates of another geodesic extremity of the particle.
+\end_layout
+
+\begin_layout Subsubsection
+Particle analysis 3D
+\end_layout
+
+\begin_layout Standard
+The plugin calculating these measurements is found under 
+\begin_inset Quotes eld
+\end_inset
+
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
+Analyze\SpecialChar menuseparator
+Particle Analysis 3D
+\begin_inset Quotes erd
+\end_inset
+
+.
+ The results are provided in an ImageJ 
+\emph on
+ResultsTable
+\emph default
+, whose name contains the name of the original image.
+ 
+\end_layout
+
+\begin_layout Description
+Label the label of the particle measured on the current line (it can be
+ different from the row number if some labels do no exist in original image).
 \end_layout
 
 \begin_layout Description
@@ -2776,31 +5071,35 @@ Bounding
 \end_inset
 
 box returns the minimal and maximal coordinates in each direction for each
- label
+ label.
 \end_layout
 
 \begin_layout Description
-Volume
+Volume computes the number of voxels comprising the particle, multiplied
+ by the volume of an individual voxel.
+\end_layout
+
+\begin_layout Description
+Surface
 \begin_inset space ~
 \end_inset
 
-/
+area the surface area computed using a discretized version of the Crofton
+ formula, that computes intersections with line grids of various orientations
+ (currently either 3 or 13).
+\end_layout
+
+\begin_layout Description
+Sphericity
 \begin_inset space ~
 \end_inset
 
-surface
-\begin_inset space ~
-\end_inset
-
-area computes the volume, the surface area, and a sphericity index, defined
- as 
+index defined as 
 \begin_inset Formula $36\pi V^{2}/S^{3}$
 \end_inset
 
 .
- Surface area is computed using a discretized version of the Crofton formula,
- that computes intersections with line grids of various orientations (currently
- either 3 or 13).
+ 
 \end_layout
 
 \begin_layout Description
@@ -2818,7 +5117,7 @@ ellipse
 
 ellipsoid returns the centroid (center of gravity) as well as the size and
  the orientation of the inertia ellipse or ellipsoid of each particle.
- Radiuses are sorted in decreasing order.
+ Radii are sorted in decreasing order.
  Angles are given in degrees, and correspond to the azimut (
 \begin_inset Quotes eld
 \end_inset
@@ -2838,23 +5137,6 @@ pitch
 ), and the roll around the main axis.
 \end_layout
 
-\begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-Region adjacency graph -> use maize image
-\end_layout
-
-\begin_layout Plain Layout
-geodesic diameter -> use fiber image
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
 \begin_layout Section
 Intensity measurements
 \end_layout
@@ -2865,16 +5147,182 @@ Other measurements are provided for pairs of grayscale and label 2D or 3D
 \begin_inset Quotes eld
 \end_inset
 
-Plugins\SpecialChar \menuseparator
-Analyze\SpecialChar \menuseparator
-Measure 3D
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
+Analyze\SpecialChar menuseparator
+Intensity Measurements 2D/3D
 \begin_inset Quotes erd
 \end_inset
 
 ).
- The plugin calculates the mean, the standard deviation, the maximum and
- the minimum intensity value of each labeled region in the grayscale image.
- The results are displayed as well in a ResultsTable.
+ The label image can correspond to a segmented particle, or to a more generic
+ region of interest.
+\end_layout
+
+\begin_layout Standard
+The plugin calculates the mean, standard deviation, maximum, minimum, median,
+ mode, skewness and kurtosis of the intensity value distribution of each
+ labeled region in the grayscale image.
+ The results are displayed as well in an ImageJ 
+\emph on
+ResultsTable
+\emph default
+.
+\end_layout
+
+\begin_layout Section
+Spatial organization
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+region adjacency graph 
+\series default
+plugin gives access to the neighborhood relationship between adjacent regions
+ (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Region-Adjacency-Graph"
+
+\end_inset
+
+).
+ This can be particularly informative for exploring collections of cells
+ within cellular tissues 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Florindo_2016_botanique"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/analysis/maize-clsm.png
+	lyxscale 60
+	width 31text%
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/analysis/maize-clsm-watDyn10.png
+	lyxscale 60
+	width 31text%
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/analysis/maize-clsm-rag.png
+	lyxscale 60
+	width 31text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Region-Adjacency-Graph"
+
+\end_inset
+
+Computation of the Region Adjacency Graph on a microscopy image of plant
+ tissue.
+ Left: original image.
+ Middle: result of watershed segmentation.
+ Right: overlay of edges representing adjacent regions.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The plugin (under 
+\begin_inset Quotes eld
+\end_inset
+
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
+Analyze\SpecialChar menuseparator
+Region Adjacency Graph
+\begin_inset Quotes erd
+\end_inset
+
+) works for both 2D and 3D images, and requires a label image as input.
+ A typical input is the result of a watershed segmentation (see section
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "chap:Watershed-segmentation"
+
+\end_inset
+
+), eventually followed by manual edition of the labels (see section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Label-Edition-plugin"
+
+\end_inset
+
+).
+ The output of the plugin is a results table with as many rows as the number
+ of pairs of adjacent regions, containing the labels of the two adjacent
+ regions.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Section
+Microstructure analysis
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Think about incorporating gray level granulometries
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Chapter
@@ -2891,7 +5339,24 @@ Utilities for binary images
 \end_layout
 
 \begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Binary-Images"
+
+\end_inset
+
 Some functions specific for the processing of binary images.
+ The plugins can be found in the 
+\begin_inset Quotes eld
+\end_inset
+
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
+Binary
+\begin_inset Quotes erd
+\end_inset
+
+ menu.
 \end_layout
 
 \begin_layout Standard
@@ -2904,21 +5369,21 @@ status open
 \align center
 \begin_inset Graphics
 	filename images/grains/grains-binary-crop-ext.png
-	width 4cm
+	width 31text%
 
 \end_inset
 
  
 \begin_inset Graphics
 	filename images/grains/grains-binary-crop-lbl-ext.png
-	width 4cm
+	width 31text%
 
 \end_inset
 
  
 \begin_inset Graphics
 	filename images/grains/grains-binary-crop-inv-dist-ext.png
-	width 4cm
+	width 31text%
 
 \end_inset
 
@@ -2965,8 +5430,143 @@ Distance
 \begin_inset space ~
 \end_inset
 
-Map computes an approximate distance map between each foreground pixel to
- the nearest background pixel
+Map 
+\begin_inset CommandInset label
+LatexCommand label
+name "op:Chamfer-Distance-Map"
+
+\end_inset
+
+computes an approximate distance from a binary image map between each foreground
+ pixel to the nearest background pixel
+\end_layout
+
+\begin_layout Description
+Chamfer
+\begin_inset space ~
+\end_inset
+
+Distance
+\begin_inset space ~
+\end_inset
+
+Map
+\begin_inset space ~
+\end_inset
+
+3D computes an approximate distance map from a 3D binary image between each
+ foreground voxel to the nearest background voxel
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/binary/36_manual1-ovr.png
+	lyxscale 50
+	width 5cm
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/binary/36_manual1-geoddist-rgb.png
+	lyxscale 50
+	width 5cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Geodesic-Distance-Map"
+
+\end_inset
+
+Computation of the geodesic distance map on a binary image from the DRIVE
+ database 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Staal_2004_tmi"
+
+\end_inset
+
+.
+ Left: original image with marker superimposed in red.
+ Right: result of geodesic distance map, hot colors correspond to large
+ distances, cold colors correspond to small distances.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Geodesic
+\begin_inset space ~
+\end_inset
+
+Distance
+\begin_inset space ~
+\end_inset
+
+Map 
+\begin_inset CommandInset label
+LatexCommand label
+name "op:Geodesic-Distance-Map"
+
+\end_inset
+
+computes the geodesic distance between each foreground pixel of a binary
+ mask image to the closest pixel of a marker image, while staying within
+ the particle represented by the mask image (See Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Geodesic-Distance-Map"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Description
+Interactive
+\begin_inset space ~
+\end_inset
+
+Geodesic
+\begin_inset space ~
+\end_inset
+
+Distance
+\begin_inset space ~
+\end_inset
+
+Map computes the geodesic distance between each foreground pixel of a the
+ currently selected image (considered the mask image) to the closest pixel
+ of a marker image defined by the user ROIs, while staying within the particle
+ represented by the mask image.
 \end_layout
 
 \begin_layout Standard
@@ -3052,8 +5652,15 @@ Size
 \begin_inset space ~
 \end_inset
 
-Opening computes the size (area in 2D, volume in 3D) of each connected component
-, and remove all particles whose size is below the value specified by the
+Opening 
+\begin_inset CommandInset label
+LatexCommand label
+name "op:Size-Opening"
+
+\end_inset
+
+computes the size (area in 2D, volume in 3D) of each connected component,
+ and remove all particles whose size is below the value specified by the
  user.
 \end_layout
 
@@ -3066,6 +5673,16 @@ Algorithms work for both 2D or 3D images.
 
 \begin_layout Section
 Utilities for label images
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Label-Images"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -3168,8 +5785,14 @@ Crop
 \begin_inset space ~
 \end_inset
 
-Label creates a new binary image containing only the label specified by
- the user.
+Label 
+\begin_inset CommandInset label
+LatexCommand label
+name "op:Crop-Label"
+
+\end_inset
+
+creates a new binary image containing only the label specified by the user.
  The size of the new image is fitted to the region.
 \end_layout
 
@@ -3188,7 +5811,7 @@ clear
 \end_inset
 
  a label, by replacing its value by 0, or to merge to adjacent regions,
- by replacing the value of a label by the value of its neighbour.
+ by replacing the value of a label by the value of its neighbor.
 \end_layout
 
 \begin_layout Description
@@ -3197,7 +5820,7 @@ Label
 \end_inset
 
 Boundaries creates a new binary image containing value 255 for pixels/voxels
- having a neighbour with a different value.
+ having a neighbor with a different value.
 \end_layout
 
 \begin_layout Description
@@ -3262,7 +5885,7 @@ Label
 
 Map allows to choose the color map used to display a label image.
  In particular, shuffling the color map and/or choosing a specific color
- for background allows better visualisation than with only grey levels.
+ for background allows better visualization than with only gray levels.
 \end_layout
 
 \begin_layout Description
@@ -3322,14 +5945,123 @@ Assign result of a measurement to a label image.
 
 \end_layout
 
+\begin_layout Section
+Label Edition plugin
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Label-Edition-plugin"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+To ease the processing of label images, MorphoLibJ provides the Label Edition
+ plugin (available under 
+\begin_inset Quotes eld
+\end_inset
+
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
+Labels\SpecialChar menuseparator
+Label Edition
+\begin_inset Quotes erd
+\end_inset
+
+).
+ This plugin contains a graphical user interface (GUI) where the users can
+ perform the following set of editing tasks:
+\end_layout
+
+\begin_layout Itemize
+Manually merge labels after their selection using the point selection tool
+ (in 2D and 3D).
+\end_layout
+
+\begin_layout Itemize
+Apply morphological erosion, dilation, opening and closing with a square/cube
+ of radius 1 as structuring element.
+\end_layout
+
+\begin_layout Itemize
+Remove labels by area or volume (size opening operation), largest size,
+ manual selection or border location.
+\end_layout
+
+\begin_layout Standard
+All operations are performed 
+\begin_inset Quotes eld
+\end_inset
+
+in place
+\begin_inset Quotes erd
+\end_inset
+
+, i.e., the input image gets directly modified.
+ However, the initial status of the label image can be recovered by clicking
+ on 
+\begin_inset Quotes eld
+\end_inset
+
+Reset
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/Label-Edition-plugin.png
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Label Edition plugin.
+ From left to right and from top to bottom: overview of the plugin GUI on
+ a 2D label image, result of label merging by manual selection, removal
+ of selected labels, label erosion and removal of largest label (in this
+ case, the largest label corresponds to the background).
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Chapter
-Library inter-operability
+Library interoperability
 \end_layout
 
 \begin_layout Standard
 A key design concept was the modularity of the implementation to facilitate
  its reusability.
- Three layers with different programming technicity can be identified :
+ Three layers with different programming abstraction can be identified:
 \end_layout
 
 \begin_layout Itemize
@@ -3337,7 +6069,7 @@ For final users, plugins provide graphical display and intuitive tuning
  of parameters.
  Such plugins can easily be incorporated into a macro:
 \begin_inset listings
-lstparams "showstringspaces=false"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
 status open
 
@@ -3362,7 +6094,7 @@ For plugins developers, operators are available through collections of static
  of code.
  Example:
 \begin_inset listings
-lstparams "showstringspaces=false"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
 status open
 
@@ -3386,7 +6118,7 @@ For core developers, algorithms are implementations of abstract interfaces,
  making it possible to choose or develop the most appropriate one, and to
  monitor execution events.
 \begin_inset listings
-lstparams "showstringspaces=false"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
 status open
 
@@ -3451,7 +6183,7 @@ status open
 \end_layout
 
 \begin_layout Section
-Library organisation
+Library organization
 \end_layout
 
 \begin_layout Standard
@@ -3475,7 +6207,7 @@ inra.ijpb.label contains the utilities for label images (cropping, size opening,
 \end_layout
 
 \begin_layout Description
-inra.ijpb.measure contains the tools for geometric and grey level characterization
+inra.ijpb.measure contains the tools for geometric and gray level characterization
  of 2D or 3D images
 \end_layout
 
@@ -3496,6 +6228,29 @@ inra.ijpb.plugins contains the set of plugins that is accessible from ImageJ/Fij
 \begin_layout Standard
 All major methods have a general class with static methods that allow calling
  the methods on 2D and 3D images in a transparent way.
+ This modularity permitted to develop other plugins devoted to the analysis
+ of nucleus images
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Poulet_2015_bmc"
+
+\end_inset
+
+, gray level granulometries 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Devaux2014"
+
+\end_inset
+
+ or the description of binary microstructures 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Silva2015"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Section
@@ -3509,6 +6264,10 @@ l algorithms and pipelines.
  
 \end_layout
 
+\begin_layout Subsection
+Segmentation pipeline prototype
+\end_layout
+
 \begin_layout Standard
 Let's see an example in a complete Beanshell script that takes the active
  2D or 3D image and finds a reasonable segmentation combining a set of morpholog
@@ -3517,7 +6276,7 @@ ical operations (gradient, extended minima and watershed):
 
 \begin_layout Standard
 \begin_inset listings
-lstparams "language=Java"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
 status open
 
@@ -3699,20 +6458,394 @@ resultImage.show();
 
 \end_layout
 
+\begin_layout Subsection
+Label visualization in 3D viewer
+\end_layout
+
 \begin_layout Standard
-\begin_inset Note Note
+Making use of MorphoLibJ's label methods and the ImageJ 3D Viewer's visualizatio
+n tools it is quite simple to create a script to display each label of an
+ image as 3D surfaces of the corresponding colors provided by the image
+ look-up table:
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
+inline false
 status open
 
 \begin_layout Plain Layout
-This modularity permitted to develop other plugins devoted to the analysis
- of nucleus images 
-\backslash
-citep{Poulet_2015_bmc}, grey level granulometries 
-\backslash
-citep{Devaux2014} or the description of binary microstructures 
-\backslash
-citep{Silva2015}.
+
+// @ImagePlus imp   
+\end_layout
+
+\begin_layout Plain Layout
+
+import inra.ijpb.label.LabelImages; 
+\end_layout
+
+\begin_layout Plain Layout
+
+import ij3d.Image3DUniverse; 
+\end_layout
+
+\begin_layout Plain Layout
+
+import ij3d.ContentConstants; 
+\end_layout
+
+\begin_layout Plain Layout
+
+import org.scijava.vecmath.Color3f; 
+\end_layout
+
+\begin_layout Plain Layout
+
+import ij.IJ; 
+\end_layout
+
+\begin_layout Plain Layout
+
+import isosurface.SmoothControl;   
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// set to true to display messages in log window 
+\end_layout
+
+\begin_layout Plain Layout
+
+verbose = false;   
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// set display range to 0-255 so the displayed colors 
+\end_layout
+
+\begin_layout Plain Layout
+
+// correspond to the LUT values 
+\end_layout
+
+\begin_layout Plain Layout
+
+imp.setDisplayRange( 0, 255 ); imp.updateAndDraw();   
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// calculate array of all labels in image 
+\end_layout
+
+\begin_layout Plain Layout
+
+labels = LabelImages.findAllLabels( imp );   
+\end_layout
+
+\begin_layout Plain Layout
+
+// create 3d universe univ = new Image3DUniverse(); 
+\end_layout
+
+\begin_layout Plain Layout
+
+univ.show();   
+\end_layout
+
+\begin_layout Plain Layout
+
+// read LUT from input image lut = imp.getLuts()[0];   
+\end_layout
+
+\begin_layout Plain Layout
+
+// add all labels different from zero (background) 
+\end_layout
+
+\begin_layout Plain Layout
+
+// to 3d universe 
+\end_layout
+
+\begin_layout Plain Layout
+
+for( i=0; i<labels.length; i++ ) 
+\end_layout
+
+\begin_layout Plain Layout
+
+{        
+\end_layout
+
+\begin_layout Plain Layout
+
+	if( labels[ i ] > 0 )     
+\end_layout
+
+\begin_layout Plain Layout
+
+	{         
+\end_layout
+
+\begin_layout Plain Layout
+
+		labelToKeep = new int[ 1 ];         
+\end_layout
+
+\begin_layout Plain Layout
+
+		labelToKeep[ 0 ] = labels[ i ];         
+\end_layout
+
+\begin_layout Plain Layout
+
+		if( verbose )             
+\end_layout
+
+\begin_layout Plain Layout
+
+		IJ.log( "Reconstructing label " + labels[ i ] + "..." );         
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\end_layout
+
+\begin_layout Plain Layout
+
+		// create new image containing only that label         
+\end_layout
+
+\begin_layout Plain Layout
+
+		labelImp = LabelImages.keepLabels( imp, labelToKeep );         
+\end_layout
+
+\begin_layout Plain Layout
+
+		// convert image to 8-bit         
+\end_layout
+
+\begin_layout Plain Layout
+
+		IJ.run( labelImp, "8-bit", "" );                   
+\end_layout
+
+\begin_layout Plain Layout
+
+		// use LUT label color         
+\end_layout
+
+\begin_layout Plain Layout
+
+		color = new Color3f( new java.awt.Color( lut.getRed( labels[ i ] ),     
+        
+\end_layout
+
+\begin_layout Plain Layout
+
+							lut.getGreen( labels[ i ] ),             
+\end_layout
+
+\begin_layout Plain Layout
+
+							lut.getBlue( labels[ i ] ) ) );                       
+\end_layout
+
+\begin_layout Plain Layout
+
+		if ( verbose )             
+\end_layout
+
+\begin_layout Plain Layout
+
+			IJ.log( "RGB( " + lut.getRed( labels[ i ] ) +", "
+\end_layout
+
+\begin_layout Plain Layout
+
+							+ lut.getGreen( labels[ i ] )                 
+\end_layout
+
+\begin_layout Plain Layout
+
+							+ ", " + lut.getBlue( labels[ i ] ) + ")" );           
+\end_layout
+
+\begin_layout Plain Layout
+
+		channels = new boolean[3];         
+\end_layout
+
+\begin_layout Plain Layout
+
+		channels[ 0 ] = false;         
+\end_layout
+
+\begin_layout Plain Layout
+
+		channels[ 1 ] = false;         
+\end_layout
+
+\begin_layout Plain Layout
+
+		channels[ 2 ] = false;                   
+\end_layout
+
+\begin_layout Plain Layout
+
+		// add label image with corresponding color as an isosurface         
+\end_layout
+
+\begin_layout Plain Layout
+
+		univ.addContent( labelImp, color, "label-"+labels[i], 0, channels, 2, ContentCo
+nstants.SURFACE);     
+\end_layout
+
+\begin_layout Plain Layout
+
+	} 
+\end_layout
+
+\begin_layout Plain Layout
+
+}   
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// launch smooth control 
+\end_layout
+
+\begin_layout Plain Layout
+
+sc = new SmoothControl( univ );
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+At the end of the script a dialog is shown to smooth the surfaces at will.
+ Each label is added to the 3D scene independently with the name "label-X"
+ where X is its label value.
  
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/MorphoLibJ-visualize-labels-in-3d-viewer.png
+	lyxscale 25
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+From left to right: input label image, script output, smoothed label surfaces
+ and example of individually translated surfaces in the 3D viewer.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Chapter
+Applications
+\end_layout
+
+\begin_layout Section
+Segmentation and analysis of Arabidospis early embryo
+\end_layout
+
+\begin_layout Plain Layout
+[morphological filtering : directional ?]
+\end_layout
+
+\begin_layout Plain Layout
+[detection of minima by extended min]
+\end_layout
+
+\begin_layout Plain Layout
+[watershed -> set of labels]
+\end_layout
+
+\begin_layout Plain Layout
+[manual edition of labels]
+\end_layout
+
+\begin_layout Plain Layout
+[morphometry of individual particles]
+\end_layout
+
+\begin_layout Plain Layout
+[create 3D result image of parametric mapping]
+\end_layout
+
+\begin_layout Section
+Analysis of hemp fibre morphology
+\end_layout
+
+\begin_layout Plain Layout
+[geodesic diameter, tortuosity of particles]
+\end_layout
+
+\begin_layout Section
+Characterization of dairy matrix microstructure
+\end_layout
+
+\begin_layout Plain Layout
+[computation of tortuosity for binary microstructure, granulometry, area
+ and boundary length densities]
 \end_layout
 
 \end_inset
@@ -3725,6 +6858,4801 @@ citep{Silva2015}.
 LatexCommand bibtex
 bibfiles "bibliography"
 options "bibtotoc,apalike2"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Chapter
+\start_of_appendix
+List of operators
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="24" columns="10">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="left" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Plugin Name
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+bin.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+16
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+32
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+RGB
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+2D
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+3D
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+GUI
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Page
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Image filtering
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Morphological filters 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "chap:Morphological-Filters"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Morphological filters (3D)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "chap:Morphological-Filters"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Geodesic Reconstruction
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "sec:Morphological-Reconstruction"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Geodesic Reconstruction (3D)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "sec:Morphological-Reconstruction"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Grayscale Attribute Filtering
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "sec:Attribute-Filtering"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Grayscale Attribute Filtering 3D
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "sec:Attribute-Filtering"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Segmentation
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Classic Watershed
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "sec:Classic-Watershed"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Marker-controlled Watershed
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "sec:Marker-Controlled-Watershed"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Morphological Segmentation
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "sec:Morphological-Segmentation-Plugin"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Minima and Maxima
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Regional Min & Max
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "sec:Minima-Maxima"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Extended Min & Max
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "sec:Minima-Maxima"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Impose Min & Max
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "sec:Minima-Maxima"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Regional Min & Max 3D 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "sec:Minima-Maxima"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Extended Min & Max 3D
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "sec:Minima-Maxima"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Impose Min & Max 3D
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "sec:Minima-Maxima"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Utilities
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Fill Holes (Binary / Gray)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "subsec:Morphological-Reconstruction-Grayscale"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Kill Borders
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "subsec:Morphological-Reconstruction-Grayscale"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Extend Borders
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Binary Overlay
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+List of image processing operators (1/2)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="24" columns="10">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="left" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Plugin Name
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+bin.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+16
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+32
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+RGB
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+2D
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+3D
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+GUI
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Page
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Binary Images
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Connected Components Labeling
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "sec:Binary-Images"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Chamfer Distance Map
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "op:Chamfer-Distance-Map"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Chamfer Distance Map 3D
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "op:Chamfer-Distance-Map"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Geodesic Distance Map
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "op:Geodesic-Distance-Map"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Remove Largest Region
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "sec:Binary-Images"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Keep Largest Region
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "sec:Binary-Images"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Area Opening
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "op:Size-Opening"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Size Opening 2D/3D
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "op:Size-Opening"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Label Images
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Set Label Map
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "op:Crop-Label"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Labels To RGB
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "op:Crop-Label"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Labels Boundary
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "sec:Label-Images"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Remove Border Labels
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "sec:Label-Images"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Replace / Remove Label(s)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "sec:Label-Images"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Select Label(s)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "op:Crop-Label"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Crop Label
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "op:Crop-Label"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Expand Labels
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "op:Crop-Label"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Remove Largest Label
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "op:Crop-Label"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Keep Largest Label
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "op:Crop-Label"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Label Size Opening
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "op:Crop-Label"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Assign Measure To Label
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "op:Crop-Label"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Label Edition
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "sec:Label-Edition-plugin"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+List of image processing operators (2/2)
+\end_layout
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 

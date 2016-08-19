@@ -102,7 +102,7 @@ public class MorphologicalFilterPlugin implements ExtendedPlugInFilter,
 		gd.addPreviewCheckbox(pfr);
 		gd.addDialogListener(this);
         previewing = true;
-		gd.addHelp("http://imagejdocu.tudor.lu/doku.php?id=plugin:morphology:fast_morphological_filters:start");
+		gd.addHelp("http://imagej.net/MorphoLibJ#Morphological_filters");
         gd.showDialog();
         previewing = false;
         
@@ -182,8 +182,8 @@ public class MorphologicalFilterPlugin implements ExtendedPlugInFilter,
 	private void showAbout()
 	{
 		IJ.showMessage("Morphological Filters",
-				"Fast Grayscale Morphological Filtering,\n" +
-				"http://imagejdocu.tudor.lu/doku.php?id=plugin:morphology:fast_morphological_filters:start\n" +
+				"MorphoLibJ,\n" +
+				"http://imagej.net/MorphoLibJ#Morphological_filters\n" +
 				"\n" +
 				"by David Legland\n" +
 				"(david.legland@nantes.inra.fr)");

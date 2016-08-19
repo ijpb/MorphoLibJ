@@ -10,13 +10,24 @@ import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
 import inra.ijpb.measure.IntensityMeasures;
 
-public class Measure3DPlugin implements PlugIn{
+/**
+ * This class implements a set of photometric (intensity) measurements over
+ * an input grayscale image (2D or 3D) and its set of corresponding labels.
+ *
+ * @author Ignacio Arganda-Carreras (ignacio.arganda@ehu.eus)
+ *
+ */
+public class IntensityMeasures3D implements PlugIn{
 
 	static int inputIndex = 0;
 	static int labelsIndex = 1;
-	static String[] measureLabels = new String[]{ "Mean", "StdDev", "Max", "Min", "NumberOfVoxels", "Volume" };
-	static boolean[] measureStates = new boolean[]{ true, true, true, true, true, true };
-	
+	static String[] measureLabels = new String[]{ "Mean", "StdDev", "Max",
+			"Min", "Median", "Mode", "Skewness", "Kurtosis",
+			"NumberOfVoxels", "Volume" };
+
+	static boolean[] measureStates = new boolean[]{ true, true, true, true,
+			true, true, true, true, true, true };
+
 	@Override
 	public void run(String arg) 
 	{		
@@ -24,22 +35,28 @@ public class Measure3DPlugin implements PlugIn{
 		
 		if( nbima < 2 )
 		{
-			IJ.error( "Measure 3D I/O error", 
-					"ERROR: At least two images need to be open to run measure 3D");
+			IJ.error( "Intensity Measures 2D/3D input error",
+					"ERROR: At least two images need to be open to run "
+							+ "Intensity Measures 2D/3D" );
 			return;
 		}
-		
+
         String[] names = new String[ nbima ];        
         
         for (int i = 0; i < nbima; i++)         
             names[ i ] = WindowManager.getImage(i + 1).getShortTitle();
         
+        if( inputIndex > nbima-1 )
+        	inputIndex = nbima - 1;
+        if( labelsIndex > nbima-1 )
+        	labelsIndex = nbima - 1;
         
         GenericDialog gd = new GenericDialog( "Measure 3D" );
         gd.addChoice( "Input", names, names[ inputIndex ] );
         gd.addChoice( "Labels", names, names[ labelsIndex ] );
         gd.addMessage("Measurements:");
-        gd.addCheckboxGroup(3, 2, measureLabels, measureStates );
+        gd.addCheckboxGroup( measureLabels.length / 2 + 1, 2, measureLabels,
+        		measureStates );
         
         gd.showDialog();
         
@@ -63,12 +80,13 @@ public class Measure3DPlugin implements PlugIn{
             ImagePlus labelImage = WindowManager.getImage( labelsIndex + 1 );
             
             if( inputImage.getWidth() != labelImage.getWidth() || 
-            	inputImage.getHeight() != labelImage.getHeight() )
+            		inputImage.getHeight() != labelImage.getHeight() )
             {
-            	IJ.error( "Measure 3D I/O error", "Error: input and label images must have the same size" );
+            	IJ.error( "Intensity Measures 2D/3D input error", "Error: input"
+            			+ " and label images must have the same size" );
             	return;
             }
-            
+
             ArrayList< ResultsTable > results = new ArrayList<ResultsTable>(); 
             
             
@@ -86,10 +104,22 @@ public class Measure3DPlugin implements PlugIn{
             if( measureStates[ 3 ] ) // Min            	
             	results.add( im.getMin() );
 
-            if( measureStates[ 4 ] ) // Number of voxels            	
+            if( measureStates[ 4 ] ) // Median
+            	results.add( im.getMedian() );
+
+            if( measureStates[ 5 ] ) // Mode
+            	results.add( im.getMode() );
+
+            if( measureStates[ 6 ] ) // Skewness
+            	results.add( im.getSkewness() );
+
+            if( measureStates[ 7 ] ) // Kurtosis
+            	results.add( im.getKurtosis() );
+
+            if( measureStates[ 8 ] ) // Number of voxels
             	results.add( im.getNumberOfVoxels() );
 
-            if( measureStates[ 5 ] ) // Volume	
+            if( measureStates[ 9 ] ) // Volume
             	results.add( im.getVolume() );
 
             ResultsTable mergedTable = new ResultsTable();
@@ -109,10 +139,8 @@ public class Measure3DPlugin implements PlugIn{
             	}
             }
             
-            mergedTable.show( "3D measurements" );
+            mergedTable.show( inputImage.getShortTitle() +
+            		"-intensity-measurements" );
         }
-
-		
 	}
-
 }

@@ -5,15 +5,15 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.scijava</groupId>
-		<artifactId>pom-scijava</artifactId>
-		<version>1.126</version>
+		<groupId>net.imagej</groupId>
+		<artifactId>pom-imagej</artifactId>
+		<version>15.7.1</version>
 		<relativePath />
 	</parent>
 
 	<groupId>fr.inra.ijpb</groupId>
 	<artifactId>MorphoLibJ_</artifactId>
-	<version>1.1.2-SNAPSHOT</version>
+	<version>1.2.3-SNAPSHOT</version>
 
 	<name>plugins/MorphoLibJ_.jar</name>
 	<description>Mathematical morphology library and plugins for ImageJ/Fiji</description>
@@ -24,21 +24,18 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 		<dependency>
 			<groupId>net.imagej</groupId>
 			<artifactId>ij</artifactId>
-			<version>${imagej1.version}</version>
-		</dependency>
+			</dependency>
 	
 		<!-- Jama (Java Matrix package) is used for computing inertia ellipsoid --> 
 		<dependency>
 			<groupId>gov.nist.math</groupId>
 			<artifactId>jama</artifactId>
-			<version>1.0.3</version>
-		</dependency>
+			</dependency>
 		
 		<!-- Add a dependency to JUnit for unit tests --> 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.8.1</version>
             <scope>test</scope>
         </dependency>
         

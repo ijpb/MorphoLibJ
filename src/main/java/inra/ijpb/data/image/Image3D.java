@@ -3,6 +3,8 @@
  */
 package inra.ijpb.data.image;
 
+import inra.ijpb.data.Cursor3D;
+
 /**
  * Interface for accessing the values of a 3D stack. Implementations should
  * provide efficient access to the inner data, without checking coordinate
@@ -70,7 +72,9 @@ public interface Image3D
 	 * @return the value at the specified position
 	 */
 	public double getValue(int x, int y, int z);
-	
+
+	public double getValue(Cursor3D pos);
+
 	/**
 	 * Changes the value at the specified coordinates, using a double to
 	 * specify the new value.
@@ -85,4 +89,6 @@ public interface Image3D
 	 *            the new value at the specified position
 	 */
 	public void setValue(int x, int y, int z, double value);
+	
+	public void setValue(Cursor3D pos, double  value);
 }

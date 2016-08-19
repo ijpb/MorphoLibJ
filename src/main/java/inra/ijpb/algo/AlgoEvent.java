@@ -13,7 +13,7 @@ package inra.ijpb.algo;
 public class AlgoEvent 
 {
 	/**
-	 * The algorithm object that throwed this event
+	 * The algorithm object that threw this event
 	 */
 	private Object source;
 	

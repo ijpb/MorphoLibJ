@@ -1,17 +1,18 @@
+[![DOI](https://zenodo.org/badge/21349/ijpb/MorphoLibJ.svg)](https://zenodo.org/badge/latestdoi/21349/ijpb/MorphoLibJ)
 MorphoLibJ
 ============
 
-Collection of mathematical morphology methods and plugins for [ImageJ](http://imagej.net/Welcome), created at INRA-IJPB Modeling and Digital Imaging lab.
+Collection of mathematical morphology methods and plugins for [ImageJ](http://imagej.net/Welcome), created at the [INRA-IJPB Modeling and Digital Imaging lab](http://www-ijpb.versailles.inra.fr/en/bc/equipes/modelisation-imagerie/).
 
 The library implements several functionalities that were missing in the ImageJ software, and that were not or only partially covered by other plugins. Namely:
 
-* **Morphological filtering**: erosion & dilation, closing & opening, morphological gradient & laplacian, top-hat...
+* **Morphological filtering** for 2D/3D and binary or grey level images: erosion & dilation, closing & opening, morphological gradient & Laplacian, top-hat...
 
-* **Morphological reconstruction**, allowing fast detection of regional or extended extrema, removing of borders, or hole filling
+* **Morphological reconstruction**, for 2D/3D and binary or grey level images, allowing fast detection of regional or extended extrema, removing of borders, hole filling, attribute filtering...
 
-* **Watershed segmentation + GUI**, making it possible to segment 2D/3D images of cell tissues
+* **Watershed segmentation** + GUI, making it possible to segment 2D/3D images of (for instance) cell tissues.
 
-* **2D/3D measurements**: volume, surface area, inertia ellipse/ellipsoid...
+* **2D/3D measurements**: photometric (intensity) and morphometric measurements such as volume, surface area, inertia ellipse/ellipsoid...
 
 * **Binary / label images utilities** for removing or keeping largest connected component, perform size opening, fill holes, kill borders...
 
@@ -32,10 +33,14 @@ Installation
 Documentation
 -------------
 
-A more detailed presentation of the library and its plugins is available on the [ImageJ/Fiji Wiki](http://imagej.net/MorphoLibJ). Some information may also be found on the [Internet page of MorphoLibJ](http://ijpb.github.io/MorphoLibJ/).
+A more detailed presentation of the library and its plugins is available on the [ImageJ/Fiji Wiki](http://imagej.net/MorphoLibJ).
 
 We have as well a [User Manual](https://github.com/ijpb/MorphoLibJ/releases/download/v1.1.1/MorphoLibJ-manual-v1.1.1.pdf) in pdf format.
 
 The main source code directory is [src/main/java/inra/ijpb](http://github.com/ijpb/MorphoLibJ/tree/master/src/main/java/inra/ijpb).
 
 You can browse the [javadoc](http://ijpb.github.io/MorphoLibJ/javadoc/) for more information about its API.
+Citation
+--------
+Please note that MorphoLibJ is based on a publication. If you use it successfully for your research please be so kind to cite our work:
+* David Legland, Ignacio Arganda-Carreras, and Philippe Andrey. [MorphoLibJ: integrated library and plugins for mathematical morphology with ImageJ](http://bioinformatics.oxfordjournals.org/content/early/2016/07/12/bioinformatics.btw413.abstract). Bioinformatics, btw413, 2016.

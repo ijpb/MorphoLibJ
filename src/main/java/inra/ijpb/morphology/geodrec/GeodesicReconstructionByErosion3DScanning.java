@@ -95,7 +95,7 @@ public class GeodesicReconstructionByErosion3DScanning extends GeodesicReconstru
 		this.sizeX 	= marker.getWidth();
 		this.sizeY 	= marker.getHeight();
 		this.sizeZ 	= marker.getSize();
-		if (sizeX != mask.getWidth() || sizeY != mask.getHeight() || sizeZ != mask.getSize()) 
+		if (!Images3D.isSameSize(marker, mask)) 
 		{
 			throw new IllegalArgumentException("Marker and Mask images must have the same size");
 		}
@@ -172,14 +172,14 @@ public class GeodesicReconstructionByErosion3DScanning extends GeodesicReconstru
 	 */
 	private void initializeResult()
 	{
-		// Create result image the same size as marker image
+		// Create result image the same size as the mask image
 		this.resultStack = ImageStack.create(sizeX, sizeY, sizeZ,
-				markerStack.getBitDepth());
+				maskStack.getBitDepth());
 		this.result = Images3D.createWrapper(this.resultStack);
 
 		// Initialize the result image with the minimum value of marker and mask
 		// images
-		if (this.markerStack.getBitDepth() == 32)
+		if (this.maskStack.getBitDepth() == 32)
 		{
 			// Initialize float result stack
 			for (int z = 0; z < sizeZ; z++)

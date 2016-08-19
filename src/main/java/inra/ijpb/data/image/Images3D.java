@@ -44,6 +44,42 @@ public class Images3D
 	}
 	
 	/**
+	 * Checks if the two input 3D images have the same size in each direction.
+	 * 
+	 * @param image1
+	 *            the first image
+	 * @param image2
+	 *            the second image
+	 * @return true if both images have same width, height and number of slices,
+	 *         and false otherwise.
+	 */
+	public static final boolean isSameSize(ImageStack image1, ImageStack image2)
+	{
+		if (image1.getWidth() != image2.getWidth())
+			return false;
+		if (image1.getHeight() != image2.getHeight())
+			return false;
+		if (image1.getSize() != image2.getSize())
+			return false;
+		return true;
+	}
+	
+	/**
+	 * Checks if the two input 3D images have the same data type
+	 * 
+	 * @param image1
+	 *            the first image
+	 * @param image2
+	 *            the second image
+	 * @return true if both images have the same data type, given by the bit
+	 *         depth.
+	 */
+	public static final boolean isSameType(ImageStack image1, ImageStack image2)
+	{
+		return image1.getBitDepth() == image2.getBitDepth();
+	}
+	
+	/**
 	 * Find minimum and maximum value of input image
 	 * 
 	 * @param image input 2d/3d image
@@ -65,7 +101,28 @@ public class Images3D
 		}
 		return new double[]{ min, max };				
 	}
-	
+	/**
+	 * Find minimum and maximum value of input image
+	 *
+	 * @param image input 2d/3d image
+	 * @return array of 2 extreme values
+	 */
+	public static final double[] findMinAndMax( ImageStack image )
+	{
+		// Adjust min and max values to display
+		double min = 0;
+		double max = 0;
+		for( int slice=1; slice<=image.getSize(); slice++ )
+		{
+			ImageProcessor ip = image.getProcessor(slice);
+			ip.resetMinAndMax();
+			if( max < ip.getMax() )
+				max = ip.getMax();
+			if( min > ip.getMin() )
+				min = ip.getMin();
+		}
+		return new double[]{ min, max };
+	}
 	/**
 	 * Optimize display range of 2d/3d image based on its
 	 * minimum and maximum values
@@ -197,6 +254,122 @@ public class Images3D
 				System.out.println("");
 			}
 		}
+	}
+	
+	/**
+	 * Inverts the values of a 3D image
+	 *
+	 * @param image input image
+	 */
+	public static final void invert( ImageStack image )
+	{
+		double[] extrema = Images3D.findMinAndMax( image );
+		int nSlices = image.getSize();
+		for (int z = 0; z < nSlices; z++)
+		{
+			final ImageProcessor ip = image.getProcessor( z + 1 );
+			for (int y = 0; y < image.getHeight(); y++)
+			{
+				for (int x = 0; x < image.getWidth(); x++)
+				{
+					float value = ip.getf( x, y );
+					ip.setf( x,  y, (float) (extrema[1] - (value - extrema[0])));
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Extracts the byte arrays corresponding to the slices of a stack
+	 * containing instances of ByteProcessor.
+	 * 
+	 * @param image
+	 *            a 3D image that must contain byte values
+	 * @return the array of byte arrays corresponding to each slice
+	 */
+	public static final byte[][] getByteArrays(ImageStack image)
+	{
+		// Check bit depth of input images
+		if (image.getBitDepth() != 8 ) 
+		{
+			throw new IllegalArgumentException("Bit depth of input ImageStack must be 8");
+		}
+
+		// Initialize result array
+		int nSlices = image.getSize();
+		byte[][] slices = new byte[nSlices][];
+		
+		// Extract inner slice array and apply type conversion
+		Object[] array = image.getImageArray();
+		for (int i = 0; i < nSlices; i++)
+		{
+			slices[i] = (byte[]) array[i];
+		}
+		
+		// return slices
+		return slices;
+	}
+	
+	/**
+	 * Extracts the short arrays corresponding to the slices of a stack
+	 * containing instances of ShortProcessor.
+	 * 
+	 * @param image
+	 *            a 3D image that must contain short values
+	 * @return the array of short arrays corresponding to each slice
+	 */
+	public static final short[][] getShortArrays(ImageStack image)
+	{
+		// Check bit depth of input images
+		if (image.getBitDepth() != 16 ) 
+		{
+			throw new IllegalArgumentException("Bit depth of input ImageStack must be 16");
+		}
+
+		// Initialize result array
+		int nSlices = image.getSize();
+		short[][] slices = new short[nSlices][];
+		
+		// Extract inner slice array and apply type conversion
+		Object[] array = image.getImageArray();
+		for (int i = 0; i < nSlices; i++)
+		{
+			slices[i] = (short[]) array[i];
+		}
+		
+		// return slices
+		return slices;
+	}
+	
+	/**
+	 * Extracts the float arrays corresponding to the slices of a stack
+	 * containing instances of FloatProcessor.
+	 * 
+	 * @param image
+	 *            a 3D image that must contain float values
+	 * @return the array of float arrays corresponding to each slice
+	 */
+	public static final float[][] getFloatArrays(ImageStack image)
+	{
+		// Check bit depth of input images
+		if (image.getBitDepth() != 32 ) 
+		{
+			throw new IllegalArgumentException("Bit depth of input ImageStack must be 32");
+		}
+
+		// Initialize result array
+		int nSlices = image.getSize();
+		float[][] slices = new float[nSlices][];
+		
+		// Extract inner slice array and apply type conversion
+		Object[] array = image.getImageArray();
+		for (int i = 0; i < nSlices; i++)
+		{
+			slices[i] = (float[]) array[i];
+		}
+		
+		// return slices
+		return slices;
 	}
 	
 }

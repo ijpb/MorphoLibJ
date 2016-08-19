@@ -91,6 +91,80 @@ public class ExtendedMinimaWatershed
 	}
 
 	/**
+	 * Computes watershed on a gray scale image after imposition of extended
+	 * minima.
+	 *
+	 * @param image
+	 *            the input image (grayscale)
+	 * @param mask
+	 * 			  mask image to constraint segmentation
+	 * @param dynamic
+	 *            the maximum difference between the minima and the boundary of
+	 *            a basin
+	 * @param connectivity
+	 *            the connectivity to use, either 4 or 8
+	 * @param verbose
+	 * 			  flag to show log messages
+	 * @return the image of watershed basins computed on original image, as a
+	 *         label image
+	 * @see inra.ijpb.morphology.MinimaAndMaxima
+	 */
+	public static final ImageProcessor extendedMinimaWatershed(
+			ImageProcessor image,
+			ImageProcessor mask,
+			int dynamic,
+			int connectivity,
+			boolean verbose )
+	{
+		ImageProcessor minima =
+				MinimaAndMaxima.extendedMinima( image, dynamic, connectivity );
+		ImageProcessor imposedMinima =
+				MinimaAndMaxima.imposeMinima( image, minima, connectivity );
+		ImageProcessor labels =
+				BinaryImages.componentsLabeling( minima, connectivity, 32 );
+		ImageProcessor basins =
+				Watershed.computeWatershed( imposedMinima, labels, mask,
+						connectivity, true, verbose);
+		return basins;
+	}
+	/**
+	 * Computes watershed on a gray scale image after imposition of extended
+	 * minima.
+	 *
+	 * @param image
+	 *            the input image (grayscale)
+	 * @param mask
+	 * 			  mask image to constraint segmentation
+	 * @param dynamic
+	 *            the maximum difference between the minima and the boundary of
+	 *            a basin
+	 * @param connectivity
+	 *            the connectivity to use, either 4 or 8
+	 * @param verbose
+	 * 			  flag to show log messages
+	 * @return the image of watershed basins computed on original image, as a
+	 *         label image
+	 * @see inra.ijpb.morphology.MinimaAndMaxima3D
+	 */
+	public static final ImageStack extendedMinimaWatershed(
+			ImageStack image,
+			ImageStack mask,
+			int dynamic,
+			int connectivity,
+			boolean verbose )
+	{
+		ImageStack minima =
+				MinimaAndMaxima3D.extendedMinima( image, dynamic, connectivity );
+		ImageStack imposedMinima =
+				MinimaAndMaxima3D.imposeMinima( image, minima, connectivity );
+		ImageStack labels =
+				BinaryImages.componentsLabeling( minima, connectivity, 32 );
+		ImageStack basins =
+				Watershed.computeWatershed( imposedMinima, labels, mask,
+						connectivity, true, verbose );
+		return basins;
+	}
+	/**
 	 * Computes watershed on a gray scale image after imposition of extended minima.
 	 * 
 	 * @param image

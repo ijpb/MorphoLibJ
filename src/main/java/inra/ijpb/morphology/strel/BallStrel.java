@@ -8,8 +8,11 @@ import ij.plugin.Filters3D;
 import inra.ijpb.morphology.Strel3D;
 
 /**
+ * A 3D structuring element with a ball shape, with same size in each direction.
+ * 
+ * @see EllipsoidStrel
+ * 
  * @author dlegland
- *
  */
 public class BallStrel extends AbstractStrel3D
 {
@@ -23,11 +26,11 @@ public class BallStrel extends AbstractStrel3D
 	// Constructors
 	
 	/**
-	 * Creates a structuring element with a circular shape of the given radius.
+	 * Creates a structuring element with a spherical shape of the given radius.
 	 * 
 	 * @param radius
 	 *            the radius of the structuring element, in pixels
-	 * @return a new structuring element with disk shape and specified radius
+	 * @return a new structuring element with ball shape and specified radius
 	 */
 	public final static BallStrel fromRadius(double radius)
 	{
@@ -35,11 +38,11 @@ public class BallStrel extends AbstractStrel3D
 	}
 	
 	/**
-	 * Creates a structuring element with a circular shape of the given radius.
+	 * Creates a structuring element with a spherical shape of the given diameter.
 	 * 
-	 * @param radius
-	 *            the radius of the structuring element, in pixels
-	 * @return a new structuring element with disk shape and specified radius
+	 * @param diam
+	 *            the diameter of the ball, in pixels
+	 * @return a new structuring element with ball shape and specified radius
 	 */
 	public final static BallStrel fromDiameter(double diam)
 	{
@@ -47,10 +50,10 @@ public class BallStrel extends AbstractStrel3D
 	}
 	
 	/**
-	 * Private constructor of Disk structuring element.
+	 * Private constructor of ball structuring element.
 	 * 
 	 * @param radius
-	 *            the radius of the structuring element, in pixels
+	 *            the radius of the ball, in pixels
 	 */
 	private BallStrel(double radius) 
 	{
@@ -72,7 +75,7 @@ public class BallStrel extends AbstractStrel3D
 	@Override
 	public int[][][] getMask3D()
 	{
-		// Create an empty image with just a white pixel in the middle
+		// Create an empty image with just a white voxel in the middle
 		int intRadius = (int) Math.round(radius);
 		int size = 2 * intRadius + 1;
 		ImageStack img = ImageStack.create(size, size, size, 8);

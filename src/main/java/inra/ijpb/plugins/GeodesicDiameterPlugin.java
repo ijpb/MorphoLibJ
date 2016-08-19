@@ -7,6 +7,7 @@ import ij.gui.GenericDialog;
 import ij.gui.Line;
 import ij.gui.OvalRoi;
 import ij.gui.Overlay;
+import ij.gui.PolygonRoi;
 import ij.gui.Roi;
 import ij.gui.TextRoi;
 import ij.measure.ResultsTable;
@@ -19,6 +20,9 @@ import inra.ijpb.binary.ChamferWeights;
 import inra.ijpb.label.LabelImages;
 
 import java.awt.Color;
+import java.awt.Point;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -76,41 +80,57 @@ public class GeodesicDiameterPlugin implements PlugIn
 		
 		// set up current parameters
 		int labelImageIndex = gd.getNextChoiceIndex();
-		ImagePlus labelImage = WindowManager.getImage(labelImageIndex+1);
+		ImagePlus labelPlus = WindowManager.getImage(labelImageIndex+1);
 		ChamferWeights weights = ChamferWeights.fromLabel(gd.getNextChoice());
 		
 		// check if image is a label image
-		if (!LabelImages.isLabelImageType(labelImage))
+		if (!LabelImages.isLabelImageType(labelPlus))
 		{
 			IJ.showMessage("Input image should be a label image");
 			return;
 		}
-		
-		// Starting time
-		long start = System.nanoTime();
+		ImageProcessor labelImage = labelPlus.getProcessor();
 		
 		// Compute geodesic diameters, using floating-point calculations
-		ResultsTable table;
-		table = process(labelImage.getProcessor(), weights.getFloatWeights());
-		
-		// Final time, displayed in seconds
+		long start = System.nanoTime();
+		ResultsTable table = process(labelImage, weights.getFloatWeights());
 		long finalTime = System.nanoTime();
+		
+		// Final time, displayed in milli-sseconds
 		float elapsedTime = (finalTime - start) / 1000000.0f;
-		IJ.showStatus(String.format("Elapsed time: %8.2f ms", elapsedTime));
 
 		// display the result table
-		String tableName = labelImage.getShortTitle() + "-GeodDiameters"; 
+		String tableName = labelPlus.getShortTitle() + "-GeodDiameters"; 
 		table.show(tableName);
 
+		int gdIndex = table.getColumnIndex("Geod. Diam");
+		double[] geodDiamArray = table.getColumnAsDoubles(gdIndex);
+		
+		boolean validPaths = true;
+		for (double geodDiam : geodDiamArray)
+		{
+			if (Float.isInfinite((float) geodDiam))
+			{
+				IJ.showMessage("Geodesic Diameter Warning", "Some geodesic diameters are infinite,\n"
+						+ "meaning that some particles are not connected.\n" + "Maybe labeling was not performed?");
+				validPaths = false;
+				break;
+			}
+		}
+		
 		// Check if results must be displayed on an image
-		if (gd.getNextBoolean()) 
+		if (gd.getNextBoolean() && validPaths) 
 		{
 			// New image for displaying geometric overlays
 			int resultImageIndex = gd.getNextChoiceIndex();
 			ImagePlus resultImage = WindowManager.getImage(resultImageIndex+1);
 			
-			showResultsAsOverlay(resultImage, table);
+			Map<Integer, List<Point>> pathMap = computePaths(labelImage, weights.getFloatWeights());
+			drawPaths(resultImage, pathMap);
+//			showResultsAsOverlay(resultImage, table);
 		}
+		
+		IJ.showStatus(String.format("Elapsed time: %8.2f ms", elapsedTime));	
 	}
 
 	
@@ -182,8 +202,6 @@ public class GeodesicDiameterPlugin implements PlugIn
 	}
 	
 	
-	
-	
 	// ====================================================
 	// Computing functions 
 	
@@ -223,6 +241,20 @@ public class GeodesicDiameterPlugin implements PlugIn
 		DefaultAlgoListener.monitor(algo);
 		ResultsTable table = algo.analyzeImage(labels);
 		return table;
+	}
+
+//	private Map<Integer, List<Point>> computePaths(ImageProcessor labels, short[] weights)
+//	{
+//		GeodesicDiameterShort algo = new GeodesicDiameterShort(weights);
+//		DefaultAlgoListener.monitor(algo);
+//		return algo.longestGeodesicPaths(labels);
+//	}
+
+	private Map<Integer, List<Point>> computePaths(ImageProcessor labels, float[] weights)
+	{
+		GeodesicDiameterFloat algo = new GeodesicDiameterFloat(weights);
+		DefaultAlgoListener.monitor(algo);
+		return algo.longestGeodesicPaths(labels);
 	}
 
 	// ====================================================
@@ -299,7 +331,32 @@ public class GeodesicDiameterPlugin implements PlugIn
 		target.setOverlay(overlay);
 	}
 
-
+	public void drawPaths(ImagePlus target, Map<Integer, List<Point>> pathMap)
+	{
+		Overlay overlay = new Overlay();
+		Roi roi;
+		
+		for (List<Point> path : pathMap.values())
+		{
+			int n = path.size();
+			float[] x = new float[n];
+			float[] y = new float[n];
+			int i = 0;
+			for (Point pos : path)
+			{
+				x[i] = pos.x + .5f;
+				y[i] = pos.y + .5f;
+				i++;
+			}
+			roi = new PolygonRoi(x, y, n, Roi.POLYLINE);
+			
+			roi.setStrokeColor(Color.RED);
+			overlay.add(roi);	
+		}
+		
+		target.setOverlay(overlay);
+	}
+	
 	private static String createResultImageName(ImagePlus baseImage) 
 	{
 		return baseImage.getShortTitle() + "-diam";

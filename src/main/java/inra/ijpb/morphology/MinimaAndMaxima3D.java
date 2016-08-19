@@ -5,6 +5,8 @@ package inra.ijpb.morphology;
 
 import ij.ImageStack;
 import inra.ijpb.algo.DefaultAlgoListener;
+import inra.ijpb.data.image.Image3D;
+import inra.ijpb.data.image.Images3D;
 import inra.ijpb.morphology.extrema.ExtremaType;
 import inra.ijpb.morphology.extrema.RegionalExtrema3DAlgo;
 import inra.ijpb.morphology.extrema.RegionalExtrema3DByFlooding;
@@ -99,8 +101,7 @@ public class MinimaAndMaxima3D
 		int sizeY = image.getHeight();
 		int sizeZ = image.getSize();
 	
-		ImageStack mask = image.duplicate();
-		addValue(mask, 1);
+		ImageStack mask = addValue(image, 1);
 	
 		ImageStack rec = GeodesicReconstruction3D.reconstructByDilation(image, mask, conn);
 		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
@@ -200,8 +201,7 @@ public class MinimaAndMaxima3D
 		int sizeY = image.getHeight();
 		int sizeZ = image.getSize();
 	
-		ImageStack marker = image.duplicate();
-		addValue(marker, 1);
+		ImageStack marker = addValue(image, 1);
 	
 		ImageStack rec = GeodesicReconstruction3D.reconstructByErosion(marker,
 				image, conn);
@@ -260,7 +260,7 @@ public class MinimaAndMaxima3D
 	 * @return the extended maxima of input image
 	 */
 	public final static ImageStack extendedMaxima(ImageStack image,
-			int dynamic) 
+			double dynamic) 
 	{
 		return extendedMaxima(image, dynamic, DEFAULT_CONNECTIVITY);
 	}
@@ -279,10 +279,9 @@ public class MinimaAndMaxima3D
 	 * @return the extended maxima of input image
 	 */
 	public final static ImageStack extendedMaxima(ImageStack image,
-			int dynamic, int conn) 
+			double dynamic, int conn) 
 	{
-		ImageStack mask = image.duplicate();
-		addValue(mask, dynamic);
+		ImageStack mask = addValue(image, dynamic);
 
 		ImageStack rec = GeodesicReconstruction3D.reconstructByDilation(image, mask, conn);
 
@@ -305,7 +304,7 @@ public class MinimaAndMaxima3D
 	 */
 	public final static ImageStack extendedMaxima(
 			ImageStack image,
-			int dynamic, 
+			double dynamic, 
 			ImageStack binaryMask ) 
 	{
 		return extendedMaxima( image, dynamic, DEFAULT_CONNECTIVITY, binaryMask );
@@ -329,12 +328,11 @@ public class MinimaAndMaxima3D
 	 */
 	public final static ImageStack extendedMaxima(
 			ImageStack image,
-			int dynamic, 
+			double dynamic, 
 			int conn,
 			ImageStack binaryMask ) 
 	{
-		ImageStack mask = image.duplicate();
-		addValue( mask, dynamic );
+		ImageStack mask = addValue(image, dynamic);
 
 		ImageStack rec = GeodesicReconstruction3D.reconstructByDilation( image, mask, conn, binaryMask );
 
@@ -352,7 +350,7 @@ public class MinimaAndMaxima3D
 	 *            the difference between minima and minima boundary
 	 * @return the extended minima of input image
 	 */
-	public final static ImageStack extendedMinima(ImageStack image, int dynamic)
+	public final static ImageStack extendedMinima(ImageStack image, double dynamic)
 	{
 		return extendedMinima(image, dynamic, DEFAULT_CONNECTIVITY);
 	}
@@ -371,10 +369,9 @@ public class MinimaAndMaxima3D
 	 * @return the extended minima of input image
 	 */
 	public final static ImageStack extendedMinima(ImageStack image,
-			int dynamic, int conn) 
+			double dynamic, int conn) 
 	{
-		ImageStack marker = image.duplicate();
-		addValue(marker, dynamic);
+		ImageStack marker = addValue(image, dynamic);
 
 		ImageStack rec = GeodesicReconstruction3D.reconstructByErosion(marker, image, conn);
 
@@ -513,24 +510,32 @@ public class MinimaAndMaxima3D
 	 * Adds the specified value to each voxel of the 3D stack.
 	 * 
 	 * @param image
-	 *            the 3D image to modify
+	 *            the original 3D image
 	 * @param value
 	 *            the value to add
+	 * @return a new ImageStack with same type with value added
 	 */
-	private final static void addValue(ImageStack image, double value) 
+	private final static ImageStack addValue(ImageStack image, double value) 
 	{
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		int sizeZ = image.getSize();
+		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, image.getBitDepth());
+		
+		Image3D image2 = Images3D.createWrapper(image);
+		Image3D result2 = Images3D.createWrapper(result);
+
 		for (int z = 0; z < sizeZ; z++) 
 		{
 			for (int y = 0; y < sizeY; y++) 
 			{
 				for (int x = 0; x < sizeX; x++) 
 				{
-					image.setVoxel(x, y, z, image.getVoxel(x, y, z) + value);
+					result2.setValue(x, y, z, image2.getValue(x, y, z) + value);
 				}
 			}
 		}
+		
+		return result;
 	}
 }

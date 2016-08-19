@@ -48,6 +48,43 @@ public class BinaryImages
 	}
 
 	/**
+	 * Check if input image is binary (8-bit with only 0 or 255 values)
+	 * @param image input image
+	 * @return true if image is binary
+	 */
+	public final static boolean isBinaryImage( ImagePlus image )
+	{
+		if( image.getType() != ImagePlus.GRAY8 &&
+				image.getType() != ImagePlus.COLOR_256 )
+			return false;
+		for(int n=1; n<=image.getImageStackSize(); n++ )
+		{
+			final int[] hist =
+					image.getImageStack().getProcessor( n ).getHistogram();
+			for( int i=1; i<hist.length-1; i++ )
+				if( hist[ i ] > 0 )
+					return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Check if input image is binary (8-bit with only 0 or 255 values)
+	 * @param image input image
+	 * @return true if image is binary
+	 */
+	public final static boolean isBinaryImage( ImageProcessor image )
+	{
+		if( ! (image instanceof ByteProcessor) )
+			return false;
+		final int[] hist = image.getHistogram();
+		for( int i=1; i<hist.length-1; i++ )
+			if( hist[ i ] > 0 )
+				return false;
+		return true;
+	}
+
+	/**
 	 * Computes the labels in the binary 2D or 3D image contained in the given
 	 * ImagePlus, and computes the maximum label to set up the display range of
 	 * the resulting ImagePlus.
@@ -65,8 +102,8 @@ public class BinaryImages
 	 *             if the number of labels reaches the maximum number that can
 	 *             be represented with this bitDepth
 	 * 
-	 * @see inra.ijpb.morphology.conncomp.ConnectedComponentsLabeling
-	 * @see inra.ijpb.morphology.conncomp.ConnectedComponentsLabeling3D
+	 * @see inra.ijpb.binary.conncomp.ConnectedComponentsLabeling
+	 * @see inra.ijpb.binary.conncomp.ConnectedComponentsLabeling3D
 	 * @see inra.ijpb.morphology.FloodFill
 	 */
 	public final static ImagePlus componentsLabeling(ImagePlus imagePlus, 
@@ -165,7 +202,7 @@ public class BinaryImages
 	 *             if the number of labels reaches the maximum number that can
 	 *             be represented with this bitDepth
 	 *             
-	 * @see inra.ijpb.morphology.conncomp.ConnectedComponentsLabeling     
+	 * @see inra.ijpb.binary.conncomp.ConnectedComponentsLabeling     
 	 */
 	public final static ImageProcessor componentsLabeling(ImageProcessor image,
 			int conn, int bitDepth) 
@@ -194,7 +231,7 @@ public class BinaryImages
 	 *             if the number of labels reaches the maximum number that can
 	 *             be represented with this bitDepth
 	 *             
-	 * @see inra.ijpb.morphology.conncomp.ConnectedComponentsLabeling3D     
+	 * @see inra.ijpb.binary.conncomp.ConnectedComponentsLabeling3D     
 	 */
 	public final static ImageStack componentsLabeling(ImageStack image,
 			int conn, int bitDepth)

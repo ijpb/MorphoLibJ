@@ -4,6 +4,7 @@
 package inra.ijpb.data.image;
 
 import ij.ImageStack;
+import inra.ijpb.data.Cursor3D;
 import static java.lang.Math.min;
 import static java.lang.Math.max;
 
@@ -95,6 +96,12 @@ public class ShortStackWrapper implements Image3D
 		return (double) (slices[z][y * sizeX + x] & 0x00FFFF);
 	}
 
+	@Override
+	public double getValue(Cursor3D pos)
+	{
+		return getValue(pos.getX(), pos.getY(), pos.getZ());
+	}
+
 	/* (non-Javadoc)
 	 * @see inra.ijpb.data.image.Image3D#setValue(int, int, int, double)
 	 */
@@ -102,6 +109,12 @@ public class ShortStackWrapper implements Image3D
 	public void setValue(int x, int y, int z, double value) 
 	{
 		slices[z][y * sizeX + x] = (short) max(min(value, 65535), 0);
+	}
+
+	@Override
+	public void setValue(Cursor3D pos, double value)
+	{
+		setValue(pos.getX(), pos.getY(), pos.getZ(), value);
 	}
 
 }
