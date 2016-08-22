@@ -12,6 +12,23 @@ import inra.ijpb.data.border.MirroringBorder;
 import inra.ijpb.morphology.Strel;
 
 /**
+ * <p>
+ * Directional filtering of planar images.
+ * </p>
+ * 
+ * <p>
+ * Oriented structuring elements are considered, for example linear structuring
+ * elements. A collection of orientation is chosen, and the result of a
+ * filtering operation is performed for each orientation of the structuring
+ * element. The results are combined to create the resulting image.
+ * </p>
+ * 
+ * <p>
+ * Example:
+ * <pre>{@code
+ * 
+ * }
+ * </p>
  * @author David Legland
  *
  */
@@ -22,10 +39,15 @@ public class DirectionalFilter extends AlgoStub
 	
 	/**
 	 * Specifies how to combine the different orientations: min or max.
+	 * 
+	 * Use MIN to enhance dark thin of the results, and MAX to enhance bright
+	 * thin structures.
 	 */
 	public enum Type 
 	{
+		/** Keep the minimum value over all possible orientations */
 		MIN("Min"),
+		/** Keep the maximum value over all possible orientations */
 		MAX("Max");
 		
 		private final String label;
@@ -34,18 +56,6 @@ public class DirectionalFilter extends AlgoStub
 		{
 			this.label = label;
 		}
-		
-//		public MorphologicalDirectionalFilter createFilter(OrientedStrelFactory factory, 
-//				int nTheta,	Filters.Operation operation)
-//		{
-//			if (this == MIN)
-//				return new MinDirectionalFilter(factory, nTheta, operation);
-//			if (this == MAX)
-//				return new MaxDirectionalFilter(factory, nTheta, operation);
-//			
-//			throw new RuntimeException(
-//					"Unable to process the " + this + " operation");
-//		}
 		
 		public String toString()
 		{
@@ -68,17 +78,17 @@ public class DirectionalFilter extends AlgoStub
 		 * Determines the operation type from its label.
 		 * @throws IllegalArgumentException if label is not recognized.
 		 */
-		public static Type fromLabel(String opLabel)
+		public static Type fromLabel(String typeLabel)
 		{
-			if (opLabel != null)
-				opLabel = opLabel.toLowerCase();
-			for (Type op : Type.values())
+			if (typeLabel != null)
+				typeLabel = typeLabel.toLowerCase();
+			for (Type type : Type.values())
 			{
-				String cmp = op.label.toLowerCase();
-				if (cmp.equals(opLabel))
-					return op;
+				String cmp = type.label.toLowerCase();
+				if (cmp.equals(typeLabel))
+					return type;
 			}
-			throw new IllegalArgumentException("Unable to parse Operation with label: " + opLabel);
+			throw new IllegalArgumentException("Unable to parse Operation with label: " + typeLabel);
 		}
 	};
 	
@@ -182,7 +192,7 @@ public class DirectionalFilter extends AlgoStub
 	 * The number of distinct orientations, between 0 and 180.
 	 * Examples:
 	 * <ul>
-	 * <li> nTheta = 2: considers 0 and 90� only </li>
+	 * <li> nTheta = 2: considers 0 and 90 degrees only</li>
 	 * <li> nTheta = 4: considers 0, 45, 90 and 135 degrees</li>
 	 * <li> nTheta = 180: considers one oriented line strel for each degree</li>
 	 * </ul>
@@ -218,8 +228,8 @@ public class DirectionalFilter extends AlgoStub
 	}
 
 	/**
-	 * Creates new instance of directional filter using line structuring
-	 * elements.
+	 * Creates new instance of directional filter for arbitrary structuring
+	 * elements, by specifying the factory.
 	 * 
 	 * @param type
 	 *            the type of combination (min or max)
@@ -250,7 +260,7 @@ public class DirectionalFilter extends AlgoStub
 	 *            a grayscale image
 	 * @return the result of directional filter
 	 */
-	public ImageProcessor applyTo(ImageProcessor image)
+	public ImageProcessor process(ImageProcessor image)
 	{
 		// determine the sign of min/max computation
 		int sign = this.type == Type.MAX ? 1 : -1;

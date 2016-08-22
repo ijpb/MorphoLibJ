@@ -4,13 +4,15 @@
 package inra.ijpb.morphology.directional;
 
 /**
+ * Factory for oriented linear structuring elements.
+ * 
  * @author David Legland
  *
  */
-public class OrientedLineStrelFactory implements OrientedStrelFactory {
-
+public class OrientedLineStrelFactory implements OrientedStrelFactory 
+{
 	/** 
-	 * The euclidean length of the discrete line 
+	 * The Euclidean length of the discrete line 
 	 */
 	double length;
 

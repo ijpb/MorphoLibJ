@@ -119,7 +119,7 @@ public class DirectionalFilteringPlugin implements ExtendedPlugInFilter, DialogL
 		DirectionalFilter filter = new DirectionalFilter(this.type, this.op, this.lineLength, this.nDirections);
 		DefaultAlgoListener.monitor(filter);
 		
-		this.result = filter.applyTo(image);
+		this.result = filter.process(image);
 
 		if (previewing)
 		{

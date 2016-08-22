@@ -11,6 +11,8 @@ import inra.ijpb.morphology.Strel;
 import inra.ijpb.morphology.strel.AbstractStrel;
 
 /**
+ * A linear structuring element, defined by a length and an orientation.
+ * 
  * @author David Legland
  *
  */
@@ -21,9 +23,24 @@ public class OrientedLineStrel extends AbstractStrel implements Strel
 
 	/** orientation of the line, in degrees, counted CCW from horizontal. */
 	double theta;
-		
+
+	/**
+	 * Stores the shape of this structuring element as an array of shifts with
+	 * respect to the central pixel.
+	 * The array has N-by-2 elements, where N is the number of pixels composing the strel.
+	 */
 	int[][] shifts;
 
+	/**
+	 * Creates an new instance of linear structuring element. The number of
+	 * pixels composing the line may differ from the specified length due to
+	 * rounding effects.
+	 * 
+	 * @param length
+	 *            the (approximate) length of the structuring element.
+	 * @param angleInDegrees
+	 *            the angle with the horizontal of the structuring element
+	 */
 	public OrientedLineStrel(double length, double angleInDegrees)
 	{
 		this.length = length;
@@ -32,9 +49,13 @@ public class OrientedLineStrel extends AbstractStrel implements Strel
 		this.computeShifts();
 	}
 
+	/**
+	 * Computes the position of the pixels that constitutes this structuring
+	 * element.
+	 */
 	private void computeShifts()
 	{
-		// Components of diection vector
+		// Components of direction vector
 		double thetaRads = Math.toRadians(this.theta);
 		double dx = Math.cos(thetaRads);
 		double dy = Math.sin(thetaRads);
@@ -53,6 +74,7 @@ public class OrientedLineStrel extends AbstractStrel implements Strel
 		// compute position of line pixels
 		if (abs(dx) >= abs(dy))
 		{
+			// process horizontal lines
 			for (int i = -n2; i <= n2; i++)
 			{
 				shifts[i + n2][0] = i;
@@ -61,6 +83,7 @@ public class OrientedLineStrel extends AbstractStrel implements Strel
 		} 
 		else
 		{
+			// process vertical lines
 			for (int i = -n2; i <= n2; i++)
 			{
 				shifts[i + n2][1] = i;
