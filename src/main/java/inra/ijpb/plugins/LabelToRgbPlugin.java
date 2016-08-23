@@ -37,7 +37,7 @@ public class LabelToRgbPlugin implements PlugIn
 		// Create a new generic dialog with appropriate options
     	GenericDialog gd = new GenericDialog("Label To RGB");
     	gd.addChoice("Colormap", CommonLabelMaps.getAllLabels(), 
-    			CommonLabelMaps.JET.getLabel());
+    			CommonLabelMaps.GOLDEN_ANGLE.getLabel());
     	gd.addChoice("Background", CommonColors.getAllLabels(), CommonColors.WHITE.getLabel());
     	gd.addCheckbox("Shuffle", true);
     	gd.showDialog();

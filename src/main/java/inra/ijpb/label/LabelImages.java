@@ -1118,6 +1118,20 @@ public class LabelImages
 		return counts;
 	}
 	
+	public final static int findLargestLabel(ImagePlus imagePlus)
+	{
+		int max = 0;
+		for (int i = 1; i <= imagePlus.getImageStackSize(); i++)
+		{
+			ImageProcessor slice = imagePlus.getStack().getProcessor(i);
+			for (int j = 0; j < slice.getPixelCount(); j++)
+			{
+				max = Math.max(max, (int) slice.getf(j));
+			}
+		}
+		return max;
+	}
+	
     /**
 	 * Returns the set of unique labels existing in the given image, excluding
 	 * the value zero (used for background).

@@ -11,15 +11,13 @@ import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
-import inra.ijpb.data.image.Images3D;
 import inra.ijpb.util.ColorMaps;
+import inra.ijpb.util.ColorMaps.CommonLabelMaps;
+import inra.ijpb.util.CommonColors;
 
 import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.image.ColorModel;
-
-import inra.ijpb.util.CommonColors;
-import static inra.ijpb.util.ColorMaps.CommonLabelMaps;
 
 /**
  * Changes the current LUT such that each label is associated to a different
@@ -45,7 +43,6 @@ public class SetLabelMapPlugin implements PlugIn, DialogListener
 	// Images managed by the plugin
 
 	ImagePlus imagePlus;
-	int nColors;
 
 	// Plugin inner data
 
@@ -85,10 +82,6 @@ public class SetLabelMapPlugin implements PlugIn, DialogListener
 		{
 			oldColorModel = imagePlus.getStack().getColorModel();
 		}
-
-		double[] minAndMax = Images3D.findMinAndMax(imagePlus);
-		nColors = Math.min((int) minAndMax[1], 255);
-		IJ.log("Set Label Map using " + nColors + " colors");
 
 		// Display dialogs and waits for user validation
 		GenericDialog gd = showDialog();
@@ -182,7 +175,7 @@ public class SetLabelMapPlugin implements PlugIn, DialogListener
 		// I could not use more than 256 colors for the LUT with ShortProcessor,
 		// problem at
 		// ij.process.ShortProcessor.createBufferedImage(ShortProcessor.java:135)
-		colorMap = CommonLabelMaps.fromLabel(lutName).computeLut(nColors, shuffleLut);
+		colorMap = CommonLabelMaps.fromLabel(lutName).computeLut(255, shuffleLut);
 	}
 
 	private void setColorModel(ColorModel cm)
