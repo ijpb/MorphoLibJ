@@ -2,17 +2,51 @@ package inra.ijpb.label;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+
+import java.awt.Color;
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ByteProcessor;
+import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.label.LabelImages;
+import inra.ijpb.util.ColorMaps.CommonLabelMaps;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 public class LabelImagesTest
 {
+	@Test
+	public final void testLabelToRGB_ImageProcessorByteArrayColor()
+	{
+		// create a byte processor containing four labels
+		ImageProcessor image = new ByteProcessor(10, 10);
+		for (int y = 0; y < 3; y++)
+		{
+			for (int x = 0; x < 3; x++)
+			{
+				image.set(x + 1, y + 1, 1);
+				image.set(x + 5, y + 1, 2);
+				image.set(x + 1, y + 5, 3);
+				image.set(x + 5, y + 5, 4);
+			}
+		}
+		
+		// create LUT and background color
+		byte[][] lut = CommonLabelMaps.GOLDEN_ANGLE.computeLut(4, false);
+		Color bgColor = Color.WHITE;
+		
+		// compute color image from labels
+		ColorProcessor colorImage = LabelImages.labelToRgb(image, lut, bgColor);
+
+		Assert.assertNotEquals(0, colorImage.get(2, 2));
+		Assert.assertNotEquals(0, colorImage.get(6, 2));
+		Assert.assertNotEquals(0, colorImage.get(2, 6));
+		Assert.assertNotEquals(0, colorImage.get(6, 6));
+	}
 
 	@Test
 	public final void testFindAllLabelsImageProcessor()

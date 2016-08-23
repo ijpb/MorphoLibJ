@@ -310,7 +310,13 @@ public class InteractiveGeodesicReconstruction3D implements PlugIn
 
 		// add slices to stack
 		for( int n=0; n<mask.getImageStackSize(); n++ )
+		{
 			markerStack.addSlice( markerSlice[n] );
+		}
+
+		// invert marker image if reconstructing by erosion
+		if( operation == Operation.BY_EROSION )
+			Images3D.invert(markerStack);
 
 		// Compute geodesic reconstruction
 		ImageStack result =

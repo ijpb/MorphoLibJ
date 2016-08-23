@@ -296,44 +296,42 @@ public class ColorMaps {
 	 */
 	public final static byte[][] createGoldenAngleLut( int nColors ) 
 	{
-		final byte[] red = new byte[ nColors ];
-		final byte[] green = new byte[ nColors ];
-		final byte[] blue = new byte[ nColors ];
-
 		// hue for assigning new color ([0.0-1.0])
 		float hue = 0.5f;
-		// saturation for assigning new color ([0.5-1.0]) 
-		float saturation = 0.75f; 
-		Color[] colors = new Color[ nColors ]; 
-		for(int i=0; i<nColors; i++)
+		// saturation for assigning new color ([0.5-1.0])
+		float saturation = 0.75f;
+		
+		// create colors recursively by adding golden angle ratio to hue and
+		// saturation of previous color
+		Color[] colors = new Color[nColors];
+		for (int i = 0; i < nColors; i++)
 		{
-			colors[ i ] = Color.getHSBColor(hue, saturation, 1);
+			// create current color
+			colors[i] = Color.getHSBColor(hue, saturation, 1);
 
+			// update hue and saturation for next color
 			hue += 0.38197f; // golden angle
-			if (hue > 1) 
+			if (hue > 1)
 				hue -= 1;
 			saturation += 0.38197f; // golden angle
 			if (saturation > 1)
 				saturation -= 1;
-			saturation = 0.5f * saturation + 0.5f;							
+			saturation = 0.5f * saturation + 0.5f;
 		}
-							
-		for(int i = 1 ; i < nColors; i++)
-		{
-			red[i] = (byte) colors[ i-1 ].getRed();
-			green[i] = (byte) colors[ i-1 ].getGreen();
-			blue[i] = (byte) colors[ i-1 ].getBlue();
-		}
+
 		// create map
-		byte[][] map = new byte[ nColors ][3];
+		byte[][] map = new byte[nColors][3];
 
-		for (int i = 0; i < nColors; i++) {
-			map[i][0] = red[ i ];
-			map[i][1] = green[ i ];
-			map[i][2] = blue[ i ];
+		// fill up the color map by converting color array 
+		for (int i = 0; i < nColors; i++)
+		{
+			Color color = colors[i];
+			map[i][0] = (byte) color.getRed();
+			map[i][1] = (byte) color.getGreen();
+			map[i][2] = (byte) color.getBlue();
 		}
 
-		return map;		
+		return map;
 	}
 	
 	public final static byte[][] createGrayLut() {

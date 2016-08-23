@@ -255,8 +255,9 @@ public class Images3D
 			}
 		}
 	}
+	
 	/**
-	 * Invert the values of a 3D image
+	 * Inverts the values of a 3D image
 	 *
 	 * @param image input image
 	 */
@@ -277,4 +278,98 @@ public class Images3D
 			}
 		}
 	}
+	
+	/**
+	 * Extracts the byte arrays corresponding to the slices of a stack
+	 * containing instances of ByteProcessor.
+	 * 
+	 * @param image
+	 *            a 3D image that must contain byte values
+	 * @return the array of byte arrays corresponding to each slice
+	 */
+	public static final byte[][] getByteArrays(ImageStack image)
+	{
+		// Check bit depth of input images
+		if (image.getBitDepth() != 8 ) 
+		{
+			throw new IllegalArgumentException("Bit depth of input ImageStack must be 8");
+		}
+
+		// Initialize result array
+		int nSlices = image.getSize();
+		byte[][] slices = new byte[nSlices][];
+		
+		// Extract inner slice array and apply type conversion
+		Object[] array = image.getImageArray();
+		for (int i = 0; i < nSlices; i++)
+		{
+			slices[i] = (byte[]) array[i];
+		}
+		
+		// return slices
+		return slices;
+	}
+	
+	/**
+	 * Extracts the short arrays corresponding to the slices of a stack
+	 * containing instances of ShortProcessor.
+	 * 
+	 * @param image
+	 *            a 3D image that must contain short values
+	 * @return the array of short arrays corresponding to each slice
+	 */
+	public static final short[][] getShortArrays(ImageStack image)
+	{
+		// Check bit depth of input images
+		if (image.getBitDepth() != 16 ) 
+		{
+			throw new IllegalArgumentException("Bit depth of input ImageStack must be 16");
+		}
+
+		// Initialize result array
+		int nSlices = image.getSize();
+		short[][] slices = new short[nSlices][];
+		
+		// Extract inner slice array and apply type conversion
+		Object[] array = image.getImageArray();
+		for (int i = 0; i < nSlices; i++)
+		{
+			slices[i] = (short[]) array[i];
+		}
+		
+		// return slices
+		return slices;
+	}
+	
+	/**
+	 * Extracts the float arrays corresponding to the slices of a stack
+	 * containing instances of FloatProcessor.
+	 * 
+	 * @param image
+	 *            a 3D image that must contain float values
+	 * @return the array of float arrays corresponding to each slice
+	 */
+	public static final float[][] getFloatArrays(ImageStack image)
+	{
+		// Check bit depth of input images
+		if (image.getBitDepth() != 32 ) 
+		{
+			throw new IllegalArgumentException("Bit depth of input ImageStack must be 32");
+		}
+
+		// Initialize result array
+		int nSlices = image.getSize();
+		float[][] slices = new float[nSlices][];
+		
+		// Extract inner slice array and apply type conversion
+		Object[] array = image.getImageArray();
+		for (int i = 0; i < nSlices; i++)
+		{
+			slices[i] = (float[]) array[i];
+		}
+		
+		// return slices
+		return slices;
+	}
+	
 }

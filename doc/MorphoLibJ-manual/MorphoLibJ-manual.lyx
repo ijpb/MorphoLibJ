@@ -497,13 +497,13 @@ Apply changes
 \end_layout
 
 \begin_layout Chapter
-Morphological filters
+Morphological filtering
 \end_layout
 
 \begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
-name "chap:Morphological-Filters"
+name "chap:Morphological-Filtering"
 
 \end_inset
 
@@ -530,7 +530,20 @@ structuring element
 \end_layout
 
 \begin_layout Section
-Principles
+Common morphologicals filters
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+TODO: add some illustration using binary sets 
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -764,8 +777,10 @@ More complicated combinations of elementary operations can be used.
 \series bold
 morphological gradient
 \series default
-, computed as the difference of the result of a morphological dilation with
- the result of a morphological erosions, reveals the 
+ is obtained as the difference of the result of a morphological dilation
+ with the result of a morphological erosion, both computed with the same
+ structuring element.
+ It reveals the 
 \series bold
 boundaries
 \series default
@@ -877,7 +892,466 @@ Some examples of composed morphological filters.
 \end_layout
 
 \begin_layout Section
-Usage
+Directional filters
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Directional-Filters"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For images containing very thin curvilinear structures (for example blood
+ vessels, cell wall sections...), the application of common filters may be
+ difficult due to the small size of the structures.
+ Even for small structuring elements, the application of a morphological
+ opening or closing let the structure disappear (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Thin-Structure-Filtering"
+
+\end_inset
+
+-b, 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Thin-Structure-Filtering"
+
+\end_inset
+
+-c).
+ Moreover, it may be difficult to preserve the whole thickness of the structure.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/appleCells/appleCells.tif
+	width 22text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Original image
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/appleCells/appleCells-smooth2.png
+	width 22text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Result of gaussian filter
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/appleCells/appleCells-median2.png
+	width 22text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Result of median filter
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/appleCells/appleCells-Cl-DirFiltOp_L21_ND12.png
+	width 22text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Result of directional filtering
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Thin-Structure-Filtering"
+
+\end_inset
+
+Filtering of a thin structure.
+ (a) Original image represening apple cells observed with confocal microscopy
+ 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Legland2009"
+
+\end_inset
+
+.
+ The application of gaussian filter (b) or median filter (c) results in
+ noise reduction, but also in a loss of the signal along the cell walls.
+ The directional filtering (d) better preserves the thickness of the structure.
+ Here, 32 orientation of line with length 25 were used.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+An alernative is to apply directional filtering.
+ The principle is to consider an oriented structuring element such as a
+ line segment of a given length, and to perform morphological operations
+ for various orientations of the structuring element 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Soille2001,Heneghan_2002_mia,LuengoHendriks2003"
+
+\end_inset
+
+.
+ For example, applying a median filter or a morphological opening with horizonta
+l direction results in the enhancement of horizontal parts of bright structures
+ (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Directional-Filtering"
+
+\end_inset
+
+-a).
+ Similarly, using a vertical structuring element results in the enhancement
+ of the vertical portions of the structures (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Directional-Filtering"
+
+\end_inset
+
+-b).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/appleCells/appleCells-Cl-Op_L21_T000.png
+	width 22text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Horizontal direction
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/appleCells/appleCells-Cl-Op_L21_T090.png
+	width 22text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Vertical direction
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/appleCells/appleCells-Cl-DirFiltOp_L21_ND2.png
+	width 22text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Two directions
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/appleCells/appleCells-Cl-DirFiltOp_L21_ND4.png
+	width 22text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Four directions
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Directional-Filtering"
+
+\end_inset
+
+Principle of directional filtering of a thin structure.
+ (a) and (b): result of median filter using an horizontal and a vertical
+ linear structuring element.
+ (c) and (d): combination of the results obtained from two directions (horizonta
+l and vertical) and four directions (by adding diagonal directions).
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The results of oriented filters for each direction can be combined by computing
+ the maximum value over all orientations (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Thin-Structure-Filtering"
+
+\end_inset
+
+-d).
+ Figures
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Directional-Filtering"
+
+\end_inset
+
+-c and 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Directional-Filtering"
+
+\end_inset
+
+-d show the results obtained when combining two or four directions.
+ This results in the enhancement of image while preserving the thickness
+ of the bright structures.
+\end_layout
+
+\begin_layout Standard
+Similar results may be obtained for enhancing dark curvilinear structures,
+ by using morphological closing or median filters, and combining the results
+ by computing the minimum over all directions.
+ 
+\end_layout
+
+\begin_layout Section
+Plugin Usage
 \end_layout
 
 \begin_layout Standard
@@ -1051,7 +1525,7 @@ classical
  morphological filters presented in chapter 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "chap:Morphological-Filters"
+reference "chap:Morphological-Filtering"
 
 \end_inset
 
@@ -1126,7 +1600,7 @@ Principle
 \end_layout
 
 \begin_layout Standard
-The principle of geodesic reconstruction is to repeat 
+The principle of morphological reconstruction is to repeat 
 \series bold
 conditional dilations or erosions
 \series default
@@ -1189,13 +1663,13 @@ status open
 \begin_layout Plain Layout
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Geodesic-Reconstruction-Principle"
+name "fig:Morphological-Reconstruction-Principle"
 
 \end_inset
 
-Principle of the geodesic reconstruction algorithm.
- Original image in gray with marker superimposed in black, and result of
- conditional dilations with increasing sizes.
+Principle of the morphological reconstruction algorithm.
+ Original image is represented in gray, with marker and result of conditional
+ dilations with increasing sizes superimposed in black.
 \end_layout
 
 \end_inset
@@ -1212,16 +1686,19 @@ Principle of the geodesic reconstruction algorithm.
 The figure 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Geodesic-Reconstruction-Principle"
+reference "fig:Morphological-Reconstruction-Principle"
 
 \end_inset
 
- shows several steps of a geodesic reconstruction by dilation on a pair
- of binary images.
+ shows several steps of a morphological reconstruction by dilation on a
+ pair of binary images.
  The mask image is shown in gray, and the marker image is shown in black
  on the first image.
  The reconstructed images at each step are shown in black.
- The markers propagates within the mask until they fill the chosen regions.
+ The markers propagates within the mask until an additional conditional
+ dilation will not modify the imag any more.
+ The result is the set of regions that contains the markers, with the same
+ shape as in the original image.
 \end_layout
 
 \begin_layout Subsection
@@ -1230,8 +1707,8 @@ Applications to binary images
 
 \begin_layout Standard
 By choosing the marker image, several operations may be automatized.
- For example, computing geodesic reconstruction with image of borders, and
- combining with original image will 
+ For example, computing morphological reconstruction with image of borders,
+ and combining with original image will 
 \series bold
 remove particles or regions touching the borders
 \series default
@@ -1247,7 +1724,7 @@ reference "fig:Geodesic-Reconstruction-Binary"
 \end_inset
 
 ).
- In a similar way, computing geodesic reconstruction by using the border
+ In a similar way, computing morphological reconstruction by using the border
  of the complement of the image makes it possible to 
 \series bold
 fill holes
@@ -1326,9 +1803,9 @@ name "subsec:Morphological-Reconstruction-Grayscale"
 \end_layout
 
 \begin_layout Standard
-Geodesic reconstructions can be applied to grayscale images.
+Morphological reconstructions can be applied to grayscale images.
  By manually choosing binary markers such that they overlay specific structures,
- and after applying a geodesic reconstruction by dilation, it is possible
+ and after applying a Morphological reconstruction by dilation, it is possible
  to obtain a grayscale image containing only the chosen structures (Figure
 \begin_inset space ~
 \end_inset
@@ -1386,8 +1863,8 @@ name "fig:Geodesic-Reconstruction-Grayscale"
 \end_inset
 
 Some applications of geodesic reconstruction on grayscale images.
- From left to right: original image with superimposed markers, result of
- geodesic reconstruction by dilation, result of border kill operation.
+ From left to right: original image with markers superimposed in red, result
+ of morphological reconstruction by dilation, result of border kill operation.
 \end_layout
 
 \end_inset
@@ -1422,7 +1899,7 @@ An example of application is presented in figure
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Geodesic-Reconstruction-Grayscale-3d"
+reference "fig:Morphological-Reconstruction-Grayscale-3d"
 
 \end_inset
 
@@ -1435,7 +1912,7 @@ s appearing as bright structures (Fig.
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Geodesic-Reconstruction-Grayscale-3d"
+reference "fig:Morphological-Reconstruction-Grayscale-3d"
 
 \end_inset
 
@@ -1448,7 +1925,7 @@ reference "fig:Geodesic-Reconstruction-Grayscale-3d"
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Geodesic-Reconstruction-Grayscale-3d"
+reference "fig:Morphological-Reconstruction-Grayscale-3d"
 
 \end_inset
 
@@ -1470,7 +1947,7 @@ clearing
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Geodesic-Reconstruction-Grayscale-3d"
+reference "fig:Morphological-Reconstruction-Grayscale-3d"
 
 \end_inset
 
@@ -1643,7 +2120,7 @@ status collapsed
 \begin_layout Plain Layout
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Geodesic-Reconstruction-Grayscale-3d"
+name "fig:Morphological-Reconstruction-Grayscale-3d"
 
 \end_inset
 
@@ -1679,7 +2156,7 @@ By computing the difference of the original image with the result of the
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Geodesic-Reconstruction-Grayscale-3d"
+reference "fig:Morphological-Reconstruction-Grayscale-3d"
 
 \end_inset
 
@@ -5248,8 +5725,8 @@ name "fig:Region-Adjacency-Graph"
 
 \end_inset
 
-Computation of the Region Adjacency Graph on a microscopy image of plant
- tissue.
+Computation of the Region Adjacency Graph (RAG) on a microscopy image of
+ plant tissue.
  Left: original image.
  Middle: result of watershed segmentation.
  Right: overlay of edges representing adjacent regions.
@@ -5332,6 +5809,59 @@ Binary and label image utilities
 \begin_layout Standard
 The MorphoLibJ library provides several utility functions for processing
  binary and label images.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+New organisation:
+\end_layout
+
+\begin_layout Enumerate
+Distance transforms
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Distance maps
+\end_layout
+
+\begin_layout Enumerate
+Geodesic Distance Transform
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Regions and labels selection
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+From value
+\end_layout
+
+\begin_layout Enumerate
+From border
+\end_layout
+
+\begin_layout Enumerate
+Attribute opening
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Label Edition plugin
+\end_layout
+
+\begin_layout Enumerate
+Label images representation
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -6168,17 +6698,7 @@ ImageProcessor result = algo.applyTo(image);
 \end_layout
 
 \begin_layout Standard
-In total, the library provides nearly two hundred classes and interfaces
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-, for around 37000 lines of code
-\end_layout
-
-\end_inset
-
-.
+In total, the library provides nearly two hundred classes and interfaces.
  
 \end_layout
 
@@ -6882,7 +7402,7 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="24" columns="10">
+<lyxtabular version="3" rows="25" columns="10">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top">
 <column alignment="center" valignment="top">
@@ -7188,7 +7708,7 @@ Morphological filters
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "chap:Morphological-Filters"
+reference "chap:Morphological-Filtering"
 
 \end_inset
 
@@ -7286,7 +7806,105 @@ Morphological filters (3D)
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "chap:Morphological-Filters"
+reference "chap:Morphological-Filtering"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Directional filters
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "sec:Directional-Filters"
 
 \end_inset
 
@@ -7301,7 +7919,7 @@ reference "chap:Morphological-Filters"
 \begin_inset Text
 
 \begin_layout Plain Layout
-Geodesic Reconstruction
+Morphological Reconstruction
 \end_layout
 
 \end_inset
@@ -7399,7 +8017,7 @@ reference "sec:Morphological-Reconstruction"
 \begin_inset Text
 
 \begin_layout Plain Layout
-Geodesic Reconstruction (3D)
+Morphological Reconstruction (3D)
 \end_layout
 
 \end_inset
