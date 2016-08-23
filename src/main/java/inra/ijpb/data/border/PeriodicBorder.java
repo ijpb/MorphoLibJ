@@ -8,6 +8,7 @@ import ij.process.ImageProcessor;
 /**
  * Periodic border that considers image is repeated indefinitely in all
  * directions.
+ * 
  * @author David Legland
  *
  */
@@ -31,6 +32,20 @@ public class PeriodicBorder implements BorderManager {
 		if (y < 0)
 			y += image.getHeight();
 		return this.image.get(x, y);
+	}
+
+	/** 
+	 * @see inra.ijpb.data.border.BorderManager#getf(int, int)
+	 */
+	@Override
+	public float getf(int x, int y) {
+		x = x % image.getWidth();
+		y = y % image.getHeight();
+		if (x < 0)
+			x += image.getWidth();
+		if (y < 0)
+			y += image.getHeight();
+		return this.image.getf(x, y);
 	}
 
 }
