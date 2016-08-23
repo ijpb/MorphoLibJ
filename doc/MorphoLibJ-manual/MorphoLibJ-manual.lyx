@@ -777,8 +777,10 @@ More complicated combinations of elementary operations can be used.
 \series bold
 morphological gradient
 \series default
-, computed as the difference of the result of a morphological dilation with
- the result of a morphological erosions, reveals the 
+ is obtained as the difference of the result of a morphological dilation
+ with the result of a morphological erosion, both computed with the same
+ structuring element.
+ It reveals the 
 \series bold
 boundaries
 \series default
@@ -891,6 +893,16 @@ Some examples of composed morphological filters.
 
 \begin_layout Section
 Directional filters
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Directional-Filters"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -1405,7 +1417,7 @@ morphological
 \begin_inset space ~
 \end_inset
 
-Gradient is defined as the difference of a morphological dilation and a
+gradient is defined as the difference of a morphological dilation and a
  morphological erosion with the same structuring element, and enhances edges
  of the original images.
 \end_layout
@@ -1588,7 +1600,7 @@ Principle
 \end_layout
 
 \begin_layout Standard
-The principle of geodesic reconstruction is to repeat 
+The principle of morphological reconstruction is to repeat 
 \series bold
 conditional dilations or erosions
 \series default
@@ -1651,13 +1663,13 @@ status open
 \begin_layout Plain Layout
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Geodesic-Reconstruction-Principle"
+name "fig:Morphological-Reconstruction-Principle"
 
 \end_inset
 
-Principle of the geodesic reconstruction algorithm.
- Original image in gray with marker superimposed in black, and result of
- conditional dilations with increasing sizes.
+Principle of the morphological reconstruction algorithm.
+ Original image is represented in gray, with marker and result of conditional
+ dilations with increasing sizes superimposed in black.
 \end_layout
 
 \end_inset
@@ -1674,16 +1686,19 @@ Principle of the geodesic reconstruction algorithm.
 The figure 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Geodesic-Reconstruction-Principle"
+reference "fig:Morphological-Reconstruction-Principle"
 
 \end_inset
 
- shows several steps of a geodesic reconstruction by dilation on a pair
- of binary images.
+ shows several steps of a morphological reconstruction by dilation on a
+ pair of binary images.
  The mask image is shown in gray, and the marker image is shown in black
  on the first image.
  The reconstructed images at each step are shown in black.
- The markers propagates within the mask until they fill the chosen regions.
+ The markers propagates within the mask until an additional conditional
+ dilation will not modify the imag any more.
+ The result is the set of regions that contains the markers, with the same
+ shape as in the original image.
 \end_layout
 
 \begin_layout Subsection
@@ -1692,8 +1707,8 @@ Applications to binary images
 
 \begin_layout Standard
 By choosing the marker image, several operations may be automatized.
- For example, computing geodesic reconstruction with image of borders, and
- combining with original image will 
+ For example, computing morphological reconstruction with image of borders,
+ and combining with original image will 
 \series bold
 remove particles or regions touching the borders
 \series default
@@ -1709,7 +1724,7 @@ reference "fig:Geodesic-Reconstruction-Binary"
 \end_inset
 
 ).
- In a similar way, computing geodesic reconstruction by using the border
+ In a similar way, computing morphological reconstruction by using the border
  of the complement of the image makes it possible to 
 \series bold
 fill holes
@@ -1788,9 +1803,9 @@ name "subsec:Morphological-Reconstruction-Grayscale"
 \end_layout
 
 \begin_layout Standard
-Geodesic reconstructions can be applied to grayscale images.
+Morphological reconstructions can be applied to grayscale images.
  By manually choosing binary markers such that they overlay specific structures,
- and after applying a geodesic reconstruction by dilation, it is possible
+ and after applying a Morphological reconstruction by dilation, it is possible
  to obtain a grayscale image containing only the chosen structures (Figure
 \begin_inset space ~
 \end_inset
@@ -1848,8 +1863,8 @@ name "fig:Geodesic-Reconstruction-Grayscale"
 \end_inset
 
 Some applications of geodesic reconstruction on grayscale images.
- From left to right: original image with superimposed markers, result of
- geodesic reconstruction by dilation, result of border kill operation.
+ From left to right: original image with markers superimposed in red, result
+ of morphological reconstruction by dilation, result of border kill operation.
 \end_layout
 
 \end_inset
@@ -1884,7 +1899,7 @@ An example of application is presented in figure
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Geodesic-Reconstruction-Grayscale-3d"
+reference "fig:Morphological-Reconstruction-Grayscale-3d"
 
 \end_inset
 
@@ -1897,7 +1912,7 @@ s appearing as bright structures (Fig.
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Geodesic-Reconstruction-Grayscale-3d"
+reference "fig:Morphological-Reconstruction-Grayscale-3d"
 
 \end_inset
 
@@ -1910,7 +1925,7 @@ reference "fig:Geodesic-Reconstruction-Grayscale-3d"
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Geodesic-Reconstruction-Grayscale-3d"
+reference "fig:Morphological-Reconstruction-Grayscale-3d"
 
 \end_inset
 
@@ -1932,7 +1947,7 @@ clearing
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Geodesic-Reconstruction-Grayscale-3d"
+reference "fig:Morphological-Reconstruction-Grayscale-3d"
 
 \end_inset
 
@@ -2105,7 +2120,7 @@ status collapsed
 \begin_layout Plain Layout
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Geodesic-Reconstruction-Grayscale-3d"
+name "fig:Morphological-Reconstruction-Grayscale-3d"
 
 \end_inset
 
@@ -2141,7 +2156,7 @@ By computing the difference of the original image with the result of the
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Geodesic-Reconstruction-Grayscale-3d"
+reference "fig:Morphological-Reconstruction-Grayscale-3d"
 
 \end_inset
 
@@ -5796,6 +5811,59 @@ The MorphoLibJ library provides several utility functions for processing
  binary and label images.
 \end_layout
 
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+New organisation:
+\end_layout
+
+\begin_layout Enumerate
+Distance transforms
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Distance maps
+\end_layout
+
+\begin_layout Enumerate
+Geodesic Distance Transform
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Regions and labels selection
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+From value
+\end_layout
+
+\begin_layout Enumerate
+From border
+\end_layout
+
+\begin_layout Enumerate
+Attribute opening
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Label Edition plugin
+\end_layout
+
+\begin_layout Enumerate
+Label images representation
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 Utilities for binary images
 \end_layout
@@ -6630,17 +6698,7 @@ ImageProcessor result = algo.applyTo(image);
 \end_layout
 
 \begin_layout Standard
-In total, the library provides nearly two hundred classes and interfaces
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-, for around 37000 lines of code
-\end_layout
-
-\end_inset
-
-.
+In total, the library provides nearly two hundred classes and interfaces.
  
 \end_layout
 
@@ -7344,7 +7402,7 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="24" columns="10">
+<lyxtabular version="3" rows="25" columns="10">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top">
 <column alignment="center" valignment="top">
@@ -7759,11 +7817,109 @@ reference "chap:Morphological-Filtering"
 </cell>
 </row>
 <row>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Directional filters
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "sec:Directional-Filters"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
 <cell alignment="left" valignment="top" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Geodesic Reconstruction
+Morphological Reconstruction
 \end_layout
 
 \end_inset
@@ -7861,7 +8017,7 @@ reference "sec:Morphological-Reconstruction"
 \begin_inset Text
 
 \begin_layout Plain Layout
-Geodesic Reconstruction (3D)
+Morphological Reconstruction (3D)
 \end_layout
 
 \end_inset
