@@ -164,7 +164,7 @@ public class OrientedLineStrel extends AbstractStrel implements Strel
 				// iterate on neighbors
 				for (int i = 0; i < shifts.length; i++) 
 				{
-					double value = bm.get(x + shifts[i][0], y + shifts[i][1]);
+					double value = bm.getf(x + shifts[i][0], y + shifts[i][1]);
 					res = Math.max(res, value);
 				}
 				
@@ -195,7 +195,7 @@ public class OrientedLineStrel extends AbstractStrel implements Strel
 				// iterate on neighbors
 				for (int i = 0; i < shifts.length; i++)
 				{
-					double value = bm.get(x + shifts[i][0], y + shifts[i][1]);
+					double value = bm.getf(x + shifts[i][0], y + shifts[i][1]);
 					res = Math.min(res, value);
 				}
 				

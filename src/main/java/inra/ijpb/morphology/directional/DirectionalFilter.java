@@ -299,10 +299,10 @@ public class DirectionalFilter extends AlgoStub
 			{
 				for (int x = 0; x < sizeX; x++)
 				{
-					int value = oriented.get(x, y);
-					if (value * sign > result.get(x, y) * sign)
+					float value = oriented.getf(x, y);
+					if (value * sign > result.getf(x, y) * sign)
 					{
-						result.set(x, y, value);
+						result.setf(x, y, value);
 					}
 				}
 			}
@@ -338,7 +338,7 @@ public class DirectionalFilter extends AlgoStub
 				
 				// iterate on neighbors
 				for (int i = 0; i < shifts.length; i++) {
-					accum += bm.get(x + shifts[i][0], y + shifts[i][1]);
+					accum += bm.getf(x + shifts[i][0], y + shifts[i][1]);
 				}
 				
 				// compute result
@@ -372,7 +372,7 @@ public class DirectionalFilter extends AlgoStub
 				// iterate on neighbors
 				for (int i = 0; i < shifts.length; i++)
 				{
-					buffer[i] = bm.get(x + shifts[i][0], y + shifts[i][1]);
+					buffer[i] = bm.getf(x + shifts[i][0], y + shifts[i][1]);
 				}
 
 				// compute result
@@ -406,7 +406,8 @@ public class DirectionalFilter extends AlgoStub
 		{
 			// Odd number of elements: return the middle one.
 			return values[middle];
-		} else
+		}
+		else
 		{
 			// Even number: return average of middle two
 			return (values[middle - 1] + values[middle]) / 2.0;
