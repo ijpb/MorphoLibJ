@@ -280,6 +280,8 @@ public class DirectionalFilter extends AlgoStub
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		
+		fireStatusChanged(this, "Directional Filter...");
+
 		// Iterate over the set of directions
 		for (int i = 0; i < nDirections; i++)
 		{
