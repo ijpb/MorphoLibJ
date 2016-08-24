@@ -32,7 +32,7 @@ import inra.ijpb.util.IJUtils;
  *
  * @author Ignacio Arganda-Carreras (ignacio.arganda@ehu.eus)
  */
-public class InteractiveGeodesicReconstruction implements ExtendedPlugInFilter,
+public class InteractiveMorphologicalReconstruction implements ExtendedPlugInFilter,
 DialogListener
 {
 	/** Apparently, it's better to store flags in plugin */

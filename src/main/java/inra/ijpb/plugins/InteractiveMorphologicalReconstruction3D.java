@@ -30,7 +30,7 @@ import inra.ijpb.util.IJUtils;
  *
  * @author Ignacio Arganda-Carreras (ignacio.arganda@ehu.eus)
  */
-public class InteractiveGeodesicReconstruction3D implements PlugIn
+public class InteractiveMorphologicalReconstruction3D implements PlugIn
 {
 	private static Conn3D connectivity = Conn3D.C6;
 	private static Operation operation = Operation.BY_DILATION;
