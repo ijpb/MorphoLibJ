@@ -21,7 +21,7 @@ import inra.ijpb.util.IJUtils;
  * reconstruction, an the mask image, used to constrain the reconstruction.
  * The connectivity can also be specified.
  */
-public class GeodesicReconstruction3DPlugin implements PlugIn {
+public class MorphologicalReconstruction3DPlugin implements PlugIn {
 
 	/**
 	 * A pre-defined set of operations for geodesic reconstruction.
