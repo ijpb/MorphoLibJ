@@ -87,19 +87,7 @@ public class Images3D
 	 */
 	public static final double[] findMinAndMax( ImagePlus image )
 	{
-		// Adjust min and max values to display
-		double min = 0;
-		double max = 0;
-		for( int slice=1; slice<=image.getImageStackSize(); slice++ )			
-		{
-			ImageProcessor ip = image.getImageStack().getProcessor(slice);
-			ip.resetMinAndMax();
-			if( max < ip.getMax() )
-				max = ip.getMax();
-			if( min > ip.getMin() )
-				min = ip.getMin();
-		}
-		return new double[]{ min, max };				
+		return findMinAndMax( image.getImageStack() );
 	}
 	/**
 	 * Find minimum and maximum value of input image
@@ -110,16 +98,21 @@ public class Images3D
 	public static final double[] findMinAndMax( ImageStack image )
 	{
 		// Adjust min and max values to display
-		double min = 0;
-		double max = 0;
+		double min = Double.MAX_VALUE;
+		double max = Double.MIN_VALUE;
 		for( int slice=1; slice<=image.getSize(); slice++ )
 		{
 			ImageProcessor ip = image.getProcessor(slice);
-			ip.resetMinAndMax();
-			if( max < ip.getMax() )
-				max = ip.getMax();
-			if( min > ip.getMin() )
-				min = ip.getMin();
+
+			for( int x = 0; x < ip.getWidth(); x++ )
+				for( int y = 0; y < ip.getHeight(); y++ )
+				{
+					final float val = ip.getf( x, y );
+					if( max < val )
+						max = val;
+					if( min > val )
+						min = val;
+				}
 		}
 		return new double[]{ min, max };
 	}
