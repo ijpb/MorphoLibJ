@@ -126,7 +126,17 @@ public class GeodesicDiameterPlugin implements PlugIn
 		if (validPaths)
 		{
 			// compute the path that is associated to each label
-			Map<Integer, List<Point>> pathMap = computePaths(labelImage, weights.getFloatWeights());
+			Map<Integer, List<Point>> pathMap = null;
+			try
+			{
+				pathMap = computePaths(labelImage, weights.getFloatWeights());
+			}
+			catch (Exception ex)
+			{
+				IJ.error("Geodesic Diameter Error", 
+						"Could not compute geodesic paths.\nTry using Borgefors weights.");
+				return;
+			}
 			
 			// Check if results must be displayed on an image
 			if (overlayPaths) 
@@ -141,17 +151,6 @@ public class GeodesicDiameterPlugin implements PlugIn
 				createPathRois(labelPlus, pathMap);
 			}
 		}
-
-//		// Check if results must be displayed on an image
-//		if (gd.getNextBoolean() && validPaths) 
-//		{
-//			// New image for displaying geometric overlays
-//			ImagePlus resultImage = WindowManager.getImage(resultImageIndex+1);
-//			
-//			Map<Integer, List<Point>> pathMap = computePaths(labelImage, weights.getFloatWeights());
-//			drawPaths(resultImage, pathMap);
-//		}
-			
 		IJ.showStatus(String.format("Elapsed time: %8.2f ms", elapsedTime));	
 	}
 
