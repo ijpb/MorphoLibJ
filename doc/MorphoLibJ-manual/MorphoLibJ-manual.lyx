@@ -352,6 +352,18 @@ http://ijpb.github.io/MorphoLibJ/javadoc/
 \end_inset
 
 .
+ 
+\end_layout
+
+\begin_layout Standard
+The reference publication for MorphoLibJ is 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Legland_2016_bmc"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Chapter
@@ -1547,6 +1559,16 @@ Planar images
 \end_layout
 
 \begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "op:Morphological-Filters"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 Morphological filters for planar images are available 
 \begin_inset Quotes eld
 \end_inset
@@ -1654,6 +1676,16 @@ line with angle of 0, 90, 45 or 135 degrees
 \end_layout
 
 \begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "op:Morphological-Filters-3D"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 Morphological filters for 3D images are available 
 \begin_inset Quotes eld
 \end_inset
@@ -1670,6 +1702,66 @@ Morphological filters (3D)
  Planar structuring elements can be used (the operation is simply repeated
  on each slice), as well as a cubic or spherical structuring element.
  For most structuring elements, the size can be chosen for each direction.
+\end_layout
+
+\begin_layout Subsection
+Directional Filters
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "op:Directional-Filters"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Directional filtering is available from 
+\begin_inset Quotes eld
+\end_inset
+
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
+Directional Filtering
+\begin_inset Quotes erd
+\end_inset
+
+.
+ It requires planar image.
+ 
+\end_layout
+
+\begin_layout Standard
+The parameters are :
+\end_layout
+
+\begin_layout Description
+Type specify how to combine the results for each oriented filter
+\end_layout
+
+\begin_layout Description
+Operation the operation to apply using each oriented structuring element
+\end_layout
+
+\begin_layout Description
+Line
+\begin_inset space ~
+\end_inset
+
+Length the approximated length of the structuring element.
+ 
+\end_layout
+
+\begin_layout Description
+Direction
+\begin_inset space ~
+\end_inset
+
+Number the number of oriented structuring elements to consider.
+ To be increased if the length of line is large.
 \end_layout
 
 \begin_layout Chapter
@@ -6480,6 +6572,11 @@ Label combines a label image with a results table, and creates a new image
 Region and labels selection
 \end_layout
 
+\begin_layout Standard
+The morphoLibJ library offers several tools for automatically select binary
+ regions or labels based on size or position criteria.
+\end_layout
+
 \begin_layout Subsection
 Binary images
 \end_layout
@@ -8009,7 +8106,7 @@ Morphological filters
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "chap:Morphological-Filtering"
+reference "op:Morphological-Filters"
 
 \end_inset
 
@@ -8107,7 +8204,7 @@ Morphological filters (3D)
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "chap:Morphological-Filtering"
+reference "op:Morphological-Filters-3D"
 
 \end_inset
 
@@ -8205,7 +8302,7 @@ Directional filters
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "sec:Directional-Filters"
+reference "op:Directional-Filters"
 
 \end_inset
 
