@@ -530,15 +530,88 @@ structuring element
 \end_layout
 
 \begin_layout Section
-Common morphologicals filters
+Principles
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Note
+The original idea was to define a methodology to describe shapes by using
+ another shape as test probe 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Serra_1982,Serra_1992_cssp"
+
+\end_inset
+
+.
+ The most basic morphological filters are the 
+\series bold
+morphological dilation
+\series default
+ and the 
+\series bold
+morphological erosion
+\series default
+.
+ The principle of morphological dilation is to test for each point of the
+ plane, if the structuring element centred on this point 
+\series bold
+intersects
+\series default
+ the structure of interest (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Principle-Dilation-Erosion"
+
+\end_inset
+
+).
+ It results in a set larger than the original set.
+ 
+\end_layout
+
+\begin_layout Standard
+The principle of morphological erosion is to test for each point of the
+ plane if the structuring element centred on this point 
+\series bold
+is contained
+\series default
+ within the original set.
+ It results in a set smaller than original set.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
 status open
 
 \begin_layout Plain Layout
-TODO: add some illustration using binary sets 
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/binarySet/binary-set.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Binary set X and structuring element B
 \end_layout
 
 \end_inset
@@ -546,8 +619,115 @@ TODO: add some illustration using binary sets
 
 \end_layout
 
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/binarySet/binary-dilation-principle.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Dilation of X by B
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/binarySet/binary-erosion-principle.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Erosion of X by B
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Principle-Dilation-Erosion"
+
+\end_inset
+
+Principle of morphological dilation and erosion on a binary set, using a
+ disk-shaped structuring element.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Morphological dilation and erosion change the size and the resulting set.
+ It may also change its topology: after a dilation, components may merge
+ and holes be filled.
+ After an erosion, components may disappear, or components be separated
+ into several parts.
+\end_layout
+
+\begin_layout Section
+Grayscale morphological filters
+\end_layout
+
 \begin_layout Subsection
-Erosion and dilation
+Grayscale erosion and dilation
 \end_layout
 
 \begin_layout Standard
@@ -561,18 +741,11 @@ name "subsec:Erosion-Dilation"
 \end_layout
 
 \begin_layout Standard
-The most basic morphological filters are the 
-\series bold
-morphological dilation
-\series default
- and the 
-\series bold
-morphological erosion
-\series default
-.
- The morphological dilation computes for each pixel the maximum within its
- neighborhood (defined by the structuring element), whereas the morphological
- erosion considers the minimum value within the neighborhood (Fig
+Morphological erosion and dilation may also be applied on grayscale images.
+ In that case, the morphological dilation computes for each pixel the maximum
+ within its neighborhood (defined by the structuring element), whereas the
+ morphological erosion considers the minimum value within the neighborhood
+ (Fig
 \begin_inset space ~
 \end_inset
 
@@ -645,8 +818,8 @@ Some examples of morphological filters on a grayscale image.
 \begin_layout Standard
 Applying a  dilation or an erosion changes the size of the structures in
  the image: the grains in the result of the dilated image are larger.
- Morphological erosion can also be used on binary images to help separating
- touching particles.
+ As for binary sets, these operations may also merge, separate, or make
+ disappear some components of the image.
 \end_layout
 
 \begin_layout Subsection
@@ -5333,7 +5506,7 @@ Most MorphoLibJ plugins consider the current image as input, that must be
  result of a connected components labeling, see section 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sec:Binary-Images"
+reference "subsec:Connected-Components-Labeling"
 
 \end_inset
 
@@ -5807,86 +5980,44 @@ Binary and label image utilities
 \end_layout
 
 \begin_layout Standard
-The MorphoLibJ library provides several utility functions for processing
- binary and label images.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-New organisation:
-\end_layout
-
-\begin_layout Enumerate
-Distance transforms
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-Distance maps
-\end_layout
-
-\begin_layout Enumerate
-Geodesic Distance Transform
-\end_layout
-
-\end_deeper
-\begin_layout Enumerate
-Regions and labels selection
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-From value
-\end_layout
-
-\begin_layout Enumerate
-From border
-\end_layout
-
-\begin_layout Enumerate
-Attribute opening
-\end_layout
-
-\end_deeper
-\begin_layout Enumerate
-Label Edition plugin
-\end_layout
-
-\begin_layout Enumerate
-Label images representation
-\end_layout
-
-\end_inset
-
-
+The MorphoLibJ library provides several utility functions for the processing
+ and the managment of binary and label images.
 \end_layout
 
 \begin_layout Section
-Utilities for binary images
+Distances for binary images
+\end_layout
+
+\begin_layout Subsection
+Distance transform
 \end_layout
 
 \begin_layout Standard
-\begin_inset CommandInset label
-LatexCommand label
-name "sec:Binary-Images"
+When analyzing images, it is often necessary to compute distances to a particula
+r structure or position.
+ A convenient operator for binary images is the
+\series bold
+ distance transform
+\series default
+.
+ Its principle is to compute, for each foreground pixel, the distance to
+ the nearest background pixel (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "fig:Distance-Transform"
 
 \end_inset
 
-Some functions specific for the processing of binary images.
- The plugins can be found in the 
-\begin_inset Quotes eld
-\end_inset
-
-Plugins\SpecialChar menuseparator
-MorphoLibJ\SpecialChar menuseparator
-Binary
-\begin_inset Quotes erd
-\end_inset
-
- menu.
+).
+ The result is commonly referred to as 
+\series bold
+Distance Map
+\series default
+.
 \end_layout
 
 \begin_layout Standard
@@ -5905,13 +6036,6 @@ status open
 
  
 \begin_inset Graphics
-	filename images/grains/grains-binary-crop-lbl-ext.png
-	width 31text%
-
-\end_inset
-
- 
-\begin_inset Graphics
 	filename images/grains/grains-binary-crop-inv-dist-ext.png
 	width 31text%
 
@@ -5924,8 +6048,14 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Binary image, result of connected components labeling, and computation of
- distance map on the complement of binary image.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Distance-Transform"
+
+\end_inset
+
+Binary image, and result of computation of distance map on the complement
+ of binary image.
 \end_layout
 
 \end_inset
@@ -5938,17 +6068,10 @@ Binary image, result of connected components labeling, and computation of
 
 \end_layout
 
-\begin_layout Description
-Connected
-\begin_inset space ~
-\end_inset
-
-Components
-\begin_inset space ~
-\end_inset
-
-Labeling transforms the binary image into a label image by assigning a specific
- number (label) to each connected component
+\begin_layout Standard
+Several methods exist for computing distrance maps.
+ The MorphoLibJ library implements distance transforms based on chamfer
+ distances, that approximate euclidean distances but are simplier to compute.
 \end_layout
 
 \begin_layout Description
@@ -5986,6 +6109,35 @@ Map
 
 3D computes an approximate distance map from a 3D binary image between each
  foreground voxel to the nearest background voxel
+\end_layout
+
+\begin_layout Subsection
+Geodesic distance transform
+\end_layout
+
+\begin_layout Standard
+In some cases it may be useful to restrict the propagation of distances
+ to a specific region or mask.
+ For example, one may be interested in the distance between two points in
+ a vasculature network, while staying within the network.
+ The 
+\series bold
+geodesic distance transform
+\series default
+ consists in computing distance from a given binary marker, while constraining
+ the propagation of the distance within a binary mask.
+ An illustration is given in Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "fig:Geodesic-Distance-Map"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -6099,6 +6251,249 @@ Map computes the geodesic distance between each foreground pixel of a the
  represented by the mask image.
 \end_layout
 
+\begin_layout Section
+Label images
+\end_layout
+
+\begin_layout Standard
+When several structures or components are present within an image, it may
+ be more convenient to work with label images.
+ Each pixel or voxel of a label image corresponds to the integer index of
+ the particle it belongs to.
+ The value 0 is assumed to correspond to the background.
+ The number of labels that can be represented depends on the image type:
+ 255 for byte images, 65535 for short images...
+\end_layout
+
+\begin_layout Standard
+Label images can be represented either using shades of gray, or using color
+ maps to better distinguish the different regions.
+ 
+\end_layout
+
+\begin_layout Subsection
+Connected component labeling
+\end_layout
+
+\begin_layout Description
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Connected-Components-Labeling"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The different structures within a binary images can be labeled by using
+ a connected 
+\series bold
+component labeling algorithm
+\series default
+.
+ Each label will correspond to a set of connected pixels or voxels.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/grains/grains-binary-crop-ext.png
+	width 31text%
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/grains/grains-binary-crop-lbl-ext.png
+	width 31text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Binary image, and result of connected components labeling.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Different connectivities may be chosen.
+ For planar images, the most current ones are the 4-connectivity, that consider
+ only orthogonal neighbors of a given pixel, and the 8-connectivity, that
+ also considers the diagonals.
+ For 3D images, the 6-connectivity considers only orthogonal neighbors in
+ the thress main directions, whereas the 26-connectivity considers all the
+ direct neighbors of a given voxel.
+\end_layout
+
+\begin_layout Description
+Connected
+\begin_inset space ~
+\end_inset
+
+Components
+\begin_inset space ~
+\end_inset
+
+Labeling 
+\begin_inset CommandInset label
+LatexCommand label
+name "op:Connected-Components-Labeling"
+
+\end_inset
+
+transforms the binary image into a label image by assigning a specific number
+ (label) to each connected component
+\end_layout
+
+\begin_layout Subsection
+Label image representation
+\end_layout
+
+\begin_layout Standard
+Several plugins allow to control the appearance of label images.
+ It is possible to choose a given color map, or to transform a label image
+ into a color image.
+ In both cases, the background color can be specified, and the color order
+ can be shuffled to facilitate the discriination of neighbor regions with
+ similar labels.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/grains/grains-binary-crop-lbl-ext.png
+	width 4cm
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/grains/grains-binary-crop-1-lbl-Elong.png
+	width 4cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Assign result of a measurement to a label image.
+ In this example, the elongation is represented using a color code, between
+ dark purple (circular) to yellow (very elongated).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Set
+\begin_inset space ~
+\end_inset
+
+Label
+\begin_inset space ~
+\end_inset
+
+Map 
+\begin_inset CommandInset label
+LatexCommand label
+name "op:Set-Label-Map"
+
+\end_inset
+
+allows to choose the color map used to display a label image.
+ In particular, shuffling the color map and/or choosing a specific color
+ for background allows better visualization than with only gray levels.
+\end_layout
+
+\begin_layout Description
+Label
+\begin_inset space ~
+\end_inset
+
+To
+\begin_inset space ~
+\end_inset
+
+RGB converts a label image to true RGB image.
+ Similar to ImageJ native conversion, but this plugin avoids confusion between
+ background pixels and labels with small values.
+\end_layout
+
+\begin_layout Description
+Assign
+\begin_inset space ~
+\end_inset
+
+Measure
+\begin_inset space ~
+\end_inset
+
+To
+\begin_inset space ~
+\end_inset
+
+Label combines a label image with a results table, and creates a new image
+ for which each pixel/voxel is assigned the measurement value corresponding
+ to the label it belongs to.
+\end_layout
+
+\begin_layout Section
+Region and labels selection
+\end_layout
+
+\begin_layout Subsection
+Binary images
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Binary-Images-Selection"
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Standard
 \begin_inset Float figure
 wide false
@@ -6201,26 +6596,18 @@ Algorithms work for both 2D or 3D images.
  3D) images.
 \end_layout
 
-\begin_layout Section
-Utilities for label images
+\begin_layout Subsection
+Label images
 \end_layout
 
 \begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
-name "sec:Label-Images"
+name "subsec:Label-Images-Selection"
 
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
-Some functions are specific for the processing of label images, in which
- the pixel/voxel value is used to identify the particle it belongs to.
- The value 0 is assumed to correspond to the background.
- The number of labels that can be represented depends on the image type:
- 255 for byte images, 65535 for short images...
 \end_layout
 
 \begin_layout Standard
@@ -6386,97 +6773,11 @@ Opening computes the size (area in 2D, volume in 3D) of each region, and
  remove all labels whose size is below the value specified by the user.
 \end_layout
 
-\begin_layout Description
-Assign
-\begin_inset space ~
-\end_inset
-
-Measure
-\begin_inset space ~
-\end_inset
-
-To
-\begin_inset space ~
-\end_inset
-
-Label combines a label image with a results table, and creates a new image
- for which each pixel/voxel is assigned the measurement value corresponding
- to the label it belongs to.
-\end_layout
-
-\begin_layout Description
-Set
-\begin_inset space ~
-\end_inset
-
-Label
-\begin_inset space ~
-\end_inset
-
-Map allows to choose the color map used to display a label image.
- In particular, shuffling the color map and/or choosing a specific color
- for background allows better visualization than with only gray levels.
-\end_layout
-
-\begin_layout Description
-Label
-\begin_inset space ~
-\end_inset
-
-To
-\begin_inset space ~
-\end_inset
-
-RGB converts a label image to true RGB image.
- Similar to ImageJ native conversion, but this plugin avoids confusion between
- background pixels and labels with small values.
+\begin_layout Section
+Label Edition plugin
 \end_layout
 
 \begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename images/grains/grains-binary-crop-lbl-ext.png
-	width 4cm
-
-\end_inset
-
- 
-\begin_inset Graphics
-	filename images/grains/grains-binary-crop-1-lbl-Elong.png
-	width 4cm
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Assign result of a measurement to a label image.
- In this example, the elongation is represented using a color code, between
- dark purple (circular) to yellow (very elongated).
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Section
-Label Edition plugin
 \begin_inset CommandInset label
 LatexCommand label
 name "sec:Label-Edition-plugin"
@@ -7317,7 +7618,7 @@ From left to right: input label image, script output, smoothed label surfaces
 
 \begin_layout Standard
 \begin_inset Note Note
-status collapsed
+status open
 
 \begin_layout Chapter
 Applications
@@ -10189,7 +10490,7 @@ n.a.
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "sec:Binary-Images"
+reference "subsec:Connected-Components-Labeling"
 
 \end_inset
 
@@ -10581,7 +10882,7 @@ n.a.
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "sec:Binary-Images"
+reference "subsec:Binary-Images-Selection"
 
 \end_inset
 
@@ -10679,7 +10980,7 @@ n.a.
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "sec:Binary-Images"
+reference "subsec:Binary-Images-Selection"
 
 \end_inset
 
@@ -11067,7 +11368,7 @@ n.a.
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "op:Crop-Label"
+reference "op:Set-Label-Map"
 
 \end_inset
 
@@ -11165,7 +11466,105 @@ n.a.
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "op:Crop-Label"
+reference "op:Set-Label-Map"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Assign Measure To Label
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "op:Set-Label-Map"
 
 \end_inset
 
@@ -11263,7 +11662,7 @@ n.a.
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "sec:Label-Images"
+reference "subsec:Label-Images-Selection"
 
 \end_inset
 
@@ -11361,7 +11760,7 @@ n.a.
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "sec:Label-Images"
+reference "subsec:Label-Images-Selection"
 
 \end_inset
 
@@ -11459,7 +11858,7 @@ n.a.
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "sec:Label-Images"
+reference "subsec:Label-Images-Selection"
 
 \end_inset
 
@@ -11557,7 +11956,7 @@ n.a.
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "op:Crop-Label"
+reference "subsec:Label-Images-Selection"
 
 \end_inset
 
@@ -11965,104 +12364,6 @@ reference "op:Crop-Label"
 
 \begin_layout Plain Layout
 Label Size Opening
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-*
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-*
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-*
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-*
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-n.a.
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-*
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-*
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-*
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset CommandInset ref
-LatexCommand pageref
-reference "op:Crop-Label"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Assign Measure To Label
 \end_layout
 
 \end_inset
