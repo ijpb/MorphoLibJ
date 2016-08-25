@@ -1159,7 +1159,7 @@ Original image
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -1176,7 +1176,7 @@ status collapsed
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Result of gaussian filter
+Gaussian filtering
 \end_layout
 
 \end_inset
@@ -1190,7 +1190,7 @@ Result of gaussian filter
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -1207,7 +1207,7 @@ status collapsed
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Result of median filter
+Median filtering
 \end_layout
 
 \end_inset
@@ -1221,7 +1221,7 @@ Result of median filter
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -1238,7 +1238,7 @@ status collapsed
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Result of directional filtering
+Directional filtering
 \end_layout
 
 \end_inset
@@ -1271,10 +1271,10 @@ key "Legland2009"
 \end_inset
 
 .
- The application of gaussian filter (b) or median filter (c) results in
+ The application of a gaussian filter (b) or median filter (c) results in
  noise reduction, but also in a loss of the signal along the cell walls.
  The directional filtering (d) better preserves the thickness of the structure.
- Here, 32 orientation of line with length 25 were used.
+ 
 \end_layout
 
 \end_inset
@@ -1524,7 +1524,8 @@ reference "fig:Directional-Filtering"
 \end_inset
 
 -d show the results obtained when combining two or four directions.
- This results in the enhancement of image while preserving the thickness
+ Here, 32 orientation of line with length 25 were used.
+ This results in the enhancement of the image while preserving the thickness
  of the bright structures.
 \end_layout
 
@@ -6126,7 +6127,7 @@ r structure or position.
 
 
 \begin_inset CommandInset ref
-LatexCommand pageref
+LatexCommand ref
 reference "fig:Distance-Transform"
 
 \end_inset
@@ -6148,15 +6149,15 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename images/grains/grains-binary-crop-ext.png
-	width 31text%
+	filename images/leaf/IJ-leaf-bin.tif
+	width 45text%
 
 \end_inset
 
  
 \begin_inset Graphics
-	filename images/grains/grains-binary-crop-inv-dist-ext.png
-	width 31text%
+	filename images/leaf/IJ-leaf-bin-dist_FireRGB.png
+	width 45text%
 
 \end_inset
 
@@ -6173,8 +6174,7 @@ name "fig:Distance-Transform"
 
 \end_inset
 
-Binary image, and result of computation of distance map on the complement
- of binary image.
+Binary image, and result of computation of the distance transform.
 \end_layout
 
 \end_inset
@@ -6251,7 +6251,7 @@ geodesic distance transform
 
 
 \begin_inset CommandInset ref
-LatexCommand pageref
+LatexCommand ref
 reference "fig:Geodesic-Distance-Map"
 
 \end_inset
@@ -11287,7 +11287,7 @@ n.a.
 \begin_inset Text
 
 \begin_layout Plain Layout
-*
+
 \end_layout
 
 \end_inset
@@ -11679,7 +11679,7 @@ n.a.
 \begin_inset Text
 
 \begin_layout Plain Layout
-*
+
 \end_layout
 
 \end_inset
