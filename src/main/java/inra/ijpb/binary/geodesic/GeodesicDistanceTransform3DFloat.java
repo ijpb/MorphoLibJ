@@ -10,6 +10,8 @@ import inra.ijpb.data.image.Image3D;
 import inra.ijpb.data.image.Images3D;
 
 /**
+ * Computation of geodesic distance transform for 3D images, using floating point computation.
+ * 
  * @author dlegland
  *
  */
@@ -140,13 +142,18 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 //		// Compute max value within the mask
 //		fireStatusChanged(this, "Normalize display"); 
 //		float maxVal = 0;
-//		for (int j = 0; j < height; j++) 
+//		for (int z = 0; z < sizeZ; z++) 
 //		{
-//			for (int i = 0; i < width; i++)
+//			for (int y = 0; y < sizeY; y++) 
 //			{
-//				float val = array[i][j];
-//				if (Float.isFinite(val))
-//					maxVal = Math.max(maxVal, val);
+//				for (int x = 0; x < sizeX; x++)
+//				{
+//					float val = (float) result.getValue(x, y, z);
+//					if (Float.isFinite(val))
+//					{
+//						maxVal = Math.max(maxVal, val);
+//					}
+//				}
 //			}
 //		}
 		
@@ -229,6 +236,8 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 					}
 				}
 			}
+			
+			fireProgressChanged(this, 1, 1);
 		}
 	}
 
@@ -301,5 +310,7 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 				}
 			}
 		}	
+		
+		fireProgressChanged(this, 1, 1);
 	}
 }
