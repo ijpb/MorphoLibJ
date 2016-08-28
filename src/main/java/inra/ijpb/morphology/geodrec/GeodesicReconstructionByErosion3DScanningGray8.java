@@ -6,6 +6,7 @@ package inra.ijpb.morphology.geodrec;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import ij.ImageStack;
+import inra.ijpb.data.image.Images3D;
 
 
 /**
@@ -79,7 +80,7 @@ public class GeodesicReconstructionByErosion3DScanningGray8 extends GeodesicReco
 		this.sizeX 	= marker.getWidth();
 		this.sizeY 	= marker.getHeight();
 		this.sizeZ 	= marker.getSize();
-		if (sizeX != mask.getWidth() || sizeY != mask.getHeight() || sizeZ != mask.getSize()) 
+		if (!Images3D.isSameSize(marker, mask)) 
 		{
 			throw new IllegalArgumentException("Marker and Mask images must have the same size");
 		}
@@ -155,8 +156,8 @@ public class GeodesicReconstructionByErosion3DScanningGray8 extends GeodesicReco
 	 */
 	private void initializeResult()
 	{
-		// Create result image the same size as marker image
-		this.result = ImageStack.create(sizeX, sizeY, sizeZ, marker.getBitDepth());
+		// Create result image the same size as the mask image
+		this.result = ImageStack.create(sizeX, sizeY, sizeZ, mask.getBitDepth());
 
 		// Data access objects
 		Object[] stack = result.getImageArray();
@@ -191,8 +192,8 @@ public class GeodesicReconstructionByErosion3DScanningGray8 extends GeodesicReco
 	 */
 	private void initializeResult( ImageStack binaryMask ) 
 	{
-		// Create result image the same size as marker image
-		this.result = ImageStack.create(sizeX, sizeY, sizeZ, marker.getBitDepth());
+		// Create result image the same size as the mask image
+		this.result = ImageStack.create(sizeX, sizeY, sizeZ, mask.getBitDepth());
 
 		// Data access objects
 		Object[] stack = result.getImageArray();
@@ -687,7 +688,7 @@ public class GeodesicReconstructionByErosion3DScanningGray8 extends GeodesicReco
 		this.sizeX 	= marker.getWidth();
 		this.sizeY 	= marker.getHeight();
 		this.sizeZ 	= marker.getSize();
-		if (sizeX != mask.getWidth() || sizeY != mask.getHeight() || sizeZ != mask.getSize()) 
+		if (!Images3D.isSameSize(marker, mask)) 
 		{
 			throw new IllegalArgumentException("Marker and Mask images must have the same size");
 		}

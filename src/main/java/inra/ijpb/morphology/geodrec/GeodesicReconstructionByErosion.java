@@ -87,8 +87,8 @@ public class GeodesicReconstructionByErosion extends GeodesicReconstructionAlgoS
 							+ connectivity);
 		}
 
-		// Create result image the same size as marker image
-		this.result = this.marker.createProcessor(width, height);
+		// Create result image the same size as the mask and marker images
+		this.result = this.mask.createProcessor(width, height);
 	
 		// Count the number of iterations for eventually displaying progress
 		int iter = 0;

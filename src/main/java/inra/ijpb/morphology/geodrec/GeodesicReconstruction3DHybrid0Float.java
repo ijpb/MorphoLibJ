@@ -7,6 +7,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import ij.ImageStack;
 import inra.ijpb.data.Cursor3D;
+import inra.ijpb.data.image.Images3D;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -20,7 +21,7 @@ import java.util.Deque;
  * 
  * <p>
  * This version first performs forward scan, then performs a backward scan that
- * also add lower-right neighbors to the queue, and finally processes pixels in
+ * also add lower-right neighbors to the queue, and finally processes voxels in
  * the queue. It is intended to work on float 3D images, using 6 or 26
  * adjacencies.
  * </p>
@@ -136,14 +137,14 @@ public class GeodesicReconstruction3DHybrid0Float extends GeodesicReconstruction
 		this.maskStack = mask;
 
 		// convert to image processors
-		this.markerSlices = getFloatProcessors(marker);
-		this.maskSlices = getFloatProcessors(mask);
+		this.markerSlices = Images3D.getFloatArrays(marker);
+		this.maskSlices = Images3D.getFloatArrays(mask);
 		
 		// Check sizes are consistent
 		this.sizeX 	= marker.getWidth();
 		this.sizeY 	= marker.getHeight();
 		this.sizeZ 	= marker.getSize();
-		if (sizeX != mask.getWidth() || sizeY != mask.getHeight() || sizeZ != mask.getSize()) 
+		if (!Images3D.isSameSize(marker, mask)) 
 		{
 			throw new IllegalArgumentException("Marker and Mask images must have the same size");
 		}
@@ -230,8 +231,8 @@ public class GeodesicReconstruction3DHybrid0Float extends GeodesicReconstruction
 	private void initializeResult() 
 	{
 		// Create result image the same size as marker image
-		this.resultStack = ImageStack.create(sizeX, sizeY, sizeZ, markerStack.getBitDepth());
-		this.resultSlices = getFloatProcessors(this.resultStack);
+		this.resultStack = ImageStack.create(sizeX, sizeY, sizeZ, maskStack.getBitDepth());
+		this.resultSlices = Images3D.getFloatArrays(this.resultStack);
 
 		float[] markerSlice, maskSlice, resultSlice;
 		
@@ -274,23 +275,6 @@ public class GeodesicReconstruction3DHybrid0Float extends GeodesicReconstruction
 				}
 			}
 		}
-	}
-	
-	private static final float[][] getFloatProcessors(ImageStack stack)
-	{
-		// Initialize result array
-		int size = stack.getSize();
-		float[][] slices = new float[size][];
-		
-		// Extract inner slice array and apply type conversion
-		Object[] array = stack.getImageArray();
-		for (int i = 0; i < size; i++)
-		{
-			slices[i] = (float[]) array[i];
-		}
-		
-		// return slices
-		return slices;
 	}
 	
 	private void forwardScan() 

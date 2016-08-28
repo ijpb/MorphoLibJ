@@ -6,6 +6,7 @@ package inra.ijpb.morphology.geodrec;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import ij.ImageStack;
+import inra.ijpb.data.image.Images3D;
 
 
 /**
@@ -81,7 +82,7 @@ public class GeodesicReconstructionByDilation3DScanningGray8 extends GeodesicRec
 		this.sizeX 	= marker.getWidth();
 		this.sizeY 	= marker.getHeight();
 		this.sizeZ 	= marker.getSize();
-		if (sizeX != mask.getWidth() || sizeY != mask.getHeight() || sizeZ != mask.getSize()) 
+		if (!Images3D.isSameSize(marker, mask)) 
 		{
 			throw new IllegalArgumentException("Marker and Mask images must have the same size");
 		}
@@ -161,7 +162,7 @@ public class GeodesicReconstructionByDilation3DScanningGray8 extends GeodesicRec
 		this.sizeX 	= marker.getWidth();
 		this.sizeY 	= marker.getHeight();
 		this.sizeZ 	= marker.getSize();
-		if (sizeX != mask.getWidth() || sizeY != mask.getHeight() || sizeZ != mask.getSize())
+		if (!Images3D.isSameSize(marker, mask)) 
 		{
 			throw new IllegalArgumentException("Marker and Mask images must have the same size");
 		}
@@ -228,8 +229,8 @@ public class GeodesicReconstructionByDilation3DScanningGray8 extends GeodesicRec
 	 */
 	private void initializeResult() 
 	{
-		// Create result image the same size as marker image
-		this.result = ImageStack.create(sizeX, sizeY, sizeZ, marker.getBitDepth());
+		// Create result image the same size as the mask image
+		this.result = ImageStack.create(sizeX, sizeY, sizeZ, mask.getBitDepth());
 
 		Object[] stack = result.getImageArray();
 		Object[] markerStack = marker.getImageArray();
@@ -264,8 +265,8 @@ public class GeodesicReconstructionByDilation3DScanningGray8 extends GeodesicRec
 	 */
 	private void initializeResult( ImageStack binaryMask ) 
 	{
-		// Create result image the same size as marker image
-		this.result = ImageStack.create(sizeX, sizeY, sizeZ, marker.getBitDepth());
+		// Create result image the same size as the mask image
+		this.result = ImageStack.create(sizeX, sizeY, sizeZ, mask.getBitDepth());
 
 		Object[] stack = result.getImageArray();
 		Object[] markerStack = marker.getImageArray();

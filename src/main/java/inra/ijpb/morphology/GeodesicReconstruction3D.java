@@ -7,6 +7,7 @@ import ij.ImageStack;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.morphology.geodrec.GeodesicReconstruction3DAlgo;
 import inra.ijpb.morphology.geodrec.GeodesicReconstruction3DHybrid0Float;
+import inra.ijpb.morphology.geodrec.GeodesicReconstruction3DHybrid0Gray16;
 import inra.ijpb.morphology.geodrec.GeodesicReconstruction3DHybrid0Gray8;
 import inra.ijpb.morphology.geodrec.GeodesicReconstructionByDilation3DScanning;
 import inra.ijpb.morphology.geodrec.GeodesicReconstructionByDilation3DScanningGray8;
@@ -146,6 +147,11 @@ public abstract class GeodesicReconstruction3D
 			algo = new GeodesicReconstruction3DHybrid0Gray8(
 					GeodesicReconstructionType.BY_DILATION);
 		} 
+		else if (marker.getBitDepth() == 16 && mask.getBitDepth() == 16)
+		{
+			algo = new GeodesicReconstruction3DHybrid0Gray16(
+					GeodesicReconstructionType.BY_DILATION);
+		} 
 		else if (marker.getBitDepth() == 32 && mask.getBitDepth() == 32)
 		{
 			algo = new GeodesicReconstruction3DHybrid0Float(
@@ -176,6 +182,11 @@ public abstract class GeodesicReconstruction3D
 		if (marker.getBitDepth() == 8 && mask.getBitDepth() == 8)
 		{
 			algo = new GeodesicReconstruction3DHybrid0Gray8(
+					GeodesicReconstructionType.BY_DILATION, connectivity);
+		} 
+		else if (marker.getBitDepth() == 16 && mask.getBitDepth() == 16)
+		{
+			algo = new GeodesicReconstruction3DHybrid0Gray16(
 					GeodesicReconstructionType.BY_DILATION, connectivity);
 		} 
 		else if (marker.getBitDepth() == 32 && mask.getBitDepth() == 32)
@@ -234,6 +245,12 @@ public abstract class GeodesicReconstruction3D
 					GeodesicReconstructionType.BY_EROSION);
 
 		} 
+		else if (marker.getBitDepth() == 16 && mask.getBitDepth() == 16)
+		{
+			algo = new GeodesicReconstruction3DHybrid0Gray16(
+					GeodesicReconstructionType.BY_EROSION);
+
+		} 
 		else if (marker.getBitDepth() == 32 && mask.getBitDepth() == 32)
 		{
 			algo = new GeodesicReconstruction3DHybrid0Float(
@@ -268,6 +285,11 @@ public abstract class GeodesicReconstruction3D
 		if (marker.getBitDepth() == 8 && mask.getBitDepth() == 8)
 		{
 			algo = new GeodesicReconstruction3DHybrid0Gray8(
+					GeodesicReconstructionType.BY_EROSION, connectivity);
+		}
+		else if (marker.getBitDepth() == 16 && mask.getBitDepth() == 16)
+		{
+			algo = new GeodesicReconstruction3DHybrid0Gray16(
 					GeodesicReconstructionType.BY_EROSION, connectivity);
 		}
 		else if (marker.getBitDepth() == 32 && mask.getBitDepth() == 32)

@@ -9,6 +9,8 @@ import ij.plugin.PlugIn;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.binary.ChamferWeights3D;
 import inra.ijpb.binary.distmap.DistanceTransform3D;
+import inra.ijpb.binary.distmap.DistanceTransform3D4WeightsFloat;
+import inra.ijpb.binary.distmap.DistanceTransform3D4WeightsShort;
 import inra.ijpb.binary.distmap.DistanceTransform3DFloat;
 import inra.ijpb.binary.distmap.DistanceTransform3DShort;
 import inra.ijpb.data.image.Images3D;
@@ -21,8 +23,8 @@ import inra.ijpb.util.IJUtils;
  * @author dlegland
  *
  */
-public class ChamferDistanceMap3DPlugin implements PlugIn {
-
+public class ChamferDistanceMap3DPlugin implements PlugIn 
+{
 	/* (non-Javadoc)
 	 * @see ij.plugin.PlugIn#run(java.lang.String)
 	 */
@@ -39,16 +41,11 @@ public class ChamferDistanceMap3DPlugin implements PlugIn {
 		// Create a new generic dialog with appropriate options
     	GenericDialog gd = new GenericDialog("Distance Map 3D");
     	gd.addChoice("Distances", ChamferWeights3D.getAllLabels(), 
-    			ChamferWeights3D.BORGEFORS.toString());			
+    			ChamferWeights3D.WEIGHTS_3_4_5_7.toString());			
     	String[] outputTypes = new String[]{"32 bits", "16 bits"};
     	gd.addChoice("Output Type", outputTypes, outputTypes[0]);
     	gd.addCheckbox("Normalize weights", true);	
-//    	gd.addPreviewCheckbox(pfr);
-//    	gd.addDialogListener(this);
-//        previewing = true;
-//		gd.addHelp("http://imagejdocu.tudor.lu/doku.php?id=plugin:morphology:fast_morphological_filters:start");
         gd.showDialog();
-//        previewing = false;
         
     	// test cancel  
     	if (gd.wasCanceled())
@@ -60,18 +57,36 @@ public class ChamferDistanceMap3DPlugin implements PlugIn {
     	boolean normalize = gd.getNextBoolean();
 
     	// identify which weights should be used
-    	ChamferWeights3D weights = ChamferWeights3D.fromLabel(weightLabel);
+    	ChamferWeights3D chamferWeights = ChamferWeights3D.fromLabel(weightLabel);
 
     	long t0 = System.currentTimeMillis();
 
+		// Choose the appropriate algorithm based on output type and number of
+		// chamfer weights
     	DistanceTransform3D algo;
     	if (floatProcessing)
     	{
-    		algo = new DistanceTransform3DFloat(weights.getFloatWeights(), normalize);
+    		float[] weights = chamferWeights.getFloatWeights();
+    		if (weights.length == 4)
+    		{
+        		algo = new DistanceTransform3D4WeightsFloat(weights, normalize);    			
+    		}
+    		else
+    		{
+        		algo = new DistanceTransform3DFloat(weights, normalize);    			
+    		}
     	} 
     	else
     	{
-    		algo = new DistanceTransform3DShort(weights.getShortWeights(), normalize);
+    		short[] weights = chamferWeights.getShortWeights();
+    		if (weights.length == 4)
+    		{
+        		algo = new DistanceTransform3D4WeightsShort(weights, normalize);    			
+    		}
+    		else
+    		{
+        		algo = new DistanceTransform3DShort(weights, normalize);
+    		}
         }
 		DefaultAlgoListener.monitor(algo);
     	

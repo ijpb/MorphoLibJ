@@ -22,7 +22,7 @@ import java.util.ArrayDeque;
  * 
  * <p>
  * Performs forward and backward passes, then performs an additional forward
- * pass only to initialize the queue, and finally processes all pixels in the
+ * pass only to initialize the queue, and finally processes all voxels in the
  * queue.
  * </p>
  * 
@@ -139,7 +139,7 @@ public class GeodesicReconstruction3DHybrid1Image3D extends	GeodesicReconstructi
 		this.sizeX 	= marker.getWidth();
 		this.sizeY 	= marker.getHeight();
 		this.sizeZ 	= marker.getSize();
-		if (sizeX != mask.getWidth() || sizeY != mask.getHeight() || sizeZ != mask.getSize()) 
+		if (!Images3D.isSameSize(marker, mask)) 
 		{
 			throw new IllegalArgumentException("Marker and Mask images must have the same size");
 		}
@@ -236,14 +236,14 @@ public class GeodesicReconstruction3DHybrid1Image3D extends	GeodesicReconstructi
 	private void initializeResult()
 	{
 		// Create result image the same size as marker image
-		this.resultStack = ImageStack.create(sizeX, sizeY, sizeZ, markerStack.getBitDepth());
+		this.resultStack = ImageStack.create(sizeX, sizeY, sizeZ, maskStack.getBitDepth());
 		this.result = Images3D.createWrapper(this.resultStack);
 
 		if (this.reconstructionType == GeodesicReconstructionType.BY_DILATION) 
 		{
 			// Initialize the result image with the minimum value of marker and mask
 			// images
-			if (this.markerStack.getBitDepth() == 32)
+			if (this.maskStack.getBitDepth() == 32)
 			{
 				// Initialize float result stack
 				for (int z = 0; z < sizeZ; z++) 
@@ -276,7 +276,7 @@ public class GeodesicReconstruction3DHybrid1Image3D extends	GeodesicReconstructi
 		{
 			// Initialize the result image with the maximum value of marker and mask
 			// images
-			if (this.markerStack.getBitDepth() == 32) 
+			if (this.maskStack.getBitDepth() == 32)
 			{
 				// Initialize float result stack
 				for (int z = 0; z < sizeZ; z++)

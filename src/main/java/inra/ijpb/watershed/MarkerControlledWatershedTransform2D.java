@@ -273,7 +273,7 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 	    	
 	    	change = false;
 			final int count = pixelList.size();
-	      	IJ.log( "  Flooding " + count + " pixels..." );
+			if( verbose )  IJ.log( "  Flooding " + count + " pixels..." );
 	      	IJ.showStatus("Flooding " + count + " pixels...");	      		      	
 	      	
 			for (int p = 0; p < count; ++p)
@@ -421,7 +421,7 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 	    	
 	    	change = false;
 			final int count = pixelList.size();
-	      	IJ.log( "  Flooding " + count + " pixels..." );
+			if( verbose )  IJ.log( "  Flooding " + count + " pixels..." );
 	      	IJ.showStatus("Flooding " + count + " pixels...");	      		      	
 	      	
 			for (int p = 0; p < count; ++p)
@@ -701,7 +701,7 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
        			new Neighborhood2DC8() : new Neighborhood2DC4();
 
 	    final int count = pixelList.size();
-	    IJ.log( "  Flooding from " + count + " pixels..." );
+	    if( verbose )  IJ.log( "  Flooding from " + count + " pixels..." );
       	IJ.showStatus("Flooding from " + count + " pixels...");
 	    
       	final int numPixels = size1 * size2;
@@ -860,7 +860,7 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
        			new Neighborhood2DC8() : new Neighborhood2DC4();
 
 	    final int count = pixelList.size();
-	    IJ.log( "  Flooding from " + count + " pixels..." );
+	    if( verbose )  IJ.log( "  Flooding from " + count + " pixels..." );
       	IJ.showStatus("Flooding from " + count + " pixels...");
 	    
       	final int numPixels = size1 * size2;
@@ -1078,7 +1078,7 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
        			new Neighborhood2DC8() : new Neighborhood2DC4();
 
 	    final int count = pixelList.size();
-	    IJ.log( "  Flooding from " + count + " pixels..." );
+	    if( verbose ) IJ.log( "  Flooding from " + count + " pixels..." );
       	IJ.showStatus("Flooding from " + count + " pixels...");
 	    
       	double maxValue = inputImage.getMax();
@@ -1280,8 +1280,11 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 	 */
 	public ImageProcessor applyWithPriorityQueueAndDams()
 	{
-		if ( Thread.currentThread().isInterrupted() )					
+		if ( Thread.currentThread().isInterrupted() )
+		{
+			IJ.log( "Watershed flooding was interrupted!" );
 			return null;
+		}
 		
 	    final int size1 = inputImage.getWidth();
 	    final int size2 = inputImage.getHeight();
@@ -1315,7 +1318,10 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 		
 		pixelList = extractPixelValuesPriorityQueue( inputImage, markerImage, tabLabels );		
 		if( null == pixelList )
+		{
+			IJ.log( "Error while extracting values from input image!" );
 			return null;
+		}
 						
 		final long t1 = System.currentTimeMillis();		
 		if( verbose ) IJ.log("  Extraction took " + (t1-t0) + " ms.");
@@ -1328,7 +1334,7 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
        			new Neighborhood2DC8() : new Neighborhood2DC4();
 
 	    final int count = pixelList.size();
-	    IJ.log( "  Flooding from " + count + " pixels..." );
+	    if( verbose )  IJ.log( "  Flooding from " + count + " pixels..." );
       	IJ.showStatus("Flooding from " + count + " pixels...");
 	    
       	double maxValue = inputImage.getMax();
@@ -1342,12 +1348,18 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
       	if ( null != maskImage )
       	{
       		if ( Thread.currentThread().isInterrupted() )
-				return null;	
+      		{
+      			IJ.log( "Watershed flooding was interrupted!" );
+      			return null;
+      		}
       		
       		while ( pixelList.isEmpty() == false )
       		{
       			if ( Thread.currentThread().isInterrupted() )
-    				return null;	
+      			{
+      				IJ.log( "Watershed flooding was interrupted!" );
+      				return null;
+      			}
 
       			final PixelRecord pixelRecord = pixelList.poll();
       			// show progression along pixel values
@@ -1409,7 +1421,10 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
       		while ( pixelList.isEmpty() == false )
       		{
       			if ( Thread.currentThread().isInterrupted() )
-    				return null;	
+      			{
+      				IJ.log( "Watershed flooding was interrupted!" );
+      				return null;
+      			}
       			
       			final PixelRecord pixelRecord = pixelList.poll();
       			// show progression along pixel values
@@ -1501,8 +1516,11 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 			final ImageProcessor seedImage,
 			final int[][] tabLabels) 
 	{
-		if ( Thread.currentThread().isInterrupted() )					
+		if ( Thread.currentThread().isInterrupted() )
+		{
+			IJ.log( "Pixel extraction was interrupted!" );
 			return null;
+		}
 				
 		final int size1 = inputImage.getWidth();
 	    final int size2 = inputImage.getHeight();

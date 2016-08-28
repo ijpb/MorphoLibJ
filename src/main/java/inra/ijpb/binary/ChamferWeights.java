@@ -41,14 +41,14 @@ public enum ChamferWeights
 	 */
 	QUASI_EUCLIDEAN("Quasi-Euclidean (1,1.41)", 
 			new short[] { 10, 14 }, 
-			new float[] {1, (float) Math.sqrt(2) }), 
-	/** Use weights 1 for orthogonal neighbors and 2 for diagonal neighbors */
-	BORGEFORS("Borgefors (3,4)", new short[] { 3, 4 }), 
+			new float[] {1, (float) Math.sqrt(2) }),
 	/**
 	 * Use weights 3 for orthogonal neighbors and 4 for diagonal neighbors (best
 	 * approximation of Euclidean distance for 3-by-3 masks)
 	 */
-	WEIGHTS_23("Weights (2,3)", new short[] { 2, 3 }), 
+	BORGEFORS("Borgefors (3,4)", new short[] { 3, 4 }),
+	/** Use weights 2 for orthogonal neighbors and 3 for diagonal neighbors */
+	WEIGHTS_23("Weights (2,3)", new short[] { 2, 3 }),
 	/** Use weights 5 for orthogonal neighbors and 7 for diagonal neighbors */
 	WEIGHTS_57("Weights (5,7)", new short[] { 5, 7 }), 
 	/**

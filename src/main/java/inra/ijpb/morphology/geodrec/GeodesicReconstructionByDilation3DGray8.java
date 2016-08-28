@@ -6,6 +6,7 @@ package inra.ijpb.morphology.geodrec;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import ij.ImageStack;
+import inra.ijpb.data.image.Images3D;
 
 import java.util.LinkedList;
 
@@ -79,8 +80,7 @@ public class GeodesicReconstructionByDilation3DGray8 extends GeodesicReconstruct
 		this.size1 = marker.getWidth();
 		this.size2 = marker.getHeight();
 		this.size3 = marker.getSize();
-		if (size1 != mask.getWidth() || size2 != mask.getHeight()
-				|| size3 != mask.getSize())
+		if (!Images3D.isSameSize(marker, mask)) 
 		{
 			throw new IllegalArgumentException(
 					"Marker and Mask images must have the same size");
@@ -94,9 +94,9 @@ public class GeodesicReconstructionByDilation3DGray8 extends GeodesicReconstruct
 							+ connectivity);
 		}
 
-		// Create result image the same size as marker image
+		// Create result image the same size as the marker and mask images
 		this.result = ImageStack.create(size1, size2, size3,
-				marker.getBitDepth());
+				mask.getBitDepth());
 
 		// Initialize the result image with the minimum value of marker and mask
 		// images
@@ -182,8 +182,7 @@ public class GeodesicReconstructionByDilation3DGray8 extends GeodesicReconstruct
 		this.size1 = marker.getWidth();
 		this.size2 = marker.getHeight();
 		this.size3 = marker.getSize();
-		if (size1 != mask.getWidth() || size2 != mask.getHeight()
-				|| size3 != mask.getSize())
+		if (!Images3D.isSameSize(marker, mask)) 
 		{
 			throw new IllegalArgumentException("Marker and Mask images must have the same size");
 		}
@@ -350,8 +349,8 @@ public class GeodesicReconstructionByDilation3DGray8 extends GeodesicReconstruct
 
 	private void initializeResult() 
 	{
-		// Create result image the same size as marker image
-		this.result = ImageStack.create(size1, size2, size3, marker.getBitDepth());
+		// Create result image the same size as the mask image
+		this.result = ImageStack.create(size1, size2, size3, mask.getBitDepth());
 
 		Object[] stack = result.getImageArray();
 		Object[] markerStack = marker.getImageArray();
@@ -383,8 +382,8 @@ public class GeodesicReconstructionByDilation3DGray8 extends GeodesicReconstruct
 	
 	private void initializeResult( ImageStack binaryMask ) 
 	{
-		// Create result image the same size as marker image
-		this.result = ImageStack.create(size1, size2, size3, marker.getBitDepth());
+		// Create result image the same size as mask image
+		this.result = ImageStack.create(size1, size2, size3, mask.getBitDepth());
 
 		Object[] stack = result.getImageArray();
 		Object[] markerStack = marker.getImageArray();

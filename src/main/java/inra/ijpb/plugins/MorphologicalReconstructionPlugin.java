@@ -13,14 +13,14 @@ import inra.ijpb.morphology.GeodesicReconstruction;
 import inra.ijpb.util.IJUtils;
 
 /**
- * Plugin for performing geodesic reconstruction by dimation or by erosion on
+ * Plugin for performing geodesic reconstruction by dilation or by erosion on
  * grayscale images.
  * 
  * Two images are required: the marker image, used to initialize the 
  * reconstruction, an the mask image, used to constrain the reconstruction.
  * The connectivity can also be specified.
  */
-public class GeodesicReconstructionPlugin implements PlugIn {
+public class MorphologicalReconstructionPlugin implements PlugIn {
 
 	/**
 	 * A pre-defined set of operations for geodesic reconstruction.

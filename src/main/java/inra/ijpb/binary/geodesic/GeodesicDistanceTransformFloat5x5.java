@@ -84,8 +84,7 @@ public class GeodesicDistanceTransformFloat5x5 extends AlgoStub implements
 	 * The function returns a new Float processor the same size as the input,
 	 * with values greater or equal to zero. 
 	 */
-	public FloatProcessor geodesicDistanceMap(ImageProcessor marker, 
-			ImageProcessor mask)
+	public FloatProcessor geodesicDistanceMap(ImageProcessor marker, ImageProcessor mask)
 	{
 		// size of image
 		width = mask.getWidth();
@@ -438,8 +437,7 @@ public class GeodesicDistanceTransformFloat5x5 extends AlgoStub implements
 	 */
 	private float min3w(float ortho, float diago, float diag2) 
 	{
-		return min(min(ortho + weights[0], diago + weights[1]), 
-				diag2 + weights[2]);
+		return min(min(ortho + weights[0], diago + weights[1]), diag2 + weights[2]);
 	}
 	
 	/**

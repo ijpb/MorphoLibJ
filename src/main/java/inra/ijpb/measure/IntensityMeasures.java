@@ -1,5 +1,8 @@
 package inra.ijpb.measure;
 
+import java.util.Collections;
+import java.util.HashMap;
+
 import ij.ImagePlus;
 import ij.measure.ResultsTable;
 
@@ -60,7 +63,173 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 
 		return table;
 	}
-	
+
+	/**
+	 * Get median voxel values per label
+	 *
+	 * @return result table with median values per label
+	 */
+	public ResultsTable getMedian()
+	{
+		final int numLabels = objectVoxels.length;
+
+		double[] median = new double[ numLabels ];
+
+		// calculate median voxel value per object
+		for( int i=0; i<numLabels; i++ )
+		{
+			Collections.sort( objectVoxels[ i ] );
+			median[ i ] = objectVoxels[ i ].get( objectVoxels[ i ].size() / 2 );
+		}
+
+
+		// create data table
+		ResultsTable table = new ResultsTable();
+		for (int i = 0; i < numLabels; i++) {
+			table.incrementCounter();
+			table.addLabel( Integer.toString( labels[i] ));
+			table.addValue( "Median", median[i] );
+		}
+
+		return table;
+	}
+
+	/**
+	 * Get mode voxel values per label
+	 *
+	 * @return result table with mode values per label
+	 */
+	public ResultsTable getMode()
+	{
+		final int numLabels = objectVoxels.length;
+
+		double[] mode = new double[ numLabels ];
+
+		// calculate mode voxel value per object
+		for( int i=0; i<numLabels; i++ )
+		{
+			HashMap<Double,Integer> hm = new HashMap< Double,Integer >();
+			int max = 1;
+			double temp = objectVoxels[ i ].get( 0 );
+
+			for(int j=0; j < objectVoxels[ i ].size(); j++ )
+			{
+				double val = objectVoxels[ i ].get( j );
+				if( hm.get( val ) != null )
+				{
+					int count = hm.get( val );
+					count++;
+					hm.put( val, count );
+					if( count>max )
+					{
+						max = count;
+						temp = val;
+					}
+				}
+				else
+					hm.put( val, 1 );
+			}
+			mode[ i ] = temp;
+		}
+
+		// create data table
+		ResultsTable table = new ResultsTable();
+		for (int i = 0; i < numLabels; i++) {
+			table.incrementCounter();
+			table.addLabel( Integer.toString( labels[i] ));
+			table.addValue( "Mode", mode[i] );
+		}
+
+		return table;
+	}
+
+	/**
+	 * Get skewness voxel values per label
+	 *
+	 * @return result table with skewness values per label
+	 */
+	public ResultsTable getSkewness()
+	{
+		final int numLabels = objectVoxels.length;
+
+		double[] skewness = new double[ numLabels ];
+
+		// calculate skewness voxel value per object
+		for( int i=0; i<numLabels; i++ )
+		{
+			final double voxelCount = objectVoxels[ i ].size();
+			double v, v2, sum2 = 0, sum3 = 0;
+			double mean = 0;
+			for( int j=0; j<voxelCount; j++ )
+			{
+				mean += objectVoxels[ i ].get( j );
+				v = objectVoxels[ i ].get( j ) + Double.MIN_VALUE;
+				v2 = v * v;
+				sum2 += v2;
+				sum3 += v * v2;
+			}
+			mean /= voxelCount;
+			double mean2 = mean*mean;
+			double variance = sum2 / voxelCount - mean2;
+			double sDeviation = Math.sqrt( variance );
+			skewness[ i ] = ((sum3 - 3.0 * mean * sum2 ) / voxelCount
+					+ 2.0 * mean * mean2 ) / ( variance * sDeviation );
+		}
+
+		// create data table
+		ResultsTable table = new ResultsTable();
+		for (int i = 0; i < numLabels; i++) {
+			table.incrementCounter();
+			table.addLabel( Integer.toString( labels[i] ));
+			table.addValue( "Skewness", skewness[i] );
+		}
+
+		return table;
+	}
+	/**
+	 * Get kurtosis voxel values per label
+	 *
+	 * @return result table with kurtosis values per label
+	 */
+	public ResultsTable getKurtosis()
+	{
+		final int numLabels = objectVoxels.length;
+
+		double[] kurtosis = new double[ numLabels ];
+
+		// calculate skewness voxel value per object
+		for( int i=0; i<numLabels; i++ )
+		{
+			final double voxelCount = objectVoxels[ i ].size();
+			double v, v2, sum2 = 0, sum3 = 0, sum4 = 0;
+			double mean = 0;
+			for( int j=0; j<voxelCount; j++ )
+			{
+				mean += objectVoxels[ i ].get( j );
+				v = objectVoxels[ i ].get( j ) + Double.MIN_VALUE;
+				v2 = v * v;
+				sum2 += v2;
+				sum3 += v * v2;
+				sum4 += v2 * v2;
+			}
+			mean /= voxelCount;
+			double mean2 = mean*mean;
+			double variance = sum2 / voxelCount - mean2;
+			kurtosis[ i ] = (((sum4 - 4.0 * mean * sum3 + 6.0 * mean2 * sum2 )
+					/ voxelCount - 3.0 * mean2 * mean2 )
+					/ ( variance * variance ) -3.0 );
+		}
+
+		// create data table
+		ResultsTable table = new ResultsTable();
+		for (int i = 0; i < numLabels; i++) {
+			table.incrementCounter();
+			table.addLabel( Integer.toString( labels[ i ] ) );
+			table.addValue( "Kurtosis", kurtosis[ i ] );
+		}
+
+		return table;
+	}
 	/**
 	 * Get standard deviation of voxel values per label
 	 * 

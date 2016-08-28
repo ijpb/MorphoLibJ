@@ -323,10 +323,18 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 			path.add(pos2[i]);
 			
 			Point pos = pos2[i];
-			while (!pos.equals(pos1[i]))
+			try
 			{
-				pos = findNextPosition(distance, pos, shifts);
-				path.add(pos);
+				while (!pos.equals(pos1[i]))
+				{
+					pos = findNextPosition(distance, pos, shifts, labelImage);
+					path.add(pos);
+				}
+			}
+			catch(Exception ex)
+			{
+				throw new RuntimeException(String.format("Could not compute path for label %d, at position (%d, %d)",
+						label, pos.x, pos.y));
 			}
 			
 			result.put(label, path);
@@ -334,46 +342,24 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 
 		return result;
 	}
-	
-//	private Point findNextPosition(ImageProcessor distMap, Point pos)
-//	{
-//		Point nextPos = pos;
-//		float minDist = distMap.getf(pos.x, pos.y);
-//
-//		// iterate over neighbors of current pixel
-//		for (int y = pos.y - 1; y <= pos.y + 1; y++)
-//		{
-//			if (y < 0 || y >= distMap.getHeight())
-//			{
-//				continue;
-//			}
-//			
-//			for (int x = pos.x - 1; x <= pos.x + 1; x++)
-//			{
-//				if (x < 0 || x >= distMap.getWidth())
-//				{
-//					continue;
-//				}
-//				
-//				float dist = distMap.getf(x, y);
-//				if (dist < minDist)
-//				{
-//					minDist = dist;
-//					nextPos = new Point(x, y);
-//				}
-//			}
-//		}
-//
-//		if (nextPos.equals(pos))
-//		{
-//			throw new RuntimeException("Could not find a neighbor with smaller value");
-//		}
-//		
-//		return nextPos;
-//	}
-	
-	private Point findNextPosition(ImageProcessor distMap, Point pos, int[][] shifts)
+
+	/**
+	 * Finds the position of the pixel in the neighborhood of pos that have the
+	 * smallest distance and that belongs to the same label as initial position.
+	 * 
+	 * @param distMap
+	 *            the distance map
+	 * @param pos
+	 *            the position of the reference pixel
+	 * @param shifts
+	 *            the list of integer shifts around the reference pixel
+	 * @param LabelImage
+	 *            the array label to check we stay in the same label...
+	 * @return the position of the neighbor with smallest value
+	 */
+	private Point findNextPosition(ImageProcessor distMap, Point pos, int[][] shifts, ImageProcessor labelImage)
 	{
+		int refLabel = labelImage.get(pos.x, pos.y);
 		Point nextPos = pos;
 		float minDist = distMap.getf(pos.x, pos.y);
 		
@@ -394,6 +380,12 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 				continue;
 			}
 		
+			// ensure we stay within the same label
+			if (labelImage.get(x, y) != refLabel)
+			{
+				continue;
+			}
+			
 			// compute neighbor value, and compare with current min
 			float dist = distMap.getf(x, y);
 			if (dist < minDist)
@@ -410,8 +402,7 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 		
 		return nextPos;
 	}
-	
-	/**
+		/**
 	 * Creates a new binary image with same 0 value, and value 255 for each
 	 * non-zero pixel of the original image.
 	 */

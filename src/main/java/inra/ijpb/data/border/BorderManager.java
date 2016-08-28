@@ -127,5 +127,17 @@ public interface BorderManager {
 	 * @param y row index of the position
 	 * @return border corrected value
 	 */
-	public int get(int x, int y); 
+	public int get(int x, int y);
+	
+	/**
+	 * Returns the floating-point value corresponding to (x,y) position.
+	 * Position can be outside original image bounds.
+	 * 
+	 * @param x
+	 *            column index of the position
+	 * @param y
+	 *            row index of the position
+	 * @return border corrected value
+	 */
+	public float getf(int x, int y); 
 }

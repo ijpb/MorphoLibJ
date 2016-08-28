@@ -12,6 +12,7 @@ import ij.gui.Roi;
 import ij.gui.TextRoi;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
+import ij.plugin.frame.RoiManager;
 import ij.process.ImageProcessor;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.binary.geodesic.GeodesicDiameterFloat;
@@ -73,6 +74,7 @@ public class GeodesicDiameterPlugin implements PlugIn
 				ChamferWeights.CHESSKNIGHT.toString());
 		gd.addCheckbox("Show Overlay Result", true);
 		gd.addChoice("Image to overlay:", imageNames, selectedImageName);
+		gd.addCheckbox("Export to ROI Manager", true);
 		gd.showDialog();
 		
 		if (gd.wasCanceled())
@@ -82,6 +84,9 @@ public class GeodesicDiameterPlugin implements PlugIn
 		int labelImageIndex = gd.getNextChoiceIndex();
 		ImagePlus labelPlus = WindowManager.getImage(labelImageIndex+1);
 		ChamferWeights weights = ChamferWeights.fromLabel(gd.getNextChoice());
+		boolean overlayPaths = gd.getNextBoolean();
+		int resultImageIndex = gd.getNextChoiceIndex();
+		boolean createPathRois = gd.getNextBoolean();
 		
 		// check if image is a label image
 		if (!LabelImages.isLabelImageType(labelPlus))
@@ -118,18 +123,34 @@ public class GeodesicDiameterPlugin implements PlugIn
 			}
 		}
 		
-		// Check if results must be displayed on an image
-		if (gd.getNextBoolean() && validPaths) 
+		if (validPaths)
 		{
-			// New image for displaying geometric overlays
-			int resultImageIndex = gd.getNextChoiceIndex();
-			ImagePlus resultImage = WindowManager.getImage(resultImageIndex+1);
+			// compute the path that is associated to each label
+			Map<Integer, List<Point>> pathMap = null;
+			try
+			{
+				pathMap = computePaths(labelImage, weights.getFloatWeights());
+			}
+			catch (Exception ex)
+			{
+				IJ.error("Geodesic Diameter Error", 
+						"Could not compute geodesic paths.\nTry using Borgefors weights.");
+				return;
+			}
 			
-			Map<Integer, List<Point>> pathMap = computePaths(labelImage, weights.getFloatWeights());
-			drawPaths(resultImage, pathMap);
-//			showResultsAsOverlay(resultImage, table);
+			// Check if results must be displayed on an image
+			if (overlayPaths) 
+			{
+				// New image for displaying geometric overlays
+				ImagePlus resultImage = WindowManager.getImage(resultImageIndex+1);
+				drawPaths(resultImage, pathMap);
+			}
+			
+			if (createPathRois)
+			{
+				createPathRois(labelPlus, pathMap);
+			}
 		}
-		
 		IJ.showStatus(String.format("Elapsed time: %8.2f ms", elapsedTime));	
 	}
 
@@ -357,6 +378,36 @@ public class GeodesicDiameterPlugin implements PlugIn
 		target.setOverlay(overlay);
 	}
 	
+	/**
+	 * Adds the specified paths to the list of ROI of the image plus.
+	 * 
+	 * @param target The ImagePlus that will be associated with ROIS
+	 * @param pathMap the list of paths
+	 */
+	public void createPathRois(ImagePlus target, Map<Integer, List<Point>> pathMap)
+	{
+		// get instance of ROI MAnager
+		RoiManager manager = RoiManager.getRoiManager();
+		
+		int index = 0;
+		for (List<Point> path : pathMap.values())
+		{
+			int n = path.size();
+			float[] x = new float[n];
+			float[] y = new float[n];
+			int i = 0;
+			for (Point pos : path)
+			{
+				x[i] = pos.x + .5f;
+				y[i] = pos.y + .5f;
+				i++;
+			}
+			Roi roi = new PolygonRoi(x, y, n, Roi.POLYLINE);
+		
+			manager.add(target, roi, index++);
+		}
+	}
+
 	private static String createResultImageName(ImagePlus baseImage) 
 	{
 		return baseImage.getShortTitle() + "-diam";
