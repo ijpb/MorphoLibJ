@@ -1262,7 +1262,7 @@ name "fig:Thin-Structure-Filtering"
 \end_inset
 
 Filtering of a thin structure.
- (a) Original image represening apple cells observed with confocal microscopy
+ (a) Original image representing apple cells observed with confocal microscopy
  
 \begin_inset CommandInset citation
 LatexCommand citep
@@ -1271,7 +1271,7 @@ key "Legland2009"
 \end_inset
 
 .
- The application of a gaussian filter (b) or median filter (c) results in
+ The application of a Gaussian filter (b) or median filter (c) results in
  noise reduction, but also in a loss of the signal along the cell walls.
  The directional filtering (d) better preserves the thickness of the structure.
  
@@ -1288,7 +1288,7 @@ key "Legland2009"
 \end_layout
 
 \begin_layout Standard
-An alernative is to apply directional filtering.
+An alternative is to apply directional filtering.
  The principle is to consider an oriented structuring element such as a
  line segment of a given length, and to perform morphological operations
  for various orientations of the structuring element 
@@ -1339,7 +1339,7 @@ status open
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -1374,7 +1374,7 @@ Horizontal direction
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -1405,7 +1405,7 @@ Vertical direction
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -1436,7 +1436,7 @@ Two directions
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -1524,7 +1524,7 @@ reference "fig:Directional-Filtering"
 \end_inset
 
 -d show the results obtained when combining two or four directions.
- Here, 32 orientation of line with length 25 were used.
+ Here, 32 orientations of line with length 25 were used.
  This results in the enhancement of the image while preserving the thickness
  of the bright structures.
 \end_layout
@@ -1687,7 +1687,7 @@ name "op:Morphological-Filters-3D"
 \end_layout
 
 \begin_layout Standard
-Morphological filters for 3D images are available 
+Morphological filters for 3D images are available under 
 \begin_inset Quotes eld
 \end_inset
 
@@ -1731,16 +1731,16 @@ Directional Filtering
 \end_inset
 
 .
- It requires planar image.
+ It requires a planar image.
  
 \end_layout
 
 \begin_layout Standard
-The parameters are :
+The parameters are:
 \end_layout
 
 \begin_layout Description
-Type specify how to combine the results for each oriented filter
+Type to specify how to combine the results for each oriented filter
 \end_layout
 
 \begin_layout Description
@@ -6101,7 +6101,7 @@ Binary and label image utilities
 
 \begin_layout Standard
 The MorphoLibJ library provides several utility functions for the processing
- and the managment of binary and label images.
+ and the management of binary and label images.
 \end_layout
 
 \begin_layout Section
@@ -6188,9 +6188,9 @@ Binary image, and result of computation of the distance transform.
 \end_layout
 
 \begin_layout Standard
-Several methods exist for computing distrance maps.
+Several methods exist for computing distance maps.
  The MorphoLibJ library implements distance transforms based on chamfer
- distances, that approximate euclidean distances but are simplier to compute.
+ distances, that approximate Euclidean distances but are simpler to compute.
 \end_layout
 
 \begin_layout Description
@@ -6243,8 +6243,8 @@ In some cases it may be useful to restrict the propagation of distances
 \series bold
 geodesic distance transform
 \series default
- consists in computing distance from a given binary marker, while constraining
- the propagation of the distance within a binary mask.
+ consists in computing the distance from a given binary marker, while constraini
+ng the propagation of the distance within a binary mask.
  An illustration is given in Figure
 \begin_inset space ~
 \end_inset
@@ -6469,7 +6469,7 @@ Different connectivities may be chosen.
  only orthogonal neighbors of a given pixel, and the 8-connectivity, that
  also considers the diagonals.
  For 3D images, the 6-connectivity considers only orthogonal neighbors in
- the thress main directions, whereas the 26-connectivity considers all the
+ the three main directions, whereas the 26-connectivity considers all the
  direct neighbors of a given voxel.
 \end_layout
 
@@ -6502,7 +6502,7 @@ Several plugins allow to control the appearance of label images.
  It is possible to choose a given color map, or to transform a label image
  into a color image.
  In both cases, the background color can be specified, and the color order
- can be shuffled to facilitate the discriination of neighbor regions with
+ can be shuffled to facilitate the discrimination of neighbor regions with
  similar labels.
 \end_layout
 
