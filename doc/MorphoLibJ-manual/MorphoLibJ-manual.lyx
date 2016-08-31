@@ -6607,7 +6607,7 @@ Region and labels selection
 \end_layout
 
 \begin_layout Standard
-The morphoLibJ library offers several tools for automatically select binary
+The MorphoLibJ library offers several tools for automatically select binary
  regions or labels based on size or position criteria.
 \end_layout
 
