@@ -402,7 +402,8 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 		
 		return nextPos;
 	}
-		/**
+	
+	/**
 	 * Creates a new binary image with same 0 value, and value 255 for each
 	 * non-zero pixel of the original image.
 	 */
@@ -500,14 +501,15 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 				
 		// Init Position and value of maximum for each label
 		Point[] posMax 	= new Point[nbLabel];
-		int[] maxValues = new int[nbLabel];
-		for (int i = 0; i < nbLabel; i++) {
+		float[] maxValues = new float[nbLabel];
+		for (int i = 0; i < nbLabel; i++) 
+		{
 			maxValues[i] = -1;
 			posMax[i] = new Point(-1, -1);
 		}
 		
 		// store current value
-		int value;
+		float value;
 		int index;
 		
 		// iterate on image pixels
@@ -524,7 +526,7 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 				index = labelIndex[label];
 				
 				// update values and positions
-				value = image.get(x, y);
+				value = image.getf(x, y);
 				if (value > maxValues[index]) 
 				{
 					posMax[index].setLocation(x, y);
@@ -537,7 +539,7 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 	}
 
 	/**
-	 * Finds maximum value of each label.
+	 * Finds maximum value within each label.
 	 */
 	private float[] findMaxValues(ImageProcessor image, 
 			ImageProcessor labelImage, int[] labels) 

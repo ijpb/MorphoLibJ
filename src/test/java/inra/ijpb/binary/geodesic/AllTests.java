@@ -12,6 +12,7 @@ import org.junit.runners.Suite;
 	GeodesicDistanceTransformFloat5x5Test.class,
 	GeodesicDistanceTransformShort5x5Test.class,
 	GeodesicDiameterFloatTest.class,
+	GeodesicDiameter3DFloatTest.class,
 })
 public class AllTests {
   //nothing
