@@ -203,7 +203,7 @@ DialogListener
 	public int showDialog(
 			ImagePlus imp,
 			String command,
-			PlugInFilterRunner pfr )
+			final PlugInFilterRunner pfr )
 	{
 		// Store user data
 		this.imagePlus = imp;

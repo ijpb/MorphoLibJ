@@ -93,7 +93,7 @@ DialogListener
 	public int showDialog(
 			ImagePlus imp,
 			String command,
-			PlugInFilterRunner pfr )
+			final PlugInFilterRunner pfr )
 	{
 		if( !BinaryImages.isBinaryImage( imp ) )
 		{
