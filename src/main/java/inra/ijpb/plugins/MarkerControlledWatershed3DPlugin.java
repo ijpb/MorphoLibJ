@@ -5,6 +5,7 @@ import ij.ImagePlus;
 import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
+import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.data.image.Images3D;
 import inra.ijpb.watershed.Watershed;
 
@@ -20,8 +21,12 @@ import inra.ijpb.watershed.Watershed;
  */
 public class MarkerControlledWatershed3DPlugin implements PlugIn 
 {
+	/** flag set to TRUE if markers are binary, to FALSE if markers are labels */
+	public static boolean binaryMarkers = true;
+	
 	/** flag to calculate watershed dams */
 	public static boolean getDams = true;
+	
 	/** flag to use 26-connectivity */
 	public static boolean use26neighbors = true;
 		
@@ -41,7 +46,13 @@ public class MarkerControlledWatershed3DPlugin implements PlugIn
 			int connectivity ) 
 	{
 		final long start = System.currentTimeMillis();
-						
+		
+		if (binaryMarkers)
+		{
+			IJ.log("-> Compute marker labels");
+			marker = BinaryImages.componentsLabeling(marker, connectivity, 16);
+		}
+		
 		IJ.log("-> Running watershed...");
 								
 		ImagePlus resultImage = Watershed.computeWatershed(input, marker, mask, connectivity, getDams );				
@@ -86,7 +97,8 @@ public class MarkerControlledWatershed3DPlugin implements PlugIn
         
         gd.addChoice( "Input", names, names[ inputIndex ] );
         gd.addChoice( "Marker", names, names[ markerIndex ] );
-        gd.addChoice( "Mask", namesMask, namesMask[ nbima > 2 ? 3 : 0 ] );
+        gd.addChoice( "Mask", namesMask, namesMask[ 0 ] );
+        gd.addCheckbox("Binary markers", true);
         gd.addCheckbox( "Calculate dams", getDams );
         gd.addCheckbox( "Use diagonal connectivity", use26neighbors );
 
@@ -97,6 +109,7 @@ public class MarkerControlledWatershed3DPlugin implements PlugIn
             inputIndex = gd.getNextChoiceIndex();
             markerIndex = gd.getNextChoiceIndex();
             int maskIndex = gd.getNextChoiceIndex();
+            binaryMarkers = gd.getNextBoolean();
             getDams = gd.getNextBoolean();
             use26neighbors = gd.getNextBoolean();
 
