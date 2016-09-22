@@ -660,14 +660,14 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 	 */
 	public ImageProcessor applyWithPriorityQueue()
 	{
-	    final int size1 = inputImage.getWidth();
-	    final int size2 = inputImage.getHeight();
-	    
-	    if (size1 != markerImage.getWidth() || size2 != markerImage.getHeight()) 
-	    {
+		final int size1 = inputImage.getWidth();
+		final int size2 = inputImage.getHeight();
+
+		if (size1 != markerImage.getWidth() || size2 != markerImage.getHeight())
+		{
 			throw new IllegalArgumentException("Marker and input images must have the same size");
 		}
-		
+
 		// Check connectivity has a correct value
 		if ( connectivity != 4 && connectivity != 8 ) 
 		{
@@ -675,128 +675,173 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 					"Connectivity for 2D images must be either 4 or 8, not "
 							+ connectivity);
 		}	    
-	    
+
 		// list of original pixels values and corresponding coordinates
 		PriorityQueue<PixelRecord> pixelList = null;
-		
-		final int[][] tabLabels = new int[ size1 ][ size2 ]; 
-		
+
+		final int[][] tabLabels = new int[ size1 ][ size2 ];
+		// value INIT is assigned to each pixel of the output labels
+		for( int i=0; i<size1; i++ )
+			Arrays.fill( tabLabels[i], INIT );
+
 		// Make list of pixels and sort it in ascending order
 		IJ.showStatus( "Extracting pixel values..." );
 		if( verbose ) IJ.log("  Extracting pixel values..." );
 		final long t0 = System.currentTimeMillis();
-		
+
 		pixelList = extractPixelValuesPriorityQueue( inputImage, markerImage, tabLabels );
 		if ( null == pixelList )
 			return null;
-						
+
 		final long t1 = System.currentTimeMillis();		
 		if( verbose ) IJ.log("  Extraction took " + (t1-t0) + " ms.");
-					    
+
 		// Watershed
-	    final long start = System.currentTimeMillis();
-	         	
-      	// Check connectivity
-       	final Neighborhood2D neigh = connectivity == 8 ? 
-       			new Neighborhood2DC8() : new Neighborhood2DC4();
+		final long start = System.currentTimeMillis();
 
-	    final int count = pixelList.size();
-	    if( verbose )  IJ.log( "  Flooding from " + count + " pixels..." );
-      	IJ.showStatus("Flooding from " + count + " pixels...");
-	    
-      	final int numPixels = size1 * size2;
-      	
-      	// with mask
-      	if ( null != maskImage )
-      	{      	
-      		while ( pixelList.isEmpty() == false )
-      		{
-      			if ( Thread.currentThread().isInterrupted() )
-    				return null;	
-      			
-      			IJ.showProgress( numPixels-pixelList.size(), numPixels );
+		// Check connectivity
+		final Neighborhood2D neigh = connectivity == 8 ?
+				new Neighborhood2DC8() : new Neighborhood2DC4();
 
-      			final PixelRecord pixelRecord = pixelList.poll();
-      			final Cursor2D p = pixelRecord.getCursor();
-	    		final int i = p.getX();
-	    		final int j = p.getY();
+		final int count = pixelList.size();
+		if( verbose )  IJ.log( "  Flooding from " + count + " pixels..." );
+			IJ.showStatus("Flooding from " + count + " pixels...");
 
-      			double pixelValue = Double.MAX_VALUE;
+		double maxValue = inputImage.getMax();
 
-      			// Read neighbor coordinates		       	
-		       	neigh.setCursor( p );
-		       		
-		       	for( Cursor2D c : neigh.getNeighbors() )			       		
-		       	{
-		       		// Look in neighborhood for labeled pixels with
-		       		// smaller or equal original value
-		       		int u = c.getX();
-		       		int v = c.getY();
-		       		
-		       		if ( u >= 0 && u < size1 && v >= 0 && v <  size2 )
-		       		{
-		       			// Unlabeled neighbors go into the queue if they are not there yet 
-		       			if ( tabLabels[ u ][ v ] == 0 && maskImage.getf( u, v ) > 0 )
-		       			{
-		       				pixelList.add( new PixelRecord( u, v, inputImage.getf( u, v ) ));
-		       				tabLabels[ u ][ v ] = INQUEUE;
-		       			}
-		       			else if ( tabLabels[ u ][ v ] > 0 && inputImage.getf( u, v ) <= pixelValue )
-		       			{
-		       				// assign label of smallest neighbor
-		       				tabLabels[ i ][ j ] = tabLabels[ u ][ v ];
-		       				pixelValue = inputImage.getf( u, v );
-		       			}
-		       		}
-		       	}    
+		// list to store neighbor labels
+		final ArrayList <Integer> neighborLabels = new ArrayList<Integer>();
 
-      		}
-      	}
-      	else // without mask
-      	{
-      		while ( pixelList.isEmpty() == false )
-      		{
-      			if ( Thread.currentThread().isInterrupted() )
-    				return null;	
-      			
-      			IJ.showProgress( numPixels-pixelList.size(), numPixels );
+		final ArrayList <PixelRecord> neighborPixels = new ArrayList<PixelRecord>();
 
-      			final PixelRecord pixelRecord = pixelList.poll();
-      			final Cursor2D p = pixelRecord.getCursor();
-	    		final int i = p.getX();
-	    		final int j = p.getY();
+		// with mask
+		if ( null != maskImage )
+		{
+			while ( pixelList.isEmpty() == false )
+			{
+				if ( Thread.currentThread().isInterrupted() )
+					return null;
 
-      			double pixelValue = pixelRecord.getValue(); 
+				final PixelRecord pixelRecord = pixelList.poll();
+				// show progression along pixel values
+				IJ.showProgress( (pixelRecord.getValue() + 1) / (maxValue + 1));
 
-      			// Read neighbor coordinates
-      			neigh.setCursor( p );
+				final Cursor2D p = pixelRecord.getCursor();
+				final int i = p.getX();
+				final int j = p.getY();
 
-      			for( Cursor2D c : neigh.getNeighbors() )			       		
-      			{
-      				// Look in neighborhood for labeled pixels with
-      				// smaller or equal original value
-      				int u = c.getX();
-      				int v = c.getY();
+				// Read neighbor coordinates
+				neigh.setCursor( p );
 
-      				if ( u >= 0 && u < size1 && v >= 0 && v <  size2 )
-      				{
-      					// Unlabeled neighbors go into the queue if they are not there yet 
-      					if ( tabLabels[ u ][ v ] == 0 )
-      					{
-      						pixelList.add( new PixelRecord( u, v, inputImage.getf( u, v ) ));
-      						tabLabels[ u ][ v ] = INQUEUE;
-      					}
-      					else if ( tabLabels[ u ][ v ] > 0 && inputImage.getf( u, v ) <= pixelValue )
-      					{
-      						// assign label of smallest neighbor
-      						tabLabels[ i ][ j ] = tabLabels[ u ][ v ];
-      						pixelValue = inputImage.getf( u, v );
-      					}
-      				}
-      			}    
+				// reset list of neighbor labels
+				neighborLabels.clear();
 
-      		}
-      	}
+				// reset list of neighbor pixels
+				neighborPixels.clear();
+
+				for( Cursor2D c : neigh.getNeighbors() )
+				{
+					// Look in neighborhood for labeled pixels with
+					// smaller or equal original value
+					int u = c.getX();
+					int v = c.getY();
+
+					if ( u >= 0 && u < size1 && v >= 0 && v <  size2 )
+					{
+						// Unlabeled neighbors go into the queue if they are not
+						// there yet
+						if ( tabLabels[ u ][ v ] == INIT &&
+								maskImage.getf( u, v ) > 0 )
+						{
+							neighborPixels.add(
+									new PixelRecord(
+											c, inputImage.getf( u, v ) ) );
+						}
+						else if ( tabLabels[ u ][ v ] > 0 &&
+								! neighborLabels.contains(tabLabels[ u ][ v ]) )
+						{
+							// store labels of neighbors in a list
+							neighborLabels.add( tabLabels[ u ][ v ] );
+						}
+					}
+				}
+
+				if( neighborLabels.size() > 0 )
+				{
+					tabLabels[ i ][ j ] = neighborLabels.get( 0 );
+					// now that we know the pixel is labeled,
+					// add neighbors to list
+					for( PixelRecord v : neighborPixels )
+					{
+						tabLabels[ v.getCursor().getX() ][ v.getCursor().getY() ] = INQUEUE;
+						pixelList.add( v );
+					}
+				}
+			}
+		}
+		else // without mask
+		{
+			while ( pixelList.isEmpty() == false )
+			{
+				if ( Thread.currentThread().isInterrupted() )
+					return null;
+
+				final PixelRecord pixelRecord = pixelList.poll();
+				// show progression along pixel values
+				IJ.showProgress( (pixelRecord.getValue() + 1) / (maxValue + 1));
+
+				final Cursor2D p = pixelRecord.getCursor();
+				final int i = p.getX();
+				final int j = p.getY();
+
+				// Read neighbor coordinates
+				neigh.setCursor( p );
+
+				// reset list of neighbor labels
+				neighborLabels.clear();
+
+				// reset list of neighbor pixels
+				neighborPixels.clear();
+
+				for( Cursor2D c : neigh.getNeighbors() )
+				{
+					// Look in neighborhood for labeled pixels with
+					// smaller or equal original value
+					int u = c.getX();
+					int v = c.getY();
+
+					if ( u >= 0 && u < size1 && v >= 0 && v <  size2 )
+					{
+						// Unlabeled neighbors go into the queue if they are not
+						// there yet
+						if ( tabLabels[ u ][ v ] == INIT )
+						{
+							neighborPixels.add(
+									new PixelRecord(
+											c, inputImage.getf( u, v ) ) );
+						}
+						else if ( tabLabels[ u ][ v ] > 0 &&
+								! neighborLabels.contains(tabLabels[ u ][ v ]) )
+						{
+							// store labels of neighbors in a list
+							neighborLabels.add( tabLabels[ u ][ v ] );
+						}
+					}
+				}
+
+				if( neighborLabels.size() > 0 )
+				{
+					tabLabels[ i ][ j ] = neighborLabels.get( 0 );
+					// now that we know the pixel is labeled, add unlabeled
+					// neighbors to list
+					for( PixelRecord v : neighborPixels )
+					{
+						tabLabels[ v.getCursor().getX() ][ v.getCursor().getY() ] = INQUEUE;
+						pixelList.add( v );
+					}
+				}
+			}// end if pixelList is not empty
+		}
 
 		final long end = System.currentTimeMillis();
 		if( verbose ) IJ.log("  Flooding took: " + (end-start) + " ms");
