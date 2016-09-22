@@ -243,7 +243,7 @@ DialogListener
 
 		long t0 = System.currentTimeMillis();
 
-		// Compute geodesic reconstruction
+		// Compute marker-controlled watershed
 		result = process( image, maskImage, imagePlus.getRoi() );
 
 		if ( null == result )
