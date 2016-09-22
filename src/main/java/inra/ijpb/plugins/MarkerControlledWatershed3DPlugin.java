@@ -117,9 +117,12 @@ public class MarkerControlledWatershed3DPlugin implements PlugIn
             ImagePlus markerImage = WindowManager.getImage( markerIndex + 1 );
             ImagePlus maskImage = maskIndex > 0 ? WindowManager.getImage( maskIndex ) : null;
             
-            // a 3D image is assumed but it will use 2D connectivity if the input is 2D
-            final int connectivity = use26neighbors ? 26 : 6;
-            
+            // a 3D image is assumed but it will use 2D connectivity if the
+            // input is 2D
+            int connectivity = use26neighbors ? 26 : 6;
+            if( inputImage.getImageStackSize() == 1 )
+            	connectivity = use26neighbors ? 8 : 4;
+
             ImagePlus result = process( inputImage, markerImage, maskImage, connectivity );
                                     
     		// Set result slice to the current slice in the input image
