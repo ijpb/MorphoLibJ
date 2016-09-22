@@ -50,7 +50,7 @@ public class MarkerControlledWatershed3DPlugin implements PlugIn
 		if (binaryMarkers)
 		{
 			IJ.log("-> Compute marker labels");
-			marker = BinaryImages.componentsLabeling(marker, connectivity, 16);
+			marker = BinaryImages.componentsLabeling(marker, connectivity, 32);
 		}
 		
 		IJ.log("-> Running watershed...");
