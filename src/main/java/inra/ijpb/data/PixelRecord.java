@@ -35,7 +35,12 @@ public class PixelRecord implements Comparable<PixelRecord>{
 	double value = 0;
 	final static AtomicLong seq = new AtomicLong();
 	final long seqNum;
-	
+
+	/**
+	 * Create pixel record with cursor position and double value
+	 * @param cursor pixel position in 2D coordinates
+	 * @param value pixel intensity value
+	 */
 	public PixelRecord(
 			final Cursor2D cursor,
 			final double value)
