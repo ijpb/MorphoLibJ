@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 
 import ij.IJ;
 import ij.ImagePlus;
+import ij.WindowManager;
 import ij.gui.DialogListener;
 import ij.gui.GenericDialog;
 import ij.gui.NonBlockingGenericDialog;
@@ -48,7 +49,7 @@ DialogListener
 
 	/** keep the original image, to restore it after the preview */
 	private ImageProcessor baseImage;
-
+	private ImageProcessor maskImage;
 	/** flag to calculate watershed dams */
 	public static boolean getDams = true;
 
@@ -172,9 +173,16 @@ DialogListener
 		// select point tool for manual introduction of markers
 		Toolbar.getInstance().setTool( Toolbar.POINT );
 
+		int nbima = WindowManager.getImageCount();
+        String[] namesMask = new String[ nbima + 1 ];
+        namesMask[ 0 ] = "None";
+
+        for (int i = 0; i < nbima; i++)
+        	namesMask[ i + 1 ] = WindowManager.getImage(i + 1).getShortTitle();
 		// create the dialog
 		gd = new NonBlockingGenericDialog( "Interactive Marker-controlled "
 				+ "Watershed" );
+		gd.addChoice( "Mask", namesMask, namesMask[ 0 ] );
 		gd.addCheckbox( "Calculate dams", getDams );
 		gd.addChoice("Connectivity",
 				Conn2D.getAllLabels(),
@@ -190,8 +198,11 @@ DialogListener
 			return DONE;
 
 		// set up current parameters
+		int maskIndex = gd.getNextChoiceIndex();
 		getDams = gd.getNextBoolean();
 		connectivity = Conn2D.fromLabel(gd.getNextChoice());
+		maskImage = maskIndex > 0 ?
+				WindowManager.getImage( maskIndex ).getProcessor() : null;
 
 		return flags;
 	}
@@ -203,8 +214,11 @@ DialogListener
 	public boolean dialogItemChanged(GenericDialog gd, AWTEvent evt)
 	{
 		// set up current parameters
+		int maskIndex = gd.getNextChoiceIndex();
 		getDams = gd.getNextBoolean();
 		connectivity = Conn2D.fromLabel(gd.getNextChoice());
+		maskImage = maskIndex > 0 ?
+				WindowManager.getImage( maskIndex ).getProcessor() : null;
 
 		return true;
 	}
@@ -220,11 +234,17 @@ DialogListener
 	public void run( ImageProcessor image )
 	{
 		if( null == image )
+		{
+			IJ.error( "Interactive Marker-controlled Watershed",
+					"ERROR: At least one image need to be open to run"
+					+ " Interactive Marker-controlled Watershed.");
 			return;
+		}
+
 		long t0 = System.currentTimeMillis();
 
 		// Compute geodesic reconstruction
-		result = process( image, imagePlus.getRoi() );
+		result = process( image, maskImage, imagePlus.getRoi() );
 
 		if ( null == result )
 		{
@@ -256,10 +276,11 @@ DialogListener
 	 * Apply geodesic reconstruction to mask image based on current operation
 	 * and ROI
 	 * @param input image to apply watershed segmentation on
+	 * @param mask image to constraint segmentation
 	 * @param roi region of interest to create marker image
 	 * @return reconstructed image
 	 */
-	ImageProcessor process( ImageProcessor input, Roi roi )
+	ImageProcessor process( ImageProcessor input, ImageProcessor mask, Roi roi )
 	{
 		if( input == null || imagePlus == null || baseImage == null)
 		{
@@ -297,10 +318,10 @@ DialogListener
 			marker.draw( roi );
 
 		marker = BinaryImages.componentsLabeling(
-						marker, connectivity.value, 16 );
+						marker, connectivity.value, 32 );
 
-		return Watershed.computeWatershed( input, marker, null,
-				connectivity.value, getDams );
+		return Watershed.computeWatershed( input, marker, mask,
+				connectivity.value, getDams, false );
 	}
 
 	private static String createResultImageName( ImagePlus baseImage ) {
