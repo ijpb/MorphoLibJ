@@ -681,8 +681,18 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 
 		final int[][] tabLabels = new int[ size1 ][ size2 ];
 		// value INIT is assigned to each pixel of the output labels
-		for( int i=0; i<size1; i++ )
-			Arrays.fill( tabLabels[i], INIT );
+		if( null == maskImage )
+		{
+			for( int i=0; i<size1; i++ )
+				Arrays.fill( tabLabels[i], INIT );
+		}
+		else
+		{
+			for( int i=0; i<size1; i++ )
+				for( int j=0; j<size2; j++ )
+					if( maskImage.getf( i, j ) > 0 )
+						tabLabels[ i ][ j ] = INIT;
+		}
 
 		// Make list of pixels and sort it in ascending order
 		IJ.showStatus( "Extracting pixel values..." );
