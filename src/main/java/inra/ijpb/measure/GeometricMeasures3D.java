@@ -981,7 +981,7 @@ public class GeometricMeasures3D
 		// compute centroid of each region
 		int sizeX = labelImage.getWidth();
 		int sizeY = labelImage.getHeight();
-		int sizeZ = labelImage.getHeight();
+		int sizeZ = labelImage.getSize();
 		for (int z = 0; z < sizeZ; z++) 
 		{
 			for (int y = 0; y < sizeY; y++) 
