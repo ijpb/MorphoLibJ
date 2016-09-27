@@ -7181,7 +7181,7 @@ inra.ijpb.plugins contains the set of plugins that is accessible from ImageJ/Fij
 All major methods have a general class with static methods that allow calling
  the methods on 2D and 3D images in a transparent way.
  This modularity permitted to develop other plugins devoted to the analysis
- of nucleus images
+ of nucleus images 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Poulet_2015_bmc"
@@ -7422,10 +7422,6 @@ n tools it is quite simple to create a script to display each label of an
 \end_layout
 
 \begin_layout Standard
-
-\end_layout
-
-\begin_layout Standard
 \begin_inset listings
 lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
@@ -7515,7 +7511,12 @@ labels = LabelImages.findAllLabels( imp );
 
 \begin_layout Plain Layout
 
-// create 3d universe univ = new Image3DUniverse(); 
+// create 3d universe
+\end_layout
+
+\begin_layout Plain Layout
+
+univ = new Image3DUniverse(); 
 \end_layout
 
 \begin_layout Plain Layout
@@ -7525,7 +7526,12 @@ univ.show();
 
 \begin_layout Plain Layout
 
-// read LUT from input image lut = imp.getLuts()[0];   
+// read LUT from input image 
+\end_layout
+
+\begin_layout Plain Layout
+
+lut = imp.getLuts()[0];   
 \end_layout
 
 \begin_layout Plain Layout
