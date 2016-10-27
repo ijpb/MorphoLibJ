@@ -166,7 +166,7 @@ public class GeodesicDiameter3DFloat extends AlgoStub implements GeodesicDiamete
 			// add an entry to the resulting data table
 			table.incrementCounter();
 			table.addValue("Label", labels[i]);
-			table.addValue("Geod. Diam", value);
+			table.addValue("Geod. Diam.", value);
 			table.addValue("Radius", radius);
 			table.addValue("Geod. Elong.", Math.max(value / (radius * 2), 1.0));
 			table.addValue("xi", posCenter[i].getX());
