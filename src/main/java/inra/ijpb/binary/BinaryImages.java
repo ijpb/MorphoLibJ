@@ -824,4 +824,90 @@ public class BinaryImages
 		
 		return result;
 	}
+
+	/**
+	 * Converts a grayscale 2D or 3D image into a binary image by setting
+	 * zero elements to 255, and non zero ones to 0.
+	 * 
+	 * @param imagePlus
+	 *            an ImagePlus object containing a gray scale image
+	 * @return a binary image containing 255 for all non-zero elements of
+	 *         original image
+	 */
+	public static final ImagePlus binarizeBackground(ImagePlus imagePlus) 
+	{
+		// Dispatch to appropriate function depending on dimension
+		ImagePlus resultPlus;
+		String title = imagePlus.getShortTitle() + "-bg";
+		if (imagePlus.getStackSize() == 1)
+		{
+			ImageProcessor result = binarizeBackground(imagePlus.getProcessor());
+			resultPlus = new ImagePlus(title, result);
+		}
+		else 
+		{
+			ImageStack result = binarizeBackground(imagePlus.getStack());
+			resultPlus = new ImagePlus(title, result);
+		}
+		return resultPlus;
+	}
+	
+	/**
+	 * Converts a grayscale 2D image into a binary 2D image by setting
+	 * zero elements to 255, and non zero ones to 0.
+	 * 
+	 * @param image
+	 *            a gray scale image
+	 * @return a binary image containing 255 for all non-zero elements of
+	 *         original image
+	 	 */
+	public static final ImageProcessor binarizeBackground(ImageProcessor image) 
+	{
+		int width = image.getWidth();
+		int height = image.getHeight();
+		ImageProcessor result = new ByteProcessor(width, height);
+		
+		for (int y = 0; y < height; y++)
+		{
+			for (int x = 0; x < width; x++) 
+			{
+				if (image.get(x, y) == 0) 
+					result.set(x, y, 255);
+			}
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Converts a grayscale 3D image into a binary 3D image by setting
+	 * zero elements to 255, and non zero ones to 0.
+	 * 
+	 * @param image
+	 *            a gray scale 3D image
+	 * @return a binary image containing 255 for all non-zero elements of
+	 *         original image
+	 */
+	public static final ImageStack binarizeBackground(ImageStack image)
+	{
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		int sizeZ = image.getSize();
+		
+		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
+		
+		for (int z = 0; z < sizeZ; z++)
+		{
+			for (int y = 0; y < sizeY; y++) 
+			{
+				for (int x = 0; x < sizeX; x++) 
+				{
+					if (image.getVoxel(x, y, z) == 0) 
+						result.setVoxel(x, y, z, 255);
+				}
+			}
+		}
+		
+		return result;
+	}
 }

@@ -2,9 +2,9 @@ package inra.ijpb.binary.geodesic;
 
 import ij.IJ;
 import ij.measure.ResultsTable;
-import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.algo.AlgoStub;
+import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.binary.ChamferWeights;
 
 import java.awt.Point;
@@ -118,10 +118,10 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 		Point[] pos2;
 		
 		// Initialize mask as binarisation of labels
-		ImageProcessor mask = binariseImage(labelImage);
+		ImageProcessor mask = BinaryImages.binarize(labelImage);
 		
 		// Initialize marker as complement of all labels
-		ImageProcessor marker = createMarkerOutsideLabels(labelImage);
+		ImageProcessor marker = BinaryImages.binarizeBackground(labelImage);
 
 		this.fireStatusChanged(this, "Initializing pseudo geodesic centers...");
 
@@ -257,10 +257,10 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 		Point[] pos2;
 		
 		// Initialize mask as binarisation of labels
-		ImageProcessor mask = binariseImage(labelImage);
+		ImageProcessor mask = BinaryImages.binarize(labelImage);
 		
 		// Initialize marker as complement of all labels
-		ImageProcessor marker = createMarkerOutsideLabels(labelImage);
+		ImageProcessor marker = BinaryImages.binarizeBackground(labelImage);
 
 		this.fireStatusChanged(this, "Initializing pseudo geodesic centers...");
 
@@ -402,32 +402,6 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 		
 		return nextPos;
 	}
-	
-	/**
-	 * Creates a new binary image with same 0 value, and value 255 for each
-	 * non-zero pixel of the original image.
-	 */
-	private ImageProcessor binariseImage(ImageProcessor mask)
-	{
-		// Extract image size
-		int width = mask.getWidth();
-		int height = mask.getHeight();
-		
-		// Create result image
-		ImageProcessor marker = new ByteProcessor(width, height);
-		
-		// Fill result image to either 255 or 0.
-		for(int y = 0; y < height; y++) 
-		{
-			for(int x = 0; x < width; x++) 
-			{				
-				marker.set(x, y, mask.get(x, y)==0 ? 0 : 255);
-			}
-		}
-		
-		// Return result
-		return marker;
-	}
 
 	private int[] findAllLabels(ImageProcessor image)
 	{
@@ -452,30 +426,6 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 			array[i] = iterator.next();
 		
 		return array;
-	}
-
-	/**
-	 * Create the binary image with value 255 for mask pixels equal to 0, 
-	 * and value 0 for any other value of mask.
-	 */
-	private ImageProcessor createMarkerOutsideLabels(ImageProcessor mask) 
-	{
-		// Extract image size
-		int width = mask.getWidth();
-		int height = mask.getHeight();
-		
-		// Create result image
-		ImageProcessor marker = new ByteProcessor(width, height);
-		
-		// Fill result image to either 255 or 0.
-		for(int y = 0; y < height; y++) {
-			for(int x = 0; x < width; x++) {				
-				marker.set(x, y, mask.get(x, y) == 0 ? 255 : 0);
-			}
-		}
-		
-		// Return result
-		return marker;
 	}
 
 	/**

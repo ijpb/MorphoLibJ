@@ -9,6 +9,7 @@ import ij.measure.ResultsTable;
 import inra.ijpb.algo.AlgoEvent;
 import inra.ijpb.algo.AlgoListener;
 import inra.ijpb.algo.AlgoStub;
+import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.binary.ChamferWeights3D;
 import inra.ijpb.data.Cursor3D;
 import inra.ijpb.data.image.Images3D;
@@ -116,7 +117,7 @@ public class GeodesicDiameter3DFloat extends AlgoStub implements GeodesicDiamete
 		Cursor3D[] pos2;
 		
 		// Initialize mask as binarisation of labels
-		ImageStack mask = binariseImage(labelImage);
+		ImageStack mask = BinaryImages.binarize(labelImage);
 		
 		// Initialize marker as complement of all labels
 		ImageStack marker = createMarkerOutsideLabels(labelImage);
@@ -215,35 +216,6 @@ public class GeodesicDiameter3DFloat extends AlgoStub implements GeodesicDiamete
 	// ==================================================
 	// Private processing methods
 	
-	/**
-	 * Creates a new binary image with same 0 value, and value 255 for each
-	 * non-zero pixel of the original image.
-	 */
-	private ImageStack binariseImage(ImageStack mask)
-	{
-		// Extract image size
-		int sizeX = mask.getWidth();
-		int sizeY = mask.getHeight();
-		int sizeZ = mask.getSize();
-		
-		// Create result image
-		ImageStack marker = ImageStack.create(sizeX, sizeY, sizeZ, 8);
-		
-		// Fill result image to either 255 or 0.
-		for(int z = 0; z < sizeZ; z++) 
-		{
-			for(int y = 0; y < sizeY; y++) 
-			{
-				for(int x = 0; x < sizeX; x++) 
-				{				
-					marker.setVoxel(x, y, z, mask.getVoxel(x, y, z) == 0 ? 0 : 255);
-				}
-			}
-		}		
-		// Return result
-		return marker;
-	}
-
 	/**
 	 * Create the binary image with value 255 for mask pixels equal to 0, 
 	 * and value 0 for any other value of mask.
