@@ -14,8 +14,8 @@ import ij.ImagePlus;
  * @author David Legland
  *
  */
-public class IJUtils {
-
+public class IJUtils 
+{
 	/**
 	 * Private constructor to prevent class instantiation.
 	 */
@@ -35,13 +35,17 @@ public class IJUtils {
 	 *            the image on which process was applied
 	 * @return the String corresponding to the message displayed in status bar
 	 */
-	public final static String showElapsedTime(String opName, long timeInMillis, ImagePlus refImage) {
+	public final static String showElapsedTime(String opName, double timeInMillis, ImagePlus refImage) 
+	{
 		int nElements;
 		String elementName;
-		if (refImage.getImageStackSize() == 1) {
+		if (refImage.getImageStackSize() == 1) 
+		{
 			nElements = refImage.getWidth() * refImage.getHeight();
 			elementName = "pixels";
-		} else {
+		}
+		else 
+		{
 			nElements = refImage.getWidth() * refImage.getHeight() * refImage.getStackSize();
 			elementName = "voxels";
 		}

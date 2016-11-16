@@ -6,6 +6,8 @@ package inra.ijpb.binary.geodesic;
 import ij.IJ;
 import ij.ImageStack;
 import ij.measure.ResultsTable;
+import inra.ijpb.algo.AlgoEvent;
+import inra.ijpb.algo.AlgoListener;
 import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.binary.ChamferWeights3D;
 import inra.ijpb.data.Cursor3D;
@@ -13,10 +15,25 @@ import inra.ijpb.data.image.Images3D;
 import inra.ijpb.label.LabelImages;
 
 /**
+ * Computes geodesic diameters in 3D label images using floating point chamfer
+ * weights.
+ *
+ *
+ * <p>
+ * Example of use:
+ *<pre>{@code
+ *	GeodesicDiameterFloat3D gd3d = new GeodesicDiameter3DFloat(ChamferWeights3D.BORGEFORS);
+ *	ResultsTable table = gd3d.process(inputLabelImage);
+ *	table.show("Geodesic Diameter 3D");
+ *}</pre>
+ *
+ * @see GeodesicDiameterFloat
+ * @see inra.ijpb.binary.ChamferWeights3D
+ * 
  * @author dlegland
  *
  */
-public class GeodesicDiameter3DFloat extends AlgoStub implements GeodesicDiameter3D
+public class GeodesicDiameter3DFloat extends AlgoStub implements GeodesicDiameter3D, AlgoListener
 {
 	// ==================================================
 	// Class variables
@@ -26,6 +43,11 @@ public class GeodesicDiameter3DFloat extends AlgoStub implements GeodesicDiamete
 	 */
 	float[] weights;
 
+	/**
+	 * The string used for indicating the current step in algo events.
+	 */
+	String currentStep = "";
+	
 	
 	// ==================================================
 	// Constructors 
@@ -59,6 +81,9 @@ public class GeodesicDiameter3DFloat extends AlgoStub implements GeodesicDiamete
 	}
 	
 	
+	// ==================================================
+	// Processing methods
+	
 	/**
 	 * Computes the geodesic diameter of each particle within the given label
 	 * image.
@@ -79,14 +104,12 @@ public class GeodesicDiameter3DFloat extends AlgoStub implements GeodesicDiamete
 		int nbLabels = labels.length;
 		
 		// Create calculator for propagating distances
-		GeodesicDistanceTransform3D calculator;
-		calculator = new GeodesicDistanceTransform3DFloat(weights, false);
-			
-		// Initialize a new result table
-		ResultsTable table = new ResultsTable();
+		GeodesicDistanceTransform3D geodDistMapAlgo;
+		geodDistMapAlgo = new GeodesicDistanceTransform3DFloat(weights, false);
+		geodDistMapAlgo.addAlgoListener(this);
 
 		// The array that stores Chamfer distances 
-		ImageStack distance;
+		ImageStack distanceMap;
 		
 		Cursor3D[] posCenter;
 		Cursor3D[] pos1;
@@ -98,15 +121,16 @@ public class GeodesicDiameter3DFloat extends AlgoStub implements GeodesicDiamete
 		// Initialize marker as complement of all labels
 		ImageStack marker = createMarkerOutsideLabels(labelImage);
 
+		this.currentStep = "initCenters";
 		this.fireStatusChanged(this, "Initializing pseudo geodesic centers...");
 
 		// first distance propagation to find an arbitrary center
-		distance = calculator.geodesicDistanceMap(marker, mask);
+		distanceMap = geodDistMapAlgo.geodesicDistanceMap(marker, mask);
 		
 		// Extract position of maxima
-		posCenter = findPositionOfMaxValues(distance, labelImage, labels);
+		posCenter = findPositionOfMaxValues(distanceMap, labelImage, labels);
 		
-		float[] radii = findMaxValues(distance, labelImage, labels);
+		float[] radii = findMaxValues(distanceMap, labelImage, labels);
 		
 		// Create new marker image with position of maxima
 		Images3D.fill(marker, 0);
@@ -122,15 +146,15 @@ public class GeodesicDiameter3DFloat extends AlgoStub implements GeodesicDiamete
 			marker.setVoxel(pos.getX(), pos.getY(), pos.getZ(), 255);
 		}
 		
-		
+		this.currentStep = "firstEnds";
 		this.fireStatusChanged(this, "Computing first geodesic extremities...");
 
 		// Second distance propagation from first maximum
-		distance = calculator.geodesicDistanceMap(marker, mask);
+		distanceMap = geodDistMapAlgo.geodesicDistanceMap(marker, mask);
 
 		// find position of maximal value,
 		// this is expected to correspond to a geodesic extremity 
-		pos1 = findPositionOfMaxValues(distance, labelImage, labels);
+		pos1 = findPositionOfMaxValues(distanceMap, labelImage, labels);
 		
 		// Create new marker image with position of maxima
 		Images3D.fill(marker, 0);
@@ -146,20 +170,25 @@ public class GeodesicDiameter3DFloat extends AlgoStub implements GeodesicDiamete
 			marker.setVoxel(pos.getX(), pos.getY(), pos.getZ(), 255);
 		}
 		
+		this.currentStep = "secondEnds";
 		this.fireStatusChanged(this, "Computing second geodesic extremities...");
 
 		// third distance propagation from second maximum
-		distance = calculator.geodesicDistanceMap(marker, mask);
+		distanceMap = geodDistMapAlgo.geodesicDistanceMap(marker, mask);
 		
 		// compute max distance constrained to each label,
-		float[] values = findMaxValues(distance, labelImage, labels);
+		float[] values = findMaxValues(distanceMap, labelImage, labels);
 		//System.out.println("value: " + value);
-		pos2 = findPositionOfMaxValues(distance, labelImage, labels);
+		pos2 = findPositionOfMaxValues(distanceMap, labelImage, labels);
 		
-		// Small conversion to normalize with weights
+		
+		// Initialize a new results table
+		ResultsTable table = new ResultsTable();
+
+		// populate the results table with features of each label
 		for (int i = 0; i < nbLabels; i++) 
 		{
-			// convert to pixel distance
+			// Small conversion to normalize to pixel distances
 			double radius = ((double) radii[i]) / weights[0];
 			double value = ((double) values[i]) / weights[0];
 			
@@ -183,6 +212,9 @@ public class GeodesicDiameter3DFloat extends AlgoStub implements GeodesicDiamete
 		return table;
 	}
 
+	// ==================================================
+	// Private processing methods
+	
 	/**
 	 * Creates a new binary image with same 0 value, and value 255 for each
 	 * non-zero pixel of the original image.
@@ -248,6 +280,7 @@ public class GeodesicDiameter3DFloat extends AlgoStub implements GeodesicDiamete
 	private Cursor3D[] findPositionOfMaxValues(ImageStack image, 
 			ImageStack labelImage, int[] labels)
 	{
+		// extract image size
 		int sizeX 	= labelImage.getWidth();
 		int sizeY 	= labelImage.getHeight();
 		int sizeZ 	= labelImage.getSize();
@@ -313,6 +346,7 @@ public class GeodesicDiameter3DFloat extends AlgoStub implements GeodesicDiamete
 	private float[] findMaxValues(ImageStack image, 
 			ImageStack labelImage, int[] labels) 
 	{
+		// extract image size
 		int sizeX 	= labelImage.getWidth();
 		int sizeY 	= labelImage.getHeight();
 		int sizeZ 	= labelImage.getSize();
@@ -347,7 +381,7 @@ public class GeodesicDiameter3DFloat extends AlgoStub implements GeodesicDiamete
 				{
 					int label = (int) labelImage.getVoxel(x, y, z);
 
-					// do not process pixels that do not belong to particle
+					// do not process voxels that do not belong to particle
 					if (label == 0)
 						continue;
 
@@ -361,4 +395,36 @@ public class GeodesicDiameter3DFloat extends AlgoStub implements GeodesicDiamete
 			}
 		}	
 		return maxValues;
-	}}
+	}
+
+	// ==================================================
+	// Implementation of AlgoListener interface 
+	
+	@Override
+	public void algoProgressChanged(AlgoEvent evt) 
+	{
+		fireProgressChanged(new Event(this, evt));
+	}
+
+	@Override
+	public void algoStatusChanged(AlgoEvent evt) 
+	{
+		evt = new Event(this, evt);
+		fireStatusChanged(evt);
+	}
+	
+	/**
+	 * Encapsulation class to add a semantic layer on the interpretation of the event.
+	 */
+	class Event extends AlgoEvent
+	{
+		public Event(GeodesicDiameter3DFloat source, AlgoEvent evt)
+		{
+			super(source, "(GeodDiam3d) " + evt.getStatus(), evt.getCurrentProgress(), evt.getTotalProgress());
+			if (!currentStep.isEmpty())
+			{
+				this.status = "(GeodDiam3d-" + currentStep + ") " + evt.getStatus();
+			}
+		}
+	}
+}

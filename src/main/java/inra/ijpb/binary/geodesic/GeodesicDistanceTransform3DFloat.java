@@ -85,6 +85,7 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 		this.sizeZ = mask.getSize();
 		
 		fireStatusChanged(this, "Initialization..."); 
+		
 		// create new empty image, and fill it with black
 		ImageStack resultStack = ImageStack.create(sizeX, sizeY, sizeZ, 32);
 		this.result = Images3D.createWrapper(resultStack);
@@ -236,9 +237,9 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 					}
 				}
 			}
-			
-			fireProgressChanged(this, 1, 1);
 		}
+		
+		fireProgressChanged(this, 1, 1);
 	}
 
 	private void backwardIteration()
@@ -269,7 +270,7 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 		
 		for (int z = sizeZ-1; z >= 0; z--)
 		{
-			fireProgressChanged(this, z, sizeZ);
+			fireProgressChanged(this, sizeZ-1-z, sizeZ);
 			for (int y = sizeY - 1; y >= 0; y--)
 			{
 				for (int x = sizeX - 1; x >= 0; x--)

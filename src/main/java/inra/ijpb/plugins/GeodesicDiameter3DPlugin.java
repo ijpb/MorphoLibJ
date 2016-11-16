@@ -11,6 +11,7 @@ import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.binary.ChamferWeights3D;
 import inra.ijpb.binary.geodesic.GeodesicDiameter3DFloat;
 import inra.ijpb.label.LabelImages;
+import inra.ijpb.util.IJUtils;
 
 /**
  * 
@@ -60,9 +61,6 @@ public class GeodesicDiameter3DPlugin implements PlugIn
 		// Set Chessknight weights as default
 		gd.addChoice("Distances", ChamferWeights3D.getAllLabels(), 
 				ChamferWeights3D.WEIGHTS_3_4_5_7.toString());
-//		gd.addCheckbox("Show Overlay Result", true);
-//		gd.addChoice("Image to overlay:", imageNames, selectedImageName);
-//		gd.addCheckbox("Export to ROI Manager", true);
 		gd.showDialog();
 		
 		if (gd.wasCanceled())
@@ -72,9 +70,6 @@ public class GeodesicDiameter3DPlugin implements PlugIn
 		int labelImageIndex = gd.getNextChoiceIndex();
 		ImagePlus labelPlus = WindowManager.getImage(labelImageIndex+1);
 		ChamferWeights3D weights = ChamferWeights3D.fromLabel(gd.getNextChoice());
-//		boolean overlayPaths = gd.getNextBoolean();
-//		int resultImageIndex = gd.getNextChoiceIndex();
-//		boolean createPathRois = gd.getNextBoolean();
 		
 		// check if image is a label image
 		if (!LabelImages.isLabelImageType(labelPlus))
@@ -91,15 +86,16 @@ public class GeodesicDiameter3DPlugin implements PlugIn
 		ResultsTable table = process(labelImage, weights.getFloatWeights());
 		long finalTime = System.nanoTime();
 		
-		// Final time, displayed in milli-sseconds
+		// Final time, displayed in milliseconds
 		float elapsedTime = (finalTime - start) / 1000000.0f;
 
 		// display the result table
 		String tableName = labelPlus.getShortTitle() + "-GeodDiameters"; 
 		table.show(tableName);
-
-		IJ.showStatus(String.format("Elapsed time: %8.2f ms", elapsedTime));	
-
+	
+		IJUtils.showElapsedTime("Geodesic Diameter 3D", (long) elapsedTime, labelPlus);
+		
+		
 		// extract column corresponding to geodesic diameter
 		int gdIndex = table.getColumnIndex("Geod. Diam.");
 		double[] geodDiamArray = table.getColumnAsDoubles(gdIndex);
