@@ -15,16 +15,17 @@ public class AlgoEvent
 	/**
 	 * The algorithm object that threw this event
 	 */
-	private Object source;
+	protected Object source;
 	
-	private String status;
+	protected String status;
 	
-	private double step;
-	private double total;
+	protected double step;
+	protected double total;
 	
 	public AlgoEvent(Object source, String status, double step, double total) 
 	{
 		this.source = source;
+		this.status = status;
 		this.step = step;
 		this.total = total;
 	}
@@ -77,6 +78,9 @@ public class AlgoEvent
 		return total;
 	}
 
+	/**
+	 * @return the progress ratio, as the ratio of current progression over total progression.
+	 */
 	public double getProgressRatio() 
 	{
 		return this.step / this.total;
