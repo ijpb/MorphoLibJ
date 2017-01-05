@@ -203,7 +203,7 @@ public class DistanceTransform3DFloat extends AlgoStub implements DistanceTransf
 							diago = Math.min(diago, resultSlice2[sizeX * y + x + 1]);
 						}
 
-						if (y < sizeX - 1)
+						if (y < sizeY - 1)
 						{
 							// voxels in the (y+1) line of  the (z-1) plane
 							if (x > 0) 
