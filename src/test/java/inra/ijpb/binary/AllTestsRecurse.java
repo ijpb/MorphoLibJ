@@ -8,6 +8,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
 	// generic classes
 	AllTests.class,
+	inra.ijpb.binary.conncomp.AllTests.class,
 	inra.ijpb.binary.distmap.AllTests.class,
 	inra.ijpb.binary.geodesic.AllTests.class,
 	})

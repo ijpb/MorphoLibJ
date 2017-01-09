@@ -15,7 +15,8 @@ import org.junit.Test;
 
 public class BinaryImagesTest {
 	/**
-	 * Checks that the maximum number of labels is greater than 2^16.
+	 * Checks that the maximum number of labels is greater than 2^8 when labels
+	 * are coded with byte.
 	 */
 	@Test
 	public final void testComputeLabels_Byte() 
@@ -35,7 +36,8 @@ public class BinaryImagesTest {
 	}
 
 	/**
-	 * Checks that the maximum number of labels is greater than 2^16.
+	 * Checks that the maximum number of labels is greater than 2^16 when labels
+	 * are coded with short.
 	 */
 	@Test
 	public final void testComputeLabelsManyLabels() 
@@ -55,7 +57,8 @@ public class BinaryImagesTest {
 	}
 
 	/**
-	 * Checks that the maximum number of labels is greater than 2^16.
+	 * Checks that the maximum number of labels is reached when computing too
+	 * many labels (using bytes).
 	 */
 	@Test(expected=RuntimeException.class)
 	public final void testComputeLabelsManyLabels_Byte() 
@@ -70,7 +73,7 @@ public class BinaryImagesTest {
 			}
 		}
 		
-		// should throw an axception
+		// should throw an exception
 		BinaryImages.componentsLabeling(image, 4, 8);
 	}
 
