@@ -169,7 +169,7 @@ public class DistanceTransform5x5Short extends AlgoStub implements DistanceTrans
 			}
 		}
 		
-		// calibrate min and max values of result imaeg processor
+		// calibrate min and max values of result image processor
 		buffer.setMinAndMax(0, maxVal);
 
 		// Forces the display to non-inverted LUT
@@ -274,7 +274,7 @@ public class DistanceTransform5x5Short extends AlgoStub implements DistanceTrans
 
 				// minimum distance of neighbor pixels
 				ortho = min(buffer.get(i - 1, j), buffer.get(i, j - 1));
-				diago =  min(buffer.get(i - 1, j - 1), buffer.get(i + 1, j - 1));
+				diago = min(buffer.get(i - 1, j - 1), buffer.get(i + 1, j - 1));
 				diag2 = min(
 						min(buffer.get(i - 1, j - 2), buffer.get(i + 1, j - 2)),
 						min(buffer.get(i - 2, j - 1), buffer.get(i + 2, j - 1)));
@@ -289,7 +289,7 @@ public class DistanceTransform5x5Short extends AlgoStub implements DistanceTrans
 			// penultimate pixel 
 			if (maskProc.getPixel(width - 2, j) == maskLabel)
 			{
-				ortho =  min(buffer.get(width - 3, j), buffer.get(width - 2, j - 1));
+				ortho = min(buffer.get(width - 3, j), buffer.get(width - 2, j - 1));
 				diago = min(buffer.get(width - 3, j - 1), buffer.get(width - 1, j - 1));
 				diag2 = min3(
 						buffer.get(width - 4, j - 1), buffer.get(width - 3, j - 2), 
@@ -302,7 +302,7 @@ public class DistanceTransform5x5Short extends AlgoStub implements DistanceTrans
 			// up-left, and up
 			if (maskProc.getPixel(width - 1, j) == maskLabel) 
 			{
-				ortho =  min(buffer.get(width - 2, j), buffer.get(width - 1, j - 1));
+				ortho = min(buffer.get(width - 2, j), buffer.get(width - 1, j - 1));
 				diago = buffer.get(width - 2, j - 1);
 				diag2 = min(buffer.get(width - 3, j - 1), buffer.get(width - 2, j - 2));
 				newVal = min3w(ortho, diago, diag2);

@@ -11,13 +11,16 @@ import org.junit.Test;
 public class DistanceTransform5x5ShortTest {
 
 	@Test
-	public final void testDistanceMap_ChessBoard() {
+	public final void testDistanceMap_ChessBoard() 
+	{
 		ByteProcessor image = new ByteProcessor(12, 10);
 		image.setBackgroundValue(0);
 		image.setValue(0);
 		image.fill();
-		for (int y = 2; y < 8; y++) {
-			for (int x = 2; x < 10; x++) {
+		for (int y = 2; y < 8; y++)
+		{
+			for (int x = 2; x < 10; x++)
+			{
 				image.set(x, y, 255);
 			}
 		}
@@ -33,7 +36,8 @@ public class DistanceTransform5x5ShortTest {
 	}
 	
 	@Test
-	public final void testDistanceMap_UntilCorners_CityBlock() {
+	public final void testDistanceMap_UntilCorners_CityBlock()
+	{
 		ByteProcessor image = new ByteProcessor(7, 7);
 		image.setValue(255);
 		image.fill();
@@ -56,7 +60,8 @@ public class DistanceTransform5x5ShortTest {
 	}
 
 	@Test
-	public final void testDistanceMap_UntilCorners_Chessboard() {
+	public final void testDistanceMap_UntilCorners_Chessboard() 
+	{
 		ByteProcessor image = new ByteProcessor(7, 7);
 		image.setValue(255);
 		image.fill();
@@ -79,7 +84,8 @@ public class DistanceTransform5x5ShortTest {
 	}
 	
 	@Test
-	public final void testDistanceMap_UntilCorners_Weights23() {
+	public final void testDistanceMap_UntilCorners_Weights23() 
+	{
 		ByteProcessor image = new ByteProcessor(7, 7);
 		image.setValue(255);
 		image.fill();
@@ -102,7 +108,8 @@ public class DistanceTransform5x5ShortTest {
 	}
 	
 	@Test
-	public final void testDistanceMap_UntilCorners_Borgefors34() {
+	public final void testDistanceMap_UntilCorners_Borgefors34() 
+	{
 		ByteProcessor image = new ByteProcessor(7, 7);
 		image.setValue(255);
 		image.fill();
@@ -125,7 +132,8 @@ public class DistanceTransform5x5ShortTest {
 	}
 	
 	@Test
-	public final void testDistanceMap_UntilCorners_ChessKnight() {
+	public final void testDistanceMap_UntilCorners_ChessKnight()
+	{
 		ByteProcessor image = new ByteProcessor(7, 7);
 		image.setValue(255);
 		image.fill();
@@ -148,11 +156,12 @@ public class DistanceTransform5x5ShortTest {
 	}
 	
 	/**
-	 * Another test for chessknight weigths, to fix a bug that incorrectly
+	 * Another test for chess-knight weights, to fix a bug that incorrectly
 	 * checked image bounds.
 	 */
 	@Test
-	public final void testDistanceMap_UntilCorners_ChessKnight2() {
+	public final void testDistanceMap_UntilCorners_ChessKnight2()
+	{
 		ByteProcessor image = new ByteProcessor(9, 9);
 		image.setValue(255);
 		image.fill();

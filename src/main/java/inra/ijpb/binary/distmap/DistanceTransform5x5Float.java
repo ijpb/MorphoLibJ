@@ -176,7 +176,7 @@ public class DistanceTransform5x5Float extends AlgoStub implements DistanceTrans
 			}
 		}
 		
-		// calibrate min and max values of result imaeg processor
+		// calibrate min and max values of result image processor
 		buffer.setMinAndMax(0, maxVal);
 
 		// Forces the display to non-inverted LUT
@@ -283,13 +283,10 @@ public class DistanceTransform5x5Float extends AlgoStub implements DistanceTrans
 
 				// minimum distance of neighbor pixels
 				ortho = min(buffer.getf(i - 1, j), buffer.getf(i, j - 1));
-				diago = min(buffer.getf(i - 1, j - 1),
-						buffer.getf(i + 1, j - 1));
+				diago = min(buffer.getf(i - 1, j - 1), buffer.getf(i + 1, j - 1));
 				diag2 = min(
-						min(buffer.getf(i - 1, j - 2),
-								buffer.getf(i + 1, j - 2)),
-						min(buffer.getf(i - 2, j - 1),
-								buffer.getf(i + 2, j - 1)));
+						min(buffer.getf(i - 1, j - 2), buffer.getf(i + 1, j - 2)),
+						min(buffer.getf(i - 2, j - 1), buffer.getf(i + 2, j - 1)));
 
 				// compute new distance of current pixel
 				newVal = min3w(ortho, diago, diag2);
@@ -301,12 +298,9 @@ public class DistanceTransform5x5Float extends AlgoStub implements DistanceTrans
 			// penultimate pixel
 			if (maskProc.getPixel(width - 2, j) == maskLabel) 
 			{
-				ortho = min(buffer.getf(width - 3, j),
-						buffer.getf(width - 2, j - 1));
-				diago = min(buffer.getf(width - 3, j - 1),
-						buffer.getf(width - 1, j - 1));
-				diag2 = min3(buffer.getf(width - 4, j - 1),
-						buffer.getf(width - 3, j - 2),
+				ortho = min(buffer.getf(width - 3, j), buffer.getf(width - 2, j - 1));
+				diago = min(buffer.getf(width - 3, j - 1), buffer.getf(width - 1, j - 1));
+				diag2 = min3(buffer.getf(width - 4, j - 1), buffer.getf(width - 3, j - 2),
 						buffer.getf(width - 1, j - 2));
 				newVal = min3w(ortho, diago, diag2);
 				updateIfNeeded(width - 2, j, newVal);
@@ -316,11 +310,9 @@ public class DistanceTransform5x5Float extends AlgoStub implements DistanceTrans
 			// up-left, and up
 			if (maskProc.getPixel(width - 1, j) == maskLabel)
 			{
-				ortho = min(buffer.getf(width - 2, j),
-						buffer.getf(width - 1, j - 1));
+				ortho = min(buffer.getf(width - 2, j), buffer.getf(width - 1, j - 1));
 				diago = buffer.getf(width - 2, j - 1);
-				diag2 = min(buffer.getf(width - 3, j - 1),
-						buffer.getf(width - 2, j - 2));
+				diag2 = min(buffer.getf(width - 3, j - 1), buffer.getf(width - 2, j - 2));
 				newVal = min3w(ortho, diago, diag2);
 				updateIfNeeded(width - 1, j, newVal);
 			}
@@ -377,12 +369,9 @@ public class DistanceTransform5x5Float extends AlgoStub implements DistanceTrans
 				continue;
 
 			// minimum distance of neighbor pixels
-			ortho = min(buffer.getf(i + 1, height - 2),
-					buffer.getf(i, height - 1));
-			diago = min(buffer.getf(i - 1, height - 1),
-					buffer.getf(i + 1, height - 1));
-			diag2 = min(buffer.getf(i - 2, height - 1),
-					buffer.getf(i + 2, height - 1));
+			ortho = min(buffer.getf(i + 1, height - 2), buffer.getf(i, height - 1));
+			diago = min(buffer.getf(i - 1, height - 1), buffer.getf(i + 1, height - 1));
+			diag2 = min(buffer.getf(i - 2, height - 1), buffer.getf(i + 2, height - 1));
 
 			// compute new distance of current pixel
 			newVal = min3w(ortho, diago, diag2);
@@ -432,8 +421,7 @@ public class DistanceTransform5x5Float extends AlgoStub implements DistanceTrans
 			{
 				ortho = buffer.getf(width - 1, j + 1);
 				diago = buffer.getf(width - 2, j + 1);
-				diag2 = min(buffer.getf(width - 3, j + 1),
-						buffer.getf(width - 2, j + 2));
+				diag2 = min(buffer.getf(width - 3, j + 1), buffer.getf(width - 2, j + 2));
 				newVal = min3w(ortho, diago, diag2);
 				updateIfNeeded(width - 1, j, newVal);
 			}
@@ -442,12 +430,9 @@ public class DistanceTransform5x5Float extends AlgoStub implements DistanceTrans
 			if (maskProc.getPixel(width - 2, j) == maskLabel) 
 			{
 				// minimum distance of neighbor pixels
-				ortho = min(buffer.getf(width - 1, j),
-						buffer.getf(width - 2, j + 1));
-				diago = min(buffer.getf(width - 3, j + 1),
-						buffer.getf(width - 1, j + 1));
-				diag2 = min3(buffer.getf(width - 3, j + 2),
-						buffer.getf(width - 1, j + 2),
+				ortho = min(buffer.getf(width - 1, j), buffer.getf(width - 2, j + 1));
+				diago = min(buffer.getf(width - 3, j + 1), buffer.getf(width - 1, j + 1));
+				diag2 = min3(buffer.getf(width - 3, j + 2), buffer.getf(width - 1, j + 2),
 						buffer.getf(width - 4, j + 1));
 
 				// compute new distance of current pixel
@@ -466,13 +451,10 @@ public class DistanceTransform5x5Float extends AlgoStub implements DistanceTrans
 
 				// minimum distance of neighbor pixels
 				ortho = min(buffer.getf(i + 1, j), buffer.getf(i, j + 1));
-				diago = min(buffer.getf(i - 1, j + 1),
-						buffer.getf(i + 1, j + 1));
+				diago = min(buffer.getf(i - 1, j + 1), buffer.getf(i + 1, j + 1));
 				diag2 = min(
-						min(buffer.getf(i - 1, j + 2),
-								buffer.getf(i + 1, j + 2)),
-						min(buffer.getf(i - 2, j + 1),
-								buffer.getf(i + 2, j + 1)));
+						min(buffer.getf(i - 1, j + 2), buffer.getf(i + 1, j + 2)),
+						min(buffer.getf(i - 2, j + 1), buffer.getf(i + 2, j + 1)));
 
 				// compute new distance of current pixel
 				newVal = min3w(ortho, diago, diag2);
@@ -523,8 +505,7 @@ public class DistanceTransform5x5Float extends AlgoStub implements DistanceTrans
 	 */
 	private float min3w(float ortho, float diago, float diag2)
 	{
-		return min(min(ortho + weights[0], diago + weights[1]), diag2
-				+ weights[2]);
+		return min(min(ortho + weights[0], diago + weights[1]), diag2 + weights[2]);
 	}
 
 	/**
