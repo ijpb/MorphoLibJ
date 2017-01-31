@@ -5,9 +5,9 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>net.imagej</groupId>
-		<artifactId>pom-imagej</artifactId>
-		<version>15.7.1</version>
+		<groupId>org.scijava</groupId>
+		<artifactId>pom-scijava</artifactId>
+		<version>13.0.0</version>
 		<relativePath />
 	</parent>
 
@@ -15,131 +15,113 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<artifactId>MorphoLibJ_</artifactId>
 	<version>1.3.2-SNAPSHOT</version>
 
-	<name>plugins/MorphoLibJ_.jar</name>
-	<description>Mathematical morphology library and plugins for ImageJ/Fiji</description>
-
-	<dependencies>
-		<!-- When writing ImageJ/Fiji plugins, it is necessary to add a dependency 
-			 to ImageJ jar -->
-		<dependency>
-			<groupId>net.imagej</groupId>
-			<artifactId>ij</artifactId>
-			</dependency>
-	
-		<!-- Jama (Java Matrix package) is used for computing inertia ellipsoid --> 
-		<dependency>
-			<groupId>gov.nist.math</groupId>
-			<artifactId>jama</artifactId>
-			</dependency>
-		
-		<!-- Add a dependency to JUnit for unit tests --> 
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        
-	</dependencies>
-    
-    
-	<build>
-	
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals>
-							<goal>java</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			
-			<!-- Configure the jar output directory such that plugin can be seen
-				 when ImageJ is run directly from eclipse workspace -->
-   			<plugin>
-      			<groupId>org.apache.maven.plugins</groupId>
-      			<artifactId>maven-jar-plugin</artifactId>
-      			<configuration>
-        			<outputDirectory>${basedir}/plugins</outputDirectory>
-      			</configuration>
-    		</plugin>
-    		
-			<!-- plugin for generating the javadoc.
-				 Output is located in "MorphoLibJ_/target/site/apidocs" -->
-    		<plugin>
-        		<groupId>org.apache.maven.plugins</groupId>
-        		<artifactId>maven-javadoc-plugin</artifactId>
-        		<configuration>
-        			<outputDirectory>${project.build.directory}/apidocs</outputDirectory>
-        			<encoding>ISO-8859-1</encoding>
-      			</configuration>
-      			<executions>
-          			<execution>
-            			<goals>
-              				<goal>javadoc</goal>
-            			</goals>
-            			<phase>site</phase>
-          			</execution>
-        		</executions>
-      		</plugin>
-      		
-		</plugins>
-	</build>
+	<name>MorphoLibJ</name>
+	<description>Mathematical morphology library and plugins for ImageJ/Fiji.</description>
+	<url>https://imagej.net/MorphoLibJ</url>
+	<inceptionYear>2014</inceptionYear>
+	<organization>
+		<name>INRA-IJPB Modeling and Digital Imaging lab</name>
+		<url>http://www-ijpb.versailles.inra.fr/en/bc/equipes/modelisation-imagerie/</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>GNU Lesser General Public License v3+</name>
+			<url>http://www.gnu.org/licenses/lgpl.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 
 	<developers>
 		<developer>
 			<id>iarganda</id>
 			<name>Ignacio Arganda-Carreras</name>
-			<email>ignacio.arganda@gmail.com</email>
-			<url>http://biocomp.cnb.csic.es/~iarganda/index_EN.html</url>
-			<organization>INRA</organization>
-			<organizationUrl>http://www-ijpb.versailles.inra.fr/en/bc/equipes/modelisation-imagerie/</organizationUrl>
+			<url>https://imagej.net/User:Iarganda</url>
 			<roles>
-				<role>architect</role>
+				<!-- See https://imagej.net/Team -->
+				<role>founder</role>
+				<role>lead</role>
 				<role>developer</role>
+				<role>debugger</role>
+				<role>reviewer</role>
+				<role>support</role>
+				<role>maintainer</role>
 			</roles>
-			<timezone>-6</timezone>
 		</developer>
-
 		<developer>
 			<id>dlegland</id>
 			<name>David Legland</name>
-			<email>david.legland@nantes.inra.fr</email>
-			<organization>INRA</organization>
-			<organizationUrl>http://www-ijpb.versailles.inra.fr/en/bc/equipes/modelisation-imagerie/</organizationUrl>
 			<roles>
-				<role>architect</role>
+				<!-- See https://imagej.net/Team -->
+				<role>founder</role>
+				<role>lead</role>
 				<role>developer</role>
+				<role>debugger</role>
+				<role>reviewer</role>
+				<role>support</role>
 			</roles>
 		</developer>
-
 	</developers>
+	<contributors>
+		<contributor>
+			<name>Curtis Rueden</name>
+			<url>http://imagej.net/User:Rueden</url>
+			<properties><id>ctrueden</id></properties>
+		</contributor>
+	</contributors>
 
-	<repositories>
-		<!-- NB: for project parent -->
-		<repository>
-			<id>imagej.public</id>
-			<url>http://maven.imagej.net/content/groups/public</url>
-		</repository>
-	</repositories>
+	<mailingLists>
+		<mailingList>
+			<name>ImageJ Forum</name>
+			<archive>http://forum.imagej.net/</archive>
+		</mailingList>
+	</mailingLists>
 
-	<!-- Synchronisation with GitHub source repository. -->
 	<scm>
 		<connection>scm:git:git://github.com/ijpb/MorphoLibJ</connection>
 		<developerConnection>scm:git:git@github.com:ijpb/MorphoLibJ</developerConnection>
 		<tag>HEAD</tag>
 		<url>https://github.com/ijpb/MorphoLibJ</url>
 	</scm>
-
-	<ciManagement>
-		<url>http://jenkins.imagej.net/job/MorphoLibJ/</url>
-		<system>Jenkins</system>
-	</ciManagement>
 	<issueManagement>
 		<system>GitHub Issues</system>
 		<url>https://github.com/ijpb/MorphoLibJ/issues</url>
 	</issueManagement>
+	<ciManagement>
+		<system>Jenkins</system>
+		<url>http://jenkins.imagej.net/job/MorphoLibJ/</url>
+	</ciManagement>
+
+	<properties>
+		<package-name>inra.ijpb</package-name>
+		<license.licenseName>lgpl_v3</license.licenseName>
+		<license.copyrightOwners>INRA.</license.copyrightOwners>
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>imagej.public</id>
+			<url>http://maven.imagej.net/content/groups/public</url>
+		</repository>
+	</repositories>
+
+	<dependencies>
+		<!-- ImageJ 1.x - https://github.com/imagej/ImageJA -->
+		<dependency>
+			<groupId>net.imagej</groupId>
+			<artifactId>ij</artifactId>
+		</dependency>
+	
+		<!-- Jama (Java Matrix package) is used for computing inertia ellipsoid --> 
+		<dependency>
+			<groupId>gov.nist.math</groupId>
+			<artifactId>jama</artifactId>
+		</dependency>
+		
+		<!-- Add a dependency to JUnit for unit tests --> 
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 </project>
