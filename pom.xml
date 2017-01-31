@@ -134,4 +134,12 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 		<url>https://github.com/ijpb/MorphoLibJ</url>
 	</scm>
 
+	<ciManagement>
+		<url>http://jenkins.imagej.net/job/MorphoLibJ/</url>
+		<system>Jenkins</system>
+	</ciManagement>
+	<issueManagement>
+		<system>GitHub Issues</system>
+		<url>https://github.com/ijpb/MorphoLibJ/issues</url>
+	</issueManagement>
 </project>
