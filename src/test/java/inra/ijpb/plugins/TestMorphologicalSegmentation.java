@@ -5,6 +5,7 @@ import ij.IJ;
 import ij.ImageJ;
 import ij.ImagePlus;
 import ij.ImageStack;
+import ij.process.ImageConverter;
 import ij.process.ImageProcessor;
 import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.morphology.MinimaAndMaxima3D;
@@ -37,10 +38,14 @@ public class TestMorphologicalSegmentation {
 			input = copy;
 			
 			ImagePlus result8bit = segmentImage( input, dynamic, connectivity, gradientRadius, calculateDams );
-			IJ.run( input, "16-bit", "" );
+			//IJ.run( input, "16-bit", "" );
+			ImageConverter ic = new ImageConverter( input );
+			ic.convertToGray16();
 			ImagePlus result16bit = segmentImage( input, dynamic, connectivity, gradientRadius, calculateDams );		
 			assertEquals( "Different results for 8 and 16 bit images (dams = " + calculateDams + ")", 0, diffImagePlus( result8bit, result16bit ) );
-			IJ.run( input.duplicate(), "32-bit", "" );
+			//IJ.run( input.duplicate(), "32-bit", "" );
+			ic = new ImageConverter( input.duplicate() );
+			ic.convertToGray32();
 			ImagePlus result32bit = segmentImage( input, dynamic, connectivity, gradientRadius, calculateDams );
 			assertEquals( "Different results for 8 and 32 bit images (dams = " + calculateDams + ")", 0, diffImagePlus( result8bit, result32bit ) );
 		}
