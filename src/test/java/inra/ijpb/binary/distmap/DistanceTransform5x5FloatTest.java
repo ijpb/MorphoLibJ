@@ -1,3 +1,24 @@
+/*-
+ * #%L
+ * Mathematical morphology library and plugins for ImageJ/Fiji.
+ * %%
+ * Copyright (C) 2014 - 2017 INRA.
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Lesser Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ * #L%
+ */
 package inra.ijpb.binary.distmap;
 
 import static org.junit.Assert.assertEquals;
@@ -11,7 +32,8 @@ import org.junit.Test;
 public class DistanceTransform5x5FloatTest {
 
 	@Test
-	public final void testDistanceMap_ChessBoard() {
+	public final void testDistanceMap_ChessBoard() 
+	{
 		ByteProcessor image = new ByteProcessor(12, 10);
 		image.setBackgroundValue(0);
 		image.fill();
@@ -32,7 +54,8 @@ public class DistanceTransform5x5FloatTest {
 	}
 	
 	@Test
-	public final void testDistanceMap_UntilCorners_CityBlock() {
+	public final void testDistanceMap_UntilCorners_CityBlock() 
+	{
 		ByteProcessor image = new ByteProcessor(7, 7);
 		image.setValue(255);
 		image.fill();
@@ -53,7 +76,8 @@ public class DistanceTransform5x5FloatTest {
 	}
 
 	@Test
-	public final void testDistanceMap_UntilCorners_Chessboard() {
+	public final void testDistanceMap_UntilCorners_Chessboard()
+	{
 		ByteProcessor image = new ByteProcessor(7, 7);
 		image.setValue(255);
 		image.fill();
@@ -75,7 +99,8 @@ public class DistanceTransform5x5FloatTest {
 	}
 	
 	@Test
-	public final void testDistanceMap_UntilCorners_Weights23() {
+	public final void testDistanceMap_UntilCorners_Weights23() 
+	{
 		ByteProcessor image = new ByteProcessor(7, 7);
 		image.setValue(255);
 		image.fill();
@@ -97,7 +122,8 @@ public class DistanceTransform5x5FloatTest {
 	}
 	
 	@Test
-	public final void testDistanceMap_UntilCorners_Borgefors34() {
+	public final void testDistanceMap_UntilCorners_Borgefors34() 
+	{
 		ByteProcessor image = new ByteProcessor(7, 7);
 		image.setValue(255);
 		image.fill();
@@ -119,11 +145,12 @@ public class DistanceTransform5x5FloatTest {
 	}
 	
 	/**
-	 * Another test for chessknight weigths, to fix a bug that incorrectly
+	 * Another test for chess-knight weights, to fix a bug that incorrectly
 	 * checked image bounds.
 	 */
 	@Test
-	public final void testDistanceMap_UntilCorners_ChessKnight2() {
+	public final void testDistanceMap_UntilCorners_ChessKnight2()
+	{
 		ByteProcessor image = new ByteProcessor(9, 9);
 		image.setValue(255);
 		image.fill();

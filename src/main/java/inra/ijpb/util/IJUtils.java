@@ -1,5 +1,23 @@
-/**
+/*-
+ * #%L
+ * Mathematical morphology library and plugins for ImageJ/Fiji.
+ * %%
+ * Copyright (C) 2014 - 2017 INRA.
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Lesser Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ * #L%
  */
 package inra.ijpb.util;
 
@@ -14,8 +32,8 @@ import ij.ImagePlus;
  * @author David Legland
  *
  */
-public class IJUtils {
-
+public class IJUtils 
+{
 	/**
 	 * Private constructor to prevent class instantiation.
 	 */
@@ -35,13 +53,17 @@ public class IJUtils {
 	 *            the image on which process was applied
 	 * @return the String corresponding to the message displayed in status bar
 	 */
-	public final static String showElapsedTime(String opName, long timeInMillis, ImagePlus refImage) {
+	public final static String showElapsedTime(String opName, double timeInMillis, ImagePlus refImage) 
+	{
 		int nElements;
 		String elementName;
-		if (refImage.getImageStackSize() == 1) {
+		if (refImage.getImageStackSize() == 1) 
+		{
 			nElements = refImage.getWidth() * refImage.getHeight();
 			elementName = "pixels";
-		} else {
+		}
+		else 
+		{
 			nElements = refImage.getWidth() * refImage.getHeight() * refImage.getStackSize();
 			elementName = "voxels";
 		}

@@ -1,5 +1,23 @@
-/**
+/*-
+ * #%L
+ * Mathematical morphology library and plugins for ImageJ/Fiji.
+ * %%
+ * Copyright (C) 2014 - 2017 INRA.
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Lesser Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ * #L%
  */
 package inra.ijpb.binary.geodesic;
 
@@ -85,6 +103,7 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 		this.sizeZ = mask.getSize();
 		
 		fireStatusChanged(this, "Initialization..."); 
+		
 		// create new empty image, and fill it with black
 		ImageStack resultStack = ImageStack.create(sizeX, sizeY, sizeZ, 32);
 		this.result = Images3D.createWrapper(resultStack);
@@ -236,9 +255,9 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 					}
 				}
 			}
-			
-			fireProgressChanged(this, 1, 1);
 		}
+		
+		fireProgressChanged(this, 1, 1);
 	}
 
 	private void backwardIteration()
@@ -269,7 +288,7 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 		
 		for (int z = sizeZ-1; z >= 0; z--)
 		{
-			fireProgressChanged(this, z, sizeZ);
+			fireProgressChanged(this, sizeZ-1-z, sizeZ);
 			for (int y = sizeY - 1; y >= 0; y--)
 			{
 				for (int x = sizeX - 1; x >= 0; x--)

@@ -1,3 +1,4 @@
+[![](http://jenkins.imagej.net/job/MorphoLibJ/lastBuild/badge/icon)](http://jenkins.imagej.net/job/MorphoLibJ/)
 [![DOI](https://zenodo.org/badge/21349/ijpb/MorphoLibJ.svg)](https://zenodo.org/badge/latestdoi/21349/ijpb/MorphoLibJ)
 MorphoLibJ
 ============
@@ -35,7 +36,7 @@ Documentation
 
 A more detailed presentation of the library and its plugins is available on the [ImageJ/Fiji Wiki](http://imagej.net/MorphoLibJ).
 
-We have as well a [User Manual](https://github.com/ijpb/MorphoLibJ/releases/download/v1.1.1/MorphoLibJ-manual-v1.1.1.pdf) in pdf format.
+We have as well a [User Manual](https://github.com/ijpb/MorphoLibJ/releases/download/v1.3.1/MorphoLibJ-manual-v1.3.1.pdf) in pdf format.
 
 The main source code directory is [src/main/java/inra/ijpb](http://github.com/ijpb/MorphoLibJ/tree/master/src/main/java/inra/ijpb).
 
@@ -43,4 +44,4 @@ You can browse the [javadoc](http://ijpb.github.io/MorphoLibJ/javadoc/) for more
 Citation
 --------
 Please note that MorphoLibJ is based on a publication. If you use it successfully for your research please be so kind to cite our work:
-* David Legland, Ignacio Arganda-Carreras, and Philippe Andrey. [MorphoLibJ: integrated library and plugins for mathematical morphology with ImageJ](http://bioinformatics.oxfordjournals.org/content/early/2016/07/19/bioinformatics.btw413). Bioinformatics, btw413, 2016.
+* David Legland, Ignacio Arganda-Carreras, Philippe Andrey; [MorphoLibJ: integrated library and plugins for mathematical morphology with ImageJ](http://bioinformatics.oxfordjournals.org/content/early/2016/07/19/bioinformatics.btw413). Bioinformatics 2016; 32 (22): 3532-3534. doi: 10.1093/bioinformatics/btw413

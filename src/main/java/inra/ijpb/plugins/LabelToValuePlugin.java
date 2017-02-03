@@ -1,5 +1,23 @@
-/**
+/*-
+ * #%L
+ * Mathematical morphology library and plugins for ImageJ/Fiji.
+ * %%
+ * Copyright (C) 2014 - 2017 INRA.
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Lesser Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ * #L%
  */
 package inra.ijpb.plugins;
 
@@ -25,11 +43,15 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 /**
+ * Combines a label image and the values within a column of a results table to
+ * create a new image with intensity corresponding to the vales in the table
+ * column.
+ * 
  * @author dlegland
  *
  */
-public class LabelToValuePlugin implements PlugIn, DialogListener {
-
+public class LabelToValuePlugin implements PlugIn, DialogListener 
+{
 	ImagePlus labelImagePlus;
 	
 	ImagePlus resultPlus;
@@ -51,8 +73,9 @@ public class LabelToValuePlugin implements PlugIn, DialogListener {
 	 * @see ij.plugin.PlugIn#run(java.lang.String)
 	 */
 	@Override
-	public void run(String arg0) {
-		// Work on current image, and exit of no one is open
+	public void run(String arg0) 
+	{
+		// Work on current image, and exit if no one is open
 		this.labelImagePlus = IJ.getImage();
 		
 		// Create empty result image
@@ -68,30 +91,35 @@ public class LabelToValuePlugin implements PlugIn, DialogListener {
 		parseDialogOptions();
 		
 		ImagePlus resultPlus = computeResultImage();
-		
 		if( null == resultPlus )
 			return;
 		
+		this.resultPlus.copyScale(this.labelImagePlus);
+
 		String newName = this.labelImagePlus.getShortTitle() + "-" + selectedHeaderName;
 		resultPlus.setTitle(newName);
 		resultPlus.show();
 		
 		// set up display 
-		if (labelImagePlus.getStackSize() > 1) {
+		if (labelImagePlus.getStackSize() > 1) 
+		{
 			resultPlus.setSlice(labelImagePlus.getSlice());
 		}
 	}
 
-	private void initResultImage() {
-		if (this.labelImagePlus.getStackSize() == 1) {
+	private void initResultImage() 
+	{
+		if (this.labelImagePlus.getStackSize() == 1) 
+		{
 			ImageProcessor labelImage = this.labelImagePlus.getProcessor();
-			int width = labelImage.getWidth(); 
-			int height = labelImage.getHeight(); 
+			int sizeX = labelImage.getWidth(); 
+			int sizeY = labelImage.getHeight(); 
 			
-			ImageProcessor resultImage = new FloatProcessor(width, height);
+			ImageProcessor resultImage = new FloatProcessor(sizeX, sizeY);
 			this.resultPlus = new ImagePlus("Result", resultImage);
-			
-		} else {
+		} 
+		else 
+		{
 			ImageStack labelImage = this.labelImagePlus.getStack();
 			int sizeX = labelImage.getWidth(); 
 			int sizeY = labelImage.getHeight(); 
@@ -99,11 +127,13 @@ public class LabelToValuePlugin implements PlugIn, DialogListener {
 			
 			ImageStack resultImage = ImageStack.create(sizeX, sizeY, sizeZ, 32); 
 			this.resultPlus = new ImagePlus("Result", resultImage);
-			
 		}
+		
+		this.resultPlus.copyScale(this.labelImagePlus);
 	}
 	
-	private GenericDialog createDialog() {
+	private GenericDialog createDialog()
+	{
 		// Get the list of windows containing tables
 		TextWindow[] textWindows = getTableWindows();
 		if (textWindows.length == 0)
@@ -125,7 +155,8 @@ public class LabelToValuePlugin implements PlugIn, DialogListener {
 		// Choose current heading
 		String[] headings = table.getHeadings();
 		String defaultHeading = headings[0];
-		if (defaultHeading.equals("Label") && headings.length > 1) {
+		if (defaultHeading.equals("Label") && headings.length > 1)
+		{
 			defaultHeading = headings[1];
 		}
 
@@ -142,17 +173,22 @@ public class LabelToValuePlugin implements PlugIn, DialogListener {
 	}
 	
 	/**
-	 * iterate on TextWindows, and keep only the ones containing a non null ResultsTable
+	 * Iterates on the list of TextWindows, and keeps only the ones containing a
+	 * non-null ResultsTable
 	 */
-	private static final TextWindow[] getTableWindows() {
+	private static final TextWindow[] getTableWindows() 
+	{
 		Frame[] frames = WindowManager.getNonImageWindows();
 		
 		ArrayList<TextWindow> windows = new ArrayList<TextWindow>(frames.length);
 		
-		for (Frame frame : frames) {
-			if (frame instanceof TextWindow) {
+		for (Frame frame : frames) 
+		{
+			if (frame instanceof TextWindow) 
+			{
 				TextWindow tw = (TextWindow) frame;
-				if (tw.getTextPanel().getResultsTable() != null) {
+				if (tw.getTextPanel().getResultsTable() != null) 
+				{
 					windows.add(tw);
 				}
 			}
@@ -162,17 +198,19 @@ public class LabelToValuePlugin implements PlugIn, DialogListener {
 	}
 
 	/**
-	 * Compute min and max values within a table column. 
+	 * Computes min and max values within a table column. 
 	 * 
 	 * @return an array of double with two values.
 	 */
-	private double[] computeColumnExtent(ResultsTable table, String heading) {
+	private double[] computeColumnExtent(ResultsTable table, String heading) 
+	{
 		int index = table.getColumnIndex(heading);
 		double[] values = table.getColumnAsDoubles(index);
 		
 		double minVal = Double.MAX_VALUE;
 		double maxVal = Double.MIN_VALUE;
-		for (double v : values) {
+		for (double v : values) 
+		{
 			minVal = Math.min(minVal, v);
 			maxVal = Math.max(maxVal, v);
 		}
@@ -182,7 +220,8 @@ public class LabelToValuePlugin implements PlugIn, DialogListener {
 	/**
 	 * analyse dialog, and setup inner fields of the class.
 	 */
-	private void parseDialogOptions() {
+	private void parseDialogOptions() 
+	{
 		String tableName = this.gd.getNextChoice();
 		Frame tableFrame = WindowManager.getFrame(tableName);
 		this.table = ((TextWindow) tableFrame).getTextPanel().getResultsTable();
@@ -191,29 +230,35 @@ public class LabelToValuePlugin implements PlugIn, DialogListener {
 		
 		this.minValue = this.gd.getNextNumber();
 		this.maxValue = this.gd.getNextNumber();
-		
 	}
 	
-	private ImagePlus computeResultImage() {
+	private ImagePlus computeResultImage() 
+	{
 		// Assumes 2D image for the moment...
 		
 		// extract array of numerical values
 		int index = this.table.getColumnIndex(this.selectedHeaderName);
 		double[] values = table.getColumnAsDoubles(index);
-				
-		try{
-			if (this.resultPlus.getStackSize() == 1) {
+
+		try 
+		{
+			if (this.resultPlus.getStackSize() == 1) 
+			{
 				ImageProcessor labelImage = this.labelImagePlus.getProcessor();
 				ImageProcessor resultImage = LabelImages.applyLut(labelImage, values);
 				this.resultPlus.setProcessor(resultImage);
-			} else {
+			}
+			else 
+			{
 				ImageStack labelImage = this.labelImagePlus.getStack();
 				ImageStack resultImage = LabelImages.applyLut(labelImage, values);
 				this.resultPlus.setStack(resultImage);
 			}
-		}catch( RuntimeException ex ){
-			IJ.error("Label to value error", "ERROR: label image values do not "
-					+ "correspond with table values!" );
+		}
+		catch (RuntimeException ex) 
+		{
+			IJ.error("Label to value error", 
+					"ERROR: label image values do not \n" + "correspond with table values!");
 			return null;
 		}
 
@@ -222,22 +267,25 @@ public class LabelToValuePlugin implements PlugIn, DialogListener {
 	}
 	
 	@Override
-	public boolean dialogItemChanged(GenericDialog gd, AWTEvent evt) {
+	public boolean dialogItemChanged(GenericDialog gd, AWTEvent evt) 
+	{
 //		IJ.log("event captured");
-		
-		if (gd.wasCanceled() || gd.wasOKed()) {
+		if (gd.wasCanceled() || gd.wasOKed()) 
+		{
 			IJ.log("already closed...");
 			return true;
 		}
 		
 		@SuppressWarnings("rawtypes")
 		Vector choices = gd.getChoices();
-		if (choices == null) {
+		if (choices == null) 
+		{
 			IJ.log("empty choices array...");
 			return false;
 		}
 		
-		if (evt.getSource() == choices.get(0)) {
+		if (evt.getSource() == choices.get(0)) 
+		{
 			IJ.log("update table");
 			// Change of the data table
 			String tableName = ((Choice) evt.getSource()).getSelectedItem();
@@ -247,13 +295,15 @@ public class LabelToValuePlugin implements PlugIn, DialogListener {
 			// Choose current heading
 			String[] headings = this.table.getHeadings();
 			String defaultHeading = headings[0];
-			if (defaultHeading.equals("Label") && headings.length > 1) {
+			if (defaultHeading.equals("Label") && headings.length > 1) 
+			{
 				defaultHeading = headings[1];
 			}
 			
 			Choice headingChoice = (Choice) choices.get(1);
 			headingChoice.removeAll();
-			for (String heading : headings) {
+			for (String heading : headings) 
+			{
 				headingChoice.add(heading);
 			}
 			headingChoice.select(defaultHeading);
@@ -261,7 +311,8 @@ public class LabelToValuePlugin implements PlugIn, DialogListener {
 			changeColumnHeader(defaultHeading);
 		}
 		
-		if (evt.getSource() == choices.get(1)) {
+		if (evt.getSource() == choices.get(1)) 
+		{
 			IJ.log("update column header");
 			// Change of the column heading
 			String headerName = ((Choice) evt.getSource()).getSelectedItem();
@@ -271,7 +322,8 @@ public class LabelToValuePlugin implements PlugIn, DialogListener {
 		return true;
 	}
 	
-	private void changeColumnHeader(String headerName) {
+	private void changeColumnHeader(String headerName) 
+	{
 		double[] extent = computeColumnExtent(this.table, headerName);
 		this.minValue = extent[0];
 		this.maxValue = extent[1];
@@ -279,7 +331,17 @@ public class LabelToValuePlugin implements PlugIn, DialogListener {
 		updateMinMaxFields(extent[0], extent[1]);
 	}
 	
-	private void updateMinMaxFields( double minValue, double maxValue) {
+	/**
+	 * Updates the text of the editable fields with the values of min and max of
+	 * the current column.
+	 * 
+	 * @param minValue
+	 *            the new minimum value of current column
+	 * @param maxValue
+	 *            the new maximum value of current column
+	 */
+	private void updateMinMaxFields( double minValue, double maxValue) 
+	{
 		@SuppressWarnings("rawtypes")
 		Vector numericFields = this.gd.getNumericFields();
 		TextField tf;
@@ -289,5 +351,4 @@ public class LabelToValuePlugin implements PlugIn, DialogListener {
 		tf = (TextField) numericFields.get(1);
 		tf.setText(IJ.d2s(maxValue, this.nDigits));
 	}
-
 }
