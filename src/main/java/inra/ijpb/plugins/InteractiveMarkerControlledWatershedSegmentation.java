@@ -896,12 +896,11 @@ public class InteractiveMarkerControlledWatershedSegmentation implements PlugIn 
 			// set thread to null
 			segmentationThread = null;
 
-			//			// Record
-			//			String[] arg = new String[] {
-			//				"tolerance=" + Integer.toString( (int) dynamic ),
-			//				"calculateDams=" + calculateDams,
-			//				"connectivity=" + Integer.toString( connectivity ) };
-			//			record( RUN_SEGMENTATION, arg );
+			// Record
+			String[] arg = new String[] {
+					"calculateDams=" + calculateDams,
+					"connectivity=" + Integer.toString( connectivity ) };
+			record( RUN_SEGMENTATION, arg );
 		    }
 		};
 
@@ -1288,7 +1287,7 @@ public class InteractiveMarkerControlledWatershedSegmentation implements PlugIn 
      */
     public static void record(String command, String... args)
     {
-	command = "call(\"inra.ijpb.plugins.MorphologicalSegmentation." + command;
+	command = "call(\"inra.ijpb.plugins.InteractiveMarkerControlledWatershedSegmentation." + command;
 	for(int i = 0; i < args.length; i++)
 	    command += "\", \"" + args[i];
 	command += "\");\n";
@@ -1299,55 +1298,24 @@ public class InteractiveMarkerControlledWatershedSegmentation implements PlugIn 
     /**
      * Segment current image (GUI needs to be running)
      *
-     * @param dynamic string containing dynamic value (format: "dynamic=[integer value]")
-     * @param calculateDams string containing boolean flag to create dams (format: "calculateDams=[boolean])
-     * @param connectivity string containing connectivity value (format: "connectivity=[4 or 8 / 6 or 26])
-     * @param usePriorityQueue string containing boolean flag to use priority queue (format: "usePriorityQueue=[boolean])
-     *
-     * @deprecated the priority queue method is now the only one
-     */
-    public static void segment(
-	    String dynamic,
-	    String calculateDams,
-	    String connectivity,
-	    String usePriorityQueue )
-    {
-	final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
-	if( iw instanceof CustomWindow )
-	{
-	    //IJ.log( "GUI detected" );
-	    final CustomWindow win = (CustomWindow) iw;
-	    win.setCalculateDams( calculateDams.contains( "true" ) );
-	    win.setConnectivity( Integer.parseInt( connectivity.replace( "connectivity=", "" ) ) );
-	    win.runSegmentation( win.getSegmentText() );
-	}
-	else
-	    IJ.log( "Error: Morphological Segmentation GUI not detected." );
-    }
-    /**
-     * Segment current image (GUI needs to be running)
-     *
-     * @param dynamic string containing dynamic value (format: "dynamic=[integer value]")
      * @param calculateDams string containing boolean flag to create dams (format: "calculateDams=[boolean])
      * @param connectivity string containing connectivity value (format: "connectivity=[4 or 8 / 6 or 26])
      */
     public static void segment(
-	    String dynamic,
 	    String calculateDams,
 	    String connectivity )
     {
-	final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
-	if( iw instanceof CustomWindow )
-	{
-	    //IJ.log( "GUI detected" );
-	    final CustomWindow win = (CustomWindow) iw;
-	    win.setCalculateDams( calculateDams.contains( "true" ) );
-	    win.setConnectivity( Integer.parseInt( connectivity.replace( "connectivity=", "" ) ) );
-	    win.runSegmentation( win.getSegmentText() );
-	}
-	else
-	    IJ.log( "Error: Morphological Segmentation GUI not detected." );
-    }
+		final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
+		if( iw instanceof CustomWindow )
+		{
+			final CustomWindow win = (CustomWindow) iw;
+			win.setCalculateDams( calculateDams.contains( "true" ) );
+			win.setConnectivity( Integer.parseInt( connectivity.replace( "connectivity=", "" ) ) );
+			win.runSegmentation( win.getSegmentText() );
+		}
+		else
+			IJ.log( "Error: Interactive Marker-controlled Watershed Segmentation GUI not detected." );
+		}
     /**
      * Toggle current result overlay image
      */
