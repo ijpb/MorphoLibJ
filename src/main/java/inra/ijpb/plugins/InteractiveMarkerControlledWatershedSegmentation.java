@@ -1182,9 +1182,9 @@ public class InteractiveMarkerControlledWatershedSegmentation implements PlugIn 
      */
     ImagePlus getWatershedLines( ImagePlus labels )
     {
-	final ImagePlus lines = BinaryImages.binarize( labels );
-	IJ.run( lines, "Invert", "stack" );
-	return lines;
+		final ImagePlus lines = BinaryImages.binarize( labels );
+		IJ.run( lines, "Invert", "stack" );
+		return lines;
     }
 
 
@@ -1210,67 +1210,67 @@ public class InteractiveMarkerControlledWatershedSegmentation implements PlugIn 
      */
     void enableAdvancedOptions( boolean enabled )
     {
-	damsCheckBox.setEnabled( enabled );
-	connectivityLabel.setEnabled( enabled );
-	connectivityList.setEnabled( enabled );
+		damsCheckBox.setEnabled( enabled );
+		connectivityLabel.setEnabled( enabled );
+		connectivityList.setEnabled( enabled );
     }
 
     @Override
     public void run(String arg0)
     {
-	if ( IJ.getVersion().compareTo("1.48a") < 0 )
-	{
-	    IJ.error( "Interactive Marker-controlled Watershed Segmentation", "ERROR: detected ImageJ version " + IJ.getVersion()  
-	    + ".\nInteractive Marker-controlled Watershed Segmentation requires version 1.48a or superior, please update ImageJ!" );
-	    return;
-	}
-
-	// get current image
-	if (null == WindowManager.getCurrentImage())
-	{
-	    inputImage = IJ.openImage();
-	    if (null == inputImage) return; // user canceled open dialog
-	}
-	else
-	    inputImage = WindowManager.getCurrentImage();
-
-	if( inputImage.getType() == ImagePlus.COLOR_256 ||
-		inputImage.getType() == ImagePlus.COLOR_RGB )
-	{
-	    IJ.error( "Interactive Marker-controlled Watershed Segmentation",
-		    "This plugin only works on grayscale images.\nPlease convert it to 8, 16 or 32-bit." );
-	    return;
-	}
-
-	inputStackCopy = inputImage.getImageStack().duplicate();
-	displayImage = new ImagePlus( inputImage.getTitle(),
-		inputStackCopy );
-	displayImage.setTitle("Morphological Segmentation");
-	displayImage.setSlice( inputImage.getSlice() );
-
-	// hide input image (to avoid accidental closing)
-	inputImage.getWindow().setVisible( false );
-
-	// set the 2D flag
-	inputIs2D = inputImage.getImageStackSize() == 1;
-
-	// correct Fiji error when the slices are read as frames
-	if ( inputIs2D == false &&
-		displayImage.isHyperStack() == false &&
-		displayImage.getNSlices() == 1 )
-	{
-	    // correct stack by setting number of frames as slices
-	    displayImage.setDimensions( 1, displayImage.getNFrames(), 1 );
-	}
-
-	// Build GUI
-	SwingUtilities.invokeLater(
-		new Runnable() {
-		    public void run() {
-			win = new CustomWindow( displayImage );
-			win.pack();
-		    }
-		});
+		if ( IJ.getVersion().compareTo("1.48a") < 0 )
+		{
+		    IJ.error( "Interactive Marker-controlled Watershed Segmentation", "ERROR: detected ImageJ version " + IJ.getVersion()  
+		    + ".\nInteractive Marker-controlled Watershed Segmentation requires version 1.48a or superior, please update ImageJ!" );
+		    return;
+		}
+	
+		// get current image
+		if (null == WindowManager.getCurrentImage())
+		{
+		    inputImage = IJ.openImage();
+		    if (null == inputImage) return; // user canceled open dialog
+		}
+		else
+		    inputImage = WindowManager.getCurrentImage();
+	
+		if( inputImage.getType() == ImagePlus.COLOR_256 ||
+			inputImage.getType() == ImagePlus.COLOR_RGB )
+		{
+		    IJ.error( "Interactive Marker-controlled Watershed Segmentation",
+			    "This plugin only works on grayscale images.\nPlease convert it to 8, 16 or 32-bit." );
+		    return;
+		}
+	
+		inputStackCopy = inputImage.getImageStack().duplicate();
+		displayImage = new ImagePlus( inputImage.getTitle(),
+			inputStackCopy );
+		displayImage.setTitle("Morphological Segmentation");
+		displayImage.setSlice( inputImage.getSlice() );
+	
+		// hide input image (to avoid accidental closing)
+		inputImage.getWindow().setVisible( false );
+	
+		// set the 2D flag
+		inputIs2D = inputImage.getImageStackSize() == 1;
+	
+		// correct Fiji error when the slices are read as frames
+		if ( inputIs2D == false &&
+			displayImage.isHyperStack() == false &&
+			displayImage.getNSlices() == 1 )
+		{
+		    // correct stack by setting number of frames as slices
+		    displayImage.setDimensions( 1, displayImage.getNFrames(), 1 );
+		}
+	
+		// Build GUI
+		SwingUtilities.invokeLater(
+			new Runnable() {
+			    public void run() {
+				win = new CustomWindow( displayImage );
+				win.pack();
+			    }
+			});
 
     }
 
@@ -1287,12 +1287,12 @@ public class InteractiveMarkerControlledWatershedSegmentation implements PlugIn 
      */
     public static void record(String command, String... args)
     {
-	command = "call(\"inra.ijpb.plugins.InteractiveMarkerControlledWatershedSegmentation." + command;
-	for(int i = 0; i < args.length; i++)
-	    command += "\", \"" + args[i];
-	command += "\");\n";
-	if(Recorder.record)
-	    Recorder.recordString(command);
+		command = "call(\"inra.ijpb.plugins.InteractiveMarkerControlledWatershedSegmentation." + command;
+		for(int i = 0; i < args.length; i++)
+		    command += "\", \"" + args[i];
+		command += "\");\n";
+		if(Recorder.record)
+		    Recorder.recordString(command);
     }
 
     /**
@@ -1321,12 +1321,12 @@ public class InteractiveMarkerControlledWatershedSegmentation implements PlugIn 
      */
     public static void toggleOverlay()
     {
-	final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
-	if( iw instanceof CustomWindow )
-	{
-	    final CustomWindow win = (CustomWindow) iw;
-	    win.toggleOverlay();
-	}
+    	final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
+    	if( iw instanceof CustomWindow )
+    	{
+    		final CustomWindow win = (CustomWindow) iw;
+    		win.toggleOverlay();
+    	}
     }
     /**
      * Merge labels that are selected either by a freehand or a point ROI.
@@ -1334,24 +1334,24 @@ public class InteractiveMarkerControlledWatershedSegmentation implements PlugIn 
      */
     public static void mergeLabels()
     {
-	final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
-	if( iw instanceof CustomWindow )
-	{
-	    final CustomWindow win = (CustomWindow) iw;
-	    win.mergeLabels();
-	}
+		final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
+		if( iw instanceof CustomWindow )
+		{
+		    final CustomWindow win = (CustomWindow) iw;
+		    win.mergeLabels();
+		}
     }
     /**
      * Shuffle LUT of current display image.
      */
     public static void shuffleColors()
     {
-	final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
-	if( iw instanceof CustomWindow )
-	{
-	    final CustomWindow win = (CustomWindow) iw;
-	    win.shuffleColors();
-	}
+		final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
+		if( iw instanceof CustomWindow )
+		{
+		    final CustomWindow win = (CustomWindow) iw;
+		    win.shuffleColors();
+		}
     }
 
     /**
@@ -1359,29 +1359,29 @@ public class InteractiveMarkerControlledWatershedSegmentation implements PlugIn 
      */
     public static void createResultImage()
     {
-	final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
-	if( iw instanceof CustomWindow )
-	{
-	    final CustomWindow win = (CustomWindow) iw;
-	    String mode = win.getResultDisplayOption();
-
-	    ImagePlus result = null;
-
-	    if( mode.equals( InteractiveMarkerControlledWatershedSegmentation.catchmentBasinsText) )
-		result = win.getResult( ResultMode.BASINS );
-	    else if( mode.equals( InteractiveMarkerControlledWatershedSegmentation.overlaidBasinsText ) )
-		result = win.getResult( ResultMode.OVERLAID_BASINS );
-	    else if( mode.equals( InteractiveMarkerControlledWatershedSegmentation.watershedLinesText ) )
-		result = win.getResult( ResultMode.LINES );
-	    else if( mode.equals( InteractiveMarkerControlledWatershedSegmentation.overlaidDamsText ))
-		result = win.getResult( ResultMode.OVERLAID_DAMS );
-
-	    if( null != result )
-	    {
-		result.show();
-		result.setSlice( win.getImagePlus().getSlice() );
-	    }
-	}
+		final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
+		if( iw instanceof CustomWindow )
+		{
+		    final CustomWindow win = (CustomWindow) iw;
+		    String mode = win.getResultDisplayOption();
+	
+		    ImagePlus result = null;
+	
+		    if( mode.equals( InteractiveMarkerControlledWatershedSegmentation.catchmentBasinsText) )
+			result = win.getResult( ResultMode.BASINS );
+		    else if( mode.equals( InteractiveMarkerControlledWatershedSegmentation.overlaidBasinsText ) )
+			result = win.getResult( ResultMode.OVERLAID_BASINS );
+		    else if( mode.equals( InteractiveMarkerControlledWatershedSegmentation.watershedLinesText ) )
+			result = win.getResult( ResultMode.LINES );
+		    else if( mode.equals( InteractiveMarkerControlledWatershedSegmentation.overlaidDamsText ))
+			result = win.getResult( ResultMode.OVERLAID_DAMS );
+	
+		    if( null != result )
+		    {
+			result.show();
+			result.setSlice( win.getImagePlus().getSlice() );
+		    }
+		}
     }
 
     /**
@@ -1390,13 +1390,13 @@ public class InteractiveMarkerControlledWatershedSegmentation implements PlugIn 
      */
     public static void setDisplayFormat( String format )
     {
-	final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
-	if( iw instanceof CustomWindow )
-	{
-	    final CustomWindow win = (CustomWindow) iw;
-	    win.setResultDisplayOption( format );
-	    if( win.isShowResultOverlaySelected() )
-		win.updateResultOverlay();
-	}
+		final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
+		if( iw instanceof CustomWindow )
+		{
+		    final CustomWindow win = (CustomWindow) iw;
+		    win.setResultDisplayOption( format );
+		    if( win.isShowResultOverlaySelected() )
+			win.updateResultOverlay();
+		}
     }
 }// end class
