@@ -870,7 +870,7 @@ public class InteractiveMarkerControlledWatershedSegmentation implements PlugIn 
 			resultImage.setCalibration( inputImage.getCalibration() );
 
 			final long end = System.currentTimeMillis();
-			IJ.log( "Whole plugin took " + (end-start) + " ms.");
+			//IJ.log( "Whole plugin took " + (end-start) + " ms.");
 
 			// Adjust min and max values to display
 			Images3D.optimizeDisplayRange( resultImage );
