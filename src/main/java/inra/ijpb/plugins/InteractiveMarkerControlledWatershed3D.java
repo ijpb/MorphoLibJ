@@ -153,8 +153,7 @@ public class InteractiveMarkerControlledWatershed3D implements PlugIn
 				image );
 	}
 	/**
-	 * Apply geodesic reconstruction to mask image based on current operation
-	 * and ROI
+	 * Apply marker-controlled watershed segmentation
 	 * @param input image to apply watershed segmentation on
 	 * @param mask image to constraint segmentation (can be null)
 	 * @param roi region of interest to create marker image
