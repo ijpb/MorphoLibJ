@@ -117,26 +117,15 @@ public class InteractiveMarkerControlledWatershedSegmentation implements PlugIn 
     //	 Watershed segmentation panel design:
     //
     //	 __ Watershed Segmentation___
-    //	| Tolerance: [10]            |
-    //	| x - Advanced options       |
-    //	|  ------------------------- |
-    //	| | x - Use dams            ||
-    //	| | Connectivity: [6/26]    ||
-    //	|  ------------------------- |
-    //  |          -----             |
-    //  |         | Run |	     |
-    //  |          -----             |
-    //	|____________________________|
+    //	|  x - Use dams             |
+    //	|  Connectivity: [6/26]     |
+    //  |          -----            |
+    //  |         | Run |	        |
+    //  |          -----            |
+    //	|___________________________|
 
     /** watershed segmentation panel */
     JPanel segmentationPanel = new JPanel();
-
-    /** advanced options panel */
-    JPanel advancedOptionsPanel = new JPanel();
-    /** checkbox to enable/disable the advanced options */
-    JCheckBox advancedOptionsCheckBox;
-    /** flag to select/deselect the advanced options */
-    private boolean selectAdvancedOptions = false;
 
     /** dams panel */
     JPanel damsPanel = new JPanel();
@@ -299,12 +288,6 @@ public class InteractiveMarkerControlledWatershedSegmentation implements PlugIn 
 			{
 			    createResultImage();
 			}
-			// "Advanced options" check box
-			else if( e.getSource() == advancedOptionsCheckBox )
-			{
-			    selectAdvancedOptions = !selectAdvancedOptions;
-			    enableAdvancedOptions( selectAdvancedOptions );
-			}
 			// "Display" result combo box
 			else if ( e.getSource() == resultDisplayList )
 			{
@@ -356,11 +339,6 @@ public class InteractiveMarkerControlledWatershedSegmentation implements PlugIn 
 
 	    // === Watershed Segmentation panel ===
 
-	    // advanced options (connectivity + priority queue choices)
-	    advancedOptionsCheckBox = new JCheckBox( "Advanced options", selectAdvancedOptions );
-	    advancedOptionsCheckBox.setToolTipText( "Enable advanced options" );
-	    advancedOptionsCheckBox.addActionListener( listener );
-
 	    // dams option
 	    damsCheckBox = new JCheckBox( "Calculate dams", calculateDams );
 	    damsCheckBox.setToolTipText( "Calculate watershed dams" );
@@ -375,24 +353,6 @@ public class InteractiveMarkerControlledWatershedSegmentation implements PlugIn 
 	    connectivityPanel.add( connectivityLabel );
 	    connectivityPanel.add( connectivityList );
 	    connectivityPanel.setToolTipText( "Voxel connectivity to use" );
-
-	    enableAdvancedOptions( selectAdvancedOptions );
-
-	    // add components to advanced options panel
-	    GridBagLayout advancedOptionsLayout = new GridBagLayout();
-	    GridBagConstraints advancedOptoinsConstraints = new GridBagConstraints();
-	    advancedOptoinsConstraints.anchor = GridBagConstraints.WEST;
-	    advancedOptoinsConstraints.gridwidth = 1;
-	    advancedOptoinsConstraints.gridheight = 1;
-	    advancedOptoinsConstraints.gridx = 0;
-	    advancedOptoinsConstraints.gridy = 0;
-	    advancedOptionsPanel.setLayout( advancedOptionsLayout );
-
-	    advancedOptionsPanel.add( damsPanel, advancedOptoinsConstraints );
-	    advancedOptoinsConstraints.gridy++;
-	    advancedOptionsPanel.add( connectivityPanel, advancedOptoinsConstraints );
-
-	    advancedOptionsPanel.setBorder(BorderFactory.createTitledBorder(""));
 
 	    // Segmentation button
 	    segmentButton = new JButton( segmentText );
@@ -412,9 +372,10 @@ public class InteractiveMarkerControlledWatershedSegmentation implements PlugIn 
 	    segmentationConstraints.insets = new Insets(5, 5, 6, 6);
 	    segmentationPanel.setLayout( segmentationLayout );
 
-	    segmentationPanel.add( advancedOptionsCheckBox, segmentationConstraints );
+	    segmentationPanel.add( damsPanel, segmentationConstraints );
 	    segmentationConstraints.gridy++;
-	    segmentationPanel.add( advancedOptionsPanel, segmentationConstraints );
+	    segmentationPanel.add( connectivityPanel, segmentationConstraints );
+
 	    segmentationConstraints.gridy++;
 	    segmentationConstraints.anchor = GridBagConstraints.CENTER;
 	    segmentationConstraints.fill = GridBagConstraints.NONE;
@@ -683,7 +644,6 @@ public class InteractiveMarkerControlledWatershedSegmentation implements PlugIn 
 	    }
 
 	    // remove listeners
-	    advancedOptionsCheckBox.removeActionListener( listener );
 	    segmentButton.removeActionListener( listener );
 	    resultDisplayList.removeActionListener( listener );
 	    toggleOverlayCheckBox.removeActionListener( listener );
@@ -1236,15 +1196,12 @@ public class InteractiveMarkerControlledWatershedSegmentation implements PlugIn 
      */
     void setParamsEnabled( boolean enabled )
     {
-	this.advancedOptionsCheckBox.setEnabled( enabled );
-	this.toggleOverlayCheckBox.setEnabled( enabled );
-	this.resultButton.setEnabled( enabled );
-	this.resultDisplayList.setEnabled( enabled );
-	displayLabel.setEnabled( enabled );
-	if( selectAdvancedOptions )
-	    enableAdvancedOptions( enabled );
-	this.mergeButton.setEnabled( enabled );
-	this.shuffleColorsButton.setEnabled( enabled );
+		this.toggleOverlayCheckBox.setEnabled( enabled );
+		this.resultButton.setEnabled( enabled );
+		this.resultDisplayList.setEnabled( enabled );
+		displayLabel.setEnabled( enabled );
+		this.mergeButton.setEnabled( enabled );
+		this.shuffleColorsButton.setEnabled( enabled );
     }
 
     /**
