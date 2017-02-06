@@ -726,8 +726,8 @@ public class InteractiveMarkerControlledWatershedSegmentation implements PlugIn 
 			if (null != oldThread)
 			{
 			    try {
-				IJ.log("Waiting for old task to finish...");
-				oldThread.join();
+			    	IJ.log("Waiting for old task to finish...");
+			    	oldThread.join();
 			    }
 			    catch (InterruptedException ie)	{ /*IJ.log("interrupted");*/ }
 			}
