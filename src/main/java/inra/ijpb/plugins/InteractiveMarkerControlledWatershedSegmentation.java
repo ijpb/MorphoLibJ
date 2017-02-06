@@ -206,7 +206,7 @@ public class InteractiveMarkerControlledWatershedSegmentation implements PlugIn 
     /** text of the segmentation button when segmentation not running */
     private String segmentText = "Run";
     /** tip text of the segmentation button when segmentation not running */
-    private String segmentTip = "Run the morphological segmentation";
+    private String segmentTip = "Run the marker-controlled watershed segmentation";
     /** text of the segmentation button when segmentation running */
     private String stopText = "STOP";
     /** tip text of the segmentation button when segmentation running */
@@ -1245,7 +1245,7 @@ public class InteractiveMarkerControlledWatershedSegmentation implements PlugIn 
 		inputStackCopy = inputImage.getImageStack().duplicate();
 		displayImage = new ImagePlus( inputImage.getTitle(),
 			inputStackCopy );
-		displayImage.setTitle("Morphological Segmentation");
+		displayImage.setTitle("Marker-controlled Watershed Segmentation");
 		displayImage.setSlice( inputImage.getSlice() );
 	
 		// hide input image (to avoid accidental closing)
