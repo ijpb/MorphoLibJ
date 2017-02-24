@@ -142,8 +142,8 @@ public class Cross3x3Strel extends AbstractInPlaceStrel {
 		
 		// init buffer with background and first two lines
 		for (int x = 0; x < width; x++) {
-			buffer[0][x] = Float.MIN_VALUE;
-			buffer[1][x] = Float.MIN_VALUE;
+			buffer[0][x] = Float.NEGATIVE_INFINITY;
+			buffer[1][x] = Float.NEGATIVE_INFINITY;
 			buffer[2][x] = image.getf(x, 0);
 		}
 		
@@ -163,13 +163,13 @@ public class Cross3x3Strel extends AbstractInPlaceStrel {
 					tmp[x] = image.getf(x, y+1);
 			} else {
 				for (int x = 0; x < width; x++) 
-					tmp[x] = Float.MIN_VALUE;
+					tmp[x] = Float.NEGATIVE_INFINITY;
 			}
 			buffer[2] = tmp;
 			
 			// process first pixel independently
 			valMax = max5(buffer[0][0], buffer[1][0], 
-					buffer[1][1], buffer[2][0], Float.MIN_VALUE);
+					buffer[1][1], buffer[2][0], Float.NEGATIVE_INFINITY);
 			image.setf(0, y, valMax);
 			
 			// Iterate over pixel of the line
@@ -181,7 +181,7 @@ public class Cross3x3Strel extends AbstractInPlaceStrel {
 			
 			// process last pixel independently
 			valMax = max5(buffer[0][width-1], buffer[1][width-2], 
-					buffer[1][width-1], buffer[2][width-1], Strel.BACKGROUND);
+					buffer[1][width-1], buffer[2][width-1], Float.NEGATIVE_INFINITY);
 			image.setf(width-1, y, valMax);
 		}
 		
@@ -286,8 +286,8 @@ public class Cross3x3Strel extends AbstractInPlaceStrel {
 		
 		// init buffer with background and first line
 		for (int x = 0; x < width; x++) {
-			buffer[0][x] = Float.MAX_VALUE;
-			buffer[1][x] = Float.MAX_VALUE;
+			buffer[0][x] = Float.POSITIVE_INFINITY;
+			buffer[1][x] = Float.POSITIVE_INFINITY;
 			buffer[2][x] = image.getf(x, 0);
 		}
 		
@@ -307,13 +307,13 @@ public class Cross3x3Strel extends AbstractInPlaceStrel {
 					tmp[x] = image.get(x, y+1);
 			} else {
 				for (int x = 0; x < width; x++) 
-					tmp[x] = Float.MAX_VALUE;
+					tmp[x] = Float.POSITIVE_INFINITY;
 			}
 			buffer[2] = tmp;
 
 			// process first pixel independently
 			valMin = min5(buffer[0][0], buffer[1][0], 
-					buffer[1][1], buffer[2][0], Float.MAX_VALUE);
+					buffer[1][1], buffer[2][0], Float.POSITIVE_INFINITY);
 			image.setf(0, y, valMin);
 			
 			// Iterate over pixel of the line
@@ -325,7 +325,7 @@ public class Cross3x3Strel extends AbstractInPlaceStrel {
 			
 			// process last pixel independently
 			valMin = min5(buffer[0][width-1], buffer[1][width-2],
-					buffer[1][width-1], buffer[2][width-1], Float.MAX_VALUE);
+					buffer[1][width-1], buffer[2][width-1], Float.POSITIVE_INFINITY);
 			image.setf(width-1, y, valMin);
 		}
 		

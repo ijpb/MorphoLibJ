@@ -18,7 +18,7 @@ public class LocalExtremumBufferDouble implements LocalExtremum
 	/**
 	 * Current max value
 	 */
-	double maxValue = Double.MIN_VALUE;
+	double maxValue = Double.NEGATIVE_INFINITY;
 
 	boolean updateNeeded = false;
 	
@@ -126,7 +126,6 @@ public class LocalExtremumBufferDouble implements LocalExtremum
 		if (value * sign > this.maxValue * sign) 
 		{
 			this.maxValue = value;
-//			updateNeeded = true;
 		}
 	}
 	
@@ -150,7 +149,7 @@ public class LocalExtremumBufferDouble implements LocalExtremum
 		if (sign == 1)
 		{
 			// find the maximum value in the buffer
-			this.maxValue = Integer.MIN_VALUE;
+			this.maxValue = Double.NEGATIVE_INFINITY;
 			for (int i = 0; i < buffer.length; i++) 
 			{
 				this.maxValue = Math.max(this.maxValue, this.buffer[i]);
@@ -159,7 +158,7 @@ public class LocalExtremumBufferDouble implements LocalExtremum
 		else
 		{
 			// find the maximum value in the buffer
-			this.maxValue = Integer.MAX_VALUE;
+			this.maxValue = Double.POSITIVE_INFINITY;
 			for (int i = 0; i < buffer.length; i++) 
 			{
 				this.maxValue = Math.min(this.maxValue, this.buffer[i]);
@@ -169,15 +168,16 @@ public class LocalExtremumBufferDouble implements LocalExtremum
 		updateNeeded = false;
 	}
 	
-	/**
-	 * Reset inner counts with default values (0 for MAX, 255 for MIN)
-	 */
+    /**
+     * Resets inner counts with default maximum values (+INFINITY for MAX,
+     * -INFINITY for MIN)
+     */
 	public void clear() 
 	{
 		if (this.sign == 1)
-			this.fill(Double.MIN_VALUE);
+			this.fill(Double.NEGATIVE_INFINITY);
 		else
-			this.fill(Double.MAX_VALUE);
+			this.fill(Double.POSITIVE_INFINITY);
 	}
 	
 	/**
