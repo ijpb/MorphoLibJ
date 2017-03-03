@@ -823,7 +823,7 @@ public class InteractiveMarkerControlledWatershedSegmentation implements PlugIn 
 							// on the mask image
 							else
 							{
-								int slice = inputImage.getSlice();
+								int slice = displayImage.getSlice();
 
 								if( roi.isArea() )
 									markerSlice[ slice-1 ].fill( roi );
