@@ -730,7 +730,6 @@ public class MorphologicalSegmentation implements PlugIn {
 			allConstraints.gridheight = 1;
 			allConstraints.gridx = 0;
 			allConstraints.gridy = 0;
-			allConstraints.gridheight = 2;
 			allConstraints.weightx = 0;
 			allConstraints.weighty = 0;
 
@@ -740,7 +739,6 @@ public class MorphologicalSegmentation implements PlugIn {
 			allConstraints.gridx++;
 			allConstraints.weightx = 1;
 			allConstraints.weighty = 1;
-			allConstraints.gridheight = 1;
 			all.add( canvas, allConstraints );
 
 			allConstraints.gridy++;
