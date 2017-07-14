@@ -268,14 +268,9 @@ public class WatershedTransform3D
         // initial height
         double h = hMin;
         
-        // find corresponding voxel index
+        // set initial voxel index
         int currentIndex = 0;
-        while( h < hMin )
-        {
-        	h = voxelList.get( currentIndex ).getValue();
-        	currentIndex++;
-        }
-        
+
         int heightIndex1 = currentIndex;
         int heightIndex2 = currentIndex;
         
@@ -532,13 +527,8 @@ public class WatershedTransform3D
         // initial height
         double h = hMin;
         
-        // find corresponding voxel index
+        // set initial voxel index
         int currentIndex = 0;
-        while( h < hMin )
-        {
-        	h = voxelList.get( currentIndex ).getValue();
-        	currentIndex++;
-        }
         
         int heightIndex1 = currentIndex;
         int heightIndex2 = currentIndex;
