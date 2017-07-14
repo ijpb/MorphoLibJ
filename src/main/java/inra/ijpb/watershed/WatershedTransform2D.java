@@ -282,14 +282,9 @@ public class WatershedTransform2D
         // initial height
         double h = hMin;
         
-        // find corresponding pixel index
+        // set initial pixel index
         int currentIndex = 0;
-        while( h < hMin )
-        {
-        	h = pixelList.get( currentIndex ).getValue();
-        	currentIndex++;
-        }
-        
+
         int heightIndex1 = currentIndex;
         int heightIndex2 = currentIndex;
         
@@ -514,13 +509,8 @@ public class WatershedTransform2D
         // initial height
         double h = hMin;
         
-        // find corresponding pixel index
+        // set initial pixel index
         int currentIndex = 0;
-        while( h < hMin )
-        {
-        	h = pixelList.get( currentIndex ).getValue();
-        	currentIndex++;
-        }
         
         int heightIndex1 = currentIndex;
         int heightIndex2 = currentIndex;
