@@ -265,20 +265,16 @@ public class WatershedTransform3D
 	    	    
 	    LinkedList<Cursor3D> fifo = new LinkedList<Cursor3D>();
 	      
-        // initial height
-        double h = hMin;
-        
         // set initial voxel index
         int currentIndex = 0;
 
         int heightIndex1 = currentIndex;
-        int heightIndex2 = currentIndex;
-        
+        int heightIndex2 = currentIndex;    
         
 	    // for h <- h_min to h_max; geodesic SKIZ of level h-1 inside level h
-	    while( currentIndex < voxelList.size() && h <= hMax )
+	    while( currentIndex < voxelList.size() )
 	    {	    	
-	    	h = voxelList.get( currentIndex ).getValue();	    	
+	    	double h = voxelList.get( currentIndex ).getValue();	    	
 	    		    		    		    	
 	    	for(int voxelIndex = heightIndex1; voxelIndex < voxelList.size(); voxelIndex ++)
 	    	{
@@ -524,20 +520,16 @@ public class WatershedTransform3D
 	    	    
 	    LinkedList<Cursor3D> fifo = new LinkedList<Cursor3D>();
 	      
-        // initial height
-        double h = hMin;
-        
         // set initial voxel index
         int currentIndex = 0;
         
         int heightIndex1 = currentIndex;
-        int heightIndex2 = currentIndex;
-        
+        int heightIndex2 = currentIndex;        
         
 	    // for h <- h_min to h_max; geodesic SKIZ of level h-1 inside level h
-	    while( currentIndex < voxelList.size() && h <= hMax )
+	    while( currentIndex < voxelList.size() )
 	    {	    	
-	    	h = voxelList.get( currentIndex ).getValue();	    	
+	    	double h = voxelList.get( currentIndex ).getValue();	    	
 	    		    		    		    	
 	    	for(int voxelIndex = heightIndex1; voxelIndex < voxelList.size(); voxelIndex ++)
 	    	{
