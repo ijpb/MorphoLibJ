@@ -30,16 +30,13 @@ import ij.io.FileSaver;
 import ij.process.ImageConverter;
 import ij.process.ImageProcessor;
 import inra.ijpb.binary.BinaryImages;
-import inra.ijpb.morphology.MinimaAndMaxima3D;
-import inra.ijpb.morphology.Morphology;
-import inra.ijpb.morphology.Strel3D;
 import inra.ijpb.watershed.Watershed;
 import java.text.* ;
 import java.util.* ;
 
 import org.junit.Test;
 
-public class TestMorphologicalWatershed {
+public class TestWatershed2D {
 	
 	
 	/**
@@ -48,25 +45,22 @@ public class TestMorphologicalWatershed {
 	@Test
 	public void testWatershed()
 	{
-		ImagePlus input = IJ.openImage( TestMorphologicalSegmentation.class.getResource( "/files/grains.tif" ).getFile() );
+		ImagePlus input = IJ.openImage( TestWatershed2D.class.getResource( "/files/grains.tif" ).getFile() );
 
 		final ImagePlus copy = input.duplicate();
 		
 		int[] connectivityValues = new int[]{ 4, 8 };
 
-		DecimalFormat df = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
-		df.setMaximumFractionDigits(340); //340 = DecimalFormat.DOUBLE_FRACTION_DIGITS
-
 		for( int connectivity : connectivityValues )
 		{
 			input = copy;
 
-		    ImageProcessor inputIP = input.getChannelProcessor();
+			ImageProcessor inputIP = input.getChannelProcessor();
 			ImageProcessor resultIP = Watershed.computeWatershed( inputIP, inputIP, connectivity );
 			
 			ImagePlus result = new ImagePlus("result", resultIP);
 
-			ImagePlus reference = IJ.openImage( TestMorphologicalSegmentation.class.getResource(
+			ImagePlus reference = IJ.openImage( TestWatershed2D.class.getResource(
 				"/files/grains_watershed_" + connectivity + ".tif" ).getFile() );
 			
 			assertEquals( "Different results for resulting images (connectivity = " + connectivity + ")",
@@ -100,8 +94,7 @@ public class TestMorphologicalWatershed {
 	}
 		
 	/**
-	 * Main method to test and debug the Morphological
-	 * Segmentation GUI
+	 * Main method to test and debug the watershed
 	 *  
 	 * @param args
 	 */
@@ -109,9 +102,9 @@ public class TestMorphologicalWatershed {
 	{
 		ImageJ.main( args );
 		
-		IJ.open( TestMorphologicalWatershed.class.getResource( "/files/grains.tif" ).getFile() );
+		IJ.open( TestWatershed2D.class.getResource( "/files/grains.tif" ).getFile() );
 		
-		new MorphologicalSegmentation().run( null );
+		new Watershed3DPlugin().run( null );
 	}
 
 }
