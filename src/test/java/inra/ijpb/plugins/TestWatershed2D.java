@@ -27,6 +27,7 @@ import ij.ImageJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.io.FileSaver;
+import ij.process.ByteProcessor;
 import ij.process.ImageConverter;
 import ij.process.ImageProcessor;
 import inra.ijpb.binary.BinaryImages;
@@ -37,7 +38,21 @@ import java.util.* ;
 import org.junit.Test;
 
 public class TestWatershed2D {
-	
+
+	long xorshift_state = 1;
+
+	/**
+	 * Random number generator to generate random mask.
+	 */
+	long xorshift()
+	{
+		long x = xorshift_state;
+		x ^= (x << 21);
+		x ^= (x >>> 35);
+		x ^= (x << 4);
+		xorshift_state = x;
+		return x;
+	}
 	
 	/**
 	 * Test the morphological segmentation pipeline over the same image stored as 8, 16 and 32-bit.
@@ -56,8 +71,15 @@ public class TestWatershed2D {
 			input = copy;
 
 			ImageProcessor inputIP = input.getChannelProcessor();
-			ImageProcessor resultIP = Watershed.computeWatershed( inputIP, inputIP, connectivity );
-			
+
+			ImageProcessor maskIP = new ByteProcessor( inputIP.getWidth(), inputIP.getHeight() );
+			for (int y = 0; y < input.getHeight(); y++) {
+				for (int x = 0; x < input.getWidth(); x++)
+					maskIP.setf(x, y, xorshift() % 2);
+			}
+
+			ImageProcessor resultIP = Watershed.computeWatershed( inputIP, maskIP, connectivity );
+						
 			ImagePlus result = new ImagePlus("result", resultIP);
 
 			ImagePlus reference = IJ.openImage( TestWatershed2D.class.getResource(
