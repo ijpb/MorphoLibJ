@@ -26,14 +26,10 @@ import ij.IJ;
 import ij.ImageJ;
 import ij.ImagePlus;
 import ij.ImageStack;
-import ij.io.FileSaver;
 import ij.process.ByteProcessor;
 import ij.process.ImageConverter;
 import ij.process.ImageProcessor;
-import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.watershed.Watershed;
-import java.text.* ;
-import java.util.* ;
 
 import org.junit.Test;
 
@@ -55,7 +51,7 @@ public class TestWatershed2D {
 	}
 	
 	/**
-	 * Test the morphological segmentation pipeline over the same image stored as 8, 16 and 32-bit.
+	 * Test 2D watershed over the same image stored as 8, 16 and 32-bit.
 	 */
 	@Test
 	public void testWatershed()
@@ -78,15 +74,32 @@ public class TestWatershed2D {
 					maskIP.setf(x, y, xorshift() % 2);
 			}
 
-			ImageProcessor resultIP = Watershed.computeWatershed( inputIP, maskIP, connectivity );
-						
-			ImagePlus result = new ImagePlus("result", resultIP);
+			ImageProcessor resultIP8bit = Watershed.computeWatershed( inputIP, maskIP, connectivity );
+			ImagePlus result8bit = new ImagePlus("result", resultIP8bit);
 
 			ImagePlus reference = IJ.openImage( TestWatershed2D.class.getResource(
 				"/files/grains_watershed_" + connectivity + ".tif" ).getFile() );
 			
-			assertEquals( "Different results for resulting images (connectivity = " + connectivity + ")",
-				0, diffImagePlus( result, reference ) );
+			assertEquals( "Different result compared to reference image (connectivity = " + connectivity + ")",
+				0, diffImagePlus( result8bit, reference ) );
+
+			ImageConverter ic = new ImageConverter( input );
+			ic.convertToGray16();
+
+			ImageProcessor resultIP16bit = Watershed.computeWatershed( inputIP, maskIP, connectivity );
+			ImagePlus result16bit = new ImagePlus("result", resultIP16bit);
+
+			assertEquals( "Different results for 8 and 16 bit images (connectivity = " + connectivity + ")", 
+				0, diffImagePlus( result8bit, result16bit ) );
+
+			ic = new ImageConverter( input.duplicate() );
+			ic.convertToGray32();
+
+			ImageProcessor resultIP32bit = Watershed.computeWatershed( inputIP, maskIP, connectivity );
+			ImagePlus result32bit = new ImagePlus("result", resultIP32bit);
+
+			assertEquals( "Different results for 8 and 32 bit images (connectivity = " + connectivity + ")",
+				0, diffImagePlus( result8bit, result32bit ) );
 		}
 	}
 
