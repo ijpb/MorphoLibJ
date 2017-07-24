@@ -779,23 +779,95 @@ status open
 
 \begin_layout Plain Layout
 \align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
 \begin_inset Graphics
 	filename images/grains/grains.png
 	width 30text%
 
 \end_inset
 
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Original image
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
  
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
 \begin_inset Graphics
 	filename images/grains/grains-Dilation-Sq2.png
 	width 30text%
 
 \end_inset
 
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Morphological dilation
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
  
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
 \begin_inset Graphics
 	filename images/grains/grains-Erosion-Sq2.png
 	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Morphological erosion
+\end_layout
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
@@ -866,7 +938,7 @@ reference "fig:Morpho-Opening-Closing"
 
 \end_inset
 
-).
+-a).
  It can also connect bright structures that were separated by a thin dark
  space.
 \end_layout
@@ -881,11 +953,29 @@ morphological
 \series bold
 opening
 \series default
-, and removes bright structures smaller than the structuring element.
+, and removes bright structures smaller than the structuring element (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Morpho-Opening-Closing"
+
+\end_inset
+
+-b).
  
 \end_layout
 
 \begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
 \begin_inset Float figure
 wide false
 sideways false
@@ -900,9 +990,50 @@ status open
 \end_inset
 
  
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Morphological closing
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
 \begin_inset Graphics
 	filename images/grains/grains-Opening-Sq2.tif
 	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Morphological opening
+\end_layout
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
@@ -919,8 +1050,8 @@ name "fig:Morpho-Opening-Closing"
 
 \end_inset
 
-Some examples of composed morphological filters.
- Morphological closing (left) and morphological opening (right).
+Some examples of composed morphological filters: morphological closing (a)
+ and morphological opening (b).
 \end_layout
 
 \end_inset
@@ -980,7 +1111,7 @@ reference "fig:Morpho-Gradient-TopHat"
 
 \end_inset
 
-).
+-a).
  
 \end_layout
 
@@ -991,37 +1122,29 @@ morphological Laplacian
 \series default
  is defined as half the sum of a morphological dilation and a morphological
  erosion with the same structuring element, minus the original image.
- It results in enhancing the edges of the image.
- 
-\end_layout
+ It results in enhancing the edges of the image (Figure
+\begin_inset space ~
+\end_inset
 
-\begin_layout Subsection
-Top-hats
-\end_layout
 
-\begin_layout Standard
-The 
-\series bold
-white top-hat 
-\series default
-first computes a morphological opening (resulting in removing bright structures
- smaller than structuring elements), and removes the result from the original
- image.
- When applied with a large structuring element, the result is an homogenization
- of the background, making bright structures easier to segment.
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Morpho-Gradient-TopHat"
+
+\end_inset
+
+-b).
  
 \end_layout
 
 \begin_layout Standard
-Similarly, the 
-\series bold
-dark top-hat
-\series default
- can be used to enhance dark structures observed on an non-homogeneous backgroun
-d.
-\end_layout
+\begin_inset Float figure
+wide false
+sideways false
+status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
+\align center
 \begin_inset Float figure
 wide false
 sideways false
@@ -1035,17 +1158,82 @@ status open
 
 \end_inset
 
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Morphological gradient
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
  
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
 \begin_inset Graphics
 	filename images/grains/grains-Laplacian-Sq2.png
 	width 30text%
 
 \end_inset
 
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Morphological Laplacian
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
  
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
 \begin_inset Graphics
 	filename images/grains/grains-WhiteTopHat-Sq20.png
 	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+White Top-Hat
+\end_layout
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
@@ -1062,8 +1250,8 @@ name "fig:Morpho-Gradient-TopHat"
 
 \end_inset
 
-Some examples of composed morphological filters.
- Morphological gradient, morphological Laplacian, morphological white top-hat.
+Some examples of morphological filters resulting from the combination of
+ elementary morphological filters.
 \end_layout
 
 \end_inset
@@ -1074,6 +1262,43 @@ Some examples of composed morphological filters.
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsection
+Top-hats
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+white top-hat 
+\series default
+first computes a morphological opening (resulting in removing bright structures
+ smaller than structuring elements), and removes the result from the original
+ image.
+ When applied with a large structuring element, the result is an homogenization
+ of the background, making bright structures easier to segment (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Morpho-Gradient-TopHat"
+
+\end_inset
+
+-c).
+ 
+\end_layout
+
+\begin_layout Standard
+Similarly, the 
+\series bold
+dark top-hat
+\series default
+ can be used to enhance dark structures observed on an non-homogeneous backgroun
+d.
 \end_layout
 
 \begin_layout Section
@@ -1985,7 +2210,7 @@ remove particles or regions touching the borders
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Geodesic-Reconstruction-Binary"
+reference "fig:Morphological-Reconstruction-Binary"
 
 \end_inset
 
@@ -2035,11 +2260,11 @@ status open
 \begin_layout Plain Layout
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Geodesic-Reconstruction-Binary"
+name "fig:Morphological-Reconstruction-Binary"
 
 \end_inset
 
-Some applications of geodesic reconstruction.
+Some applications of morphological reconstruction.
  From left to right: original image, result of kill borders, result of fill
  holes.
 \end_layout
@@ -2079,7 +2304,7 @@ Morphological reconstructions can be applied to grayscale images.
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Geodesic-Reconstruction-Grayscale"
+reference "fig:Morphological-Reconstruction-Grayscale"
 
 \end_inset
 
@@ -2124,11 +2349,11 @@ status open
 \begin_layout Plain Layout
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Geodesic-Reconstruction-Grayscale"
+name "fig:Morphological-Reconstruction-Grayscale"
 
 \end_inset
 
-Some applications of geodesic reconstruction on grayscale images.
+Some applications of morphological reconstruction on grayscale images.
  From left to right: original image with markers superimposed in red, result
  of morphological reconstruction by dilation, result of border kill operation.
 \end_layout
@@ -2390,8 +2615,8 @@ name "fig:Morphological-Reconstruction-Grayscale-3d"
 
 \end_inset
 
-Application of 3D geodesic reconstruction for isolating chromocenters within
- a nucleus.
+Application of 3D morphological reconstruction for isolating chromocenters
+ within a nucleus.
  (a) Sample slice of a 3 image of nucleus with chromocenters represented
  as bright blobs.
  (b) Manual selection of a marker region within the nucleus.
@@ -2435,18 +2660,18 @@ Usage
 \end_layout
 
 \begin_layout Standard
-The geodesic reconstruction algorithm is often used within other operators.
+The  reconstruction algorithm is often used within other operators.
  It is however provided as a plugin to allow its inclusion in user-designed
  macros or plugins:
 \end_layout
 
 \begin_layout Description
-Geodesic
+Morphological
 \begin_inset space ~
 \end_inset
 
-Reconstruction compute the geodesic reconstruction by erosion or dilation
- using a marker image and a mask image, and a specified connectivity.
+Reconstruction compute the  reconstruction by erosion or dilation using
+ a marker image and a mask image, and a specified connectivity.
  
 \end_layout
 
@@ -2455,25 +2680,25 @@ Interactive
 \begin_inset space ~
 \end_inset
 
-Geodesic
+Morphological
 \begin_inset space ~
 \end_inset
 
 Reconstruction
 \begin_inset CommandInset label
 LatexCommand label
-name "op:Interactive-Geodesic-Reconstruction"
+name "op:Interactive-Morphological-Reconstruction"
 
 \end_inset
 
- compute the geodesic reconstruction by erosion or dilation taking the current
- 2D image as mask image, creating the marker image out of user-defined ROIs
+ compute the  reconstruction by erosion or dilation taking the current 2D
+ image as mask image, creating the marker image out of user-defined ROIs
  (for example with the point selection tool) and using a specified connectivity.
  The plugin allows previewing the result.
 \end_layout
 
 \begin_layout Description
-Geodesic
+Morphological
 \begin_inset space ~
 \end_inset
 
@@ -2481,8 +2706,8 @@ Reconstruction
 \begin_inset space ~
 \end_inset
 
-3D compute the geodesic reconstruction by erosion or dilation on a 3D image
- (marker and mask images are defined by the user among the open ones).
+3D compute the  reconstruction by erosion or dilation on a 3D image (marker
+ and mask images are defined by the user among the open ones).
 \end_layout
 
 \begin_layout Description
@@ -2490,7 +2715,7 @@ Interactive
 \begin_inset space ~
 \end_inset
 
-Geodesic
+Morphological
 \begin_inset space ~
 \end_inset
 
@@ -2501,18 +2726,18 @@ Reconstruction
 3D
 \begin_inset CommandInset label
 LatexCommand label
-name "op:Interactive-Geodesic-Reconstruction-3d"
+name "op:Interactive-Morphological-Reconstruction-3d"
 
 \end_inset
 
- compute the geodesic reconstruction by erosion or dilation on using the
- current 3D image as mask and creating the marker image from the user-defined
- point selections.
+ compute the  reconstruction by erosion or dilation on using the current
+ 3D image as mask and creating the marker image from the user-defined point
+ selections.
 \end_layout
 
 \begin_layout Standard
 The kill borders and fill holes operations are also provided as plugins.
- Both work for 2D and 3D images of 8, 16 or 32 bits.
+ Both work for 2D and 3D images of 8, 16 or 32 bit-depth images.
 \end_layout
 
 \begin_layout Description
@@ -2656,8 +2881,8 @@ Regional and extended maxima on a grayscale image.
 \end_layout
 
 \begin_layout Standard
-Both extended maxima and minima are computed using the geodesic reconstruction
- algorithm.
+Both extended maxima and minima are computed using the morphological reconstruct
+ion algorithm.
  More details can be found in the book of 
 \begin_inset CommandInset citation
 LatexCommand citet
@@ -2813,8 +3038,8 @@ Attribute filters aim at removing components of an image based on a certain
  size criterion, rather than on intensity.
  The most common and useful criterion is the number of pixels/voxels (i.e.,
  the area or volume).
- For example, a morphological size opening operation with a threshold value
- of 20 will remove all blobs containing fewer than 20 voxels.
+ For example, a size opening operation with a threshold value equal to 20
+ will remove all blobs containing fewer than 20 voxels.
  The length of the diagonal of the bounding box can also be of interest
  to discriminate elongated versus round component shapes.
  
@@ -2937,23 +3162,95 @@ status open
 
 \begin_layout Plain Layout
 \align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
 \begin_inset Graphics
 	filename images/leaf/leaf_crop400.tif
 	width 31text%
 
 \end_inset
 
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Original image
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
  
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
 \begin_inset Graphics
 	filename images/leaf/leaf_crop400-areaOpen.tif
 	width 31text%
 
 \end_inset
 
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Area opening
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
  
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
 \begin_inset Graphics
 	filename images/leaf/leaf_crop400-OpeningSq1.tif
 	width 31text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Morphological opening
+\end_layout
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
@@ -2971,10 +3268,10 @@ name "fig:Area-Opening-Gray"
 \end_inset
 
 Example of area opening on a grayscale image.
- Left: original grayscale image of a leaf (image courtesy of Eric Biot,
- INRA Versailles).
- Middle: grayscale size opening making bright spots disappear.
- Right: comparison with morphological closing with square structuring element
+ (a) Original grayscale image of a leaf (image courtesy of Eric Biot, INRA
+ Versailles).
+ (b) Grayscale size opening making bright spots disappear.
+ (c) Comparison with morphological closing using a square structuring element
  of radius 1: bright spots are removed, but some veins also disappear.
 \end_layout
 
@@ -8553,7 +8850,7 @@ reference "sec:Morphological-Reconstruction"
 \begin_inset Text
 
 \begin_layout Plain Layout
-Interactive Geodesic Reconstruction
+Interactive Morphological Reconstruction
 \end_layout
 
 \end_inset
@@ -8636,7 +8933,7 @@ Interactive Geodesic Reconstruction
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "op:Interactive-Geodesic-Reconstruction"
+reference "op:Interactive-Morphological-Reconstruction"
 
 \end_inset
 
@@ -8651,7 +8948,7 @@ reference "op:Interactive-Geodesic-Reconstruction"
 \begin_inset Text
 
 \begin_layout Plain Layout
-Interactive Geodesic Reconstruction 3D
+Interactive Morphological Reconstruction 3D
 \end_layout
 
 \end_inset
@@ -8734,7 +9031,7 @@ Interactive Geodesic Reconstruction 3D
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "op:Interactive-Geodesic-Reconstruction-3d"
+reference "op:Interactive-Morphological-Reconstruction-3d"
 
 \end_inset
 
