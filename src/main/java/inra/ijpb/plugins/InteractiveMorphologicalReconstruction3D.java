@@ -32,6 +32,7 @@ import ij.gui.Toolbar;
 import ij.plugin.PlugIn;
 import ij.plugin.frame.RoiManager;
 import ij.process.ByteProcessor;
+import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
@@ -219,11 +220,14 @@ public class InteractiveMorphologicalReconstruction3D implements PlugIn
 		if( null == result )
 			return;
 
-		Images3D.optimizeDisplayRange( result );
-
+		if (result.getBitDepth() != 24)
+		{
+			Images3D.optimizeDisplayRange( result );
+		}
+		
 		// Display the result image
-		result.show();
 		result.setSlice( image.getSlice() );
+		result.show();
 
 		long t1 = System.currentTimeMillis();
 		IJUtils.showElapsedTime( operation.toString(), t1 - t0, image );
@@ -262,6 +266,8 @@ public class InteractiveMorphologicalReconstruction3D implements PlugIn
 			maxValue = 255;
 		else if ( bitDepth == 16 )
 			maxValue = 65535;
+		else if ( bitDepth == 24 )
+			maxValue = 0xFFFFFF;
 		else
 			maxValue = Float.MAX_VALUE;
 
@@ -271,9 +277,11 @@ public class InteractiveMorphologicalReconstruction3D implements PlugIn
 		for( int n=0; n<mask.getImageStackSize(); n++ )
 		{
 			if( bitDepth == 8 )
-				markerSlice[ n ] = new ByteProcessor( mask.getWidth(), mask.getHeight() );			
+				markerSlice[ n ] = new ByteProcessor( mask.getWidth(), mask.getHeight() );
 			else if( bitDepth == 16 )
 				markerSlice[ n ] = new ShortProcessor( mask.getWidth(), mask.getHeight() );			
+			else if( bitDepth == 24 )
+				markerSlice[ n ] = new ColorProcessor( mask.getWidth(), mask.getHeight() );			
 			else
 				markerSlice[ n ] = new FloatProcessor( mask.getWidth(), mask.getHeight() );			
 
@@ -339,20 +347,22 @@ public class InteractiveMorphologicalReconstruction3D implements PlugIn
 		if( operation == Operation.BY_EROSION )
 			Images3D.invert(markerStack);
 
-		// Compute geodesic reconstruction
+		// Compute morphological reconstruction
 		ImageStack result =
 				operation.applyTo( markerStack, mask.getImageStack(),
 						connectivity.getValue() );
+		
 		// Keep same color model
 		result.setColorModel( mask.getImageStack().getColorModel() );
-
+		
 		// create resulting image
-		String newName = mask.getShortTitle() + "-geodRec";
+		String newName = mask.getShortTitle() + "-rec";
 		ImagePlus resultPlus = new ImagePlus( newName, result );
 		resultPlus.copyScale( mask );
-		resultPlus.show();
 
 		resultPlus.setSlice( mask.getSlice() );
+		resultPlus.show();
+
 		return resultPlus;
 	}
 }
