@@ -47,7 +47,7 @@ import inra.ijpb.morphology.extrema.RegionalExtrema3DByFlooding;
  * </p>
  * 
  * @see MinimaAndMaxima
- * @see GeodesicReconstruction3D
+ * @see Reconstruction3D
  * @see FloodFill
  * 
  * @author David Legland
@@ -121,7 +121,7 @@ public class MinimaAndMaxima3D
 	
 		ImageStack mask = addValue(image, 1);
 	
-		ImageStack rec = GeodesicReconstruction3D.reconstructByDilation(image, mask, conn);
+		ImageStack rec = Reconstruction3D.reconstructByDilation(image, mask, conn);
 		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
 	
 		for (int z = 0; z < sizeZ; z++) 
@@ -221,7 +221,7 @@ public class MinimaAndMaxima3D
 	
 		ImageStack marker = addValue(image, 1);
 	
-		ImageStack rec = GeodesicReconstruction3D.reconstructByErosion(marker,
+		ImageStack rec = Reconstruction3D.reconstructByErosion(marker,
 				image, conn);
 
 		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 8);
@@ -301,7 +301,7 @@ public class MinimaAndMaxima3D
 	{
 		ImageStack mask = addValue(image, dynamic);
 
-		ImageStack rec = GeodesicReconstruction3D.reconstructByDilation(image, mask, conn);
+		ImageStack rec = Reconstruction3D.reconstructByDilation(image, mask, conn);
 
 		return regionalMaxima(rec, conn);
 	}
@@ -352,7 +352,7 @@ public class MinimaAndMaxima3D
 	{
 		ImageStack mask = addValue(image, dynamic);
 
-		ImageStack rec = GeodesicReconstruction3D.reconstructByDilation( image, mask, conn, binaryMask );
+		ImageStack rec = Reconstruction3D.reconstructByDilation( image, mask, conn, binaryMask );
 
 		return regionalMaxima(rec, conn);
 	}
@@ -391,7 +391,7 @@ public class MinimaAndMaxima3D
 	{
 		ImageStack marker = addValue(image, dynamic);
 
-		ImageStack rec = GeodesicReconstruction3D.reconstructByErosion(marker, image, conn);
+		ImageStack rec = Reconstruction3D.reconstructByErosion(marker, image, conn);
 
 		if( null == rec )
 			return null;
@@ -457,7 +457,7 @@ public class MinimaAndMaxima3D
 			}
 		}
 
-		return GeodesicReconstruction3D.reconstructByDilation(marker, mask, conn);
+		return Reconstruction3D.reconstructByDilation(marker, mask, conn);
 	}
 
 	/**
@@ -521,7 +521,7 @@ public class MinimaAndMaxima3D
 			}
 		}
 
-		return GeodesicReconstruction3D.reconstructByErosion(marker, mask, conn);
+		return Reconstruction3D.reconstructByErosion(marker, mask, conn);
 	}
 
 	/**

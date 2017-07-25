@@ -35,8 +35,8 @@ import org.junit.runners.Suite;
 	FloodFillTest.class,
 	FloodFill3DTest.class,
 	LabelImagesTest.class, 
-	GeodesicReconstructionTest.class,
-	GeodesicReconstruction3DTest.class,
+	ReconstructionTest.class,
+	Reconstruction3DTest.class,
 	MinimaAndMaximaTest.class,
 	MinimaAndMaxima3DTest.class
 	})

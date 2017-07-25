@@ -36,7 +36,7 @@ import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 import inra.ijpb.data.image.Images3D;
-import inra.ijpb.morphology.GeodesicReconstruction3D;
+import inra.ijpb.morphology.Reconstruction3D;
 import inra.ijpb.util.IJUtils;
 
 /**
@@ -77,10 +77,10 @@ public class InteractiveMorphologicalReconstruction3D implements PlugIn
 				int conn )
 		{
 			if ( this == BY_DILATION )
-				return GeodesicReconstruction3D.reconstructByDilation(
+				return Reconstruction3D.reconstructByDilation(
 						marker, mask, conn );
 			if ( this == BY_EROSION )
-				return GeodesicReconstruction3D.reconstructByErosion(
+				return Reconstruction3D.reconstructByErosion(
 						marker, mask, conn );
 
 			throw new RuntimeException(

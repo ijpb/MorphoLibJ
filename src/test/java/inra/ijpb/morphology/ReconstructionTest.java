@@ -32,7 +32,7 @@ import org.junit.Test;
  * @author David Legland
  *
  */
-public class GeodesicReconstructionTest {
+public class ReconstructionTest {
 
 	/**
 	 * Test method for {@link ijt.filter.morphology.GeodesicReconstruction#reconstructByDilation()}.
@@ -212,7 +212,7 @@ public class GeodesicReconstructionTest {
 		marker.set(6, 2, 0xFFFFFF);
 		marker.set(2, 6, 0xFFFFFF);
 		
-		ImageProcessor result = Reconstruction.reconstructByDilation(marker, mask);
+		ImageProcessor result = Reconstruction.reconstructByDilation(marker, mask, 4);
 		
 		assertEquals(0, result.get(2, 2));
 		assertEquals(0, result.get(6, 6));

@@ -27,7 +27,7 @@ import ij.ImageStack;
 import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
 import inra.ijpb.morphology.Reconstruction;
-import inra.ijpb.morphology.GeodesicReconstruction3D;
+import inra.ijpb.morphology.Reconstruction3D;
 import inra.ijpb.util.IJUtils;
 
 /**
@@ -52,7 +52,7 @@ public class FillHolesPlugin implements PlugIn
 		if (imagePlus.getStackSize() > 1)
 		{
 			ImageStack stack = imagePlus.getStack();
-			ImageStack result = GeodesicReconstruction3D.fillHoles(stack);
+			ImageStack result = Reconstruction3D.fillHoles(stack);
 			resultPlus = new ImagePlus(newName, result);
 			
 		} 

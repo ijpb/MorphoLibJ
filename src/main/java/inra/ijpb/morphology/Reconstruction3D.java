@@ -38,29 +38,45 @@ import inra.ijpb.morphology.geodrec.GeodesicReconstructionType;
  * Morphological reconstruction for 8-bits grayscale or binary stacks.
  * </p>
  * 
- * @deprecated replaced by the Reconstruction class (2017.07.25)
+ * <p>
+ * This class provides a collection of static methods for commonly used 
+ * operations on 3D images, such as border removal or holes filling. 
+ * </p>
+ * 
+ * <p>
+ * Example of use:
+ * <pre><code>
+ * ImageStack mask = IJ.getImage().getStack();
+ * int bitDepth = mask.getBitDepth();
+ * ImageStack marker = ImageStack.create(mask.getWidth(), mask.getHeight(), mask.getSize(), bitDepth);
+ * marker.set(30, 20, 10, 255); 
+ * ImageStack rec = Reconstruction3D.reconstructByDilation(marker, mask, 6);
+ * ImagePlus res = new ImagePlus("Reconstruction", rec);
+ * res.show(); 
+ * </code></pre>
  * 
  * @see Reconstruction
+ * @see FloodFill3D
  * 
  * @author David Legland
  */
-@Deprecated
-public abstract class GeodesicReconstruction3D 
+public abstract class Reconstruction3D 
 {
 	/**
 	 * Private constructor to prevent class instantiation.
 	 */
-	private GeodesicReconstruction3D()
+	protected Reconstruction3D()
 	{
 	}
 
 	/**
-	 * Removes the border of the input image, by performing a geodesic 
+	 * Removes the border of the input image, by performing a morphological
 	 * reconstruction initialized with image boundary.
-	 *  
+	 * 
 	 * @see #fillHoles(ImageStack)
 	 * 
-	 * @param image the image to process
+	 * @param image
+	 *            the image to process
 	 * @return a new image with borders removed
 	 */
 	public final static ImageStack killBorders(ImageStack image)
@@ -102,13 +118,14 @@ public abstract class GeodesicReconstruction3D
 	}
 
 	/**
-	 * Fills the holes in the input image, by (1) inverting the image, (2) 
-	 * performing a geodesic reconstruction initialized with inverted image
+	 * Fills the holes in the input image, by (1) inverting the image, (2)
+	 * performing a morphological reconstruction initialized with inverted image
 	 * boundary and (3) by inverting the result.
 	 * 
 	 * @see #killBorders(ImageStack)
 	 * 
-	 * @param image the image to process
+	 * @param image
+	 *            the image to process
 	 * @return a new image with holes filled
 	 */
 	public final static ImageStack fillHoles(ImageStack image) 
@@ -136,12 +153,14 @@ public abstract class GeodesicReconstruction3D
 	}
 
 	/**
-	 * Static method to computes the geodesic reconstruction by dilation of 
+	 * Static method to computes the morphological reconstruction by dilation of
 	 * the marker image under the mask image.
 	 * 
-	 * @param marker input marker image
-	 * @param mask mask image
-	 * @return the result of 3D geodesic reconstruction
+	 * @param marker
+	 *            input marker image
+	 * @param mask
+	 *            mask image
+	 * @return the result of 3D morphological reconstruction
 	 */
 	public final static ImageStack reconstructByDilation(ImageStack marker,
 			ImageStack mask)
@@ -172,13 +191,16 @@ public abstract class GeodesicReconstruction3D
 	}
 
 	/**
-	 * Static method to computes the geodesic reconstruction by dilation of 
+	 * Static method to computes the morphological reconstruction by dilation of
 	 * the marker image under the mask image.
 	 * 
-	 * @param marker input marker image
-	 * @param mask mask image
-	 * @param connectivity 3d connectivity (6 or 26)
-	 * @return the result of 3D geodesic reconstruction
+	 * @param marker
+	 *            input marker image
+	 * @param mask
+	 *            mask image
+	 * @param connectivity
+	 *            3d connectivity (6 or 26)
+	 * @return the result of 3D morphological reconstruction
 	 */
 	public final static ImageStack reconstructByDilation(ImageStack marker,
 			ImageStack mask, int connectivity)
@@ -209,14 +231,18 @@ public abstract class GeodesicReconstruction3D
 	}
 
 	/**
-	 * Static method to computes the geodesic reconstruction by dilation of 
+	 * Static method to computes the morphological reconstruction by dilation of
 	 * the marker image under the mask image, but restricted to a binary mask.
 	 * 
-	 * @param marker input marker image
-	 * @param mask mask image
-	 * @param connectivity 3d connectivity (6 or 26)
-	 * @param binaryMask binary mask to restrict area of application
-	 * @return geodesic reconstruction by dilation of input image
+	 * @param marker
+	 *            input marker image
+	 * @param mask
+	 *            mask image
+	 * @param connectivity
+	 *            3d connectivity (6 or 26)
+	 * @param binaryMask
+	 *            binary mask to restrict area of application
+	 * @return morphological reconstruction by dilation of input image
 	 */
 	public final static ImageStack reconstructByDilation(
 			ImageStack marker,
@@ -233,12 +259,14 @@ public abstract class GeodesicReconstruction3D
 	
 	
 	/**
-	 * Static method to computes the geodesic reconstruction by erosion of the
-	 * marker image over the mask image.
+	 * Static method to computes the morphological reconstruction by erosion of
+	 * the marker image over the mask image.
 	 * 
-	 * @param marker input marker image
-	 * @param mask mask image
-	 * @return the result of 3D geodesic reconstruction
+	 * @param marker
+	 *            input marker image
+	 * @param mask
+	 *            mask image
+	 * @return the result of 3D morphological reconstruction
 	 */
 	public final static ImageStack reconstructByErosion(ImageStack marker,
 			ImageStack mask)
@@ -271,13 +299,16 @@ public abstract class GeodesicReconstruction3D
 	}
 
 	/**
-	 * Static method to computes the geodesic reconstruction by erosion of the
-	 * marker image over the mask image.
-
-	 * @param marker input marker image
-	 * @param mask mask image
-	 * @param connectivity 3d connectivity (6 or 26)
-	 * @return the result of 3D geodesic reconstruction
+	 * Static method to computes the morphological reconstruction by erosion of
+	 * the marker image over the mask image.
+	 * 
+	 * @param marker
+	 *            input marker image
+	 * @param mask
+	 *            mask image
+	 * @param connectivity
+	 *            3d connectivity (6 or 26)
+	 * @return the result of 3D morphological reconstruction
 	 */
 	public final static ImageStack reconstructByErosion(ImageStack marker,
 			ImageStack mask, int connectivity)
