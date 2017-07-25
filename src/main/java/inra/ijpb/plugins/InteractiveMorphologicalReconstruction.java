@@ -22,6 +22,7 @@
 package inra.ijpb.plugins;
 
 import java.awt.AWTEvent;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 
 import ij.IJ;
@@ -35,6 +36,7 @@ import ij.gui.Toolbar;
 import ij.plugin.filter.ExtendedPlugInFilter;
 import ij.plugin.filter.PlugInFilterRunner;
 import ij.process.ByteProcessor;
+import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
@@ -42,14 +44,13 @@ import inra.ijpb.morphology.Reconstruction;
 import inra.ijpb.util.IJUtils;
 
 /**
- * Plugin for performing interactive geodesic reconstruction by dilation erosion
- * on grayscale images.
+ * Plugin for performing interactive morphological reconstruction by dilation or
+ * by erosion on grayscale images.
  *
  * In contrast with the non-interactive plugin, the active image is considered
- * the mask image, while the marker image is constructed by user-defined
- * point ROIs. The marker image is used to initialize the reconstruction, and
- * the mask image is used to constrain it.
- * The connectivity can also be specified.
+ * the mask image, while the marker image is constructed by user-defined point
+ * ROIs. The marker image is used to initialize the reconstruction, and the mask
+ * image is used to constrain it. The connectivity can also be specified.
  *
  * @author Ignacio Arganda-Carreras (ignacio.arganda@ehu.eus)
  */
@@ -57,7 +58,7 @@ public class InteractiveMorphologicalReconstruction implements ExtendedPlugInFil
 DialogListener
 {
 	/** Apparently, it's better to store flags in plugin */
-	private int flags = DOES_8G | DOES_8C | DOES_16 | DOES_32 | KEEP_PREVIEW
+	private int flags = DOES_8G | DOES_8C | DOES_16 | DOES_32 | DOES_RGB | KEEP_PREVIEW
 			| FINAL_PROCESSING;
 	PlugInFilterRunner pfr;
 	int nPasses;
@@ -253,7 +254,7 @@ DialogListener
 		Toolbar.getInstance().setTool( Toolbar.POINT );
 
 		// create the dialog
-		gd = new NonBlockingGenericDialog( "Interactive Geodesic "
+		gd = new NonBlockingGenericDialog( "Interactive Morphological "
 				+ "Reconstruction");
 
 		gd.addChoice("Type of Reconstruction",
@@ -352,6 +353,7 @@ DialogListener
 					+ "the point selection tool." );
 			return null;
 		}
+		
 		// Create marker image from ROI
 		ImageProcessor marker;
 		if( mask instanceof ByteProcessor )
@@ -363,6 +365,11 @@ DialogListener
 		{
 			marker = new ShortProcessor( mask.getWidth(), mask.getHeight() );
 			marker.setValue( 65535 );
+		}
+		else if( mask instanceof ColorProcessor )
+		{
+			marker = new ColorProcessor( mask.getWidth(), mask.getHeight() );
+			marker.setColor(Color.WHITE);
 		}
 		else
 		{
@@ -385,6 +392,6 @@ DialogListener
 	}
 
 	private static String createResultImageName( ImagePlus baseImage ) {
-		return baseImage.getShortTitle() + "-geodRec";
+		return baseImage.getShortTitle() + "-rec";
 	}
 }
