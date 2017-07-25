@@ -89,6 +89,68 @@ public class ColorImages
 	}
 
 	/**
+	 * Splits the channels of the color image into three new instances of
+	 * ByteProcessor.
+	 * 
+	 * @param image
+	 *            the original image, assumed to be a ColorProcessor
+	 * @return a collection containing the red, green and blue channels
+	 */
+	public static final Collection<ImageStack> splitChannels(ImageStack image) 
+	{
+		if (!(image.getProcessor(1) instanceof ColorProcessor)) 
+		{
+			throw new IllegalArgumentException("Requires a Stack containing instances of ColorProcessor");
+		}
+		
+		// size of input image
+		int width = image.getWidth();
+		int height = image.getHeight();
+		int depth = image.getSize();
+
+		// create byte stacks
+		ImageStack redStack = ImageStack.create(width, height, depth, 8);
+		ImageStack greenStack = ImageStack.create(width, height, depth, 8);
+		ImageStack blueStack = ImageStack.create(width, height, depth, 8);
+		
+		for (int z = 1; z <= depth; z++)
+		{
+			// extract the current RGB slice
+			ColorProcessor rgb = (ColorProcessor) image.getProcessor(z);
+
+			// extract the current slice of each channel
+			ByteProcessor red 	= (ByteProcessor) redStack.getProcessor(z);
+			ByteProcessor green = (ByteProcessor) greenStack.getProcessor(z);
+			ByteProcessor blue 	= (ByteProcessor) blueStack.getProcessor(z);
+			
+			// convert int codes to color components
+			for (int y = 0; y < height; y++)
+			{
+				for (int x = 0; x < width; x++)
+				{
+					int intCode = rgb.get(x, y);
+					red.set(x, y, (intCode >> 16) & 0x00FF);
+					green.set(x, y, (intCode >> 8) & 0x00FF);
+					blue.set(x, y, intCode & 0x00FF);
+				}
+			}
+
+			// set slices (should not be necessary, but more secure)
+			redStack.setProcessor(red, z);
+			greenStack.setProcessor(green, z);
+			blueStack.setProcessor(blue, z);
+		}
+		
+		// concatenate channels into a new collection of ImageStack instances
+		ArrayList<ImageStack> result = new ArrayList<ImageStack>(3);
+		result.add(redStack);
+		result.add(greenStack);
+		result.add(blueStack);
+		
+		return result;
+	}
+
+	/**
 	 * Splits the channels of the color image and returns the new ByteImages
 	 * into a Map, using channel names as key. 
 	 *  
@@ -130,6 +192,68 @@ public class ColorImages
 		map.put("red", red);
 		map.put("green", green);
 		map.put("blue", blue);
+		
+		return map;
+	}
+
+	/**
+	 * Splits the channels of the 3D color image into three new instances of
+	 * ImageStack containing ByteProcessors.
+	 * 
+	 * @param image
+	 *            the original image, assumed to be a ColorProcessor
+	 * @return a collection containing the red, green and blue channels
+	 */
+	public static final HashMap<String, ImageStack> mapChannels(ImageStack image) 
+	{
+		if (!(image.getProcessor(1) instanceof ColorProcessor)) 
+		{
+			throw new IllegalArgumentException("Requires a Stack containing instances of ColorProcessor");
+		}
+		
+		// size of input image
+		int width = image.getWidth();
+		int height = image.getHeight();
+		int depth = image.getSize();
+
+		// create byte stacks
+		ImageStack redStack = ImageStack.create(width, height, depth, 8);
+		ImageStack greenStack = ImageStack.create(width, height, depth, 8);
+		ImageStack blueStack = ImageStack.create(width, height, depth, 8);
+		
+		for (int z = 1; z <= depth; z++)
+		{
+			// extract the current RGB slice
+			ColorProcessor rgb = (ColorProcessor) image.getProcessor(z);
+
+			// extract the current slice of each channel
+			ByteProcessor red 	= (ByteProcessor) redStack.getProcessor(z);
+			ByteProcessor green = (ByteProcessor) greenStack.getProcessor(z);
+			ByteProcessor blue 	= (ByteProcessor) blueStack.getProcessor(z);
+			
+			// convert int codes to color components
+			for (int y = 0; y < height; y++)
+			{
+				for (int x = 0; x < width; x++)
+				{
+					int intCode = rgb.get(x, y);
+					red.set(x, y, (intCode >> 16) & 0x00FF);
+					green.set(x, y, (intCode >> 8) & 0x00FF);
+					blue.set(x, y, intCode & 0x00FF);
+				}
+			}
+
+			// set slices (should not be necessary, but more secure)
+			redStack.setProcessor(red, z);
+			greenStack.setProcessor(green, z);
+			blueStack.setProcessor(blue, z);
+		}
+		
+		// concatenate channels into a new collection
+		HashMap<String, ImageStack> map = new HashMap<String, ImageStack>(3);
+		map.put("red", redStack);
+		map.put("green", greenStack);
+		map.put("blue", blueStack);
 		
 		return map;
 	}
@@ -198,6 +322,63 @@ public class ColorImages
 		// create result color image
 		ColorProcessor result = new ColorProcessor(width, height);
 		result.setRGB(redArray, greenArray, blueArray);
+		
+		return result;	
+	}
+	
+	/**
+	 * Creates a new color ImageStack from the red, green and blue ImageStack
+	 * instances. Each channel must contains instances of ByteProcessor.
+	 * 
+	 * @param red
+	 *            the image for the red channel (must contain ByteProcessor instances)
+	 * @param green
+	 *            the image for the green channel (must contain ByteProcessor instances)
+	 * @param blue
+	 *            the image for the blue channel (must contain ByteProcessor instances)
+	 * @return the color image corresponding to the concatenation of the three
+	 *         channels
+	 * @throws IllegalArgumentException
+	 *             if one of the ImageStack does not contain instances of ByteProcessor
+	 */
+	public static final ImageStack mergeChannels(ImageStack red, 
+			ImageStack green, ImageStack blue)
+	{
+		// check validity of input
+		if (!(red.getProcessor(1) instanceof ByteProcessor))
+			throw new IllegalArgumentException("Input channels must be instances of ByteProcessor");
+		if (!(green.getProcessor(1) instanceof ByteProcessor))
+			throw new IllegalArgumentException("Input channels must be instances of ByteProcessor");
+		if (!(blue.getProcessor(1) instanceof ByteProcessor))
+			throw new IllegalArgumentException("Input channels must be instances of ByteProcessor");
+		
+		int width = red.getWidth();
+		int height = red.getHeight();
+		int depth = red.getSize();
+		ImageStack result = ImageStack.create(width, height, depth, 24);
+		
+		for (int z = 1; z <= depth; z++)
+		{
+			// extract current slices
+			ByteProcessor redSlice = (ByteProcessor) red.getProcessor(z);
+			ByteProcessor greenSlice = (ByteProcessor) green.getProcessor(z);
+			ByteProcessor blueSlice = (ByteProcessor) blue.getProcessor(z);
+			ColorProcessor rgbSlice =  (ColorProcessor) result.getProcessor(z);
+
+			for (int y = 0; y < height; y++)
+			{
+				for (int x = 0; x < width; x++)
+				{
+					int r = redSlice.get(x, y);
+					int g = greenSlice.get(x, y);
+					int b = blueSlice.get(x, y);
+					int rgbCode = (r << 16) | (g << 8) | b;
+					rgbSlice.set(x, y, rgbCode);
+				}
+			}
+			
+			result.setProcessor(rgbSlice, z);
+		}
 		
 		return result;	
 	}
