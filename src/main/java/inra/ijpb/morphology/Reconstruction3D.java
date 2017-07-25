@@ -21,8 +21,11 @@
  */
 package inra.ijpb.morphology;
 
+import java.util.Map;
+
 import ij.ImageStack;
 import inra.ijpb.algo.DefaultAlgoListener;
+import inra.ijpb.data.image.ColorImages;
 import inra.ijpb.morphology.geodrec.GeodesicReconstruction3DAlgo;
 import inra.ijpb.morphology.geodrec.GeodesicReconstruction3DHybrid0Float;
 import inra.ijpb.morphology.geodrec.GeodesicReconstruction3DHybrid0Gray16;
@@ -187,6 +190,12 @@ public abstract class Reconstruction3D
 		}
 
 		DefaultAlgoListener.monitor(algo);
+
+		if (marker.getBitDepth() == 24 && mask.getBitDepth() == 24)
+		{
+			return applyAlgoToRGB(algo, marker, mask);
+		}
+
 		return algo.applyTo(marker, mask);
 	}
 
@@ -227,6 +236,12 @@ public abstract class Reconstruction3D
 		}
 		
 		DefaultAlgoListener.monitor(algo);
+		
+		if (marker.getBitDepth() == 24 && mask.getBitDepth() == 24)
+		{
+			return applyAlgoToRGB(algo, marker, mask);
+		}
+
 		return algo.applyTo(marker, mask);
 	}
 
@@ -254,6 +269,12 @@ public abstract class Reconstruction3D
 		GeodesicReconstruction3DAlgo algo = new GeodesicReconstructionByDilation3DScanningGray8(
 				connectivity);
 		DefaultAlgoListener.monitor(algo);
+		
+		if (marker.getBitDepth() == 24 && mask.getBitDepth() == 24)
+		{
+			return applyAlgoToRGB(algo, marker, mask);
+		}
+
 		return algo.applyTo( marker, mask, binaryMask );
 	}
 	
@@ -295,6 +316,12 @@ public abstract class Reconstruction3D
 		}
 		
 		DefaultAlgoListener.monitor(algo);
+
+		if (marker.getBitDepth() == 24 && mask.getBitDepth() == 24)
+		{
+			return applyAlgoToRGB(algo, marker, mask);
+		}
+
 		return algo.applyTo(marker, mask);
 	}
 
@@ -339,6 +366,40 @@ public abstract class Reconstruction3D
 		}
 		
 		DefaultAlgoListener.monitor(algo);
+		
+		if (marker.getBitDepth() == 24 && mask.getBitDepth() == 24)
+		{
+			return applyAlgoToRGB(algo, marker, mask);
+		}
+
 		return algo.applyTo(marker, mask);
+	}
+	
+	/**
+	 * Applies an instance of morphological reconstruction algorithm to each
+	 * channel of a color image and returns the color image resulting from the
+	 * concatenation of each channel.
+	 * 
+	 * @param algo
+	 *            the instance of reconstruction algorithm to apply
+	 * @param marker
+	 *            the marker color image
+	 * @param mask
+	 *            the mask color image
+	 * @return the result of the algorithm on each pair of channels
+	 */
+	private final static ImageStack applyAlgoToRGB(
+			GeodesicReconstruction3DAlgo algo, ImageStack marker,
+			ImageStack mask)
+	{
+		// extract channels and allocate memory for result
+		Map<String, ImageStack> markerChannels 	= ColorImages.mapChannels(marker);
+		Map<String, ImageStack> maskChannels 	= ColorImages.mapChannels(mask);
+		
+		ImageStack resRed 	= algo.applyTo(markerChannels.get("red"), 	maskChannels.get("red"));
+		ImageStack resGreen = algo.applyTo(markerChannels.get("green"), maskChannels.get("green"));
+		ImageStack resBlue 	= algo.applyTo(markerChannels.get("blue"), 	maskChannels.get("blue"));
+		
+		return ColorImages.mergeChannels(resRed, resGreen, resBlue);
 	}
 }
