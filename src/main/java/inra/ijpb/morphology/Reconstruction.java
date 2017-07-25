@@ -21,7 +21,12 @@
  */
 package inra.ijpb.morphology;
 
+import java.util.Map;
+
+import ij.process.ByteProcessor;
+import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
+import inra.ijpb.data.image.ColorImages;
 import inra.ijpb.morphology.geodrec.GeodesicReconstructionAlgo;
 import inra.ijpb.morphology.geodrec.GeodesicReconstructionHybrid;
 import inra.ijpb.morphology.geodrec.GeodesicReconstructionType;
@@ -83,7 +88,7 @@ public abstract class Reconstruction
 		{
 			for (int x = 1; x < width-1; x++) 
 			{
-				markers.set(x, y, 0);
+				markers.set(x, y, 0); //TODO: replace by min value
 			}
 		}
 		
@@ -96,7 +101,7 @@ public abstract class Reconstruction
 			for (int x = 0; x < width; x++) 
 			{
 				int val = image.get(x, y) - result.get(x, y);
-				result.set(x, y, Math.max(val, 0));
+				result.set(x, y, Math.max(val, 0)); //TODO: check if max is needed
 			}
 		}
 		
@@ -125,7 +130,7 @@ public abstract class Reconstruction
 		{
 			for (int x = 1; x < width-1; x++) 
 			{
-				markers.set(x, y, 255);
+				markers.set(x, y, 255);//TODO: replace by max value
 			}
 		}
 		
@@ -148,6 +153,11 @@ public abstract class Reconstruction
 	{
 		GeodesicReconstructionAlgo algo = new GeodesicReconstructionHybrid(
 				GeodesicReconstructionType.BY_DILATION);
+		if (marker instanceof ColorProcessor && mask instanceof ColorProcessor)
+		{
+			return applyAlgo(algo, (ColorProcessor) marker, (ColorProcessor) mask);
+		}
+		
 		return algo.applyTo(marker, mask);
 	}
 
@@ -168,6 +178,11 @@ public abstract class Reconstruction
 	{
 		GeodesicReconstructionAlgo algo = new GeodesicReconstructionHybrid(
 				GeodesicReconstructionType.BY_DILATION, connectivity);
+		if (marker instanceof ColorProcessor && mask instanceof ColorProcessor)
+		{
+			return applyAlgo(algo, (ColorProcessor) marker, (ColorProcessor) mask);
+		}
+		
 		return algo.applyTo(marker, mask);
 	}
 
@@ -186,6 +201,11 @@ public abstract class Reconstruction
 	{
 		GeodesicReconstructionAlgo algo = new GeodesicReconstructionHybrid(
 				GeodesicReconstructionType.BY_EROSION);
+		if (marker instanceof ColorProcessor && mask instanceof ColorProcessor)
+		{
+			return applyAlgo(algo, (ColorProcessor) marker, (ColorProcessor) mask);
+		}
+		
 		return algo.applyTo(marker, mask);
 	}
 
@@ -206,6 +226,40 @@ public abstract class Reconstruction
 	{
 		GeodesicReconstructionAlgo algo = new GeodesicReconstructionHybrid(
 				GeodesicReconstructionType.BY_EROSION, connectivity);
+		if (marker instanceof ColorProcessor && mask instanceof ColorProcessor)
+		{
+			return applyAlgo(algo, (ColorProcessor) marker, (ColorProcessor) mask);
+		}
+		
 		return algo.applyTo(marker, mask);
 	}
+	
+	/**
+	 * Applies an instance of morphological reconstruction algorithm to each
+	 * channel of a color image and returns the color image resulting from the
+	 * concatenation of each channel.
+	 * 
+	 * @param algo
+	 *            the instance of reconstruction algorithm to apply
+	 * @param marker
+	 *            the marker color image
+	 * @param mask
+	 *            the mask color image
+	 * @return the result of the algorithm on each pair of channels
+	 */
+	private final static ColorProcessor applyAlgo(
+			GeodesicReconstructionAlgo algo, ColorProcessor marker,
+			ColorProcessor mask)
+	{
+		// extract channels and allocate memory for result
+		Map<String, ByteProcessor> markerChannels 	= ColorImages.mapChannels(marker);
+		Map<String, ByteProcessor> maskChannels 	= ColorImages.mapChannels(mask);
+		
+		ImageProcessor resRed 	= algo.applyTo(markerChannels.get("red"), 	maskChannels.get("red"));
+		ImageProcessor resGreen = algo.applyTo(markerChannels.get("green"), maskChannels.get("green"));
+		ImageProcessor resBlue 	= algo.applyTo(markerChannels.get("blue"), 	maskChannels.get("blue"));
+		
+		return ColorImages.mergeChannels(resRed, resGreen, resBlue);
+	}
+	
 }
