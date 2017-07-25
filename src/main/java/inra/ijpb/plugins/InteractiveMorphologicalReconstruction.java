@@ -38,7 +38,7 @@ import ij.process.ByteProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
-import inra.ijpb.morphology.GeodesicReconstruction;
+import inra.ijpb.morphology.Reconstruction;
 import inra.ijpb.util.IJUtils;
 
 /**
@@ -93,9 +93,9 @@ DialogListener
 				int conn )
 		{
 			if ( this == BY_DILATION )
-				return GeodesicReconstruction.reconstructByDilation(marker, mask, conn);
+				return Reconstruction.reconstructByDilation(marker, mask, conn);
 			if ( this == BY_EROSION )
-				return GeodesicReconstruction.reconstructByErosion(marker, mask, conn);
+				return Reconstruction.reconstructByErosion(marker, mask, conn);
 
 			throw new RuntimeException(
 					"Unable to process the " + this + " operation");

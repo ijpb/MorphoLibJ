@@ -27,47 +27,52 @@ import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
-import inra.ijpb.morphology.GeodesicReconstruction;
+import inra.ijpb.morphology.Reconstruction;
 import inra.ijpb.util.IJUtils;
 
 /**
- * Plugin for performing geodesic reconstruction by dilation or by erosion on
- * grayscale images.
+ * Plugin for performing morphological reconstruction by dilation or by erosion
+ * on grayscale images.
  * 
- * Two images are required: the marker image, used to initialize the 
- * reconstruction, an the mask image, used to constrain the reconstruction.
- * The connectivity can also be specified.
+ * Two images are required: the marker image, used to initialize the
+ * reconstruction, an the mask image, used to constrain the reconstruction. The
+ * connectivity can also be specified.
  */
-public class MorphologicalReconstructionPlugin implements PlugIn {
-
+public class MorphologicalReconstructionPlugin implements PlugIn 
+{
 	/**
 	 * A pre-defined set of operations for geodesic reconstruction.
 	 */
-	public enum Operation {
-		BY_DILATION("By Dilation"),
+	public enum Operation
+	{
+		BY_DILATION("By Dilation"), 
 		BY_EROSION("By Erosion");
 		
 		private final String label;
 		
-		private Operation(String label) {
+		private Operation(String label) 
+		{
 			this.label = label;
 		}
 		
-		public ImageProcessor applyTo(ImageProcessor marker, ImageProcessor mask, int conn) {
+		public ImageProcessor applyTo(ImageProcessor marker, ImageProcessor mask, int conn) 
+		{
 			if (this == BY_DILATION)
-				return GeodesicReconstruction.reconstructByDilation(marker, mask, conn);
+				return Reconstruction.reconstructByDilation(marker, mask, conn);
 			if (this == BY_EROSION)
-				return GeodesicReconstruction.reconstructByErosion(marker, mask, conn);
+				return Reconstruction.reconstructByErosion(marker, mask, conn);
 						
 			throw new RuntimeException(
 					"Unable to process the " + this + " operation");
 		}
 		
-		public String toString() {
+		public String toString() 
+		{
 			return this.label;
 		}
 		
-		public static String[] getAllLabels(){
+		public static String[] getAllLabels()
+		{
 			int n = Operation.values().length;
 			String[] result = new String[n];
 			
@@ -87,7 +92,8 @@ public class MorphologicalReconstructionPlugin implements PlugIn {
 		 * @throws IllegalArgumentException
 		 *             if operation name is not recognized.
 		 */
-		public static Operation fromLabel(String opLabel) {
+		public static Operation fromLabel(String opLabel)
+		{
 			if (opLabel != null)
 				opLabel = opLabel.toLowerCase();
 			for (Operation op : Operation.values()) {
@@ -102,27 +108,32 @@ public class MorphologicalReconstructionPlugin implements PlugIn {
 	/**
 	 * A pre-defined set of connectivities
 	 */
-	enum Conn2D {
+	enum Conn2D 
+	{
 		C4("4", 4),
 		C8("8", 8);
 		
 		private final String label;
 		private final int value;
 		
-		private Conn2D(String label, int value) {
+		private Conn2D(String label, int value) 
+		{
 			this.label = label;
 			this.value = value;
 		}
 		
-		public String toString() {
+		public String toString() 
+		{
 			return this.label;
 		}
 		
-		public int getValue() {
+		public int getValue() 
+		{
 			return this.value;
 		}
 		
-		public static String[] getAllLabels(){
+		public static String[] getAllLabels()
+		{
 			int n = Conn2D.values().length;
 			String[] result = new String[n];
 			
@@ -135,17 +146,23 @@ public class MorphologicalReconstructionPlugin implements PlugIn {
 		
 		/**
 		 * Determines the operation type from its label.
-		 * @throws IllegalArgumentException if label is not recognized.
+		 * 
+		 * @param label
+		 *            the label of the connectivity option
+		 * @throws IllegalArgumentException
+		 *             if label is not recognized.
 		 */
-		public static Conn2D fromLabel(String opLabel) {
-			if (opLabel != null)
-				opLabel = opLabel.toLowerCase();
-			for (Conn2D op : Conn2D.values()) {
+		public static Conn2D fromLabel(String label)
+		{
+			if (label != null)
+				label = label.toLowerCase();
+			for (Conn2D op : Conn2D.values())
+			{
 				String cmp = op.label.toLowerCase();
-				if (cmp.equals(opLabel))
+				if (cmp.equals(label))
 					return op;
 			}
-			throw new IllegalArgumentException("Unable to parse Conn2D with label: " + opLabel);
+			throw new IllegalArgumentException("Unable to parse Conn2D with label: " + label);
 		}
 	};
 
@@ -154,19 +171,22 @@ public class MorphologicalReconstructionPlugin implements PlugIn {
 	 * @see ij.plugin.PlugIn#run(java.lang.String)
 	 */
 	@Override
-	public void run(String arg) {
+	public void run(String arg) 
+	{
 		// Open a dialog to choose:
 		// - mask image
 		// - marker image
 		int[] indices = WindowManager.getIDList();
-		if (indices == null) {
+		if (indices == null) 
+		{
 			IJ.error("No image", "Need at least one image to work");
 			return;
 		}
 	
 		// create the list of image names
 		String[] imageNames = new String[indices.length];
-		for (int i = 0; i < indices.length; i++) {
+		for (int i = 0; i < indices.length; i++) 
+		{
 			imageNames[i] = WindowManager.getImage(indices[i]).getTitle();
 		}
 		
@@ -176,7 +196,7 @@ public class MorphologicalReconstructionPlugin implements PlugIn {
 		gd.addChoice("Marker Image", imageNames, IJ.getImage().getTitle());
 		gd.addChoice("Mask Image", imageNames, IJ.getImage().getTitle());
 		gd.addChoice("Type of Reconstruction", 
-				Operation.getAllLabels(), 
+				Operation.getAllLabels(),
 				Operation.BY_DILATION.label);
 		gd.addChoice("Connectivity", 
 				Conn2D.getAllLabels(), 
@@ -216,8 +236,9 @@ public class MorphologicalReconstructionPlugin implements PlugIn {
 		IJUtils.showElapsedTime(op.toString(), t1 - t0, markerImage);
 	}
 
-	private static String createResultImageName(ImagePlus baseImage) {
-		return baseImage.getShortTitle() + "-geodRec";
+	private static String createResultImageName(ImagePlus baseImage) 
+	{
+		return baseImage.getShortTitle() + "-rec";
 	}
 	
 }

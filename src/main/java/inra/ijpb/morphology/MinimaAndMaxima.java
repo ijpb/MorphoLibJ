@@ -354,7 +354,7 @@ public class MinimaAndMaxima
 			}
 		}
 		
-		return GeodesicReconstruction.reconstructByDilation(marker, mask, conn);
+		return Reconstruction.reconstructByDilation(marker, mask, conn);
 	}
 
 	/**
@@ -410,6 +410,6 @@ public class MinimaAndMaxima
 			}
 		}
 		
-		return GeodesicReconstruction.reconstructByErosion(marker, mask, conn);
+		return Reconstruction.reconstructByErosion(marker, mask, conn);
 	}
 }

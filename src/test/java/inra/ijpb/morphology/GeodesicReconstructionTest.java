@@ -23,6 +23,7 @@ package inra.ijpb.morphology;
 
 import static org.junit.Assert.*;
 import ij.process.ByteProcessor;
+import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
 
 import org.junit.Test;
@@ -63,7 +64,7 @@ public class GeodesicReconstructionTest {
 		ImageProcessor marker = new ByteProcessor(width, height);
 		marker.set(2, 3, 255);
 		
-		ImageProcessor result = GeodesicReconstruction.reconstructByDilation(marker, mask);
+		ImageProcessor result = Reconstruction.reconstructByDilation(marker, mask);
 		
 		assertEquals(16, result.getWidth());
 		assertEquals(10, result.getHeight());
@@ -103,7 +104,7 @@ public class GeodesicReconstructionTest {
 		ImageProcessor marker = new ByteProcessor(width, height);
 		marker.set(2, 3, 255);
 		
-		ImageProcessor result = GeodesicReconstruction.reconstructByDilation(marker, mask, 8);
+		ImageProcessor result = Reconstruction.reconstructByDilation(marker, mask, 8);
 		
 		assertEquals(16, result.getWidth());
 		assertEquals(10, result.getHeight());
@@ -137,7 +138,7 @@ public class GeodesicReconstructionTest {
 		}
 
 		// Compute geodesic reconstruction by dilation
-		ImageProcessor result = GeodesicReconstruction.reconstructByDilation(marker, mask, 4);
+		ImageProcessor result = Reconstruction.reconstructByDilation(marker, mask, 4);
 		//		printImage(result);
 
 		for (int y = 0; y < height; y++) {
@@ -171,7 +172,7 @@ public class GeodesicReconstructionTest {
 		}
 
 		// Compute geodesic reconstruction by dilation
-		ImageProcessor result = GeodesicReconstruction.reconstructByDilation(marker, mask, 8);
+		ImageProcessor result = Reconstruction.reconstructByDilation(marker, mask, 8);
 		//		printImage(result);
 
 		for (int y = 0; y < height; y++) {
@@ -180,6 +181,43 @@ public class GeodesicReconstructionTest {
 			}
 		}
 
+	}
+
+	@Test
+	public void testReconstructByDilation_RGB_C4() 
+	{
+		// size of images
+		int width = 10;
+		int height = 10;
+		
+		ColorProcessor mask = new ColorProcessor(width, height);
+		ColorProcessor marker = new ColorProcessor(width, height);
+		
+		int redCode 	= 0xFF0000;
+		int greenCode 	= 0x00FF00;
+		int blueCode 	= 0x0000FF;
+		int yellowCode 	= 0xFFFF00;
+		
+		for (int y = 0; y < 3; y++)
+		{
+			for (int x = 0; x < 3; x++)
+			{
+				mask.set(x + 1, y + 1, redCode);
+				mask.set(x + 5, y + 1, greenCode);
+				mask.set(x + 1, y + 5, blueCode);
+				mask.set(x + 5, y + 5, yellowCode);
+			}
+		}
+		
+		marker.set(6, 2, 0xFFFFFF);
+		marker.set(2, 6, 0xFFFFFF);
+		
+		ImageProcessor result = Reconstruction.reconstructByDilation(marker, mask);
+		
+		assertEquals(0, result.get(2, 2));
+		assertEquals(0, result.get(6, 6));
+		assertEquals(greenCode, result.get(6, 2));
+		assertEquals(blueCode, result.get(2, 6));
 	}
 
 	/**
@@ -216,7 +254,7 @@ public class GeodesicReconstructionTest {
 		marker.fill();
 		marker.set(2, 3, 0);
 		
-		ImageProcessor result = GeodesicReconstruction.reconstructByErosion(marker, mask);
+		ImageProcessor result = Reconstruction.reconstructByErosion(marker, mask);
 		
 		assertEquals(16, result.getWidth());
 		assertEquals(10, result.getHeight());
@@ -260,7 +298,7 @@ public class GeodesicReconstructionTest {
 		marker.fill();
 		marker.set(2, 3, 0);
 		
-		ImageProcessor result = GeodesicReconstruction.reconstructByErosion(marker, mask, 8);
+		ImageProcessor result = Reconstruction.reconstructByErosion(marker, mask, 8);
 		
 		assertEquals(16, result.getWidth());
 		assertEquals(10, result.getHeight());
