@@ -49,6 +49,29 @@ public class ColorImages
 	}
 
 	/**
+	 * Prints the content of the input color image on the console. This can be
+	 * used for debugging (small) images.
+	 * 
+	 * @param image
+	 *            the color image to display on the console
+	 */
+	public static final void print(ColorProcessor image) 
+	{
+		for (int y = 0; y < image.getHeight(); y++)
+		{
+			for (int x = 0; x < image.getWidth(); x++)
+			{
+				int intCode = image.get(x, y);
+				int r = (intCode & 0xFF0000) >> 16;
+				int g = (intCode & 0xFF00) >> 8;
+				int b = (intCode & 0xFF);
+				System.out.print(String.format("(%3d,%3d,%3d) ", r, g, b));
+			}
+			System.out.println("");
+		}
+	}
+
+	/**
 	 * Splits the channels of the color image into three new instances of
 	 * ByteProcessor.
 	 * 
