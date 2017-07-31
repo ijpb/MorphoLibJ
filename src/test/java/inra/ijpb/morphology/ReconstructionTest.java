@@ -21,12 +21,13 @@
  */
 package inra.ijpb.morphology;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
+
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
-
-import org.junit.Test;
 
 /**
  * @author David Legland
@@ -35,7 +36,7 @@ import org.junit.Test;
 public class ReconstructionTest {
 
 	/**
-	 * Test method for {@link ijt.filter.morphology.GeodesicReconstruction#reconstructByDilation()}.
+	 * Test method for {@link ijt.filter.morphology.Reconstruction#reconstructByDilation()}.
 	 */
 	@Test
 	public void testReconstructByDilation_C4() {
@@ -75,7 +76,7 @@ public class ReconstructionTest {
 	}
 
 	/**
-	 * Test method for {@link ijt.filter.morphology.GeodesicReconstruction#reconstructByDilation()}.
+	 * Test method for {@link ijt.filter.morphology.Reconstruction#reconstructByDilation()}.
 	 */
 	@Test
 	public void testReconstructByDilation_C8() {
@@ -190,14 +191,15 @@ public class ReconstructionTest {
 		int width = 10;
 		int height = 10;
 		
-		ColorProcessor mask = new ColorProcessor(width, height);
-		ColorProcessor marker = new ColorProcessor(width, height);
-		
+		// Choose contrasted colors
 		int redCode 	= 0xFF0000;
 		int greenCode 	= 0x00FF00;
 		int blueCode 	= 0x0000FF;
 		int yellowCode 	= 0xFFFF00;
-		
+
+		// create black images with four 3x3 squares containing one of the
+		// contrasted colors
+		ColorProcessor mask = new ColorProcessor(width, height);
 		for (int y = 0; y < 3; y++)
 		{
 			for (int x = 0; x < 3; x++)
@@ -208,20 +210,25 @@ public class ReconstructionTest {
 				mask.set(x + 5, y + 5, yellowCode);
 			}
 		}
-		
+
+		// create a marker image with two white squares
+		ColorProcessor marker = new ColorProcessor(width, height);
 		marker.set(6, 2, 0xFFFFFF);
 		marker.set(2, 6, 0xFFFFFF);
 		
+		// Apply reconstruction
 		ImageProcessor result = Reconstruction.reconstructByDilation(marker, mask, 4);
 		
-		assertEquals(0, result.get(2, 2));
-		assertEquals(0, result.get(6, 6));
-		assertEquals(greenCode, result.get(6, 2));
-		assertEquals(blueCode, result.get(2, 6));
+		// result should contain only the two colored squares specified by the
+		// marker image
+		assertEquals(0, result.get(2, 2) & 0x00FFFFFF);
+		assertEquals(0, result.get(6, 6) & 0x00FFFFFF);
+		assertEquals(greenCode, result.get(6, 2) & 0x00FFFFFF);
+		assertEquals(blueCode, result.get(2, 6) & 0x00FFFFFF);
 	}
 
 	/**
-	 * Test method for {@link ijt.filter.morphology.GeodesicReconstruction#reconstructByErosion()}.
+	 * Test method for {@link ijt.filter.morphology.Reconstruction#reconstructByErosion()}.
 	 */
 	@Test
 	public void testReconstructByErosion() {
@@ -265,7 +272,7 @@ public class ReconstructionTest {
 	}
 
 	/**
-	 * Test method for {@link ijt.filter.morphology.GeodesicReconstruction#reconstructByErosion()}.
+	 * Test method for {@link ijt.filter.morphology.Reconstruction#reconstructByErosion()}.
 	 */
 	@Test
 	public void testReconstructByErosion_C8() {
