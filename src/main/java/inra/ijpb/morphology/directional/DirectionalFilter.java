@@ -41,12 +41,6 @@ import inra.ijpb.morphology.Strel;
  * element. The results are combined to create the resulting image.
  * </p>
  * 
- * <p>
- * Example:
- * <pre>{@code
- * 
- * }
- * </p>
  * @author David Legland
  *
  */
