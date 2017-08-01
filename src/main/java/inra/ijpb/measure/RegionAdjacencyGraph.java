@@ -63,7 +63,6 @@ import java.util.TreeSet;
  *     System.out.println("(" + pair.label1 + "," + pair.label2 + ")");
  * }
  * }</pre>
- * </p> 
  * @author dlegland
  *
  */
