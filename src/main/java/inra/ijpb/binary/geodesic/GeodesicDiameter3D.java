@@ -33,7 +33,6 @@ import inra.ijpb.algo.Algo;
  * <p>
  * Example of use:
  *
- * @see inra.ijpb.binary.geodesic.GeodesicDiameter3DShort
  * @see inra.ijpb.binary.geodesic.GeodesicDiameter3DFloat
  * 
  * @author dlegland
