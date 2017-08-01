@@ -338,6 +338,8 @@ public class DirectionalFilter extends AlgoStub
 
 	/**
 	 * Computes the average value among the neighbors.
+	 * @param image input image
+	 * @param strel structuring element
 	 */
 	public static ImageProcessor mean(ImageProcessor image, Strel strel) {
 		// Allocate memory for result
