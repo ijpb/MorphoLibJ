@@ -88,6 +88,8 @@ public class DirectionalFilter extends AlgoStub
 		
 		/**
 		 * Determines the operation type from its label.
+		 * @param typeLabel label name
+		 * @return operation type
 		 * @throws IllegalArgumentException if label is not recognized.
 		 */
 		public static Type fromLabel(String typeLabel)
@@ -162,6 +164,8 @@ public class DirectionalFilter extends AlgoStub
 		/**
 		 * Determines the operation type from its label.
 		 * 
+		 * @param opLabel operation label
+		 * @return operation
 		 * @throws IllegalArgumentException
 		 *             if label is not recognized.
 		 */
