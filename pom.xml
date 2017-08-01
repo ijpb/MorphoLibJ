@@ -87,8 +87,8 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 		<url>https://github.com/ijpb/MorphoLibJ/issues</url>
 	</issueManagement>
 	<ciManagement>
-		<system>Jenkins</system>
-		<url>http://jenkins.imagej.net/job/MorphoLibJ/</url>
+		<system>Travis CI</system>
+		<url>https://travis-ci.org/ijpb/MorphoLibJ</url>
 	</ciManagement>
 
 	<properties>
