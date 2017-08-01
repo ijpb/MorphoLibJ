@@ -311,7 +311,7 @@ DialogListener
 	 * Computes the distance propagated from the boundary of the white
 	 * particles, within the white phase.
 	 *
-	 * @param maskPlus
+	 * @param mask
 	 *            the binary mask image that will constrain the propagation
 	 * @param roi
 	 * 			  the roi to define the marker image
