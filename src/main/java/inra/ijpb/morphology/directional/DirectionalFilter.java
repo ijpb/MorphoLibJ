@@ -340,6 +340,7 @@ public class DirectionalFilter extends AlgoStub
 	 * Computes the average value among the neighbors.
 	 * @param image input image
 	 * @param strel structuring element
+	 * @return result image
 	 */
 	public static ImageProcessor mean(ImageProcessor image, Strel strel) {
 		// Allocate memory for result
@@ -372,6 +373,9 @@ public class DirectionalFilter extends AlgoStub
 
 	/**
 	 * Computes the median value among the neighbors.
+	 * @param image input image
+	 * @param strel structuring element
+	 * @return result image
 	 */
 	public static ImageProcessor median(ImageProcessor image, Strel strel)
 	{
@@ -406,6 +410,8 @@ public class DirectionalFilter extends AlgoStub
 
 	/**
 	 * Sorts the array, and returns its median value.
+	 * @param values array of values
+	 * @return median value
 	 */
 	private static double median(double[] values)
 	{
@@ -415,6 +421,8 @@ public class DirectionalFilter extends AlgoStub
 
 	/**
 	 * Computes the median value in a sorted array.
+	 * @param values sorted array of values
+	 * @return median value
 	 */
 	private static double medianSorted(double[] values)
 	{
