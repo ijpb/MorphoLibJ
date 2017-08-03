@@ -332,7 +332,7 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 			while(ic.getWidth() < 512 && ic.getHeight() < 512)
 				IJ.run( imp, "In","" );
 
-			setTitle( "Interactive Marker-controlled Watershed Segmentation" );
+			setTitle( "Interactive Marker-controlled Watershed" );
 
 			// select point tool for manual label merging
 			Toolbar.getInstance().setTool( Toolbar.POINT );
