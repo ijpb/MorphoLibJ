@@ -86,7 +86,7 @@ import javax.swing.SwingUtilities;
  * @author Ignacio Arganda-Carreras
  *
  */
-public class InteractiveMarkerControlledWatershedSegmentation implements PlugIn {
+public class InteractiveMarkerControlledWatershed implements PlugIn {
 
 	/** main GUI window */
 	private CustomWindow win;
@@ -1367,13 +1367,13 @@ public class InteractiveMarkerControlledWatershedSegmentation implements PlugIn 
 
 			ImagePlus result = null;
 
-			if( mode.equals( InteractiveMarkerControlledWatershedSegmentation.catchmentBasinsText) )
+			if( mode.equals( InteractiveMarkerControlledWatershed.catchmentBasinsText) )
 				result = win.getResult( ResultMode.BASINS );
-			else if( mode.equals( InteractiveMarkerControlledWatershedSegmentation.overlaidBasinsText ) )
+			else if( mode.equals( InteractiveMarkerControlledWatershed.overlaidBasinsText ) )
 				result = win.getResult( ResultMode.OVERLAID_BASINS );
-			else if( mode.equals( InteractiveMarkerControlledWatershedSegmentation.watershedLinesText ) )
+			else if( mode.equals( InteractiveMarkerControlledWatershed.watershedLinesText ) )
 				result = win.getResult( ResultMode.LINES );
-			else if( mode.equals( InteractiveMarkerControlledWatershedSegmentation.overlaidDamsText ))
+			else if( mode.equals( InteractiveMarkerControlledWatershed.overlaidDamsText ))
 				result = win.getResult( ResultMode.OVERLAID_DAMS );
 
 			if( null != result )
