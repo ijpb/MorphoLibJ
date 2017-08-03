@@ -6851,31 +6851,10 @@ reference "fig:Geodesic-Distance-Map-3d"
 \end_layout
 
 \begin_layout Section
-Label images
-\end_layout
-
-\begin_layout Standard
-When several structures or components are present within an image, it may
- be more convenient to work with label images.
- Each pixel or voxel of a label image corresponds to the integer index of
- the particle it belongs to.
- The value 0 is assumed to correspond to the background.
- The number of labels that can be represented depends on the image type:
- 255 for byte images, 65535 for short images, and around 16 millions for
- 32-bit floating point images.
-\end_layout
-
-\begin_layout Standard
-Label images can be represented either using shades of gray, or using color
- maps to better distinguish the different regions.
- 
-\end_layout
-
-\begin_layout Subsection
 Connected component labeling
 \end_layout
 
-\begin_layout Description
+\begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:Connected-Components-Labeling"
@@ -6886,14 +6865,27 @@ name "subsec:Connected-Components-Labeling"
 \end_layout
 
 \begin_layout Standard
-The different structures within a binary images can be labeled by using
- a connected 
+The different structures within a binary images can be individualised by
+ using a connected 
 \series bold
 component labeling algorithm
 \series default
 .
- Each label will correspond to a set of connected pixels or voxels.
- 
+ The result is an image containing integer label, each label corresponding
+ to a set of connected pixels or voxels (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Connected-component-labeling"
+
+\end_inset
+
+).
+ Label images can be represented with colored LUT to help distinguish adjacent
+ labels.
 \end_layout
 
 \begin_layout Standard
@@ -6906,14 +6898,14 @@ status open
 \align center
 \begin_inset Graphics
 	filename images/grains/grains-binary-crop-ext.png
-	width 31text%
+	width 25text%
 
 \end_inset
 
  
 \begin_inset Graphics
 	filename images/grains/grains-binary-crop-lbl-ext.png
-	width 31text%
+	width 25text%
 
 \end_inset
 
@@ -6924,6 +6916,12 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Connected-component-labeling"
+
+\end_inset
+
 Binary image, and result of connected components labeling.
 \end_layout
 
@@ -6938,13 +6936,195 @@ Binary image, and result of connected components labeling.
 \end_layout
 
 \begin_layout Standard
-Different connectivities may be chosen.
- For planar images, the most current ones are the 4-connectivity, that consider
- only orthogonal neighbors of a given pixel, and the 8-connectivity, that
- also considers the diagonals.
- For 3D images, the 6-connectivity considers only orthogonal neighbors in
+The result of a connected component labeling depends on the chosen 
+\series bold
+connectivity
+\series default
+, that corresponds to the convention used to decide wether two pixels or
+ voxels are connected or not (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Connectivity-2D"
+
+\end_inset
+
+).
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/connectivity/binaryImage12x8WithDigits.png
+	lyxscale 75
+	width 30col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Binary image
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/connectivity/binaryRegions12x8C4.png
+	lyxscale 75
+	width 30col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+4-connectivity
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/connectivity/binaryRegions12x8C8.png
+	lyxscale 75
+	width 30col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+8-connectivity
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Connectivity-2D"
+
+\end_inset
+
+Impact of the connectivity on the result of connected component labeling.
+ (a) Original binary images.
+ (b) Connected component labeling using the 4-connectivity.
+ (c) Connected component labeling using the 8-connectivity.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For planar images, a typical choice is the 4-connectivity, that considers
+ only the orthogonal neighbors of a given pixel (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Connectivity-2D"
+
+\end_inset
+
+-b).
+ When two components touch only via a corner, they are not considered as
+ the same one.
+ The 8-connectivity is an alternative that also considers the diagonal pixels
+ as neighbors (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Connectivity-2D"
+
+\end_inset
+
+-c).
+ 
+\end_layout
+
+\begin_layout Standard
+For 3D images, the 6-connectivity considers only orthogonal neighbors in
  the three main directions, whereas the 26-connectivity considers all the
- direct neighbors of a given voxel.
+ neighbors of a given voxel in its 3-by-3-by-3 surrounding.
 \end_layout
 
 \begin_layout Description
@@ -6965,6 +7145,37 @@ name "op:Connected-Components-Labeling"
 
 transforms the binary image into a label image by assigning a specific number
  (label) to each connected component
+\end_layout
+
+\begin_layout Section
+Label images
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:label-images"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+When several structures or components are present within an image, it may
+ be more convenient to work with label images.
+ Each pixel or voxel of a label image corresponds to the integer index of
+ the particle it belongs to.
+ The value 0 is assumed to correspond to the background.
+ The number of labels that can be represented depends on the image type:
+ 255 for byte images, 65535 for short images, and around 16 millions for
+ 32-bit floating point images.
+\end_layout
+
+\begin_layout Standard
+Label images can be represented either using shades of gray, or using color
+ maps to better distinguish the different regions.
+ 
 \end_layout
 
 \begin_layout Subsection
@@ -7008,6 +7219,12 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Assign-Measure-To-Label"
+
+\end_inset
+
 Assign result of a measurement to a label image.
  In this example, the elongation is represented using a color code, between
  dark purple (circular) to yellow (very elongated).
@@ -7055,7 +7272,8 @@ To
 
 RGB converts a label image to true RGB image.
  Similar to ImageJ native conversion, but this plugin avoids confusion between
- background pixels and labels with small values.
+ background pixels and labels with small values when the number of labels
+ is large.
 \end_layout
 
 \begin_layout Description
@@ -7073,7 +7291,18 @@ To
 
 Label combines a label image with a results table, and creates a new image
  for which each pixel/voxel is assigned the measurement value corresponding
- to the label it belongs to.
+ to the label it belongs to (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Assign-Measure-To-Label"
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Section
@@ -7081,8 +7310,8 @@ Region and labels selection
 \end_layout
 
 \begin_layout Standard
-The MorphoLibJ library offers several tools for automatically select binary
- regions or labels based on size or position criteria.
+The MorphoLibJ library offers several utility tools for automatically selecting
+ or removing specific regions, or to edit the label images.
 \end_layout
 
 \begin_layout Subsection
@@ -7097,6 +7326,11 @@ name "subsec:Binary-Images-Selection"
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+The MorphoLibJ library offers several tools for automatically selecting
+ binary regions based on size or position criteria.
 \end_layout
 
 \begin_layout Standard
@@ -7161,10 +7395,15 @@ Keep
 \begin_inset space ~
 \end_inset
 
-/
+Largest
 \begin_inset space ~
 \end_inset
 
+Region identifies the largest connected component, and remove all other
+ regions
+\end_layout
+
+\begin_layout Description
 Remove
 \begin_inset space ~
 \end_inset
@@ -7173,8 +7412,7 @@ Largest
 \begin_inset space ~
 \end_inset
 
-Region identifies the largest connected component, and keep it or remove
- it
+Region identifies the largest connected component, and remove it from image
 \end_layout
 
 \begin_layout Description
@@ -7213,6 +7451,12 @@ name "subsec:Label-Images-Selection"
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+This section describes several operators allowing to select labels based
+ on a size criterium, or to edit the label image by removing or replacing
+ label values.
 \end_layout
 
 \begin_layout Standard
@@ -7282,7 +7526,7 @@ Border
 \begin_inset space ~
 \end_inset
 
-Labels similar to 
+Labels similar to the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -7407,7 +7651,18 @@ Label Edition
 
 ).
  This plugin contains a graphical user interface (GUI) where the users can
- perform the following set of editing tasks:
+ perform the following set of editing tasks (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Label-Edition-plugin"
+
+\end_inset
+
+):
 \end_layout
 
 \begin_layout Itemize
@@ -7468,6 +7723,12 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Label-Edition-plugin"
+
+\end_inset
+
 Label Edition plugin.
  From left to right and from top to bottom: overview of the plugin GUI on
  a 2D label image, result of label merging by manual selection, removal
