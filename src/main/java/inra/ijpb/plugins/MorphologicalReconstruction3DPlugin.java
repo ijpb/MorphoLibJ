@@ -28,7 +28,7 @@ import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import inra.ijpb.data.image.Images3D;
-import inra.ijpb.morphology.GeodesicReconstruction3D;
+import inra.ijpb.morphology.Reconstruction3D;
 import inra.ijpb.util.IJUtils;
 
 /**
@@ -56,9 +56,9 @@ public class MorphologicalReconstruction3DPlugin implements PlugIn {
 		
 		public ImageStack applyTo(ImageStack marker, ImageStack mask, int conn) {
 			if (this == BY_DILATION)
-				return GeodesicReconstruction3D.reconstructByDilation(marker, mask, conn);
+				return Reconstruction3D.reconstructByDilation(marker, mask, conn);
 			if (this == BY_EROSION)
-				return GeodesicReconstruction3D.reconstructByErosion(marker, mask, conn);
+				return Reconstruction3D.reconstructByErosion(marker, mask, conn);
 						
 			throw new RuntimeException(
 					"Unable to process the " + this + " operation");

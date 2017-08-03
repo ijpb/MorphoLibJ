@@ -120,7 +120,7 @@ public class CubeStrel extends AbstractSeparableStrel3D
 	 * 
 	 * @return a collection of three in place structuring elements
 	 * 
-	 * @see inra.ijpb.morphology.strel.SeparableStrel#separate()
+	 * @see inra.ijpb.morphology.strel.SeparableStrel#decompose()
 	 */
 	@Override
 	public Collection<InPlaceStrel3D> decompose()

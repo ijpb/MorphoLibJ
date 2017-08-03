@@ -194,15 +194,16 @@ public class LocalExtremumBufferGray8 implements LocalExtremum
 		updateNeeded = false;
 	}
 	
-	/**
-	 * Reset inner counts with default values (0 for MAX, 255 for MIN)
-	 */
+    /**
+     * Resets inner counts with default maximal integer values
+     * (Integer.MIN_VALUE for MAX, Integer.MAX_VALUE for MIN)
+     */
 	public void clear()
 	{
 		if (this.sign == 1)
-			this.fill(0);
+			this.fill(Integer.MIN_VALUE);
 		else
-			this.fill(255);
+			this.fill(Integer.MAX_VALUE);
 	}
 	
 	/**

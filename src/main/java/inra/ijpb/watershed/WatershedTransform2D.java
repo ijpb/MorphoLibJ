@@ -279,25 +279,16 @@ public class WatershedTransform2D
 	    	    
 	    LinkedList<Cursor2D> fifo = new LinkedList<Cursor2D>();
 	      
-        // initial height
-        double h = hMin;
-        
-        // find corresponding pixel index
+        // set initial pixel index
         int currentIndex = 0;
-        while( h < hMin )
-        {
-        	h = pixelList.get( currentIndex ).getValue();
-        	currentIndex++;
-        }
-        
+
         int heightIndex1 = currentIndex;
         int heightIndex2 = currentIndex;
         
-        
 	    // for h <- h_min to h_max; geodesic SKIZ of level h-1 inside level h
-	    while( currentIndex < pixelList.size() && h <= hMax )
+	    while( currentIndex < pixelList.size() )
 	    {	    	
-	    	h = pixelList.get( currentIndex ).getValue();	    	
+	    	double h = pixelList.get( currentIndex ).getValue();	    	
 	    		    		    		    	
 	    	for(int pixelIndex = heightIndex1; pixelIndex < pixelList.size(); pixelIndex ++)
 	    	{
@@ -511,25 +502,16 @@ public class WatershedTransform2D
 	    	    
 	    LinkedList<Cursor2D> fifo = new LinkedList<Cursor2D>();
 	      
-        // initial height
-        double h = hMin;
-        
-        // find corresponding pixel index
+        // set initial pixel index
         int currentIndex = 0;
-        while( h < hMin )
-        {
-        	h = pixelList.get( currentIndex ).getValue();
-        	currentIndex++;
-        }
         
         int heightIndex1 = currentIndex;
         int heightIndex2 = currentIndex;
         
-        
 	    // for h <- h_min to h_max; geodesic SKIZ of level h-1 inside level h
-	    while( currentIndex < pixelList.size() && h <= hMax )
+	    while( currentIndex < pixelList.size() )
 	    {	    	
-	    	h = pixelList.get( currentIndex ).getValue();	    	
+	    	double h = pixelList.get( currentIndex ).getValue();	    	
 	    		    		    		    	
 	    	for(int pixelIndex = heightIndex1; pixelIndex < pixelList.size(); pixelIndex ++)
 	    	{

@@ -1,5 +1,6 @@
-[![](http://jenkins.imagej.net/job/MorphoLibJ/lastBuild/badge/icon)](http://jenkins.imagej.net/job/MorphoLibJ/)
+[![](https://travis-ci.org/ijpb/MorphoLibJ.svg?branch=master)](https://travis-ci.org/ijpb/MorphoLibJ)
 [![DOI](https://zenodo.org/badge/21349/ijpb/MorphoLibJ.svg)](https://zenodo.org/badge/latestdoi/21349/ijpb/MorphoLibJ)
+
 MorphoLibJ
 ============
 
@@ -41,6 +42,7 @@ We have as well a [User Manual](https://github.com/ijpb/MorphoLibJ/releases/down
 The main source code directory is [src/main/java/inra/ijpb](http://github.com/ijpb/MorphoLibJ/tree/master/src/main/java/inra/ijpb).
 
 You can browse the [javadoc](http://ijpb.github.io/MorphoLibJ/javadoc/) for more information about its API.
+
 Citation
 --------
 Please note that MorphoLibJ is based on a publication. If you use it successfully for your research please be so kind to cite our work:

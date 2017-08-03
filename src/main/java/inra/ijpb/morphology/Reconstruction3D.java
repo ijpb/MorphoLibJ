@@ -21,8 +21,11 @@
  */
 package inra.ijpb.morphology;
 
+import java.util.Map;
+
 import ij.ImageStack;
 import inra.ijpb.algo.DefaultAlgoListener;
+import inra.ijpb.data.image.ColorImages;
 import inra.ijpb.morphology.geodrec.GeodesicReconstruction3DAlgo;
 import inra.ijpb.morphology.geodrec.GeodesicReconstruction3DHybrid0Float;
 import inra.ijpb.morphology.geodrec.GeodesicReconstruction3DHybrid0Gray16;
@@ -38,29 +41,45 @@ import inra.ijpb.morphology.geodrec.GeodesicReconstructionType;
  * Morphological reconstruction for 8-bits grayscale or binary stacks.
  * </p>
  * 
- * @deprecated replaced by the Reconstruction class (2017.07.25)
+ * <p>
+ * This class provides a collection of static methods for commonly used 
+ * operations on 3D images, such as border removal or holes filling. 
+ * </p>
+ * 
+ * <p>
+ * Example of use:
+ * <pre><code>
+ * ImageStack mask = IJ.getImage().getStack();
+ * int bitDepth = mask.getBitDepth();
+ * ImageStack marker = ImageStack.create(mask.getWidth(), mask.getHeight(), mask.getSize(), bitDepth);
+ * marker.set(30, 20, 10, 255); 
+ * ImageStack rec = Reconstruction3D.reconstructByDilation(marker, mask, 6);
+ * ImagePlus res = new ImagePlus("Reconstruction", rec);
+ * res.show(); 
+ * </code></pre>
  * 
  * @see Reconstruction
+ * @see FloodFill3D
  * 
  * @author David Legland
  */
-@Deprecated
-public abstract class GeodesicReconstruction3D 
+public abstract class Reconstruction3D 
 {
 	/**
 	 * Private constructor to prevent class instantiation.
 	 */
-	private GeodesicReconstruction3D()
+	protected Reconstruction3D()
 	{
 	}
 
 	/**
-	 * Removes the border of the input image, by performing a geodesic 
+	 * Removes the border of the input image, by performing a morphological
 	 * reconstruction initialized with image boundary.
-	 *  
+	 * 
 	 * @see #fillHoles(ImageStack)
 	 * 
-	 * @param image the image to process
+	 * @param image
+	 *            the image to process
 	 * @return a new image with borders removed
 	 */
 	public final static ImageStack killBorders(ImageStack image)
@@ -102,13 +121,14 @@ public abstract class GeodesicReconstruction3D
 	}
 
 	/**
-	 * Fills the holes in the input image, by (1) inverting the image, (2) 
-	 * performing a geodesic reconstruction initialized with inverted image
+	 * Fills the holes in the input image, by (1) inverting the image, (2)
+	 * performing a morphological reconstruction initialized with inverted image
 	 * boundary and (3) by inverting the result.
 	 * 
 	 * @see #killBorders(ImageStack)
 	 * 
-	 * @param image the image to process
+	 * @param image
+	 *            the image to process
 	 * @return a new image with holes filled
 	 */
 	public final static ImageStack fillHoles(ImageStack image) 
@@ -136,12 +156,14 @@ public abstract class GeodesicReconstruction3D
 	}
 
 	/**
-	 * Static method to computes the geodesic reconstruction by dilation of 
+	 * Static method to computes the morphological reconstruction by dilation of
 	 * the marker image under the mask image.
 	 * 
-	 * @param marker input marker image
-	 * @param mask mask image
-	 * @return the result of 3D geodesic reconstruction
+	 * @param marker
+	 *            input marker image
+	 * @param mask
+	 *            mask image
+	 * @return the result of 3D morphological reconstruction
 	 */
 	public final static ImageStack reconstructByDilation(ImageStack marker,
 			ImageStack mask)
@@ -168,17 +190,26 @@ public abstract class GeodesicReconstruction3D
 		}
 
 		DefaultAlgoListener.monitor(algo);
+
+		if (marker.getBitDepth() == 24 && mask.getBitDepth() == 24)
+		{
+			return applyAlgoToRGB(algo, marker, mask);
+		}
+
 		return algo.applyTo(marker, mask);
 	}
 
 	/**
-	 * Static method to computes the geodesic reconstruction by dilation of 
+	 * Static method to computes the morphological reconstruction by dilation of
 	 * the marker image under the mask image.
 	 * 
-	 * @param marker input marker image
-	 * @param mask mask image
-	 * @param connectivity 3d connectivity (6 or 26)
-	 * @return the result of 3D geodesic reconstruction
+	 * @param marker
+	 *            input marker image
+	 * @param mask
+	 *            mask image
+	 * @param connectivity
+	 *            3d connectivity (6 or 26)
+	 * @return the result of 3D morphological reconstruction
 	 */
 	public final static ImageStack reconstructByDilation(ImageStack marker,
 			ImageStack mask, int connectivity)
@@ -205,18 +236,28 @@ public abstract class GeodesicReconstruction3D
 		}
 		
 		DefaultAlgoListener.monitor(algo);
+		
+		if (marker.getBitDepth() == 24 && mask.getBitDepth() == 24)
+		{
+			return applyAlgoToRGB(algo, marker, mask);
+		}
+
 		return algo.applyTo(marker, mask);
 	}
 
 	/**
-	 * Static method to computes the geodesic reconstruction by dilation of 
+	 * Static method to computes the morphological reconstruction by dilation of
 	 * the marker image under the mask image, but restricted to a binary mask.
 	 * 
-	 * @param marker input marker image
-	 * @param mask mask image
-	 * @param connectivity 3d connectivity (6 or 26)
-	 * @param binaryMask binary mask to restrict area of application
-	 * @return geodesic reconstruction by dilation of input image
+	 * @param marker
+	 *            input marker image
+	 * @param mask
+	 *            mask image
+	 * @param connectivity
+	 *            3d connectivity (6 or 26)
+	 * @param binaryMask
+	 *            binary mask to restrict area of application
+	 * @return morphological reconstruction by dilation of input image
 	 */
 	public final static ImageStack reconstructByDilation(
 			ImageStack marker,
@@ -228,17 +269,25 @@ public abstract class GeodesicReconstruction3D
 		GeodesicReconstruction3DAlgo algo = new GeodesicReconstructionByDilation3DScanningGray8(
 				connectivity);
 		DefaultAlgoListener.monitor(algo);
+		
+		if (marker.getBitDepth() == 24 && mask.getBitDepth() == 24)
+		{
+			return applyAlgoToRGB(algo, marker, mask);
+		}
+
 		return algo.applyTo( marker, mask, binaryMask );
 	}
 	
 	
 	/**
-	 * Static method to computes the geodesic reconstruction by erosion of the
-	 * marker image over the mask image.
+	 * Static method to computes the morphological reconstruction by erosion of
+	 * the marker image over the mask image.
 	 * 
-	 * @param marker input marker image
-	 * @param mask mask image
-	 * @return the result of 3D geodesic reconstruction
+	 * @param marker
+	 *            input marker image
+	 * @param mask
+	 *            mask image
+	 * @return the result of 3D morphological reconstruction
 	 */
 	public final static ImageStack reconstructByErosion(ImageStack marker,
 			ImageStack mask)
@@ -267,17 +316,26 @@ public abstract class GeodesicReconstruction3D
 		}
 		
 		DefaultAlgoListener.monitor(algo);
+
+		if (marker.getBitDepth() == 24 && mask.getBitDepth() == 24)
+		{
+			return applyAlgoToRGB(algo, marker, mask);
+		}
+
 		return algo.applyTo(marker, mask);
 	}
 
 	/**
-	 * Static method to computes the geodesic reconstruction by erosion of the
-	 * marker image over the mask image.
-
-	 * @param marker input marker image
-	 * @param mask mask image
-	 * @param connectivity 3d connectivity (6 or 26)
-	 * @return the result of 3D geodesic reconstruction
+	 * Static method to computes the morphological reconstruction by erosion of
+	 * the marker image over the mask image.
+	 * 
+	 * @param marker
+	 *            input marker image
+	 * @param mask
+	 *            mask image
+	 * @param connectivity
+	 *            3d connectivity (6 or 26)
+	 * @return the result of 3D morphological reconstruction
 	 */
 	public final static ImageStack reconstructByErosion(ImageStack marker,
 			ImageStack mask, int connectivity)
@@ -308,6 +366,40 @@ public abstract class GeodesicReconstruction3D
 		}
 		
 		DefaultAlgoListener.monitor(algo);
+		
+		if (marker.getBitDepth() == 24 && mask.getBitDepth() == 24)
+		{
+			return applyAlgoToRGB(algo, marker, mask);
+		}
+
 		return algo.applyTo(marker, mask);
+	}
+	
+	/**
+	 * Applies an instance of morphological reconstruction algorithm to each
+	 * channel of a color image and returns the color image resulting from the
+	 * concatenation of each channel.
+	 * 
+	 * @param algo
+	 *            the instance of reconstruction algorithm to apply
+	 * @param marker
+	 *            the marker color image
+	 * @param mask
+	 *            the mask color image
+	 * @return the result of the algorithm on each pair of channels
+	 */
+	private final static ImageStack applyAlgoToRGB(
+			GeodesicReconstruction3DAlgo algo, ImageStack marker,
+			ImageStack mask)
+	{
+		// extract channels and allocate memory for result
+		Map<String, ImageStack> markerChannels 	= ColorImages.mapChannels(marker);
+		Map<String, ImageStack> maskChannels 	= ColorImages.mapChannels(mask);
+		
+		ImageStack resRed 	= algo.applyTo(markerChannels.get("red"), 	maskChannels.get("red"));
+		ImageStack resGreen = algo.applyTo(markerChannels.get("green"), maskChannels.get("green"));
+		ImageStack resBlue 	= algo.applyTo(markerChannels.get("blue"), 	maskChannels.get("blue"));
+		
+		return ColorImages.mergeChannels(resRed, resGreen, resBlue);
 	}
 }

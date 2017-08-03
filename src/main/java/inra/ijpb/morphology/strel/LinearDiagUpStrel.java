@@ -215,7 +215,7 @@ public class LinearDiagUpStrel extends AbstractInPlaceStrel {
 			fireProgressChanged(this, d - dmin, dmax - dmin);
 			
 			// reset local histogram
-			localMax.fill(Float.MIN_VALUE);
+			localMax.fill(Float.NEGATIVE_INFINITY);
 			
 			int xmin = Math.max(0, d + 1 - height);
 			int xmax = Math.min(width, d + 1); 
@@ -245,7 +245,7 @@ public class LinearDiagUpStrel extends AbstractInPlaceStrel {
 			// process pixels at the end of the line 
 			// and that do not touch the upper left image boundary
 			while (t < tmax + this.offset) {
-				localMax.add(Float.MIN_VALUE);
+				localMax.add(Float.NEGATIVE_INFINITY);
 				int t2 = t - this.offset;
 				int x = t2;
 				int y = d - t2;
@@ -369,7 +369,7 @@ public class LinearDiagUpStrel extends AbstractInPlaceStrel {
 			fireProgressChanged(this, d - dmin, dmax - dmin);
 			
 			// reset local histogram
-			localMin.fill(Float.MAX_VALUE);
+			localMin.fill(Float.POSITIVE_INFINITY);
 			
 			int xmin = Math.max(0, d - height - 1);
 			int xmax = Math.min(width, d + 1); 
@@ -399,7 +399,7 @@ public class LinearDiagUpStrel extends AbstractInPlaceStrel {
 			// process pixels at the end of the line 
 			// and that do not touch the upper left image boundary
 			while (t < tmax + this.offset) {
-				localMin.add(Float.MAX_VALUE);
+				localMin.add(Float.POSITIVE_INFINITY);
 				int t2 = t - this.offset;
 				int x = t2;
 				int y = d - t2;

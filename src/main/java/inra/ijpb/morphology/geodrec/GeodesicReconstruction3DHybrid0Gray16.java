@@ -51,7 +51,7 @@ import java.util.Deque;
  * </p>
  * 
  * @see GeodesicReconstruction3DHybrid0Gray8
- * @see GeodesicReconstruction3DHybridFloat
+ * @see GeodesicReconstruction3DHybrid0Float
  * 
  * @author David Legland
  * 

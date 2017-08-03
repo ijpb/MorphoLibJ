@@ -27,15 +27,14 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Locale;
 
+import org.junit.Test;
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import inra.ijpb.data.image.Images3D;
-import inra.ijpb.morphology.GeodesicReconstruction3D;
 import inra.ijpb.morphology.Morphology;
 import inra.ijpb.morphology.strel.CubeStrel;
-
-import org.junit.Test;
 
 public class GeodesicReconstructionByErosion3DScanningTest {
 
@@ -117,8 +116,9 @@ public class GeodesicReconstructionByErosion3DScanningTest {
 //		System.out.println("\n=== Marker Image ===");
 //		Images3D.print(marker);
 		
-		ImageStack result = GeodesicReconstruction3D.reconstructByErosion(marker, mask, 6);
-		
+		GeodesicReconstructionByErosion3DScanning algo = new GeodesicReconstructionByErosion3DScanning(6);
+		ImageStack result = algo.applyTo(marker, mask);
+
 //		System.out.println("\n=== Result Image ===");
 //		Images3D.print(result);
 		

@@ -301,7 +301,7 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 			for (int x = 0; x < width; x++) {
 
 				// init local histogram with background values
-				localMin.fill(Float.MAX_VALUE);
+				localMin.fill(Float.POSITIVE_INFINITY);
 
 				// add neighbor values
 				for (int z = 0; z < Math.min(shift, depth); z++) {
@@ -316,7 +316,7 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 
 				// process pixels at the end of the line
 				for (int z = Math.max(0, depth - shift); z < depth; z++) {
-					localMin.add(Float.MAX_VALUE);
+					localMin.add(Float.POSITIVE_INFINITY);
 					stack.setVoxel(x, y, z, localMin.getMax());
 				}
 			}

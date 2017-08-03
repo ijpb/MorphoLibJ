@@ -32,12 +32,12 @@ import inra.ijpb.morphology.strel.CubeStrel;
 import org.junit.Test;
 
 /**
- * Test the various static methods in GeodesicReconstruction3D class.
+ * Test the various static methods in Reconstruction3D class.
  * Many tests are already performed in geodrec subpackage, but this class
  * tests only global behavious, whereas geodrec focus on differences between
  * algorithms. 
  */
-public class GeodesicReconstruction3DTest {
+public class Reconstruction3DTest {
 
 	@Test
 	public final void test_reconstructByDilation_CubicMeshC26() {
@@ -46,7 +46,7 @@ public class GeodesicReconstruction3DTest {
 		ImageStack marker = ImageStack.create(20, 20, 20, 8);
 		marker.setVoxel(5, 5, 5, 255);
 		
-		ImageStack result = GeodesicReconstruction3D.reconstructByDilation(marker, mask, 26);
+		ImageStack result = Reconstruction3D.reconstructByDilation(marker, mask, 26);
 		
 		assertEquals(255, result.getVoxel(5, 15, 5), .01);
 	}
@@ -57,7 +57,7 @@ public class GeodesicReconstruction3DTest {
 		ImageStack marker = ImageStack.create(11, 11, 11, 8);
 		marker.setVoxel(1, 1, 1, 255);
 		
-		ImageStack result = GeodesicReconstruction3D.reconstructByDilation(marker, mask, 6);
+		ImageStack result = Reconstruction3D.reconstructByDilation(marker, mask, 6);
 		
 		assertEquals(255, result.getVoxel(1, 1, 1), .01);
 		assertEquals(224, result.getVoxel(9, 1, 1), .01);
@@ -78,7 +78,7 @@ public class GeodesicReconstruction3DTest {
 		marker.setVoxel(1, 1, 1, 255);
 		marker = marker.convertToFloat();
 		
-		ImageStack result = GeodesicReconstruction3D.reconstructByDilation(marker, mask, 6);
+		ImageStack result = Reconstruction3D.reconstructByDilation(marker, mask, 6);
 		
 		assertEquals(255, result.getVoxel(1, 1, 1), .01);
 		assertEquals(224, result.getVoxel(9, 1, 1), .01);
@@ -96,7 +96,7 @@ public class GeodesicReconstruction3DTest {
 		ImageStack marker = ImageStack.create(11, 11, 11, 8);
 		marker.setVoxel(1, 1, 1, 255);
 		
-		ImageStack result = GeodesicReconstruction3D.reconstructByDilation(marker, mask, 26);
+		ImageStack result = Reconstruction3D.reconstructByDilation(marker, mask, 26);
 		
 		assertEquals(255, result.getVoxel(1, 1, 1), .01);
 		assertEquals(224, result.getVoxel(9, 1, 1), .01);
@@ -117,7 +117,7 @@ public class GeodesicReconstruction3DTest {
 		marker.setVoxel(1, 1, 1, 255);
 		marker = marker.convertToFloat();
 		
-		ImageStack result = GeodesicReconstruction3D.reconstructByDilation(marker, mask, 26);
+		ImageStack result = Reconstruction3D.reconstructByDilation(marker, mask, 26);
 		
 		assertEquals(255, result.getVoxel(1, 1, 1), .01);
 		assertEquals(224, result.getVoxel(9, 1, 1), .01);
@@ -136,7 +136,7 @@ public class GeodesicReconstruction3DTest {
 		ImageStack marker = ImageStack.create(20, 20, 20, 8);
 		marker.setVoxel(5, 5, 5, 255);
 		
-		ImageStack result = GeodesicReconstruction3D.reconstructByDilation(marker, mask, 6);
+		ImageStack result = Reconstruction3D.reconstructByDilation(marker, mask, 6);
 		
 		assertEquals(255, result.getVoxel(5, 15, 5), .01);
 	}
@@ -155,7 +155,7 @@ public class GeodesicReconstruction3DTest {
 		}
 		marker.setVoxel(5, 5, 5, 0);
 		
-		ImageStack result = GeodesicReconstruction3D.reconstructByDilation(marker, mask, 6);
+		ImageStack result = Reconstruction3D.reconstructByDilation(marker, mask, 6);
 
 		assertEquals(0, result.getVoxel(5, 15, 5), .01);
 	}
@@ -177,7 +177,7 @@ public class GeodesicReconstruction3DTest {
 
 		marker.setVoxel(20, 80, 50, 255);
 
-		ImageStack result = GeodesicReconstruction3D.reconstructByDilation(marker, mask, 26);
+		ImageStack result = Reconstruction3D.reconstructByDilation(marker, mask, 26);
 		
 		for(int z = 0; z < depth; z++) {
 			for(int y = 0; y < height; y++) {
@@ -210,7 +210,7 @@ public class GeodesicReconstruction3DTest {
 
 		marker.setVoxel(20, 80, 50, 255);
 
-		ImageStack result = GeodesicReconstruction3D.reconstructByDilation(marker, mask, 6);
+		ImageStack result = Reconstruction3D.reconstructByDilation(marker, mask, 6);
 		
 		for(int z = 0; z < depth; z++) {
 			for(int y = 0; y < height; y++) {
@@ -230,7 +230,7 @@ public class GeodesicReconstruction3DTest {
 		fillStack(marker, 255);
 		marker.setVoxel(1, 1, 1, 0);
 		
-		ImageStack result = GeodesicReconstruction3D.reconstructByErosion(marker, mask, 6);
+		ImageStack result = Reconstruction3D.reconstructByErosion(marker, mask, 6);
 		
 		assertEquals(  0, result.getVoxel(1, 1, 1), .01);
 		assertEquals( 32, result.getVoxel(9, 1, 1), .01);
@@ -252,7 +252,7 @@ public class GeodesicReconstruction3DTest {
 		marker.setVoxel(1, 1, 1, 0);
 		marker = marker.convertToFloat();
 		
-		ImageStack result = GeodesicReconstruction3D.reconstructByErosion(marker, mask, 6);
+		ImageStack result = Reconstruction3D.reconstructByErosion(marker, mask, 6);
 		
 		assertEquals(  0, result.getVoxel(1, 1, 1), .01);
 		assertEquals( 32, result.getVoxel(9, 1, 1), .01);
@@ -271,7 +271,7 @@ public class GeodesicReconstruction3DTest {
 		fillStack(marker, 255);
 		marker.setVoxel(1, 1, 1, 0);
 		
-		ImageStack result = GeodesicReconstruction3D.reconstructByErosion(marker, mask, 26);
+		ImageStack result = Reconstruction3D.reconstructByErosion(marker, mask, 26);
 		
 		assertEquals(  0, result.getVoxel(1, 1, 1), .01);
 		assertEquals( 32, result.getVoxel(9, 1, 1), .01);
@@ -293,7 +293,7 @@ public class GeodesicReconstruction3DTest {
 		marker.setVoxel(1, 1, 1, 0);
 		marker = marker.convertToFloat();
 		
-		ImageStack result = GeodesicReconstruction3D.reconstructByErosion(marker, mask, 26);
+		ImageStack result = Reconstruction3D.reconstructByErosion(marker, mask, 26);
 		
 		assertEquals(  0, result.getVoxel(1, 1, 1), .01);
 		assertEquals( 32, result.getVoxel(9, 1, 1), .01);
@@ -343,7 +343,7 @@ public class GeodesicReconstruction3DTest {
 		}
 		marker.setVoxel(20, 80, 50, 0);
 		
-		ImageStack result = GeodesicReconstruction3D.reconstructByErosion(marker, mask, 6);
+		ImageStack result = Reconstruction3D.reconstructByErosion(marker, mask, 6);
 		
 		// Check images equality
 		for(int z = 0; z < depth; z++) {
@@ -392,7 +392,7 @@ public class GeodesicReconstruction3DTest {
 		}
 		marker.setVoxel(20, 80, 50, 0);
 		
-		ImageStack result = GeodesicReconstruction3D.reconstructByErosion(marker, mask, 26);
+		ImageStack result = Reconstruction3D.reconstructByErosion(marker, mask, 26);
 		
 		// Check images equality
 		for(int z = 0; z < depth; z++) {
@@ -449,7 +449,7 @@ public class GeodesicReconstruction3DTest {
 		marker = marker.convertToFloat();
 
 
-		ImageStack result = GeodesicReconstruction3D.reconstructByErosion(marker, mask, 6);
+		ImageStack result = Reconstruction3D.reconstructByErosion(marker, mask, 6);
 		
 		// Check images equality
 		for(int z = 0; z < depth; z++) {
@@ -502,7 +502,7 @@ public class GeodesicReconstruction3DTest {
 		mask = mask.convertToFloat();
 		marker = marker.convertToFloat();
 
-		ImageStack result = GeodesicReconstruction3D.reconstructByErosion(marker, mask, 26);
+		ImageStack result = Reconstruction3D.reconstructByErosion(marker, mask, 26);
 		
 		// Check images equality
 		for(int z = 0; z < depth; z++) {
@@ -565,7 +565,7 @@ public class GeodesicReconstruction3DTest {
 			}
 		}
 		
-		ImageStack result = GeodesicReconstruction3D.killBorders(stack);
+		ImageStack result = Reconstruction3D.killBorders(stack);
 		
 		for (int y = 0; y < sizeY; y++) 
 		{

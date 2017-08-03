@@ -27,8 +27,8 @@ import ij.ImageStack;
 import ij.plugin.PlugIn;
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
-import inra.ijpb.morphology.GeodesicReconstruction;
-import inra.ijpb.morphology.GeodesicReconstruction3D;
+import inra.ijpb.morphology.Reconstruction;
+import inra.ijpb.morphology.Reconstruction3D;
 import inra.ijpb.util.IJUtils;
 
 /**
@@ -50,7 +50,7 @@ public class KillBordersPlugin implements PlugIn
 		{
 			// Process planar images
 			ImageProcessor image = imagePlus.getProcessor();
-			ImageProcessor result = GeodesicReconstruction.killBorders(image);
+			ImageProcessor result = Reconstruction.killBorders(image);
 			if (!(result instanceof ColorProcessor))
 				result.setLut(image.getLut());
 			resultPlus = new ImagePlus(newName, result);
@@ -60,7 +60,7 @@ public class KillBordersPlugin implements PlugIn
 		{
 			// Process 3D stack
 			ImageStack image = imagePlus.getStack();
-			ImageStack result = GeodesicReconstruction3D.killBorders(image);
+			ImageStack result = Reconstruction3D.killBorders(image);
 			result.setColorModel(image.getColorModel());
 			resultPlus = new ImagePlus(newName, result);
 		} 
