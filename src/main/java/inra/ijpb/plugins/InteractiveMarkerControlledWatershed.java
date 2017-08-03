@@ -1220,8 +1220,8 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 	{
 		if ( IJ.getVersion().compareTo("1.48a") < 0 )
 		{
-			IJ.error( "Interactive Marker-controlled Watershed Segmentation", "ERROR: detected ImageJ version " + IJ.getVersion()  
-			+ ".\nInteractive Marker-controlled Watershed Segmentation requires version 1.48a or superior, please update ImageJ!" );
+			IJ.error( "Interactive Marker-controlled Watershed", "ERROR: detected ImageJ version " + IJ.getVersion()  
+			+ ".\nInteractive Marker-controlled Watershed requires version 1.48a or superior, please update ImageJ!" );
 			return;
 		}
 
@@ -1237,7 +1237,7 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 		if( inputImage.getType() == ImagePlus.COLOR_256 ||
 				inputImage.getType() == ImagePlus.COLOR_RGB )
 		{
-			IJ.error( "Interactive Marker-controlled Watershed Segmentation",
+			IJ.error( "Interactive Marker-controlled Watershed",
 					"This plugin only works on grayscale images.\nPlease convert it to 8, 16 or 32-bit." );
 			return;
 		}
@@ -1245,7 +1245,7 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 		inputStackCopy = inputImage.getImageStack().duplicate();
 		displayImage = new ImagePlus( inputImage.getTitle(),
 				inputStackCopy );
-		displayImage.setTitle("Marker-controlled Watershed Segmentation");
+		displayImage.setTitle("Marker-controlled Watershed");
 		displayImage.setSlice( inputImage.getSlice() );
 
 		// hide input image (to avoid accidental closing)
@@ -1287,7 +1287,7 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 	 */
 	public static void record(String command, String... args)
 	{
-		command = "call(\"inra.ijpb.plugins.InteractiveMarkerControlledWatershedSegmentation." + command;
+		command = "call(\"inra.ijpb.plugins.InteractiveMarkerControlledWatershed." + command;
 		for(int i = 0; i < args.length; i++)
 			command += "\", \"" + args[i];
 		command += "\");\n";
@@ -1314,7 +1314,7 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 			win.runSegmentation( win.getSegmentText() );
 		}
 		else
-			IJ.log( "Error: Interactive Marker-controlled Watershed Segmentation GUI not detected." );
+			IJ.log( "Error: Interactive Marker-controlled Watershed GUI not detected." );
 	}
 	/**
 	 * Toggle current result overlay image
