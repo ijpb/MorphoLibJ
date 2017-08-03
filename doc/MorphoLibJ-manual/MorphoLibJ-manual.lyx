@@ -6484,11 +6484,16 @@ Binary image, and result of computation of the distance transform.
 
 \end_layout
 
+\begin_layout Subsubsection
+Chamfer distances
+\end_layout
+
 \begin_layout Standard
 Several methods exist for computing distance maps.
  The MorphoLibJ library implements distance transforms based on chamfer
- distances, that approximate Euclidean distances but are simpler to compute
- 
+ distances.
+ Chamfer distances approximate Euclidean distances with integer weights,
+ and are simpler to compute than exact Euclidean distance 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Borgefors1984,Borgefors1986"
@@ -6499,19 +6504,225 @@ key "Borgefors1984,Borgefors1986"
  As chamfer weights are only an approximation of the real Euclidean distance,
  some differences are expected compared to the actual Euclidean distance
  map.
+ 
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Note
+Several choices for chamfer weights are illustrated on Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Chamfer-Weights-2D"
+
+\end_inset
+
+.
+ The 
+\begin_inset Quotes eld
+\end_inset
+
+Borgefors
+\begin_inset Quotes erd
+\end_inset
+
+ weights were claimed to be a good approximation when using only the eights
+ closest eighbors.
+ 
+\begin_inset Quotes eld
+\end_inset
+
+Chess-knight
+\begin_inset Quotes erd
+\end_inset
+
+ distance is usually the best choice, as it considers a larger neighborhood.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
 status open
 
 \begin_layout Plain Layout
-TODO: add a small diagram explaining the principle of chamfer weights.
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/binary/distMap_11_digits_fire.png
+	lyxscale 75
+	width 22text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Chessboard (1,1)
 \end_layout
 
 \end_inset
 
 
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/binary/distMap_12_digits_fire.png
+	lyxscale 75
+	width 22text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+City-block (1,2)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/binary/distMap_34_digits_fire.png
+	lyxscale 75
+	width 22text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Borgefors (3,4)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/binary/distMap_5711_digits_fire.png
+	lyxscale 75
+	width 22text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Chess knight (5,7,11)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Chamfer-Weights-2D"
+
+\end_inset
+
+Several chamfer weights for computing distance maps.
+ For each image, the distance to the lower-left pixel is represented both
+ with numeric value and with color code.
+ Numbers in brackets correspond to the weights associated with orthogonal
+ and diagonal directions.
+ For chess-knight weights, the weight 11 correspond to a shift of 
+\begin_inset Formula $(\pm1,\pm2)$
+\end_inset
+
+ pixels in any direction.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Plugin usage
+\end_layout
+
+\begin_layout Standard
+The MorphoLibJ library provides two plugins for computing chamfer distance
+ maps for 2D or 3D binary images :
 \end_layout
 
 \begin_layout Description
@@ -6557,6 +6768,42 @@ name "op:Chamfer-Distance-Map-3d"
 computes an approximate distance map from a 3D binary image between each
  foreground voxel to the nearest background voxel.
  Binary image is assumed to have cubic voxels.
+\end_layout
+
+\begin_layout Standard
+For each plugin, a dialog opens and allows to select the following parameters:
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Chamfer
+\begin_inset space ~
+\end_inset
+
+Weights the weights to use for computing the distance map
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Output
+\begin_inset space ~
+\end_inset
+
+Type specify if the result should be stored in 16-bits image (uses less
+ memory), or 32-bits image (larger distances can be computed).
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Normalize specify if the resulting map should be divided by the weight associate
+d with orthogonal pixels or voxels.
+ This may be useful for Borgefors or Chess-kneight weights to have distances
+ comparable to Euclidean ones.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Preview (2D only) enable the preview of the result
 \end_layout
 
 \begin_layout Subsection
@@ -6960,7 +7207,7 @@ reference "fig:Connectivity-2D"
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
