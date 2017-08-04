@@ -5399,6 +5399,16 @@ Particle analysis
 \end_layout
 
 \begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Particle-Analysis"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 This section describes the methods implemented in MorphoLibJ for describing
  individual particles, represented as label images (one label for each particle).
  We first define and describe the implemented features, then we present
@@ -5410,6 +5420,16 @@ Intrinsic volumes
 \end_layout
 
 \begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Intrinsic-Volumes"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 The 
 \series bold
 intrinsic volumes 
@@ -5417,8 +5437,19 @@ intrinsic volumes
 are a set of features with interesting mathematical properties that are
  commonly used for describing individual particles as well as binary microstruct
 rues.
- In the planar case, they correspond to the area, the perimeter and the
- Euler number.
+ In the planar case, they correspond to the 
+\series bold
+area
+\series default
+, the 
+\series bold
+perimeter
+\series default
+ and the 
+\series bold
+Euler number
+\series default
+.
  The Euler number is a topological characteristic that equals the number
  of connected components minus the number of holes (Fig.
 \begin_inset space ~
@@ -5431,11 +5462,18 @@ reference "fig:Euler-Number"
 
 \end_inset
 
-).
+-a).
  
 \end_layout
 
 \begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
 \begin_inset Float figure
 wide false
 sideways false
@@ -5450,9 +5488,50 @@ status open
 \end_inset
 
 
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+2D Euler number
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
 \begin_inset Graphics
 	filename images/analysis/negativeEulerNumber.png
 	height 4cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+3D Euler number
+\end_layout
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
@@ -5470,8 +5549,8 @@ name "fig:Euler-Number"
 \end_inset
 
 Illustration of Euler Number definition.
- Left: three particles with Euler numbers equal to 1, 0 and -1, respectively.
- Right: example of a 3D particle with an Euler number equal to -1, corresponding
+ (a) Three particles with Euler numbers equal to 1, 0 and -1, respectively.
+ (b) Example of a 3D particle with an Euler number equal to -1, corresponding
  to the subtraction of 1 connected components minus two handles.
 \end_layout
 
@@ -5486,9 +5565,24 @@ Illustration of Euler Number definition.
 \end_layout
 
 \begin_layout Standard
-For 3D particles, intrinsic volumes correspond to the volume, the surface
- area, the mean breadth (a quantity proportional to the integral of the
- mean curvature over the surface) and the Euler number.
+For 3D particles, intrinsic volumes correspond to the 
+\series bold
+volume
+\series default
+, the
+\series bold
+ surface area
+\series default
+, the 
+\series bold
+mean breadth 
+\series default
+(a quantity proportional to the integral of the mean curvature over the
+ surface) and the 
+\series bold
+(3D) Euler number
+\series default
+.
  In 3D the Euler number equals the number of connected components minus
  the number of 
 \begin_inset Quotes eld
@@ -5524,11 +5618,21 @@ reference "fig:Euler-Number"
 
 \end_inset
 
-.
+-b.
 \end_layout
 
 \begin_layout Subsubsection
 Estimation from 2D or 3D images
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Surface-Area-And-Perimeter"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -5669,11 +5773,231 @@ Euler number
 \end_layout
 
 \begin_layout Standard
-The measurement of Euler number depends on the choice of the connectivity.
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Euler-Number"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The measurement of Euler number from binary images is usually performed
+ by considering a reconstruction of the connected components that connects
+ adjacent pixels or voxels (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Euler-Number-Computation-2D"
+
+\end_inset
+
+).
+ The resulting reconstruction depends on the choice of the connectivity.
  For planar images, typical choices are the 4-connectivity, corresponding
- to the orthogonal neighbors, and the 8-connectivity, that also consider
- the diagonal neighbors.
- In 3D, the 6-connectivity considers the neighbors in the three main directions
+ to the orthogonal neighbors (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Euler-Number-Computation-2D"
+
+\end_inset
+
+-b), and the 8-connectivity, that also consider the diagonal neighbors (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Euler-Number-Computation-2D"
+
+\end_inset
+
+-b).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/connectivity/binaryImage12x8WithDigits.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Binary image
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/connectivity/binaryImage12x8RecC4.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Reconstruction using the
+\begin_inset Newline newline
+\end_inset
+
+4-connectivity 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/connectivity/binaryImage12x8RecC8.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Reconstruction using the 
+\begin_inset Newline newline
+\end_inset
+
+8-connectivity
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Euler-Number-Computation-2D"
+
+\end_inset
+
+Determination of the Euler number from binray images.
+ (a) Original binary images.
+ (b) Euler number computed with 4-connectivity: five components are detected.
+ (c) Euler number computed using the 8-connectivity: three components are
+ detected, two of them having holes.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Depening on the chosen connectivity, the resulting Euler number may differ.
+ For example, the reconstruction presented in Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Euler-Number-Computation-2D"
+
+\end_inset
+
+ has Euler number equal to five (the number of connected components), whereas
+ the Euler number of the reconstruction using the 8-connectivity is equal
+ to 1: three connected components are obtained, minus two holes within them
+ (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Euler-Number-Computation-2D"
+
+\end_inset
+
+-c).
+\end_layout
+
+\begin_layout Standard
+In 3D, the 6-connectivity considers the neighbors in the three main directions
  within the image, whereas the 26 connectivity also consider the diagonals.
  Other connectivities have been proposed but are not implemented in MorphoLibJ
  
@@ -5687,10 +6011,38 @@ key "Ohser2009"
 \end_layout
 
 \begin_layout Standard
+The connectivity is also considered for computing morphological reconstructions
+ (section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Morphological-Reconstruction"
+
+\end_inset
+
+), or for computing the connected component labeling of a binary image (section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Connected-Components-Labeling"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
 In the current implementation in MorphoLibJ, the Euler number is not taken
- into account for intersection of particles with image borders.
- This may result in non-integer result if the particle(s) of interest touches
- image border.
+ into account for intersection of particles with image borders, as they
+ usually do not correspond to real boundaries.
+ This may however result in non-integer result if the particle(s) of interest
+ touches image border.
 \end_layout
 
 \begin_layout Subsubsection
@@ -5923,7 +6275,7 @@ Most MorphoLibJ plugins consider the current image as input, that must be
  result of a connected components labeling, see section 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "subsec:Connected-Components-Labeling"
+reference "sec:Connected-Components-Labeling"
 
 \end_inset
 
@@ -7104,7 +7456,7 @@ Connected component labeling
 \begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
-name "subsec:Connected-Components-Labeling"
+name "sec:Connected-Components-Labeling"
 
 \end_inset
 
@@ -7372,6 +7724,30 @@ reference "fig:Connectivity-2D"
 For 3D images, the 6-connectivity considers only orthogonal neighbors in
  the three main directions, whereas the 26-connectivity considers all the
  neighbors of a given voxel in its 3-by-3-by-3 surrounding.
+ The connectivity is also considered for computing morphological reconstructions
+ (section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Morphological-Reconstruction"
+
+\end_inset
+
+), or for computing the Euler number of binary or label images (section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Euler-Number"
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Description
@@ -11805,7 +12181,7 @@ n.a.
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "subsec:Connected-Components-Labeling"
+reference "sec:Connected-Components-Labeling"
 
 \end_inset
 
