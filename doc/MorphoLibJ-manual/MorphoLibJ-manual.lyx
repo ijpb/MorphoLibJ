@@ -78,8 +78,10 @@
 %\captionsetup[figure]{name=Figure}
 %\DeclareCaptionLabelSeparator{colon}{.}
 
-% to add mini-TOC in the beginning of each chapter
-\usepackage{minitoc}
+% To add mini-TOC in the beginning of each chapter
+% The 'nohints' option is to prevent a conflict with the lastpage package, 
+% resulting in an extra empty page at the end of the document.
+\usepackage[nohints]{minitoc}
 \end_preamble
 \use_default_options true
 \maintain_unincluded_children false
@@ -591,7 +593,7 @@ key "Serra_1982,Serra_1992_cssp"
 structuring element
 \series default
 .
- Common structuring element include squares, discrete disks and octogons.
+ Common structuring element include squares, discrete disks and octagons.
  Linear structuring element of various orientations may also be used to
  assess local orientation of the structures.
  
@@ -1184,9 +1186,9 @@ reference "fig:Morpho-Opening-Closing"
 \end_layout
 
 \begin_layout Standard
-Note that even if opening and closing better preserve the size of the structures
+Note that even if opening and closing preserve the size of the structures
  in the original image, their shape is slightly altered.
- For example, the result of morphological closing on Figure
+ For example, the morphological closing on Figure
 \begin_inset space ~
 \end_inset
 
@@ -1197,8 +1199,8 @@ reference "fig:Morpho-Opening-Closing"
 
 \end_inset
 
--b creates artificial connections between grains, whereas the result of
- morphological opening (Figure
+-b creates artificial connections between grains, whereas the morphological
+ opening (Figure
 \begin_inset space ~
 \end_inset
 
@@ -1264,7 +1266,7 @@ reference "fig:Morphological-Post-Processing"
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -1444,7 +1446,7 @@ reference "fig:Morphological-Post-Processing"
 
 -c).
  Then, a morphological opening removes the small particles that do not correspon
-d to the vascular bundles in image (Figure
+d to the vascular bundles (Figure
 \begin_inset space ~
 \end_inset
 
@@ -1456,8 +1458,7 @@ reference "fig:Morphological-Post-Processing"
 \end_inset
 
 -d).
- The result is a binary image showing only the vascular bundles in the original
- image.
+ The result is a binary image showing only the vascular bundles.
 \end_layout
 
 \begin_layout Subsection
@@ -1480,7 +1481,11 @@ More complicated combinations of elementary operations can be used.
 \series bold
 morphological gradient
 \series default
- is obtained as the difference of the result of a morphological dilation
+ (also known as the 
+\series bold
+Beucher gradient
+\series default
+) is obtained as the difference of the result of a morphological dilation
  with the result of a morphological erosion, both computed with the same
  structuring element.
  It reveals the 
@@ -1494,34 +1499,25 @@ boundaries
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Morpho-Gradient-TopHat"
+reference "fig:Morpho-Gradient"
 
 \end_inset
 
 -a).
- 
-\end_layout
-
-\begin_layout Standard
-The 
-\series bold
-morphological Laplacian
-\series default
- is defined as half the sum of a morphological dilation and a morphological
- erosion with the same structuring element, minus the original image.
- It results in enhancing the edges of the image (Figure
+ When applied to a binary image, the morphological gradient is a convenient
+ way to obtain the boundaries of the structures of interest within the image
+ (Figure
 \begin_inset space ~
 \end_inset
 
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Morpho-Gradient-TopHat"
+reference "fig:Morpho-Gradient"
 
 \end_inset
 
 -b).
- 
 \end_layout
 
 \begin_layout Standard
@@ -1553,6 +1549,41 @@ status open
 
 \begin_layout Plain Layout
 Morphological gradient
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/maizeBundles/m02g_crop_seg-Closing-Opening-Closing-Gradient.png
+	width 35text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Morphological gradient on a
+\begin_inset Newline newline
+\end_inset
+
+binary image
 \end_layout
 
 \end_inset
@@ -1594,37 +1625,6 @@ Morphological Laplacian
 \end_inset
 
  
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename images/grains/grains-WhiteTopHat-Sq20.png
-	width 30text%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-White Top-Hat
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Plain Layout
@@ -1633,12 +1633,27 @@ White Top-Hat
 \begin_layout Plain Layout
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Morpho-Gradient-TopHat"
+name "fig:Morpho-Gradient"
 
 \end_inset
 
 Some examples of morphological filters resulting from the combination of
  elementary morphological filters.
+ (a) Morphological gradient on a grayscale image.
+ (b) Morphological gradient on the binary image represented in Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Morphological-Post-Processing"
+
+\end_inset
+
+-d (inverted LUT).
+ (c) Morphological Laplacian on a grayscale image.
+ 
 \end_layout
 
 \end_inset
@@ -1649,6 +1664,28 @@ Some examples of morphological filters resulting from the combination of
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+morphological Laplacian
+\series default
+ is defined as half the sum of a morphological dilation and a morphological
+ erosion with the same structuring element, minus the original image.
+ It results in enhancing the edges of the image (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Morpho-Gradient"
+
+\end_inset
+
+-c).
+ 
 \end_layout
 
 \begin_layout Subsection
@@ -1681,12 +1718,146 @@ operator first computes a morphological opening (resulting in removing bright
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Morpho-Gradient-TopHat"
+reference "fig:White-TopHat-Grains"
 
 \end_inset
 
 -c).
  
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/grains/grains_roiVLine.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Original image
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/grains/grains-WhiteTopHat-Sq20_roiVLine.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+White Top-Hat
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/grains/grains-compareTopHatProfiles.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Profile plots along 
+\begin_inset Newline newline
+\end_inset
+
+vertical line
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:White-TopHat-Grains"
+
+\end_inset
+
+Top-hat filtering.
+ (a) Original image graysclae image, showing inhomogeneous background.
+ (b) Result of the White Top-Hat operator using square with radius 20 as
+ structuring element.
+ (c) Profile plots along line region of interest for each image.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -2641,7 +2812,7 @@ reference "fig:Morphological-Reconstruction-Principle"
  on the first image.
  The reconstructed images at each step are shown in black.
  The markers propagates within the mask until an additional conditional
- dilation will not modify the imag any more.
+ dilation will not modify the image any more.
  The result is the set of regions that contains the markers, with the same
  shape as in the original image.
 \end_layout
@@ -2669,12 +2840,6 @@ reference "fig:Morphological-Reconstruction-Binary"
 \end_inset
 
 ).
- In a similar way, computing morphological reconstruction by using the border
- of the complement of the image makes it possible to 
-\series bold
-fill holes
-\series default
- that may appear in particles.
 \end_layout
 
 \begin_layout Standard
@@ -2731,6 +2896,15 @@ Some applications of morphological reconstruction.
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+In a similar way, computing morphological reconstruction by using the border
+ of the complement of the image makes it possible to 
+\series bold
+fill holes
+\series default
+ that may appear in particles.
 \end_layout
 
 \begin_layout Subsection
@@ -7574,7 +7748,7 @@ status open
 \begin_inset Graphics
 	filename images/binary/distMap_11_digits_fire.png
 	lyxscale 75
-	width 22text%
+	width 23text%
 
 \end_inset
 
@@ -7606,7 +7780,7 @@ status open
 \begin_inset Graphics
 	filename images/binary/distMap_12_digits_fire.png
 	lyxscale 75
-	width 22text%
+	width 23text%
 
 \end_inset
 
@@ -7638,7 +7812,7 @@ status open
 \begin_inset Graphics
 	filename images/binary/distMap_34_digits_fire.png
 	lyxscale 75
-	width 22text%
+	width 23text%
 
 \end_inset
 
@@ -7670,7 +7844,7 @@ status open
 \begin_inset Graphics
 	filename images/binary/distMap_5711_digits_fire.png
 	lyxscale 75
-	width 22text%
+	width 23text%
 
 \end_inset
 
@@ -7709,7 +7883,7 @@ Several chamfer weights for computing distance maps.
  with numeric value and with color code.
  Numbers in brackets correspond to the weights associated with orthogonal
  and diagonal directions.
- For chess-knight weights, the weight 11 correspond to a shift of 
+ For chess-knight weights, the weight 11 corresponds to a shift of 
 \begin_inset Formula $(\pm1,\pm2)$
 \end_inset
 
@@ -8150,13 +8324,6 @@ reference "fig:Geodesic-Distance-Map-3d"
 
 ).
  Binary image is assumed to have cubic voxels.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Newpage newpage
-\end_inset
-
-
 \end_layout
 
 \begin_layout Section
