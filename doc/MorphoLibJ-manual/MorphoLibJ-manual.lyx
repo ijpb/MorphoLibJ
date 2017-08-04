@@ -359,7 +359,7 @@ http://ijpb.github.io/MorphoLibJ/javadoc/
 The reference publication for MorphoLibJ is 
 \begin_inset CommandInset citation
 LatexCommand citet
-key "Legland_2016_bmc"
+key "Legland_2016_bioinformatics"
 
 \end_inset
 
@@ -3535,10 +3535,6 @@ Let's have a look at the different parameters:
 
 \begin_layout Itemize
 Image parameters: 
-\begin_inset Separator latexpar
-\end_inset
-
-
 \end_layout
 
 \begin_deeper
@@ -3564,10 +3560,6 @@ Mask image
 \end_deeper
 \begin_layout Itemize
 Morphological parameters: 
-\begin_inset Separator latexpar
-\end_inset
-
-
 \end_layout
 
 \begin_deeper
@@ -4030,10 +4022,6 @@ Let's have a look at the different parameters:
 
 \begin_layout Itemize
 Image parameters:
-\begin_inset Separator latexpar
-\end_inset
-
-
 \end_layout
 
 \begin_deeper
@@ -4062,10 +4050,6 @@ Marker image
 \end_deeper
 \begin_layout Itemize
 And it can optionally admit a third image:
-\begin_inset Separator latexpar
-\end_inset
-
-
 \end_layout
 
 \begin_deeper
@@ -4083,10 +4067,6 @@ Mask image
 \end_deeper
 \begin_layout Itemize
 Rest of parameters:
-\begin_inset Separator latexpar
-\end_inset
-
-
 \end_layout
 
 \begin_deeper
@@ -5066,7 +5046,18 @@ Distances
 \series default
 : allows selecting among a pre-defined set of weights that can be used to
  compute the distance transform using Chamfer approximations of the Euclidean
- metric.
+ metric (see section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Distance-Transform"
+
+\end_inset
+
+).
  They affect the location but specially the shape of the border in the final
  result.
  The options are:
@@ -5828,7 +5819,7 @@ reference "fig:Euler-Number-Computation-2D"
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -6762,6 +6753,16 @@ Distance transform
 \end_layout
 
 \begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Distance-Transform"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 When analyzing images, it is often necessary to compute distances to a particula
 r structure or position.
  A convenient operator for binary images is the
@@ -7160,6 +7161,16 @@ Preview (2D only) enable the preview of the result
 
 \begin_layout Subsection
 Geodesic distance transform
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Geodesic-Distance-Transform"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
