@@ -11,6 +11,7 @@ inra.ijpb.math
 inra.ijpb.measure
 inra.ijpb.morphology
 inra.ijpb.morphology.attrfilt
+inra.ijpb.morphology.directional
 inra.ijpb.morphology.extrema
 inra.ijpb.morphology.geodrec
 inra.ijpb.morphology.strel
