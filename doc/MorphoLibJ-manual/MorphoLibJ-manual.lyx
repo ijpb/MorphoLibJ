@@ -2937,7 +2937,15 @@ reference "fig:Morphological-Reconstruction-Grayscale"
 \end_inset
 
 ).
- 
+ The algorithms for morphological reconstruction on grayscale images are
+ discussed in 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Vincent_1993_tip,Robinson_2004_prl"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
