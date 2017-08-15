@@ -878,7 +878,7 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 						resultImage.setCalibration( inputImage.getCalibration() );
 
 						final long end = System.currentTimeMillis();
-						//IJ.log( "Whole plugin took " + (end-start) + " ms.");
+						IJ.showStatus( "Whole plugin took " + (end-start) + " ms.");
 
 						// Adjust min and max values to display
 						Images3D.optimizeDisplayRange( resultImage );
