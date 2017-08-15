@@ -4299,7 +4299,7 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename images/watershed-flooding-scheme.svg
+	filename images/watershed-flooding-scheme.pdf
 	lyxscale 50
 	width 40text%
 
