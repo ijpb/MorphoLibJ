@@ -49,11 +49,13 @@ import inra.ijpb.util.ColorMaps.CommonLabelMaps;
 import inra.ijpb.watershed.Watershed;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Panel;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
@@ -443,9 +445,15 @@ public class MorphologicalSegmentation implements PlugIn {
 
 			final ImageCanvas canvas = (ImageCanvas) getCanvas();
 
+			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+			double screenWidth = screenSize.getWidth();
+			double screenHeight = screenSize.getHeight();
+			
 			// Zoom in if image is too small
-			while(ic.getWidth() < 512 && ic.getHeight() < 512)
-				IJ.run( imp, "In","" );
+			while( 	ic.getWidth() < screenWidth/2 &&
+				ic.getHeight() < screenHeight/2 &&
+				ic.getMagnification() < 32.0 )			
+			    IJ.run( imp, "In","" );
 
 			setTitle( "Morphological Segmentation" );
 
