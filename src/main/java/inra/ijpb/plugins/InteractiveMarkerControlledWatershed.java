@@ -874,7 +874,7 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 							return;
 						}
 
-						resultImage.setTitle("Waterhsed");
+						resultImage.setTitle( inputImage.getShortTitle() + "-Waterhsed" );
 						resultImage.setCalibration( inputImage.getCalibration() );
 
 						final long end = System.currentTimeMillis();
