@@ -121,9 +121,9 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 	//	 __ Watershed Segmentation___
 	//	|  x - Use dams             |
 	//	|  Connectivity: [6/26]     |
-	//  |          -----            |
-	//  |         | Run |	        |
-	//  |          -----            |
+	//	|          -----            |
+	//	|         | Run |	    	|
+	//	|          -----            |
 	//	|___________________________|
 
 	/** watershed segmentation panel */
@@ -153,9 +153,9 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 	//	 __ Results__________________
 	//	| Display: [Overlay basins]  |
 	//	| x - Overlay results        |
-	//  |      --------------        |
-	//  |     | Create Image |       |
-	//  |      --------------        |
+	//	|      --------------        |
+	//	|     | Create Image |       |
+	//	|      --------------        |
 	//	|____________________________|
 
 	/** main Results panel */
