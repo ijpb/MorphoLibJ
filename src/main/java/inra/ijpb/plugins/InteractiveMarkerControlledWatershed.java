@@ -831,7 +831,7 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 							// on the mask image
 							else
 							{
-								int slice = displayImage.getSlice();
+								int slice = displayImage.getCurrentSlice();
 
 								if( roi.isArea() )
 									markerSlice[ slice-1 ].fill( roi );
@@ -983,7 +983,7 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 				if( null != watershedResult )
 				{
 					watershedResult.show();
-					watershedResult.setSlice( displayImage.getSlice() );
+					watershedResult.setSlice( displayImage.getCurrentSlice() );
 				}
 
 				// Macro recording
@@ -1254,7 +1254,7 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 		displayImage = new ImagePlus( inputImage.getTitle(),
 				inputStackCopy );
 		displayImage.setTitle("Marker-controlled Watershed");
-		displayImage.setSlice( inputImage.getSlice() );
+		displayImage.setSlice( inputImage.getCurrentSlice() );
 
 		// hide input image (to avoid accidental closing)
 		inputImage.getWindow().setVisible( false );
@@ -1387,7 +1387,7 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 			if( null != result )
 			{
 				result.show();
-				result.setSlice( win.getImagePlus().getSlice() );
+				result.setSlice( win.getImagePlus().getCurrentSlice() );
 			}
 		}
 	}
