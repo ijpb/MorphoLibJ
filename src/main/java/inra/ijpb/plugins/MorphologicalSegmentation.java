@@ -453,7 +453,16 @@ public class MorphologicalSegmentation implements PlugIn {
 			while( 	ic.getWidth() < screenWidth/2 &&
 				ic.getHeight() < screenHeight/2 &&
 				ic.getMagnification() < 32.0 )			
-			    IJ.run( imp, "In","" );
+			    {
+    				final int canvasWidth = ic.getWidth();
+    				ic.zoomIn( 0, 0 );
+    				// check if canvas size changed (otherwise stop zooming)
+    				if( canvasWidth == ic.getWidth() )
+    				{
+    					ic.zoomOut(0, 0);
+    					break;
+    				}
+			    }
 
 			setTitle( "Morphological Segmentation" );
 
