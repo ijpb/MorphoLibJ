@@ -1279,7 +1279,7 @@ public class MorphologicalSegmentation implements PlugIn {
 				if( null != watershedResult )
 				{
 					watershedResult.show();
-					watershedResult.setSlice( displayImage.getSlice() );
+					watershedResult.setSlice( displayImage.getCurrentSlice() );
 				}
 
 				// Macro recording	
@@ -1625,7 +1625,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		displayImage = new ImagePlus( inputImage.getTitle(), 
 				inputStackCopy );
 		displayImage.setTitle("Morphological Segmentation");
-		displayImage.setSlice( inputImage.getSlice() );
+		displayImage.setSlice( inputImage.getCurrentSlice() );
 
 		// hide input image (to avoid accidental closing)
 		inputImage.getWindow().setVisible( false );
@@ -1791,7 +1791,7 @@ public class MorphologicalSegmentation implements PlugIn {
 			if( null != result )
 			{
 				result.show();
-				result.setSlice( win.getImagePlus().getSlice() );
+				result.setSlice( win.getImagePlus().getCurrentSlice() );
 			}
 		}
 	}
