@@ -1219,7 +1219,7 @@ public class MorphologicalSegmentation implements PlugIn {
 						String[] arg = new String[] {
 								"tolerance=" + Double.toString( dynamic ),
 								"calculateDams=" + calculateDams,
-								"connectivity=" + Integer.toString( connectivity ) };
+								"connectivity=" + Integer.toString( readConn ) };
 						record( RUN_SEGMENTATION, arg );
 					}
 				};
