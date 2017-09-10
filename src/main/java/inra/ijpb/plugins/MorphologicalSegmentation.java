@@ -1588,7 +1588,6 @@ public class MorphologicalSegmentation implements PlugIn {
 	void enableGradientOptions( boolean enabled )
 	{
 		gradientList.setEnabled( enabled );
-		gradientList.setEnabled( enabled );
 		gradientRadiusSizeLabel.setEnabled( enabled );
 		gradientRadiusSizeText.setEnabled( enabled );
 		gradientCheckBox.setEnabled( enabled );
