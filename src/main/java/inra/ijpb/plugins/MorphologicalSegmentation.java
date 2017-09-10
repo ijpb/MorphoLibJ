@@ -163,7 +163,7 @@ public class MorphologicalSegmentation implements PlugIn {
 	/** gradient type label */
 	JLabel gradientTypeLabel;
 	/** gradient list of options */
-	String[] gradientOptions = new String[]{ "Morphological" };
+	String[] gradientOptions = new String[]{ "Morphological", "Internal", "External" };
 	/** gradient combo box */
 	JComboBox<String> gradientList;		
 	/** gradient radius size panel */
@@ -322,6 +322,8 @@ public class MorphologicalSegmentation implements PlugIn {
 
 	/** name of the macro method to set the gradient radius */
 	public static String SET_RADIUS = "setGradientRadius";
+	/** name of the macro method to set the gradient method */
+	public static String SET_GRADIENT_TYPE = "setGradientType";
 	
 	/** name of the macro method to merge selected labels */
 	public static String MERGE_LABELS = "mergeLabels";
@@ -1059,19 +1061,33 @@ public class MorphologicalSegmentation implements PlugIn {
 							}
 
 							final long t1 = System.currentTimeMillis();
-							IJ.log( "Applying morphological gradient to input image..." );
+							String extra = "";
+							if( gradientList.getSelectedItem().equals("Internal") )
+								extra = " internal";
+							else if( gradientList.getSelectedItem().equals("External") )
+								extra = " external";
+							IJ.log( "Applying morphological"+ extra +" gradient to input image..." );
 
 							if ( image.getSize() > 1 )
 							{
 								Strel3D strel = Strel3D.Shape.CUBE.fromRadius( gradientRadius );
-								image = Morphology.gradient( image, strel );
-								//(new ImagePlus("gradient", image) ).show();
+								if( gradientList.getSelectedItem().equals("Internal") )
+									image = Morphology.internalGradient( image, strel );
+								else if( gradientList.getSelectedItem().equals("External") )
+									image = Morphology.externalGradient( image, strel );
+								else
+									image = Morphology.gradient( image, strel );
 							}
 							else
 							{
 								Strel strel = Strel.Shape.SQUARE.fromRadius( gradientRadius );
-								ImageProcessor gradient = 
-										Morphology.gradient( image.getProcessor( 1 ), strel );
+								ImageProcessor gradient = null;
+								if( gradientList.getSelectedItem().equals("Internal") )
+									gradient = Morphology.internalGradient( image.getProcessor( 1 ), strel );
+								else if( gradientList.getSelectedItem().equals("External") )
+									gradient = Morphology.internalGradient( image.getProcessor( 1 ), strel );
+								else
+									gradient = Morphology.gradient( image.getProcessor( 1 ), strel );
 								image = new ImageStack(image.getWidth(), image.getHeight());
 								image.addSlice(gradient);								
 							}
@@ -1080,11 +1096,14 @@ public class MorphologicalSegmentation implements PlugIn {
 							gradientStack = image;
 
 							final long t2 = System.currentTimeMillis();
-							IJ.log( "Morphological gradient took " + (t2-t1) + " ms.");
+							IJ.log( "Morphological" + extra + " gradient took " + (t2-t1) + " ms.");
 							
 							// macro recording
 							String[] arg = new String[] { gradientRadiusSizeText.getText() };
 							record( SET_RADIUS, arg );
+
+							arg = new String[] { (String) gradientList.getSelectedItem() };
+							record( SET_GRADIENT_TYPE, arg );
 						}
 
 						IJ.log( "Running extended minima with dynamic value " + dynamic + "..." );
@@ -1529,7 +1548,17 @@ public class MorphologicalSegmentation implements PlugIn {
 				gradientRadiusSizeText.setText( String.valueOf( radius ) );
 			}
 		}
-		
+		/**
+		 * Set the gradient method
+		 * @param method gradient calculation method name
+		 */
+		void setGradientType( String method )
+		{
+			if( null != method )
+			{
+				gradientList.setSelectedItem( method );
+			}
+		}
 	}// end class CustomWindow
 
 
@@ -1859,5 +1888,17 @@ public class MorphologicalSegmentation implements PlugIn {
 			win.setGradientRadius( Integer.parseInt( radius ) );			
 		}
 	}
-	
+	/**
+	 * Set the gradient method to use
+	 * @param method name of the gradient method to use
+	 */
+	public static void setGradientType( String method )
+	{
+		final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
+		if( iw instanceof CustomWindow )
+		{
+			final CustomWindow win = (CustomWindow) iw;
+			win.setGradientType( method );
+		}
+	}
 }// end MorphologicalSegmentation class
