@@ -921,9 +921,9 @@ public class MorphologicalSegmentation implements PlugIn {
 		 * 
 		 * @param dynamic dynamic value
 		 */
-		void setDynamic( int dynamic )
+		void setDynamic( double dynamic )
 		{
-			dynamicText.setText( Integer.toString(dynamic) );
+			dynamicText.setText( Double.toString(dynamic) );
 		}
 
 		/**
@@ -1087,11 +1087,11 @@ public class MorphologicalSegmentation implements PlugIn {
 							record( SET_RADIUS, arg );
 						}
 
-						IJ.log( "Running extended minima with dynamic value " + (int)dynamic + "..." );
+						IJ.log( "Running extended minima with dynamic value " + dynamic + "..." );
 						final long step0 = System.currentTimeMillis();				
 
 						// Run extended minima
-						ImageStack regionalMinima = MinimaAndMaxima3D.extendedMinima( image, (int)dynamic, connectivity );
+						ImageStack regionalMinima = MinimaAndMaxima3D.extendedMinima( image, dynamic, connectivity );
 
 						if( null == regionalMinima )
 						{
@@ -1198,7 +1198,7 @@ public class MorphologicalSegmentation implements PlugIn {
 
 						// Record
 						String[] arg = new String[] {
-								"tolerance=" + Integer.toString( (int) dynamic ),
+								"tolerance=" + Double.toString( dynamic ),
 								"calculateDams=" + calculateDams,
 								"connectivity=" + Integer.toString( connectivity ) };
 						record( RUN_SEGMENTATION, arg );
@@ -1695,7 +1695,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		{
 			//IJ.log( "GUI detected" );			
 			final CustomWindow win = (CustomWindow) iw;
-			win.setDynamic( Integer.parseInt( dynamic.replace( "tolerance=", "" ) ) );
+			win.setDynamic( Double.parseDouble( dynamic.replace( "tolerance=", "" ) ) );
 			win.setCalculateDams( calculateDams.contains( "true" ) );
 			win.setConnectivity( Integer.parseInt( connectivity.replace( "connectivity=", "" ) ) );
 			win.runSegmentation( win.getSegmentText() );			
@@ -1720,7 +1720,7 @@ public class MorphologicalSegmentation implements PlugIn {
 		{
 			//IJ.log( "GUI detected" );			
 			final CustomWindow win = (CustomWindow) iw;
-			win.setDynamic( Integer.parseInt( dynamic.replace( "tolerance=", "" ) ) );
+			win.setDynamic( Double.parseDouble( dynamic.replace( "tolerance=", "" ) ) );
 			win.setCalculateDams( calculateDams.contains( "true" ) );
 			win.setConnectivity( Integer.parseInt( connectivity.replace( "connectivity=", "" ) ) );
 			win.runSegmentation( win.getSegmentText() );			
