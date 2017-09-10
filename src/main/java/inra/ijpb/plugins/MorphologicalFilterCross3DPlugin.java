@@ -92,7 +92,7 @@ public class MorphologicalFilterCross3DPlugin implements PlugIn {
 
 		// Display the result image
 		resPlus.show();
-		resPlus.setSlice(imagePlus.getSlice());
+		resPlus.setSlice(imagePlus.getCurrentSlice());
 
 		// Display elapsed time
 		long t1 = System.currentTimeMillis();

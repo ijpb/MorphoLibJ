@@ -51,7 +51,7 @@ public class RemoveLargestRegionPlugin implements PlugIn {
 		resultPlus.show();
 		if (imagePlus.getStackSize() > 1) {
 			resultPlus.setZ(imagePlus.getZ());
-			resultPlus.setSlice(imagePlus.getSlice());
+			resultPlus.setSlice(imagePlus.getCurrentSlice());
 		}
 		
 	

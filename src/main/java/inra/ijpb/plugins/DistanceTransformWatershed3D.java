@@ -169,7 +169,7 @@ public class DistanceTransformWatershed3D implements PlugIn
 
 		// Display the result image
 		result.show();
-		result.setSlice( image.getSlice() );
+		result.setSlice( image.getCurrentSlice() );
 
 		// Display elapsed time
 		long t1 = System.currentTimeMillis();

@@ -93,7 +93,7 @@ public class LabelingPlugin implements PlugIn
 		if (!isPlanar)
 		{
 			resultPlus.setZ(imagePlus.getZ());
-			resultPlus.setSlice(imagePlus.getSlice());
+			resultPlus.setSlice(imagePlus.getCurrentSlice());
 		}
 	}
 

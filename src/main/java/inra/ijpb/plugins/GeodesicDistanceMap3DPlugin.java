@@ -172,7 +172,7 @@ public class GeodesicDistanceMap3DPlugin implements PlugIn
 
 		// copy calibration settings
 		resultPlus.copyScale(maskPlus);
-		resultPlus.setSlice(markerPlus.getSlice());
+		resultPlus.setSlice(markerPlus.getCurrentSlice());
 
 		// setup display options
 		double maxVal = findMaxWithinMask(resultPlus, maskPlus);

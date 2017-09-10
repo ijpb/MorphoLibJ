@@ -106,7 +106,7 @@ public class ExpandLabelsPlugin implements PlugIn
         // For 3D images, choose same slice as original
 		if (imagePlus.getStackSize() > 1)
 		{
-			int newSlice = (int) Math.floor(imagePlus.getSlice() * (1.0 + expandRatio / 100.0));
+			int newSlice = (int) Math.floor(imagePlus.getCurrentSlice() * (1.0 + expandRatio / 100.0));
 			resultPlus.setSlice(newSlice);
 		}
 	}

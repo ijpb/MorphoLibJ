@@ -69,7 +69,7 @@ public class FillHolesPlugin implements PlugIn
 		
 		if (imagePlus.getStackSize() > 1) 
 		{
-			resultPlus.setSlice(imagePlus.getSlice());
+			resultPlus.setSlice(imagePlus.getCurrentSlice());
 		}
 		
 		 IJUtils.showElapsedTime("Fill Holes", elapsedTime, imagePlus);

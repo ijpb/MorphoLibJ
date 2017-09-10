@@ -382,7 +382,7 @@ public class LabelEdition implements PlugIn
 			{
 				final ImagePlus result = displayImage.duplicate();
 				result.setTitle( inputImage.getShortTitle() + "-edited" );
-				result.setSlice( displayImage.getSlice() );
+				result.setSlice( displayImage.getCurrentSlice() );
 				result.show();
 			}
 
@@ -607,7 +607,7 @@ public class LabelEdition implements PlugIn
 		displayImage = new ImagePlus( inputImage.getTitle(), 
 				inputStackCopy );
 		displayImage.setTitle( "Label Edition" );
-		displayImage.setSlice( inputImage.getSlice() );
+		displayImage.setSlice( inputImage.getCurrentSlice() );
 		displayImage.setCalibration( inputImage.getCalibration() );
 
 		// hide input image (to avoid accidental closing)

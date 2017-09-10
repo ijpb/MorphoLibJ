@@ -178,7 +178,7 @@ public class ImposeMinAndMax3DPlugin implements PlugIn {
 		ImagePlus resultImage = new ImagePlus(newName, recProc);
 		resultImage.copyScale(markerImage);
 		resultImage.show();
-		resultImage.setSlice(refImage.getSlice());
+		resultImage.setSlice(refImage.getCurrentSlice());
 
 		long t1 = System.currentTimeMillis();
 		IJUtils.showElapsedTime(op.toString(), t1 - t0, refImage);

@@ -96,7 +96,7 @@ public class RemoveBorderLabelsPlugin implements PlugIn {
 		if (isStack)
 		{
 			resultPlus.setZ(imagePlus.getZ());
-			resultPlus.setSlice(imagePlus.getSlice());
+			resultPlus.setSlice(imagePlus.getCurrentSlice());
 		}
 	}
 	/**

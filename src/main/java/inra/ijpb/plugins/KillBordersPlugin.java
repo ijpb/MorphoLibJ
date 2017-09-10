@@ -71,7 +71,7 @@ public class KillBordersPlugin implements PlugIn
 		
 		if (imagePlus.getStackSize() > 1) 
 		{
-			resultPlus.setSlice(imagePlus.getSlice());
+			resultPlus.setSlice(imagePlus.getCurrentSlice());
 		}
 
 		IJUtils.showElapsedTime("Kill Borders", elapsedTime, imagePlus);

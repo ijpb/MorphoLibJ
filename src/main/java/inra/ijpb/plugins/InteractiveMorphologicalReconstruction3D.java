@@ -226,7 +226,7 @@ public class InteractiveMorphologicalReconstruction3D implements PlugIn
 		}
 		
 		// Display the result image
-		result.setSlice( image.getSlice() );
+		result.setSlice( image.getCurrentSlice() );
 		result.show();
 
 		long t1 = System.currentTimeMillis();
@@ -329,7 +329,7 @@ public class InteractiveMorphologicalReconstruction3D implements PlugIn
 		// on the mask image
 		else
 		{
-			int slice = mask.getSlice();
+			int slice = mask.getCurrentSlice();
 
 			if( roi.isArea() )
 				markerSlice[ slice-1 ].fill( roi );
@@ -360,7 +360,7 @@ public class InteractiveMorphologicalReconstruction3D implements PlugIn
 		ImagePlus resultPlus = new ImagePlus( newName, result );
 		resultPlus.copyScale( mask );
 
-		resultPlus.setSlice( mask.getSlice() );
+		resultPlus.setSlice( mask.getCurrentSlice() );
 		resultPlus.show();
 
 		return resultPlus;

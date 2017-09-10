@@ -103,7 +103,7 @@ public class LabelToValuePlugin implements PlugIn, DialogListener
 		// set up display 
 		if (labelImagePlus.getStackSize() > 1) 
 		{
-			resultPlus.setSlice(labelImagePlus.getSlice());
+			resultPlus.setSlice(labelImagePlus.getCurrentSlice());
 		}
 	}
 

@@ -81,7 +81,7 @@ public class LabelToRgbPlugin implements PlugIn
 		resPlus.show();
     	if (imagePlus.getStackSize() > 1) 
     	{
-    		resPlus.setSlice(imagePlus.getSlice());
+    		resPlus.setSlice(imagePlus.getCurrentSlice());
     	}
 	}
 

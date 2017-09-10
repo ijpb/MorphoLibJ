@@ -71,7 +71,7 @@ public class AttributeFiltering
 
 		if (imagePlus.getStackSize() > 1)
 		{
-			resultPlus.setSlice(imagePlus.getSlice());
+			resultPlus.setSlice(imagePlus.getCurrentSlice());
 		}
 		return resultPlus;
 	}

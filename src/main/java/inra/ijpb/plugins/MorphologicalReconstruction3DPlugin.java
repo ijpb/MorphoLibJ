@@ -216,7 +216,7 @@ public class MorphologicalReconstruction3DPlugin implements PlugIn {
 		resultPlus.copyScale(maskPlus);
 		resultPlus.show();
 		
-		resultPlus.setSlice(maskPlus.getSlice());
+		resultPlus.setSlice(maskPlus.getCurrentSlice());
 
 		long t1 = System.currentTimeMillis();
 		IJUtils.showElapsedTime(op.toString(), t1 - t0, markerPlus);

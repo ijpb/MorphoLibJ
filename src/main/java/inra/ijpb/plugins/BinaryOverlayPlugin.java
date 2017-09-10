@@ -90,7 +90,7 @@ public class BinaryOverlayPlugin implements PlugIn {
 		
 		// set up display 
 		if (refImage.getStackSize() > 1) {
-			resultPlus.setSlice(refImage.getSlice());
+			resultPlus.setSlice(refImage.getCurrentSlice());
 		}
 	}
 }

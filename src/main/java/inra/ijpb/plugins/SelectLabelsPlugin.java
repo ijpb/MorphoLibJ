@@ -85,7 +85,7 @@ public class SelectLabelsPlugin implements PlugIn {
         selectedPlus.show();
         if (imagePlus.getStackSize() > 1)
         {	
-        	selectedPlus.setSlice(imagePlus.getSlice());
+        	selectedPlus.setSlice(imagePlus.getCurrentSlice());
         }
     }
     

@@ -187,7 +187,7 @@ public class ExtendedMinAndMax3DPlugin implements PlugIn {
 				
 		resultPlus.show();
 		
-		resultPlus.setSlice(imagePlus.getSlice());
+		resultPlus.setSlice(imagePlus.getCurrentSlice());
 
 		long t1 = System.currentTimeMillis();
 		IJUtils.showElapsedTime(op.toString(), t1 - t0, imagePlus);
