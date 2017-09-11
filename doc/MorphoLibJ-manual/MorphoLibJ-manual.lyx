@@ -5130,6 +5130,388 @@ Labeled image
 \end_layout
 
 \begin_layout Section
+Interactive Marker-controlled Watershed plugin
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Interactive-Marker-controlled-WS"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Introduction
+\end_layout
+
+\begin_layout Standard
+Similar to the Marker-controlled Watershed plugin, this ImageJ/Fiji plugin
+ segments grayscale images of any type (8, 16 and 32-bit) in 2D and 3D using
+ the marker-controlled watershed algorithm by 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Meyer_1990_jvcir"
+
+\end_inset
+
+.and it floods the image from specific seed points, but this time 
+\series bold
+the points are introduced interactively by the user
+\series default
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/Interactive-Marker-controlled-Watershed-plugin-overview.png
+	width 90text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Overview of the Interactive Marker-controlled Watershed plugin.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+Interactive Marker-controlled Watershed runs on any open grayscale image,
+ single 2D image or (3D) stack.
+ If no image is open when calling the plugin, an Open dialog will pop up.
+\end_layout
+
+\begin_layout Standard
+The user can pan, zoom in and out, or scroll between slices (if the input
+ image is a stack) in the main canvas as if it were any other ImageJ window.
+ On the left side of the canvas there are three panels of parameters, one
+ with the watershed parameters, one for the output (result) options and
+ one for post-processing the result.
+ All buttons, checkboxes and panels contain a short explanation of their
+ functionality that is displayed when the cursor lingers over them.
+\end_layout
+
+\begin_layout Subsubsection
+Interactive markers
+\end_layout
+
+\begin_layout Standard
+In this plugin the markers are introduced interactively by the user using
+ any of the selection tools.
+ By default, the point selection tool will be enabled in the main ImageJ
+ toolbar.
+ To select markers on different slices, one option is to use the point selection
+ tool and keep the SHIFT key pressed each time you click to set a new marker.
+ Another possibility is to use the ROI Manager.
+ In that case, all selected ROIs in the manager will be used as markers
+ (see Fig.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Interactive-Marker-controlled-WS"
+
+\end_inset
+
+for examples of selections used as markers).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/Interactive-Marker-controlled-Watershed-markers.png
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Example-of-interactive-markers"
+
+\end_inset
+
+Example of interactive markers introduced by the user.
+ From left to right: point selections, rectangular selections and free-hand
+ selections (stored in the ROI Manager).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Watershed Segmentation panel
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename images/Interactive-Marker-controlled-Watershed-WS-panel.png
+	width 40text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This panel is reserved to the parameters involved in the segmentation pipeline:
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Calculate dams
+\series default
+: un-check this option to produce segmentations without watershed lines.
+ 
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Connectivity
+\series default
+: voxel connectivity (4-8 in 2D, and 6-26 in 3D).
+ Selecting non-diagonal connectivity (4 or 6) usually provides more rounded
+ objects.
+ 
+\end_layout
+
+\begin_layout Standard
+Finally, 
+\series bold
+click on “Run” to launch the segmentation
+\series default
+.
+ If your segmentation is taking too long or you want 
+\series bold
+to stop it
+\series default
+ for any reason, you can do so by clicking on the same button (which should
+ read “STOP” during that process).
+\end_layout
+
+\begin_layout Subsubsection
+Results panel
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename images/Morphological-segmentation-results-panel.png
+	width 40text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Only enabled after running the segmentation.
+ 
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Display
+\series default
+: list of options to display the segmentation results (see Fig.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:MS-display-options"
+
+\end_inset
+
+).
+ 
+\begin_inset Separator latexpar
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\series bold
+Overlaid basins
+\series default
+: colored objects overlaying the input image (with or without dams depending
+ on the selected option in the Watershed Segmentation panel).
+ 
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Overlaid dams
+\series default
+: overlay the watershed dams in red on top of the input image (only works
+ if “Calculate dams” is checked).
+ 
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Catchment basins
+\series default
+: colored objects.
+ 
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Watershed lines
+\series default
+: binary image showing the watershed lines in black and the objects in white
+ (only works if “Calculate dams” is checked).
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\series bold
+Show result overlay
+\series default
+: toggle result overlay.
+ 
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Create image button
+\series default
+: create a new image with the results displayed in the canvas.
+\end_layout
+
+\begin_layout Subsubsection
+Post-processing panel
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename images/Morphological-segmentation-post-processing-panel.png
+	width 40text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Similarly to the Results panel, this panel only gets enabled after running
+ the segmentation pipeline.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Merge labels
+\series default
+: merge together labels selected by either the 
+\series bold
+
+\begin_inset Quotes eld
+\end_inset
+
+freehand
+\begin_inset Quotes erd
+\end_inset
+
+ selection tool
+\series default
+ (on a single slice) 
+\series bold
+or the point tool
+\series default
+ (on single or multiple slices).
+ The zero-value label belongs to the watershed dams, therefore it will ignored
+ in case of being selected.
+ The first selected label value will be assigned to the rest of selected
+ labels, which will share its color.
+ 
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+\color red
+Note
+\series default
+\color inherit
+: to select labels on different slices, use the point selection tool and
+ keep the SHIFT key pressed each time you click on a new label.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Shuffle colors
+\series default
+: randomly re-assign colors to the labels.
+ This is a very handy option whenever two adjacent labels present a similar
+ color.
+\end_layout
+
+\begin_layout Section
 Morphological Segmentation plugin
 \end_layout
 
@@ -5203,11 +5585,11 @@ Morphological Segmentation runs on any open grayscale image, single 2D image
 \begin_layout Standard
 The user can pan, zoom in and out, or scroll between slices (if the input
  image is a stack) in the main canvas as if it were any other ImageJ window.
- On the left side of the canvas there are three panels of parameters, one
- for the input image, one with the watershed parameters and one for the
- output options.
- All buttons, checkboxes and input panels contain a short explanation of
- their functionality that is displayed when the cursor lingers over them.
+ On the left side of the canvas there are four panels of parameters, one
+ for the input image, one with the watershed parameters, one for the output
+ options and one for post-processing the resulting labels.
+ All buttons, checkboxes and panels contain a short explanation of their
+ functionality that is displayed when the cursor lingers over them.
 \end_layout
 
 \begin_layout Standard
@@ -5481,6 +5863,12 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:MS-display-options"
+
+\end_inset
+
 Examples of the 4 different display options.
 \end_layout
 
