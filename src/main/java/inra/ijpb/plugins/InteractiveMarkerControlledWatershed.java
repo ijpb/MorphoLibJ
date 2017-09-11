@@ -757,7 +757,8 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 
 						// get original image info
 						final Roi roi = displayImage.getRoi();
-						if( roi == null )
+						if( roi == null && null == RoiManager.getInstance()
+								|| RoiManager.getInstance().getSelectedIndex() == -1 )
 						{
 							IJ.showMessage( "Please define the markers using for example "
 									+ "the point selection tool." );
@@ -787,8 +788,24 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 						}
 						if( inputIs2D )
 						{
-							// paint ROI
-							if( roi.isArea() )
+							// paint ROI (first checking Roi Manager)
+							if ( null != RoiManager.getInstance() )
+							{
+								RoiManager manager = RoiManager.getInstance();
+								int[] selected = manager.getSelectedIndexes();
+								if( selected.length > 0 )
+								{
+									for( int i=0; i<selected.length; i++ )
+									{
+										final Roi selectedRoi = manager.getRoi( i );
+										if( selectedRoi.isArea() )
+											markerSlice[ 0 ].fill( selectedRoi );
+										else
+											markerSlice[ 0 ].draw( selectedRoi );
+									}
+								}
+							}
+							else if( roi.isArea() )
 								markerSlice[0].fill( roi );
 							else
 								markerSlice[0].draw( roi );
@@ -819,6 +836,8 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 										final Roi selectedRoi = manager.getRoi( i );
 										int slice =
 												manager.getSliceNumber( manager.getName( i ) );
+										if( slice == -1 )
+											slice = displayImage.getCurrentSlice();
 										if( selectedRoi.isArea() )
 											markerSlice[ slice-1 ].fill( selectedRoi );
 										else
