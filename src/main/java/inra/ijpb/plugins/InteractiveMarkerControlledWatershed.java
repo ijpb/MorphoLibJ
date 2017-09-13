@@ -935,7 +935,7 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 						// Record
 						String[] arg = new String[] {
 								"calculateDams=" + calculateDams,
-								"connectivity=" + Integer.toString( connectivity ) };
+								"connectivity=" + Integer.toString( readConn ) };
 						record( RUN_SEGMENTATION, arg );
 					}
 				};
