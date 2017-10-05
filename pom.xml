@@ -7,7 +7,7 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
 		<groupId>org.scijava</groupId>
 		<artifactId>pom-scijava</artifactId>
-		<version>13.0.0</version>
+		<version>17.1.1</version>
 		<relativePath />
 	</parent>
 
