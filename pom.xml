@@ -7,7 +7,7 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
 		<groupId>org.scijava</groupId>
 		<artifactId>pom-scijava</artifactId>
-		<version>13.0.0</version>
+		<version>17.1.1</version>
 		<relativePath />
 	</parent>
 
@@ -95,6 +95,9 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 		<package-name>inra.ijpb</package-name>
 		<license.licenseName>lgpl_v3</license.licenseName>
 		<license.copyrightOwners>INRA.</license.copyrightOwners>
+
+		<!-- NB: Deploy releases to the ImageJ Maven repository. -->
+		<releaseProfiles>deploy-to-imagej</releaseProfiles>
 	</properties>
 
 	<repositories>
