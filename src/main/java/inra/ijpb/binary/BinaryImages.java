@@ -128,7 +128,7 @@ public class BinaryImages
 			int conn, int bitDepth)
 	{
 		ImagePlus labelPlus;
-		int nLabels;
+		double nLabels;
 	
 		// Dispatch processing depending on input image dimensionality
 		if (imagePlus.getStackSize() == 1)
@@ -155,19 +155,19 @@ public class BinaryImages
 	 * Computes maximum value in the input 2D image.
 	 * This method is used to compute display range of result ImagePlus.
 	 */
-	private final static int findMax(ImageProcessor image) 
+	private final static double findMax(ImageProcessor image) 
 	{
 		// get image size
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		
-		// find maximum value over voxels
-		int maxVal = 0;
+		// find maximum value over pixels
+		double maxVal = 0;
 		for (int y = 0; y < sizeY; y++) 
 		{
 			for (int x = 0; x < sizeX; x++) 
 			{
-				maxVal = Math.max(maxVal, image.get(x, y));
+				maxVal = Math.max(maxVal, image.getf(x, y));
 			}
 		}
 		
@@ -178,7 +178,7 @@ public class BinaryImages
 	 * Computes maximum value in the input 3D image.
 	 * This method is used to compute display range of result ImagePlus.
 	 */
-	private final static int findMax(ImageStack image) 
+	private final static double findMax(ImageStack image) 
 	{
 		// get image size
 		int sizeX = image.getWidth();
@@ -186,14 +186,14 @@ public class BinaryImages
 		int sizeZ = image.getSize();
 	
 		// find maximum value over voxels
-		int maxVal = 0;
+		double maxVal = 0;
 		for (int z = 0; z < sizeZ; z++) 
 		{
 			for (int y = 0; y < sizeY; y++) 
 			{
 				for (int x = 0; x < sizeX; x++) 
 				{
-					maxVal = Math.max(maxVal, (int) image.getVoxel(x, y, z));
+					maxVal = Math.max(maxVal, image.getVoxel(x, y, z));
 				}
 			}
 		}

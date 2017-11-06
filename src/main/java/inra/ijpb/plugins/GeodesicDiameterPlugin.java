@@ -102,7 +102,7 @@ public class GeodesicDiameterPlugin implements PlugIn
 		int labelImageIndex = gd.getNextChoiceIndex();
 		ImagePlus labelPlus = WindowManager.getImage(labelImageIndex+1);
 		ChamferWeights weights = ChamferWeights.fromLabel(gd.getNextChoice());
-		boolean overlayPaths = gd.getNextBoolean();
+        boolean overlayPaths = gd.getNextBoolean();
 		int resultImageIndex = gd.getNextChoiceIndex();
 		boolean createPathRois = gd.getNextBoolean();
 		
@@ -129,46 +129,51 @@ public class GeodesicDiameterPlugin implements PlugIn
 		int gdIndex = table.getColumnIndex("Geod. Diam");
 		double[] geodDiamArray = table.getColumnAsDoubles(gdIndex);
 		
-		boolean validPaths = true;
-		for (double geodDiam : geodDiamArray)
+		if (overlayPaths || createPathRois)
 		{
-			if (Float.isInfinite((float) geodDiam))
-			{
-				IJ.showMessage("Geodesic Diameter Warning", "Some geodesic diameters are infinite,\n"
-						+ "meaning that some particles are not connected.\n" + "Maybe labeling was not performed?");
-				validPaths = false;
-				break;
-			}
+    		boolean validPaths = true;
+    		for (double geodDiam : geodDiamArray)
+    		{
+    			if (Float.isInfinite((float) geodDiam))
+    			{
+    				IJ.showMessage("Geodesic Diameter Warning", "Some geodesic diameters are infinite,\n"
+    						+ "meaning that some particles are not connected.\n" + "Maybe labeling was not performed?");
+    				validPaths = false;
+    				break;
+    			}
+    		}
+		
+    		
+    		if (validPaths)
+    		{
+    			// compute the path that is associated to each label
+    			Map<Integer, List<Point>> pathMap = null;
+    			try
+    			{
+    				pathMap = computePaths(labelImage, weights.getFloatWeights());
+    			}
+    			catch (Exception ex)
+    			{
+    				IJ.error("Geodesic Diameter Error", 
+    						"Could not compute geodesic paths.\nTry using Borgefors weights.");
+    				return;
+    			}
+    			
+    			// Check if results must be displayed on an image
+    			if (overlayPaths) 
+    			{
+    				// New image for displaying geometric overlays
+    				ImagePlus resultImage = WindowManager.getImage(resultImageIndex+1);
+    				drawPaths(resultImage, pathMap);
+    			}
+    			
+    			if (createPathRois)
+    			{
+    				createPathRois(labelPlus, pathMap);
+    			}
+    		}
 		}
 		
-		if (validPaths)
-		{
-			// compute the path that is associated to each label
-			Map<Integer, List<Point>> pathMap = null;
-			try
-			{
-				pathMap = computePaths(labelImage, weights.getFloatWeights());
-			}
-			catch (Exception ex)
-			{
-				IJ.error("Geodesic Diameter Error", 
-						"Could not compute geodesic paths.\nTry using Borgefors weights.");
-				return;
-			}
-			
-			// Check if results must be displayed on an image
-			if (overlayPaths) 
-			{
-				// New image for displaying geometric overlays
-				ImagePlus resultImage = WindowManager.getImage(resultImageIndex+1);
-				drawPaths(resultImage, pathMap);
-			}
-			
-			if (createPathRois)
-			{
-				createPathRois(labelPlus, pathMap);
-			}
-		}
 		IJ.showStatus(String.format("Elapsed time: %8.2f ms", elapsedTime));	
 	}
 

@@ -130,10 +130,6 @@ public class GeodesicDiameter3DFloat extends AlgoStub implements GeodesicDiamete
 		// The array that stores Chamfer distances 
 		ImageStack distanceMap;
 		
-		Cursor3D[] posCenter;
-		Cursor3D[] pos1;
-		Cursor3D[] pos2;
-		
 		// Initialize mask as binarisation of labels
 		ImageStack mask = BinaryImages.binarize(labelImage);
 		
@@ -147,7 +143,7 @@ public class GeodesicDiameter3DFloat extends AlgoStub implements GeodesicDiamete
 		distanceMap = geodDistMapAlgo.geodesicDistanceMap(marker, mask);
 		
 		// Extract position of maxima
-		posCenter = findPositionOfMaxValues(distanceMap, labelImage, labels);
+		Cursor3D[] posCenter = findPositionOfMaxValues(distanceMap, labelImage, labels);
 		
 		float[] radii = findMaxValues(distanceMap, labelImage, labels);
 		
@@ -173,7 +169,7 @@ public class GeodesicDiameter3DFloat extends AlgoStub implements GeodesicDiamete
 
 		// find position of maximal value,
 		// this is expected to correspond to a geodesic extremity 
-		pos1 = findPositionOfMaxValues(distanceMap, labelImage, labels);
+		Cursor3D[] pos1 = findPositionOfMaxValues(distanceMap, labelImage, labels);
 		
 		// Create new marker image with position of maxima
 		Images3D.fill(marker, 0);
@@ -198,7 +194,7 @@ public class GeodesicDiameter3DFloat extends AlgoStub implements GeodesicDiamete
 		// compute max distance constrained to each label,
 		float[] values = findMaxValues(distanceMap, labelImage, labels);
 		//System.out.println("value: " + value);
-		pos2 = findPositionOfMaxValues(distanceMap, labelImage, labels);
+		Cursor3D[] pos2 = findPositionOfMaxValues(distanceMap, labelImage, labels);
 		
 		
 		// Initialize a new results table
@@ -209,7 +205,7 @@ public class GeodesicDiameter3DFloat extends AlgoStub implements GeodesicDiamete
 		{
 			// Small conversion to normalize to pixel distances
 			double radius = ((double) radii[i]) / weights[0];
-			double value = ((double) values[i]) / weights[0];
+			double value = ((double) values[i]) / weights[0] + 1;
 			
 			// add an entry to the resulting data table
 			table.incrementCounter();

@@ -81,7 +81,7 @@ public class LabelingPlugin implements PlugIn
 			return;
 		}
 		
-		// udpate meta information of result image
+		// update meta information of result image
 		String newName = imagePlus.getShortTitle() + "-lbl";
 		resultPlus.setTitle(newName);
 		resultPlus.copyScale(imagePlus);
