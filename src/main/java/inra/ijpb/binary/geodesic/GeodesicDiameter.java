@@ -34,12 +34,11 @@ import inra.ijpb.algo.Algo;
  * Example of use:
  *
  * <pre>
- * {
- * 	&#064;code
- * 	float[] weights = ChamferWeights.CHESSKNIGHT.getFloatWeights();
+ * {@code
+ * 	ChamferWeights weights = ChamferWeights.CHESSKNIGHT;
  * 	GeodesicDiameter gd = new GeodesicDiameterFloat(weights);
  * 	ResultsTable table = gd.analyseImage(inputLabelImage);
- * 	table.show(&quot;Geodesic Diameter&quot;);
+ * 	table.show("Geodesic Diameter");
  * }
  * </pre>
  *

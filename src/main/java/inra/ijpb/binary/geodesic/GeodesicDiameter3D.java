@@ -32,6 +32,12 @@ import inra.ijpb.algo.Algo;
  * 
  * <p>
  * Example of use:
+ *<pre>{@code
+ *	GeodesicDiameterFloat3D gd3d = new GeodesicDiameter3DFloat(ChamferWeights3D.BORGEFORS);
+ *	ResultsTable table = gd3d.process(inputLabelImage);
+ *	table.show("Geodesic Diameter 3D");
+ *}</pre>
+ *
  *
  * @see inra.ijpb.binary.geodesic.GeodesicDiameter3DFloat
  * 
