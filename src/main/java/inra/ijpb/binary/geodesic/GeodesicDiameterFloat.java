@@ -65,6 +65,29 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 	 * neighbors
 	 */
 	float[] weights;
+
+	/**
+	 * The algorithm used for computing geodesic distances.
+	 */
+	GeodesicDistanceTransform calculator;
+
+	/**
+	 * An array of shifts corresponding to the weights, for computing geodesic
+	 * longest paths.
+	 */
+	int[][] shifts;
+	
+	/**
+	 * Keep a reference to the label image to dispatch the process into several methods.
+	 */
+	ImageProcessor labelImage;
+	
+	/**
+	 * The array that stores Chamfer distances. The content of the array will
+	 * change during the different steps of the algorithms.
+	 */
+	ImageProcessor distanceMap;
+
 	
 	// ==================================================
 	// Constructors 
@@ -78,7 +101,7 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 	 */
 	public GeodesicDiameterFloat(ChamferWeights chamferWeights)
 	{
-		this.weights = chamferWeights.getFloatWeights();
+		this(chamferWeights.getFloatWeights());
 	}
 	
 	/**
@@ -91,8 +114,37 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 	public GeodesicDiameterFloat(float[] weights)
 	{
 		this.weights = weights;
+		chooseDistanceCalculator();
 	}
 	
+	/**
+	 * Choose the appropriate instance of GeodesicDistanceTransform depending on
+	 * the length of the weight array.
+	 */
+	private void chooseDistanceCalculator()
+	{
+		// Create calculator for propagating distances
+		if (weights.length == 3)
+		{
+			calculator = new GeodesicDistanceTransformFloat5x5(weights, false);
+			shifts = new int[][]{
+					          {-1, -2}, {0, -2}, {+1, -2},  
+					{-2, -1}, {-1, -1}, {0, -1}, {+1, -1}, {+2, -1}, 
+					{-2,  0}, {-1,  0},          {+1,  0}, {+2,  0},  
+					{-2, +1}, {-1, +1}, {0, +1}, {+1, +1}, {+2, +1},  
+					          {-1, +2}, {0, +2}, {+1, +2},  
+			};
+		} 
+		else 
+		{
+			calculator = new GeodesicDistanceTransformFloat(weights, false);
+			shifts = new int[][]{
+					{-1, -1}, {0, -1}, {+1, -1}, 
+					{-1,  0},          {+1,  0}, 
+					{-1, +1}, {0, +1}, {+1, +1}, 
+			};
+		}
+	}
 
 	// ==================================================
 	// General methods 
@@ -111,25 +163,12 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 	{
 		// Check validity of parameters
 		if (labelImage==null) return null;
+		this.labelImage = labelImage;
 		
 		// extract labels
         this.fireStatusChanged(this, "Count labels in image");
         int[] labels = LabelImages.findAllLabels(labelImage);
 		int nbLabels = labels.length;
-		
-		// Create calculator for propagating distances
-		GeodesicDistanceTransform calculator;
-		if (weights.length == 3)
-		{
-			calculator = new GeodesicDistanceTransformFloat5x5(weights, false);
-		} 
-		else 
-		{
-			calculator = new GeodesicDistanceTransformFloat(weights, false);
-		}
-			
-		// The array that stores Chamfer distances (re-computed at each step)
-		ImageProcessor distance;
 		
 		this.fireStatusChanged(this, "Compute binary masks");
 
@@ -142,12 +181,12 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 		this.fireStatusChanged(this, "Initializing pseudo geodesic centers...");
 
 		// first distance propagation to find an arbitrary center
-		distance = calculator.geodesicDistanceMap(marker, mask);
+		distanceMap = calculator.geodesicDistanceMap(marker, mask);
 		
 		// Extract position of maxima
-		Point[] posCenter = findPositionOfMaxValues(distance, labelImage, labels);
+		Point[] posCenter = LabelImages.findPositionOfMaxValues(distanceMap, labelImage, labels);
 		
-		float[] radii = findMaxValues(distance, labelImage, labels);
+		float[] radii = findMaxValues(distanceMap, labelImage, labels);
 		
 		// Create new marker image with position of maxima
 		marker.setValue(0);
@@ -167,11 +206,11 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 		this.fireStatusChanged(this, "Computing first geodesic extremities...");
 
 		// Second distance propagation from first maximum
-		distance = calculator.geodesicDistanceMap(marker, mask);
+		distanceMap = calculator.geodesicDistanceMap(marker, mask);
 
 		// find position of maximal value,
 		// this is expected to correspond to a geodesic extremity 
-		Point[] pos1 = findPositionOfMaxValues(distance, labelImage, labels);
+		Point[] pos1 = LabelImages.findPositionOfMaxValues(distanceMap, labelImage, labels);
 		
 		// Create new marker image with position of maxima
 		marker.setValue(0);
@@ -190,12 +229,12 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 		this.fireStatusChanged(this, "Computing second geodesic extremities...");
 
 		// third distance propagation from second maximum
-		distance = calculator.geodesicDistanceMap(marker, mask);
+		distanceMap = calculator.geodesicDistanceMap(marker, mask);
 		
 		// compute max distance constrained to each label,
-		float[] values = findMaxValues(distance, labelImage, labels);
+		float[] values = findMaxValues(distanceMap, labelImage, labels);
 		//System.out.println("value: " + value);
-		Point[] pos2 = findPositionOfMaxValues(distance, labelImage, labels);
+		Point[] pos2 = LabelImages.findPositionOfMaxValues(distanceMap, labelImage, labels);
 		
         // Store results in a new result table
         ResultsTable table = new ResultsTable();
@@ -236,41 +275,12 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 	{
 		// Check validity of parameters
 		if (labelImage==null) return null;
+		this.labelImage = labelImage;
 
 		// extract labels
         int[] labels = LabelImages.findAllLabels(labelImage);
 		int nbLabels = labels.length;
 
-		// Create calculator for propagating distances
-		GeodesicDistanceTransform calculator;
-		int[][] shifts;
-		if (weights.length == 3)
-		{
-			calculator = new GeodesicDistanceTransformFloat5x5(weights, false);
-			shifts = new int[][]{
-					          {-1, -2}, {0, -2}, {+1, -2},  
-					{-2, -1}, {-1, -1}, {0, -1}, {+1, -1}, {+2, -1}, 
-					{-2,  0}, {-1,  0},          {+1,  0}, {+2,  0},  
-					{-2, +1}, {-1, +1}, {0, +1}, {+1, +1}, {+2, +1},  
-					          {-1, +2}, {0, +2}, {+1, +2},  
-			};
-		} 
-		else 
-		{
-			calculator = new GeodesicDistanceTransformFloat(weights, false);
-			shifts = new int[][]{
-					{-1, -1}, {0, -1}, {+1, -1}, 
-					{-1,  0},          {+1,  0}, 
-					{-1, +1}, {0, +1}, {+1, +1}, 
-			};
-		}
-
-		// Initialize a new result table
-		Map<Integer, List<Point>> result = new TreeMap<Integer, List<Point>>();
-
-		// The array that stores Chamfer distances 
-		ImageProcessor distance;
-		
 		// Initialize mask as binarisation of labels
 		ImageProcessor mask = BinaryImages.binarize(labelImage);
 		
@@ -280,10 +290,10 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 		this.fireStatusChanged(this, "Initializing pseudo geodesic centers...");
 
 		// first distance propagation to find an arbitrary center
-		distance = calculator.geodesicDistanceMap(marker, mask);
+		distanceMap = calculator.geodesicDistanceMap(marker, mask);
 		
 		// Extract position of maxima
-		Point[] posCenter = findPositionOfMaxValues(distance, labelImage, labels);
+		Point[] posCenter = LabelImages.findPositionOfMaxValues(distanceMap, labelImage, labels);
 		
 		// Create new marker image with position of maxima
 		marker.setValue(0);
@@ -303,11 +313,11 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 		this.fireStatusChanged(this, "Computing first geodesic extremities...");
 
 		// Second distance propagation from first maximum
-		distance = calculator.geodesicDistanceMap(marker, mask);
+		distanceMap = calculator.geodesicDistanceMap(marker, mask);
 
 		// find position of maximal value,
 		// this is expected to correspond to a geodesic extremity 
-		Point[] pos1 = findPositionOfMaxValues(distance, labelImage, labels);
+		Point[] pos1 = LabelImages.findPositionOfMaxValues(distanceMap, labelImage, labels);
 		
 		// Create new marker image with position of maxima
 		marker.setValue(0);
@@ -326,10 +336,16 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 		this.fireStatusChanged(this, "Computing second geodesic extremities...");
 
 		// third distance propagation from second maximum
-		distance = calculator.geodesicDistanceMap(marker, mask);
+		distanceMap = calculator.geodesicDistanceMap(marker, mask);
+
+		// compute position of furthest points
+		Point[] pos2 = LabelImages.findPositionOfMaxValues(distanceMap, labelImage, labels);
+
 		
+		// Initialize a new result table
+		Map<Integer, List<Point>> result = new TreeMap<Integer, List<Point>>();
+
 		// compute paths starting from points with larger distance value
-		Point[] pos2 = findPositionOfMaxValues(distance, labelImage, labels);
 		for (int i = 0; i < labels.length; i++)
 		{
 			int label = labels[i];
@@ -342,7 +358,7 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 			{
 				while (!pos.equals(pos1[i]))
 				{
-					pos = findNextPosition(distance, pos, shifts, labelImage);
+					pos = findLowestNeighborPosition(pos);
 					path.add(pos);
 				}
 			}
@@ -362,21 +378,17 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 	 * Finds the position of the pixel in the neighborhood of pos that have the
 	 * smallest distance and that belongs to the same label as initial position.
 	 * 
-	 * @param distMap
-	 *            the distance map
 	 * @param pos
 	 *            the position of the reference pixel
 	 * @param shifts
 	 *            the list of integer shifts around the reference pixel
-	 * @param LabelImage
-	 *            the array label to check we stay in the same label...
 	 * @return the position of the neighbor with smallest value
 	 */
-	private Point findNextPosition(ImageProcessor distMap, Point pos, int[][] shifts, ImageProcessor labelImage)
+	private Point findLowestNeighborPosition(Point pos)
 	{
 		int refLabel = (int) labelImage.getf(pos.x, pos.y);
 		Point nextPos = pos;
-		float minDist = distMap.getf(pos.x, pos.y);
+		float minDist = distanceMap.getf(pos.x, pos.y);
 		
 		// iterate over neighbors of current pixel
 		for (int i = 0; i < shifts.length; i++)
@@ -386,11 +398,11 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 			int y = pos.y + shifts[i][1];
 			
 			// check neighbor is within image bounds
-			if (x < 0 || x >= distMap.getWidth())
+			if (x < 0 || x >= distanceMap.getWidth())
 			{
 				continue;
 			}
-			if (y < 0 || y >= distMap.getHeight())
+			if (y < 0 || y >= distanceMap.getHeight())
 			{
 				continue;
 			}
@@ -402,7 +414,7 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 			}
 			
 			// compute neighbor value, and compare with current min
-			float dist = distMap.getf(x, y);
+			float dist = distanceMap.getf(x, y);
 			if (dist < minDist)
 			{
 				minDist = dist;
@@ -416,66 +428,6 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 		}
 		
 		return nextPos;
-	}
-
-	/**
-	 * Find one position for each label. 
-	 */
-	private Point[] findPositionOfMaxValues(ImageProcessor image, 
-			ImageProcessor labelImage, int[] labels)
-	{
-		int width 	= labelImage.getWidth();
-		int height 	= labelImage.getHeight();
-		
-		// Compute value of greatest label
-		int nbLabel = labels.length;
-		int maxLabel = 0;
-		for (int i = 0; i < nbLabel; i++)
-			maxLabel = Math.max(maxLabel, labels[i]);
-		
-		// init index of each label
-		// to make correspondence between label value and label index
-		int[] labelIndex = new int[maxLabel+1];
-		for (int i = 0; i < nbLabel; i++)
-			labelIndex[labels[i]] = i;
-				
-		// Init Position and value of maximum for each label
-		Point[] posMax 	= new Point[nbLabel];
-		float[] maxValues = new float[nbLabel];
-		for (int i = 0; i < nbLabel; i++) 
-		{
-			maxValues[i] = -1;
-			posMax[i] = new Point(-1, -1);
-		}
-		
-		// store current value
-		float value;
-		int index;
-		
-		// iterate on image pixels
-		for (int y = 0; y < height; y++) 
-		{
-			for (int x = 0; x < width; x++) 
-			{
-				int label = (int) labelImage.getf(x, y);
-				
-				// do not process pixels that do not belong to particle
-				if (label==0)
-					continue;
-
-				index = labelIndex[label];
-				
-				// update values and positions
-				value = image.getf(x, y);
-				if (value > maxValues[index]) 
-				{
-					posMax[index].setLocation(x, y);
-					maxValues[index] = value;
-				}
-			}
-		}
-				
-		return posMax;
 	}
 
 	/**

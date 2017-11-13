@@ -30,6 +30,7 @@ import java.util.Map;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.measure.ResultsTable;
+import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.binary.ChamferWeights;
 
@@ -71,6 +72,27 @@ public class GeodesicDiameterFloatTest
 
 		assertEquals(71, table.getCounter());
 	}
+
+	/**
+	 * Test method for {@link inra.ijpb.binary.geodesic.GeodesicDiameterFloat#longestGeodesicPaths(ij.process.ImageProcessor)}.
+	 */
+	@Test
+	public void testLongestGeodesicPaths_Rect()
+	{
+		ImageProcessor image = new ByteProcessor(10, 3);
+		for (int x = 1; x < 8; x++)
+		{
+			image.set(x, 1, 255);
+		}
+
+		GeodesicDiameterFloat algo = new GeodesicDiameterFloat(ChamferWeights.BORGEFORS);
+		Map<Integer, List<Point>> pathMap = algo.longestGeodesicPaths(image);
+
+		assertEquals(1, pathMap.size());
+		List<Point> path1 = pathMap.get(255);
+		assertEquals(7, path1.size());
+	}
+
 
 	/**
 	 * Test method for {@link inra.ijpb.binary.geodesic.GeodesicDiameterFloat#longestGeodesicPaths(ij.process.ImageProcessor)}.
