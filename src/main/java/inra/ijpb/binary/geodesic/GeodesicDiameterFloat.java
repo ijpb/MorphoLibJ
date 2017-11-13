@@ -146,6 +146,7 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 		}
 	}
 
+	
 	// ==================================================
 	// General methods 
 
@@ -234,6 +235,7 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 		// compute max distance constrained to each label,
 		float[] values = findMaxValues(distanceMap, labelImage, labels);
 		//System.out.println("value: " + value);
+		
 		Point[] pos2 = LabelImages.findPositionOfMaxValues(distanceMap, labelImage, labels);
 		
         // Store results in a new result table
@@ -259,6 +261,7 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 			table.addValue("y2", pos2[i].y);
 		}
 
+		this.fireStatusChanged(this, "");
 		return table;
 	}
 	
