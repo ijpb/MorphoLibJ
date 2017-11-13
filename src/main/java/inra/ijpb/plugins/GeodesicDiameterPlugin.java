@@ -47,6 +47,7 @@ import inra.ijpb.binary.ChamferWeights;
 import inra.ijpb.binary.geodesic.GeodesicDiameterFloat;
 import inra.ijpb.binary.geodesic.GeodesicDiameterShort;
 import inra.ijpb.label.LabelImages;
+import inra.ijpb.util.IJUtils;
 
 
 /**
@@ -182,7 +183,7 @@ public class GeodesicDiameterPlugin implements PlugIn
     		}
 		}
 		
-		IJ.showStatus(String.format("Elapsed time: %8.2f ms", elapsedTime));	
+		IJUtils.showElapsedTime("Geodesic Diameter", elapsedTime, labelPlus); 
 	}
 
 	
