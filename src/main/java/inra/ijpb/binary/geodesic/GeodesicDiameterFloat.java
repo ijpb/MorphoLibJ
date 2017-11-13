@@ -374,7 +374,7 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 	 */
 	private Point findNextPosition(ImageProcessor distMap, Point pos, int[][] shifts, ImageProcessor labelImage)
 	{
-		int refLabel = labelImage.get(pos.x, pos.y);
+		int refLabel = (int) labelImage.getf(pos.x, pos.y);
 		Point nextPos = pos;
 		float minDist = distMap.getf(pos.x, pos.y);
 		
@@ -417,33 +417,6 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 		
 		return nextPos;
 	}
-
-//	private int[] findAllLabels(ImageProcessor image)
-//	{
-//		int width 	= image.getWidth();
-//		int height 	= image.getHeight();
-//		
-//		TreeSet<Integer> labels = new TreeSet<Integer> ();
-//		
-//        // iterate on image pixels
-//        for (int y = 0; y < height; y++)
-//            for (int x = 0; x < width; x++)
-//            {
-//                labels.add((int) image.getf(x, y));
-//            }
-//		
-//		// remove 0 if it exists
-//		if (labels.contains(0))
-//			labels.remove(0);
-//		
-//		// convert to array
-//		int[] array = new int[labels.size()];
-//		Iterator<Integer> iterator = labels.iterator();
-//		for (int i = 0; i < labels.size(); i++) 
-//			array[i] = iterator.next();
-//		
-//		return array;
-//	}
 
 	/**
 	 * Find one position for each label. 

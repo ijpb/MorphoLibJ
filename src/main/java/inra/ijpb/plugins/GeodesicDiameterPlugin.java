@@ -28,6 +28,7 @@ import ij.gui.GenericDialog;
 import ij.gui.Line;
 import ij.gui.OvalRoi;
 import ij.gui.Overlay;
+import ij.gui.PointRoi;
 import ij.gui.PolygonRoi;
 import ij.gui.Roi;
 import ij.gui.TextRoi;
@@ -43,6 +44,7 @@ import inra.ijpb.label.LabelImages;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -154,6 +156,7 @@ public class GeodesicDiameterPlugin implements PlugIn
     			}
     			catch (Exception ex)
     			{
+    			    IJ.handleException(ex);
     				IJ.error("Geodesic Diameter Error", 
     						"Could not compute geodesic paths.\nTry using Borgefors weights.");
     				return;
@@ -305,30 +308,6 @@ public class GeodesicDiameterPlugin implements PlugIn
 	// Computing functions 
 	
 	/**
-	 * Compute geodesic length of particles, using imageProcessor as input and
-	 * weights as array of float
-	 * 
-	 * @param labels
-	 *            the label image of the particles
-	 * @param weights
-	 *            the weights to use
-	 * @return an array of objects (image name, ImagePlus object)
-	 * @deprecated use process method instead
-	 */
-	@Deprecated
-	public Object[] exec(ImageProcessor labels, float[] weights) 
-	{
-		ResultsTable table = process(labels, weights);
-		
-		// show result
-		table.show("Geodesic Diameters");
-		
-		// return the created array
-		return new Object[]{"Geodesic Diameters", table};
-	}
-
-
-	/**
 	 * Display the result of geodesic parameter extraction as overlay on a given
 	 * image.
 	 * 
@@ -378,26 +357,13 @@ public class GeodesicDiameterPlugin implements PlugIn
 	public void drawPaths(ImagePlus target, Map<Integer, List<Point>> pathMap)
 	{
 		Overlay overlay = new Overlay();
-		Roi roi;
 		
-		for (List<Point> path : pathMap.values())
+		for (Roi roi : pathListToRoiList(pathMap))
 		{
-			int n = path.size();
-			float[] x = new float[n];
-			float[] y = new float[n];
-			int i = 0;
-			for (Point pos : path)
-			{
-				x[i] = pos.x + .5f;
-				y[i] = pos.y + .5f;
-				i++;
-			}
-			roi = new PolygonRoi(x, y, n, Roi.POLYLINE);
-			
-			roi.setStrokeColor(Color.RED);
-			overlay.add(roi);	
+		    roi.setStrokeColor(Color.RED);
+		    overlay.add(roi);
 		}
-		
+
 		target.setOverlay(overlay);
 	}
 	
@@ -409,28 +375,49 @@ public class GeodesicDiameterPlugin implements PlugIn
 	 */
 	public void createPathRois(ImagePlus target, Map<Integer, List<Point>> pathMap)
 	{
-		// get instance of ROI MAnager
+		// get instance of ROI Manager
 		RoiManager manager = RoiManager.getRoiManager();
 		
 		int index = 0;
-		for (List<Point> path : pathMap.values())
+		for (Roi roi : pathListToRoiList(pathMap))
 		{
-			int n = path.size();
-			float[] x = new float[n];
-			float[] y = new float[n];
-			int i = 0;
-			for (Point pos : path)
-			{
-				x[i] = pos.x + .5f;
-				y[i] = pos.y + .5f;
-				i++;
-			}
-			Roi roi = new PolygonRoi(x, y, n, Roi.POLYLINE);
-		
-			manager.add(target, roi, index++);
+		    manager.add(target, roi, index++);
 		}
 	}
 
+	private List<Roi> pathListToRoiList(Map<Integer, List<Point>> pathMap)
+	{
+	    List<Roi> roiList = new ArrayList<Roi>(pathMap.size());
+	    
+        for (List<Point> path : pathMap.values())
+        {
+            if (path.size() > 1)
+            {
+                // Polyline path
+                int n = path.size();
+                float[] x = new float[n];
+                float[] y = new float[n];
+                int i = 0;
+                for (Point pos : path)
+                {
+                    x[i] = pos.x + .5f;
+                    y[i] = pos.y + .5f;
+                    i++;
+                }
+                Roi roi = new PolygonRoi(x, y, n, Roi.POLYLINE);
+                roiList.add(roi);
+            }
+            else
+            {
+                // case of single point particle
+                Point p = path.get(0);
+                Roi roi = new PointRoi(p.x + .5, p.y + .5);
+                roiList.add(roi);
+            }
+        }
+        return roiList;
+	}
+	
 	private static String createResultImageName(ImagePlus baseImage) 
 	{
 		return baseImage.getShortTitle() + "-diam";
