@@ -21,6 +21,12 @@
  */
 package inra.ijpb.plugins;
 
+import java.awt.Color;
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
@@ -37,16 +43,10 @@ import ij.plugin.PlugIn;
 import ij.plugin.frame.RoiManager;
 import ij.process.ImageProcessor;
 import inra.ijpb.algo.DefaultAlgoListener;
+import inra.ijpb.binary.ChamferWeights;
 import inra.ijpb.binary.geodesic.GeodesicDiameterFloat;
 import inra.ijpb.binary.geodesic.GeodesicDiameterShort;
-import inra.ijpb.binary.ChamferWeights;
 import inra.ijpb.label.LabelImages;
-
-import java.awt.Color;
-import java.awt.Point;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -118,7 +118,12 @@ public class GeodesicDiameterPlugin implements PlugIn
 		
 		// Compute geodesic diameters, using floating-point calculations
 		long start = System.nanoTime();
-		ResultsTable table = process(labelImage, weights.getFloatWeights());
+		
+		GeodesicDiameterFloat algo = new GeodesicDiameterFloat(weights);
+		DefaultAlgoListener.monitor(algo);
+		
+		ResultsTable table = algo.analyzeImage(labelImage);
+
 		long finalTime = System.nanoTime();
 		
 		// Final time, displayed in milli-sseconds
@@ -152,7 +157,7 @@ public class GeodesicDiameterPlugin implements PlugIn
     			Map<Integer, List<Point>> pathMap = null;
     			try
     			{
-    				pathMap = computePaths(labelImage, weights.getFloatWeights());
+    				pathMap = algo.longestGeodesicPaths();
     			}
     			catch (Exception ex)
     			{
@@ -180,74 +185,6 @@ public class GeodesicDiameterPlugin implements PlugIn
 		IJ.showStatus(String.format("Elapsed time: %8.2f ms", elapsedTime));	
 	}
 
-	
-	/**
-	 * Computes the geodesic diameter of each particle using floating point weights.
-	 * 
-	 * @param labels
-	 *            the label image representing the particles
-	 * @param newName
-	 *            the name of the image to be created
-	 * @param weights
-	 *            the array of weights for the orthogonal, diagonal directions
-	 * @return an array of objects
-	 */
-	public Object[] exec(ImagePlus labels, String newName, float[] weights) 
-	{
-		// Check validity of parameters
-		if (labels==null) 
-			return null;
-		if (newName==null) 
-			newName = createResultImageName(labels);
-		if (weights==null) 
-			return null;
-		
-		ResultsTable table = process(labels.getProcessor(),
-				weights);
-
-		// create string for indexing results
-		String tableName = labels.getShortTitle() + "-Geodesics"; 
-		
-		// show result
-		table.show(tableName);
-				
-		// return the created array
-		return new Object[]{tableName, table};
-	}
-	
-	/**
-	 * Computes the geodesic diameter of each particle using integer weights.
-	 * 
-	 * @param labels
-	 *            the label image representing the particles
-	 * @param newName
-	 *            the name of the image to be created
-	 * @param weights
-	 *            the array of weights for the orthogonal, diagonal directions
-	 * @return an array of objects
-	 */
-	public Object[] exec(ImagePlus labels, String newName, short[] weights) 
-	{
-		// Check validity of parameters
-		if (labels==null) 
-			return null;
-		if (newName==null) 
-			newName = createResultImageName(labels);
-		if (weights==null) 
-			return null;
-		
-		ResultsTable table = process(labels.getProcessor(), weights);
-		
-		// create string for indexing results
-		String tableName = labels.getShortTitle() + "-Geodesics"; 
-		
-		// show result
-		table.show(tableName);
-		
-		// return the created array
-		return new Object[]{"Geodesic Lengths", table};
-	}
-	
 	
 	// ====================================================
 	// Computing functions 
@@ -288,20 +225,6 @@ public class GeodesicDiameterPlugin implements PlugIn
 		DefaultAlgoListener.monitor(algo);
 		ResultsTable table = algo.analyzeImage(labels);
 		return table;
-	}
-
-//	private Map<Integer, List<Point>> computePaths(ImageProcessor labels, short[] weights)
-//	{
-//		GeodesicDiameterShort algo = new GeodesicDiameterShort(weights);
-//		DefaultAlgoListener.monitor(algo);
-//		return algo.longestGeodesicPaths(labels);
-//	}
-
-	private Map<Integer, List<Point>> computePaths(ImageProcessor labels, float[] weights)
-	{
-		GeodesicDiameterFloat algo = new GeodesicDiameterFloat(weights);
-		DefaultAlgoListener.monitor(algo);
-		return algo.longestGeodesicPaths(labels);
 	}
 
 	// ====================================================
@@ -416,10 +339,5 @@ public class GeodesicDiameterPlugin implements PlugIn
             }
         }
         return roiList;
-	}
-	
-	private static String createResultImageName(ImagePlus baseImage) 
-	{
-		return baseImage.getShortTitle() + "-diam";
 	}
 }

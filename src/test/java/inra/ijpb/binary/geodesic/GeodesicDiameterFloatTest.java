@@ -86,7 +86,8 @@ public class GeodesicDiameterFloatTest
 		}
 
 		GeodesicDiameterFloat algo = new GeodesicDiameterFloat(ChamferWeights.BORGEFORS);
-		Map<Integer, List<Point>> pathMap = algo.longestGeodesicPaths(image);
+		algo.analyzeImage(image);
+		Map<Integer, List<Point>> pathMap = algo.longestGeodesicPaths();
 
 		assertEquals(1, pathMap.size());
 		List<Point> path1 = pathMap.get(255);
@@ -104,7 +105,8 @@ public class GeodesicDiameterFloatTest
 		ImageProcessor image = imagePlus.getProcessor();
 	
 		GeodesicDiameterFloat algo = new GeodesicDiameterFloat(ChamferWeights.CHESSKNIGHT);
-		Map<Integer, List<Point>> pathMap = algo.longestGeodesicPaths(image);
+		algo.analyzeImage(image);
+		Map<Integer, List<Point>> pathMap = algo.longestGeodesicPaths();
 
 		assertEquals(1, pathMap.size());
 	}
@@ -120,7 +122,8 @@ public class GeodesicDiameterFloatTest
     
         // Need to use weights in 3-by-3 neighborhood, to avoid propagating distances to another grain 
         GeodesicDiameterFloat algo = new GeodesicDiameterFloat(ChamferWeights.BORGEFORS);
-        Map<Integer, List<Point>> pathMap = algo.longestGeodesicPaths(image);
+		algo.analyzeImage(image);
+		Map<Integer, List<Point>> pathMap = algo.longestGeodesicPaths();
 
         assertEquals(71, pathMap.size());
     }
@@ -136,7 +139,8 @@ public class GeodesicDiameterFloatTest
     
         // Need to use weights in 3-by-3 neighborhood, to avoid propagating distances to another grain 
         GeodesicDiameterFloat algo = new GeodesicDiameterFloat(ChamferWeights.BORGEFORS);
-        Map<Integer, List<Point>> pathMap = algo.longestGeodesicPaths(image);
+		algo.analyzeImage(image);
+		Map<Integer, List<Point>> pathMap = algo.longestGeodesicPaths();
 
         assertEquals(6, pathMap.size());
         

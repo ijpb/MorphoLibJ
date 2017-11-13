@@ -262,117 +262,6 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 		return table;
 	}
 	
-	/**
-	 * Computes the geodesic path of each particle within the given label image.
-	 * 
-	 * @param labelImage
-	 *            a label image, containing either the label of a particle or
-	 *            region, or zero for background
-	 * @return A map that associate to each integer label the list of positions
-	 *         that constitutes the geodesic path
-	 */
-	public Map<Integer, List<Point>> longestGeodesicPaths(ImageProcessor labelImage) 
-	{
-		// Check validity of parameters
-		if (labelImage==null) return null;
-		this.labelImage = labelImage;
-
-		// extract labels
-        int[] labels = LabelImages.findAllLabels(labelImage);
-		int nbLabels = labels.length;
-
-		// Initialize mask as binarisation of labels
-		ImageProcessor mask = BinaryImages.binarize(labelImage);
-		
-		// Initialize marker as complement of all labels
-		ImageProcessor marker = BinaryImages.binarizeBackground(labelImage);
-
-		this.fireStatusChanged(this, "Initializing pseudo geodesic centers...");
-
-		// first distance propagation to find an arbitrary center
-		distanceMap = calculator.geodesicDistanceMap(marker, mask);
-		
-		// Extract position of maxima
-		Point[] posCenter = LabelImages.findPositionOfMaxValues(distanceMap, labelImage, labels);
-		
-		// Create new marker image with position of maxima
-		marker.setValue(0);
-		marker.fill();
-		for (int i = 0; i < nbLabels; i++) 
-		{
-			if (posCenter[i].x == -1)
-			{
-				IJ.showMessage("Particle Not Found", 
-						"Could not find maximum for particle label " + i);
-				continue;
-			}
-			marker.set(posCenter[i].x, posCenter[i].y, 255);
-		}
-		
-		
-		this.fireStatusChanged(this, "Computing first geodesic extremities...");
-
-		// Second distance propagation from first maximum
-		distanceMap = calculator.geodesicDistanceMap(marker, mask);
-
-		// find position of maximal value,
-		// this is expected to correspond to a geodesic extremity 
-		Point[] pos1 = LabelImages.findPositionOfMaxValues(distanceMap, labelImage, labels);
-		
-		// Create new marker image with position of maxima
-		marker.setValue(0);
-		marker.fill();
-		for (int i = 0; i < nbLabels; i++)
-		{
-			if (pos1[i].x == -1) 
-			{
-				IJ.showMessage("Particle Not Found", 
-						"Could not find maximum for particle label " + i);
-				continue;
-			}
-			marker.set(pos1[i].x, pos1[i].y, 255);
-		}
-		
-		this.fireStatusChanged(this, "Computing second geodesic extremities...");
-
-		// third distance propagation from second maximum
-		distanceMap = calculator.geodesicDistanceMap(marker, mask);
-
-		// compute position of furthest points
-		Point[] pos2 = LabelImages.findPositionOfMaxValues(distanceMap, labelImage, labels);
-
-		
-		// Initialize a new result table
-		Map<Integer, List<Point>> result = new TreeMap<Integer, List<Point>>();
-
-		// compute paths starting from points with larger distance value
-		for (int i = 0; i < labels.length; i++)
-		{
-			int label = labels[i];
-			
-			List<Point> path = new ArrayList<Point>();
-			path.add(pos2[i]);
-			
-			Point pos = pos2[i];
-			try
-			{
-				while (!pos.equals(pos1[i]))
-				{
-					pos = findLowestNeighborPosition(pos);
-					path.add(pos);
-				}
-			}
-			catch(Exception ex)
-			{
-				throw new RuntimeException(String.format("Could not compute path for label %d, at position (%d, %d)",
-						label, pos.x, pos.y));
-			}
-			
-			result.put(label, path);
-		}
-
-		return result;
-	}
 
 	/**
 	 * Computes the geodesic path of each particle within the given label image.
@@ -382,7 +271,7 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 	 * @return A map that associate to each integer label the list of positions
 	 *         that constitutes the geodesic path
 	 */
-	public Map<Integer, List<Point>> computeLongestGeodesicPaths() 
+	public Map<Integer, List<Point>> longestGeodesicPaths() 
 	{
 		// extract labels
         int[] labels = LabelImages.findAllLabels(labelImage);
