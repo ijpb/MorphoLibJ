@@ -246,9 +246,12 @@ public class GeodesicDiameterShort extends AlgoStub implements GeodesicDiameter
 
 		// Create calculator for propagating distances
 		GeodesicDistanceTransform calculator;
-		if (weights.length == 3) {
+		if (weights.length == 3) 
+		{
 			calculator = new GeodesicDistanceTransformShort5x5(weights, false);
-		} else {
+		}
+		else
+		{
 			calculator = new GeodesicDistanceTransformShort(weights, false);
 		}
 
@@ -415,7 +418,7 @@ public class GeodesicDiameterShort extends AlgoStub implements GeodesicDiameter
 		{
 			for (int x = 0; x < width; x++) 
 			{
-				int label = labelImage.get(x, y);
+				int label = (int) labelImage.getf(x, y);
 				
 				// do not process pixels that do not belong to particle
 				if (label==0)
@@ -471,7 +474,7 @@ public class GeodesicDiameterShort extends AlgoStub implements GeodesicDiameter
 		{
 			for (int x = 0; x < width; x++) 
 			{
-				int label = labelImage.get(x, y);
+				int label = (int) labelImage.getf(x, y);
 				
 				// do not process pixels that do not belong to particle
 				if (label == 0)
