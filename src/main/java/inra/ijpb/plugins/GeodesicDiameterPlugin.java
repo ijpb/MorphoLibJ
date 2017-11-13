@@ -49,12 +49,6 @@ import inra.ijpb.binary.geodesic.GeodesicDiameterShort;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.util.IJUtils;
 
-import java.awt.Color;
-import java.awt.Point;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 /**
  * Plugin for computing geodesic distances of labeled particles using chamfer
  * weights.
@@ -307,6 +301,7 @@ public class GeodesicDiameterPlugin implements PlugIn
 		// get instance of ROI Manager
 		RoiManager manager = RoiManager.getRoiManager();
 		
+		// add each path to the ROI Manager
 		int index = 0;
 		for (Roi roi : pathListToRoiList(pathMap))
 		{
@@ -345,10 +340,5 @@ public class GeodesicDiameterPlugin implements PlugIn
             }
         }
         return roiList;
-	}
-	
-	private static String createResultImageName(ImagePlus baseImage) 
-	{
-		return baseImage.getShortTitle() + "-diam";
 	}
 }
