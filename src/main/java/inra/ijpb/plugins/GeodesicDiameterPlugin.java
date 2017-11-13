@@ -49,6 +49,11 @@ import inra.ijpb.binary.geodesic.GeodesicDiameterShort;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.util.IJUtils;
 
+import java.awt.Color;
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Plugin for computing geodesic distances of labeled particles using chamfer
@@ -340,5 +345,10 @@ public class GeodesicDiameterPlugin implements PlugIn
             }
         }
         return roiList;
+	}
+	
+	private static String createResultImageName(ImagePlus baseImage) 
+	{
+		return baseImage.getShortTitle() + "-diam";
 	}
 }
