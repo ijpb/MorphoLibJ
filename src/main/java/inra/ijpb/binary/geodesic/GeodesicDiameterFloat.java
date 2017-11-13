@@ -375,6 +375,58 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 	}
 
 	/**
+	 * Computes the geodesic path of each particle within the given label image.
+	 * Assumes the geodesic distance map has already been computed after a call
+	 * to the "analyzeImage" method.
+	 * 
+	 * @return A map that associate to each integer label the list of positions
+	 *         that constitutes the geodesic path
+	 */
+	public Map<Integer, List<Point>> computeLongestGeodesicPaths() 
+	{
+		// extract labels
+        int[] labels = LabelImages.findAllLabels(labelImage);
+
+		// find position of maximal value,
+		// this is expected to correspond to a geodesic extremity 
+		Point[] pos1 = LabelImages.findPositionOfMinValues(distanceMap, labelImage, labels);
+		
+		// compute position of furthest points
+		Point[] pos2 = LabelImages.findPositionOfMaxValues(distanceMap, labelImage, labels);
+
+		
+		// Initialize a new result table
+		Map<Integer, List<Point>> result = new TreeMap<Integer, List<Point>>();
+
+		// compute paths starting from points with larger distance value
+		for (int i = 0; i < labels.length; i++)
+		{
+			int label = labels[i];
+			
+			List<Point> path = new ArrayList<Point>();
+			path.add(pos2[i]);
+			
+			Point pos = pos2[i];
+			try
+			{
+				while (!pos.equals(pos1[i]))
+				{
+					pos = findLowestNeighborPosition(pos);
+					path.add(pos);
+				}
+			}
+			catch(Exception ex)
+			{
+				throw new RuntimeException(String.format("Could not compute path for label %d, at position (%d, %d)",
+						label, pos.x, pos.y));
+			}
+			
+			result.put(label, path);
+		}
+
+		return result;
+	}
+	/**
 	 * Finds the position of the pixel in the neighborhood of pos that have the
 	 * smallest distance and that belongs to the same label as initial position.
 	 * 
