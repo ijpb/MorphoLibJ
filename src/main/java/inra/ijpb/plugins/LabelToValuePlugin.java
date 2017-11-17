@@ -77,7 +77,15 @@ public class LabelToValuePlugin implements PlugIn, DialogListener
 	{
 		// Work on current image, and exit if no one is open
 		this.labelImagePlus = IJ.getImage();
-		
+	
+		// Check that a table window is open
+		TextWindow[] textWindows = getTableWindows();
+        if (textWindows.length == 0)
+        {
+            IJ.error("Requires at least one Table window");
+            return;
+        }
+        
 		// Create empty result image
 		initResultImage();
 		
@@ -85,9 +93,9 @@ public class LabelToValuePlugin implements PlugIn, DialogListener
 		createDialog();
 		this.gd.showDialog();
 		
+		// parse dialog
 		if (gd.wasCanceled())
 			return;
-		
 		parseDialogOptions();
 		
 		ImagePlus resultPlus = computeResultImage();
@@ -144,7 +152,7 @@ public class LabelToValuePlugin implements PlugIn, DialogListener
 		String[] tableNames = new String[textWindows.length];
 		for (int i = 0; i < textWindows.length; i++) {
 			tableNames[i] = textWindows[i].getTitle();
-			IJ.log("Found table: " + tableNames[i]);
+//			IJ.log("Found table: " + tableNames[i]);
 		}
 		
 		// Choose current table
@@ -198,26 +206,6 @@ public class LabelToValuePlugin implements PlugIn, DialogListener
 	}
 
 	/**
-	 * Computes min and max values within a table column. 
-	 * 
-	 * @return an array of double with two values.
-	 */
-	private double[] computeColumnExtent(ResultsTable table, String heading) 
-	{
-		int index = table.getColumnIndex(heading);
-		double[] values = table.getColumnAsDoubles(index);
-		
-		double minVal = Double.MAX_VALUE;
-		double maxVal = Double.MIN_VALUE;
-		for (double v : values) 
-		{
-			minVal = Math.min(minVal, v);
-			maxVal = Math.max(maxVal, v);
-		}
-		return new double[]{minVal, maxVal};
-	}
-	
-	/**
 	 * analyse dialog, and setup inner fields of the class.
 	 */
 	private void parseDialogOptions() 
@@ -234,12 +222,10 @@ public class LabelToValuePlugin implements PlugIn, DialogListener
 	
 	private ImagePlus computeResultImage() 
 	{
-		// Assumes 2D image for the moment...
-		
 		// extract array of numerical values
-		int index = this.table.getColumnIndex(this.selectedHeaderName);
-		double[] values = table.getColumnAsDoubles(index);
+		double[] values = getColumnValues(table, this.selectedHeaderName);
 
+		// Different processing depending on image dimensionality
 		try 
 		{
 			if (this.resultPlus.getStackSize() == 1) 
@@ -269,10 +255,8 @@ public class LabelToValuePlugin implements PlugIn, DialogListener
 	@Override
 	public boolean dialogItemChanged(GenericDialog gd, AWTEvent evt) 
 	{
-//		IJ.log("event captured");
 		if (gd.wasCanceled() || gd.wasOKed()) 
 		{
-			IJ.log("already closed...");
 			return true;
 		}
 		
@@ -284,10 +268,9 @@ public class LabelToValuePlugin implements PlugIn, DialogListener
 			return false;
 		}
 		
-		if (evt.getSource() == choices.get(0)) 
+		// Change of the data table
+        if (evt.getSource() == choices.get(0)) 
 		{
-			IJ.log("update table");
-			// Change of the data table
 			String tableName = ((Choice) evt.getSource()).getSelectedItem();
 			Frame tableFrame = WindowManager.getFrame(tableName);
 			this.table = ((TextWindow) tableFrame).getTextPanel().getResultsTable();
@@ -311,26 +294,25 @@ public class LabelToValuePlugin implements PlugIn, DialogListener
 			changeColumnHeader(defaultHeading);
 		}
 		
+		// Change of the column heading
 		if (evt.getSource() == choices.get(1)) 
 		{
-			IJ.log("update column header");
-			// Change of the column heading
 			String headerName = ((Choice) evt.getSource()).getSelectedItem();
-			changeColumnHeader(headerName);
+            changeColumnHeader(headerName);
 		}
 		
 		return true;
 	}
 	
-	private void changeColumnHeader(String headerName) 
-	{
-		double[] extent = computeColumnExtent(this.table, headerName);
-		this.minValue = extent[0];
-		this.maxValue = extent[1];
-		
-		updateMinMaxFields(extent[0], extent[1]);
-	}
-	
+    private void changeColumnHeader(String headerName) 
+    {
+        double[] extent = computeColumnExtent(this.table, headerName);
+        this.minValue = extent[0];
+        this.maxValue = extent[1];
+        
+        updateMinMaxFields(extent[0], extent[1]);
+    }
+    
 	/**
 	 * Updates the text of the editable fields with the values of min and max of
 	 * the current column.
@@ -351,4 +333,56 @@ public class LabelToValuePlugin implements PlugIn, DialogListener
 		tf = (TextField) numericFields.get(1);
 		tf.setText(IJ.d2s(maxValue, this.nDigits));
 	}
+
+    /**
+     * Computes min and max values within a table column. 
+     * 
+     * @return an array of double with two values.
+     */
+    private double[] computeColumnExtent(ResultsTable table, String heading) 
+    {
+        double[] values = getColumnValues(table, heading);
+        
+        double minVal = Double.MAX_VALUE;
+        double maxVal = Double.MIN_VALUE;
+        for (double v : values) 
+        {
+            minVal = Math.min(minVal, v);
+            maxVal = Math.max(maxVal, v);
+        }
+        return new double[]{minVal, maxVal};
+    }
+    
+    private double[] getColumnValues(ResultsTable table, String heading)
+    {
+        String[] allHeaders = table.getHeadings();
+
+        // Check if column header corresponds to row label header
+        boolean hasRowLabels = hasRowLabelColumn(table);
+        if (hasRowLabels && heading.equals(allHeaders[0]))
+        {
+            // need to parse row label column
+            int nr = table.size();
+            double[] values = new double[nr];
+            for (int r = 0; r < nr; r++)
+            {
+                String label = table.getLabel(r);
+                values[r] = Double.parseDouble(label);
+            }
+            return values;
+        }
+
+        // determine index of column
+        int index = table.getColumnIndex(heading);
+        if (index == ResultsTable.COLUMN_NOT_FOUND)
+        {
+            throw new RuntimeException("Unable to find column index from header: " + heading);
+        }
+        return table.getColumnAsDoubles(index);
+    }
+    
+    private static final boolean hasRowLabelColumn(ResultsTable table)
+    {
+        return table.getLastColumn() == (table.getHeadings().length-2);
+    }
 }
