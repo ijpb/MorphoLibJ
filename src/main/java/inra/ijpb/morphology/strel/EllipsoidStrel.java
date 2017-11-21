@@ -218,7 +218,9 @@ public class EllipsoidStrel extends AbstractStrel3D
 		float rx = (float) this.xRadius;
 		float ry = (float) this.yRadius;
 		float rz = (float) this.zRadius;
-		return Filters3D.filter(image, Filters3D.MAX, rx, ry, rz);
+		ImageStack result = Filters3D.filter(image, Filters3D.MAX, rx, ry, rz);
+		result.setColorModel( image.getColorModel() );
+		return result;
 	}
 
 	/**
@@ -235,6 +237,8 @@ public class EllipsoidStrel extends AbstractStrel3D
 		float rx = (float) this.xRadius;
 		float ry = (float) this.yRadius;
 		float rz = (float) this.zRadius;
-		return Filters3D.filter(image, Filters3D.MIN, rx, ry, rz);
+		ImageStack result = Filters3D.filter(image, Filters3D.MIN, rx, ry, rz);
+		result.setColorModel( image.getColorModel() );
+		return result;
 	}
 }

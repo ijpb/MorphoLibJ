@@ -183,7 +183,9 @@ public class BallStrel extends AbstractStrel3D
 	public ImageStack dilation(ImageStack image)
 	{
 		float r = (float) this.radius;
-		return Filters3D.filter(image, Filters3D.MAX, r, r, r);
+		ImageStack result = Filters3D.filter(image, Filters3D.MAX, r, r, r);
+		result.setColorModel( image.getColorModel() );
+		return result;
 	}
 
 	/**
@@ -197,6 +199,8 @@ public class BallStrel extends AbstractStrel3D
 	public ImageStack erosion(ImageStack image)
 	{
 		float r = (float) this.radius;
-		return Filters3D.filter(image, Filters3D.MIN, r, r, r);
+		ImageStack result = Filters3D.filter(image, Filters3D.MIN, r, r, r);
+		result.setColorModel( image.getColorModel() );
+		return result;
 	}
 }
