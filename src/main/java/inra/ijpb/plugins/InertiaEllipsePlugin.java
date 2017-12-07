@@ -31,8 +31,8 @@ import ij.process.ImageProcessor;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.GeometricMeasures2D;
 
-public class InertiaEllipsePlugin implements PlugInFilter {
-
+public class InertiaEllipsePlugin implements PlugInFilter
+{
     // ====================================================
     // Global Constants
     
@@ -42,8 +42,7 @@ public class InertiaEllipsePlugin implements PlugInFilter {
     
    /**
      * When this options is set to true, information messages are displayed on
-     * the console, and the number of counts for each direction is included in
-     * results table. 
+     * the console. 
      */
     public boolean debug  = false;
     
@@ -90,30 +89,33 @@ public class InertiaEllipsePlugin implements PlugInFilter {
     }
     
     /**
-     * Main body of the plugin. 
-     * 
-     * @param inputImage the image to analyze
-     * @return the ResutlsTable describing each label
-     */
-    public ResultsTable process(ImagePlus inputImage) {
+	 * Main body of the plugin.
+	 * 
+	 * @param imagePlus
+	 *            the image to analyze
+	 * @return the instance of ResultsTable containing ellipse parameters for
+	 *         each label
+	 */
+    public ResultsTable process(ImagePlus imagePlus) {
         // Check validity of parameters
-        if (inputImage==null) 
+        if (imagePlus==null) 
             return null;
 
         if (debug) {
         	System.out.println("Compute Inertia ellipses on image '" 
-        			+ inputImage.getTitle());
+        			+ imagePlus.getTitle());
         }
         
-        ImageProcessor proc = inputImage.getProcessor();
+        ImageProcessor proc = imagePlus.getProcessor();
         
         // Extract spatial calibration
-        Calibration cal = inputImage.getCalibration();
+        Calibration cal = imagePlus.getCalibration();
         double[] resol = new double[]{1, 1};
         if (cal.scaled()) {
         	resol[0] = cal.pixelWidth;
         	resol[1] = cal.pixelHeight;
         }
+        //TODO: use spatial calibration of ImagePlus
 
         ResultsTable results = GeometricMeasures2D.inertiaEllipse(proc);
         
