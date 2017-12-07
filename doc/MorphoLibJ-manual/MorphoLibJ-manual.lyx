@@ -4362,6 +4362,9 @@ Filtering
 
 \begin_layout Chapter
 Watershed segmentation
+\end_layout
+
+\begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
 name "chap:Watershed-segmentation"
@@ -6839,7 +6842,20 @@ name "sec:Particle-Analysis"
 
 \begin_layout Standard
 This section describes the methods implemented in MorphoLibJ for describing
- individual particles, represented as label images (one label for each particle).
+ individual particles, represented as label images.
+ In label image, each particle or region is represented by an integer label
+ (see section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:label-images"
+
+\end_inset
+
+).
  We first define and describe the implemented features, then we present
  the plugins that integrate them.
 \end_layout
@@ -7213,8 +7229,11 @@ name "subsec:Euler-Number"
 
 \begin_layout Standard
 The measurement of Euler number from binary images is usually performed
- by considering a reconstruction of the connected components that connects
- adjacent pixels or voxels (Fig.
+ by considering a reconstruction of the 
+\series bold
+connected components
+\series default
+ that connects adjacent pixels or voxels (Fig.
 \begin_inset space ~
 \end_inset
 
@@ -7257,7 +7276,7 @@ reference "fig:Euler-Number-Computation-2D"
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -7374,7 +7393,7 @@ name "fig:Euler-Number-Computation-2D"
 
 \end_inset
 
-Determination of the Euler number from binray images.
+Determination of the Euler number from binary images.
  (a) Original binary images.
  (b) Euler number computed with 4-connectivity: five components are detected.
  (c) Euler number computed using the 8-connectivity: three components are
@@ -9187,7 +9206,58 @@ reference "fig:Geodesic-Distance-Map-3d"
  Binary image is assumed to have cubic voxels.
 \end_layout
 
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
+Label images
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:label-images"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+When several structures or components are present within an image, it may
+ be more convenient to work with 
+\series bold
+label images
+\series default
+.
+ Each pixel or voxel of a label image corresponds to the integer index of
+ the particle it belongs to.
+ By convention, the value 0 is assumed to correspond to the background.
+ Label images are typically computed from binary images by connected component
+ algorithms (section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Connected-Components-Labeling"
+
+\end_inset
+
+).
+ Segmentation algorithms such as the watershed may also returns result as
+ a label image.
+\end_layout
+
+\begin_layout Standard
+The number of labels that can be represented depends on the image type:
+ 255 for byte images, 65535 for short images, and around 16 millions for
+ 32-bit floating point images (only the 24 mantissa bits are used for label
+ representation).
+\end_layout
+
+\begin_layout Subsection
 Connected component labeling
 \end_layout
 
@@ -9294,10 +9364,42 @@ reference "fig:Connectivity-2D"
 \end_layout
 
 \begin_layout Standard
+For planar images, a typical choice is the 4-connectivity, that considers
+ only the orthogonal neighbors of a given pixel (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Connectivity-2D"
+
+\end_inset
+
+-b).
+ When two components touch only via a corner, they are not considered as
+ the same one.
+ The 8-connectivity is an alternative that also considers the diagonal pixels
+ as neighbors (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Connectivity-2D"
+
+\end_inset
+
+-c).
+ 
+\end_layout
+
+\begin_layout Standard
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -9427,38 +9529,6 @@ Impact of the connectivity on the result of connected component labeling.
 \end_layout
 
 \begin_layout Standard
-For planar images, a typical choice is the 4-connectivity, that considers
- only the orthogonal neighbors of a given pixel (Figure
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Connectivity-2D"
-
-\end_inset
-
--b).
- When two components touch only via a corner, they are not considered as
- the same one.
- The 8-connectivity is an alternative that also considers the diagonal pixels
- as neighbors (Figure
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Connectivity-2D"
-
-\end_inset
-
--c).
- 
-\end_layout
-
-\begin_layout Standard
 For 3D images, the 6-connectivity considers only orthogonal neighbors in
  the three main directions, whereas the 26-connectivity considers all the
  neighbors of a given voxel in its 3-by-3-by-3 surrounding.
@@ -9508,39 +9578,14 @@ transforms the binary image into a label image by assigning a specific number
  (label) to each connected component
 \end_layout
 
-\begin_layout Section
-Label images
-\end_layout
-
-\begin_layout Standard
-\begin_inset CommandInset label
-LatexCommand label
-name "sec:label-images"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-When several structures or components are present within an image, it may
- be more convenient to work with label images.
- Each pixel or voxel of a label image corresponds to the integer index of
- the particle it belongs to.
- The value 0 is assumed to correspond to the background.
- The number of labels that can be represented depends on the image type:
- 255 for byte images, 65535 for short images, and around 16 millions for
- 32-bit floating point images.
+\begin_layout Subsection
+Label image representation
 \end_layout
 
 \begin_layout Standard
 Label images can be represented either using shades of gray, or using color
  maps to better distinguish the different regions.
  
-\end_layout
-
-\begin_layout Subsection
-Label image representation
 \end_layout
 
 \begin_layout Standard
