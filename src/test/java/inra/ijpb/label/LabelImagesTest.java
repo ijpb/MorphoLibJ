@@ -70,7 +70,7 @@ public class LabelImagesTest
 	}
 
 	@Test
-	public final void testFindAllLabelsImageProcessor()
+	public final void testFindAllLabels_ByteProcessor()
 	{
 		String fileName = getClass().getResource("/files/blobs-lbl.tif").getFile();
 		ImagePlus imagePlus = IJ.openImage(fileName);
@@ -81,6 +81,34 @@ public class LabelImagesTest
 		{
 			assertFalse(labels[i] == 0);
 			assertEquals(i + 1, labels[i]);
+		}
+	}
+
+	/**
+	 * We want labels in increasing order, whatever the order they are detected
+	 * in the image.
+	 */
+	@Test
+	public final void testFindAllLabels_Byte_IncreasingOrder()
+	{
+		ByteProcessor image = new ByteProcessor(6, 6);
+		image.set(1, 1, 8);
+		image.set(3, 1, 6);
+		image.set(4, 1, 6);
+		
+		image.set(1, 3, 4);
+		image.set(3, 3, 2);
+		image.set(3, 3, 2);
+		image.set(1, 4, 4);
+		image.set(3, 4, 2);
+		image.set(4, 4, 2);
+
+		int[] labels = LabelImages.findAllLabels(image);
+		int[] expectedLabels = new int[]{2, 4, 6, 8};
+		for (int i = 0; i < labels.length; i++)
+		{
+			assertFalse(labels[i] == 0);
+			assertEquals(expectedLabels[i], labels[i]);
 		}
 	}
 
