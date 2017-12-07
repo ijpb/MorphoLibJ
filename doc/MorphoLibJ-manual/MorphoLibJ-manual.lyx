@@ -6804,6 +6804,24 @@ Analyze Particles...
 \end_layout
 
 \begin_layout Standard
+In label image, each particle or region is represented by an integer label
+ (see section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:label-images"
+
+\end_inset
+
+).
+ We first define and describe the implemented features, then we present
+ the plugins that integrate them.
+\end_layout
+
+\begin_layout Standard
 \begin_inset ERT
 status open
 
@@ -6827,7 +6845,7 @@ minitoc
 \end_layout
 
 \begin_layout Section
-Particle analysis
+Intrinsic volumes
 \end_layout
 
 \begin_layout Standard
@@ -6838,33 +6856,6 @@ name "sec:Particle-Analysis"
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
-This section describes the methods implemented in MorphoLibJ for describing
- individual particles, represented as label images.
- In label image, each particle or region is represented by an integer label
- (see section
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:label-images"
-
-\end_inset
-
-).
- We first define and describe the implemented features, then we present
- the plugins that integrate them.
-\end_layout
-
-\begin_layout Subsection
-Intrinsic volumes
-\end_layout
-
-\begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:Intrinsic-Volumes"
@@ -7066,7 +7057,7 @@ reference "fig:Euler-Number"
 -b.
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 Estimation from 2D or 3D images
 \end_layout
 
@@ -7213,7 +7204,7 @@ key "Lehmann_2012_ij"
 .
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 Euler number
 \end_layout
 
@@ -7493,7 +7484,7 @@ In the current implementation in MorphoLibJ, the Euler number is not taken
  touches image border.
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 Shape factors
 \end_layout
 
@@ -7595,6 +7586,186 @@ sphericity index
 \end_layout
 
 \begin_layout Subsection
+ImageJ plugins
+\end_layout
+
+\begin_layout Standard
+Most MorphoLibJ plugins consider the current image as input, that must be
+ either binary (only one region is considered), or label (typically the
+ result of a connected components labeling, see section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Connected-Components-Labeling"
+
+\end_inset
+
+).
+ The output is a results table (ImageJ 
+\emph on
+ResultsTable
+\emph default
+) containing one row for each label actually present within the image.
+ The spatial calibration of the image is taken into account in most measurements.
+ All plugins can be found under the 
+\begin_inset Quotes eld
+\end_inset
+
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
+Analyze
+\begin_inset Quotes erd
+\end_inset
+
+ menu.
+\end_layout
+
+\begin_layout Subsubsection
+Particle analysis 2D
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+global geometry
+\series default
+ of particles in 2D images can be characterized with the Region Morphometry
+ plugin (under 
+\begin_inset Quotes eld
+\end_inset
+
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
+Analyze\SpecialChar menuseparator
+Region Morphometry
+\begin_inset Quotes erd
+\end_inset
+
+).
+ For 2D particles, the area, the perimeter and derived features are implemented.
+ The columns of the results table are:
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Label the label of the particle measured on the current line (it can be
+ different from the row number if some labels do no exist in original image).
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Area the number of pixels within each region, multiplied by the area of
+ each pixel.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Perimeter an estimate of the perimeter, using Crofton formula.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Circularity the normalized ratio of area by the square of the perimeter:
+ 
+\begin_inset Formula $4\pi\cdot A/p^{2}$
+\end_inset
+
+.
+ The value should be comprised between 0 (very elongated) and 1 (close to
+ circular).
+ Values superior to 1 may appear due to discretization effect.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Elongation the normalized ratio of the square of the perimeter by the area:
+ 
+\begin_inset Formula $p^{2}/\left(4\pi\cdot A\right)$
+\end_inset
+
+, corresponding to the inverse of the circularity.
+ The values range from 1 (round), and increase with elongation of the particle.
+\end_layout
+
+\begin_layout Subsubsection
+Particle analysis 3D
+\end_layout
+
+\begin_layout Standard
+The plugin calculating these measurements is found under 
+\begin_inset Quotes eld
+\end_inset
+
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
+Analyze\SpecialChar menuseparator
+Particle Analysis 3D
+\begin_inset Quotes erd
+\end_inset
+
+.
+ The results are provided in an ImageJ 
+\emph on
+ResultsTable
+\emph default
+, whose name contains the name of the original image.
+ 
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Label the label of the particle measured on the current line (it can be
+ different from the row number if some labels do no exist in original image).
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Bounding
+\begin_inset space ~
+\end_inset
+
+box returns the minimal and maximal coordinates in each direction for each
+ label.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Volume computes the number of voxels comprising the particle, multiplied
+ by the volume of an individual voxel.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Surface
+\begin_inset space ~
+\end_inset
+
+area the surface area computed using a discretized version of the Crofton
+ formula, that computes intersections with line grids of various orientations
+ (currently either 3 or 13).
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Sphericity
+\begin_inset space ~
+\end_inset
+
+index defined as 
+\begin_inset Formula $36\pi V^{2}/S^{3}$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
 Inertia ellipse and ellipsoid
 \end_layout
 
@@ -7609,7 +7780,38 @@ ds to an integral of its indicator function, with various degrees along
  ellipse or ellipsoid.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Standard
+The 
+\series bold
+Inertia
+\begin_inset space ~
+\end_inset
+
+ellipsoid plugin
+\series default
+ returns the centroid (center of gravity) as well as the size and the orientatio
+n of the inertia ellipsoid of each 3D particle.
+ Radii are sorted in decreasing order.
+ Angles are given in degrees, and correspond to the azimut (
+\begin_inset Quotes eld
+\end_inset
+
+yaw
+\begin_inset Quotes erd
+\end_inset
+
+), the elevation (
+\begin_inset Quotes eld
+\end_inset
+
+pitch
+\begin_inset Quotes erd
+\end_inset
+
+), and the roll around the main axis.
+\end_layout
+
+\begin_layout Section
 Geodesic measurements
 \end_layout
 
@@ -7713,146 +7915,22 @@ largest circle that can be inscribed within the particle
  
 \end_layout
 
-\begin_layout Subsection
-ImageJ plugins
-\end_layout
-
 \begin_layout Standard
-Most MorphoLibJ plugins consider the current image as input, that must be
- either binary (only one region is considered), or label (typically the
- result of a connected components labeling, see section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:Connected-Components-Labeling"
-
-\end_inset
-
-).
- The output is a results table (ImageJ 
-\emph on
-ResultsTable
-\emph default
-) containing one row for each label actually present within the image.
- The spatial calibration of the image is taken into account in all measurements.
- All plugins can be found under the 
-\begin_inset Quotes eld
-\end_inset
-
-Plugins\SpecialChar menuseparator
-MorphoLibJ\SpecialChar menuseparator
-Analyze
-\begin_inset Quotes erd
-\end_inset
-
- menu.
-\end_layout
-
-\begin_layout Subsubsection
-Global geometry
-\end_layout
-
-\begin_layout Standard
-The 
+This 
 \series bold
-global geometry
+Geodesic Diameter plugin
 \series default
- of particles in 2D images can be characterized with the Region Morphometry
- plugin (under 
-\begin_inset Quotes eld
-\end_inset
-
-Plugins\SpecialChar menuseparator
-MorphoLibJ\SpecialChar menuseparator
-Analyze\SpecialChar menuseparator
-Region Morphometry
-\begin_inset Quotes erd
-\end_inset
-
-).
- For 2D particles, the area, the perimeter and derived features are implemented.
- The columns of the results table are:
-\end_layout
-
-\begin_layout Description
-Label the label of the particle measured on the current line (it can be
- different from the row number if some labels do no exist in original image).
-\end_layout
-
-\begin_layout Description
-Area the number of pixels within each region, multiplied by the area of
- each pixel.
-\end_layout
-
-\begin_layout Description
-Perimeter an estimate of the perimeter, using Crofton formula.
-\end_layout
-
-\begin_layout Description
-Circularity the normalized ratio of area by the square of the perimeter:
- 
-\begin_inset Formula $4\pi\cdot A/p^{2}$
-\end_inset
-
-.
- The value should be comprised between 0 (very elongated) and 1 (close to
- circular).
- Values superior to 1 may appear due to discretization effect.
-\end_layout
-
-\begin_layout Description
-Elongation the normalized ratio of the square of the perimeter by the area:
- 
-\begin_inset Formula $p^{2}/\left(4\pi\cdot A\right)$
-\end_inset
-
-, corresponding to the inverse of the circularity.
- The values range from 1 (round), and increase with elongation of the particle.
-\end_layout
-
-\begin_layout Subsubsection
-Largest inscribed circle or ball
-\end_layout
-
-\begin_layout Standard
-This plugin computes for each label the largest disk that can be enclosed
- within the corresponding particle.
- The plugin opens a dialog that allows to choose the label image to characterize
-, the choice of the method for computing distance, and eventually the image
- on which overlaid circles can be drawn.
- The output of the plugin includes the following information:
-\end_layout
-
-\begin_layout Description
-Label the label of the particle measured on the current line.
-\end_layout
-
-\begin_layout Description
-xi the x-coordinate of the inscribed circle.
-\end_layout
-
-\begin_layout Description
-yi the y-coordinate of the inscribed circle.
-\end_layout
-
-\begin_layout Description
-radius the radius of the inscribed circle.
-\end_layout
-
-\begin_layout Subsubsection
-Geodesic diameter
-\end_layout
-
-\begin_layout Standard
-This plugin computes several geodesic measures for each particle in a label
- image.
+ computes several geodesic measures for each particle in a label image.
  The result of the plugin comprises the following features:
 \end_layout
 
-\begin_layout Description
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
 Label the label of the particle measured on the current line.
 \end_layout
 
-\begin_layout Description
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
 Geod.
 \begin_inset space ~
 \end_inset
@@ -7861,12 +7939,14 @@ Diam.
  the value of the geodesic diameter.
 \end_layout
 
-\begin_layout Description
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
 Radius the radius of the largest inscribed circle, which is computed during
  the algorithm.
 \end_layout
 
-\begin_layout Description
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
 Geod.
 \begin_inset space ~
 \end_inset
@@ -7878,7 +7958,8 @@ Elong.
  particles.
 \end_layout
 
-\begin_layout Description
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
 xi,
 \begin_inset space ~
 \end_inset
@@ -7886,7 +7967,8 @@ xi,
 yi coordinates of the largest inscribed circle.
 \end_layout
 
-\begin_layout Description
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
 x1,
 \begin_inset space ~
 \end_inset
@@ -7894,7 +7976,8 @@ x1,
 y1 coordinates of one of the geodesic extremities of the particle.
 \end_layout
 
-\begin_layout Description
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
 x2,
 \begin_inset space ~
 \end_inset
@@ -7902,106 +7985,37 @@ x2,
 y2 coordinates of another geodesic extremity of the particle.
 \end_layout
 
-\begin_layout Subsubsection
-Particle analysis 3D
-\end_layout
-
 \begin_layout Standard
-The plugin calculating these measurements is found under 
-\begin_inset Quotes eld
-\end_inset
-
-Plugins\SpecialChar menuseparator
-MorphoLibJ\SpecialChar menuseparator
-Analyze\SpecialChar menuseparator
-Particle Analysis 3D
-\begin_inset Quotes erd
-\end_inset
-
-.
- The results are provided in an ImageJ 
-\emph on
-ResultsTable
-\emph default
-, whose name contains the name of the original image.
- 
+The 
+\series bold
+largest inscribed circle plugin 
+\series default
+computes for each label the largest disk that can be enclosed within the
+ corresponding particle.
+ The plugin opens a dialog that allows to choose the label image to characterize
+, the choice of the method for computing distance, and eventually the image
+ on which overlaid circles can be drawn.
+ The output of the plugin includes the following information:
 \end_layout
 
-\begin_layout Description
-Label the label of the particle measured on the current line (it can be
- different from the row number if some labels do no exist in original image).
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Label the label of the particle measured on the current line.
 \end_layout
 
-\begin_layout Description
-Bounding
-\begin_inset space ~
-\end_inset
-
-box returns the minimal and maximal coordinates in each direction for each
- label.
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+xi the x-coordinate of the inscribed circle.
 \end_layout
 
-\begin_layout Description
-Volume computes the number of voxels comprising the particle, multiplied
- by the volume of an individual voxel.
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+yi the y-coordinate of the inscribed circle.
 \end_layout
 
-\begin_layout Description
-Surface
-\begin_inset space ~
-\end_inset
-
-area the surface area computed using a discretized version of the Crofton
- formula, that computes intersections with line grids of various orientations
- (currently either 3 or 13).
-\end_layout
-
-\begin_layout Description
-Sphericity
-\begin_inset space ~
-\end_inset
-
-index defined as 
-\begin_inset Formula $36\pi V^{2}/S^{3}$
-\end_inset
-
-.
- 
-\end_layout
-
-\begin_layout Description
-Inertia
-\begin_inset space ~
-\end_inset
-
-ellipse
-\begin_inset space ~
-\end_inset
-
-/
-\begin_inset space ~
-\end_inset
-
-ellipsoid returns the centroid (center of gravity) as well as the size and
- the orientation of the inertia ellipse or ellipsoid of each particle.
- Radii are sorted in decreasing order.
- Angles are given in degrees, and correspond to the azimut (
-\begin_inset Quotes eld
-\end_inset
-
-yaw
-\begin_inset Quotes erd
-\end_inset
-
-), the elevation (
-\begin_inset Quotes eld
-\end_inset
-
-pitch
-\begin_inset Quotes erd
-\end_inset
-
-), and the roll around the main axis.
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+radius the radius of the inscribed circle.
 \end_layout
 
 \begin_layout Section
@@ -8035,6 +8049,13 @@ The plugin calculates the mean, standard deviation, maximum, minimum, median,
 ResultsTable
 \emph default
 .
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -9676,7 +9697,7 @@ To
 \begin_inset space ~
 \end_inset
 
-RGB converts a label image to true RGB image.
+RGB converts a label image to a true RGB image.
  Similar to ImageJ native conversion, but this plugin avoids confusion between
  background pixels and labels with small values when the number of labels
  is large.
