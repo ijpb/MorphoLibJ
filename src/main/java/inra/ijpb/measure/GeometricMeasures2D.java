@@ -27,7 +27,7 @@ import static java.lang.Math.sqrt;
 import ij.IJ;
 import ij.measure.ResultsTable;
 import ij.process.ImageProcessor;
-import inra.ijpb.binary.BinaryImages;
+import inra.ijpb.label.LabelDistances;
 import inra.ijpb.label.LabelImages;
 
 import java.awt.Point;
@@ -1207,11 +1207,8 @@ public class GeometricMeasures2D
     	int[] labels = LabelImages.findAllLabels(labelImage);
     	int nbLabels = labels.length;
     	
-		// Initialize mask as binarisation of labels
-		ImageProcessor mask = BinaryImages.binarize(labelImage);
-
 		// first distance propagation to find an arbitrary center
-		ImageProcessor distanceMap = BinaryImages.distanceMap(mask);
+		ImageProcessor distanceMap = LabelDistances.distanceMap(labelImage);
 		
 		// Extract position of maxima
 		Point[] posCenter;
