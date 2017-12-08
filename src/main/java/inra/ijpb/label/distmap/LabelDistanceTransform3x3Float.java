@@ -21,24 +21,24 @@
  */
 package inra.ijpb.label.distmap;
 
+import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
-import ij.process.ShortProcessor;
 import inra.ijpb.algo.AlgoEvent;
 import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.binary.ChamferWeights;
 
 /**
  * Computes Chamfer distances within a label image in a 3x3 neighborhood using
- * ShortProcessor object for storing result.
+ * FloatProcessor object for storing result.
  * 
  * @author David Legland
  */
-public class LabelDistanceTransform3x3Short extends AlgoStub implements LabelDistanceTransform 
+public class LabelDistanceTransform3x3Float extends AlgoStub implements LabelDistanceTransform 
 {
 	// ==================================================
 	// Class variables
 	
-	private short[] weights;
+	private float[] weights;
 
 	private int width;
 	private int height;
@@ -56,7 +56,7 @@ public class LabelDistanceTransform3x3Short extends AlgoStub implements LabelDis
 	 * The inner buffer that stores the distance map. The content of the
 	 * buffer is updated during forward and backward iterations.
 	 */
-	private ShortProcessor distMap;
+	private FloatProcessor distMap;
 
 
 	// ==================================================
@@ -68,9 +68,9 @@ public class LabelDistanceTransform3x3Short extends AlgoStub implements LabelDis
 	 * @param weights
 	 *            an array of two weights for orthogonal and diagonal directions
 	 */
-	public LabelDistanceTransform3x3Short(ChamferWeights weights)
+	public LabelDistanceTransform3x3Float(ChamferWeights weights)
 	{
-		this.weights = weights.getShortWeights();
+		this.weights = weights.getFloatWeights();
 	}
 
 	/**
@@ -79,7 +79,7 @@ public class LabelDistanceTransform3x3Short extends AlgoStub implements LabelDis
 	 * @param weights
 	 *            an array of two weights for orthogonal and diagonal directions
 	 */
-	public LabelDistanceTransform3x3Short(short[] weights)
+	public LabelDistanceTransform3x3Float(float[] weights)
 	{
 		this.weights = weights;
 	}
@@ -94,9 +94,9 @@ public class LabelDistanceTransform3x3Short extends AlgoStub implements LabelDis
 	 *            flag indicating whether the final distance map should be
 	 *            normalized by the first weight
 	 */
-	public LabelDistanceTransform3x3Short(ChamferWeights weights, boolean normalize)
+	public LabelDistanceTransform3x3Float(ChamferWeights weights, boolean normalize)
 	{
-		this.weights = weights.getShortWeights();
+		this.weights = weights.getFloatWeights();
 		this.normalizeMap = normalize;
 	}
 
@@ -110,7 +110,7 @@ public class LabelDistanceTransform3x3Short extends AlgoStub implements LabelDis
 	 *            flag indicating whether the final distance map should be
 	 *            normalized by the first weight
 	 */
-	public LabelDistanceTransform3x3Short(short[] weights, boolean normalize)
+	public LabelDistanceTransform3x3Float(float[] weights, boolean normalize)
 	{
 		this.weights = weights;
 		this.normalizeMap = normalize;
@@ -126,12 +126,12 @@ public class LabelDistanceTransform3x3Short extends AlgoStub implements LabelDis
 	 * with values greater or equal to zero.
 	 * 
 	 * @param image a label image with black pixels (0) as foreground
-	 * @return a new instance of ShortProcessor containing: <ul>
+	 * @return a new instance of FloatProcessor containing: <ul>
 	 * <li> 0 for each background pixel </li>
 	 * <li> the (strictly positive) distance to the nearest background pixel otherwise</li>
 	 * </ul>
 	 */
-	public ShortProcessor distanceMap(ImageProcessor image) 
+	public FloatProcessor distanceMap(ImageProcessor image) 
 	{
 		// size of image
 		width = image.getWidth();
@@ -141,7 +141,7 @@ public class LabelDistanceTransform3x3Short extends AlgoStub implements LabelDis
 		this.labelImage = image;
 
 		// create new empty image, and fill it with black
-		distMap = new ShortProcessor(width, height);
+		distMap = new FloatProcessor(width, height);
 		distMap.setValue(0);
 		distMap.fill();
 
@@ -153,7 +153,7 @@ public class LabelDistanceTransform3x3Short extends AlgoStub implements LabelDis
 			for (int x = 0; x < width; x++)
 			{
 				int label = (int) image.getf(x, y);
-				distMap.set(x, y, label == 0 ? 0 : Short.MAX_VALUE);
+				distMap.setf(x, y, label == 0 ? 0 : Float.POSITIVE_INFINITY);
 			}
 		}
 
@@ -173,7 +173,7 @@ public class LabelDistanceTransform3x3Short extends AlgoStub implements LabelDis
 				{
 					if (labelImage.getPixel(x, y) != 0)
 					{
-						distMap.set(x, y, distMap.get(x, y) / weights[0]);
+						distMap.setf(x, y, distMap.getf(x, y) / weights[0]);
 					}
 				}
 			}
@@ -182,14 +182,14 @@ public class LabelDistanceTransform3x3Short extends AlgoStub implements LabelDis
 		this.fireStatusChanged(new AlgoEvent(this, ""));
 
 		// Compute max value within the mask
-		int maxVal = 0;
+		double maxVal = 0;
 		for (int y = 0; y < height; y++)
 		{
 			for (int x = 0; x < width; x++)
 			{
 				int label = (int) labelImage.getf(x, y);
 				if (label != 0)
-					maxVal = Math.max(maxVal, distMap.get(x, y));
+					maxVal = Math.max(maxVal, distMap.getf(x, y));
 			}
 		}
 		
@@ -207,7 +207,7 @@ public class LabelDistanceTransform3x3Short extends AlgoStub implements LabelDis
 	{
 		int[] dx = new int[]{-1, 0, +1, -1};
 		int[] dy = new int[]{-1, -1, -1, 0};
-		int[] dw = new int[]{weights[1], weights[0], weights[1], weights[0]};
+		float[] dw = new float[]{weights[1], weights[0], weights[1], weights[0]};
 		
 		// Iterate over pixels
 		for (int y = 0; y < height; y++)
@@ -223,8 +223,8 @@ public class LabelDistanceTransform3x3Short extends AlgoStub implements LabelDis
 					continue;
 				
 				// current distance value
-				int currentDist = distMap.get(x, y);
-				int newDist = currentDist;
+				float currentDist = distMap.getf(x, y);
+				float newDist = currentDist;
 				
 				// iterate over neighbors
 				for (int i = 0; i < dx.length; i++)
@@ -247,13 +247,13 @@ public class LabelDistanceTransform3x3Short extends AlgoStub implements LabelDis
 					else
 					{
 						// Increment distance
-						newDist = Math.min(newDist, distMap.get(x2, y2) + dw[i]);
+						newDist = Math.min(newDist, distMap.getf(x2, y2) + dw[i]);
 					}
 				}
 				
 				if (newDist < currentDist) 
 				{
-					distMap.set(x, y, newDist);
+					distMap.setf(x, y, newDist);
 				}
 			}
 		}
@@ -265,7 +265,7 @@ public class LabelDistanceTransform3x3Short extends AlgoStub implements LabelDis
 	{
 		int[] dx = new int[]{+1, 0, -1, +1};
 		int[] dy = new int[]{+1, +1, +1, 0};
-		int[] dw = new int[]{weights[1], weights[0], weights[1], weights[0]};
+		float[] dw = new float[]{weights[1], weights[0], weights[1], weights[0]};
 		
 		// Iterate over pixels
 		for (int y = height-1; y >= 0; y--)
@@ -281,8 +281,8 @@ public class LabelDistanceTransform3x3Short extends AlgoStub implements LabelDis
 					continue;
 				
 				// current distance value
-				int currentDist = distMap.get(x, y);
-				int newDist = currentDist;
+				float currentDist = distMap.getf(x, y);
+				float newDist = currentDist;
 				
 				// iterate over neighbors
 				for (int i = 0; i < dx.length; i++)
@@ -305,13 +305,13 @@ public class LabelDistanceTransform3x3Short extends AlgoStub implements LabelDis
 					else
 					{
 						// Increment distance
-						newDist = Math.min(newDist, distMap.get(x2, y2) + dw[i]);
+						newDist = Math.min(newDist, distMap.getf(x2, y2) + dw[i]);
 					}
 				}
 				
 				if (newDist < currentDist) 
 				{
-					distMap.set(x, y, newDist);
+					distMap.setf(x, y, newDist);
 				}
 			}
 		}

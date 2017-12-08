@@ -8058,6 +8058,19 @@ ResultsTable
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Section
+Microstructure analysis
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 Spatial organization
 \end_layout
@@ -8192,17 +8205,8 @@ reference "sec:Label-Edition-plugin"
 status open
 
 \begin_layout Section
-Microstructure analysis
+Texture analysis
 \end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Note Note
-status open
 
 \begin_layout Plain Layout
 Think about incorporating gray level granulometries
