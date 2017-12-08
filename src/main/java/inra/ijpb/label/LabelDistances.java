@@ -9,6 +9,8 @@ import ij.process.ShortProcessor;
 import inra.ijpb.label.distmap.LabelDistanceTransform;
 import inra.ijpb.label.distmap.LabelDistanceTransform3x3Float;
 import inra.ijpb.label.distmap.LabelDistanceTransform3x3Short;
+import inra.ijpb.label.distmap.LabelDistanceTransform5x5Float;
+import inra.ijpb.label.distmap.LabelDistanceTransform5x5Short;
 
 /**
  * Collection of static methods for computing distances or distance maps within
@@ -74,17 +76,17 @@ public class LabelDistances
 			short[] weights, boolean normalize)
 	{
 		LabelDistanceTransform algo;
-//		switch (weights.length) {
-//		case 2:
+		switch (weights.length) {
+		case 2:
 			algo = new LabelDistanceTransform3x3Short(weights, normalize);
-//			break;
-//		case 3:
-//			algo = new DistanceTransform5x5Short(weights, normalize);
-//			break;
-//		default:
-//			throw new IllegalArgumentException(
-//					"Requires weight array with 2 or 3 elements");
-//		}
+			break;
+		case 3:
+			algo = new LabelDistanceTransform5x5Short(weights, normalize);
+			break;
+		default:
+			throw new IllegalArgumentException(
+					"Requires weight array with 2 or 3 elements");
+		}
 
 		return (ShortProcessor) algo.distanceMap(image);
 	}
@@ -116,18 +118,18 @@ public class LabelDistances
 			float[] weights, boolean normalize) 
 	{
 		LabelDistanceTransform algo;
-//		switch (weights.length) 
-//		{
-//		case 2:
+		switch (weights.length) 
+		{
+		case 2:
 			algo = new LabelDistanceTransform3x3Float(weights, normalize);
-//			break;
-//		case 3:
-//			algo = new LabelDistanceTransform5x5Float(weights, normalize);
-//			break;
-//		default:
-//			throw new IllegalArgumentException(
-//					"Requires weight array with 2 or 3 elements");
-//		}
+			break;
+		case 3:
+			algo = new LabelDistanceTransform5x5Float(weights, normalize);
+			break;
+		default:
+			throw new IllegalArgumentException(
+					"Requires weight array with 2 or 3 elements");
+		}
 		
 		return (FloatProcessor) algo.distanceMap(image);
 	}

@@ -34,13 +34,21 @@ import inra.ijpb.binary.distmap.DistanceTransform3x3Float;
 import inra.ijpb.binary.distmap.DistanceTransform3x3Short;
 import inra.ijpb.binary.distmap.DistanceTransform5x5Float;
 import inra.ijpb.binary.distmap.DistanceTransform5x5Short;
+import inra.ijpb.label.distmap.LabelDistanceTransform;
+import inra.ijpb.label.distmap.LabelDistanceTransform3x3Float;
+import inra.ijpb.label.distmap.LabelDistanceTransform3x3Short;
+import inra.ijpb.label.distmap.LabelDistanceTransform5x5Float;
+import inra.ijpb.label.distmap.LabelDistanceTransform5x5Short;
 
 import java.awt.AWTEvent;
 
 /**
- * Compute distance map, with possibility to choose chamfer weights, result 
+ * Compute distance map, with possibility to choose chamfer weights, result
  * type, and to normalize result or not.
  *
+ * Can process either binary images, or label images (that can be coded with 8,
+ * 16 or 32 bits).
+ * 
  * @author dlegland
  *
  */
@@ -49,7 +57,7 @@ public class ChamferDistanceMapPlugin implements ExtendedPlugInFilter,
 		{
 
 	/** Apparently, it's better to store flags in plugin */
-	private int flags = DOES_8G | KEEP_PREVIEW | FINAL_PROCESSING;
+	private int flags = DOES_8G | DOES_16 | DOES_32 | KEEP_PREVIEW | FINAL_PROCESSING;
 	PlugInFilterRunner pfr;
 	int nPasses;
 	boolean previewing = false;
@@ -179,11 +187,11 @@ public class ChamferDistanceMapPlugin implements ExtendedPlugInFilter,
 			boolean normalize) 
 	{
     	// Initialize calculator
-    	DistanceTransform algo;
+    	LabelDistanceTransform algo;
     	if (weights.length == 2) {
-    		algo = new DistanceTransform3x3Float(weights, normalize);
+    		algo = new LabelDistanceTransform3x3Float(weights, normalize);
     	} else {
-    		algo = new DistanceTransform5x5Float(weights, normalize);
+    		algo = new LabelDistanceTransform5x5Float(weights, normalize);
     	}
 
     	// add monitoring
@@ -195,11 +203,11 @@ public class ChamferDistanceMapPlugin implements ExtendedPlugInFilter,
 
     private ImageProcessor processShort(ImageProcessor image, short[] weights, boolean normalize) {
     	// Initialize calculator
-    	DistanceTransform algo;
+    	LabelDistanceTransform algo;
     	if (weights.length == 2) {
-    		algo = new DistanceTransform3x3Short(weights, normalize);
+    		algo = new LabelDistanceTransform3x3Short(weights, normalize);
     	} else {
-    		algo = new DistanceTransform5x5Short(weights, normalize);
+    		algo = new LabelDistanceTransform5x5Short(weights, normalize);
     	}
 
     	// add monitoring
