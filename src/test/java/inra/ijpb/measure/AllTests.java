@@ -22,10 +22,10 @@
 package inra.ijpb.measure;
 
 
-import inra.ijpb.measure.RegionAdjacencyGraphTest;
-
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+
+import inra.ijpb.label.RegionAdjacencyGraphTest;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({

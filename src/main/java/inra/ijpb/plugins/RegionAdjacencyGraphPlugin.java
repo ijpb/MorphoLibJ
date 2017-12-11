@@ -32,9 +32,9 @@ import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
 import inra.ijpb.label.LabelImages;
+import inra.ijpb.label.RegionAdjacencyGraph;
+import inra.ijpb.label.RegionAdjacencyGraph.LabelPair;
 import inra.ijpb.measure.GeometricMeasures2D;
-import inra.ijpb.measure.RegionAdjacencyGraph;
-import inra.ijpb.measure.RegionAdjacencyGraph.LabelPair;
 
 import java.awt.Color;
 import java.util.Map;
@@ -74,7 +74,7 @@ public class RegionAdjacencyGraphPlugin implements PlugIn
 
 			GenericDialog gd = new GenericDialog("Create RAG");
 			gd.addCheckbox("Show RAG", true);
-			gd.addChoice("Image to overaly", imageNames, selectedImageName);
+			gd.addChoice("Image to overlay", imageNames, selectedImageName);
 			
 			gd.showDialog();
 			if (gd.wasCanceled())

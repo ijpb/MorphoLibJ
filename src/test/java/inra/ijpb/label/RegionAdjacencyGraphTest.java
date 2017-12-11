@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/lgpl-3.0.html>.
  * #L%
  */
-package inra.ijpb.measure;
+package inra.ijpb.label;
 
 import static org.junit.Assert.*;
 
@@ -27,8 +27,8 @@ import java.util.Set;
 
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
-
-import inra.ijpb.measure.RegionAdjacencyGraph.LabelPair;
+import inra.ijpb.label.RegionAdjacencyGraph;
+import inra.ijpb.label.RegionAdjacencyGraph.LabelPair;
 
 import org.junit.Test;
 
