@@ -1403,11 +1403,14 @@ public class LabelImages
 	}
 
 	/**
-	 * Replace all values specified in label array by the value 0.
-	 *  
-	 * @param image a label 3D image
-	 * @param labels the list of labels to replace 
-	 * @param newLabel the new value for labels 
+	 * Replace all values specified in label array by the specified value.
+	 * 
+	 * @param image
+	 *            a 3D label image
+	 * @param labels
+	 *            the list of labels to replace
+	 * @param newLabel
+	 *            the new value for labels
 	 */
 	public static final void replaceLabels(ImageStack image, float[] labels, float newLabel)
 	{
@@ -1437,6 +1440,79 @@ public class LabelImages
 		}
 	}
 
+	/**
+	 * Ensures that the labels in the given label image range from 1 to Lmax.
+	 * 
+	 * @param imagePlus
+	 *            the instance of ImagePlus containing the label image
+	 */
+	public static final void trimLabels(ImagePlus imagePlus)
+	{
+		// Dispatch to appropriate function depending on dimension
+		if (imagePlus.getStackSize() == 1) 
+		{
+			// process planar image
+			ImageProcessor image = imagePlus.getProcessor();
+			trimLabels(image);
+		} 
+		else 
+		{
+			// process image stack
+			ImageStack image = imagePlus.getStack();
+			trimLabels(image);
+		}
+		
+	}
+
+	/**
+	 * Ensures that the labels in the given label image range from 1 to Lmax.
+	 *  
+	 * @param image the label image
+	 */
+	public static final void trimLabels(ImageProcessor image)
+	{
+		int[] labels = findAllLabels(image);
+		HashMap<Integer, Integer> map = mapLabelIndices(labels);
+		
+		for (int y = 0; y < image.getHeight(); y++)
+		{
+			for (int x = 0; x < image.getWidth(); x++)
+			{
+				int label = (int) image.getf(x, y);
+				if (label != 0)
+				{
+					image.setf(x, y, map.get(label) + 1);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Ensures that the labels in the given label image range from 1 to Lmax.
+	 *  
+	 * @param image the 3D label image
+	 */
+	public static final void trimLabels(ImageStack image)
+	{
+		int[] labels = findAllLabels(image);
+		HashMap<Integer, Integer> map = mapLabelIndices(labels);
+		
+		for (int z = 0; z < image.getSize(); z++)
+		{
+			for (int y = 0; y < image.getHeight(); y++)
+			{
+				for (int x = 0; x < image.getWidth(); x++)
+				{
+					int label = (int) image.getVoxel(x, y, z);
+					if (label != 0)
+					{
+						image.setVoxel(x, y, z, map.get(label) + 1);
+					}
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Creates a new image containing only the specified labels.
 	 * 
