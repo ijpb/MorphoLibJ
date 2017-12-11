@@ -9518,7 +9518,7 @@ reference "fig:Connectivity-2D"
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -10180,8 +10180,246 @@ Size
 \begin_inset space ~
 \end_inset
 
-Opening computes the size (area in 2D, volume in 3D) of each region, and
- remove all labels whose size is below the value specified by the user.
+Opening 
+\begin_inset CommandInset label
+LatexCommand label
+name "op:Label-Size-Opening"
+
+\end_inset
+
+computes the size (area in 2D, volume in 3D) of each region, and remove
+ all labels whose size is below the value specified by the user.
+\end_layout
+
+\begin_layout Description
+Trim
+\begin_inset space ~
+\end_inset
+
+Labels 
+\begin_inset CommandInset label
+LatexCommand label
+name "op:Trim-Labels"
+
+\end_inset
+
+re-computes the label of each region such that the largest label is equal
+ to the number of labels.
+ This tool can be useful to remove 
+\begin_inset Quotes eld
+\end_inset
+
+empty labels
+\begin_inset Quotes erd
+\end_inset
+
+ that could occur after removal of one or several labels (merge labels,
+ remove labels...).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/grains/grains-WTH-areaOpen-lbl2-border.png
+	height 4cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Label image
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/grains/grains-lbl2-hist.png
+	height 4cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Original histogram
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/grains/grains-lbl2-trim-hist.png
+	height 4cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Trimmed histogram
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Trim-Labels"
+
+\end_inset
+
+Illustration of the 
+\begin_inset Quotes eld
+\end_inset
+
+Trim Labels
+\begin_inset Quotes erd
+\end_inset
+
+ plugin.
+ (a) Original label image.
+ (b) Histogram of original label image, showing missing labels.
+ (c) Histogram of the trimmed label image, without missing labels.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Trim-Labels"
+
+\end_inset
+
+ presents a use case of the 
+\series bold
+Trim Labels
+\series default
+ plugin.
+ The left image is a label image in which small labels as well as labels
+ touching image borders have been removed (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Trim-Labels"
+
+\end_inset
+
+-a).
+ The histogram of the image presents some 
+\begin_inset Quotes eld
+\end_inset
+
+holes
+\begin_inset Quotes erd
+\end_inset
+
+, corresponding to the labels that have been removed (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Trim-Labels"
+
+\end_inset
+
+-b).
+ The application of the plugin results in a similar images, without missing
+ labels (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Trim-Labels"
+
+\end_inset
+
+-c).
+ The number of labels in the image corresponds to the maximal value in the
+ image (in this case, 71).
 \end_layout
 
 \begin_layout Section
@@ -11137,7 +11375,7 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="27" columns="10">
+<lyxtabular version="3" rows="30" columns="10">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top">
 <column alignment="center" valignment="top">
@@ -12238,6 +12476,98 @@ reference "sec:Attribute-Filtering"
 </cell>
 </row>
 <row>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
 <cell alignment="left" valignment="top" rightline="true" usebox="none">
 \begin_inset Text
 
@@ -12619,6 +12949,98 @@ reference "sec:Morphological-Segmentation-Plugin"
 
 \end_inset
 
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 
 \end_layout
 
@@ -13308,6 +13730,98 @@ reference "subsec:Extrema-Imposition"
 </cell>
 </row>
 <row>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
 <cell alignment="left" valignment="top" rightline="true" usebox="none">
 \begin_inset Text
 
@@ -13814,7 +14328,7 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="28" columns="10">
+<lyxtabular version="3" rows="30" columns="10">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top">
 <column alignment="center" valignment="top">
@@ -15209,6 +15723,98 @@ reference "op:Size-Opening"
 </cell>
 </row>
 <row>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
 <cell alignment="left" valignment="top" rightline="true" usebox="none">
 \begin_inset Text
 
@@ -16468,7 +17074,105 @@ n.a.
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "op:Crop-Label"
+reference "op:Label-Size-Opening"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Trim Labels
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "op:Trim-Labels"
 
 \end_inset
 
