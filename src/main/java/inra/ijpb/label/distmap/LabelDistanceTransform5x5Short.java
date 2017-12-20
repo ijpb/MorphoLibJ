@@ -28,22 +28,27 @@ import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.binary.ChamferWeights;
 
 /**
- * Computes Chamfer distances within a label image in a 3x3 neighborhood using
+ * Computes Chamfer distances within a label image in a 5x5 neighborhood using
  * ShortProcessor object for storing result.
  * 
+ * <p>
+ * Uses 5x5 chamfer map, with two passes (one forward, one backward). Three
+ * different weights are provided for orthogonal, diagonal, and "chess-knight"
+ * moves. Weights equal to (5,7,11) usually give nice results.
+ * </p>
+ * 
+ * @see inra.ijpb.binary.distmap
  * @author David Legland
  */
 public class LabelDistanceTransform5x5Short extends AlgoStub implements LabelDistanceTransform 
 {
 	// ==================================================
 	// Class variables
-	
+
+	/**
+	 * The chamfer weights to propagate to neighbor pixels.
+	 */
 	private short[] weights;
-
-	private int width;
-	private int height;
-
-	private ImageProcessor labelImage;
 
 	/**
 	 * Flag for dividing final distance map by the value first weight. This
@@ -51,12 +56,6 @@ public class LabelDistanceTransform5x5Short extends AlgoStub implements LabelDis
 	 * values.
 	 */
 	private boolean normalizeMap = true;
-
-	/**
-	 * The inner buffer that stores the distance map. The content of the
-	 * buffer is updated during forward and backward iterations.
-	 */
-	private ShortProcessor distMap;
 
 
 	// ==================================================
@@ -140,47 +139,30 @@ public class LabelDistanceTransform5x5Short extends AlgoStub implements LabelDis
 	 * <li> the (strictly positive) distance to the nearest background pixel otherwise</li>
 	 * </ul>
 	 */
-	public ShortProcessor distanceMap(ImageProcessor image) 
+	public ShortProcessor distanceMap(ImageProcessor labelImage) 
 	{
 		// size of image
-		width = image.getWidth();
-		height = image.getHeight();
-
-		// update mask
-		this.labelImage = image;
-
-		// create new empty image, and fill it with black
-		distMap = new ShortProcessor(width, height);
-		distMap.setValue(0);
-		distMap.fill();
+		int sizeX = labelImage.getWidth();
+		int sizeY = labelImage.getHeight();
 
 		this.fireStatusChanged(new AlgoEvent(this, "Initialization"));
+		ShortProcessor distMap = initializeResult(labelImage);
 		
-		// initialize empty image with either 0 (background) or Inf (foreground)
-		for (int y = 0; y < height; y++) 
-		{
-			for (int x = 0; x < width; x++)
-			{
-				int label = (int) image.getf(x, y);
-				distMap.set(x, y, label == 0 ? 0 : Short.MAX_VALUE);
-			}
-		}
-
 		// Two iterations are enough to compute distance map to boundary
 		this.fireStatusChanged(new AlgoEvent(this, "Forward Scan"));
-		forwardIteration();
+		forwardIteration(distMap, labelImage);
 		this.fireStatusChanged(new AlgoEvent(this, "Backward Scan"));
-		backwardIteration();
+		backwardIteration(distMap, labelImage);
 
 		// Normalize values by the first weight
 		if (this.normalizeMap)
 		{
 			this.fireStatusChanged(new AlgoEvent(this, "Normalization"));
-			for (int y = 0; y < height; y++)
+			for (int y = 0; y < sizeY; y++)
 			{
-				for (int x = 0; x < width; x++)
+				for (int x = 0; x < sizeX; x++)
 				{
-					if (labelImage.getPixel(x, y) != 0)
+					if (((int) labelImage.getf(x, y)) > 0)
 					{
 						distMap.set(x, y, distMap.get(x, y) / weights[0]);
 					}
@@ -192,9 +174,9 @@ public class LabelDistanceTransform5x5Short extends AlgoStub implements LabelDis
 
 		// Compute max value within the mask
 		int maxVal = 0;
-		for (int y = 0; y < height; y++)
+		for (int y = 0; y < sizeY; y++)
 		{
-			for (int x = 0; x < width; x++)
+			for (int x = 0; x < sizeX; x++)
 			{
 				int label = (int) labelImage.getf(x, y);
 				if (label != 0)
@@ -212,21 +194,49 @@ public class LabelDistanceTransform5x5Short extends AlgoStub implements LabelDis
 		return distMap;
 	}
 
-	private void forwardIteration() 
+	private ShortProcessor initializeResult(ImageProcessor labelImage)
 	{
+		// size of image
+		int sizeX = labelImage.getWidth();
+		int sizeY = labelImage.getHeight();
+
+		// create new empty image, and fill it with black
+		ShortProcessor distMap = new ShortProcessor(sizeX, sizeY);
+		distMap.setValue(0);
+		distMap.fill();
+
+		// initialize empty image with either 0 (background) or Inf (foreground)
+		for (int y = 0; y < sizeY; y++) 
+		{
+			for (int x = 0; x < sizeX; x++)
+			{
+				int label = (int) labelImage.getf(x, y);
+				distMap.set(x, y, label == 0 ? 0 : Short.MAX_VALUE);
+			}
+		}
+		
+		return distMap;
+	}
+	
+	private void forwardIteration(ShortProcessor distMap, ImageProcessor labelImage) 
+	{
+		// Initialize pairs of offset and weights
 		int[] dx = new int[]{-1, +1,  -2, -1,  0, +1, +2,  -1};
 		int[] dy = new int[]{-2, -2,  -1, -1, -1, -1, -1,   0};
-		
 		short[] dw = new short[] { 
 				weights[2], weights[2], 
 				weights[2], weights[1], weights[0], weights[1], weights[2], 
 				weights[0] };
 		
+		//  size of image
+		int sizeX = labelImage.getWidth();
+		int sizeY = labelImage.getHeight();
+
 		// Iterate over pixels
-		for (int y = 0; y < height; y++)
+		for (int y = 0; y < sizeY; y++)
 		{
-			this.fireProgressChanged(this, y, height);
-			for (int x = 0; x < width; x++)
+			this.fireProgressChanged(this, y, sizeY);
+			for (int x = 0; x < sizeX; x++)
 			{
 				// get current label
 				int label = (int) labelImage.getf(x, y);
@@ -247,9 +257,9 @@ public class LabelDistanceTransform5x5Short extends AlgoStub implements LabelDis
 					int y2 = y + dy[i];
 					
 					// check bounds
-					if (x2 < 0 || x2 >= width)
+					if (x2 < 0 || x2 >= sizeX)
 						continue;
-					if (y2 < 0 || y2 >= height)
+					if (y2 < 0 || y2 >= sizeY)
 						continue;
 					
 					if ((int) labelImage.getf(x2, y2) != label)
@@ -271,24 +281,28 @@ public class LabelDistanceTransform5x5Short extends AlgoStub implements LabelDis
 			}
 		}
 		
-		this.fireProgressChanged(this, height, height);
+		this.fireProgressChanged(this, sizeY, sizeY);
 	}
 
-	private void backwardIteration() 
+	private void backwardIteration(ShortProcessor distMap, ImageProcessor labelImage) 
 	{
+		// Initialize pairs of offset and weights
 		int[] dx = new int[]{+1, -1,  +2, +1,  0, -1, -2,  +1};
 		int[] dy = new int[]{+2, +2,  +1, +1, +1, +1, +1,   0};
-		
 		short[] dw = new short[] { 
 				weights[2], weights[2], 
 				weights[2], weights[1], weights[0], weights[1], weights[2], 
 				weights[0] };
 		
+		//  size of image
+		int sizeX = labelImage.getWidth();
+		int sizeY = labelImage.getHeight();
+
 		// Iterate over pixels
-		for (int y = height-1; y >= 0; y--)
+		for (int y = sizeY-1; y >= 0; y--)
 		{
-			this.fireProgressChanged(this, height-1-y, height);
-			for (int x = width-1; x >= 0; x--)
+			this.fireProgressChanged(this, sizeY-1-y, sizeY);
+			for (int x = sizeX-1; x >= 0; x--)
 			{
 				// get current label
 				int label = (int) labelImage.getf(x, y);
@@ -309,9 +323,9 @@ public class LabelDistanceTransform5x5Short extends AlgoStub implements LabelDis
 					int y2 = y + dy[i];
 					
 					// check bounds
-					if (x2 < 0 || x2 >= width)
+					if (x2 < 0 || x2 >= sizeX)
 						continue;
-					if (y2 < 0 || y2 >= height)
+					if (y2 < 0 || y2 >= sizeY)
 						continue;
 					
 					if ((int) labelImage.getf(x2, y2) != label)
@@ -333,6 +347,6 @@ public class LabelDistanceTransform5x5Short extends AlgoStub implements LabelDis
 			}
 		}
 		
-		this.fireProgressChanged(this, height, height);
+		this.fireProgressChanged(this, sizeY, sizeY);
 	}
 }

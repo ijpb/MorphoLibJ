@@ -40,23 +40,12 @@ public class LabelDistanceTransform3x3Float extends AlgoStub implements LabelDis
 	
 	private float[] weights;
 
-	private int width;
-	private int height;
-
-	private ImageProcessor labelImage;
-
 	/**
 	 * Flag for dividing final distance map by the value first weight. This
 	 * results in distance map values closer to euclidean, but with non integer
 	 * values.
 	 */
 	private boolean normalizeMap = true;
-
-	/**
-	 * The inner buffer that stores the distance map. The content of the
-	 * buffer is updated during forward and backward iterations.
-	 */
-	private FloatProcessor distMap;
 
 
 	// ==================================================
@@ -131,45 +120,28 @@ public class LabelDistanceTransform3x3Float extends AlgoStub implements LabelDis
 	 * <li> the (strictly positive) distance to the nearest background pixel otherwise</li>
 	 * </ul>
 	 */
-	public FloatProcessor distanceMap(ImageProcessor image) 
+	public FloatProcessor distanceMap(ImageProcessor labelImage) 
 	{
-		// size of image
-		width = image.getWidth();
-		height = image.getHeight();
-
-		// update mask
-		this.labelImage = image;
-
-		// create new empty image, and fill it with black
-		distMap = new FloatProcessor(width, height);
-		distMap.setValue(0);
-		distMap.fill();
+		//  size of image
+		int sizeX = labelImage.getWidth();
+		int sizeY = labelImage.getHeight();
 
 		this.fireStatusChanged(new AlgoEvent(this, "Initialization"));
+		FloatProcessor distMap = initializeResult(labelImage);
 		
-		// initialize empty image with either 0 (background) or Inf (foreground)
-		for (int y = 0; y < height; y++) 
-		{
-			for (int x = 0; x < width; x++)
-			{
-				int label = (int) image.getf(x, y);
-				distMap.setf(x, y, label == 0 ? 0 : Float.POSITIVE_INFINITY);
-			}
-		}
-
 		// Two iterations are enough to compute distance map to boundary
 		this.fireStatusChanged(new AlgoEvent(this, "Forward Scan"));
-		forwardIteration();
+		forwardIteration(distMap, labelImage);
 		this.fireStatusChanged(new AlgoEvent(this, "Backward Scan"));
-		backwardIteration();
+		backwardIteration(distMap, labelImage);
 
 		// Normalize values by the first weight
 		if (this.normalizeMap)
 		{
 			this.fireStatusChanged(new AlgoEvent(this, "Normalization"));
-			for (int y = 0; y < height; y++)
+			for (int y = 0; y < sizeY; y++)
 			{
-				for (int x = 0; x < width; x++)
+				for (int x = 0; x < sizeX; x++)
 				{
 					if (labelImage.getPixel(x, y) != 0)
 					{
@@ -183,9 +155,9 @@ public class LabelDistanceTransform3x3Float extends AlgoStub implements LabelDis
 
 		// Compute max value within the mask
 		double maxVal = 0;
-		for (int y = 0; y < height; y++)
+		for (int y = 0; y < sizeY; y++)
 		{
-			for (int x = 0; x < width; x++)
+			for (int x = 0; x < sizeX; x++)
 			{
 				int label = (int) labelImage.getf(x, y);
 				if (label != 0)
@@ -203,17 +175,46 @@ public class LabelDistanceTransform3x3Float extends AlgoStub implements LabelDis
 		return distMap;
 	}
 
-	private void forwardIteration() 
+	private FloatProcessor initializeResult(ImageProcessor labelImage)
 	{
+		// size of image
+		int sizeX = labelImage.getWidth();
+		int sizeY = labelImage.getHeight();
+
+		// create new empty image, and fill it with black
+		FloatProcessor distMap = new FloatProcessor(sizeX, sizeY);
+		distMap.setValue(0);
+		distMap.fill();
+
+		// initialize empty image with either 0 (background) or Inf (foreground)
+		for (int y = 0; y < sizeY; y++) 
+		{
+			for (int x = 0; x < sizeX; x++)
+			{
+				int label = (int) labelImage.getf(x, y);
+				distMap.setf(x, y, label == 0 ? 0 : Float.POSITIVE_INFINITY);
+			}
+		}
+		
+		return distMap;
+	}
+	
+	private void forwardIteration(FloatProcessor distMap, ImageProcessor labelImage) 
+	{
+		// Initialize pairs of offset and weights
 		int[] dx = new int[]{-1, 0, +1, -1};
 		int[] dy = new int[]{-1, -1, -1, 0};
 		float[] dw = new float[]{weights[1], weights[0], weights[1], weights[0]};
 		
+		// size of image
+		int sizeX = labelImage.getWidth();
+		int sizeY = labelImage.getHeight();
+
 		// Iterate over pixels
-		for (int y = 0; y < height; y++)
+		for (int y = 0; y < sizeY; y++)
 		{
-			this.fireProgressChanged(this, y, height);
-			for (int x = 0; x < width; x++)
+			this.fireProgressChanged(this, y, sizeY);
+			for (int x = 0; x < sizeX; x++)
 			{
 				// get current label
 				int label = (int) labelImage.getf(x, y);
@@ -234,9 +235,9 @@ public class LabelDistanceTransform3x3Float extends AlgoStub implements LabelDis
 					int y2 = y + dy[i];
 					
 					// check bounds
-					if (x2 < 0 || x2 >= width)
+					if (x2 < 0 || x2 >= sizeX)
 						continue;
-					if (y2 < 0 || y2 >= height)
+					if (y2 < 0 || y2 >= sizeY)
 						continue;
 					
 					if ((int) labelImage.getf(x2, y2) != label)
@@ -258,20 +259,25 @@ public class LabelDistanceTransform3x3Float extends AlgoStub implements LabelDis
 			}
 		}
 		
-		this.fireProgressChanged(this, height, height);
+		this.fireProgressChanged(this, sizeY, sizeY);
 	}
 
-	private void backwardIteration() 
+	private void backwardIteration(FloatProcessor distMap, ImageProcessor labelImage) 
 	{
+		// Initialize pairs of offset and weights
 		int[] dx = new int[]{+1, 0, -1, +1};
 		int[] dy = new int[]{+1, +1, +1, 0};
 		float[] dw = new float[]{weights[1], weights[0], weights[1], weights[0]};
 		
+		// size of image
+		int sizeX = labelImage.getWidth();
+		int sizeY = labelImage.getHeight();
+
 		// Iterate over pixels
-		for (int y = height-1; y >= 0; y--)
+		for (int y = sizeY-1; y >= 0; y--)
 		{
-			this.fireProgressChanged(this, height-1-y, height);
-			for (int x = width-1; x >= 0; x--)
+			this.fireProgressChanged(this, sizeY-1-y, sizeY);
+			for (int x = sizeX-1; x >= 0; x--)
 			{
 				// get current label
 				int label = (int) labelImage.getf(x, y);
@@ -292,9 +298,9 @@ public class LabelDistanceTransform3x3Float extends AlgoStub implements LabelDis
 					int y2 = y + dy[i];
 					
 					// check bounds
-					if (x2 < 0 || x2 >= width)
+					if (x2 < 0 || x2 >= sizeX)
 						continue;
-					if (y2 < 0 || y2 >= height)
+					if (y2 < 0 || y2 >= sizeY)
 						continue;
 					
 					if ((int) labelImage.getf(x2, y2) != label)
@@ -316,6 +322,6 @@ public class LabelDistanceTransform3x3Float extends AlgoStub implements LabelDis
 			}
 		}
 		
-		this.fireProgressChanged(this, height, height);
+		this.fireProgressChanged(this, sizeY, sizeY);
 	}
 }
