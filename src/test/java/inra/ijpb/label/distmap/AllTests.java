@@ -30,6 +30,8 @@ import org.junit.runners.Suite;
 	// generic classes
 	LabelDistanceTransform3x3FloatTest.class, 
 	LabelDistanceTransform3x3ShortTest.class, 
+	LabelDistanceTransform5x5FloatTest.class, 
+	LabelDistanceTransform5x5ShortTest.class, 
 	})
 public class AllTests {
   //nothing
