@@ -31,7 +31,7 @@ public class LabelDistances
 	/**
 	 * <p>
 	 * Computes the distance map (or distance transform) from a label image. 
-	 * Distance is computed for pixel within a label (with value > 0), as the
+	 * Distance is computed for pixel within a label (with value &gt; 0), as the
 	 * chamfer distance to the nearest pixel with a different value.
 	 * </p>
 	 * 
@@ -54,7 +54,7 @@ public class LabelDistances
 	 * Computes the distance map (or distance transform) from a label image, by specifying
 	 * weights and normalization.
 	 *  
-	 * Distance is computed for pixel within a label (with value > 0), as the
+	 * Distance is computed for pixel within a label (with value &gt; 0), as the
 	 * chamfer distance to the nearest pixel with a different value.
 	 * </p>
 	 * 
@@ -96,7 +96,7 @@ public class LabelDistances
 	 * Computes the distance map (or distance transform) from a label image, by specifying
 	 * weights and normalization.
 	 *  
-	 * Distance is computed for pixel within a label (with value > 0), as the
+	 * Distance is computed for pixel within a label (with value &gt; 0), as the
 	 * chamfer distance to the nearest pixel with a different value.
 	 * </p>
 	 * 
