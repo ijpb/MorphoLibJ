@@ -26,6 +26,7 @@ import ij.process.ImageProcessor;
 import inra.ijpb.algo.AlgoEvent;
 import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.binary.ChamferWeights;
+import inra.ijpb.label.LabelValues;
 
 /**
  * Computes Chamfer distances within a label image in a 3x3 neighborhood using
@@ -153,19 +154,8 @@ public class LabelDistanceTransform3x3Float extends AlgoStub implements LabelDis
 
 		this.fireStatusChanged(new AlgoEvent(this, ""));
 
-		// Compute max value within the mask
-		double maxVal = 0;
-		for (int y = 0; y < sizeY; y++)
-		{
-			for (int x = 0; x < sizeX; x++)
-			{
-				int label = (int) labelImage.getf(x, y);
-				if (label != 0)
-					maxVal = Math.max(maxVal, distMap.getf(x, y));
-			}
-		}
-		
-		// calibrate min and max values of result image processor
+		// Compute max value within the mask for setting min/max of ImageProcessor
+		double maxVal = LabelValues.maxValueWithinLabels(distMap, labelImage);
 		distMap.setMinAndMax(0, maxVal);
 
 		// Forces the display to non-inverted LUT
