@@ -396,6 +396,36 @@ public class GeodesicDistanceTransformFloat5x5 extends AlgoStub implements
 				updateIfNeeded(width - 2, j, newVal);
 			}
 
+			// Process second pixel of penultimate line
+			if (maskProc.getPixel(1, height - 2) == maskLabel)
+			{
+				// minimum distance of neighbor pixels
+				ortho = min(buffer.getf(2, height - 2), buffer.getf(1, height - 1));
+				diago = min(buffer.getf(0, height - 1), buffer.getf(2, height - 1));
+				diag2 = buffer.getf(3, height - 1);
+				
+				// compute new distance of current pixel
+				newVal = min3w(ortho, diago, diag2);
+
+				// modify current pixel if needed
+				updateIfNeeded(1, height - 2, newVal);
+			}
+			
+			// Process first pixel of penultimate line
+			if (maskProc.getPixel(0, height - 2) == maskLabel)
+			{
+				// minimum distance of neighbor pixels
+				ortho = min(buffer.getf(1, height - 2), buffer.getf(1, height - 1));
+				diago = buffer.getf(1, height - 1);
+				diag2 = buffer.getf(2, height - 1);
+				
+				// compute new distance of current pixel
+				newVal = min3w(ortho, diago, diag2);
+
+				// modify current pixel if needed
+				updateIfNeeded(0, height - 2, newVal);
+			}
+
 			// Process pixels in the middle of the current line
 			for (int i = width - 3; i > 1; i--) 
 			{
