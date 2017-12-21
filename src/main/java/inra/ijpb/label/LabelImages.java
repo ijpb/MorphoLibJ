@@ -23,6 +23,14 @@ package inra.ijpb.label;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+
+import java.awt.Color;
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.TreeSet;
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
@@ -36,14 +44,6 @@ import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
-
-import java.awt.Color;
-import java.awt.Point;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeSet;
 
 /**
  * Utility methods for label images (stored as 8-, 16- or 32-bits).
@@ -1925,6 +1925,8 @@ public class LabelImages
 	 * defined by <code>labelImage</code> and with maximal value in intensity
 	 * image <code>valueImage</code>.
 	 * 
+	 * @deprecated use LavelValues.findPositionOfMaxValues instead
+	 * 
 	 * @param valueImage
 	 *            the intensity image containing values to compare
 	 * @param labelImage
@@ -1933,54 +1935,19 @@ public class LabelImages
 	 *            the list of labels in the label image
 	 * @return the position of maximum value in intensity image for each label
 	 */
+	@Deprecated
 	public static final Point[] findPositionOfMaxValues(ImageProcessor valueImage, 
 			ImageProcessor labelImage, int[] labels)
 	{
-		// Create associative map between each label and its index
-		Map<Integer,Integer> labelIndices = mapLabelIndices(labels);
-		
-		// Init Position and value of maximum for each label
-		int nbLabel = labels.length;
-		Point[] posMax 	= new Point[nbLabel];
-		float[] maxValues = new float[nbLabel];
-		for (int i = 0; i < nbLabel; i++) 
-		{
-			maxValues[i] = Float.NEGATIVE_INFINITY;
-			posMax[i] = new Point(-1, -1);
-		}
-		
-		// iterate on image pixels
-		int width 	= labelImage.getWidth();
-		int height 	= labelImage.getHeight();
-		for (int y = 0; y < height; y++) 
-		{
-			for (int x = 0; x < width; x++) 
-			{
-				int label = (int) labelImage.getf(x, y);
-				
-				// do not process pixels that do not belong to any particle
-				if (label == 0)
-					continue;
-
-				int index = labelIndices.get(label);
-				
-				// update values and positions
-				float value = valueImage.getf(x, y);
-				if (value > maxValues[index]) 
-				{
-					posMax[index].setLocation(x, y);
-					maxValues[index] = value;
-				}
-			}
-		}
-				
-		return posMax;
+		return LabelValues.findPositionOfMaxValues(valueImage, labelImage, labels);
 	}
 
 	/**
 	 * For each label, finds the position of the point belonging to label region
 	 * defined by <code>labelImage</code> and with minimal value in intensity
 	 * image <code>valueImage</code>.
+	 * 
+	 * @deprecated use LavelValues.findPositionOfMinValues instead
 	 * 
 	 * @param valueImage
 	 *            the intensity image containing values to compare
@@ -1990,48 +1957,11 @@ public class LabelImages
 	 *            the list of labels in the label image
 	 * @return the position of minimum value in intensity image for each label
 	 */
+	@Deprecated
 	public static final Point[] findPositionOfMinValues(ImageProcessor valueImage, 
 			ImageProcessor labelImage, int[] labels)
 	{
-		// Create associative map between each label and its index
-		Map<Integer,Integer> labelIndices = mapLabelIndices(labels);
-		
-		// Init Position and value of minimum for each label
-		int nbLabel = labels.length;
-		Point[] posMax 	= new Point[nbLabel];
-		float[] maxValues = new float[nbLabel];
-		for (int i = 0; i < nbLabel; i++) 
-		{
-			maxValues[i] = Float.POSITIVE_INFINITY;
-			posMax[i] = new Point(-1, -1);
-		}
-		
-		// iterate on image pixels
-		int width 	= labelImage.getWidth();
-		int height 	= labelImage.getHeight();
-		for (int y = 0; y < height; y++) 
-		{
-			for (int x = 0; x < width; x++) 
-			{
-				int label = (int) labelImage.getf(x, y);
-				
-				// do not process pixels that do not belong to any particle
-				if (label == 0)
-					continue;
-
-				int index = labelIndices.get(label);
-				
-				// update values and positions
-				float value = valueImage.getf(x, y);
-				if (value < maxValues[index]) 
-				{
-					posMax[index].setLocation(x, y);
-					maxValues[index] = value;
-				}
-			}
-		}
-				
-		return posMax;
+		return LabelValues.findPositionOfMinValues(valueImage, labelImage, labels);
 	}
 
 }// end class LabelImages

@@ -28,6 +28,7 @@ import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.binary.ChamferWeights;
 import inra.ijpb.label.LabelImages;
+import inra.ijpb.label.LabelValues;
 
 import java.awt.Point;
 import java.util.ArrayList;
@@ -185,22 +186,21 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 		distanceMap = calculator.geodesicDistanceMap(marker, mask);
 		
 		// Extract position of maxima
-		Point[] posCenter = LabelImages.findPositionOfMaxValues(distanceMap, labelImage, labels);
-		
-		float[] radii = findMaxValues(distanceMap, labelImage, labels);
+		LabelValues.PositionValuePair[] circles = LabelValues.findMaxValues(distanceMap, labelImage, labels);
 		
 		// Create new marker image with position of maxima
 		marker.setValue(0);
 		marker.fill();
 		for (int i = 0; i < nbLabels; i++) 
 		{
-			if (posCenter[i].x == -1) 
+			Point center = circles[i].getPosition();
+			if (center.x == -1)
 			{
 				IJ.showMessage("Particle Not Found", 
 						"Could not find maximum for particle label " + i);
 				continue;
 			}
-			marker.set(posCenter[i].x, posCenter[i].y, 255);
+			marker.set(center.x, center.y, 255);
 		}
 		
 		
@@ -211,7 +211,7 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 
 		// find position of maximal value,
 		// this is expected to correspond to a geodesic extremity 
-		Point[] pos1 = LabelImages.findPositionOfMaxValues(distanceMap, labelImage, labels);
+		Point[] pos1 = LabelValues.findPositionOfMaxValues(distanceMap, labelImage, labels);
 		
 		// Create new marker image with position of maxima
 		marker.setValue(0);
@@ -233,19 +233,18 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 		distanceMap = calculator.geodesicDistanceMap(marker, mask);
 		
 		// compute max distance constrained to each label,
-		float[] values = findMaxValues(distanceMap, labelImage, labels);
-		//System.out.println("value: " + value);
-		
-		Point[] pos2 = LabelImages.findPositionOfMaxValues(distanceMap, labelImage, labels);
-		
+		LabelValues.PositionValuePair[] extremities = LabelValues.findMaxValues(distanceMap, labelImage, labels);
+
         // Store results in a new result table
         ResultsTable table = new ResultsTable();
 		for (int i = 0; i < nbLabels; i++) 
 		{
 		    // Small conversion to normalize with weights,
-		    // and ensure length 1 for particles composed of only one pixel
-			double radius = ((double) radii[i]) / weights[0];
-			double value = ((double) values[i]) / weights[0] + 1;
+			double radius = circles[i].getValue() / weights[0];
+			Point center = circles[i].getPosition();
+		    // ensure minimal length of 1 for particles composed of only one pixel
+			double value = extremities[i].getValue() / weights[0] + 1;
+			Point extremPos = extremities[i].getPosition();
 			
 			// add an entry to the resulting data table
 			table.incrementCounter();
@@ -253,12 +252,12 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 			table.addValue("Geod. Diam", value);
 			table.addValue("Radius", radius);
 			table.addValue("Geod. Elong.", Math.max(value / (radius * 2), 1.0));
-			table.addValue("xi", posCenter[i].x);
-			table.addValue("yi", posCenter[i].y);
+			table.addValue("xi", center.x);
+			table.addValue("yi", center.y);
 			table.addValue("x1", pos1[i].x);
 			table.addValue("y1", pos1[i].y);
-			table.addValue("x2", pos2[i].x);
-			table.addValue("y2", pos2[i].y);
+			table.addValue("x2", extremPos.x);
+			table.addValue("y2", extremPos.y);
 		}
 
 		this.fireStatusChanged(this, "");
@@ -268,6 +267,7 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 
 	/**
 	 * Computes the geodesic path of each particle within the given label image.
+	 * 
 	 * Assumes the geodesic distance map has already been computed after a call
 	 * to the "analyzeImage" method.
 	 * 
@@ -279,13 +279,12 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 		// extract labels
         int[] labels = LabelImages.findAllLabels(labelImage);
 
-		// find position of maximal value,
+		// find position of minimal value,
 		// this is expected to correspond to a geodesic extremity 
-		Point[] pos1 = LabelImages.findPositionOfMinValues(distanceMap, labelImage, labels);
+		Point[] pos1 = LabelValues.findPositionOfMinValues(distanceMap, labelImage, labels);
 		
 		// compute position of furthest points
-		Point[] pos2 = LabelImages.findPositionOfMaxValues(distanceMap, labelImage, labels);
-
+		Point[] pos2 = LabelValues.findPositionOfMaxValues(distanceMap, labelImage, labels);
 		
 		// Initialize a new result table
 		Map<Integer, List<Point>> result = new TreeMap<Integer, List<Point>>();
@@ -372,58 +371,5 @@ public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 		}
 		
 		return nextPos;
-	}
-
-	/**
-	 * Finds maximum value within each label.
-	 */
-	private float[] findMaxValues(ImageProcessor image, 
-			ImageProcessor labelImage, int[] labels) 
-	{
-		int width 	= labelImage.getWidth();
-		int height 	= labelImage.getHeight();
-		
-		// Compute value of greatest label
-		int nbLabel = labels.length;
-		int maxLabel = 0;
-		for (int i = 0; i < nbLabel; i++)
-			maxLabel = Math.max(maxLabel, labels[i]);
-		
-		// init index of each label
-		// to make correspondence between label value and label index
-		int[] labelIndex = new int[maxLabel+1];
-		for (int i = 0; i < nbLabel; i++)
-			labelIndex[labels[i]] = i;
-				
-		// Init Position and value of maximum for each label
-		float[] maxValues = new float[nbLabel];
-		for (int i = 0; i < nbLabel; i++)
-			maxValues[i] = Float.MIN_VALUE;
-		
-		// store current value
-		float value;
-		int index;
-		
-		// iterate on image pixels
-		for (int y = 0; y < height; y++)
-		{
-			for (int x = 0; x < width; x++) 
-			{
-				int label = (int) labelImage.getf(x, y);
-				
-				// do not process pixels that do not belong to particle
-				if (label == 0)
-					continue;
-
-				index = labelIndex[label];
-				
-				// update values and positions
-				value = image.getf(x, y);
-				if (value > maxValues[index])
-					maxValues[index] = value;
-			}
-		}
-				
-		return maxValues;
 	}
 }
