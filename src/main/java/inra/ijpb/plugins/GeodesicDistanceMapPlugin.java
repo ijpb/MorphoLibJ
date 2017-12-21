@@ -32,16 +32,15 @@ import ij.process.ImageProcessor;
 import ij.process.LUT;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.binary.ChamferWeights;
-import inra.ijpb.binary.geodesic.GeodesicDistanceTransform;
-import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat;
-import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat5x5;
-import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort;
-import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort5x5;
+import inra.ijpb.label.LabelDistances;
+import inra.ijpb.label.geodesic.LabelGeodesicDistanceTransform;
+import inra.ijpb.label.geodesic.LabelGeodesicDistanceTransform5x5FloatScanning;
+import inra.ijpb.label.geodesic.LabelGeodesicDistanceTransform5x5ShortScanning;
 import inra.ijpb.util.ColorMaps;
 
 /**
- * Plugin for computing geodesic distance map from binary images using chamfer
- * weights.
+ * Plugin for computing geodesic distance map from binary marker and constrained
+ * to binary or label images using chamfer distances propagation.
  * 
  * @author dlegland
  *
@@ -190,13 +189,8 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 			return null;
 		}
 
-		// Initialize calculator
-		GeodesicDistanceTransform algo = chooseAlgo(weights, normalize);
-
 		// Compute distance on specified images
-		ImageProcessor result = algo.geodesicDistanceMap(marker.getProcessor(),
-				mask.getProcessor());
-		ImagePlus resultPlus = new ImagePlus(newName, result);
+		ImagePlus resultPlus = LabelDistances.geodesicDistanceMap(marker, mask);
 
 		// create result array
 		return new Object[] { newName, resultPlus };
@@ -254,19 +248,8 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 			return null;
 		}
 
-		// Initialize calculator
-		GeodesicDistanceTransform algo;
-		if (weights.length == 2)
-		{
-			algo = new GeodesicDistanceTransformShort(weights, normalize);
-		} else
-		{
-			algo = new GeodesicDistanceTransformShort5x5(weights, normalize);
-		}
-
 		// Compute distance on specified images
-		ImageProcessor result = algo.geodesicDistanceMap(marker.getProcessor(),
-				mask.getProcessor());
+		ImageProcessor result = LabelDistances.geodesicDistanceMap(marker.getProcessor(), mask.getProcessor(), weights, normalize);
 		ImagePlus resultPlus = new ImagePlus(newName, result);
 
 		// create result array
@@ -324,7 +307,8 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 		}
 
 		// Initialize calculator
-		GeodesicDistanceTransform algo = chooseAlgo(weights, normalize);
+		LabelGeodesicDistanceTransform algo = new LabelGeodesicDistanceTransform5x5FloatScanning(
+				weights, normalize);
 		DefaultAlgoListener.monitor(algo);
     	
 
@@ -364,7 +348,8 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 		}
 
 		// Initialize calculator
-		GeodesicDistanceTransform algo = chooseAlgo(weights, normalize);
+		LabelGeodesicDistanceTransform algo = new LabelGeodesicDistanceTransform5x5FloatScanning(
+				weights, normalize);
 		DefaultAlgoListener.monitor(algo);
     	
 
@@ -426,14 +411,9 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 		}
 
 		// Initialize calculator
-		GeodesicDistanceTransform algo;
-		if (weights.length == 2)
-		{
-			algo = new GeodesicDistanceTransformShort(weights, normalize);
-		} else
-		{
-			algo = new GeodesicDistanceTransformShort5x5(weights, normalize);
-		}
+		LabelGeodesicDistanceTransform algo = new LabelGeodesicDistanceTransform5x5ShortScanning(
+				weights, normalize);
+
 		DefaultAlgoListener.monitor(algo);
 
 		// Compute distance on specified images
@@ -448,28 +428,6 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 		
 		// create result array
 		return resultPlus;
-	}
-
-	/**
-	 * Choose the appropriate algorithm depending on the length of the weight
-	 * array.
-	 * 
-	 * @param weights
-	 *            the array of chamfer weights
-	 * @param normalize
-	 *            a boolean indicating whether the map should be normalized
-	 * @return an instance of GeodesicDistanceTransform operator
-	 */
-	private GeodesicDistanceTransform chooseAlgo(float[] weights, boolean normalize)
-	{
-		if (weights.length == 2)
-		{
-			return new GeodesicDistanceTransformFloat(weights, normalize);
-		} 
-		else
-		{
-			return new GeodesicDistanceTransformFloat5x5(weights, normalize);
-		}
 	}
 	
 	private LUT createFireLUT(double maxVal)

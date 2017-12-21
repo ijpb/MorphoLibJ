@@ -111,15 +111,18 @@ public class LabelDistanceTransform3x3Float extends AlgoStub implements LabelDis
 	// Methods 
 	
 	/**
-	 * Computes the distance map of the distance to the nearest pixel with a different value.
-	 * The function returns a new short processor the same size as the input,
-	 * with values greater or equal to zero.
+	 * Computes the distance map of the distance to the nearest pixel with a
+	 * different value. The function returns a new short processor the same size
+	 * as the input, with values greater or equal to zero.
 	 * 
-	 * @param image a label image with black pixels (0) as foreground
-	 * @return a new instance of FloatProcessor containing: <ul>
-	 * <li> 0 for each background pixel </li>
-	 * <li> the (strictly positive) distance to the nearest background pixel otherwise</li>
-	 * </ul>
+	 * @param labelImage
+	 *            a label image with black pixels (0) as foreground
+	 * @return a new instance of FloatProcessor containing:
+	 *         <ul>
+	 *         <li>0 for each background pixel</li>
+	 *         <li>the (strictly positive) distance to the nearest background
+	 *         pixel otherwise</li>
+	 *         </ul>
 	 */
 	public FloatProcessor distanceMap(ImageProcessor labelImage) 
 	{
