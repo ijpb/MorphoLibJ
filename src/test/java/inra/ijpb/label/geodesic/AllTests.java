@@ -28,6 +28,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	// generic classes
+	GeodesicDiameterCalculatorTest.class,
 	LabelGeodesicDistanceTransform5x5FloatScanningTest.class,
 	LabelGeodesicDistanceTransform5x5ShortScanningTest.class,
 })

@@ -210,80 +210,7 @@ public class GeodesicDiameterCalculator extends AlgoStub
 		return values;
 	}
 	
-	/**
-	 * Compute the geodesic distance map from the label image stored in this
-	 * instance.
-	 * 
-	 * The geodesic distance map correspond to the geodesic distance
-	 * (constrained to the label image) to the geodesic extremity computed for
-	 * each label.
-	 * 
-	 * Principle:
-	 * <ol>
-	 * <li> Identifies centers from distance map</li>
-	 * <li> Identifies first geodesic extremity by propagating geodesic distances from center </li>
-	 * <li> Propagates geodesic distance from the fist geodesic extremity</li>
-	 * </ol> 
-	 */
-	private void computeGeodesicDistanceMap()
-	{
-		// number of labels to process
-		int nLabels = this.labels.length;
-
-		this.fireStatusChanged(this, "Initializing pseudo geodesic centers...");
-		this.distanceMap = LabelDistances.distanceMap(labelImage);
-
-		// Extract position of maxima
-		LabelValues.PositionValuePair[] circles = LabelValues.findMaxValues(distanceMap, labelImage, labels);
-		
-		// Create new marker image
-		int sizeX = labelImage.getWidth();
-		int sizeY = labelImage.getHeight();
-		ImageProcessor marker = new ByteProcessor(sizeX, sizeY);
-		
-		// initialize marker image with position of maxima
-		for (int i = 0; i < nLabels; i++) 
-		{
-			Point center = circles[i].getPosition();
-			if (center.x == -1)
-			{
-				IJ.showMessage("Particle Not Found", 
-						"Could not find maximum for particle label " + labels[i]);
-				continue;
-			}
-			marker.set(center.x, center.y, 255);
-		}
-
-		this.fireStatusChanged(this, "Computing first geodesic extremities...");
-
-		// Second distance propagation from first maximum
-		distanceMap = calculator.geodesicDistanceMap(marker, labelImage);
-		
-		// find position of maximal value for each label
-		// this is expected to correspond to a geodesic extremity 
-		Point[] pos1 = LabelValues.findPositionOfMaxValues(distanceMap, labelImage, labels);
-		
-		// Create new marker image with position of maxima
-		marker.setValue(0);
-		marker.fill();
-		for (int i = 0; i < nLabels; i++)
-		{
-			if (pos1[i].x == -1) 
-			{
-				IJ.showMessage("Particle Not Found", 
-						"Could not find maximum for particle label " + labels[i]);
-				continue;
-			}
-			marker.set(pos1[i].x, pos1[i].y, 255);
-		}
-		
-		this.fireStatusChanged(this, "Computing second geodesic extremities...");
-
-		// third distance propagation from second maximum
-		distanceMap = calculator.geodesicDistanceMap(marker, labelImage);
-
-		this.fireStatusChanged(this, "");
-	}
+	
 	
 //	/**
 //	 * Computes the geodesic diameter of each particle within the given label
@@ -408,11 +335,19 @@ public class GeodesicDiameterCalculator extends AlgoStub
 	 * @return A map that associate to each integer label the list of positions
 	 *         that constitutes the geodesic path
 	 */
-	public Map<Integer, List<Point>> longestGeodesicPaths() 
+	public Map<Integer, List<Point>> longestGeodesicPaths(ImageProcessor labelImage) 
 	{
-		// extract labels
-        int[] labels = LabelImages.findAllLabels(labelImage);
-
+		// check if the computation of the distance map is needed or not
+		if (this.labelImage != labelImage)
+		{
+			// store input image
+			this.labelImage = labelImage;
+			this.labels = LabelImages.findAllLabels(labelImage);
+			
+			// updates the distance map
+			computeGeodesicDistanceMap();
+		}
+		
 		// find position of maximal value,
 		// this is expected to correspond to a geodesic extremity 
 		Point[] pos1 = LabelValues.findPositionOfMinValues(distanceMap, labelImage, labels);
@@ -453,6 +388,81 @@ public class GeodesicDiameterCalculator extends AlgoStub
 		return result;
 	}
 	/**
+	 * Compute the geodesic distance map from the label image stored in this
+	 * instance.
+	 * 
+	 * The geodesic distance map correspond to the geodesic distance
+	 * (constrained to the label image) to the geodesic extremity computed for
+	 * each label.
+	 * 
+	 * Principle:
+	 * <ol>
+	 * <li> Identifies centers from distance map</li>
+	 * <li> Identifies first geodesic extremity by propagating geodesic distances from center </li>
+	 * <li> Propagates geodesic distance from the fist geodesic extremity</li>
+	 * </ol> 
+	 */
+	private void computeGeodesicDistanceMap()
+	{
+		// number of labels to process
+		int nLabels = this.labels.length;
+	
+		this.fireStatusChanged(this, "Initializing pseudo geodesic centers...");
+		this.distanceMap = LabelDistances.distanceMap(labelImage);
+	
+		// Extract position of maxima
+		LabelValues.PositionValuePair[] circles = LabelValues.findMaxValues(distanceMap, labelImage, labels);
+		
+		// Create new marker image
+		int sizeX = labelImage.getWidth();
+		int sizeY = labelImage.getHeight();
+		ImageProcessor marker = new ByteProcessor(sizeX, sizeY);
+		
+		// initialize marker image with position of maxima
+		for (int i = 0; i < nLabels; i++) 
+		{
+			Point center = circles[i].getPosition();
+			if (center.x == -1)
+			{
+				IJ.showMessage("Particle Not Found", 
+						"Could not find maximum for particle label " + labels[i]);
+				continue;
+			}
+			marker.set(center.x, center.y, 255);
+		}
+	
+		this.fireStatusChanged(this, "Computing first geodesic extremities...");
+	
+		// Second distance propagation from first maximum
+		distanceMap = calculator.geodesicDistanceMap(marker, labelImage);
+		
+		// find position of maximal value for each label
+		// this is expected to correspond to a geodesic extremity 
+		Point[] pos1 = LabelValues.findPositionOfMaxValues(distanceMap, labelImage, labels);
+		
+		// Create new marker image with position of maxima
+		marker.setValue(0);
+		marker.fill();
+		for (int i = 0; i < nLabels; i++)
+		{
+			if (pos1[i].x == -1) 
+			{
+				IJ.showMessage("Particle Not Found", 
+						"Could not find maximum for particle label " + labels[i]);
+				continue;
+			}
+			marker.set(pos1[i].x, pos1[i].y, 255);
+		}
+		
+		this.fireStatusChanged(this, "Computing second geodesic extremities...");
+	
+		// third distance propagation from second maximum
+		distanceMap = calculator.geodesicDistanceMap(marker, labelImage);
+	
+		this.fireStatusChanged(this, "");
+	}
+
+	/**
 	 * Finds the position of the pixel in the neighborhood of pos that have the
 	 * smallest distance and that belongs to the same label as initial position.
 	 * 
@@ -468,19 +478,24 @@ public class GeodesicDiameterCalculator extends AlgoStub
 		Point nextPos = pos;
 		float minDist = distanceMap.getf(pos.x, pos.y);
 		
+		// size of image
+		int sizeX = distanceMap.getWidth();
+		int sizeY = distanceMap.getHeight();
+		
 		// iterate over neighbors of current pixel
-		for (int i = 0; i < shifts.length; i++)
+//		for (int i = 0; i < shifts.length; i++)
+		for (int[] shift : this.shifts)
 		{
 			// Compute neighbor coordinates
-			int x = pos.x + shifts[i][0];
-			int y = pos.y + shifts[i][1];
+			int x = pos.x + shift[0];
+			int y = pos.y + shift[1];
 			
 			// check neighbor is within image bounds
-			if (x < 0 || x >= distanceMap.getWidth())
+			if (x < 0 || x >= sizeX)
 			{
 				continue;
 			}
-			if (y < 0 || y >= distanceMap.getHeight())
+			if (y < 0 || y >= sizeY)
 			{
 				continue;
 			}

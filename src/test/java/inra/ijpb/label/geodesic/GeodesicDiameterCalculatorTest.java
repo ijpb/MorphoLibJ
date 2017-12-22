@@ -2,6 +2,8 @@ package inra.ijpb.label.geodesic;
 
 import static org.junit.Assert.assertEquals;
 
+import java.awt.Point;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -70,82 +72,76 @@ public class GeodesicDiameterCalculatorTest
 		assertEquals(71, geodDiams.size());
 	}
 
-//	/**
-//	 * Test method for {@link inra.ijpb.label.geodesic.GeodesicDiameter#longestGeodesicPaths(ij.process.ImageProcessor)}.
-//	 */
-//	@Test
-//	public void testLongestGeodesicPaths_Rect()
-//	{
-//		ImageProcessor image = new ByteProcessor(10, 3);
-//		for (int x = 1; x < 8; x++)
-//		{
-//			image.set(x, 1, 255);
-//		}
-//
-//		GeodesicDiameterFloat algo = new GeodesicDiameterFloat(ChamferWeights.BORGEFORS);
-//		algo.analyzeImage(image);
-//		Map<Integer, List<Point>> pathMap = algo.longestGeodesicPaths();
-//
-//		assertEquals(1, pathMap.size());
-//		List<Point> path1 = pathMap.get(255);
-//		assertEquals(7, path1.size());
-//	}
-//
-//
-//	/**
-//	 * Test method for {@link inra.ijpb.label.geodesic.GeodesicDiameter#longestGeodesicPaths(ij.process.ImageProcessor)}.
-//	 */
-//	@Test
-//	public void testLongestGeodesicPaths_Circles()
-//	{
-//		ImagePlus imagePlus = IJ.openImage(getClass().getResource("/files/circles.tif").getFile());
-//		ImageProcessor image = imagePlus.getProcessor();
-//	
-//		GeodesicDiameterFloat algo = new GeodesicDiameterFloat(ChamferWeights.CHESSKNIGHT);
-//		algo.analyzeImage(image);
-//		Map<Integer, List<Point>> pathMap = algo.longestGeodesicPaths();
-//
-//		assertEquals(1, pathMap.size());
-//	}
-//
-//    /**
-//     * Test method for {@link inra.ijpb.label.geodesic.GeodesicDiameter#longestGeodesicPaths(ij.process.ImageProcessor)}.
-//     */
-//    @Test
-//    public void testLongestGeodesicPaths_Grains()
-//    {
-//        ImagePlus imagePlus = IJ.openImage(getClass().getResource("/files/grains-WTH-areaOpen-lbl2.tif").getFile());
-//        ImageProcessor image = imagePlus.getProcessor();
-//    
-//        // Need to use weights in 3-by-3 neighborhood, to avoid propagating distances to another grain 
-//        GeodesicDiameterFloat algo = new GeodesicDiameterFloat(ChamferWeights.BORGEFORS);
-//		algo.analyzeImage(image);
-//		Map<Integer, List<Point>> pathMap = algo.longestGeodesicPaths();
-//
-//        assertEquals(71, pathMap.size());
-//    }
-//
-//    /**
-//     * Test method for {@link inra.ijpb.label.geodesic.GeodesicDiameter#longestGeodesicPaths(ij.process.ImageProcessor)}.
-//     */
-//    @Test
-//    public void testLongestGeodesicPaths_LargeLabels()
-//    {
-//        ImagePlus imagePlus = IJ.openImage(getClass().getResource("/files/particles_largeLabels.tif").getFile());
-//        ImageProcessor image = imagePlus.getProcessor();
-//    
-//        // Need to use weights in 3-by-3 neighborhood, to avoid propagating distances to another grain 
-//        GeodesicDiameterFloat algo = new GeodesicDiameterFloat(ChamferWeights.BORGEFORS);
-//		algo.analyzeImage(image);
-//		Map<Integer, List<Point>> pathMap = algo.longestGeodesicPaths();
-//
-//        assertEquals(6, pathMap.size());
-//        
-//        List<Point> lastPath = pathMap.get(104544);
-//        assertEquals(1, lastPath.size());
-//        Point p = lastPath.get(0);
-//        assertEquals(30, p.x);
-//        assertEquals(32, p.y);
-//    }
+	/**
+	 * Test method for {@link inra.ijpb.label.geodesic.GeodesicDiameter#longestGeodesicPaths(ij.process.ImageProcessor)}.
+	 */
+	@Test
+	public void testLongestGeodesicPaths_Rect()
+	{
+		ImageProcessor image = new ByteProcessor(10, 3);
+		for (int x = 1; x < 8; x++)
+		{
+			image.set(x, 1, 255);
+		}
+
+		GeodesicDiameterCalculator algo = new GeodesicDiameterCalculator(ChamferWeights.BORGEFORS);
+		Map<Integer, List<Point>> pathMap = algo.longestGeodesicPaths(image);
+
+		assertEquals(1, pathMap.size());
+		List<Point> path1 = pathMap.get(255);
+		assertEquals(4, path1.size());
+	}
+
+
+	/**
+	 * Test method for {@link inra.ijpb.label.geodesic.GeodesicDiameter#longestGeodesicPaths(ij.process.ImageProcessor)}.
+	 */
+	@Test
+	public void testLongestGeodesicPaths_Circles()
+	{
+		ImagePlus imagePlus = IJ.openImage(getClass().getResource("/files/circles.tif").getFile());
+		ImageProcessor image = imagePlus.getProcessor();
+	
+		GeodesicDiameterCalculator algo = new GeodesicDiameterCalculator(ChamferWeights.BORGEFORS);
+		Map<Integer, List<Point>> pathMap = algo.longestGeodesicPaths(image);
+
+		assertEquals(1, pathMap.size());
+	}
+
+    /**
+     * Test method for {@link inra.ijpb.label.geodesic.GeodesicDiameter#longestGeodesicPaths(ij.process.ImageProcessor)}.
+     */
+    @Test
+    public void testLongestGeodesicPaths_Grains()
+    {
+        ImagePlus imagePlus = IJ.openImage(getClass().getResource("/files/grains-WTH-areaOpen-lbl2.tif").getFile());
+        ImageProcessor image = imagePlus.getProcessor();
+    
+		GeodesicDiameterCalculator algo = new GeodesicDiameterCalculator(ChamferWeights.BORGEFORS);
+		Map<Integer, List<Point>> pathMap = algo.longestGeodesicPaths(image);
+
+        assertEquals(71, pathMap.size());
+    }
+
+    /**
+     * Test method for {@link inra.ijpb.label.geodesic.GeodesicDiameter#longestGeodesicPaths(ij.process.ImageProcessor)}.
+     */
+    @Test
+    public void testLongestGeodesicPaths_LargeLabels()
+    {
+        ImagePlus imagePlus = IJ.openImage(getClass().getResource("/files/particles_largeLabels.tif").getFile());
+        ImageProcessor image = imagePlus.getProcessor();
+    
+		GeodesicDiameterCalculator algo = new GeodesicDiameterCalculator(ChamferWeights.BORGEFORS);
+		Map<Integer, List<Point>> pathMap = algo.longestGeodesicPaths(image);
+
+        assertEquals(6, pathMap.size());
+        
+        List<Point> lastPath = pathMap.get(104544);
+        assertEquals(1, lastPath.size());
+        Point p = lastPath.get(0);
+        assertEquals(30, p.x);
+        assertEquals(32, p.y);
+    }
 
 }
