@@ -44,9 +44,8 @@ import ij.plugin.frame.RoiManager;
 import ij.process.ImageProcessor;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.binary.ChamferWeights;
-import inra.ijpb.binary.geodesic.GeodesicDiameterFloat;
-import inra.ijpb.binary.geodesic.GeodesicDiameterShort;
 import inra.ijpb.label.LabelImages;
+import inra.ijpb.label.geodesic.GeodesicDiameterCalculator;
 import inra.ijpb.util.IJUtils;
 
 /**
@@ -119,10 +118,10 @@ public class GeodesicDiameterPlugin implements PlugIn
 		// Compute geodesic diameters, using floating-point calculations
 		long start = System.nanoTime();
 		
-		GeodesicDiameterFloat algo = new GeodesicDiameterFloat(weights);
+		GeodesicDiameterCalculator algo = new GeodesicDiameterCalculator(weights);
 		DefaultAlgoListener.monitor(algo);
 		
-		ResultsTable table = algo.analyzeImage(labelImage);
+		ResultsTable table = algo.geodesicDiameterResults(labelImage);
 
 		long finalTime = System.nanoTime();
 		
@@ -141,91 +140,50 @@ public class GeodesicDiameterPlugin implements PlugIn
     		boolean validPaths = true;
     		for (double geodDiam : geodDiamArray)
     		{
-    			if (Float.isInfinite((float) geodDiam))
+    			if (Double.isInfinite(geodDiam))
     			{
-    				IJ.showMessage("Geodesic Diameter Warning", "Some geodesic diameters are infinite,\n"
-    						+ "meaning that some particles are not connected.\n" + "Maybe labeling was not performed?");
     				validPaths = false;
     				break;
     			}
     		}
 		
-    		
-    		if (validPaths)
+    		if (!validPaths)
     		{
-    			// compute the path that is associated to each label
-    			Map<Integer, List<Point>> pathMap = null;
-    			try
-    			{
-    				pathMap = algo.longestGeodesicPaths();
-    			}
-    			catch (Exception ex)
-    			{
-    			    IJ.handleException(ex);
-    				IJ.error("Geodesic Diameter Error", 
-    						"Could not compute geodesic paths.\nTry using Borgefors weights.");
-    				return;
-    			}
-    			
-    			// Check if results must be displayed on an image
-    			if (overlayPaths) 
-    			{
-    				// New image for displaying geometric overlays
-    				ImagePlus resultImage = WindowManager.getImage(resultImageIndex+1);
-    				drawPaths(resultImage, pathMap);
-    			}
-    			
-    			if (createPathRois)
-    			{
-    				createPathRois(labelPlus, pathMap);
-    			}
+				IJ.showMessage("Geodesic Diameter Warning", "Some geodesic diameters are infinite,\n"
+						+ "meaning that some particles are not connected.\n" + "Maybe labeling was not performed, or label image was cropped?");
+    		}
+    		
+    		// compute the path that is associated to each label
+    		Map<Integer, List<Point>> pathMap = null;
+    		try
+    		{
+    			pathMap = algo.longestGeodesicPaths(labelImage);
+    		}
+    		catch (Exception ex)
+    		{
+    			IJ.handleException(ex);
+    			IJ.error("Geodesic Diameter Error", 
+    					"Could not compute geodesic paths.\nTry using Borgefors weights.");
+    			return;
+    		}
+
+    		// Check if results must be displayed on an image
+    		if (overlayPaths) 
+    		{
+    			// New image for displaying geometric overlays
+    			ImagePlus resultImage = WindowManager.getImage(resultImageIndex+1);
+    			drawPaths(resultImage, pathMap);
+    		}
+
+    		if (createPathRois)
+    		{
+    			createPathRois(labelPlus, pathMap);
     		}
 		}
 		
 		IJUtils.showElapsedTime("Geodesic Diameter", elapsedTime, labelPlus); 
 	}
 
-	
-	// ====================================================
-	// Computing functions 
-	
-	/**
-	 * Compute the table of geodesic parameters, when the weights are given as
-	 * floating point values.
-	 * 
-	 * @param labels
-	 *            the label image of the particles
-	 * @param weights
-	 *            the weights to use
-	 * @return a new ResultsTable object containing the geodesic diameter of
-	 *         each label
-	 */
-	public ResultsTable process(ImageProcessor labels, float[] weights)
-	{
-		GeodesicDiameterFloat algo = new GeodesicDiameterFloat(weights);
-		DefaultAlgoListener.monitor(algo);
-		ResultsTable table = algo.analyzeImage(labels);
-		return table;
-	}
-
-	/**
-	 * Compute the table of geodesic parameters, when the weights are given as
-	 * integer values.
-	 * 
-	 * @param labels
-	 *            the label image of the particles
-	 * @param weights
-	 *            the weights to use
-	 * @return a new ResultsTable object containing the geodesic diameter of
-	 *         each label
-	 */
-	public ResultsTable process(ImageProcessor labels, short[] weights)
-	{
-		GeodesicDiameterShort algo = new GeodesicDiameterShort(weights);
-		DefaultAlgoListener.monitor(algo);
-		ResultsTable table = algo.analyzeImage(labels);
-		return table;
-	}
 
 	// ====================================================
 	// Computing functions 
@@ -315,6 +273,11 @@ public class GeodesicDiameterPlugin implements PlugIn
 	    
         for (List<Point> path : pathMap.values())
         {
+        	if (path == null)
+        	{
+        		continue;
+        	}
+        	
             if (path.size() > 1)
             {
                 // Polyline path
@@ -331,7 +294,7 @@ public class GeodesicDiameterPlugin implements PlugIn
                 Roi roi = new PolygonRoi(x, y, n, Roi.POLYLINE);
                 roiList.add(roi);
             }
-            else
+            else if (path.size() == 1)
             {
                 // case of single point particle
                 Point p = path.get(0);

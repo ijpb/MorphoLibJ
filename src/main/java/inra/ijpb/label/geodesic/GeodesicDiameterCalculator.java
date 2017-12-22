@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import ij.IJ;
+import ij.measure.ResultsTable;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.algo.AlgoStub;
@@ -70,7 +71,7 @@ public class GeodesicDiameterCalculator extends AlgoStub
 	/**
 	 * The algorithm used for computing geodesic distances.
 	 */
-	LabelGeodesicDistanceTransform calculator;
+	LabelGeodesicDistanceTransform geodesicDistanceTransform;
 
 	/**
 	 * An array of shifts corresponding to the weights, for computing geodesic
@@ -103,6 +104,30 @@ public class GeodesicDiameterCalculator extends AlgoStub
 	 */
 	ImageProcessor distanceMap = null;
 
+	/**
+	 * The largest inscribed circle within each label, computed during the first
+	 * step of the algorithm.
+	 * 
+	 * @see #computeGeodesicDistanceMap()
+	 */
+	LabelValues.PositionValuePair[] innerCircles = null;
+
+	/**
+	 * The position of the first geodesic extremity for each label, computed
+	 * during the second step of the algorithm.
+	 * 
+	 * @see #computeGeodesicDistanceMap()
+	 */
+	Point[] firstGeodesicExtremities = null;
+
+	/**
+	 * The position of the second geodesic extremity for each label, computed
+	 * during the thrid step of the algorithm.
+	 * 
+	 * @see #computeGeodesicDistanceMap()
+	 */
+	LabelValues.PositionValuePair[] secondGeodesicExtremities = null;
+	
 	
 	// ==================================================
 	// Constructors 
@@ -110,7 +135,7 @@ public class GeodesicDiameterCalculator extends AlgoStub
 	/**
 	 * Creates a new geodesic diameter computation operator.
 	 * 
-	 * @param chamferWeights
+	 * @param weights
 	 *            an instance of ChamferWeights, which provides the float values
 	 *            used for propagating distances
 	 */
@@ -134,13 +159,13 @@ public class GeodesicDiameterCalculator extends AlgoStub
 	/**
 	 * Creates a new geodesic diameter computation operator.
 	 * 
-	 * @param weights
-	 *            the array of weights for orthogonal, diagonal, and eventually
-	 *            chess-knight moves neighbors
+	 * @param gdt
+	 *            the instance of Geodesic Distance Transform calculator used
+	 *            for propagating distances
 	 */
 	public GeodesicDiameterCalculator(LabelGeodesicDistanceTransform gdt) 
 	{
-		this.calculator = gdt;
+		this.geodesicDistanceTransform = gdt;
 	}
 	
 	
@@ -158,6 +183,8 @@ public class GeodesicDiameterCalculator extends AlgoStub
 	 */
 	public Map<Integer, Double> geodesicDiameter(ImageProcessor labelImage)
 	{
+		validateGeodesicDistanceMap(labelImage);
+
 		int[] labels = LabelImages.findAllLabels(labelImage);
 		double[] geodDiams = geodesicDiameter(labelImage, labels);
 		
@@ -184,147 +211,63 @@ public class GeodesicDiameterCalculator extends AlgoStub
 	 */
 	public double[] geodesicDiameter(ImageProcessor labelImage, int[] labels)
 	{
-		// Check validity of parameters
-		if (labelImage==null) return null;
-		
 		// check if the computation of the distance map is needed or not
-		if (this.labelImage != labelImage)
-		{
-			// store input image
-			this.labelImage = labelImage;
-			this.labels = labels;
-			
-			// updates the distance map
-			computeGeodesicDistanceMap();
-		}
+		validateGeodesicDistanceMap(labelImage);
 		
-		// compute max distance constrained to each label
-		double[] values = LabelValues.maxValues(distanceMap, labelImage, labels);
-		
-		// add 1 to take into account pixel thickness
+		// Get the maximum distance within each label, 
+		// and add 1 to take into account pixel thickness.
+		double[] values = new double[this.labels.length];
 		for (int i = 0; i < this.labels.length; i++)
 		{
-			values[i] += 1;
+			values[i] = secondGeodesicExtremities[i].getValue() + 1;
 		}
 		
 		return values;
 	}
 	
 	
-	
-//	/**
-//	 * Computes the geodesic diameter of each particle within the given label
-//	 * image.
-//	 * 
-//	 * @param labelImage
-//	 *            a label image, containing either the label of a particle or
-//	 *            region, or zero for background
-//	 * @return a ResultsTable containing for each label the geodesic diameter of
-//	 *         the corresponding particle
-//	 */
-//	public ResultsTable analyzeImage(ImageProcessor labelImage) 
-//	{
-//		// Check validity of parameters
-//		if (labelImage==null) return null;
-//		this.labelImage = labelImage;
-//		
-//        // extract labels
-//        this.fireStatusChanged(this, "Count labels in image");
-//        int[] labels = LabelImages.findAllLabels(labelImage);
-//		int nLabels = labels.length;
-//		
-//		// Initialize mask as binarisation of labels
-//		ImageProcessor mask = BinaryImages.binarize(labelImage);
-//		
-//		// Initialize marker as complement of all labels
-//		ImageProcessor marker = BinaryImages.binarizeBackground(labelImage);
-//
-//		this.fireStatusChanged(this, "Initializing pseudo geodesic centers...");
-//
-//		// first distance propagation to find an arbitrary center
-//		distanceMap = calculator.geodesicDistanceMap(marker, mask);
-//		
-//		// Extract position of maxima
-//		LabelValues.PositionValuePair[] circles = LabelValues.findMaxValues(distanceMap, labelImage, labels);
-//		
-//		// Create new marker image with position of maxima
-//		marker.setValue(0);
-//		marker.fill();
-//		for (int i = 0; i < nLabels; i++) 
-//		{
-//			Point center = circles[i].getPosition();
-//			if (center.x == -1)
-//			{
-//				IJ.showMessage("Particle Not Found", 
-//						"Could not find maximum for particle label " + i);
-//				continue;
-//			}
-//			marker.set(center.x, center.y, 255);
-//		}
-//		
-//		
-//		this.fireStatusChanged(this, "Computing first geodesic extremities...");
-//
-//		// Second distance propagation from first maximum
-//		distanceMap = calculator.geodesicDistanceMap(marker, mask);
-//
-//		// find position of maximal value,
-//		// this is expected to correspond to a geodesic extremity 
-//		Point[] pos1 = LabelValues.findPositionOfMaxValues(distanceMap, labelImage, labels);
-//		
-//		// Create new marker image with position of maxima
-//		marker.setValue(0);
-//		marker.fill();
-//		for (int i = 0; i < nLabels; i++)
-//		{
-//			if (pos1[i].x == -1) 
-//			{
-//				IJ.showMessage("Particle Not Found", 
-//						"Could not find maximum for particle label " + i);
-//				continue;
-//			}
-//			marker.set(pos1[i].x, pos1[i].y, 255);
-//		}
-//		
-//		this.fireStatusChanged(this, "Computing second geodesic extremities...");
-//
-//		// third distance propagation from second maximum
-//		distanceMap = calculator.geodesicDistanceMap(marker, mask);
-//		
-//		// compute max distance constrained to each label
-//		LabelValues.PositionValuePair[] extremities = LabelValues.findMaxValues(distanceMap, labelImage, labels);
-//		
-//		// Initialize a new result table
-//		ResultsTable table = new ResultsTable();
-//
-//		// Small conversion to normalize with weights
-//		for (int i = 0; i < nLabels; i++)
-//		{
-//			// coordinates of max inscribed circle
-//			double radius = circles[i].getValue();
-//			Point center = circles[i].getPosition();
-//			
-//		    // coordinate and value of second geodesic extremity 
-//			double value = extremities[i].getValue() + 1;
-//			Point extremPos = extremities[i].getPosition();
-//			
-//			// add an entry to the resulting data table
-//			table.incrementCounter();
-//			table.addValue("Label", labels[i]);
-//			table.addValue("Geod. Diam", value);
-//			table.addValue("Radius", radius);
-//			table.addValue("Geod. Elong.", Math.max(value / (radius * 2), 1.0));
-//			table.addValue("xi", center.x);
-//			table.addValue("yi", center.y);
-//			table.addValue("x1", pos1[i].x);
-//			table.addValue("y1", pos1[i].y);
-//			table.addValue("x2", extremPos.x);
-//			table.addValue("y2", extremPos.y);
-//		}
-//
-//		this.fireStatusChanged(this, "");
-//		return table;
-//	}
+	public ResultsTable geodesicDiameterResults(ImageProcessor labelImage)
+	{
+		// check if the computation of the distance map is needed or not
+		validateGeodesicDistanceMap(labelImage);
+		
+		// Initialize a new result table
+		ResultsTable table = new ResultsTable();
+
+		// Convert all results that were computed during execution of the
+		// "computeGeodesicDistanceMap()" method into rows of the results table
+		for (int i = 0; i < this.labels.length; i++)
+		{
+			int label = this.labels[i];
+			
+			// coordinates of max inscribed circle
+			double radius = innerCircles[i].getValue();
+			Point center = innerCircles[i].getPosition();
+			
+		    // coordinate of first geodesic extremity 
+			Point pos1 = firstGeodesicExtremities[i];
+			
+			// coordinate and value of second geodesic extremity 
+			double value = secondGeodesicExtremities[i].getValue() + 1;
+			Point pos2 = secondGeodesicExtremities[i].getPosition();
+			
+			// add an entry to the resulting data table
+			table.incrementCounter();
+			table.addValue("Label", label);
+			table.addValue("Geod. Diam", value);
+			table.addValue("Radius", radius);
+			table.addValue("Geod. Elong.", Math.max(value / (radius * 2), 1.0));
+			table.addValue("xi", center.x);
+			table.addValue("yi", center.y);
+			table.addValue("x1", pos1.x);
+			table.addValue("y1", pos1.y);
+			table.addValue("x2", pos2.x);
+			table.addValue("y2", pos2.y);
+		}
+
+		return table;
+
+	}
 	
 	/**
 	 * Computes the geodesic path of each particle within the given label image.
@@ -332,12 +275,61 @@ public class GeodesicDiameterCalculator extends AlgoStub
 	 * Assumes the geodesic distance map has already been computed after a call
 	 * to the "analyzeImage" method.
 	 *
+	 * @param labelImage
+	 *            the image containing labels
+	 *
 	 * @return A map that associate to each integer label the list of positions
 	 *         that constitutes the geodesic path
 	 */
 	public Map<Integer, List<Point>> longestGeodesicPaths(ImageProcessor labelImage) 
 	{
 		// check if the computation of the distance map is needed or not
+		validateGeodesicDistanceMap(labelImage);
+		
+		// Initialize a new result table
+		Map<Integer, List<Point>> pathMap = new TreeMap<Integer, List<Point>>();
+
+		// compute paths starting from points with larger distance value
+		for (int i = 0; i < labels.length; i++)
+		{
+			int label = labels[i];
+			
+			// Current first geodesic extremity 
+			// (corresponding to the minimum of the geodesic distance map)
+			Point pos1 = this.firstGeodesicExtremities[i];
+			
+			// Create new path
+			List<Point> path = new ArrayList<Point>();
+			
+			// if the geodesic diameter of the current label is infinite, it is
+			// not possible to create a path
+			// -> use an empty path
+			if (!Double.isFinite(this.secondGeodesicExtremities[i].getValue()))
+			{
+				pathMap.put(label, path);
+				continue;
+			}
+			
+			// initialize path with position of second geodesic extremity
+			// (corresponding to the maximum of the geodesic distance map)
+			Point pos = this.secondGeodesicExtremities[i].getPosition();
+			path.add(pos);
+			
+			// iterate over neighbors of current position until we reach the minimum value
+			while (!pos.equals(pos1))
+			{
+				pos = findLowestNeighborPosition(pos);
+				path.add(pos);
+			}
+			
+			pathMap.put(label, path);
+		}
+
+		return pathMap;
+	}
+	
+	private void validateGeodesicDistanceMap(ImageProcessor labelImage)
+	{
 		if (this.labelImage != labelImage)
 		{
 			// store input image
@@ -347,46 +339,8 @@ public class GeodesicDiameterCalculator extends AlgoStub
 			// updates the distance map
 			computeGeodesicDistanceMap();
 		}
-		
-		// find position of maximal value,
-		// this is expected to correspond to a geodesic extremity 
-		Point[] pos1 = LabelValues.findPositionOfMinValues(distanceMap, labelImage, labels);
-		
-		// compute position of furthest points
-		Point[] pos2 = LabelValues.findPositionOfMaxValues(distanceMap, labelImage, labels);
-
-		
-		// Initialize a new result table
-		Map<Integer, List<Point>> result = new TreeMap<Integer, List<Point>>();
-
-		// compute paths starting from points with larger distance value
-		for (int i = 0; i < labels.length; i++)
-		{
-			int label = labels[i];
-			
-			List<Point> path = new ArrayList<Point>();
-			path.add(pos2[i]);
-			
-			Point pos = pos2[i];
-			try
-			{
-				while (!pos.equals(pos1[i]))
-				{
-					pos = findLowestNeighborPosition(pos);
-					path.add(pos);
-				}
-			}
-			catch(Exception ex)
-			{
-				throw new RuntimeException(String.format("Could not compute path for label %d, at position (%d, %d)",
-						label, pos.x, pos.y));
-			}
-			
-			result.put(label, path);
-		}
-
-		return result;
 	}
+	
 	/**
 	 * Compute the geodesic distance map from the label image stored in this
 	 * instance.
@@ -407,21 +361,24 @@ public class GeodesicDiameterCalculator extends AlgoStub
 		// number of labels to process
 		int nLabels = this.labels.length;
 	
-		this.fireStatusChanged(this, "Initializing pseudo geodesic centers...");
-		this.distanceMap = LabelDistances.distanceMap(labelImage);
-	
-		// Extract position of maxima
-		LabelValues.PositionValuePair[] circles = LabelValues.findMaxValues(distanceMap, labelImage, labels);
-		
 		// Create new marker image
 		int sizeX = labelImage.getWidth();
 		int sizeY = labelImage.getHeight();
 		ImageProcessor marker = new ByteProcessor(sizeX, sizeY);
 		
+		// Compute distance map from label borders to identify centers 
+		this.fireStatusChanged(this, "Initializing pseudo geodesic centers...");
+		this.distanceMap = LabelDistances.distanceMap(labelImage);
+	
+		// Extract position of maxima
+		this.innerCircles = LabelValues.findMaxValues(distanceMap, labelImage, labels);
+		
 		// initialize marker image with position of maxima
+		marker.setValue(0);
+		marker.fill();
 		for (int i = 0; i < nLabels; i++) 
 		{
-			Point center = circles[i].getPosition();
+			Point center = this.innerCircles[i].getPosition();
 			if (center.x == -1)
 			{
 				IJ.showMessage("Particle Not Found", 
@@ -434,31 +391,33 @@ public class GeodesicDiameterCalculator extends AlgoStub
 		this.fireStatusChanged(this, "Computing first geodesic extremities...");
 	
 		// Second distance propagation from first maximum
-		distanceMap = calculator.geodesicDistanceMap(marker, labelImage);
+		distanceMap = geodesicDistanceTransform.geodesicDistanceMap(marker, labelImage);
 		
 		// find position of maximal value for each label
 		// this is expected to correspond to a geodesic extremity 
-		Point[] pos1 = LabelValues.findPositionOfMaxValues(distanceMap, labelImage, labels);
+		this.firstGeodesicExtremities = LabelValues.findPositionOfMaxValues(distanceMap, labelImage, labels);
 		
 		// Create new marker image with position of maxima
 		marker.setValue(0);
 		marker.fill();
 		for (int i = 0; i < nLabels; i++)
 		{
-			if (pos1[i].x == -1) 
+			if (this.firstGeodesicExtremities[i].x == -1) 
 			{
 				IJ.showMessage("Particle Not Found", 
 						"Could not find maximum for particle label " + labels[i]);
 				continue;
 			}
-			marker.set(pos1[i].x, pos1[i].y, 255);
+			marker.set(firstGeodesicExtremities[i].x, firstGeodesicExtremities[i].y, 255);
 		}
 		
 		this.fireStatusChanged(this, "Computing second geodesic extremities...");
 	
 		// third distance propagation from second maximum
-		distanceMap = calculator.geodesicDistanceMap(marker, labelImage);
-	
+		this.distanceMap = geodesicDistanceTransform.geodesicDistanceMap(marker, labelImage);
+		// also computes position of maxima
+		this.secondGeodesicExtremities = LabelValues.findMaxValues(distanceMap, labelImage, labels);
+
 		this.fireStatusChanged(this, "");
 	}
 
@@ -475,7 +434,6 @@ public class GeodesicDiameterCalculator extends AlgoStub
 	private Point findLowestNeighborPosition(Point pos)
 	{
 		int refLabel = (int) labelImage.getf(pos.x, pos.y);
-		Point nextPos = pos;
 		float minDist = distanceMap.getf(pos.x, pos.y);
 		
 		// size of image
@@ -483,7 +441,7 @@ public class GeodesicDiameterCalculator extends AlgoStub
 		int sizeY = distanceMap.getHeight();
 		
 		// iterate over neighbors of current pixel
-//		for (int i = 0; i < shifts.length; i++)
+		Point nextPos = pos;
 		for (int[] shift : this.shifts)
 		{
 			// Compute neighbor coordinates
@@ -517,10 +475,9 @@ public class GeodesicDiameterCalculator extends AlgoStub
 
 		if (nextPos.equals(pos))
 		{
-			throw new RuntimeException("Could not find a neighbor with smaller value");
+			throw new RuntimeException("Could not find a neighbor with smaller value at (" + pos.x + "," + pos.y + ")");
 		}
 		
 		return nextPos;
 	}
-
 }
