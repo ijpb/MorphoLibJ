@@ -43,6 +43,30 @@ import org.junit.Test;
 public class GeodesicDiameterFloatTest
 {
 	/**
+	 * Test method for {@link inra.ijpb.binary.geodesic.GeodesicDiameterFloat#analyzeImage(ij.process.ImageProcessor)}, 
+	 * operating on a 9-by-3 rectangle.
+	 */
+	@Test
+	public void testAnalyzeImage_Rect_ChessKnight()
+	{
+		ImageProcessor image = new ByteProcessor(11, 5);
+		for (int y = 0; y < 3; y++)
+		{
+			for (int x = 0; x < 9; x++)
+			{
+				image.set(x + 1, y + 1, 255);
+			}
+		}
+	
+		GeodesicDiameterFloat algo = new GeodesicDiameterFloat(ChamferWeights.CHESSKNIGHT);
+		ResultsTable table = algo.analyzeImage(image);
+
+		assertEquals(1, table.getCounter());
+		double exp = (42.0 / 5.0) + 1;
+		assertEquals(exp, table.getValueAsDouble(1, 0), .1);
+	}
+
+	/**
 	 * Test method for {@link inra.ijpb.binary.geodesic.GeodesicDiameterFloat#analyzeImage(ij.process.ImageProcessor)}.
 	 */
 	@Test
