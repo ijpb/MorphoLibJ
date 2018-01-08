@@ -170,7 +170,7 @@ public class LabelToValuePlugin implements PlugIn, DialogListener
 
 		double[] extent = computeColumnExtent(table, defaultHeading);
 
-		this.gd = new GenericDialog("Colorize Labels");
+		this.gd = new GenericDialog("Assign Measure to Label");
 		gd.addChoice("Results Table:", tableNames, tableNames[0]);
 		gd.addChoice("Column:", headings, defaultHeading);
 		gd.addNumericField("Min Value", extent[0], this.nDigits, 10, null);
