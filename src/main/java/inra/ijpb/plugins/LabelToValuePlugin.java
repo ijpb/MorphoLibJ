@@ -59,7 +59,7 @@ public class LabelToValuePlugin implements PlugIn, DialogListener
 	ResultsTable table = null;
 	
 	
-	GenericDialog gd;
+	GenericDialog gd = null;
 	
 	String selectedHeaderName = null;
 	
