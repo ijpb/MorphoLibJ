@@ -407,6 +407,7 @@ public class LabelEdition implements PlugIn
 		{
 			LabelImages.mergeLabels( displayImage, displayImage.getRoi(),
 					true );
+			displayImage.deleteRoi();
 			displayImage.updateAndDraw();
 		}
 
@@ -497,6 +498,7 @@ public class LabelEdition implements PlugIn
 		{
 			LabelImages.removeLabels( displayImage, displayImage.getRoi(),
 					true );
+			displayImage.deleteRoi();
 			displayImage.updateAndDraw();
 		}
 		/**
