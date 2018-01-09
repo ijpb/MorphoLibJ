@@ -385,7 +385,8 @@ public class LabelEdition implements PlugIn
 				result.setSlice( displayImage.getCurrentSlice() );
 				result.show();
 			}
-			// show input image as well
+			// show original input image as well
+			inputImage.changes = false;
 			inputImage.getWindow().setVisible( true );
 
 			// remove listeners
