@@ -96,7 +96,7 @@ public class GeodesicDistanceTransformShort extends AlgoStub implements Geodesic
 	 *            the label image used as mask
 	 * @return the geodesic distance map from the marker image within each label
 	 *         of the mask
-	 * @see inra.ijpb.label.geodesic.LabelGeodesicDistanceTransform#geodesicDistanceMap(ij.process.ImageProcessor,
+	 * @see inra.ijpb.binary.geodesic.GeodesicDistanceTransform#geodesicDistanceMap(ij.process.ImageProcessor,
 	 *      ij.process.ImageProcessor)
 	 */
 	@Override
