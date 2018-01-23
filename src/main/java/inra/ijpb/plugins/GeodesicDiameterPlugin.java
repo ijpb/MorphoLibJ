@@ -45,7 +45,7 @@ import ij.process.ImageProcessor;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.binary.ChamferWeights;
 import inra.ijpb.label.LabelImages;
-import inra.ijpb.label.geodesic.GeodesicDiameterCalculator;
+import inra.ijpb.measure.GeodesicDiameterCalculator;
 import inra.ijpb.util.IJUtils;
 
 /**

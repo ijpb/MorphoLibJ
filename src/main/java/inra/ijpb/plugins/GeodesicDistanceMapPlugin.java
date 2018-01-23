@@ -21,8 +21,6 @@
  */
 package inra.ijpb.plugins;
 
-import java.awt.image.IndexColorModel;
-
 import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
@@ -32,11 +30,13 @@ import ij.process.ImageProcessor;
 import ij.process.LUT;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.binary.ChamferWeights;
+import inra.ijpb.binary.geodesic.GeodesicDistanceTransform;
+import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat5x5;
+import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort5x5;
 import inra.ijpb.label.LabelDistances;
-import inra.ijpb.label.geodesic.LabelGeodesicDistanceTransform;
-import inra.ijpb.label.geodesic.LabelGeodesicDistanceTransform5x5FloatScanning;
-import inra.ijpb.label.geodesic.LabelGeodesicDistanceTransform5x5ShortScanning;
 import inra.ijpb.util.ColorMaps;
+
+import java.awt.image.IndexColorModel;
 
 /**
  * Plugin for computing geodesic distance map from binary marker and constrained
@@ -307,8 +307,7 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 		}
 
 		// Initialize calculator
-		LabelGeodesicDistanceTransform algo = new LabelGeodesicDistanceTransform5x5FloatScanning(
-				weights, normalize);
+		GeodesicDistanceTransform algo = new GeodesicDistanceTransformFloat5x5(weights, normalize);
 		DefaultAlgoListener.monitor(algo);
     	
 
@@ -348,7 +347,7 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 		}
 
 		// Initialize calculator
-		LabelGeodesicDistanceTransform algo = new LabelGeodesicDistanceTransform5x5FloatScanning(
+		GeodesicDistanceTransform algo = new GeodesicDistanceTransformFloat5x5(
 				weights, normalize);
 		DefaultAlgoListener.monitor(algo);
     	
@@ -411,8 +410,7 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 		}
 
 		// Initialize calculator
-		LabelGeodesicDistanceTransform algo = new LabelGeodesicDistanceTransform5x5ShortScanning(
-				weights, normalize);
+		GeodesicDistanceTransform algo = new GeodesicDistanceTransformShort5x5(weights, normalize);
 
 		DefaultAlgoListener.monitor(algo);
 
