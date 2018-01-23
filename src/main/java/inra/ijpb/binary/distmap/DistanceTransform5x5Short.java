@@ -21,12 +21,12 @@
  */
 package inra.ijpb.binary.distmap;
 
-import static java.lang.Math.min;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
-import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.algo.AlgoEvent;
+import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.binary.ChamferWeights;
+import inra.ijpb.label.LabelValues;
 
 /**
  * <p>Computes Chamfer distances in a 5x5 neighborhood using a ShortProcessor 
@@ -56,29 +56,24 @@ import inra.ijpb.binary.ChamferWeights;
  */
 public class DistanceTransform5x5Short extends AlgoStub implements DistanceTransform 
 {
-	private final static int DEFAULT_MASK_LABEL = 255;
-
-	private short[] weights = new short[]{3, 4, 5};
-
-	private int width;
-	private int height;
-
-	private ImageProcessor maskProc;
-
-	int maskLabel = DEFAULT_MASK_LABEL;
+	// ==================================================
+	// Class variables
 
 	/**
-	 * Flag for dividing final distance map by the value first weight. 
-	 * This results in distance map values closer to Euclidean, but with 
-	 * non integer values. 
+	 * The chamfer weights to propagate to neighbor pixels.
+	 */
+	private short[] weights;
+
+	/**
+	 * Flag for dividing final distance map by the value first weight. This
+	 * results in distance map values closer to euclidean, but with non integer
+	 * values.
 	 */
 	private boolean normalizeMap = true;
 
-	/**
-	 * The inner buffer that will store the distance map. The content
-	 * of the buffer is updated during forward and backward iterations.
-	 */
-	private ShortProcessor buffer;
+
+	// ==================================================
+	// Constructors 
 	
 	/**
 	 * Default constructor with predefined chamfer weights.
@@ -134,421 +129,220 @@ public class DistanceTransform5x5Short extends AlgoStub implements DistanceTrans
 		this.normalizeMap = normalize;
 	}
 
+	// ==================================================
+	// Methods 
+	
 	/**
-	 * Computes the distance map of the distance to the nearest boundary pixel.
-	 * The function returns a new short processor the same size as the input,
-	 * with values greater or equal to zero. 
+	 * Computes the distance map of the distance to the nearest pixel with a
+	 * different value. The function returns a new short processor the same size
+	 * as the input, with values greater or equal to zero.
 	 * 
-	 * @param image a binary image with white pixels (255) as foreground
-	 * @return a new instance of ShortProcessor containing: <ul>
-	 * <li> 0 for each background pixel </li>
-	 * <li> the distance to the nearest background pixel otherwise</li>
-	 * </ul>
+	 * @param labelImage
+	 *            a label image with black pixels (0) as foreground
+	 * @return a new instance of ShortProcessor containing:
+	 *         <ul>
+	 *         <li>0 for each background pixel</li>
+	 *         <li>the (strictly positive) distance to the nearest background
+	 *         pixel otherwise</li>
+	 *         </ul>
 	 */
-	public ShortProcessor distanceMap(ImageProcessor image)
+	public ShortProcessor distanceMap(ImageProcessor labelImage) 
 	{
 		// size of image
-		width = image.getWidth();
-		height = image.getHeight();
-		
-		// update mask
-		this.maskProc = image;
+		int sizeX = labelImage.getWidth();
+		int sizeY = labelImage.getHeight();
 
-		// create new empty image, and fill it with black
-		buffer = new ShortProcessor(width, height);
-		buffer.setValue(0);
-		buffer.fill();
-		
 		this.fireStatusChanged(new AlgoEvent(this, "Initialization"));
-		
-		// initialize empty image with either 0 (background) or Inf (foreground)
-		for (int i = 0; i < width; i++)
-		{
-			for (int j = 0; j < height; j++)
-			{
-				int val = image.get(i, j) & 0x00ff;
-				buffer.set(i, j, val == 0 ? 0 : Short.MAX_VALUE);
-			}
-		}
+		ShortProcessor distMap = initializeResult(labelImage);
 		
 		// Two iterations are enough to compute distance map to boundary
 		this.fireStatusChanged(new AlgoEvent(this, "Forward Scan"));
-		forwardIteration();
+		forwardIteration(distMap, labelImage);
 		this.fireStatusChanged(new AlgoEvent(this, "Backward Scan"));
-		backwardIteration();
+		backwardIteration(distMap, labelImage);
 
 		// Normalize values by the first weight
-		if (this.normalizeMap) 
+		if (this.normalizeMap)
 		{
 			this.fireStatusChanged(new AlgoEvent(this, "Normalization"));
-			for (int i = 0; i < width; i++) 
+			for (int y = 0; y < sizeY; y++)
 			{
-				for (int j = 0; j < height; j++)
+				for (int x = 0; x < sizeX; x++)
 				{
-					if (maskProc.getPixel(i, j) != 0) 
+					if (((int) labelImage.getf(x, y)) > 0)
 					{
-						buffer.set(i, j, buffer.get(i, j) / weights[0]);
+						distMap.set(x, y, distMap.get(x, y) / weights[0]);
 					}
 				}
 			}
 		}
-		
+
 		this.fireStatusChanged(new AlgoEvent(this, ""));
 
-		// Compute max value within the mask
-		short maxVal = 0;
-		for (int i = 0; i < width; i++)
-		{
-			for (int j = 0; j < height; j++) 
-			{
-				if (maskProc.getPixel(i, j) != 0)
-					maxVal = (short) Math.max(maxVal, buffer.get(i, j));
-			}
-		}
-		
-		// calibrate min and max values of result image processor
-		buffer.setMinAndMax(0, maxVal);
+		// Compute max value within the mask for setting min/max of ImageProcessor
+		double maxVal = LabelValues.maxValueWithinLabels(distMap, labelImage);
+		distMap.setMinAndMax(0, maxVal);
 
 		// Forces the display to non-inverted LUT
-		if (buffer.isInvertedLut())
-			buffer.invertLut();
-		
-		return buffer;
+		if (distMap.isInvertedLut())
+			distMap.invertLut();
+
+		return distMap;
 	}
 
-	private void forwardIteration()
+	private ShortProcessor initializeResult(ImageProcessor labelImage)
 	{
-		// variables declaration
-		int ortho;
-		int diago;
-		int diag2;
-		int newVal;
+		// size of image
+		int sizeX = labelImage.getWidth();
+		int sizeY = labelImage.getHeight();
 
-		// Process first line: consider only the pixel on the left
-		for (int i = 1; i < width; i++) 
-		{
-			if (maskProc.get(i, 0) != maskLabel)
-				continue;
-			ortho = buffer.get(i - 1, 0) + weights[0];
-			updateIfNeeded(i, 0, ortho );
-		}
+		// create new empty image, and fill it with black
+		ShortProcessor distMap = new ShortProcessor(sizeX, sizeY);
+		distMap.setValue(0);
+		distMap.fill();
 
-		// process first pixel of second line: up, upright, and (+2,-1)
-		if (maskProc.get(0, 1) == maskLabel) 
+		// initialize empty image with either 0 (background) or Inf (foreground)
+		for (int y = 0; y < sizeY; y++) 
 		{
-			ortho = buffer.get(0, 0) + weights[0];
-			diago = buffer.get(1, 0) + weights[1];
-			diag2 = buffer.get(2, 0) + weights[2];
-			newVal = min3(ortho, diago, diag2);
-			updateIfNeeded(0, 1, newVal);
+			for (int x = 0; x < sizeX; x++)
+			{
+				int label = (int) labelImage.getf(x, y);
+				distMap.set(x, y, label == 0 ? 0 : Short.MAX_VALUE);
+			}
 		}
 		
-		// process second pixel of second line: up, left, upleft and upright, and (+2,-1)
-		if (maskProc.get(1, 1) == maskLabel) 
-		{
-			ortho = min(buffer.get(0, 1), buffer.get(1, 0));
-			diago = min(buffer.get(0, 0), buffer.get(2, 0));
-			diag2 = buffer.get(3, 0);
-			newVal = min3w(ortho, diago, diag2);
-			updateIfNeeded(1, 1, newVal);
-		}
-
-		// Second line, regular pixels: consider only the pixel on the left
-		// and from the first line
-		for (int i = 2; i < width - 2; i++) 
-		{
-			if (maskProc.get(i, 1) != maskLabel)
-				continue;
-			ortho = min(buffer.get(i - 1, 1), buffer.get(i, 0));
-			diago = min(buffer.get(i-1, 0), buffer.get(i+1, 0));
-			diag2 = min(buffer.get(i-2, 0), buffer.get(i+2, 0));
-			newVal = min3w(ortho, diago, diag2);
-			updateIfNeeded(i, 1, newVal);
-		}
-		
-		// last pixel of second line
-		if (maskProc.get(width-1, 1) == maskLabel) 
-		{
-			ortho = min(buffer.get(width-2, 1), buffer.get(width-1, 0));
-			diago = buffer.get(1, 0);
-			diag2 = buffer.get(2, 0);
-			newVal = min3w(ortho, diago, diag2);
-			updateIfNeeded(width-1, 1, newVal);
-		}
-
-		// Process all other lines
-		for (int j = 2; j < height; j++) 
-		{
-			this.fireProgressChanged(this, j, height);
-
-			// process first pixel of current line: consider pixels up and
-			// upright
-			if (maskProc.get(0, j) == maskLabel) 
-			{
-				ortho = buffer.get(0, j - 1);
-				diago = buffer.get(1, j - 1);
-				diag2 = min(buffer.get(2, j - 1), buffer.get(1, j - 2));
-				newVal = min3w(ortho, diago, diag2);
-				updateIfNeeded(0, j, newVal);
-			}
-
-			//  process second pixel of regular line 
-			if (maskProc.get(1, j) == maskLabel)
-			{
-				ortho = min(buffer.get(0, j), buffer.get(1, j - 1));
-				diago = min(buffer.get(0, j - 1), buffer.get(2, j - 1));
-				diag2 = min3(buffer.get(0, j - 2), buffer.get(2, j - 2), buffer.get(3, j - 1));
-				newVal = min3w(ortho, diago, diag2);
-				updateIfNeeded(1, j, newVal);
-			}
-			
-			// Process pixels in the middle of the line
-			for (int i = 2; i < width - 2; i++) 
-			{
-				// process only pixels inside structure
-				if (maskProc.get(i, j) != maskLabel)
-					continue;
-
-				// minimum distance of neighbor pixels
-				ortho = min(buffer.get(i - 1, j), buffer.get(i, j - 1));
-				diago = min(buffer.get(i - 1, j - 1), buffer.get(i + 1, j - 1));
-				diag2 = min(
-						min(buffer.get(i - 1, j - 2), buffer.get(i + 1, j - 2)),
-						min(buffer.get(i - 2, j - 1), buffer.get(i + 2, j - 1)));
-				
-				// compute new distance of current pixel
-				newVal = min3w(ortho, diago, diag2);
-
-				// modify current pixel if needed
-				updateIfNeeded(i, j, newVal);
-			}
-
-			// penultimate pixel 
-			if (maskProc.getPixel(width - 2, j) == maskLabel)
-			{
-				ortho = min(buffer.get(width - 3, j), buffer.get(width - 2, j - 1));
-				diago = min(buffer.get(width - 3, j - 1), buffer.get(width - 1, j - 1));
-				diag2 = min3(
-						buffer.get(width - 4, j - 1), buffer.get(width - 3, j - 2), 
-						buffer.get(width - 1, j - 2));
-				newVal = min3w(ortho, diago, diag2);
-				updateIfNeeded(width - 2, j, newVal);
-			}
-			
-			// process last pixel of current line: consider pixels left,
-			// up-left, and up
-			if (maskProc.getPixel(width - 1, j) == maskLabel) 
-			{
-				ortho = min(buffer.get(width - 2, j), buffer.get(width - 1, j - 1));
-				diago = buffer.get(width - 2, j - 1);
-				diag2 = min(buffer.get(width - 3, j - 1), buffer.get(width - 2, j - 2));
-				newVal = min3w(ortho, diago, diag2);
-				updateIfNeeded(width - 1, j, newVal);
-			}
-
-		} // end of processing for current line 
-		this.fireProgressChanged(this, height, height);
-
-	} // end of forward iteration
-
-	private void backwardIteration()
-	{
-		// variables declaration
-		int ortho;
-		int diago;
-		int diag2;
-		int newVal;
-
-		// Process last line: consider only the pixel just after (on the right)
-		for (int i = width - 2; i >= 0; i--) 
-		{
-			if (maskProc.getPixel(i, height - 1) != maskLabel)
-				continue;
-
-			newVal = buffer.get(i + 1, height - 1) + weights[0];
-			updateIfNeeded(i, height - 1, newVal);
-		}
-
-		// last pixel of penultimate line: consider the 3 pixels below
-		if (maskProc.getPixel(width - 1, height - 2) == maskLabel) 
-		{
-			ortho = buffer.get(width - 1, height - 1);
-			diago = buffer.get(width - 2, height - 1);
-			diag2 = buffer.get(width - 3, height - 1);
-			newVal = min3w(ortho, diago, diag2);
-			updateIfNeeded(width - 1, height - 2, newVal);
-		}
-
-		// penultimate pixel of penultimate line: consider right pixel, and the 4 pixels below
-		if (maskProc.getPixel(width - 2, height - 2) == maskLabel) 
-		{
-			ortho = min(buffer.get(width - 1, height - 2), buffer.get(width - 2, height - 1));
-			diago = min(buffer.get(width - 1, height - 1), buffer.get(width - 3, height - 1));
-			diag2 = buffer.get(width - 4, height - 1);
-			newVal = min3w(ortho, diago, diag2);
-			updateIfNeeded(width - 2, height - 2, newVal);
-		}
-
-		// Process regular pixels of penultimate line
-		for (int i = width - 3; i > 1; i--) 
-		{
-			if (maskProc.getPixel(i, height - 2) != maskLabel)
-				continue;
-
-			// minimum distance of neighbor pixels
-			ortho = min(buffer.get(i + 1, height - 2), buffer.get(i, height - 1));
-			diago = min(buffer.get(i - 1, height - 1), buffer.get(i + 1, height - 1));
-			diag2 = min(buffer.get(i - 2, height - 1), buffer.get(i + 2, height - 1));
-			
-			// compute new distance of current pixel
-			newVal = min3w(ortho, diago, diag2);
-
-			// modify current pixel if needed
-			updateIfNeeded(i, height - 2, newVal);
-		}
-		
-		// Process second pixel of penultimate line
-		if (maskProc.getPixel(1, height - 2) == maskLabel)
-		{
-			// minimum distance of neighbor pixels
-			ortho = min(buffer.get(2, height - 2), buffer.get(1, height - 1));
-			diago = min(buffer.get(0, height - 1), buffer.get(2, height - 1));
-			diag2 = buffer.get(3, height - 1);
-
-			// compute new distance of current pixel
-			newVal = min3w(ortho, diago, diag2);
-
-			// modify current pixel if needed
-			updateIfNeeded(1, height - 2, newVal);
-		}
-
-		// Process first pixel of penultimate line
-		if (maskProc.getPixel(0, height - 2) == maskLabel)
-		{
-			// minimum distance of neighbor pixels
-			ortho = min(buffer.get(1, height - 2), buffer.get(0, height - 1));
-			diago = buffer.get(1, height - 1);
-			diag2 = buffer.get(2, height - 1);
-
-			// compute new distance of current pixel
-			newVal = min3w(ortho, diago, diag2);
-
-			// modify current pixel if needed
-			updateIfNeeded(0, height - 2, newVal);
-		}
-			
-		// Process regular lines
-		for (int j = height - 3; j >= 0; j--) 
-		{
-			this.fireProgressChanged(this, height-1-j, height);
-
-			// process last pixel of the current line: consider pixels
-			// down, down-left and (-2,+1)
-			if (maskProc.getPixel(width - 1, j) == maskLabel)
-			{
-				ortho = buffer.get(width - 1, j + 1);
-				diago = buffer.get(width - 2, j + 1);
-				diag2 = min(buffer.get(width - 3, j + 1), buffer.get(width - 2, j + 2));
-				newVal = min3w(ortho, diago, diag2);
-				updateIfNeeded(width - 1, j, newVal);
-			}
-
-		
-			// process penultimate pixel of current line
-			if (maskProc.getPixel(width - 2, j) == maskLabel)
-			{
-
-				// minimum distance of neighbor pixels
-				ortho = min(buffer.get(width - 1, j), buffer.get(width - 2, j + 1));
-				diago = min(buffer.get(width - 3, j + 1), buffer.get(width - 1, j + 1));
-				diag2 = min3(
-						buffer.get(width - 3, j + 2), 
-						buffer.get(width - 1, j + 2), 
-						buffer.get(width - 4, j + 1));
-				
-				// compute new distance of current pixel
-				newVal = min3w(ortho, diago, diag2);
-
-				// modify current pixel if needed
-				updateIfNeeded(width - 2, j, newVal);
-			}
-
-			// Process pixels in the middle of the current line
-			for (int i = width - 3; i > 1; i--) 
-			{
-				// process only pixels inside structure
-				if (maskProc.getPixel(i, j) != maskLabel)
-					continue;
-
-				// minimum distance of neighbor pixels
-				ortho = min(buffer.get(i + 1, j), buffer.get(i, j + 1));
-				diago = min(buffer.get(i - 1, j + 1), buffer.get(i + 1, j + 1));
-				diag2 = min(
-						min(buffer.get(i - 1, j + 2), buffer.get(i + 1, j + 2)),
-						min(buffer.get(i - 2, j + 1), buffer.get(i + 2, j + 1)));
-				
-				// compute new distance of current pixel
-				newVal = min3w(ortho, diago, diag2);
-
-				// modify current pixel if needed
-				updateIfNeeded(i, j, newVal);
-			}
-
-			// process second pixel of current line: consider pixels right,
-			// down-right and down
-			if (maskProc.getPixel(1, j) == maskLabel) 
-			{
-				ortho = min(buffer.get(2, j), buffer.get(1, j + 1));
-				diago = min(buffer.get(0, j + 1), buffer.get(2, j + 1));
-				diag2 = min3(buffer.get(3, j + 1), buffer.get(2, j + 2), buffer.get(0, j + 2));
-				newVal = min3w(ortho, diago, diag2);
-				updateIfNeeded(1, j, newVal);
-			}
-
-			// process first pixel of current line: consider pixels right,
-			// down-right and down
-			if (maskProc.getPixel(0, j) == maskLabel)
-			{
-				ortho = min(buffer.get(1, j), buffer.get(0, j + 1));
-				diago = buffer.get(1, j + 1);
-				diag2 = min(buffer.get(2, j + 1), buffer.get(1, j + 2));
-				newVal = min3w(ortho, diago, diag2);
-				updateIfNeeded(0, j, newVal);
-			}
-
-		} // end of processing for current line
-		
-		this.fireProgressChanged(this, height, height);
-	} // end of backward iteration
-
-	/**
-	 * Computes the minimum within 3 values.
-	 */
-	private final static int min3(int v1, int v2, int v3)
-	{
-		return min(min(v1, v2), v3);
+		return distMap;
 	}
 	
-	/**
-	 * Computes the weighted minima of orthogonal, diagonal, and (2,1)-diagonal
-	 * values.
-	 */
-	private int min3w(int ortho, int diago, int diag2)
+	private void forwardIteration(ShortProcessor distMap, ImageProcessor labelImage) 
 	{
-		return min(min(ortho + weights[0], diago + weights[1]), 
-				diag2 + weights[2]);
-	}
-	
-	/**
-	 * Update the pixel at position (i,j) with the value newVal. If newVal is
-	 * greater or equal to current value at position (i,j), do nothing.
-	 */
-	private void updateIfNeeded(int i, int j, int newVal)
-	{
-		int value = buffer.get(i, j);
-		if (newVal < value) 
+		// Initialize pairs of offset and weights
+		int[] dx = new int[]{-1, +1,  -2, -1,  0, +1, +2,  -1};
+		int[] dy = new int[]{-2, -2,  -1, -1, -1, -1, -1,   0};
+		short[] dw = new short[] { 
+				weights[2], weights[2], 
+				weights[2], weights[1], weights[0], weights[1], weights[2], 
+				weights[0] };
+		
+		//  size of image
+		int sizeX = labelImage.getWidth();
+		int sizeY = labelImage.getHeight();
+
+		// Iterate over pixels
+		for (int y = 0; y < sizeY; y++)
 		{
-			buffer.set(i, j, newVal);
+			this.fireProgressChanged(this, y, sizeY);
+			for (int x = 0; x < sizeX; x++)
+			{
+				// get current label
+				int label = (int) labelImage.getf(x, y);
+				
+				// do not process background pixels
+				if (label == 0)
+					continue;
+				
+				// current distance value
+				int currentDist = distMap.get(x, y);
+				int newDist = currentDist;
+				
+				// iterate over neighbors
+				for (int i = 0; i < dx.length; i++)
+				{
+					// compute neighbor coordinates
+					int x2 = x + dx[i];
+					int y2 = y + dy[i];
+					
+					// check bounds
+					if (x2 < 0 || x2 >= sizeX)
+						continue;
+					if (y2 < 0 || y2 >= sizeY)
+						continue;
+					
+					if ((int) labelImage.getf(x2, y2) != label)
+					{
+						// Update with distance to nearest different label
+						newDist = dw[i];
+					}
+					else
+					{
+						// Increment distance
+						newDist = Math.min(newDist, distMap.get(x2, y2) + dw[i]);
+					}
+				}
+				
+				if (newDist < currentDist) 
+				{
+					distMap.set(x, y, newDist);
+				}
+			}
 		}
+		
+		this.fireProgressChanged(this, sizeY, sizeY);
+	}
+
+	private void backwardIteration(ShortProcessor distMap, ImageProcessor labelImage) 
+	{
+		// Initialize pairs of offset and weights
+		int[] dx = new int[]{+1, -1,  +2, +1,  0, -1, -2,  +1};
+		int[] dy = new int[]{+2, +2,  +1, +1, +1, +1, +1,   0};
+		short[] dw = new short[] { 
+				weights[2], weights[2], 
+				weights[2], weights[1], weights[0], weights[1], weights[2], 
+				weights[0] };
+		
+		//  size of image
+		int sizeX = labelImage.getWidth();
+		int sizeY = labelImage.getHeight();
+
+		// Iterate over pixels
+		for (int y = sizeY-1; y >= 0; y--)
+		{
+			this.fireProgressChanged(this, sizeY-1-y, sizeY);
+			for (int x = sizeX-1; x >= 0; x--)
+			{
+				// get current label
+				int label = (int) labelImage.getf(x, y);
+				
+				// do not process background pixels
+				if (label == 0)
+					continue;
+				
+				// current distance value
+				int currentDist = distMap.get(x, y);
+				int newDist = currentDist;
+				
+				// iterate over neighbors
+				for (int i = 0; i < dx.length; i++)
+				{
+					// compute neighbor coordinates
+					int x2 = x + dx[i];
+					int y2 = y + dy[i];
+					
+					// check bounds
+					if (x2 < 0 || x2 >= sizeX)
+						continue;
+					if (y2 < 0 || y2 >= sizeY)
+						continue;
+					
+					if ((int) labelImage.getf(x2, y2) != label)
+					{
+						// Update with distance to nearest different label
+						newDist = dw[i];
+					}
+					else
+					{
+						// Increment distance
+						newDist = Math.min(newDist, distMap.get(x2, y2) + dw[i]);
+					}
+				}
+				
+				if (newDist < currentDist) 
+				{
+					distMap.set(x, y, newDist);
+				}
+			}
+		}
+		
+		this.fireProgressChanged(this, sizeY, sizeY);
 	}
 }
