@@ -29,11 +29,11 @@ import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
 import ij.process.LUT;
 import inra.ijpb.algo.DefaultAlgoListener;
+import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.binary.ChamferWeights;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransform;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat5x5;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort5x5;
-import inra.ijpb.label.LabelDistances;
 import inra.ijpb.util.ColorMaps;
 
 import java.awt.image.IndexColorModel;
@@ -190,7 +190,7 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 		}
 
 		// Compute distance on specified images
-		ImagePlus resultPlus = LabelDistances.geodesicDistanceMap(marker, mask);
+		ImagePlus resultPlus = BinaryImages.geodesicDistanceMap(marker, mask);
 
 		// create result array
 		return new Object[] { newName, resultPlus };
@@ -249,7 +249,7 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 		}
 
 		// Compute distance on specified images
-		ImageProcessor result = LabelDistances.geodesicDistanceMap(marker.getProcessor(), mask.getProcessor(), weights, normalize);
+		ImageProcessor result = BinaryImages.geodesicDistanceMap(marker.getProcessor(), mask.getProcessor(), weights, normalize);
 		ImagePlus resultPlus = new ImagePlus(newName, result);
 
 		// create result array

@@ -63,6 +63,7 @@ import inra.ijpb.label.LabelValues;
  * @author David Legland
  *
  */
+@Deprecated
 public class GeodesicDiameterCalculator extends AlgoStub
 {
 	// ==================================================

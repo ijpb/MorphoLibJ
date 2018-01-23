@@ -266,7 +266,7 @@ public class BinaryImages
 	 * voxel.
 	 * 
 	 * @param imagePlus
-	 *            an ImagePlus object containing a binary image 
+	 *            an ImagePlus object containing a binary or label image 
 	 * @return a new ImagePlus containing the distance map
 	 * 
 	 * @see inra.ijpb.binary.distmap.DistanceTransform
@@ -310,7 +310,7 @@ public class BinaryImages
 	 * </p>
 	 * 
 	 * @param image
-	 *            the input binary image
+	 *            the input binary or label image
 	 * @return a new ImageProcessor containing the distance map result
 	 */
 	public static final ImageProcessor distanceMap(ImageProcessor image) 
@@ -331,7 +331,7 @@ public class BinaryImages
 	 * </p>
 	 * 
 	 * @param image
-	 *            the input binary image
+	 *            the input binary or label image
 	 * @param weights
 	 *            an array of chamfer weights, with at least two values
 	 * @param normalize
@@ -371,7 +371,7 @@ public class BinaryImages
 	 * </p>
 	 * 
 	 * @param image
-	 *            the input binary image
+	 *            the input binary or label image
 	 * @param weights
 	 *            an array of chamfer weights, with at least two values
 	 * @param normalize
@@ -456,6 +456,22 @@ public class BinaryImages
 	{
 		DistanceTransform3D algo = new DistanceTransform3DFloat(weights, normalize);
 		return algo.distanceMap(image);
+	}
+	
+	public static final ImagePlus geodesicDistanceMap(ImagePlus markerPlus,
+			ImagePlus maskPlus)
+	{
+		ImagePlus result = null;
+		String newName = markerPlus.getShortTitle() + "-distMap";
+		
+		if (markerPlus.getStackSize() == 1 && maskPlus.getStackSize() == 1)
+		{
+			ImageProcessor distMap = geodesicDistanceMap(markerPlus.getProcessor(), maskPlus.getProcessor());
+			result = new ImagePlus(newName, distMap);
+		}
+
+		result.copyScale(markerPlus);
+		return result;
 	}
 	
 	/**

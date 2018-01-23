@@ -23,6 +23,7 @@ import inra.ijpb.label.geodesic.LabelGeodesicDistanceTransform5x5ShortScanning;
  * @author dlegland
  *
  */
+@Deprecated
 public class LabelDistances
 {
 	/**

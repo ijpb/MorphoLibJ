@@ -21,23 +21,23 @@
  */
 package inra.ijpb.measure;
 
-import java.awt.Point;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
 import ij.IJ;
 import ij.measure.ResultsTable;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.algo.AlgoStub;
+import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.binary.ChamferWeights;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransform;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat5x5;
-import inra.ijpb.label.LabelDistances;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.label.LabelValues;
+
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Computes geodesic diameter of a set of labeled particles or regions, using 
@@ -370,7 +370,7 @@ public class GeodesicDiameterCalculator extends AlgoStub
 		
 		// Compute distance map from label borders to identify centers 
 		this.fireStatusChanged(this, "Initializing pseudo geodesic centers...");
-		this.distanceMap = LabelDistances.distanceMap(labelImage);
+		this.distanceMap = BinaryImages.distanceMap(labelImage);
 	
 		// Extract position of maxima
 		this.innerCircles = LabelValues.findMaxValues(distanceMap, labelImage, labels);
