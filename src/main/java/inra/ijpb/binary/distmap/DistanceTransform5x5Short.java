@@ -26,6 +26,7 @@ import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.algo.AlgoEvent;
+import inra.ijpb.binary.ChamferWeights;
 
 /**
  * <p>Computes Chamfer distances in a 5x5 neighborhood using a ShortProcessor 
@@ -94,6 +95,21 @@ public class DistanceTransform5x5Short extends AlgoStub implements DistanceTrans
 	public DistanceTransform5x5Short(short[] weights) 
 	{
 		this(weights, true);
+	}
+
+	/**
+	 * Constructor specifying the chamfer weights and the optional
+	 * normalization.
+	 * 
+	 * @param weights
+	 *            an array of two weights for orthogonal and diagonal directions
+	 * @param normalize
+	 *            flag indicating whether the final distance map should be
+	 *            normalized by the first weight
+	 */
+	public DistanceTransform5x5Short(ChamferWeights weights, boolean normalize)
+	{
+		this(weights.getShortWeights(), normalize);
 	}
 
 	/**

@@ -26,6 +26,7 @@ import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.algo.AlgoEvent;
+import inra.ijpb.binary.ChamferWeights;
 
 /**
  * <p>
@@ -99,6 +100,21 @@ public class DistanceTransform5x5Float extends AlgoStub implements DistanceTrans
 	public DistanceTransform5x5Float(float[] weights) 
 	{
 		this(weights, true);
+	}
+
+	/**
+	 * Constructor specifying the chamfer weights and the optional
+	 * normalization.
+	 * 
+	 * @param weights
+	 *            an array of two weights for orthogonal and diagonal directions
+	 * @param normalize
+	 *            flag indicating whether the final distance map should be
+	 *            normalized by the first weight
+	 */
+	public DistanceTransform5x5Float(ChamferWeights weights, boolean normalize)
+	{
+		this(weights.getFloatWeights(), normalize);
 	}
 
 	/**

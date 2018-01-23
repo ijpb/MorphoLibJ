@@ -26,6 +26,7 @@ import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.algo.AlgoEvent;
 import inra.ijpb.algo.AlgoStub;
+import inra.ijpb.binary.ChamferWeights;
 
 /**
  * Computes Chamfer distances in a 3x3 neighborhood using a float array
@@ -80,7 +81,22 @@ public class DistanceTransform3x3Float extends AlgoStub implements
 	 */
 	public DistanceTransform3x3Float(float[] weights) 
 	{
-		this.weights = weights;
+		this(weights, true);
+	}
+
+	/**
+	 * Constructor specifying the chamfer weights and the optional
+	 * normalization.
+	 * 
+	 * @param weights
+	 *            an array of two weights for orthogonal and diagonal directions
+	 * @param normalize
+	 *            flag indicating whether the final distance map should be
+	 *            normalized by the first weight
+	 */
+	public DistanceTransform3x3Float(ChamferWeights weights, boolean normalize)
+	{
+		this(weights.getFloatWeights(), normalize);
 	}
 
 	/**
