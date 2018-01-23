@@ -1,4 +1,4 @@
-package inra.ijpb.label.geodesic;
+package inra.ijpb.measure;
 
 import static org.junit.Assert.assertEquals;
 

@@ -71,7 +71,7 @@ public class GeodesicDistanceTransformShort5x5 extends AlgoStub implements Geode
 	
 	public GeodesicDistanceTransformShort5x5(short[] weights)
 	{
-		this.weights = weights;
+		this(weights, true);
 	}
 
 	public GeodesicDistanceTransformShort5x5(ChamferWeights weights, boolean normalizeMap) 
@@ -83,6 +83,16 @@ public class GeodesicDistanceTransformShort5x5 extends AlgoStub implements Geode
 	{
 		this.weights = weights;
 		this.normalizeMap = normalizeMap;
+		
+		// ensure the number of weight is at least 3.
+		if (weights.length < 3) 
+		{
+			short[] newWeights = new short[3];
+			newWeights[0] = weights[0];
+			newWeights[1] = weights[1];
+			newWeights[2] = (short) (weights[0] + weights[1]);
+			this.weights = newWeights;
+		}
 	}
 
 	// ==================================================

@@ -71,7 +71,7 @@ public class GeodesicDistanceTransformFloat5x5 extends AlgoStub implements
 	
 	public GeodesicDistanceTransformFloat5x5(float[] weights)
 	{
-		this.weights = weights;
+		this(weights, true);
 	}
 
 	public GeodesicDistanceTransformFloat5x5(ChamferWeights weights, boolean normalizeMap) 
@@ -83,6 +83,16 @@ public class GeodesicDistanceTransformFloat5x5 extends AlgoStub implements
 	{
 		this.weights = weights;
 		this.normalizeMap = normalizeMap;
+		
+		// ensure the number of weight is at least 3.
+		if (weights.length < 3) 
+		{
+			float[] newWeights = new float[3];
+			newWeights[0] = weights[0];
+			newWeights[1] = weights[1];
+			newWeights[2] = (float) (weights[0] + weights[1]);
+			this.weights = newWeights;
+		}
 	}
 
 	// ==================================================

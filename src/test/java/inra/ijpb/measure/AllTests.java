@@ -30,6 +30,7 @@ import inra.ijpb.label.RegionAdjacencyGraphTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	// generic classes
+	GeodesicDiameterCalculatorTest.class,
 	GeometricMeasures2DTest.class,
 	GeometricMeasures3DTest.class,
 	GeometryUtilsTest.class,
