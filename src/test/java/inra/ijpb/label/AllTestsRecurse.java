@@ -29,8 +29,6 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
 	// generic classes
 	AllTests.class,
-	inra.ijpb.label.distmap.AllTests.class,
-//	inra.ijpb.label.geodesic.AllTests.class,
 	})
 public class AllTestsRecurse {
   //nothing
