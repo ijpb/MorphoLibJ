@@ -306,7 +306,7 @@ public class GeodesicDiameterCalculator extends AlgoStub
 			// if the geodesic diameter of the current label is infinite, it is
 			// not possible to create a path
 			// -> use an empty path
-			if (!Double.isFinite(this.secondGeodesicExtremities[i].getValue()))
+			if (Double.isInfinite(this.secondGeodesicExtremities[i].getValue()))
 			{
 				pathMap.put(label, path);
 				continue;
