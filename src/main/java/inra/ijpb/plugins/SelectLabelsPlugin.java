@@ -80,7 +80,8 @@ public class SelectLabelsPlugin implements PlugIn {
         // copy settings
         selectedPlus.copyScale(imagePlus);
         selectedPlus.setDisplayRange(imagePlus.getDisplayRangeMin(), imagePlus.getDisplayRangeMax());
-        
+        selectedPlus.setLut( imagePlus.getProcessor().getLut() );
+
         // display and adapt visible slice
         selectedPlus.show();
         if (imagePlus.getStackSize() > 1)
