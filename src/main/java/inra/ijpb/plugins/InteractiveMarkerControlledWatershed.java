@@ -757,8 +757,9 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 
 						// get original image info
 						final Roi roi = displayImage.getRoi();
-						if( roi == null && null == RoiManager.getInstance()
-								|| RoiManager.getInstance().getSelectedIndex() == -1 )
+						if( roi == null && null == RoiManager.getInstance() ||
+								null != RoiManager.getInstance() &&
+								RoiManager.getInstance().getSelectedIndex() == -1 )
 						{
 							IJ.showMessage( "Please define the markers using for example "
 									+ "the point selection tool." );
