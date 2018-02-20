@@ -53,7 +53,7 @@ public class GeodesicDistanceMapPluginTest
 		ImagePlus mapPlus = plugin.process(markerPlus, maskPlus, "map", weights, true);
 		ImageProcessor map = mapPlus.getProcessor();
 	
-		assertEquals(259, map.getf(190, 211), .01);
+		assertEquals(259, map.getf(190, 213), .01);
 	}
 
 	/**
@@ -74,7 +74,7 @@ public class GeodesicDistanceMapPluginTest
 		ImagePlus mapPlus = plugin.process(markerPlus, maskPlus, "map", weights, true);
 		ImageProcessor map = mapPlus.getProcessor();
 				
-		assertEquals(259, map.get(190, 211));
+		assertEquals(259, map.get(190, 213));
 	}
 
 }
