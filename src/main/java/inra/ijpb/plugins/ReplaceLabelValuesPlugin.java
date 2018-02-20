@@ -43,7 +43,7 @@ public class ReplaceLabelValuesPlugin implements PlugIn
 	{
 		ImagePlus imagePlus = IJ.getImage();
 		
-		GenericDialog gd = new GenericDialog("Remove Labels");
+		GenericDialog gd = new GenericDialog("Remove/Replace Label(s)");
 		gd.addStringField("Label(s)", "1", 12);
 		gd.addMessage("Separate label values by \",\"");
 		gd.addNumericField("Final Value", 0, 0);
