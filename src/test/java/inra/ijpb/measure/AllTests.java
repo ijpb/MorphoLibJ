@@ -25,8 +25,6 @@ package inra.ijpb.measure;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-import inra.ijpb.label.RegionAdjacencyGraphTest;
-
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	// generic classes
@@ -34,7 +32,6 @@ import inra.ijpb.label.RegionAdjacencyGraphTest;
 	GeometricMeasures2DTest.class,
 	GeometricMeasures3DTest.class,
 	GeometryUtilsTest.class,
-	RegionAdjacencyGraphTest.class, 
 	Vector3dTest.class,
 	})
 public class AllTests {
