@@ -5,9 +5,10 @@
 # David put resulting jar into this directory to test directly from eclipse
 /plugins/
 
-# confiuration files of eclipse EDI
+# configuration files of eclipse EDI
 /.classpath
 /.project
 /.settings/
 
 /javadoc.xml
+/doc/MorphoLibJ-manual/*.pdf
