@@ -128,6 +128,25 @@ public class LabeledVoxelsMeasure {
 
 		return table;
 	}
+	/**
+	 * Get sum of all voxel intensities per labeled object
+	 * 
+	 *  @return sum of voxel intensities (Integrated Density) Pper labeled objec
+	 */
+	public ResultsTable getSumOfVoxels() 
+	{
+		final int numLabels = objectVoxels.length;
+
+		// create data table
+		ResultsTable table = new ResultsTable();
+		for (int i = 0; i < numLabels; i++) {
+			table.incrementCounter();
+			table.addLabel(Integer.toString( labels[i] ));
+			double vox_sum = objectVoxels[ i ].stream().mapToDouble(Double::doubleValue).sum();
+			table.addValue( "Voxels Sum", vox_sum);
+		}
+			return table;
+	}
 	
 	/**
 	 * Get volume per labeled object based on the input
