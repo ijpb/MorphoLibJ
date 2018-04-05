@@ -23,7 +23,6 @@ package inra.ijpb.plugins;
 
 import java.awt.Color;
 import java.awt.Point;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +44,7 @@ import ij.process.ImageProcessor;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.binary.ChamferWeights;
 import inra.ijpb.label.LabelImages;
-import inra.ijpb.measure.GeodesicDiameterCalculator;
+import inra.ijpb.measure.GeodesicDiameter;
 import inra.ijpb.util.IJUtils;
 
 /**
@@ -118,10 +117,11 @@ public class GeodesicDiameterPlugin implements PlugIn
 		// Compute geodesic diameters, using floating-point calculations
 		long start = System.nanoTime();
 		
-		GeodesicDiameterCalculator algo = new GeodesicDiameterCalculator(weights);
+		GeodesicDiameter algo = new GeodesicDiameter(weights);
+		algo.setComputePaths(overlayPaths || createPathRois);
 		DefaultAlgoListener.monitor(algo);
 		
-		ResultsTable table = algo.geodesicDiameterResults(labelImage);
+		Map<Integer, GeodesicDiameter.Result> geodDiams = algo.process(labelImage);
 
 		long finalTime = System.nanoTime();
 		
@@ -129,18 +129,19 @@ public class GeodesicDiameterPlugin implements PlugIn
 		float elapsedTime = (finalTime - start) / 1000000.0f;
 
 		// display the result table
+		ResultsTable table = GeodesicDiameter.asTable(geodDiams);  
 		String tableName = labelPlus.getShortTitle() + "-GeodDiameters"; 
 		table.show(tableName);
 
-		int gdIndex = table.getColumnIndex("Geod. Diam");
-		double[] geodDiamArray = table.getColumnAsDoubles(gdIndex);
+//		int gdIndex = table.getColumnIndex("Geod. Diam");
+//		double[] geodDiamArray = table.getColumnAsDoubles(gdIndex);
 		
 		if (overlayPaths || createPathRois)
 		{
     		boolean validPaths = true;
-    		for (double geodDiam : geodDiamArray)
+    		for (GeodesicDiameter.Result geodDiam : geodDiams.values())
     		{
-    			if (Double.isInfinite(geodDiam))
+    			if (Double.isInfinite(geodDiam.diameter))
     			{
     				validPaths = false;
     				break;
@@ -150,34 +151,35 @@ public class GeodesicDiameterPlugin implements PlugIn
     		if (!validPaths)
     		{
 				IJ.showMessage("Geodesic Diameter Warning", "Some geodesic diameters are infinite,\n"
-						+ "meaning that some particles are not connected.\n" + "Maybe labeling was not performed, or label image was cropped?");
+						+ "meaning that some particles are not connected.\n" 
+						+ "Maybe labeling was not performed, or label image was cropped?");
     		}
     		
-    		// compute the path that is associated to each label
-    		Map<Integer, List<Point>> pathMap = null;
-    		try
-    		{
-    			pathMap = algo.longestGeodesicPaths(labelImage);
-    		}
-    		catch (Exception ex)
-    		{
-    			IJ.handleException(ex);
-    			IJ.error("Geodesic Diameter Error", 
-    					"Could not compute geodesic paths.\nTry using Borgefors weights.");
-    			return;
-    		}
+//    		// compute the path that is associated to each label
+//    		Map<Integer, List<Point>> pathMap = null;
+//    		try
+//    		{
+//    			pathMap = algo.longestGeodesicPaths(labelImage);
+//    		}
+//    		catch (Exception ex)
+//    		{
+//    			IJ.handleException(ex);
+//    			IJ.error("Geodesic Diameter Error", 
+//    					"Could not compute geodesic paths.\nTry using Borgefors weights.");
+//    			return;
+//    		}
 
     		// Check if results must be displayed on an image
     		if (overlayPaths) 
     		{
     			// New image for displaying geometric overlays
     			ImagePlus resultImage = WindowManager.getImage(resultImageIndex+1);
-    			drawPaths(resultImage, pathMap);
+    			drawPaths(resultImage, geodDiams);
     		}
 
     		if (createPathRois)
     		{
-    			createPathRois(labelPlus, pathMap);
+    			createPathRois(labelPlus, geodDiams);
     		}
 		}
 		
@@ -235,12 +237,13 @@ public class GeodesicDiameterPlugin implements PlugIn
 		target.setOverlay(overlay);
 	}
 
-	public void drawPaths(ImagePlus target, Map<Integer, List<Point>> pathMap)
+	public void drawPaths(ImagePlus target, Map<Integer, GeodesicDiameter.Result> geodDiams)
 	{
 		Overlay overlay = new Overlay();
 		
-		for (Roi roi : pathListToRoiList(pathMap))
+		for (GeodesicDiameter.Result result : geodDiams.values())
 		{
+			Roi roi = createPathRoi(result.path);
 		    roi.setStrokeColor(Color.RED);
 		    overlay.add(roi);
 		}
@@ -254,54 +257,50 @@ public class GeodesicDiameterPlugin implements PlugIn
 	 * @param target The ImagePlus that will be associated with ROIS
 	 * @param pathMap the list of paths
 	 */
-	public void createPathRois(ImagePlus target, Map<Integer, List<Point>> pathMap)
+	public void createPathRois(ImagePlus target, Map<Integer, GeodesicDiameter.Result> geodDiams)
 	{
 		// get instance of ROI Manager
 		RoiManager manager = RoiManager.getRoiManager();
 		
 		// add each path to the ROI Manager
 		int index = 0;
-		for (Roi roi : pathListToRoiList(pathMap))
+		for (GeodesicDiameter.Result result : geodDiams.values())
 		{
-		    manager.add(target, roi, index++);
+		    manager.add(target, createPathRoi(result.path), index++);
 		}
 	}
 
-	private List<Roi> pathListToRoiList(Map<Integer, List<Point>> pathMap)
+	private Roi createPathRoi(List<Point> path)
 	{
-	    List<Roi> roiList = new ArrayList<Roi>(pathMap.size());
-	    
-        for (List<Point> path : pathMap.values())
+    	if (path == null)
+    	{
+    		return null;
+    	}
+    	
+        if (path.size() > 1)
         {
-        	if (path == null)
-        	{
-        		continue;
-        	}
-        	
-            if (path.size() > 1)
+            // Polyline path
+            int n = path.size();
+            float[] x = new float[n];
+            float[] y = new float[n];
+            int i = 0;
+            for (Point pos : path)
             {
-                // Polyline path
-                int n = path.size();
-                float[] x = new float[n];
-                float[] y = new float[n];
-                int i = 0;
-                for (Point pos : path)
-                {
-                    x[i] = pos.x + .5f;
-                    y[i] = pos.y + .5f;
-                    i++;
-                }
-                Roi roi = new PolygonRoi(x, y, n, Roi.POLYLINE);
-                roiList.add(roi);
+                x[i] = pos.x + .5f;
+                y[i] = pos.y + .5f;
+                i++;
             }
-            else if (path.size() == 1)
-            {
-                // case of single point particle
-                Point p = path.get(0);
-                Roi roi = new PointRoi(p.x + .5, p.y + .5);
-                roiList.add(roi);
-            }
+            return new PolygonRoi(x, y, n, Roi.POLYLINE);
         }
-        return roiList;
+        else if (path.size() == 1)
+        {
+            // case of single point particle
+            Point p = path.get(0);
+            return new PointRoi(p.x + .5, p.y + .5);
+        }
+        else
+        {
+        	throw new RuntimeException("Can not manage empty paths");
+        }
 	}
 }
