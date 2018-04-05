@@ -37,14 +37,16 @@ import java.util.HashMap;
  * @author Ignacio Arganda-Carreras
  *
  */
-public class LabeledVoxelsMeasure {
+public class LabeledVoxelsMeasure
+{
+    /** list of voxels grouped by label */
+    ArrayList<Double>[] objectVoxels;
 
-	/** list of voxels grouped by label */
-	ArrayList<Double>[] objectVoxels;
-	/** list of unique labels */
-	int[] labels;
-	/** calibration of input image */
-	Calibration calibration;
+    /** list of unique labels */
+    int[] labels;
+    
+    /** calibration of input image */
+    Calibration calibration;
 	
 	/**
 	 * Initialize the measurements by reading the input (grayscale) 
@@ -66,20 +68,18 @@ public class LabeledVoxelsMeasure {
 		
 		this.calibration = inputImage.getCalibration();
 
+		// extract the labels from the input image
 		this.labels = LabelImages.findAllLabels( labelImage.getImageStack() );
 		int numLabels = labels.length;
 		
 		// create associative hash table to know the index of each label
-		HashMap<Integer, Integer> labelIndices = new HashMap<Integer, Integer>();
-        for (int i = 0; i < numLabels; i++) {
-        	labelIndices.put( labels[i], i );
-        }
+		HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
 
 		// initialize lists of voxels per object
         // unchecked cast
 		objectVoxels = (ArrayList<Double>[]) new ArrayList[ numLabels ];
 
-		for( int i=0; i<numLabels; i++ )
+		for( int i = 0; i < numLabels; i++ )
 			objectVoxels[ i ] = new ArrayList<Double>();
 		
 		//final long start = System.currentTimeMillis();		
@@ -120,7 +120,8 @@ public class LabeledVoxelsMeasure {
 				
 		// create data table
 		ResultsTable table = new ResultsTable();
-		for (int i = 0; i < numLabels; i++) {
+		for (int i = 0; i < numLabels; i++)
+		{
 			table.incrementCounter();
 			table.addLabel(Integer.toString( labels[i] ));
 			table.addValue("NumberOfVoxels", objectVoxels[ i ].size() );
@@ -139,7 +140,8 @@ public class LabeledVoxelsMeasure {
 
 		// create data table
 		ResultsTable table = new ResultsTable();
-		for (int i = 0; i < numLabels; i++) {
+		for (int i = 0; i < numLabels; i++)
+		{
 			table.incrementCounter();
 			table.addLabel(Integer.toString( labels[i] ));
 			double vox_sum = objectVoxels[ i ].stream().mapToDouble(Double::doubleValue).sum();
@@ -162,7 +164,8 @@ public class LabeledVoxelsMeasure {
 		
 		// create data table
 		ResultsTable table = new ResultsTable();
-		for (int i = 0; i < numLabels; i++) {
+		for (int i = 0; i < numLabels; i++) 
+		{
 			table.incrementCounter();
 			table.addLabel(Integer.toString( labels[i] ));
 			table.addValue( "Volume", objectVoxels[ i ].size() * volumePerVoxel );
