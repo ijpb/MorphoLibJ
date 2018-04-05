@@ -132,7 +132,7 @@ public class LabeledVoxelsMeasure
 	/**
 	 * Get sum of all voxel intensities per labeled object
 	 * 
-	 *  @return sum of voxel intensities (Integrated Density) Pper labeled objec
+	 *  @return sum of voxel intensities (Integrated Density) per labeled object
 	 */
 	public ResultsTable getSumOfVoxels() 
 	{
@@ -144,8 +144,14 @@ public class LabeledVoxelsMeasure
 		{
 			table.incrementCounter();
 			table.addLabel(Integer.toString( labels[i] ));
-			double vox_sum = objectVoxels[ i ].stream().mapToDouble(Double::doubleValue).sum();
-			table.addValue( "Voxels Sum", vox_sum);
+//			double vox_sum = objectVoxels[ i ].stream().mapToDouble(Double::doubleValue).sum();
+			// compute the sum, 1.6-compatible
+			double voxelSum = 0;
+			for (double value : objectVoxels[i])
+			{
+				voxelSum += value;
+			}
+			table.addValue( "Voxels Sum", voxelSum);
 		}
 			return table;
 	}
