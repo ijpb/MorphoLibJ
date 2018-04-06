@@ -22,12 +22,15 @@
 package inra.ijpb.measure;
 
 import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import ij.IJ;
+import ij.ImagePlus;
+import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
@@ -41,14 +44,31 @@ import inra.ijpb.label.LabelValues;
 import inra.ijpb.label.LabelValues.PositionValuePair;
 
 /**
- * Represents the result of the computation of geodesic diameter. Provides
- * access to the geodesic diameter measure, but also to the geodesic
- * extremities, and optionally the geodesic path.
+ * Computes geodesic diameter of a set of labeled particles or regions, using 
+ * floating point values (32 bits) for propagating chamfer distances.
+ * 
+ * This version uses optimized algorithm, that propagates distances of all
+ * particles during each pass. This reduces computation overhead due to 
+ * iteration over particles.
+ * 
+ * <p>
+ * Example of use:
+ *<pre>{@code
+ *	GeodesicDiameter algo = new GeodesicDiameter(ChamferWeights.CHESSKNIGHT);
+ *	Map<Integer,GeodesicDiameter.Result> geodDiams = algo.process(inputLabelImage);
+ *	for (int label : geodDiams.keySet())
+ *  {
+ *      double diam = geodDiams.get(label).diameter;
+ *      System.out.printl(String.format("geod. diam. of label %d is %5.2f", label, diam);
+ *  }
+ *}</pre>
+ *
+ * @see inra.ijpb.binary.geodesic.GeodesicDiameterFloat
+ * @see inra.ijpb.binary.geodesic.GeodesicDistanceTransform
  * 
  * @author David Legland
  *
- */
-public class GeodesicDiameter extends AlgoStub
+ */public class GeodesicDiameter extends AlgoStub
 {
 	// ==================================================
 	// Static methods 
@@ -73,14 +93,14 @@ public class GeodesicDiameter extends AlgoStub
 			// coordinates of max inscribed circle
 			table.addValue("Radius", res.innerRadius);
 			table.addValue("Geod. Elong.", Math.max(res.diameter / (res.innerRadius * 2), 1.0));
-			table.addValue("xi", res.initialPoint.x);
-			table.addValue("yi", res.initialPoint.y);
+			table.addValue("xi", res.initialPoint.getX());
+			table.addValue("yi", res.initialPoint.getY());
 			
 		    // coordinate of first and second geodesic extremities 
-			table.addValue("x1", res.firstExtremity.x);
-			table.addValue("y1", res.firstExtremity.y);
-			table.addValue("x2", res.secondExtremity.x);
-			table.addValue("y2", res.secondExtremity.y);
+			table.addValue("x1", res.firstExtremity.getX());
+			table.addValue("y1", res.firstExtremity.getY());
+			table.addValue("x2", res.secondExtremity.getX());
+			table.addValue("y2", res.secondExtremity.getY());
 		}
 	
 		return table;
@@ -182,6 +202,40 @@ public class GeodesicDiameter extends AlgoStub
 	
 	// ==================================================
 	// General methods 
+	
+	/**
+	 * Computes the geodesic diameter of each particle within the given label
+	 * image.
+	 * 
+	 * @param labelImage
+	 *            a label image, containing either the label of a particle or
+	 *            region, or zero for background
+	 * @return a the geodesic diameter of each particle within the label image
+	 */
+	public Map<Integer, Result> process(ImagePlus labelImagePlus)
+	{
+		// Extract image processor, and compute geodesic diameter in pixel units
+		ImageProcessor labelImage = labelImagePlus.getProcessor();
+		int[] labels = LabelImages.findAllLabels(labelImage);
+		Result[] geodDiams = process(labelImage, labels);
+		
+		// check spatial calibration
+		Calibration calib = labelImagePlus.getCalibration();
+		if (calib.pixelWidth != calib.pixelHeight)
+		{
+			throw new RuntimeException("Requires image with square pixels");
+		}
+		
+		// convert the arrays into a map of index-value pairs
+		Map<Integer, Result> map = new TreeMap<Integer, Result>();
+		for (int i = 0; i < labels.length; i++)
+		{
+			// convert to user units
+			map.put(labels[i], geodDiams[i].recalibrate(calib));
+		}
+		
+		return map;
+	}
 	
 	/**
 	 * Computes the geodesic diameter of each particle within the given label
@@ -309,10 +363,10 @@ public class GeodesicDiameter extends AlgoStub
 			{
 				// Current first geodesic extremity 
 				// (corresponding to the minimum of the geodesic distance map)
-				Point pos1 = result[i].firstExtremity;
+				Point2D pos1 = result[i].firstExtremity;
 				
 				// Create new path
-				List<Point> path = new ArrayList<Point>();
+				List<Point2D> path = new ArrayList<Point2D>();
 				
 				// if the geodesic diameter of the current label is infinite, it is
 				// not possible to create a path
@@ -325,7 +379,7 @@ public class GeodesicDiameter extends AlgoStub
 				
 				// initialize path with position of second geodesic extremity
 				// (corresponding to the maximum of the geodesic distance map)
-				Point pos = result[i].secondExtremity;
+				Point pos = (Point) result[i].secondExtremity;
 				path.add(pos);
 				
 				// iterate over neighbors of current position until we reach the minimum value
@@ -412,14 +466,60 @@ public class GeodesicDiameter extends AlgoStub
 	{
 		public double diameter;
 
-		public Point initialPoint;
+		public Point2D initialPoint;
 
 		public double innerRadius;
 
-		public Point firstExtremity;
+		public Point2D firstExtremity;
 
-		public Point secondExtremity;
+		public Point2D secondExtremity;
 
-		public List<Point> path = null;
+		public List<Point2D> path = null;
+
+		/**
+		 * Computes the result corresponding to the spatial calibration.
+		 * 
+		 * @param calib
+		 *            the spatial calibration of an image
+		 * @return the result after applying the spatial calibration
+		 */
+		public Result recalibrate(Calibration calib)
+		{
+			double size = calib.pixelWidth;
+			Result res = new Result();
+			
+			// calibrate the diameter
+			res.diameter = this.diameter * size;
+
+			// calibrate inscribed disk
+			res.initialPoint = calibrate(this.initialPoint, calib); 
+			res.innerRadius = this.innerRadius * size;
+
+			// calibrate geodesic extremities
+			res.firstExtremity = calibrate(this.firstExtremity, calib); 
+			res.secondExtremity = calibrate(this.firstExtremity, calib);
+			
+			// calibrate the geodesic path if any
+			if (this.path != null)
+			{
+				List<Point2D> path = new ArrayList<Point2D>(this.path.size());
+				for (Point2D point : this.path)
+				{
+					path.add(calibrate(point, calib));
+				}
+				res.path = path;
+			}
+			
+			// return the calibrated result
+			return res;
+		}
+		
+		private Point2D calibrate(Point2D point, Calibration calib)
+		{
+			return new Point2D.Double(
+					point.getX() * calib.pixelWidth + calib.xOrigin, 
+					point.getY() * calib.pixelHeight + calib.yOrigin);
+		}
+		
 	}
 }

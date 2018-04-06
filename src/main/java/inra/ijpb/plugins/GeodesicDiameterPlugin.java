@@ -22,7 +22,7 @@
 package inra.ijpb.plugins;
 
 import java.awt.Color;
-import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.util.List;
 import java.util.Map;
 
@@ -30,17 +30,14 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
 import ij.gui.GenericDialog;
-import ij.gui.Line;
-import ij.gui.OvalRoi;
 import ij.gui.Overlay;
 import ij.gui.PointRoi;
 import ij.gui.PolygonRoi;
 import ij.gui.Roi;
-import ij.gui.TextRoi;
+import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
 import ij.plugin.frame.RoiManager;
-import ij.process.ImageProcessor;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.binary.ChamferWeights;
 import inra.ijpb.label.LabelImages;
@@ -112,20 +109,18 @@ public class GeodesicDiameterPlugin implements PlugIn
 			IJ.showMessage("Input image should be a label image");
 			return;
 		}
-		ImageProcessor labelImage = labelPlus.getProcessor();
 		
-		// Compute geodesic diameters, using floating-point calculations
-		long start = System.nanoTime();
-		
+		// Create and configure the class for computing geodesic diameter
 		GeodesicDiameter algo = new GeodesicDiameter(weights);
 		algo.setComputePaths(overlayPaths || createPathRois);
 		DefaultAlgoListener.monitor(algo);
 		
-		Map<Integer, GeodesicDiameter.Result> geodDiams = algo.process(labelImage);
+		// Compute geodesic diameters, using floating-point calculations
+		long start = System.nanoTime();
+		Map<Integer, GeodesicDiameter.Result> geodDiams = algo.process(labelPlus);
 
+		// Elapsed time, displayed in milli-seconds
 		long finalTime = System.nanoTime();
-		
-		// Final time, displayed in milli-sseconds
 		float elapsedTime = (finalTime - start) / 1000000.0f;
 
 		// display the result table
@@ -133,9 +128,7 @@ public class GeodesicDiameterPlugin implements PlugIn
 		String tableName = labelPlus.getShortTitle() + "-GeodDiameters"; 
 		table.show(tableName);
 
-//		int gdIndex = table.getColumnIndex("Geod. Diam");
-//		double[] geodDiamArray = table.getColumnAsDoubles(gdIndex);
-		
+		// Optional processing of geodesic paths
 		if (overlayPaths || createPathRois)
 		{
     		boolean validPaths = true;
@@ -154,20 +147,6 @@ public class GeodesicDiameterPlugin implements PlugIn
 						+ "meaning that some particles are not connected.\n" 
 						+ "Maybe labeling was not performed, or label image was cropped?");
     		}
-    		
-//    		// compute the path that is associated to each label
-//    		Map<Integer, List<Point>> pathMap = null;
-//    		try
-//    		{
-//    			pathMap = algo.longestGeodesicPaths(labelImage);
-//    		}
-//    		catch (Exception ex)
-//    		{
-//    			IJ.handleException(ex);
-//    			IJ.error("Geodesic Diameter Error", 
-//    					"Could not compute geodesic paths.\nTry using Borgefors weights.");
-//    			return;
-//    		}
 
     		// Check if results must be displayed on an image
     		if (overlayPaths) 
@@ -190,60 +169,61 @@ public class GeodesicDiameterPlugin implements PlugIn
 	// ====================================================
 	// Computing functions 
 	
-	/**
-	 * Display the result of geodesic parameter extraction as overlay on a given
-	 * image.
-	 * 
-	 * @param target
-	 *            the imagePlus used to display result
-	 * @param table
-	 *            the ResultsTable obtained from geodesicDimaeter analysis
-	 */
-	public void showResultsAsOverlay(ImagePlus target, ResultsTable table) 
-	{
-		
-		Overlay overlay = new Overlay();
-		
-		Roi roi;
-		
-		int count = table.getCounter();
-		for (int i = 0; i < count; i++) {
-			// Coordinates of inscribed circle
-			double xi = table.getValue("xi", i);
-			double yi = table.getValue("yi", i);
-			double ri = table.getValue("Radius", i);
-			
-			// draw inscribed circle
-			int width = (int) Math.round(2 * ri);
-			roi = new OvalRoi((int) (xi - ri), (int) (yi - ri), width, width);
-			roi.setStrokeColor(Color.BLUE);
-			overlay.add(roi);
-			
-			// Display label
-			roi = new TextRoi((int)xi, (int)yi, Integer.toString(i + 1));
-			roi.setStrokeColor(Color.BLUE);
-			overlay.add(roi);
-			
-			// Draw geodesic diameter 
-			int x1 = (int) table.getValue("x1", i);
-			int y1 = (int) table.getValue("y1", i);
-			int x2 = (int) table.getValue("x2", i);
-			int y2 = (int) table.getValue("y2", i);
-			roi = new Line(x1, y1, x2, y2);
-			roi.setStrokeColor(Color.RED);
-			overlay.add(roi);			
-		}
-		
-		target.setOverlay(overlay);
-	}
+//	/**
+//	 * Display the result of geodesic parameter extraction as overlay on a given
+//	 * image.
+//	 * 
+//	 * @param target
+//	 *            the imagePlus used to display result
+//	 * @param table
+//	 *            the ResultsTable obtained from geodesicDimaeter analysis
+//	 */
+//	public void showResultsAsOverlay(ImagePlus target, ResultsTable table) 
+//	{
+//		
+//		Overlay overlay = new Overlay();
+//		
+//		Roi roi;
+//		
+//		int count = table.getCounter();
+//		for (int i = 0; i < count; i++) {
+//			// Coordinates of inscribed circle
+//			double xi = table.getValue("xi", i);
+//			double yi = table.getValue("yi", i);
+//			double ri = table.getValue("Radius", i);
+//			
+//			// draw inscribed circle
+//			int width = (int) Math.round(2 * ri);
+//			roi = new OvalRoi((int) (xi - ri), (int) (yi - ri), width, width);
+//			roi.setStrokeColor(Color.BLUE);
+//			overlay.add(roi);
+//			
+//			// Display label
+//			roi = new TextRoi((int)xi, (int)yi, Integer.toString(i + 1));
+//			roi.setStrokeColor(Color.BLUE);
+//			overlay.add(roi);
+//			
+//			// Draw geodesic diameter 
+//			int x1 = (int) table.getValue("x1", i);
+//			int y1 = (int) table.getValue("y1", i);
+//			int x2 = (int) table.getValue("x2", i);
+//			int y2 = (int) table.getValue("y2", i);
+//			roi = new Line(x1, y1, x2, y2);
+//			roi.setStrokeColor(Color.RED);
+//			overlay.add(roi);			
+//		}
+//		
+//		target.setOverlay(overlay);
+//	}
 
 	public void drawPaths(ImagePlus target, Map<Integer, GeodesicDiameter.Result> geodDiams)
 	{
 		Overlay overlay = new Overlay();
+		Calibration calib = target.getCalibration();
 		
 		for (GeodesicDiameter.Result result : geodDiams.values())
 		{
-			Roi roi = createPathRoi(result.path);
+			Roi roi = createPathRoi(result.path, calib);
 		    roi.setStrokeColor(Color.RED);
 		    overlay.add(roi);
 		}
@@ -261,18 +241,19 @@ public class GeodesicDiameterPlugin implements PlugIn
 	{
 		// get instance of ROI Manager
 		RoiManager manager = RoiManager.getRoiManager();
+		Calibration calib = target.getCalibration();
 		
 		// add each path to the ROI Manager
 		int index = 0;
 		for (GeodesicDiameter.Result result : geodDiams.values())
 		{
-		    manager.add(target, createPathRoi(result.path), index++);
+		    manager.add(target, createPathRoi(result.path, calib), index++);
 		}
 	}
 
-	private Roi createPathRoi(List<Point> path)
+	private Roi createPathRoi(List<Point2D> path, Calibration calib)
 	{
-    	if (path == null)
+		if (path == null)
     	{
     		return null;
     	}
@@ -284,10 +265,11 @@ public class GeodesicDiameterPlugin implements PlugIn
             float[] x = new float[n];
             float[] y = new float[n];
             int i = 0;
-            for (Point pos : path)
+            for (Point2D pos : path)
             {
-                x[i] = pos.x + .5f;
-                y[i] = pos.y + .5f;
+            	pos = calibToPixel(pos, calib);
+                x[i] = (float) (pos.getX() + 0.5f);
+                y[i] = (float) (pos.getY() + 0.5f);
                 i++;
             }
             return new PolygonRoi(x, y, n, Roi.POLYLINE);
@@ -295,12 +277,19 @@ public class GeodesicDiameterPlugin implements PlugIn
         else if (path.size() == 1)
         {
             // case of single point particle
-            Point p = path.get(0);
-            return new PointRoi(p.x + .5, p.y + .5);
+            Point2D pos = calibToPixel(path.get(0), calib);
+            return new PointRoi(pos.getX() + 0.5, pos.getY() + 0.5);
         }
         else
         {
         	throw new RuntimeException("Can not manage empty paths");
         }
+	}
+	
+	private Point2D calibToPixel(Point2D point, Calibration calib)
+	{
+		double x = (point.getX() - calib.xOrigin) / calib.pixelWidth;
+		double y = (point.getY() - calib.yOrigin) / calib.pixelHeight;
+		return new Point2D.Double(x, y);
 	}
 }

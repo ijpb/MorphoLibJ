@@ -2,7 +2,7 @@ package inra.ijpb.measure;
 
 import static org.junit.Assert.assertEquals;
 
-import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.util.List;
 import java.util.Map;
 
@@ -90,7 +90,7 @@ public class GeodesicDiameterTest
 		Map<Integer,GeodesicDiameter.Result> geodDiams = algo.process(image);
 
 		assertEquals(1, geodDiams.size());
-		List<Point> path1 = geodDiams.get(255).path;
+		List<Point2D> path1 = geodDiams.get(255).path;
 		assertEquals(4, path1.size());
 	}
 
@@ -145,11 +145,11 @@ public class GeodesicDiameterTest
 
         assertEquals(6, geodDiams.size());
         
-        List<Point> lastPath = geodDiams.get(104544).path;
+        List<Point2D> lastPath = geodDiams.get(104544).path;
         assertEquals(1, lastPath.size());
-        Point p = lastPath.get(0);
-        assertEquals(30, p.x);
-        assertEquals(32, p.y);
+        Point2D p = lastPath.get(0);
+        assertEquals(30, p.getX(), .01);
+        assertEquals(32, p.getY(), .01);
     }
 
 	/**
