@@ -207,7 +207,7 @@ import inra.ijpb.label.LabelValues.PositionValuePair;
 	 * Computes the geodesic diameter of each particle within the given label
 	 * image.
 	 * 
-	 * @param labelImage
+	 * @param labelImagePlus
 	 *            a label image, containing either the label of a particle or
 	 *            region, or zero for background
 	 * @return a the geodesic diameter of each particle within the label image
