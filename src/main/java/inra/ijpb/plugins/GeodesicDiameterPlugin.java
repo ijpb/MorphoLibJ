@@ -235,7 +235,7 @@ public class GeodesicDiameterPlugin implements PlugIn
 	 * Adds the specified paths to the list of ROI of the image plus.
 	 * 
 	 * @param target The ImagePlus that will be associated with ROIS
-	 * @param pathMap the list of paths
+	 * @param geodDiams the list of paths
 	 */
 	public void createPathRois(ImagePlus target, Map<Integer, GeodesicDiameter.Result> geodDiams)
 	{
