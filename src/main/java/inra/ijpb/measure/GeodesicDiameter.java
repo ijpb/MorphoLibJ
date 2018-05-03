@@ -66,6 +66,8 @@ import inra.ijpb.label.LabelValues.PositionValuePair;
  * @see inra.ijpb.binary.geodesic.GeodesicDiameterFloat
  * @see inra.ijpb.binary.geodesic.GeodesicDistanceTransform
  * 
+ * @since 1.3.5
+ * 
  * @author David Legland
  *
  */public class GeodesicDiameter extends AlgoStub

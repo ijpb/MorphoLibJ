@@ -63,8 +63,9 @@ import java.util.TreeMap;
  * @see inra.ijpb.binary.geodesic.GeodesicDistanceTransform
  * 
  * @author David Legland
- *
+ * @deprecated replaced by GeodesicDiameter (since 1.3.5)
  */
+@Deprecated
 public class GeodesicDiameterCalculator extends AlgoStub
 {
 	// ==================================================

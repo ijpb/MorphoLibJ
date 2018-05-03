@@ -14,6 +14,7 @@ import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.binary.ChamferWeights;
 
+@Deprecated
 public class GeodesicDiameterCalculatorTest
 {
 	@Test
