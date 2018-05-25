@@ -72,7 +72,7 @@ public class IntensityMeasures3D implements PlugIn{
         if( labelsIndex > nbima-1 )
         	labelsIndex = nbima - 1;
         
-        GenericDialog gd = new GenericDialog( "Measure 3D" );
+        GenericDialog gd = new GenericDialog( "Intensity Measurements 2D/3D" );
         gd.addChoice( "Input", names, names[ inputIndex ] );
         gd.addChoice( "Labels", names, names[ labelsIndex ] );
         gd.addMessage("Measurements:");
