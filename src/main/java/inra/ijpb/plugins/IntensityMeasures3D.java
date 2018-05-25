@@ -42,10 +42,13 @@ public class IntensityMeasures3D implements PlugIn{
 	static int labelsIndex = 1;
 	static String[] measureLabels = new String[]{ "Mean", "StdDev", "Max",
 			"Min", "Median", "Mode", "Skewness", "Kurtosis",
-			"NumberOfVoxels", "Volume", "NeighborsMean" };
+			"NumberOfVoxels", "Volume", "NeighborsMean", "NeighborsStdDev",
+			"NeighborsMax", "NeighborsMin", "NeighborsMedian",
+			"NeighborsMode", "NeighborsSkewness", "NeighborsKurtosis" };
 
 	static boolean[] measureStates = new boolean[]{ true, true, true, true,
-			true, true, true, true, true, true, true };
+			true, true, true, true, true, true, true, true, true, true, true,
+			true, true, true };
 
 	@Override
 	public void run(String arg) 
@@ -141,7 +144,28 @@ public class IntensityMeasures3D implements PlugIn{
             	rb.addResult( im.getVolume() );
 
             if( measureStates[ 10 ] ) // Neighbors mean intensity
-            	rb.addResult( im.getNeighborsMean());
+            	rb.addResult( im.getNeighborsMean() );
+
+            if( measureStates[ 11 ] ) // Neighbors standard deviation intensity
+            	rb.addResult( im.getNeighborsStdDev() );
+
+            if( measureStates[ 12 ] ) // Neighbors maximum intensity
+            	rb.addResult( im.getNeighborsMax() );
+
+            if( measureStates[ 13 ] ) // Neighbors minimum intensity
+            	rb.addResult( im.getNeighborsMin() );
+
+            if( measureStates[ 14 ] ) // Neighbors median intensity
+            	rb.addResult( im.getNeighborsMedian() );
+
+            if( measureStates[ 15 ] ) // Neighbors mode intensity
+            	rb.addResult( im.getNeighborsMode() );
+
+            if( measureStates[ 16 ] ) // Neighbors skewness intensity
+            	rb.addResult( im.getNeighborsSkewness() );
+
+            if( measureStates[ 17 ] ) // Neighbors kurtosis intensity
+            	rb.addResult( im.getNeighborsKurtosis() );
 
             rb.getResultsTable().show( inputImage.getShortTitle() +
             		"-intensity-measurements" );
