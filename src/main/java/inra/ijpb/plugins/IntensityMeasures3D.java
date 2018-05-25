@@ -42,10 +42,10 @@ public class IntensityMeasures3D implements PlugIn{
 	static int labelsIndex = 1;
 	static String[] measureLabels = new String[]{ "Mean", "StdDev", "Max",
 			"Min", "Median", "Mode", "Skewness", "Kurtosis",
-			"NumberOfVoxels", "Volume" };
+			"NumberOfVoxels", "Volume", "NeighborsMean" };
 
 	static boolean[] measureStates = new boolean[]{ true, true, true, true,
-			true, true, true, true, true, true };
+			true, true, true, true, true, true, true };
 
 	@Override
 	public void run(String arg) 
@@ -139,6 +139,9 @@ public class IntensityMeasures3D implements PlugIn{
 
             if( measureStates[ 9 ] ) // Volume
             	rb.addResult( im.getVolume() );
+
+            if( measureStates[ 10 ] ) // Neighbors mean intensity
+            	rb.addResult( im.getNeighborsMean());
 
             rb.getResultsTable().show( inputImage.getShortTitle() +
             		"-intensity-measurements" );

@@ -47,7 +47,8 @@ public class LabeledVoxelsMeasure
     
     /** calibration of input image */
     Calibration calibration;
-	
+    /** associative hash table to know the index of each label */
+    HashMap<Integer, Integer> labelIndices = null;
 	/**
 	 * Initialize the measurements by reading the input (grayscale) 
 	 * image and its corresponding labels.
@@ -73,7 +74,7 @@ public class LabeledVoxelsMeasure
 		int numLabels = labels.length;
 		
 		// create associative hash table to know the index of each label
-		HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
+		labelIndices = LabelImages.mapLabelIndices( labels );
 
 		// initialize lists of voxels per object
         // unchecked cast

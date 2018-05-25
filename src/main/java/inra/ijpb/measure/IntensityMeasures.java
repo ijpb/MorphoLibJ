@@ -23,9 +23,12 @@ package inra.ijpb.measure;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Set;
 
 import ij.ImagePlus;
 import ij.measure.ResultsTable;
+import inra.ijpb.label.RegionAdjacencyGraph;
+import inra.ijpb.label.RegionAdjacencyGraph.LabelPair;
 
 
 /**
@@ -36,8 +39,10 @@ import ij.measure.ResultsTable;
  *
  */
 public class IntensityMeasures extends LabeledVoxelsMeasure{
-
-	
+	/** adjacency list */
+	Set<LabelPair> adjList = null;
+	/** label image */
+	ImagePlus labelImage = null;
 	
 	/**
 	 * Initialize the measurements by reading the input (grayscale) 
@@ -51,6 +56,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 			ImagePlus labelImage )
 	{
 		super( inputImage, labelImage );
+		this.labelImage = labelImage;
 	}
 	
 	/**
@@ -84,7 +90,49 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 
 		return table;
 	}
+	/**
+	 * Get the mean intensity values of the neighbor labels
+	 *
+	 * @return result table with mean values of neighbor labels
+	 */
+	public ResultsTable getNeighborsMean()
+	{
+		if( this.adjList == null )
+			this.adjList = RegionAdjacencyGraph.computeAdjacencies( labelImage );
+		final int numLabels = objectVoxels.length;
 
+		double[] mean = new double[ numLabels ];
+		double[] numNeighborVoxels = new double[ numLabels ];
+		// go through list of adjacent pairs
+		for (LabelPair pair : adjList)
+		{
+			// extract their indices
+			int ind1 = super.labelIndices.get(pair.label1);
+			int ind2 = super.labelIndices.get(pair.label2);
+			// sum up the voxel values of each label to the list of
+			// the adjacent label
+			for( final double v : objectVoxels[ ind2 ] )
+				mean[ ind1 ] += v;
+			numNeighborVoxels[ ind1 ] += objectVoxels[ ind2 ].size();
+			for( final double v : objectVoxels[ ind1 ] )
+				mean[ ind2 ] += v;
+			numNeighborVoxels[ ind2 ] += objectVoxels[ ind1 ].size();
+		}
+		// divide by the total number of neighbor voxels to obtain the mean
+		for( int i=0; i<numLabels; i++ )
+			if( numNeighborVoxels[ i ] > 0 )
+				mean[ i ] /= numNeighborVoxels[ i ];
+
+		// create data table
+		ResultsTable table = new ResultsTable();
+		for (int i = 0; i < numLabels; i++) {
+			table.incrementCounter();
+			table.addLabel(Integer.toString( labels[i] ));
+			table.addValue("NeighborsMean", mean[i]);
+		}
+
+		return table;
+	}
 	/**
 	 * Get median voxel values per label
 	 *
