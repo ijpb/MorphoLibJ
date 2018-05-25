@@ -8050,8 +8050,11 @@ Intensity Measurements 2D/3D
 \begin_layout Standard
 The plugin calculates the mean, standard deviation, maximum, minimum, median,
  mode, skewness and kurtosis of the intensity value distribution of each
- labeled region in the grayscale image.
- The results are displayed as well in an ImageJ 
+ labeled region in the grayscale image as well as the same statistics of
+ the neighboring (adjacent) regions of each of the labels.
+ If a regions has no adjacent labels, their measurements will appear as
+ NaN (not a number).
+ The results are displayed in an ImageJ 
 \emph on
 ResultsTable
 \emph default
