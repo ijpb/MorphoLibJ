@@ -25,7 +25,6 @@ public class ResultsBuilder {
 				if( !allResults.columnExists(colName)) {
 					for(int i=0; i<rt.getCounter(); i++) {
 						allResults.setValue(colName, i, rt.getValue(colName, i)); // Currently only supports numbered results...
-						allResults.updateResults();
 					}
 				}
 			}
