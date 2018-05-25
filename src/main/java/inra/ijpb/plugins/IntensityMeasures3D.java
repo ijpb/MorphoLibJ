@@ -21,15 +21,13 @@
  */
 package inra.ijpb.plugins;
 
-import java.util.ArrayList;
-
 import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
 import ij.gui.GenericDialog;
-import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
 import inra.ijpb.measure.IntensityMeasures;
+import inra.ijpb.measure.ResultsBuilder;
 
 /**
  * This class implements a set of photometric (intensity) measurements over
@@ -108,59 +106,41 @@ public class IntensityMeasures3D implements PlugIn{
             	return;
             }
 
-            ArrayList< ResultsTable > results = new ArrayList<ResultsTable>(); 
-            
+            ResultsBuilder rb = new ResultsBuilder();
             
             final IntensityMeasures im = new IntensityMeasures( inputImage, labelImage );
 
             if( measureStates[ 0 ] ) // Mean            	
-            	results.add( im.getMean() );
+            	rb.addResult( im.getMean() );
 
             if( measureStates[ 1 ] ) // Standard deviation			            	
-            	results.add( im.getStdDev() );
+            	rb.addResult( im.getStdDev() );
 
             if( measureStates[ 2 ] ) // Max         	
-            	results.add( im.getMax() );
+            	rb.addResult( im.getMax() );
 
             if( measureStates[ 3 ] ) // Min            	
-            	results.add( im.getMin() );
+            	rb.addResult( im.getMin() );
 
             if( measureStates[ 4 ] ) // Median
-            	results.add( im.getMedian() );
+            	rb.addResult( im.getMedian() );
 
             if( measureStates[ 5 ] ) // Mode
-            	results.add( im.getMode() );
+            	rb.addResult( im.getMode() );
 
             if( measureStates[ 6 ] ) // Skewness
-            	results.add( im.getSkewness() );
+            	rb.addResult( im.getSkewness() );
 
             if( measureStates[ 7 ] ) // Kurtosis
-            	results.add( im.getKurtosis() );
+            	rb.addResult( im.getKurtosis() );
 
             if( measureStates[ 8 ] ) // Number of voxels
-            	results.add( im.getNumberOfVoxels() );
+            	rb.addResult( im.getNumberOfVoxels() );
 
             if( measureStates[ 9 ] ) // Volume
-            	results.add( im.getVolume() );
+            	rb.addResult( im.getVolume() );
 
-            ResultsTable mergedTable = new ResultsTable();
-            final int numLabels = results.get( 0 ).getCounter();
-            
-            for(int i=0; i < numLabels; i++ )
-            {
-            	mergedTable.incrementCounter();
-            	String label = results.get( 0 ).getLabel( i );
-            	mergedTable.addLabel(label);
-            	
-            	for( int j=0; j<results.size(); j++ )
-            	{
-            		String measure = results.get( j ).getColumnHeading( 0 );
-            		double value = results.get( j ).getValue( measure, i );
-            		mergedTable.addValue( measure, value );
-            	}
-            }
-            
-            mergedTable.show( inputImage.getShortTitle() +
+            rb.getResultsTable().show( inputImage.getShortTitle() +
             		"-intensity-measurements" );
         }
 	}
