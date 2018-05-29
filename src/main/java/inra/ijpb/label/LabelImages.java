@@ -1979,7 +1979,10 @@ public class LabelImages
 	    			intersection[ labelIndices1.get( (int) labelImage1.getf( i, j ) ) ] ++;
 	    // return the intersection over the union
 	    for( int i = 0; i < intersection.length; i ++ )
-	    	intersection[ i ] /= ( numPix1[ i ] + numPix2[ labelIndices2.get( labels1[ i ] ) ] - intersection[ i ] );
+	    {
+	    	int num2 = labelIndices2.get( labels1[ i ] ) != null ? numPix2[ labelIndices2.get( labels1[ i ] ) ] : 0;
+	    	intersection[ i ] /= ( numPix1[ i ] + num2 - intersection[ i ] );
+	    }
 	    return intersection;
 	}
 	/**
@@ -2053,7 +2056,10 @@ public class LabelImages
 		}
 	    // return the intersection over the union
 	    for( int i = 0; i < intersection.length; i ++ )
-	    	intersection[ i ] /= ( numPix1[ i ] + numPix2[ labelIndices2.get( labels1[ i ] ) ] - intersection[ i ] );
+	    {
+	    	int num2 = labelIndices2.get( labels1[ i ] ) != null ? numPix2[ labelIndices2.get( labels1[ i ] ) ] : 0;
+	    	intersection[ i ] /= ( numPix1[ i ] + num2 - intersection[ i ] );
+	    }
 	    return intersection;
 	}
 	/**
@@ -2143,7 +2149,10 @@ public class LabelImages
 	    			intersection[ labelIndices1.get( (int) labelImage1.getf( i, j ) ) ] ++;
 	    // return the Dice coefficient
 	    for( int i = 0; i < intersection.length; i ++ )
-	    	intersection[ i ] = 2 * intersection[ i ]  / ( numPix1[ i ] + numPix2[ labelIndices2.get( labels1[ i ] ) ] );
+	    {
+	    	int num2 = labelIndices2.get( labels1[ i ] ) != null ? numPix2[ labelIndices2.get( labels1[ i ] ) ] : 0;
+	    	intersection[ i ] = 2 * intersection[ i ]  / ( numPix1[ i ] + num2 );
+	    }
 	    return intersection;
 	}
 	/**
@@ -2215,7 +2224,10 @@ public class LabelImages
 		}
 	    // return the Dice coefficient
 	    for( int i = 0; i < intersection.length; i ++ )
-	    	intersection[ i ] = 2 * intersection[ i ]  / ( numPix1[ i ] + numPix2[ labelIndices2.get( labels1[ i ] ) ] );
+	    {
+	    	int num2 = labelIndices2.get( labels1[ i ] ) != null ? numPix2[ labelIndices2.get( labels1[ i ] ) ] : 0;
+	    	intersection[ i ] = 2 * intersection[ i ]  / ( numPix1[ i ] + num2 );
+	    }
 	    return intersection;
 	}
 	/**
