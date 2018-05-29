@@ -1925,7 +1925,7 @@ public class LabelImages
 	 * @param labelImage1 first label image
 	 * @param labelImage2 second label image
 	 * @return Jaccard index value or -1 if error
-	 * @see https://en.wikipedia.org/wiki/Jaccard_index
+	 * @see <a href="https://en.wikipedia.org/wiki/Jaccard_index">https://en.wikipedia.org/wiki/Jaccard_index</a>
 	 */
 	public static final double getJaccardIndex(
 			ImageProcessor labelImage1,
@@ -1950,7 +1950,7 @@ public class LabelImages
 	 * @param labelImage1 reference label image
 	 * @param labelImage2 label image to compare with
 	 * @return Jaccard index per label in the reference image or null if error
-	 * @see https://en.wikipedia.org/wiki/Jaccard_index
+	 * @see <a href="https://en.wikipedia.org/wiki/Jaccard_index">https://en.wikipedia.org/wiki/Jaccard_index</a>
 	 */
 	public static final double[] getJaccardIndexPerLabel(
 			ImageProcessor labelImage1,
@@ -1991,7 +1991,7 @@ public class LabelImages
 	 * @param labelImage1 first label image
 	 * @param labelImage2 second label image
 	 * @return Jaccard index value or -1 if error
-	 * @see https://en.wikipedia.org/wiki/Jaccard_index
+	 * @see <a href="https://en.wikipedia.org/wiki/Jaccard_index">https://en.wikipedia.org/wiki/Jaccard_index</a>
 	 */
 	public static final double getJaccardIndex(
 			ImageStack labelImage1,
@@ -2022,7 +2022,7 @@ public class LabelImages
 	 * @param labelImage1 reference label image
 	 * @param labelImage2 label image to compare with
 	 * @return Jaccard index per label in the reference image or null if error
-	 * @see https://en.wikipedia.org/wiki/Jaccard_index
+	 * @see <a href="https://en.wikipedia.org/wiki/Jaccard_index">https://en.wikipedia.org/wiki/Jaccard_index</a>
 	 */
 	public static final double[] getJaccardIndexPerLabel(
 			ImageStack labelImage1,
@@ -2068,7 +2068,7 @@ public class LabelImages
 	 * @param labelImage1 first label image
 	 * @param labelImage2 second label image
 	 * @return Jaccard index value or -1 if error
-	 * @see https://en.wikipedia.org/wiki/Jaccard_index
+	 * @see <a href="https://en.wikipedia.org/wiki/Jaccard_index">https://en.wikipedia.org/wiki/Jaccard_index</a>
 	 */
 	public static final double getJaccardIndex(
 			ImagePlus labelImage1,
@@ -2082,7 +2082,7 @@ public class LabelImages
 	 * @param labelImage1 reference label image
 	 * @param labelImage2 label image to compare with
 	 * @return Jaccard index per label in the reference image or null if error
-	 * @see https://en.wikipedia.org/wiki/Jaccard_index
+	 * @see <a href="https://en.wikipedia.org/wiki/Jaccard_index">https://en.wikipedia.org/wiki/Jaccard_index</a>
 	 */
 	public static final double[] getJaccardIndexPerLabel(
 			ImagePlus labelImage1,
@@ -2095,7 +2095,7 @@ public class LabelImages
 	 * @param labelImage1 first label image
 	 * @param labelImage2 second label image
 	 * @return Dice coefficient value or -1 if error
-	 * @see https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient
+	 * @see <a href="https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient">https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient</a>
 	 */
 	public static final double getDiceCoefficient(
 			ImageProcessor labelImage1,
@@ -2120,7 +2120,7 @@ public class LabelImages
 	 * @param labelImage1 reference label image
 	 * @param labelImage2 label image to compare with
 	 * @return Dice coefficient per label in the reference image or null if error
-	 * @see https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient
+	 * @see <a href="https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient">https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient</a>
 	 */
 	public static final double[] getDiceCoefficientPerLabel(
 			ImageProcessor labelImage1,
@@ -2160,7 +2160,7 @@ public class LabelImages
 	 * @param labelImage1 first label image
 	 * @param labelImage2 second label image
 	 * @return Dice coefficient value or -1 if error
-	 * @see https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient
+	 * @see <a href="https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient">https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient</a>
 	 */
 	public static final double getDiceCoefficient(
 			ImageStack labelImage1,
@@ -2190,7 +2190,7 @@ public class LabelImages
 	 * @param labelImage1 reference label image
 	 * @param labelImage2 label image to compare with
 	 * @return Dice coefficient per label in the reference image or null if error
-	 * @see https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient
+	 * @see <a href="https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient">https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient</a>
 	 */
 	public static final double[] getDiceCoefficientPerLabel(
 			ImageStack labelImage1,
@@ -2235,7 +2235,7 @@ public class LabelImages
 	 * @param labelImage1 first label image
 	 * @param labelImage2 second label image
 	 * @return Dice coefficient value or -1 if error
-	 * @see https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient
+	 * @see <a href="https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient">https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient</a>
 	 */
 	public static final double getDiceCoefficient(
 			ImagePlus labelImage1,
@@ -2249,7 +2249,7 @@ public class LabelImages
 	 * @param labelImage1 reference label image
 	 * @param labelImage2 label image to compare with
 	 * @return Dice coefficient per label in the reference image or null if error
-	 * @see https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient
+	 * @see <a href="https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient">https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient</a>
 	 */
 	public static final double[] getDiceCoefficientPerLabel(
 			ImagePlus labelImage1,
