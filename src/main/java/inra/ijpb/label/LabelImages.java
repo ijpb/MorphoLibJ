@@ -1919,7 +1919,76 @@ public class LabelImages
 		}
 		return list;
 	}
-	
+	/**
+	 * Get the Jaccard index (intersection over union overlap) between
+	 * two label images.
+	 * @param labelImage1 first label image
+	 * @param labelImage2 second label image
+	 * @return Jaccard index value or -1 if error
+	 * @see https://en.wikipedia.org/wiki/Jaccard_index
+	 */
+	public static final double getJaccardIndex(
+			ImageProcessor labelImage1,
+			ImageProcessor labelImage2 )
+	{
+		if( labelImage1.getWidth() != labelImage2.getWidth() ||
+				labelImage1.getHeight() != labelImage2.getHeight() )
+			return -1;
+		double intersection = 0;
+		final double numElements = labelImage1.getWidth() * labelImage1.getHeight();
+		// calculate the pixel to pixel intersection
+	    for( int i = 0; i < labelImage1.getWidth(); i++ )
+	    	for( int j = 0; j < labelImage1.getHeight(); j++ )
+	    		if( labelImage1.getf( i, j ) == labelImage2.getf( i, j ) )
+	    			intersection ++;
+	    // return the intersection over the union
+	    return intersection / ( 2 * numElements - intersection );
+	}
+	/**
+	 * Get the Jaccard index (intersection over union overlap) between
+	 * two label images.
+	 * @param labelImage1 first label image
+	 * @param labelImage2 second label image
+	 * @return Jaccard index value or -1 if error
+	 * @see https://en.wikipedia.org/wiki/Jaccard_index
+	 */
+	public static final double getJaccardIndex(
+			ImageStack labelImage1,
+			ImageStack labelImage2 )
+	{
+		if( labelImage1.getWidth() != labelImage2.getWidth() ||
+				labelImage1.getHeight() != labelImage2.getHeight() ||
+				labelImage1.getSize() != labelImage2.getSize() )
+			return -1;
+		double intersection = 0;
+		final double numElements = labelImage1.getWidth() * labelImage1.getHeight() * labelImage1.getSize();
+		// calculate the pixel to pixel intersection
+		for( int k = 0; k < labelImage1.getSize(); k ++ )
+		{
+			final ImageProcessor l1 = labelImage1.getProcessor( k+1 );
+			final ImageProcessor l2 = labelImage2.getProcessor( k+1 );
+			for( int i = 0; i < labelImage1.getWidth(); i++ )
+				for( int j = 0; j < labelImage1.getHeight(); j++ )
+					if( l1.getf( i, j ) == l2.getf( i, j ) )
+						intersection ++;
+		}
+	    // return the intersection over the union
+	    return intersection / ( 2 * numElements - intersection );
+	}
+	/**
+	 * Get the Jaccard index (intersection over union overlap) between
+	 * two label images.
+	 * @param labelImage1 first label image
+	 * @param labelImage2 second label image
+	 * @return Jaccard index value or -1 if error
+	 * @see https://en.wikipedia.org/wiki/Jaccard_index
+	 */
+	public static final double getJaccardIndex(
+			ImagePlus labelImage1,
+			ImagePlus labelImage2 )
+	{
+		return getJaccardIndex( labelImage1.getImageStack(), labelImage2.getImageStack() );
+	}
 	/**
 	 * For each label, finds the position of the point belonging to label region
 	 * defined by <code>labelImage</code> and with maximal value in intensity
