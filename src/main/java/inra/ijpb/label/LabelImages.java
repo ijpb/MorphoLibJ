@@ -1990,6 +1990,72 @@ public class LabelImages
 		return getJaccardIndex( labelImage1.getImageStack(), labelImage2.getImageStack() );
 	}
 	/**
+	 * Get the Dice coefficient between two label images.
+	 * @param labelImage1 first label image
+	 * @param labelImage2 second label image
+	 * @return Dice coefficient value or -1 if error
+	 * @see https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient
+	 */
+	public static final double getDiceCoefficient(
+			ImageProcessor labelImage1,
+			ImageProcessor labelImage2 )
+	{
+		if( labelImage1.getWidth() != labelImage2.getWidth() ||
+				labelImage1.getHeight() != labelImage2.getHeight() )
+			return -1;
+		double intersection = 0;
+		final double numElements = labelImage1.getWidth() * labelImage1.getHeight();
+		// calculate the pixel to pixel intersection
+	    for( int i = 0; i < labelImage1.getWidth(); i++ )
+	    	for( int j = 0; j < labelImage1.getHeight(); j++ )
+	    		if( labelImage1.getf( i, j ) == labelImage2.getf( i, j ) )
+	    			intersection ++;
+	    // return the Dice coefficient
+	    return intersection / numElements;
+	}
+	/**
+	 * Get the Dice coefficient between two label images.
+	 * @param labelImage1 first label image
+	 * @param labelImage2 second label image
+	 * @return Dice coefficient value or -1 if error
+	 * @see https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient
+	 */
+	public static final double getDiceCoefficient(
+			ImageStack labelImage1,
+			ImageStack labelImage2 )
+	{
+		if( labelImage1.getWidth() != labelImage2.getWidth() ||
+				labelImage1.getHeight() != labelImage2.getHeight() )
+			return -1;
+		double intersection = 0;
+		final double numElements = labelImage1.getWidth() * labelImage1.getHeight();
+		// calculate the pixel to pixel intersection
+		for( int k = 0; k < labelImage1.getSize(); k ++ )
+		{
+			final ImageProcessor l1 = labelImage1.getProcessor( k+1 );
+			final ImageProcessor l2 = labelImage2.getProcessor( k+1 );
+			for( int i = 0; i < labelImage1.getWidth(); i++ )
+				for( int j = 0; j < labelImage1.getHeight(); j++ )
+					if( l1.getf( i, j ) == l2.getf( i, j ) )
+						intersection ++;
+		}
+	    // return the Dice coefficient
+	    return intersection / numElements;
+	}
+	/**
+	 * Get the Dice coefficient between two label images.
+	 * @param labelImage1 first label image
+	 * @param labelImage2 second label image
+	 * @return Dice coefficient value or -1 if error
+	 * @see https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient
+	 */
+	public static final double getDiceCoefficient(
+			ImagePlus labelImage1,
+			ImagePlus labelImage2 )
+	{
+		return getDiceCoefficient( labelImage1.getImageStack(), labelImage2.getImageStack() );
+	}
+	/**
 	 * For each label, finds the position of the point belonging to label region
 	 * defined by <code>labelImage</code> and with maximal value in intensity
 	 * image <code>valueImage</code>.
