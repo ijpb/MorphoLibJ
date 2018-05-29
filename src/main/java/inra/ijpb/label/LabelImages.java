@@ -1935,20 +1935,23 @@ public class LabelImages
 				labelImage1.getHeight() != labelImage2.getHeight() )
 			return -1;
 		double intersection = 0;
-		double numElements = 0;
+		double numPix1 = 0;
+		double numPix2 = 0;
 		// calculate the pixel to pixel intersection
 	    for( int i = 0; i < labelImage1.getWidth(); i++ )
 	    	for( int j = 0; j < labelImage1.getHeight(); j++ )
 	    	{
 	    		if( labelImage1.getf( i, j ) > 0 ) // skip label 0 (background)
 	    		{
-	    			numElements ++;
+	    			numPix1 ++;
 	    			if( labelImage1.getf( i, j ) == labelImage2.getf( i, j ) )
 	    				intersection ++;
 	    		}
+	    		if( labelImage2.getf( i, j ) > 0 )
+	    			numPix2 ++;
 	    	}
 	    // return the intersection over the union
-	    return intersection / ( 2 * numElements - intersection );
+	    return intersection / ( numPix1 + numPix2 - intersection );
 	}
 	/**
 	 * Get the Jaccard index per label (intersection over union overlap) between
@@ -2011,7 +2014,8 @@ public class LabelImages
 				labelImage1.getSize() != labelImage2.getSize() )
 			return -1;
 		double intersection = 0;
-		double numElements = 0;
+		double numPix1 = 0;
+		double numPix2 = 0;
 		// calculate the pixel to pixel intersection
 		for( int k = 0; k < labelImage1.getSize(); k ++ )
 		{
@@ -2019,15 +2023,19 @@ public class LabelImages
 			final ImageProcessor l2 = labelImage2.getProcessor( k+1 );
 			for( int i = 0; i < labelImage1.getWidth(); i++ )
 				for( int j = 0; j < labelImage1.getHeight(); j++ )
+				{
 					if( l1.getf( i, j ) > 0 ) // skip label 0 (background)
 		    		{
-		    			numElements ++;
+		    			numPix1 ++;
 		    			if( l1.getf( i, j ) == l2.getf( i, j ) )
 		    				intersection ++;
 		    		}
+					if( l2.getf( i, j ) > 0 )
+						numPix2 ++;
+				}
 		}
 	    // return the intersection over the union
-	    return intersection / ( 2 * numElements - intersection );
+	    return intersection / ( numPix1 + numPix2 - intersection );
 	}
 	/**
 	 * Get the Jaccard index per label (intersection over union overlap) between
@@ -2121,20 +2129,23 @@ public class LabelImages
 				labelImage1.getHeight() != labelImage2.getHeight() )
 			return -1;
 		double intersection = 0;
-		double numElements = 0;
+		double numPix1 = 0;
+		double numPix2 = 0;
 		// calculate the pixel to pixel intersection
 	    for( int i = 0; i < labelImage1.getWidth(); i++ )
 	    	for( int j = 0; j < labelImage1.getHeight(); j++ )
 	    	{
 	    		if( labelImage1.getf( i, j ) > 0 ) // skip label 0 (background)
 	    		{
-	    			numElements ++;
+	    			numPix1 ++;
 	    			if( labelImage1.getf( i, j ) == labelImage2.getf( i, j ) )
 	    				intersection ++;
 	    		}
+	    		if( labelImage2.getf( i, j ) > 0 )
+	    			numPix2 ++;
 	    	}
 	    // return the Dice coefficient
-	    return intersection / numElements;
+	    return 2 * intersection / (numPix1 + numPix2);
 	}
 	/**
 	 * Get the Dice coefficient per label (intersection over union overlap) between
@@ -2195,7 +2206,8 @@ public class LabelImages
 				labelImage1.getHeight() != labelImage2.getHeight() )
 			return -1;
 		double intersection = 0;
-		double numElements = 0;
+		double numPix1 = 0;
+		double numPix2 = 0;
 		// calculate the pixel to pixel intersection
 		for( int k = 0; k < labelImage1.getSize(); k ++ )
 		{
@@ -2203,15 +2215,19 @@ public class LabelImages
 			final ImageProcessor l2 = labelImage2.getProcessor( k+1 );
 			for( int i = 0; i < labelImage1.getWidth(); i++ )
 				for( int j = 0; j < labelImage1.getHeight(); j++ )
+				{
 					if( l1.getf( i, j ) > 0 ) // skip label 0 (background)
 		    		{
-		    			numElements ++;
+		    			numPix1 ++;
 		    			if( l1.getf( i, j ) == l2.getf( i, j ) )
 		    				intersection ++;
 		    		}
+					if( l2.getf( i, j ) > 0 )
+						numPix2 ++;
+				}
 		}
 	    // return the Dice coefficient
-	    return intersection / numElements;
+	    return 2 * intersection / ( numPix1 + numPix2 );
 	}
 	/**
 	 * Get the Dice coefficient per label (intersection over union overlap) between
