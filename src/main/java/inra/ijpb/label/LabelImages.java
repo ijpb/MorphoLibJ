@@ -1920,6 +1920,201 @@ public class LabelImages
 		return list;
 	}
 	/**
+	 * Get the total overlap between two label images (source and target).
+	 * <p>
+	 * Total Overlap (for all regions) $TO = \frac{ \sum_r{|S_r \cap T_r|} }{ \sum_r{|T_r|} }$.
+	 * @param sourceImage source label image
+	 * @param targetImage target label image
+	 * @return total overlap value or -1 if error
+	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
+	 */
+	public static final double getTotalOverlap(
+			ImageProcessor sourceImage,
+			ImageProcessor targetImage )
+	{
+		if( sourceImage.getWidth() != targetImage.getWidth() ||
+				sourceImage.getHeight() != targetImage.getHeight() )
+			return -1;
+		double intersection = 0;
+		double numPixTarget = 0;
+		// calculate the pixel to pixel intersection
+	    for( int i = 0; i < sourceImage.getWidth(); i++ )
+	    	for( int j = 0; j < sourceImage.getHeight(); j++ )
+	    	{
+	    		if( sourceImage.getf( i, j ) > 0 ) // skip label 0 (background)
+	    		{
+	    			if( sourceImage.getf( i, j ) == targetImage.getf( i, j ) )
+	    				intersection ++;
+	    		}
+	    		if( targetImage.getf( i, j ) > 0 )
+	    			numPixTarget ++;
+	    	}
+	    // return the total overlap
+	    return intersection / numPixTarget;
+	}
+	/**
+	 * Get the target overlap between two label images (source and target)
+	 * per each individual labeled region.
+	 * <p>
+	 * Target Overlap (for individual label regions r) $TO_r = \frac{ |S_r \cap T_r| }{ |T_r| }$.
+	 * @param sourceImage source label image
+	 * @param targetImage target label image
+	 * @return target overlap per label or null if error
+	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
+	 */
+	public static final double[] getTargetOverlapPerLabel(
+			ImageProcessor sourceImage,
+			ImageProcessor targetImage )
+	{
+		if( sourceImage.getWidth() != targetImage.getWidth() ||
+				sourceImage.getHeight() != targetImage.getHeight() )
+			return null;
+
+		int[] sourceLabels = findAllLabels( sourceImage );
+		double[] intersection = new double[ sourceLabels.length ];
+		// create associative array to identify the index of each label
+	    HashMap<Integer, Integer> sourceLabelIndices = mapLabelIndices( sourceLabels );
+
+	    int[] targetLabels = findAllLabels( targetImage );
+		int[] numPixTarget = pixelCount( targetImage, targetLabels );
+
+		// create associative array to identify the index of each label
+	    HashMap<Integer, Integer> targetLabelIndices = mapLabelIndices( targetLabels );
+
+		// calculate the pixel to pixel intersection
+	    for( int i = 0; i < sourceImage.getWidth(); i++ )
+	    	for( int j = 0; j < sourceImage.getHeight(); j++ )
+	    		if( sourceImage.getf( i, j ) > 0 ) // skip label 0 (background)
+	    		{
+	    			if( sourceImage.getf( i, j ) == targetImage.getf( i, j ) )
+	    				intersection[ sourceLabelIndices.get( (int) sourceImage.getf( i, j ) ) ] ++;
+	    		}
+	    // return the target overlap
+	    for( int i = 0; i < intersection.length; i ++ )
+	    	intersection[ i ] = targetLabelIndices.get( sourceLabels[ i ] ) != null ?
+	    			intersection[ i ] / numPixTarget[ targetLabelIndices.get( sourceLabels[ i ] ) ] : 0;
+
+	    return intersection;
+	}
+	/**
+	 * Get the total overlap between two label images (source and target).
+	 * <p>
+	 * Total Overlap (for all regions) $TO = \frac{ \sum_r{|S_r \cap T_r|} }{ \sum_r{|T_r|} }$.
+	 * @param sourceImage source label image
+	 * @param targetImage target label image
+	 * @return total overlap value or -1 if error
+	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
+	 */
+	public static final double getTotalOverlap(
+			ImageStack sourceImage,
+			ImageStack targetImage )
+	{
+		if( sourceImage.getWidth() != targetImage.getWidth() ||
+				sourceImage.getHeight() != targetImage.getHeight() )
+			return -1;
+		double intersection = 0;
+		double numPixTarget = 0;
+		// calculate the pixel to pixel intersection
+		for( int k = 0; k < sourceImage.getSize(); k ++ )
+		{
+			final ImageProcessor ls = sourceImage.getProcessor( k+1 );
+			final ImageProcessor lt = targetImage.getProcessor( k+1 );
+			for( int i = 0; i < sourceImage.getWidth(); i++ )
+				for( int j = 0; j < sourceImage.getHeight(); j++ )
+				{
+					if( ls.getf( i, j ) > 0 ) // skip label 0 (background)
+		    		{
+		    			if( ls.getf( i, j ) == lt.getf( i, j ) )
+		    				intersection ++;
+		    		}
+					if( lt.getf( i, j ) > 0 )
+						numPixTarget ++;
+				}
+		}
+	    // return the total overlap
+	    return intersection / numPixTarget;
+	}
+	/**
+	 * Get the total overlap between two label images (source and target).
+	 * <p>
+	 * Total Overlap (for all regions) $TO = \frac{ \sum_r{|S_r \cap T_r|} }{ \sum_r{|T_r|} }$.
+	 * @param sourceImage source label image
+	 * @param targetImage target label image
+	 * @return total overlap value or -1 if error
+	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
+	 */
+	public static final double getTotalOverlap(
+			ImagePlus sourceImage,
+			ImagePlus targetImage )
+	{
+		return getTotalOverlap( sourceImage.getImageStack(), targetImage.getImageStack() );
+	}
+
+	/**
+	 * Get the target overlap between two label images (source and target)
+	 * per each individual labeled region.
+	 * <p>
+	 * Target Overlap (for individual label regions r) $TO_r = \frac{ |S_r \cap T_r| }{ |T_r| }$.
+	 * @param sourceImage source label image
+	 * @param targetImage target label image
+	 * @return target overlap per label or null if error
+	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
+	 */
+	public static final double[] getTargetOverlapPerLabel(
+			ImageStack sourceImage,
+			ImageStack targetImage )
+	{
+		if( sourceImage.getWidth() != targetImage.getWidth() ||
+				sourceImage.getHeight() != targetImage.getHeight() )
+			return null;
+
+		int[] sourceLabels = findAllLabels( sourceImage );
+		double[] intersection = new double[ sourceLabels.length ];
+		// create associative array to identify the index of each label
+	    HashMap<Integer, Integer> sourceLabelIndices = mapLabelIndices( sourceLabels );
+
+	    int[] targetLabels = findAllLabels( targetImage );
+		int[] numPixTarget = voxelCount( targetImage, targetLabels );
+
+		// create associative array to identify the index of each label
+	    HashMap<Integer, Integer> targetLabelIndices = mapLabelIndices( targetLabels );
+	    // calculate the pixel to pixel intersection
+	 	for( int k = 0; k < sourceImage.getSize(); k ++ )
+	 	{
+	 		final ImageProcessor ls = sourceImage.getProcessor( k+1 );
+			final ImageProcessor lt = targetImage.getProcessor( k+1 );
+	 		for( int i = 0; i < sourceImage.getWidth(); i++ )
+	 			for( int j = 0; j < sourceImage.getHeight(); j++ )
+	 				if( ls.getf( i, j ) > 0 ) // skip label 0 (background)
+	 				{
+	 					if( ls.getf( i, j ) == lt.getf( i, j ) )
+	 						intersection[ sourceLabelIndices.get( (int) ls.getf( i, j ) ) ] ++;
+	 				}
+	 	}
+	    // return the target overlap
+	    for( int i = 0; i < intersection.length; i ++ )
+	    	intersection[ i ] = targetLabelIndices.get( sourceLabels[ i ] ) != null ?
+	    			intersection[ i ] / numPixTarget[ targetLabelIndices.get( sourceLabels[ i ] ) ] : 0;
+
+	    return intersection;
+	}
+	/**
+	 * Get the target overlap between two label images (source and target)
+	 * per each individual labeled region.
+	 * <p>
+	 * Target Overlap (for individual label regions r) $TO_r = \frac{ |S_r \cap T_r| }{ |T_r| }$.
+	 * @param sourceImage source label image
+	 * @param targetImage target label image
+	 * @return target overlap per label or null if error
+	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
+	 */
+	public static final double[] getTargetOverlapPerLabel(
+			ImagePlus sourceImage,
+			ImagePlus targetImage )
+	{
+		return getTargetOverlapPerLabel( sourceImage.getImageStack(), targetImage.getImageStack() );
+	}
+	/**
 	 * Get the Jaccard index (intersection over union overlap) between
 	 * two label images.
 	 * @param labelImage1 first label image
