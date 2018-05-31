@@ -2345,7 +2345,7 @@ public class LabelImages
 	    			numPix2 ++;
 	    	}
 	    // return the Dice coefficient
-	    return 2 * intersection / (numPix1 + numPix2);
+	    return 2.0 * intersection / (numPix1 + numPix2);
 	}
 	/**
 	 * Get the Dice coefficient per label (intersection over union overlap) between
@@ -2387,7 +2387,7 @@ public class LabelImages
 	    for( int i = 0; i < intersection.length; i ++ )
 	    {
 	    	int num2 = labelIndices2.get( labels1[ i ] ) != null ? numPix2[ labelIndices2.get( labels1[ i ] ) ] : 0;
-	    	intersection[ i ] = 2 * intersection[ i ]  / ( numPix1[ i ] + num2 );
+	    	intersection[ i ] = 2.0 * intersection[ i ]  / ( numPix1[ i ] + num2 );
 	    }
 	    return intersection;
 	}
@@ -2427,7 +2427,7 @@ public class LabelImages
 				}
 		}
 	    // return the Dice coefficient
-	    return 2 * intersection / ( numPix1 + numPix2 );
+	    return 2.0 * intersection / ( numPix1 + numPix2 );
 	}
 	/**
 	 * Get the Dice coefficient per label (intersection over union overlap) between
@@ -2474,7 +2474,7 @@ public class LabelImages
 	    for( int i = 0; i < intersection.length; i ++ )
 	    {
 	    	int num2 = labelIndices2.get( labels1[ i ] ) != null ? numPix2[ labelIndices2.get( labels1[ i ] ) ] : 0;
-	    	intersection[ i ] = 2 * intersection[ i ]  / ( numPix1[ i ] + num2 );
+	    	intersection[ i ] = 2.0 * intersection[ i ]  / ( numPix1[ i ] + num2 );
 	    }
 	    return intersection;
 	}
