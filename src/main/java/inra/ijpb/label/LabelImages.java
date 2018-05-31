@@ -2506,6 +2506,159 @@ public class LabelImages
 		return getDiceCoefficientPerLabel( labelImage1.getImageStack(), labelImage2.getImageStack() );
 	}
 	/**
+	 * Get the total volume similarity between two label images (source and target).
+	 * <p>
+	 * Volume Similarity (for all regions) $VS = 2\frac{ \sum_r{|S_r| - |T_r|} }{ \sum_r{|S_r| + |T_r|} }$.
+	 * @param sourceImage source label image
+	 * @param targetImage target label image
+	 * @return total volume similarity value
+	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
+	 */
+	public static final double getVolumeSimilarity(
+			ImageProcessor sourceImage,
+			ImageProcessor targetImage )
+	{
+		double numPixSource = 0;
+		double numPixTarget = 0;
+		int[] sourceLabels = findAllLabels( sourceImage );
+		int[] sourcePixPerLabel = pixelCount( sourceImage, sourceLabels );
+
+	    int[] targetLabels = findAllLabels( targetImage );
+		int[] targetPixPerLabel = pixelCount( targetImage, targetLabels );
+
+		for( int i = 0; i < sourceLabels.length; i ++ )
+			numPixSource += sourcePixPerLabel[ i ];
+		for( int i = 0; i < targetLabels.length; i ++ )
+			numPixTarget += targetPixPerLabel[ i ];
+
+	    // return the total volume similarity
+	    return 2.0 * ( numPixSource - numPixTarget )  / ( numPixSource + numPixTarget );
+	}
+	/**
+	 * Get the volume similarity between two label images (source and target)
+	 * per each individual labeled region.
+	 * <p>
+	 * Volume Similarity (for each label region r) $VS_r = 2\frac{ |S_r| - |T_r| }{ |S_r| + |T_r| }$.
+	 * @param sourceImage source label image
+	 * @param targetImage target label image
+	 * @return volume similarity per label
+	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
+	 */
+	public static final double[] getVolumeSimilarityPerLabel(
+			ImageProcessor sourceImage,
+			ImageProcessor targetImage )
+	{
+		int[] sourceLabels = findAllLabels( sourceImage );
+		int[] numPixSource = pixelCount( sourceImage, sourceLabels );
+		double[] volumeSim = new double[ sourceLabels.length ];
+
+	    int[] targetLabels = findAllLabels( targetImage );
+		int[] numPixTarget = pixelCount( targetImage, targetLabels );
+
+		// create associative array to identify the index of each label
+	    HashMap<Integer, Integer> targetLabelIndices = mapLabelIndices( targetLabels );
+
+	    // calculate the volume similarity of the source labels
+	    for( int i = 0; i < sourceLabels.length; i ++ )
+	    	volumeSim[ i ] = targetLabelIndices.get( sourceLabels[ i ] ) != null ?
+	    			2.0 * ( numPixSource[ i ] - numPixTarget[ targetLabelIndices.get( sourceLabels[ i ] ) ] )
+	    			/ ( numPixSource[ i ] + numPixTarget[ targetLabelIndices.get( sourceLabels[ i ] ) ] )
+	    			: 0;
+	    return volumeSim;
+	}
+	/**
+	 * Get the total volume similarity between two label images (source and target).
+	 * <p>
+	 * Volume Similarity (for all regions) $VS = 2\frac{ \sum_r{|S_r| - |T_r|} }{ \sum_r{|S_r| + |T_r|} }$.
+	 * @param sourceImage source label image
+	 * @param targetImage target label image
+	 * @return total volume similarity value or NaN if error
+	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
+	 */
+	public static final double getVolumeSimilarity(
+			ImageStack sourceImage,
+			ImageStack targetImage )
+	{
+		double numPixSource = 0;
+		double numPixTarget = 0;
+		int[] sourceLabels = findAllLabels( sourceImage );
+		int[] sourcePixPerLabel = voxelCount( sourceImage, sourceLabels );
+
+	    int[] targetLabels = findAllLabels( targetImage );
+		int[] targetPixPerLabel = voxelCount( targetImage, targetLabels );
+
+		for( int i = 0; i < sourceLabels.length; i ++ )
+			numPixSource += sourcePixPerLabel[ i ];
+		for( int i = 0; i < targetLabels.length; i ++ )
+			numPixTarget += targetPixPerLabel[ i ];
+
+	    // return the total volume similarity
+	    return 2.0 * ( numPixSource - numPixTarget )  / ( numPixSource + numPixTarget );
+	}
+	/**
+	 * Get the volume similarity between two label images (source and target)
+	 * per each individual labeled region.
+	 * <p>
+	 * Volume Similarity (for each label region r) $VS_r = 2\frac{ |S_r| - |T_r| }{ |S_r| + |T_r| }$.
+	 * @param sourceImage source label image
+	 * @param targetImage target label image
+	 * @return volume similarity per label
+	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
+	 */
+	public static final double[] getVolumeSimilarityPerLabel(
+			ImageStack sourceImage,
+			ImageStack targetImage )
+	{
+		int[] sourceLabels = findAllLabels( sourceImage );
+		int[] numPixSource = voxelCount( sourceImage, sourceLabels );
+		double[] volumeSim = new double[ sourceLabels.length ];
+
+	    int[] targetLabels = findAllLabels( targetImage );
+		int[] numPixTarget = voxelCount( targetImage, targetLabels );
+
+		// create associative array to identify the index of each label
+	    HashMap<Integer, Integer> targetLabelIndices = mapLabelIndices( targetLabels );
+
+	    // calculate the volume similarity of the source labels
+	    for( int i = 0; i < sourceLabels.length; i ++ )
+	    	volumeSim[ i ] = targetLabelIndices.get( sourceLabels[ i ] ) != null ?
+	    			2.0 * ( numPixSource[ i ] - numPixTarget[ targetLabelIndices.get( sourceLabels[ i ] ) ] )
+	    			/ ( numPixSource[ i ] + numPixTarget[ targetLabelIndices.get( sourceLabels[ i ] ) ] )
+	    			: 0;
+	    return volumeSim;
+	}
+	/**
+	 * Get the total volume similarity between two label images (source and target).
+	 * <p>
+	 * Volume Similarity (for all regions) $VS = 2\frac{ \sum_r{|S_r| - |T_r|} }{ \sum_r{|S_r| + |T_r|} }$.
+	 * @param sourceImage source label image
+	 * @param targetImage target label image
+	 * @return total volume similarity value
+	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
+	 */
+	public static final double getVolumeSimilarity(
+			ImagePlus sourceImage,
+			ImagePlus targetImage )
+	{
+		return getVolumeSimilarity( sourceImage.getImageStack(), targetImage.getImageStack() );
+	}
+	/**
+	 * Get the volume similarity between two label images (source and target)
+	 * per each individual labeled region.
+	 * <p>
+	 * Volume Similarity (for each label region r) $VS_r = 2\frac{ |S_r| - |T_r| }{ |S_r| + |T_r| }$.
+	 * @param sourceImage source label image
+	 * @param targetImage target label image
+	 * @return volume similarity per label
+	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
+	 */
+	public static final double[] getVolumeSimilarityPerLabel(
+			ImagePlus sourceImage,
+			ImagePlus targetImage )
+	{
+		return getVolumeSimilarityPerLabel( sourceImage.getImageStack(), targetImage.getImageStack() );
+	}
+	/**
 	 * For each label, finds the position of the point belonging to label region
 	 * defined by <code>labelImage</code> and with maximal value in intensity
 	 * image <code>valueImage</code>.
