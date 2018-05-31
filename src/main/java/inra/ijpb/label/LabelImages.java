@@ -1138,6 +1138,11 @@ public class LabelImages
 		return counts;
 	}
 	
+	/**
+	 * Find largest label (by number of pixels/voxels) in input image
+	 * @param imagePlus input image
+	 * @return value of the largest label in the input label image
+	 */
 	public final static int findLargestLabel(ImagePlus imagePlus)
 	{
 		int max = 0;
