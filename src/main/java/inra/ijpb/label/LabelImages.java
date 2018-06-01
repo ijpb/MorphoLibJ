@@ -2659,6 +2659,129 @@ public class LabelImages
 		return getVolumeSimilarityPerLabel( sourceImage.getImageStack(), targetImage.getImageStack() );
 	}
 	/**
+	 * Get the total false negative error between two label images (source and target).
+	 * <p>
+	 * False Negative Error (for all regions) $FN = \frac{ \sum_r{|T_r \setminus S_r|} }{ \sum_r{|T_r|} }$.
+	 * @param sourceImage source label image
+	 * @param targetImage target label image
+	 * @return false negative error or -1 if error
+	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
+	 */
+	public static final double getFalseNegativeError(
+			ImageProcessor sourceImage,
+			ImageProcessor targetImage )
+	{
+		if( sourceImage.getWidth() != targetImage.getWidth() ||
+				sourceImage.getHeight() != targetImage.getHeight() )
+			return -1;
+		return 1.0 - LabelImages.getTotalOverlap( sourceImage, targetImage );
+	}
+	/**
+	 * Get the false negative error between two label images (source and target)
+	 * per each individual labeled region.
+	 * <p>
+	 * False Negative Error (for each individual labeled region r) $FN_r = \frac{ |T_r \setminus S_r| }{ |T_r| }$.
+	 * @param sourceImage source label image
+	 * @param targetImage target label image
+	 * @return false negative error per label or null if error
+	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
+	 */
+	public static final double[] getFalseNegativeErrorPerLabel(
+			ImageProcessor sourceImage,
+			ImageProcessor targetImage )
+	{
+		if( sourceImage.getWidth() != targetImage.getWidth() ||
+				sourceImage.getHeight() != targetImage.getHeight() )
+			return null;
+
+		double[] fne = LabelImages.getTargetOverlapPerLabel( sourceImage, targetImage );
+		for( int i = 0; i < fne.length; i++ )
+			fne[ i ] = 1.0 - fne[ i ];
+
+	    return fne;
+	}
+	/**
+	 * Get the total false negative error between two label images (source and target).
+	 * <p>
+	 * False Negative Error (for all regions) $FN = \frac{ \sum_r{|T_r \setminus S_r|} }{ \sum_r{|T_r|} }$.
+	 * @param sourceImage source label image
+	 * @param targetImage target label image
+	 * @return false negative error or -1 if error
+	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
+	 */
+	public static final double getFalseNegativeError(
+			ImageStack sourceImage,
+			ImageStack targetImage )
+	{
+		if( sourceImage.getWidth() != targetImage.getWidth() ||
+				sourceImage.getHeight() != targetImage.getHeight() ||
+				sourceImage.getSize() != targetImage.getSize() )
+			return -1;
+		return 1.0 - LabelImages.getTotalOverlap( sourceImage, targetImage );
+	}
+	/**
+	 * Get the false negative error between two label images (source and target)
+	 * per each individual labeled region.
+	 * <p>
+	 * False Negative Error (for each individual labeled region r) $FN_r = \frac{ |T_r \setminus S_r| }{ |T_r| }$.
+	 * @param sourceImage source label image
+	 * @param targetImage target label image
+	 * @return false negative error per label or null if error
+	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
+	 */
+	public static final double[] getFalseNegativeErrorPerLabel(
+			ImageStack sourceImage,
+			ImageStack targetImage )
+	{
+		double[] fne = LabelImages.getTargetOverlapPerLabel( sourceImage, targetImage );
+		if( null != fne )
+			for( int i = 0; i < fne.length; i++ )
+				fne[ i ] = 1.0 - fne[ i ];
+
+	    return fne;
+	}
+
+	/**
+	 * Get the total false negative error between two label images (source and target).
+	 * <p>
+	 * False Negative Error (for all regions) $FN = \frac{ \sum_r{|T_r \setminus S_r|} }{ \sum_r{|T_r|} }$.
+	 * @param sourceImage source label image
+	 * @param targetImage target label image
+	 * @return false negative error or -1 if error
+	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
+	 */
+	public static final double getFalseNegativeError(
+			ImagePlus sourceImage,
+			ImagePlus targetImage )
+	{
+		if( sourceImage.getWidth() != targetImage.getWidth() ||
+				sourceImage.getHeight() != targetImage.getHeight() ||
+				sourceImage.getNSlices() != targetImage.getNSlices() )
+			return -1;
+		return 1.0 - LabelImages.getTotalOverlap( sourceImage, targetImage );
+	}
+	/**
+	 * Get the false negative error between two label images (source and target)
+	 * per each individual labeled region.
+	 * <p>
+	 * False Negative Error (for each individual labeled region r) $FN_r = \frac{ |T_r \setminus S_r| }{ |T_r| }$.
+	 * @param sourceImage source label image
+	 * @param targetImage target label image
+	 * @return false negative error per label or null if error
+	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
+	 */
+	public static final double[] getFalseNegativeErrorPerLabel(
+			ImagePlus sourceImage,
+			ImagePlus targetImage )
+	{
+		double[] fne = LabelImages.getTargetOverlapPerLabel( sourceImage, targetImage );
+		if( null != fne )
+			for( int i = 0; i < fne.length; i++ )
+				fne[ i ] = 1.0 - fne[ i ];
+
+	    return fne;
+	}
+	/**
 	 * For each label, finds the position of the point belonging to label region
 	 * defined by <code>labelImage</code> and with maximal value in intensity
 	 * image <code>valueImage</code>.
