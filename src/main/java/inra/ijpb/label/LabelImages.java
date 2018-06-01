@@ -2782,6 +2782,193 @@ public class LabelImages
 	    return fne;
 	}
 	/**
+	 * Get the total false positive error between two label images (source and target).
+	 * <p>
+	 * False Positive Error (for all regions) $FP = \frac{ \sum_r{|S_r \setminus T_r|} }{ \sum_r{|S_r|} }$.
+	 * @param sourceImage source label image
+	 * @param targetImage target label image
+	 * @return false positive error or -1 if error
+	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
+	 */
+	public static final double getFalsePositiveError(
+			ImageProcessor sourceImage,
+			ImageProcessor targetImage )
+	{
+		if( sourceImage.getWidth() != targetImage.getWidth() ||
+				sourceImage.getHeight() != targetImage.getHeight() )
+			return -1;
+		double setDiff = 0;
+		double numPixSource = 0;
+		// calculate the set difference between source and target
+	    for( int i = 0; i < sourceImage.getWidth(); i++ )
+	    	for( int j = 0; j < sourceImage.getHeight(); j++ )
+	    	{
+	    		if( sourceImage.getf( i, j ) > 0 ) // skip label 0 (background)
+	    		{
+	    			numPixSource ++;
+	    			if( sourceImage.getf( i, j ) != targetImage.getf( i, j ) )
+	    				setDiff ++;
+	    		}
+	    	}
+	    // return the total overlap
+	    return setDiff / numPixSource;
+	}
+	/**
+	 * Get the false positive error between two label images (source and target)
+	 * per each individual labeled region.
+	 * <p>
+	 * False Positive Error (for each individual labeled region r) $FN_r = \frac{ |S_r \setminus T_r| }{ |S_r| }$.
+	 * @param sourceImage source label image
+	 * @param targetImage target label image
+	 * @return false positive error per label or null if error
+	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
+	 */
+	public static final double[] getFalsePositiveErrorPerLabel(
+			ImageProcessor sourceImage,
+			ImageProcessor targetImage )
+	{
+		if( sourceImage.getWidth() != targetImage.getWidth() ||
+				sourceImage.getHeight() != targetImage.getHeight() )
+			return null;
+
+		int[] sourceLabels = findAllLabels( sourceImage );
+		double[] setDiff = new double[ sourceLabels.length ];
+		// create associative array to identify the index of each label
+	    HashMap<Integer, Integer> sourceLabelIndices = mapLabelIndices( sourceLabels );
+	    int[] numPixSource = pixelCount( sourceImage, sourceLabels );
+
+		// calculate the set difference between source and target
+	    for( int i = 0; i < sourceImage.getWidth(); i++ )
+	    	for( int j = 0; j < sourceImage.getHeight(); j++ )
+	    		if( sourceImage.getf( i, j ) > 0 ) // skip label 0 (background)
+	    		{
+	    			if( sourceImage.getf( i, j ) != targetImage.getf( i, j ) )
+	    				setDiff[ sourceLabelIndices.get( (int) sourceImage.getf( i, j ) ) ] ++;
+	    		}
+	    // return the false positive error
+	    for( int i = 0; i < setDiff.length; i ++ )
+	    	setDiff[ i ] /= numPixSource[ i ];
+
+	    return setDiff;
+	}
+	/**
+	 * Get the total false positive error between two label images (source and target).
+	 * <p>
+	 * False Positive Error (for all regions) $FP = \frac{ \sum_r{|S_r \setminus T_r|} }{ \sum_r{|S_r|} }$.
+	 * @param sourceImage source label image
+	 * @param targetImage target label image
+	 * @return false positive error or -1 if error
+	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
+	 */
+	public static final double getFalsePositiveError(
+			ImageStack sourceImage,
+			ImageStack targetImage )
+	{
+		if( sourceImage.getWidth() != targetImage.getWidth() ||
+				sourceImage.getHeight() != targetImage.getHeight() ||
+				sourceImage.getSize() != targetImage.getSize() )
+			return -1;
+		double setDiff = 0;
+		double numPixSource = 0;
+		// calculate the set difference between source and target
+		for( int k = 0; k < sourceImage.getSize(); k++ )
+		{
+			final ImageProcessor ls = sourceImage.getProcessor( k+1 );
+			final ImageProcessor lt = targetImage.getProcessor( k+1 );
+		    for( int i = 0; i < sourceImage.getWidth(); i++ )
+		    	for( int j = 0; j < sourceImage.getHeight(); j++ )
+		    	{
+		    		if( ls.getf( i, j ) > 0 ) // skip label 0 (background)
+		    		{
+		    			numPixSource ++;
+		    			if( ls.getf( i, j ) != lt.getf( i, j ) )
+		    				setDiff ++;
+		    		}
+		    	}
+		}
+	    // return the total overlap
+	    return setDiff / numPixSource;
+	}
+	/**
+	 * Get the false positive error between two label images (source and target)
+	 * per each individual labeled region.
+	 * <p>
+	 * False Positive Error (for each individual labeled region r) $FN_r = \frac{ |S_r \setminus T_r| }{ |S_r| }$.
+	 * @param sourceImage source label image
+	 * @param targetImage target label image
+	 * @return false positive error per label or null if error
+	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
+	 */
+	public static final double[] getFalsePositiveErrorPerLabel(
+			ImageStack sourceImage,
+			ImageStack targetImage )
+	{
+		if( sourceImage.getWidth() != targetImage.getWidth() ||
+				sourceImage.getHeight() != targetImage.getHeight() ||
+				sourceImage.getSize() != targetImage.getSize() )
+			return null;
+		int[] sourceLabels = findAllLabels( sourceImage );
+		double[] setDiff = new double[ sourceLabels.length ];
+		// create associative array to identify the index of each label
+	    HashMap<Integer, Integer> sourceLabelIndices = mapLabelIndices( sourceLabels );
+	    int[] numPixSource = voxelCount( sourceImage, sourceLabels );
+
+	    // calculate the set difference between source and target
+	    for( int k = 0; k < sourceImage.getSize(); k++ )
+	 	{
+	 		final ImageProcessor ls = sourceImage.getProcessor( k+1 );
+	 		final ImageProcessor lt = targetImage.getProcessor( k+1 );
+	 		for( int i = 0; i < sourceImage.getWidth(); i++ )
+	 			for( int j = 0; j < sourceImage.getHeight(); j++ )
+	 				if( ls.getf( i, j ) > 0 ) // skip label 0 (background)
+	 				{
+	 					if( ls.getf( i, j ) != lt.getf( i, j ) )
+	 						setDiff[ sourceLabelIndices.get( (int) ls.getf( i, j ) ) ] ++;
+	 				}
+	 	}
+	
+	    // return the false positive error
+	    for( int i = 0; i < setDiff.length; i ++ )
+	    	setDiff[ i ] /= numPixSource[ i ];
+
+	    return setDiff;
+	}
+	/**
+	 * Get the total false positive error between two label images (source and target).
+	 * <p>
+	 * False Positive Error (for all regions) $FP = \frac{ \sum_r{|S_r \setminus T_r|} }{ \sum_r{|S_r|} }$.
+	 * @param sourceImage source label image
+	 * @param targetImage target label image
+	 * @return false positive error or -1 if error
+	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
+	 */
+	public static final double getFalsePositiveError(
+			ImagePlus sourceImage,
+			ImagePlus targetImage )
+	{
+		if( sourceImage.getWidth() != targetImage.getWidth() ||
+				sourceImage.getHeight() != targetImage.getHeight() ||
+				sourceImage.getNSlices() != targetImage.getNSlices() )
+			return -1;
+		return LabelImages.getFalsePositiveError( sourceImage.getImageStack(), targetImage.getImageStack() );
+	}
+	/**
+	 * Get the false positive error between two label images (source and target)
+	 * per each individual labeled region.
+	 * <p>
+	 * False Positive Error (for each individual labeled region r) $FN_r = \frac{ |S_r \setminus T_r| }{ |S_r| }$.
+	 * @param sourceImage source label image
+	 * @param targetImage target label image
+	 * @return false positive error per label or null if error
+	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
+	 */
+	public static final double[] getFalsePositiveErrorPerLabel(
+			ImagePlus sourceImage,
+			ImagePlus targetImage )
+	{
+		return LabelImages.getFalsePositiveErrorPerLabel( sourceImage.getImageStack(), targetImage.getImageStack() );
+	}
+	/**
 	 * For each label, finds the position of the point belonging to label region
 	 * defined by <code>labelImage</code> and with maximal value in intensity
 	 * image <code>valueImage</code>.
