@@ -122,7 +122,7 @@ public class RegionalMinAndMax3DPlugin implements PlugIn {
 		ImageStack stack = imagePlus.getStack();
 		
 		// Create the configuration dialog
-		GenericDialog gd = new GenericDialog("Regional Minima and Maxima");
+		GenericDialog gd = new GenericDialog("Regional Min & Max 3D");
 		gd.addChoice("Operation", Operation.getAllLabels(), 
 				Operation.REGIONAL_MINIMA.label);
 		gd.addChoice("Connectivity", connectivityLabels, connectivityLabels[0]);

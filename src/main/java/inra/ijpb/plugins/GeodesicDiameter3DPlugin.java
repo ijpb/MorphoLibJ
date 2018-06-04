@@ -74,7 +74,7 @@ public class GeodesicDiameter3DPlugin implements PlugIn
 		String selectedImageName = IJ.getImage().getTitle();
 		
 		// create the dialog
-		GenericDialog gd = new GenericDialog("Geodesic Diameter");
+		GenericDialog gd = new GenericDialog("Geodesic Diameter 3D");
 		gd.addChoice("Label Image (3D):", imageNames, selectedImageName);
 		// Set Chessknight weights as default
 		gd.addChoice("Distances", ChamferWeights3D.getAllLabels(), 

@@ -73,7 +73,7 @@ public class GeodesicDistanceMap3D implements PlugIn
 		}
 
 		// create the dialog
-		GenericDialog gd = new GenericDialog("Geodesic Distance Map");
+		GenericDialog gd = new GenericDialog("Geodesic Distance Map 3D");
 
 		gd.addChoice("Marker Image", imageNames, IJ.getImage().getTitle());
 		gd.addChoice("Mask Image", imageNames, IJ.getImage().getTitle());

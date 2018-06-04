@@ -102,7 +102,7 @@ public class ChamferDistanceMapPlugin implements ExtendedPlugInFilter,
     	this.pfr = pfr;
 
     	// Create a new generic dialog with appropriate options
-    	GenericDialog gd = new GenericDialog("Distance Map");
+    	GenericDialog gd = new GenericDialog("Chamfer Distance Map");
     	gd.addChoice("Distances", ChamferWeights.getAllLabels(), 
     			ChamferWeights.BORGEFORS.toString());			
     	String[] outputTypes = new String[]{"32 bits", "16 bits"};

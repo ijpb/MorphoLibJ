@@ -140,7 +140,7 @@ public class ImposeMinAndMax3DPlugin implements PlugIn {
 		}
 		
 		// create the dialog
-		GenericDialog gd = new GenericDialog("Geodesic Reconstruction");
+		GenericDialog gd = new GenericDialog("Impose Min & Max 3D");
 		
 		gd.addChoice("Original Image", imageNames, IJ.getImage().getTitle());
 		gd.addChoice("Marker Image", imageNames, IJ.getImage().getTitle());

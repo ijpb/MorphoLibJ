@@ -191,7 +191,7 @@ public class MorphologicalReconstructionPlugin implements PlugIn
 		}
 		
 		// create the dialog
-		GenericDialog gd = new GenericDialog("Geodesic Reconstruction");
+		GenericDialog gd = new GenericDialog("Morphological Reconstruction");
 		
 		gd.addChoice("Marker Image", imageNames, IJ.getImage().getTitle());
 		gd.addChoice("Mask Image", imageNames, IJ.getImage().getTitle());

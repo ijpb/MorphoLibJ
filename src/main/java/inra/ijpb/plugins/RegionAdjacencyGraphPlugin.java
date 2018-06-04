@@ -72,7 +72,7 @@ public class RegionAdjacencyGraphPlugin implements PlugIn
 			// name of selected image
 			String selectedImageName = IJ.getImage().getTitle();
 
-			GenericDialog gd = new GenericDialog("Create RAG");
+			GenericDialog gd = new GenericDialog("Region Adjacency Graph");
 			gd.addCheckbox("Show RAG", true);
 			gd.addChoice("Image to overlay", imageNames, selectedImageName);
 			

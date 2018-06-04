@@ -54,7 +54,7 @@ public class LabelingPlugin implements PlugIn
 		boolean isPlanar = imagePlus.getStackSize() == 1;
 		
 		// Display dialog options
-		GenericDialog gd = new GenericDialog("Labeling");
+		GenericDialog gd = new GenericDialog("Connected Components Labeling");
 		String[] connLabels = isPlanar ? conn2DLabels : conn3DLabels;
 		gd.addChoice("Connectivity", connLabels, connLabels[0]);
 		gd.addChoice("Type of result", resultBitDepthLabels, resultBitDepthLabels[1]);

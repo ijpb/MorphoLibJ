@@ -53,7 +53,7 @@ public class LabelToRgbPlugin implements PlugIn
 		int maxLabel = computeMaxLabel(imagePlus);
 		
 		// Create a new generic dialog with appropriate options
-    	GenericDialog gd = new GenericDialog("Label To RGB");
+    	GenericDialog gd = new GenericDialog("Labels To RGB");
     	gd.addChoice("Colormap", CommonLabelMaps.getAllLabels(), 
     			CommonLabelMaps.GOLDEN_ANGLE.getLabel());
     	gd.addChoice("Background", CommonColors.getAllLabels(), CommonColors.WHITE.getLabel());

@@ -51,7 +51,7 @@ public class ExtendBordersPlugin implements PlugIn
 		ImagePlus imagePlus = IJ.getImage();
 		
 		// Open a dialog to choose the different parameters
-		GenericDialog gd = new GenericDialog("Add Border");
+		GenericDialog gd = new GenericDialog("Extend Image Borders");
 		gd.addNumericField("Left", 0, 0);
 		gd.addNumericField("Right", 0, 0);
 		gd.addNumericField("Top", 0, 0);

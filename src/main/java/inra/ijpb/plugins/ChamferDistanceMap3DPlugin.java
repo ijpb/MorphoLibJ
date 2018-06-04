@@ -60,7 +60,7 @@ public class ChamferDistanceMap3DPlugin implements PlugIn
 		}
 		
 		// Create a new generic dialog with appropriate options
-    	GenericDialog gd = new GenericDialog("Distance Map 3D");
+    	GenericDialog gd = new GenericDialog("Chamfer Distance Map 3D");
     	gd.addChoice("Distances", ChamferWeights3D.getAllLabels(), 
     			ChamferWeights3D.WEIGHTS_3_4_5_7.toString());			
     	String[] outputTypes = new String[]{"32 bits", "16 bits"};

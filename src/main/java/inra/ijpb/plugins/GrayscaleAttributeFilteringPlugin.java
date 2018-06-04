@@ -200,7 +200,7 @@ public class GrayscaleAttributeFilteringPlugin implements ExtendedPlugInFilter, 
 	public int showDialog(ImagePlus imp, String command, PlugInFilterRunner pfr)
 	{
 		// Create the configuration dialog
-		GenericDialog gd = new GenericDialog("Attribute Filtering");
+		GenericDialog gd = new GenericDialog("Gray Scale Attribute Filtering");
 
 		gd.addChoice("Operation", Operation.getAllLabels(), Operation.OPENING.label);
 		gd.addChoice("Attribute", Attribute.getAllLabels(), Attribute.AREA.label);

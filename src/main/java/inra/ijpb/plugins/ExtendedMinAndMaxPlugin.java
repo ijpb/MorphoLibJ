@@ -180,7 +180,7 @@ public class ExtendedMinAndMaxPlugin implements ExtendedPlugInFilter, DialogList
     	this.baseImage = imp.getProcessor().duplicate();
 
 		// Create the configuration dialog
-		GenericDialog gd = new GenericDialog("Extended Minima and Maxima");
+		GenericDialog gd = new GenericDialog("Extended Min & Max");
 		
 		gd.addChoice("Operation", Operation.getAllLabels(), Operation.EXTENDED_MINIMA.label);
 		boolean isGray8 = (this.baseImage instanceof ByteProcessor);

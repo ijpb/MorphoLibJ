@@ -92,7 +92,7 @@ public class GrayscaleAreaOpeningPlugin implements ExtendedPlugInFilter, DialogL
 	public int showDialog(ImagePlus imp, String command, PlugInFilterRunner pfr)
 	{
 		// Create the configuration dialog
-		GenericDialog gd = new GenericDialog("Area Opening");
+		GenericDialog gd = new GenericDialog("Gray Scale Area Opening");
 
 		gd.addNumericField("Pixel Number", 100, 0, 10, "pixels");
 		

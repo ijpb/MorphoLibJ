@@ -91,7 +91,7 @@ public class DirectionalFilteringPlugin implements ExtendedPlugInFilter, DialogL
     	this.baseImage = imp.getProcessor().duplicate();
 
 		// Create the configuration dialog
-		GenericDialog gd = new GenericDialog("Directional Filter");
+		GenericDialog gd = new GenericDialog("Directional Filtering");
 		
 		gd.addChoice("Type", Type.getAllLabels(), this.type.toString());
 		gd.addChoice("Operation", Operation.getAllLabels(), this.op.toString());

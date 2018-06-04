@@ -112,7 +112,7 @@ public class MorphologicalFilterPlugin implements ExtendedPlugInFilter,
     	this.baseImage = imp.getProcessor().duplicate();
 
 		// Create the configuration dialog
-		GenericDialog gd = new GenericDialog("Morphological Filter");
+		GenericDialog gd = new GenericDialog("Morphological Filters");
 		
 		gd.addChoice("Operation", Operation.getAllLabels(), 
 				this.op.toString());

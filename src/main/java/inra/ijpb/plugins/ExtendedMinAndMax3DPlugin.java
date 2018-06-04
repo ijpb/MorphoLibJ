@@ -162,7 +162,7 @@ public class ExtendedMinAndMax3DPlugin implements PlugIn {
 		}
 		
 		// Create the configuration dialog
-		GenericDialog gd = new GenericDialog("Regional Minima and Maxima");
+		GenericDialog gd = new GenericDialog("Extended Min & Max 3D");
 		gd.addChoice("Operation", Operation.getAllLabels(), 
 				Operation.EXTENDED_MINIMA.label);
 		gd.addSlider("Dynamic", minValue, maxValue, 10);		

@@ -170,7 +170,7 @@ public class RegionalMinAndMaxPlugin implements ExtendedPlugInFilter, DialogList
     	this.baseImage = imp.getProcessor().duplicate();
 
 		// Create the configuration dialog
-		GenericDialog gd = new GenericDialog("Regional Minima and Maxima");
+		GenericDialog gd = new GenericDialog("Regional Min & Max");
 		
 		gd.addChoice("Operation", Operation.getAllLabels(), 
 				Operation.REGIONAL_MINIMA.label);

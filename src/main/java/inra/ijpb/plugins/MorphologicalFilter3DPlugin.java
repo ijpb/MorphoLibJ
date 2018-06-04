@@ -68,7 +68,7 @@ public class MorphologicalFilter3DPlugin implements PlugIn
 		}
 		
 		// create the dialog
-		GenericDialog gd = new GenericDialog("Morphological Filter 3D");
+		GenericDialog gd = new GenericDialog("Morphological Filters (3D)");
 		
 		gd.addChoice("Operation", Operation.getAllLabels(), 
 				Operation.DILATION.toString());

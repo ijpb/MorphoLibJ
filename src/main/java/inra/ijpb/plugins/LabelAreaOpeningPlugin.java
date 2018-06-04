@@ -39,7 +39,7 @@ public class LabelAreaOpeningPlugin implements PlugIn {
         
         // create the dialog, with operator options
 		boolean isPlanar = imagePlus.getStackSize() == 1; 
-		String title = isPlanar ? "Area Opening" : "Volume Opening";
+		String title = "Label Size Opening";
         GenericDialog gd = new GenericDialog(title);
         String label = isPlanar ? "Min Pixel Number:" : "Min Voxel Number:";
         gd.addNumericField(label, 100, 0);

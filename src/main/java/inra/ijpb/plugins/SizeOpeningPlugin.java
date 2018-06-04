@@ -47,7 +47,7 @@ public class SizeOpeningPlugin implements PlugIn
         
         // create the dialog, with operator options
 		boolean isPlanar = imagePlus.getStackSize() == 1; 
-		String title = isPlanar ? "Area Opening" : "Volume Opening";
+		String title = "Size Opening 2D/3D";
         GenericDialog gd = new GenericDialog(title);
         String label = isPlanar ? "Min Pixel Number:" : "Min Voxel Number:";
         gd.addNumericField(label, 100, 0);

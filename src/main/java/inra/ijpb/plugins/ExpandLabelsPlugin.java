@@ -64,7 +64,7 @@ public class ExpandLabelsPlugin implements PlugIn
 		
         // create the dialog, with operator options
 		boolean isPlanar = imagePlus.getStackSize() == 1; 
-        GenericDialog gd = new GenericDialog("Dilate labels");
+        GenericDialog gd = new GenericDialog("Expand labels");
         gd.addNumericField("Dilation Coeff. (%)", 20, 0);
         gd.showDialog();
         

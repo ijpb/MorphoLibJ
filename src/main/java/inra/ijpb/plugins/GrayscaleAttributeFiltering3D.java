@@ -172,7 +172,7 @@ public class GrayscaleAttributeFiltering3D implements PlugIn
 		}
 
         // create the dialog, with operator options
-		String title = "Attribute Filtering 3D";
+		String title = "Gray Scale Attribute Filtering 3D";
         GenericDialog gd = new GenericDialog( title );
         gd.addChoice( "Operation", Operation.getAllLabels(),
         					operation.label );

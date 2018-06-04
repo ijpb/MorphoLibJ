@@ -93,7 +93,7 @@ public class GrayscaleBoxDiameterOpeningPlugin implements ExtendedPlugInFilter, 
 	public int showDialog(ImagePlus imp, String command, PlugInFilterRunner pfr)
 	{
 		// Create the configuration dialog
-		GenericDialog gd = new GenericDialog("Box Diagonal Opening");
+		GenericDialog gd = new GenericDialog("Gray Scale Box Diagonal Opening");
 
 		gd.addNumericField("Diagonal Min.", 100, 0, 10, "pixels");
 		
