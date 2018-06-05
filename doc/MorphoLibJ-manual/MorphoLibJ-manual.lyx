@@ -8061,8 +8061,307 @@ ResultsTable
 .
 \end_layout
 
+\begin_layout Section
+Label Overlap measures
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Label-Overlap-measures"
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Standard
-\begin_inset Newpage clearpage
+Given two label images, there are different measures that allow us to evaluate
+ the overlap agreement (or error) between the labels.
+ Following 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "tustison2009introducing"
+
+\end_inset
+
+, and given a source image 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$S$
+\end_layout
+
+\end_inset
+
+ and a target image 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$T$
+\end_layout
+
+\end_inset
+
+, this plugin provides the following overlap measurements in two different
+ result tables (one with the total values for all labels and one with values
+ for individual labels):
+\end_layout
+
+\begin_layout Itemize
+Target Overlap for each individual labeled region 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$r$
+\end_layout
+
+\end_inset
+
+:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\ensuremath{TO_{r}=\frac{|S_{r}\cap T_{r}|}{|T_{r}|}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Total Overlap (for all regions):
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\ensuremath{TO=\frac{\sum_{r}{|S_{r}\cap T_{r}|}}{\sum_{r}{|T_{r}|}}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Jaccard Index or Union Overlap for each individual labeled region 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$r$
+\end_layout
+
+\end_inset
+
+:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula 
+\[
+UO_{r}=2\frac{|S_{r}\cap T_{r}|}{|S_{r}\cup T_{r}|}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Jaccard Index or Union Overlap for all regions:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula 
+\[
+UO=2\frac{\sum_{r}|S_{r}\cap T_{r}|}{\sum_{r}|S_{r}\cup T_{r}|}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Dice Coefficient or Mean Overlap for each individual labeled region 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$r$
+\end_layout
+
+\end_inset
+
+:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula 
+\[
+MO_{r}=2\frac{|S_{r}\cap T_{r}|}{|S_{r}|+|T_{r}|}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Dice Coefficient or Mean Overlap for all regions:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula 
+\[
+MO=2\frac{\sum_{r}|S_{r}\cap T_{r}|}{\sum_{r}\left(|S_{r}|+|T_{r}|\right)}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Volume Similarity for each individual labeled region 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$r$
+\end_layout
+
+\end_inset
+
+:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula 
+\[
+VS_{r}=2\frac{|S_{r}|-|T_{r}|}{|S_{r}|+|T_{r}|}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Volume Similarity for all regions:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula 
+\[
+VS=2\frac{\sum_{r}\left(|S_{r}|-|T_{r}|\right)}{\sum_{r}\left(|S_{r}|+|T_{r}|\right)}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+False Negative Error for each individual labeled region 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$r$
+\end_layout
+
+\end_inset
+
+:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula 
+\[
+FN_{r}=\frac{|T_{r}\setminus S_{r}|}{|T_{r}|}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+False Negative Error for all regions:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula 
+\[
+FN=\frac{\sum_{r}|T_{r}\setminus S_{r}|}{\sum_{r}|T_{r}|}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+False Positive Error for each individual labeled region 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$r$
+\end_layout
+
+\end_inset
+
+:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula 
+\[
+FP_{r}=\frac{|S_{r}\setminus T_{r}|}{|S_{r}|}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+False Positive Error for all regions:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula 
+\[
+FP=\frac{\sum_{r}|S{}_{r}\setminus T{}_{r}|}{\sum_{r}|S_{r}|}
+\]
+
 \end_inset
 
 
