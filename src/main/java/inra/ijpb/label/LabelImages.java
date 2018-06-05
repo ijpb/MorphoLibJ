@@ -39,6 +39,7 @@ import ij.gui.PlotWindow;
 import ij.gui.PointRoi;
 import ij.gui.ProfilePlot;
 import ij.gui.Roi;
+import ij.measure.ResultsTable;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
@@ -1967,7 +1968,7 @@ public class LabelImages
 	 * @return target overlap per label or null if error
 	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
 	 */
-	public static final double[] getTargetOverlapPerLabel(
+	public static final ResultsTable getTargetOverlapPerLabel(
 			ImageProcessor sourceImage,
 			ImageProcessor targetImage )
 	{
@@ -1998,8 +1999,14 @@ public class LabelImages
 	    for( int i = 0; i < intersection.length; i ++ )
 	    	intersection[ i ] = targetLabelIndices.get( sourceLabels[ i ] ) != null ?
 	    			intersection[ i ] / numPixTarget[ targetLabelIndices.get( sourceLabels[ i ] ) ] : 0;
-
-	    return intersection;
+		// create data table
+		ResultsTable table = new ResultsTable();
+		for (int i = 0; i < sourceLabels.length; i++) {
+			table.incrementCounter();
+			table.addLabel(Integer.toString( sourceLabels[i] ));
+			table.addValue("TargetOverlap", intersection[i]);
+		}
+	    return table;
 	}
 	/**
 	 * Get the total overlap between two label images (source and target).
@@ -2065,7 +2072,7 @@ public class LabelImages
 	 * @return target overlap per label or null if error
 	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
 	 */
-	public static final double[] getTargetOverlapPerLabel(
+	public static final ResultsTable getTargetOverlapPerLabel(
 			ImageStack sourceImage,
 			ImageStack targetImage )
 	{
@@ -2100,8 +2107,14 @@ public class LabelImages
 	    for( int i = 0; i < intersection.length; i ++ )
 	    	intersection[ i ] = targetLabelIndices.get( sourceLabels[ i ] ) != null ?
 	    			intersection[ i ] / numPixTarget[ targetLabelIndices.get( sourceLabels[ i ] ) ] : 0;
-
-	    return intersection;
+		// create data table
+		ResultsTable table = new ResultsTable();
+		for (int i = 0; i < sourceLabels.length; i++) {
+			table.incrementCounter();
+			table.addLabel(Integer.toString( sourceLabels[i] ));
+			table.addValue("TargetOverlap", intersection[i]);
+		}
+	    return table;
 	}
 	/**
 	 * Get the target overlap between two label images (source and target)
@@ -2113,7 +2126,7 @@ public class LabelImages
 	 * @return target overlap per label or null if error
 	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
 	 */
-	public static final double[] getTargetOverlapPerLabel(
+	public static final ResultsTable getTargetOverlapPerLabel(
 			ImagePlus sourceImage,
 			ImagePlus targetImage )
 	{
@@ -2161,7 +2174,7 @@ public class LabelImages
 	 * @return Jaccard index per label in the reference image or null if error
 	 * @see <a href="https://en.wikipedia.org/wiki/Jaccard_index">https://en.wikipedia.org/wiki/Jaccard_index</a>
 	 */
-	public static final double[] getJaccardIndexPerLabel(
+	public static final ResultsTable getJaccardIndexPerLabel(
 			ImageProcessor labelImage1,
 			ImageProcessor labelImage2 )
 	{
@@ -2195,7 +2208,14 @@ public class LabelImages
 	    	int num2 = labelIndices2.get( labels1[ i ] ) != null ? numPix2[ labelIndices2.get( labels1[ i ] ) ] : 0;
 	    	intersection[ i ] /= ( numPix1[ i ] + num2 - intersection[ i ] );
 	    }
-	    return intersection;
+	    // create data table
+ 		ResultsTable table = new ResultsTable();
+ 		for (int i = 0; i < labels1.length; i++) {
+ 			table.incrementCounter();
+ 			table.addLabel(Integer.toString( labels1[i] ));
+ 			table.addValue("JaccardIndex", intersection[i]);
+ 		}
+ 	    return table;
 	}
 	/**
 	 * Get the Jaccard index (intersection over union overlap) between
@@ -2245,7 +2265,7 @@ public class LabelImages
 	 * @return Jaccard index per label in the reference image or null if error
 	 * @see <a href="https://en.wikipedia.org/wiki/Jaccard_index">https://en.wikipedia.org/wiki/Jaccard_index</a>
 	 */
-	public static final double[] getJaccardIndexPerLabel(
+	public static final ResultsTable getJaccardIndexPerLabel(
 			ImageStack labelImage1,
 			ImageStack labelImage2 )
 	{
@@ -2284,7 +2304,14 @@ public class LabelImages
 	    	int num2 = labelIndices2.get( labels1[ i ] ) != null ? numPix2[ labelIndices2.get( labels1[ i ] ) ] : 0;
 	    	intersection[ i ] /= ( numPix1[ i ] + num2 - intersection[ i ] );
 	    }
-	    return intersection;
+	    // create data table
+  		ResultsTable table = new ResultsTable();
+  		for (int i = 0; i < labels1.length; i++) {
+  			table.incrementCounter();
+  			table.addLabel(Integer.toString( labels1[i] ));
+  			table.addValue("JaccardIndex", intersection[i]);
+  		}
+  	    return table;
 	}
 	/**
 	 * Get the Jaccard index (intersection over union overlap) between
@@ -2308,7 +2335,7 @@ public class LabelImages
 	 * @return Jaccard index per label in the reference image or null if error
 	 * @see <a href="https://en.wikipedia.org/wiki/Jaccard_index">https://en.wikipedia.org/wiki/Jaccard_index</a>
 	 */
-	public static final double[] getJaccardIndexPerLabel(
+	public static final ResultsTable getJaccardIndexPerLabel(
 			ImagePlus labelImage1,
 			ImagePlus labelImage2 )
 	{
@@ -2355,7 +2382,7 @@ public class LabelImages
 	 * @return Dice coefficient per label in the reference image or null if error
 	 * @see <a href="https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient">https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient</a>
 	 */
-	public static final double[] getDiceCoefficientPerLabel(
+	public static final ResultsTable getDiceCoefficientPerLabel(
 			ImageProcessor labelImage1,
 			ImageProcessor labelImage2 )
 	{
@@ -2389,7 +2416,14 @@ public class LabelImages
 	    	int num2 = labelIndices2.get( labels1[ i ] ) != null ? numPix2[ labelIndices2.get( labels1[ i ] ) ] : 0;
 	    	intersection[ i ] = 2.0 * intersection[ i ]  / ( numPix1[ i ] + num2 );
 	    }
-	    return intersection;
+	    // create data table
+  		ResultsTable table = new ResultsTable();
+  		for (int i = 0; i < labels1.length; i++) {
+  			table.incrementCounter();
+  			table.addLabel(Integer.toString( labels1[i] ));
+  			table.addValue("DiceCoefficient", intersection[i]);
+  		}
+  	    return table;
 	}
 	/**
 	 * Get the Dice coefficient between two label images.
@@ -2437,7 +2471,7 @@ public class LabelImages
 	 * @return Dice coefficient per label in the reference image or null if error
 	 * @see <a href="https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient">https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient</a>
 	 */
-	public static final double[] getDiceCoefficientPerLabel(
+	public static final ResultsTable getDiceCoefficientPerLabel(
 			ImageStack labelImage1,
 			ImageStack labelImage2 )
 	{
@@ -2476,7 +2510,14 @@ public class LabelImages
 	    	int num2 = labelIndices2.get( labels1[ i ] ) != null ? numPix2[ labelIndices2.get( labels1[ i ] ) ] : 0;
 	    	intersection[ i ] = 2.0 * intersection[ i ]  / ( numPix1[ i ] + num2 );
 	    }
-	    return intersection;
+	    // create data table
+  		ResultsTable table = new ResultsTable();
+  		for (int i = 0; i < labels1.length; i++) {
+  			table.incrementCounter();
+  			table.addLabel(Integer.toString( labels1[i] ));
+  			table.addValue("DiceCoefficient", intersection[i]);
+  		}
+  	    return table;
 	}
 	/**
 	 * Get the Dice coefficient between two label images.
@@ -2499,7 +2540,7 @@ public class LabelImages
 	 * @return Dice coefficient per label in the reference image or null if error
 	 * @see <a href="https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient">https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient</a>
 	 */
-	public static final double[] getDiceCoefficientPerLabel(
+	public static final ResultsTable getDiceCoefficientPerLabel(
 			ImagePlus labelImage1,
 			ImagePlus labelImage2 )
 	{
@@ -2544,7 +2585,7 @@ public class LabelImages
 	 * @return volume similarity per label
 	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
 	 */
-	public static final double[] getVolumeSimilarityPerLabel(
+	public static final ResultsTable getVolumeSimilarityPerLabel(
 			ImageProcessor sourceImage,
 			ImageProcessor targetImage )
 	{
@@ -2564,7 +2605,14 @@ public class LabelImages
 	    			2.0 * ( numPixSource[ i ] - numPixTarget[ targetLabelIndices.get( sourceLabels[ i ] ) ] )
 	    			/ ( numPixSource[ i ] + numPixTarget[ targetLabelIndices.get( sourceLabels[ i ] ) ] )
 	    			: 0;
-	    return volumeSim;
+		// create data table
+  		ResultsTable table = new ResultsTable();
+  		for (int i = 0; i < sourceLabels.length; i++) {
+  			table.incrementCounter();
+  			table.addLabel(Integer.toString( sourceLabels[ i ] ));
+  			table.addValue("VolumeSimilarity", volumeSim[ i ] );
+  		}
+  	    return table;
 	}
 	/**
 	 * Get the total volume similarity between two label images (source and target).
@@ -2605,7 +2653,7 @@ public class LabelImages
 	 * @return volume similarity per label
 	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
 	 */
-	public static final double[] getVolumeSimilarityPerLabel(
+	public static final ResultsTable getVolumeSimilarityPerLabel(
 			ImageStack sourceImage,
 			ImageStack targetImage )
 	{
@@ -2625,7 +2673,14 @@ public class LabelImages
 	    			2.0 * ( numPixSource[ i ] - numPixTarget[ targetLabelIndices.get( sourceLabels[ i ] ) ] )
 	    			/ ( numPixSource[ i ] + numPixTarget[ targetLabelIndices.get( sourceLabels[ i ] ) ] )
 	    			: 0;
-	    return volumeSim;
+		// create data table
+  		ResultsTable table = new ResultsTable();
+  		for (int i = 0; i < sourceLabels.length; i++) {
+  			table.incrementCounter();
+  			table.addLabel(Integer.toString( sourceLabels[ i ] ));
+  			table.addValue("VolumeSimilarity", volumeSim[ i ] );
+  		}
+  	    return table;
 	}
 	/**
 	 * Get the total volume similarity between two label images (source and target).
@@ -2652,7 +2707,7 @@ public class LabelImages
 	 * @return volume similarity per label
 	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
 	 */
-	public static final double[] getVolumeSimilarityPerLabel(
+	public static final ResultsTable getVolumeSimilarityPerLabel(
 			ImagePlus sourceImage,
 			ImagePlus targetImage )
 	{
@@ -2686,7 +2741,7 @@ public class LabelImages
 	 * @return false negative error per label or null if error
 	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
 	 */
-	public static final double[] getFalseNegativeErrorPerLabel(
+	public static final ResultsTable getFalseNegativeErrorPerLabel(
 			ImageProcessor sourceImage,
 			ImageProcessor targetImage )
 	{
@@ -2694,11 +2749,15 @@ public class LabelImages
 				sourceImage.getHeight() != targetImage.getHeight() )
 			return null;
 
-		double[] fne = LabelImages.getTargetOverlapPerLabel( sourceImage, targetImage );
-		for( int i = 0; i < fne.length; i++ )
-			fne[ i ] = 1.0 - fne[ i ];
-
-	    return fne;
+		ResultsTable toTable = LabelImages.getTargetOverlapPerLabel( sourceImage, targetImage );
+		// create data table
+  		ResultsTable fneTable = new ResultsTable();
+  		for (int i = 0; i < toTable.getCounter(); i++) {
+  			fneTable.incrementCounter();
+  			fneTable.addLabel( toTable.getLabel( i ) );
+  			fneTable.addValue( "FalseNegativeError", 1.0 - toTable.getValue("TargetOverlap", i) );
+  		}
+  	    return fneTable;
 	}
 	/**
 	 * Get the total false negative error between two label images (source and target).
@@ -2729,16 +2788,19 @@ public class LabelImages
 	 * @return false negative error per label or null if error
 	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
 	 */
-	public static final double[] getFalseNegativeErrorPerLabel(
+	public static final ResultsTable getFalseNegativeErrorPerLabel(
 			ImageStack sourceImage,
 			ImageStack targetImage )
 	{
-		double[] fne = LabelImages.getTargetOverlapPerLabel( sourceImage, targetImage );
-		if( null != fne )
-			for( int i = 0; i < fne.length; i++ )
-				fne[ i ] = 1.0 - fne[ i ];
-
-	    return fne;
+		ResultsTable toTable = LabelImages.getTargetOverlapPerLabel( sourceImage, targetImage );
+		// create data table
+  		ResultsTable fneTable = new ResultsTable();
+  		for (int i = 0; i < toTable.getCounter(); i++) {
+  			fneTable.incrementCounter();
+  			fneTable.addLabel( toTable.getLabel( i ) );
+  			fneTable.addValue( "FalseNegativeError", 1.0 - toTable.getValue("TargetOverlap", i) );
+  		}
+  	    return fneTable;
 	}
 
 	/**
@@ -2770,16 +2832,11 @@ public class LabelImages
 	 * @return false negative error per label or null if error
 	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
 	 */
-	public static final double[] getFalseNegativeErrorPerLabel(
+	public static final ResultsTable getFalseNegativeErrorPerLabel(
 			ImagePlus sourceImage,
 			ImagePlus targetImage )
 	{
-		double[] fne = LabelImages.getTargetOverlapPerLabel( sourceImage, targetImage );
-		if( null != fne )
-			for( int i = 0; i < fne.length; i++ )
-				fne[ i ] = 1.0 - fne[ i ];
-
-	    return fne;
+		return LabelImages.getFalseNegativeErrorPerLabel( sourceImage.getImageStack() , targetImage.getImageStack() );
 	}
 	/**
 	 * Get the total false positive error between two label images (source and target).
@@ -2823,7 +2880,7 @@ public class LabelImages
 	 * @return false positive error per label or null if error
 	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
 	 */
-	public static final double[] getFalsePositiveErrorPerLabel(
+	public static final ResultsTable getFalsePositiveErrorPerLabel(
 			ImageProcessor sourceImage,
 			ImageProcessor targetImage )
 	{
@@ -2849,7 +2906,14 @@ public class LabelImages
 	    for( int i = 0; i < setDiff.length; i ++ )
 	    	setDiff[ i ] /= numPixSource[ i ];
 
-	    return setDiff;
+	    // create data table
+  		ResultsTable table = new ResultsTable();
+  		for (int i = 0; i < sourceLabels.length; i++) {
+  			table.incrementCounter();
+  			table.addLabel(Integer.toString( sourceLabels[ i ] ));
+  			table.addValue( "FalsePositiveError", setDiff[ i ] );
+  		}
+  	    return table;
 	}
 	/**
 	 * Get the total false positive error between two label images (source and target).
@@ -2899,7 +2963,7 @@ public class LabelImages
 	 * @return false positive error per label or null if error
 	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
 	 */
-	public static final double[] getFalsePositiveErrorPerLabel(
+	public static final ResultsTable getFalsePositiveErrorPerLabel(
 			ImageStack sourceImage,
 			ImageStack targetImage )
 	{
@@ -2931,7 +2995,14 @@ public class LabelImages
 	    for( int i = 0; i < setDiff.length; i ++ )
 	    	setDiff[ i ] /= numPixSource[ i ];
 
-	    return setDiff;
+	    // create data table
+  		ResultsTable table = new ResultsTable();
+  		for (int i = 0; i < sourceLabels.length; i++) {
+  			table.incrementCounter();
+  			table.addLabel(Integer.toString( sourceLabels[ i ] ));
+  			table.addValue( "FalsePositiveError", setDiff[ i ] );
+  		}
+  	    return table;
 	}
 	/**
 	 * Get the total false positive error between two label images (source and target).
@@ -2962,7 +3033,7 @@ public class LabelImages
 	 * @return false positive error per label or null if error
 	 * @see <a href="http://www.insight-journal.org/browse/publication/707">http://www.insight-journal.org/browse/publication/707</a>
 	 */
-	public static final double[] getFalsePositiveErrorPerLabel(
+	public static final ResultsTable getFalsePositiveErrorPerLabel(
 			ImagePlus sourceImage,
 			ImagePlus targetImage )
 	{
