@@ -11,12 +11,24 @@ import ij.measure.ResultsTable;
  */
 
 public class ResultsBuilder {
-	
+	/** Results table with all the accumulated results */
 	private ResultsTable allResults;
 	
+	/**
+	 * Basic constructor. It creates a default empty table.
+	 */
 	public ResultsBuilder() { this.allResults = new ResultsTable();	}
+	/**
+	 * Constructs a ResultsBuilder initializing the default table to the input one.
+	 * @param rt initial results table
+	 */
 	public ResultsBuilder(ResultsTable rt) { this.allResults = rt; }
 	
+	/**
+	 * Add a results table to the already existing table.
+	 * @param rt table to add
+	 * @return current results builder
+	 */
 	public ResultsBuilder addResult (ResultsTable rt) {
 		// Keep the label and everything in the same order as before, but just append whatever columns do not exist yet
 		if(allResults.size() == rt.size() ) {
@@ -35,6 +47,10 @@ public class ResultsBuilder {
 		return this;
 	}
 	
+	/**
+	 * Get the current results table.
+	 * @return current results table
+	 */
 	public ResultsTable getResultsTable() {
 		return this.allResults;
 	}
