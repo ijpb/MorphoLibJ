@@ -355,7 +355,8 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 			double mean2 = mean*mean;
 			double variance = sum2 / voxelCount - mean2;
 			double sDeviation = Math.sqrt( variance );
-			skewness[ i ] = ((sum3 - 3.0 * mean * sum2 ) / voxelCount
+			skewness[ i ] = Double.compare( variance, 0d ) == 0 ? 0 :
+				((sum3 - 3.0 * mean * sum2 ) / voxelCount
 					+ 2.0 * mean * mean2 ) / ( variance * sDeviation );
 		}
 
@@ -414,7 +415,8 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 				double mean2 = mean*mean;
 				double variance = sum2 / voxelCount - mean2;
 				double sDeviation = Math.sqrt( variance );
-				skewness[ i ] = ((sum3 - 3.0 * mean * sum2 ) / voxelCount
+				skewness[ i ] = Double.compare( variance, 0d ) == 0 ? 0 :
+					((sum3 - 3.0 * mean * sum2 ) / voxelCount
 						+ 2.0 * mean * mean2 ) / ( variance * sDeviation );
 			}
 			else
