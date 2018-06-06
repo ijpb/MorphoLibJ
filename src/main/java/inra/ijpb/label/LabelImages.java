@@ -1452,20 +1452,20 @@ public class LabelImages
 	 * @param imagePlus
 	 *            the instance of ImagePlus containing the label image
 	 */
-	public static final void trimLabels(ImagePlus imagePlus)
+	public static final void remapLabels(ImagePlus imagePlus)
 	{
 		// Dispatch to appropriate function depending on dimension
 		if (imagePlus.getStackSize() == 1) 
 		{
 			// process planar image
 			ImageProcessor image = imagePlus.getProcessor();
-			trimLabels(image);
+			remapLabels(image);
 		} 
 		else 
 		{
 			// process image stack
 			ImageStack image = imagePlus.getStack();
-			trimLabels(image);
+			remapLabels(image);
 		}
 		
 	}
@@ -1475,7 +1475,7 @@ public class LabelImages
 	 *  
 	 * @param image the label image
 	 */
-	public static final void trimLabels(ImageProcessor image)
+	public static final void remapLabels(ImageProcessor image)
 	{
 		int[] labels = findAllLabels(image);
 		HashMap<Integer, Integer> map = mapLabelIndices(labels);
@@ -1498,7 +1498,7 @@ public class LabelImages
 	 *  
 	 * @param image the 3D label image
 	 */
-	public static final void trimLabels(ImageStack image)
+	public static final void remapLabels(ImageStack image)
 	{
 		int[] labels = findAllLabels(image);
 		HashMap<Integer, Integer> map = mapLabelIndices(labels);

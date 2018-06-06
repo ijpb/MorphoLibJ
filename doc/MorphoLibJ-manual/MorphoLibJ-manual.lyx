@@ -10501,14 +10501,14 @@ computes the size (area in 2D, volume in 3D) of each region, and remove
 \end_layout
 
 \begin_layout Description
-Trim
+Remap
 \begin_inset space ~
 \end_inset
 
 Labels 
 \begin_inset CommandInset label
 LatexCommand label
-name "op:Trim-Labels"
+name "op:Remap-Labels"
 
 \end_inset
 
@@ -10616,7 +10616,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Trimmed histogram
+Remapped histogram
 \end_layout
 
 \end_inset
@@ -10635,7 +10635,7 @@ Trimmed histogram
 \begin_layout Plain Layout
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Trim-Labels"
+name "fig:Remap-Labels"
 
 \end_inset
 
@@ -10643,14 +10643,14 @@ Illustration of the
 \begin_inset Quotes eld
 \end_inset
 
-Trim Labels
+Remap Labels
 \begin_inset Quotes erd
 \end_inset
 
  plugin.
  (a) Original label image.
  (b) Histogram of original label image, showing missing labels.
- (c) Histogram of the trimmed label image, without missing labels.
+ (c) Histogram of the remapped label image, without missing labels.
  
 \end_layout
 
@@ -10672,13 +10672,13 @@ The Figure
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Trim-Labels"
+reference "fig:Remap-Labels"
 
 \end_inset
 
  presents a use case of the 
 \series bold
-Trim Labels
+Remap Labels
 \series default
  plugin.
  The left image is a label image in which small labels as well as labels
@@ -10689,7 +10689,7 @@ Trim Labels
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Trim-Labels"
+reference "fig:Remap-Labels"
 
 \end_inset
 
@@ -10709,7 +10709,7 @@ holes
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Trim-Labels"
+reference "fig:Remap-Labels"
 
 \end_inset
 
@@ -10722,7 +10722,7 @@ reference "fig:Trim-Labels"
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Trim-Labels"
+reference "fig:Remap-Labels"
 
 \end_inset
 
@@ -17594,7 +17594,7 @@ reference "op:Label-Size-Opening"
 \begin_inset Text
 
 \begin_layout Plain Layout
-Trim Labels
+Remap Labels
 \end_layout
 
 \end_inset
@@ -17677,7 +17677,7 @@ n.a.
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "op:Trim-Labels"
+reference "op:Remap-Labels"
 
 \end_inset
 

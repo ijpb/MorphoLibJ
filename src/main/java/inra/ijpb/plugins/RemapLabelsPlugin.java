@@ -33,7 +33,7 @@ import inra.ijpb.label.LabelImages;
  * @author David Legland
  *
  */
-public class TrimLabelsPlugin implements PlugIn 
+public class RemapLabelsPlugin implements PlugIn
 {
 	/* (non-Javadoc)
 	 * @see ij.plugin.PlugIn#run(java.lang.String)
@@ -42,7 +42,7 @@ public class TrimLabelsPlugin implements PlugIn
 	public void run(String arg)
 	{
 		ImagePlus imagePlus = IJ.getImage();
-		LabelImages.trimLabels(imagePlus);
+		LabelImages.remapLabels(imagePlus);
 		
 		imagePlus.draw();
 	}
