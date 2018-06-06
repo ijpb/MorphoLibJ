@@ -463,7 +463,8 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 			mean /= voxelCount;
 			double mean2 = mean*mean;
 			double variance = sum2 / voxelCount - mean2;
-			kurtosis[ i ] = (((sum4 - 4.0 * mean * sum3 + 6.0 * mean2 * sum2 )
+			kurtosis[ i ] = Double.compare( variance, 0d ) == 0 ? -6.0/5.0 :
+				(((sum4 - 4.0 * mean * sum3 + 6.0 * mean2 * sum2 )
 					/ voxelCount - 3.0 * mean2 * mean2 )
 					/ ( variance * variance ) -3.0 );
 		}
@@ -523,7 +524,8 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 				mean /= voxelCount;
 				double mean2 = mean*mean;
 				double variance = sum2 / voxelCount - mean2;
-				kurtosis[ i ] = (((sum4 - 4.0 * mean * sum3 + 6.0 * mean2 * sum2 )
+				kurtosis[ i ] = Double.compare( variance, 0d ) == 0 ? -6.0/5.0 :
+					(((sum4 - 4.0 * mean * sum3 + 6.0 * mean2 * sum2 )
 						/ voxelCount - 3.0 * mean2 * mean2 )
 						/ ( variance * variance ) -3.0 );
 			}
