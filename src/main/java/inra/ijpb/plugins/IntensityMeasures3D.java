@@ -91,7 +91,7 @@ public class IntensityMeasures3D implements PlugIn{
         		measureStates[ i ] = gd.getNextBoolean();
         	        		                        
             boolean calculateMeasures = false;
-            for( int i=0; i<6; i++ )
+            for( int i=0; i<measureStates.length; i++ )
             	if( measureStates[ i ] )
             		calculateMeasures = true;
             
