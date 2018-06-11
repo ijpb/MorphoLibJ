@@ -42,6 +42,18 @@ import inra.ijpb.label.RegionAdjacencyGraph.LabelPair;
 public class IntensityMeasures extends LabeledVoxelsMeasure{
 	/** adjacency list */
 	Set<LabelPair> adjList = null;
+	/** list of adjacent pixels/voxels per label */
+	ArrayList<Double>[] neighborVoxels = null;
+	/** intensity mode per region labeled and number of pixels/voxels with that intensity */
+	double[][] mode = null;
+	/** maximum intensity value per labeled region */
+	double[] max = null;
+	/** minimum intensity value per labeled region */
+	double[] min = null;
+	/** mean intensity value per labeled region */
+	double[] mean = null;
+	/** neighbors mean intensity value per labeled region */
+	double[] neighborsMean = null;
 	/** label image */
 	ImagePlus labelImage = null;
 	
@@ -67,23 +79,12 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 	 */
 	public ResultsTable getMean()
 	{
-		final int numLabels = objectVoxels.length;
-		
-		double[] mean = new double[ numLabels ];
-		
-		// calculate mean voxel value per object
-		for( int i=0; i<numLabels; i++ )
-		{
-			mean[ i ] = 0;
-			for( final double v : objectVoxels[ i ] )
-				mean[ i ] += v;
-			mean[ i ] /= objectVoxels[ i ].size();			
-		}
-		
-		
+		// Calculate man intensity per label
+		this.mean = meanPerLabel();
+
 		// create data table
 		ResultsTable table = new ResultsTable();
-		for (int i = 0; i < numLabels; i++) {
+		for (int i = 0; i < mean.length; i++) {
 			table.incrementCounter();
 			table.addLabel(Integer.toString( labels[i] ));
 			table.addValue("Mean", mean[i]);
@@ -92,51 +93,67 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 		return table;
 	}
 	/**
+	 * Get the mean intensity value per labeled region.
+	 * @return mean intensity value per labeled region
+	 */
+	private double[] meanPerLabel()
+	{
+		double[] mean = new double[ objectVoxels.length ];
+		
+		// calculate mean voxel value per object
+		for( int i=0; i<mean.length; i++ )
+		{
+			mean[ i ] = 0;
+			for( final double v : objectVoxels[ i ] )
+				mean[ i ] += v;
+			mean[ i ] /= objectVoxels[ i ].size();			
+		}
+		return mean;
+	}
+	/**
 	 * Get the mean intensity values of the neighbor labels
 	 *
 	 * @return result table with mean values of neighbor labels
 	 */
 	public ResultsTable getNeighborsMean()
 	{
-		if( this.adjList == null )
-			this.adjList = RegionAdjacencyGraph.computeAdjacencies( labelImage );
-		final int numLabels = objectVoxels.length;
-
-		double[] mean = new double[ numLabels ];
-		double[] numNeighborVoxels = new double[ numLabels ];
-		// go through list of adjacent pairs
-		for (LabelPair pair : adjList)
-		{
-			// extract their indices
-			int ind1 = super.labelIndices.get( pair.label1 );
-			int ind2 = super.labelIndices.get( pair.label2 );
-			// sum up the voxel values of each label to the list of
-			// the adjacent label
-			for( final double v : objectVoxels[ ind2 ] )
-				mean[ ind1 ] += v;
-			numNeighborVoxels[ ind1 ] += objectVoxels[ ind2 ].size();
-			for( final double v : objectVoxels[ ind1 ] )
-				mean[ ind2 ] += v;
-			numNeighborVoxels[ ind2 ] += objectVoxels[ ind1 ].size();
-		}
-		// divide by the total number of neighbor voxels to obtain the mean
-		for( int i=0; i<numLabels; i++ )
-		{
-			if( numNeighborVoxels[ i ] > 0 )
-				mean[ i ] /= numNeighborVoxels[ i ];
-			else
-				mean[ i ] = Double.NaN;
-		}
+		this.neighborsMean = neighborsMeanPerLabel();
 
 		// create data table
 		ResultsTable table = new ResultsTable();
-		for (int i = 0; i < numLabels; i++) {
+		for (int i = 0; i < neighborsMean.length; i++) {
 			table.incrementCounter();
 			table.addLabel(Integer.toString( labels[i] ));
-			table.addValue("NeighborsMean", mean[i]);
+			table.addValue("NeighborsMean", neighborsMean[i]);
 		}
 
 		return table;
+	}
+	/**
+	 * Get the neighbors mean intensity value per labeled region.
+	 * @return neighbors mean intensity value per labeled region
+	 */
+	private double[] neighborsMeanPerLabel()
+	{
+		if( this.neighborVoxels == null )
+			this.neighborVoxels = computeNeighborVoxels();
+		final int numLabels = objectVoxels.length;
+
+		double[] neighborsMean = new double[ numLabels ];
+
+		// go through list of adjacent pairs
+		for( int i = 0; i < numLabels; i++ )
+		{
+			for( double val : neighborVoxels[ i ] )
+			{
+				neighborsMean[ i ] += val;
+			}
+			if( neighborVoxels[ i ].size() > 0)
+				neighborsMean[ i ] /= neighborVoxels[ i ].size();
+			else
+				neighborsMean[ i ] = Double.NaN;
+		}
+		return neighborsMean;
 	}
 	/**
 	 * Get median voxel values per label
@@ -173,24 +190,12 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 	 */
 	public ResultsTable getNeighborsMedian()
 	{
-		if( this.adjList == null )
-			this.adjList = RegionAdjacencyGraph.computeAdjacencies( labelImage );
-		final int numLabels = objectVoxels.length;
+		if( this.neighborVoxels == null )
+			this.neighborVoxels = computeNeighborVoxels();
 
+		final int numLabels = objectVoxels.length;
 		double[] median = new double[ numLabels ];
-		ArrayList<Double>[] neighborVoxels = new ArrayList[ numLabels ];
-		for( int i = 0; i < neighborVoxels.length; i++ )
-			neighborVoxels[ i ] = new ArrayList<Double>();
-		// go through list of adjacent pairs
-		for (LabelPair pair : adjList)
-		{
-			// extract their indices
-			int ind1 = super.labelIndices.get( pair.label1 );
-			int ind2 = super.labelIndices.get( pair.label2 );
-			// concatenate lists of adjacent voxels
-			neighborVoxels[ ind1 ].addAll( objectVoxels[ ind2 ] );
-			neighborVoxels[ ind2 ].addAll( objectVoxels[ ind1 ] );
-		}
+
 		// calculate median value
 		for( int i=0; i<numLabels; i++ )
 		{
@@ -219,7 +224,6 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 	public ResultsTable getMode()
 	{
 		final int numLabels = objectVoxels.length;
-
 		double[] mode = new double[ numLabels ];
 
 		// calculate mode voxel value per object
@@ -229,9 +233,8 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 			int max = 1;
 			double temp = objectVoxels[ i ].get( 0 );
 
-			for(int j=0; j < objectVoxels[ i ].size(); j++ )
+			for( double val : objectVoxels[ i ] )
 			{
-				double val = objectVoxels[ i ].get( j );
 				if( hm.get( val ) != null )
 				{
 					int count = hm.get( val );
@@ -254,7 +257,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 		for (int i = 0; i < numLabels; i++) {
 			table.incrementCounter();
 			table.addLabel( Integer.toString( labels[i] ));
-			table.addValue( "Mode", mode[i] );
+			table.addValue( "Mode", mode[ i ] );
 		}
 
 		return table;
@@ -266,24 +269,11 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 	 */
 	public ResultsTable getNeighborsMode()
 	{
-		if( this.adjList == null )
-			this.adjList = RegionAdjacencyGraph.computeAdjacencies( labelImage );
-		final int numLabels = objectVoxels.length;
+		if( this.neighborVoxels == null )
+			this.neighborVoxels = computeNeighborVoxels();
 
+		final int numLabels = objectVoxels.length;
 		double[] mode = new double[ numLabels ];
-		ArrayList<Double>[] neighborVoxels = new ArrayList[ numLabels ];
-		for( int i = 0; i < neighborVoxels.length; i++ )
-			neighborVoxels[ i ] = new ArrayList<Double>();
-		// go through list of adjacent pairs
-		for (LabelPair pair : adjList)
-		{
-			// extract their indices
-			int ind1 = super.labelIndices.get( pair.label1 );
-			int ind2 = super.labelIndices.get( pair.label2 );
-			// concatenate lists of adjacent voxels
-			neighborVoxels[ ind1 ].addAll( objectVoxels[ ind2 ] );
-			neighborVoxels[ ind2 ].addAll( objectVoxels[ ind1 ] );
-		}
 		// calculate mode value
 		for( int i=0; i<numLabels; i++ )
 		{
@@ -291,9 +281,8 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 			int max = 1;
 			double temp = neighborVoxels[ i ].get( 0 );
 
-			for(int j=0; j < neighborVoxels[ i ].size(); j++ )
+			for( double val : neighborVoxels[ i ] )
 			{
-				double val = neighborVoxels[ i ].get( j );
 				if( hm.get( val ) != null )
 				{
 					int count = hm.get( val );
@@ -334,6 +323,10 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 	public ResultsTable getSkewness()
 	{
 		final int numLabels = objectVoxels.length;
+		// check if the mean intensity per label has already
+		// been calculated
+		if( null != this.mean )
+			this.mean = meanPerLabel();
 
 		double[] skewness = new double[ numLabels ];
 
@@ -342,22 +335,19 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 		{
 			final double voxelCount = objectVoxels[ i ].size();
 			double v, v2, sum2 = 0, sum3 = 0;
-			double mean = 0;
 			for( int j=0; j<voxelCount; j++ )
 			{
-				mean += objectVoxels[ i ].get( j );
 				v = objectVoxels[ i ].get( j ) + Double.MIN_VALUE;
 				v2 = v * v;
 				sum2 += v2;
 				sum3 += v * v2;
 			}
-			mean /= voxelCount;
-			double mean2 = mean*mean;
+			double mean2 = mean[ i ] * mean[ i ];
 			double variance = sum2 / voxelCount - mean2;
 			double sDeviation = Math.sqrt( variance );
 			skewness[ i ] = Double.compare( variance, 0d ) == 0 ? 0 :
-				((sum3 - 3.0 * mean * sum2 ) / voxelCount
-					+ 2.0 * mean * mean2 ) / ( variance * sDeviation );
+				((sum3 - 3.0 * mean[ i ] * sum2 ) / voxelCount
+					+ 2.0 * mean[ i ] * mean2 ) / ( variance * sDeviation );
 		}
 
 		// create data table
@@ -377,24 +367,12 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 	 */
 	public ResultsTable getNeighborsSkewness()
 	{
-		if( this.adjList == null )
-			this.adjList = RegionAdjacencyGraph.computeAdjacencies( labelImage );
-		final int numLabels = objectVoxels.length;
+		if( this.neighborVoxels == null )
+			this.neighborVoxels = computeNeighborVoxels();
 
+		final int numLabels = objectVoxels.length;
 		double[] skewness = new double[ numLabels ];
-		ArrayList<Double>[] neighborVoxels = new ArrayList[ numLabels ];
-		for( int i = 0; i < neighborVoxels.length; i++ )
-			neighborVoxels[ i ] = new ArrayList<Double>();
-		// go through list of adjacent pairs
-		for( LabelPair pair : adjList )
-		{
-			// extract their indices
-			int ind1 = super.labelIndices.get( pair.label1 );
-			int ind2 = super.labelIndices.get( pair.label2 );
-			// concatenate lists of adjacent voxels
-			neighborVoxels[ ind1 ].addAll( objectVoxels[ ind2 ] );
-			neighborVoxels[ ind2 ].addAll( objectVoxels[ ind1 ] );
-		}
+
 		// calculate skewness value
 		for( int i=0; i<numLabels; i++ )
 		{
@@ -435,6 +413,29 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 		return table;
 	}
 	/**
+	 * Compute the lists of pixels/voxels belonging to each adjacent label region.
+	 * @return array with lists of pixels/voxels belonging to each adjacent label region
+	 */
+	private ArrayList<Double>[] computeNeighborVoxels()
+	{
+		if( this.adjList == null )
+			this.adjList = RegionAdjacencyGraph.computeAdjacencies( labelImage );
+		ArrayList<Double>[] neighborVoxels = new ArrayList[ adjList.size() ];
+		for( int i = 0; i < neighborVoxels.length; i++ )
+			neighborVoxels[ i ] = new ArrayList<Double>();
+		// go through list of adjacent pairs
+		for( LabelPair pair : adjList )
+		{
+			// extract their indices
+			int ind1 = super.labelIndices.get( pair.label1 );
+			int ind2 = super.labelIndices.get( pair.label2 );
+			// concatenate lists of adjacent voxels
+			neighborVoxels[ ind1 ].addAll( objectVoxels[ ind2 ] );
+			neighborVoxels[ ind2 ].addAll( objectVoxels[ ind1 ] );
+		}
+		return neighborVoxels;
+	}
+	/**
 	 * Get kurtosis voxel values per label
 	 *
 	 * @return result table with kurtosis values per label
@@ -442,6 +443,10 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 	public ResultsTable getKurtosis()
 	{
 		final int numLabels = objectVoxels.length;
+		// check if the mean intensity per label has already
+		// been calculated
+		if( null != this.mean )
+			this.mean = meanPerLabel();
 
 		double[] kurtosis = new double[ numLabels ];
 
@@ -450,21 +455,19 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 		{
 			final double voxelCount = objectVoxels[ i ].size();
 			double v, v2, sum2 = 0, sum3 = 0, sum4 = 0;
-			double mean = 0;
 			for( int j=0; j<voxelCount; j++ )
 			{
-				mean += objectVoxels[ i ].get( j );
 				v = objectVoxels[ i ].get( j ) + Double.MIN_VALUE;
 				v2 = v * v;
 				sum2 += v2;
 				sum3 += v * v2;
 				sum4 += v2 * v2;
 			}
-			mean /= voxelCount;
-			double mean2 = mean*mean;
+
+			double mean2 = mean[ i ] * mean[ i ];
 			double variance = sum2 / voxelCount - mean2;
 			kurtosis[ i ] = Double.compare( variance, 0d ) == 0 ? -6.0/5.0 :
-				(((sum4 - 4.0 * mean * sum3 + 6.0 * mean2 * sum2 )
+				(((sum4 - 4.0 * mean[ i ] * sum3 + 6.0 * mean2 * sum2 )
 					/ voxelCount - 3.0 * mean2 * mean2 )
 					/ ( variance * variance ) -3.0 );
 		}
@@ -486,24 +489,11 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 	 */
 	public ResultsTable getNeighborsKurtosis()
 	{
-		if( this.adjList == null )
-			this.adjList = RegionAdjacencyGraph.computeAdjacencies( labelImage );
+		if( this.neighborVoxels == null )
+			this.neighborVoxels = computeNeighborVoxels();
 		final int numLabels = objectVoxels.length;
-
 		double[] kurtosis = new double[ numLabels ];
-		ArrayList<Double>[] neighborVoxels = new ArrayList[ numLabels ];
-		for( int i = 0; i < neighborVoxels.length; i++ )
-			neighborVoxels[ i ] = new ArrayList<Double>();
-		// go through list of adjacent pairs
-		for( LabelPair pair : adjList )
-		{
-			// extract their indices
-			int ind1 = super.labelIndices.get( pair.label1 );
-			int ind2 = super.labelIndices.get( pair.label2 );
-			// concatenate lists of adjacent voxels
-			neighborVoxels[ ind1 ].addAll( objectVoxels[ ind2 ] );
-			neighborVoxels[ ind2 ].addAll( objectVoxels[ ind1 ] );
-		}
+
 		// calculate kurtosis value
 		for( int i=0; i<numLabels; i++ )
 		{
@@ -553,7 +543,10 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 	{
 		final int numLabels = objectVoxels.length;
 		
-		double[] mean = new double[ numLabels ];
+		// check if the mean intensity per label has already
+		// been calculated
+		if( null != this.mean )
+			this.mean = meanPerLabel();
 		double[] sd = new double[ numLabels ];
 		
 		// calculate mean voxel value per object
@@ -592,37 +585,22 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 	 */
 	public ResultsTable getNeighborsStdDev()
 	{
-		if( this.adjList == null )
-			this.adjList = RegionAdjacencyGraph.computeAdjacencies( labelImage );
-		final int numLabels = objectVoxels.length;
+		// Check if neighbors mean already exists
+		if( null == neighborsMean )
+			this.neighborsMean = neighborsMeanPerLabel();
 
-		double[] mean = new double[ numLabels ];
+		final int numLabels = neighborsMean.length;
+
 		double[] sd = new double[ numLabels ];
-		double[] numNeighborVoxels = new double[ numLabels ];
-		// go through list of adjacent pairs
-		for (LabelPair pair : adjList)
-		{
-			// extract their indices
-			int ind1 = super.labelIndices.get( pair.label1 );
-			int ind2 = super.labelIndices.get( pair.label2 );
-			// sum up the voxel values of each label to the list of
-			// the adjacent label
-			for( final double v : objectVoxels[ ind2 ] )
-				mean[ ind1 ] += v;
-			numNeighborVoxels[ ind1 ] += objectVoxels[ ind2 ].size();
-			for( final double v : objectVoxels[ ind1 ] )
-				mean[ ind2 ] += v;
-			numNeighborVoxels[ ind2 ] += objectVoxels[ ind1 ].size();
-		}
-		// divide by the total number of neighbor voxels to obtain the mean
+
+		// Calculate standard deviation
 		for( int i=0; i<numLabels; i++ )
 		{
-			if( numNeighborVoxels[ i ] > 0 )
+			if( neighborVoxels[ i ].size() > 0 )
 			{
-				mean[ i ] /= numNeighborVoxels[ i ];
-				for( final double v : objectVoxels[ i ] )
-					sd[ i ] += ( v - mean[ i ] ) * ( v - mean[ i ] );
-				sd[ i ] /= objectVoxels[ i ].size();
+				for( final double v : neighborVoxels[ i ] )
+					sd[ i ] += ( v - neighborsMean[ i ] ) * ( v - neighborsMean[ i ] );
+				sd[ i ] /= neighborVoxels[ i ].size();
 				sd[ i ] = Math.sqrt( sd[ i ] );
 			}
 			else
@@ -646,9 +624,26 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 	 */
 	public ResultsTable getMax()
 	{
-		final int numLabels = objectVoxels.length;
+		this.max = maxPerLabel();
 		
-		double[] max = new double[ numLabels ];
+		// create data table
+		ResultsTable table = new ResultsTable();
+		for (int i = 0; i < objectVoxels.length; i++) {
+			table.incrementCounter();
+			table.addLabel(Integer.toString( labels[i] ));
+			table.addValue("Max", max[i]);
+		}
+
+		return table;
+	}
+	/**
+	 * Calculate maximum intensity value per labeled region.
+	 * @return maximum intensity value per labeled region
+	 */
+	private double[] maxPerLabel()
+	{
+		final int numLabels = objectVoxels.length;
+		final double[] max = new double[ numLabels ];
 		
 		// calculate maximum voxel value per object
 		for( int i=0; i<numLabels; i++ )
@@ -658,17 +653,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 				if( v > max[ i ] )
 					max[ i ] = v;
 		}
-		
-		
-		// create data table
-		ResultsTable table = new ResultsTable();
-		for (int i = 0; i < numLabels; i++) {
-			table.incrementCounter();
-			table.addLabel(Integer.toString( labels[i] ));
-			table.addValue("Max", max[i]);
-		}
-
-		return table;
+		return max;
 	}
 	/**
 	 * Get the maximum intensity values of the neighbor labels
@@ -677,13 +662,22 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 	 */
 	public ResultsTable getNeighborsMax()
 	{
+		// Check if adjacency list has been created
 		if( this.adjList == null )
 			this.adjList = RegionAdjacencyGraph.computeAdjacencies( labelImage );
+
 		final int numLabels = objectVoxels.length;
 
-		double[] max = new double[ numLabels ];
+		// check if the maximum intensity of individual labeled regions
+		// has been already calculated
+		if( null == this.max )
+			this.max = maxPerLabel();
+
+		// Initialize array of adjacent maximum values
+		double[] adjacentMax = new double[ numLabels ];
 		for( int i=0; i<numLabels; i++ )
-			max[ i ] = Double.NaN;
+			adjacentMax[ i ] = Double.NaN;
+
 		// go through list of adjacent pairs
 		for( LabelPair pair : adjList )
 		{
@@ -692,18 +686,18 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 			int ind2 = super.labelIndices.get( pair.label2 );
 
 			// store maximum value of adjacent label voxels
-			if( Double.isNaN( max[ ind1 ] ) )
-				max[ ind1 ] = Double.MIN_VALUE;
-			if( Double.isNaN( max[ ind2 ] ) )
-				max[ ind2 ] = Double.MIN_VALUE;
+			if( Double.isNaN( adjacentMax[ ind1 ] ) )
+				adjacentMax[ ind1 ] = Double.MIN_VALUE;
+			if( Double.isNaN( adjacentMax[ ind2 ] ) )
+				adjacentMax[ ind2 ] = Double.MIN_VALUE;
 
-			for( final double v : objectVoxels[ ind2 ] )
-				if( v > max[ ind1 ] )
-					max[ ind1 ] = v;
+			// check if the maximum value of the adjacent neighbor
+			// is larger than the stored maximum (in both directions)
+			if( this.max[ ind2 ] > adjacentMax[ ind1 ] )
+				adjacentMax[ ind1 ] = this.max[ ind2 ];
 
-			for( final double v : objectVoxels[ ind1 ] )
-				if( v > max[ ind2 ] )
-					max[ ind2 ] = v;
+			if( this.max[ ind1 ] > adjacentMax[ ind2 ] )
+				adjacentMax[ ind2 ] = this.max[ ind1 ];
 		}
 
 		// create data table
@@ -711,7 +705,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 		for (int i = 0; i < numLabels; i++) {
 			table.incrementCounter();
 			table.addLabel(Integer.toString( labels[ i ] ));
-			table.addValue( "NeighborsMax", max[ i ] );
+			table.addValue( "NeighborsMax", adjacentMax[ i ] );
 		}
 
 		return table;
@@ -723,8 +717,25 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 	 */
 	public ResultsTable getMin()
 	{
+		this.min = minPerLabel();
+
+		// create data table
+		ResultsTable table = new ResultsTable();
+		for (int i = 0; i < objectVoxels.length; i++) {
+			table.incrementCounter();
+			table.addLabel(Integer.toString( labels[i] ));
+			table.addValue("Min", min[i]);
+		}
+
+		return table;
+	}
+	/**
+	 * Calculate minimum intensity value per labeled region.
+	 * @return minimum intensity value per labeled region
+	 */
+	private double[] minPerLabel()
+	{
 		final int numLabels = objectVoxels.length;
-		
 		double[] min = new double[ numLabels ];
 		
 		// calculate minimum voxel value per object
@@ -735,17 +746,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 				if( v < min[ i ] )
 					min[ i ] = v;
 		}
-		
-		
-		// create data table
-		ResultsTable table = new ResultsTable();
-		for (int i = 0; i < numLabels; i++) {
-			table.incrementCounter();
-			table.addLabel(Integer.toString( labels[i] ));
-			table.addValue("Min", min[i]);
-		}
-
-		return table;
+		return min;
 	}
 	/**
 	 * Get the minimum intensity values of the neighbor labels
@@ -754,13 +755,22 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 	 */
 	public ResultsTable getNeighborsMin()
 	{
+		// Check if adjacency list has been created
 		if( this.adjList == null )
 			this.adjList = RegionAdjacencyGraph.computeAdjacencies( labelImage );
+
 		final int numLabels = objectVoxels.length;
 
-		double[] min = new double[ numLabels ];
+		// check if the minimum intensity of individual labeled regions
+		// has been already calculated
+		if( null == this.min )
+			this.min = minPerLabel();
+
+		// Initialize array of adjacent minimum values
+		double[] adjacentMin = new double[ numLabels ];
 		for( int i=0; i<numLabels; i++ )
-			min[ i ] = Double.NaN;
+			adjacentMin[ i ] = Double.NaN;
+
 		// go through list of adjacent pairs
 		for( LabelPair pair : adjList )
 		{
@@ -768,19 +778,19 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 			int ind1 = super.labelIndices.get( pair.label1 );
 			int ind2 = super.labelIndices.get( pair.label2 );
 
-			// store maximum value of adjacent label voxels
-			if( Double.isNaN( min[ ind1 ] ) )
-				min[ ind1 ] = Double.MAX_VALUE;
-			if( Double.isNaN( min[ ind2 ] ) )
-				min[ ind2 ] = Double.MAX_VALUE;
+			// store minimum value of adjacent label voxels
+			if( Double.isNaN( adjacentMin[ ind1 ] ) )
+				adjacentMin[ ind1 ] = Double.MAX_VALUE;
+			if( Double.isNaN( adjacentMin[ ind2 ] ) )
+				adjacentMin[ ind2 ] = Double.MAX_VALUE;
 
-			for( final double v : objectVoxels[ ind2 ] )
-				if( v < min[ ind1 ] )
-					min[ ind1 ] = v;
+			// check if the minimum value of the adjacent neighbor
+			// is smaller than the stored minimum (in both directions)
+			if( this.min[ ind2 ] < adjacentMin[ ind1 ] )
+				adjacentMin[ ind1 ] = this.min[ ind2 ];
 
-			for( final double v : objectVoxels[ ind1 ] )
-				if( v < min[ ind2 ] )
-					min[ ind2 ] = v;
+			if( this.min[ ind1 ] < adjacentMin[ ind2 ] )
+				adjacentMin[ ind2 ] = this.min[ ind1 ];
 		}
 
 		// create data table
@@ -788,7 +798,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 		for (int i = 0; i < numLabels; i++) {
 			table.incrementCounter();
 			table.addLabel(Integer.toString( labels[ i ] ));
-			table.addValue( "NeighborsMin", min[ i ] );
+			table.addValue( "NeighborsMin", adjacentMin[ i ] );
 		}
 
 		return table;
