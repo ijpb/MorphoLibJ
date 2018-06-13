@@ -54,6 +54,8 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 	double[] mean = null;
 	/** neighbors mean intensity value per labeled region */
 	double[] neighborsMean = null;
+	/** intensity histogram per label */
+	HashMap<Double,Integer>[] histogramPerLabel = null;
 	/** label image */
 	ImagePlus labelImage = null;
 	
@@ -226,28 +228,23 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 		final int numLabels = objectVoxels.length;
 		double[] mode = new double[ numLabels ];
 
+		// calculate histogram of each label
+		if( null == histogramPerLabel )
+			this.histogramPerLabel = getHistogramPerLabel();
+
 		// calculate mode voxel value per object
 		for( int i=0; i<numLabels; i++ )
 		{
-			HashMap<Double,Integer> hm = new HashMap< Double,Integer >();
 			int max = 1;
 			double temp = objectVoxels[ i ].get( 0 );
 
-			for( double val : objectVoxels[ i ] )
+			for( HashMap.Entry<Double, Integer> entry : histogramPerLabel[ i ].entrySet() )
 			{
-				if( hm.get( val ) != null )
+				if( entry.getValue() > max )
 				{
-					int count = hm.get( val );
-					count++;
-					hm.put( val, count );
-					if( count>max )
-					{
-						max = count;
-						temp = val;
-					}
+					max = entry.getValue();
+					temp = entry.getKey();
 				}
-				else
-					hm.put( val, 1 );
 			}
 			mode[ i ] = temp;
 		}
@@ -263,45 +260,95 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 		return table;
 	}
 	/**
+	 * Get the intensity histogram of each label.
+	 * @return the intensity histogram of each label
+	 */
+	private HashMap<Double,Integer>[] getHistogramPerLabel()
+	{
+		HashMap<Double,Integer>[] hm = new HashMap[ objectVoxels.length ];
+		for( int i=0; i<objectVoxels.length; i++ )
+		{
+			hm[ i ] = new HashMap< Double,Integer >();
+
+			for( double val : objectVoxels[ i ] )
+			{
+				if( hm[ i ].get( val ) != null )
+				{
+					int count = hm[ i ].get( val );
+					count++;
+					hm[ i ].put( val, count );
+				}
+				else
+					hm[ i ].put( val, 1 );
+			}
+		}
+		return hm;
+	}
+	/**
 	 * Get the intensity mode value of the neighbor labels
 	 *
 	 * @return result table with intensity mode of neighbor labels
 	 */
 	public ResultsTable getNeighborsMode()
 	{
-		if( this.neighborVoxels == null )
-			this.neighborVoxels = computeNeighborVoxels();
+		// check if the label histograms have been calculated
+		if( null == histogramPerLabel )
+			this.histogramPerLabel = getHistogramPerLabel();
 
 		final int numLabels = objectVoxels.length;
 		double[] mode = new double[ numLabels ];
-		// calculate mode value
+
+		// check if adjacency list has already been calculated
+		if( this.adjList == null )
+			this.adjList = RegionAdjacencyGraph.computeAdjacencies( labelImage );
+
+		HashMap<Double,Integer>[] hm = new HashMap[ numLabels ];
+		for( int i = 0; i < numLabels ; i++ )
+			hm[ i ] = new HashMap< Double,Integer >();
+		// merge histograms of adjacent labels
+		for( LabelPair pair : adjList )
+		{
+			// extract their indices
+			int ind1 = super.labelIndices.get( pair.label1 );
+			int ind2 = super.labelIndices.get( pair.label2 );
+
+			// add up ind1 histogram to ind2 hashmap
+			for( HashMap.Entry<Double, Integer> entry : histogramPerLabel[ ind1 ].entrySet() )
+			{
+				double val = entry.getKey();
+				int count = entry.getValue();
+				if( hm[ ind2 ].get( val ) != null )
+					hm[ ind2 ].put( val, count + hm[ ind2 ].get( val ) );
+				else
+					hm[ ind2 ].put( val, count );
+			}
+			// add up ind2 histogram to ind1 hashmap
+			for( HashMap.Entry<Double, Integer> entry : histogramPerLabel[ ind2 ].entrySet() )
+			{
+				double val = entry.getKey();
+				int count = entry.getValue();
+				if( hm[ ind1 ].get( val ) != null )
+					hm[ ind1 ].put( val, count + hm[ ind1 ].get( val ) );
+				else
+					hm[ ind1 ].put( val, count );
+			}
+		}
+
+		// calculate mode value in merged histograms hashmap
 		for( int i=0; i<numLabels; i++ )
 		{
-			HashMap<Double,Integer> hm = new HashMap< Double,Integer >();
 			int max = 1;
-			double temp = neighborVoxels[ i ].get( 0 );
+			double temp = Double.NaN;
 
-			for( double val : neighborVoxels[ i ] )
+			for( HashMap.Entry<Double, Integer> entry : hm[ i ].entrySet() )
 			{
-				if( hm.get( val ) != null )
+				if( entry.getValue() > max )
 				{
-					int count = hm.get( val );
-					count++;
-					hm.put( val, count );
-					if( count>max )
-					{
-						max = count;
-						temp = val;
-					}
+					max = entry.getValue();
+					temp = entry.getKey();
 				}
-				else
-					hm.put( val, 1 );
 			}
-
-			if( neighborVoxels[ i ].size() > 0)
-				mode[ i ] = temp;
-			else
-				mode[ i ] = Double.NaN;
+			mode[ i ] = temp;
 		}
 
 		// create data table
