@@ -137,21 +137,37 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 	 */
 	private double[] neighborsMeanPerLabel()
 	{
-		if( this.neighborVoxels == null )
-			this.neighborVoxels = computeNeighborVoxels();
+		// check if adjacency list has already been calculated
+		if( this.adjList == null )
+			this.adjList = RegionAdjacencyGraph.computeAdjacencies( labelImage );
+		// check if mean per label exists
+		if( null == this.mean )
+			this.mean = meanPerLabel();
+
 		final int numLabels = objectVoxels.length;
 
 		double[] neighborsMean = new double[ numLabels ];
+		double[] neighborsNumVox = new double[ numLabels ];
 
-		// go through list of adjacent pairs
+		// merge histograms of adjacent labels
+		for( LabelPair pair : adjList )
+		{
+			// extract their indices
+			int ind1 = super.labelIndices.get( pair.label1 );
+			int ind2 = super.labelIndices.get( pair.label2 );
+			// sum up weighted mean values
+			neighborsMean[ ind1 ] += mean[ ind2 ] * objectVoxels[ ind2 ].size();
+			neighborsMean[ ind2 ] += mean[ ind1 ] * objectVoxels[ ind1 ].size();
+			// store number of neighbor voxels
+			neighborsNumVox[ ind1 ] += objectVoxels[ ind2 ].size();
+			neighborsNumVox[ ind2 ] += objectVoxels[ ind1 ].size();
+		}
+
+		// go through list of labels and divide by the total number of neighbor voxels
 		for( int i = 0; i < numLabels; i++ )
 		{
-			for( double val : neighborVoxels[ i ] )
-			{
-				neighborsMean[ i ] += val;
-			}
-			if( neighborVoxels[ i ].size() > 0)
-				neighborsMean[ i ] /= neighborVoxels[ i ].size();
+			if( neighborsNumVox[ i ] > 0)
+				neighborsMean[ i ] /= neighborsNumVox[ i ];
 			else
 				neighborsMean[ i ] = Double.NaN;
 		}
@@ -635,7 +651,9 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 		// Check if neighbors mean already exists
 		if( null == neighborsMean )
 			this.neighborsMean = neighborsMeanPerLabel();
-
+		// Check if neighbor voxels have been calculated
+		if( this.neighborVoxels == null )
+			this.neighborVoxels = computeNeighborVoxels();
 		final int numLabels = neighborsMean.length;
 
 		double[] sd = new double[ numLabels ];
@@ -646,7 +664,10 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 			if( neighborVoxels[ i ].size() > 0 )
 			{
 				for( final double v : neighborVoxels[ i ] )
-					sd[ i ] += ( v - neighborsMean[ i ] ) * ( v - neighborsMean[ i ] );
+				{
+					double diff = v - neighborsMean[ i ];
+					sd[ i ] += diff * diff;
+				}
 				sd[ i ] /= neighborVoxels[ i ].size();
 				sd[ i ] = Math.sqrt( sd[ i ] );
 			}
