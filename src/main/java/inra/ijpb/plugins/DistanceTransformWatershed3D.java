@@ -91,6 +91,8 @@ public class DistanceTransformWatershed3D implements PlugIn
 
 		/**
 		 * Determines the operation type from its label.
+		 * @param opLabel name of the operation type
+		 * @return 3D connectivity type
 		 * @throws IllegalArgumentException if label is not recognized.
 		 */
 		public static Conn3D fromLabel(String opLabel) {
