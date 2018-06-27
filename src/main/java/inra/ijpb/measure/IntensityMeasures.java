@@ -611,16 +611,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 		if( null != this.mean )
 			this.mean = meanPerLabel();
 		double[] sd = new double[ numLabels ];
-		
-		// calculate mean voxel value per object
-		for( int i=0; i<numLabels; i++ )
-		{
-			mean[ i ] = 0;
-			for( final double v : objectVoxels[ i ] )
-				mean[ i ] += v;
-			mean[ i ] /= objectVoxels[ i ].size();			
-		}
-		
+
 		// calculate standard deviation
 		for( int i=0; i<numLabels; i++ )
 		{
