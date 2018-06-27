@@ -616,8 +616,12 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 		for( int i=0; i<numLabels; i++ )
 		{
 			sd[ i ] = 0;
+			double diff;
 			for( final double v : objectVoxels[ i ] )
-				sd[ i ] += ( v - mean[ i ] ) * ( v - mean[ i ] );
+			{
+				diff = v - mean[ i ];
+				sd[ i ] += diff * diff;
+			}
 			sd[ i ] /= objectVoxels[ i ].size();
 			sd[ i ] = Math.sqrt( sd[ i ] );
 		}
