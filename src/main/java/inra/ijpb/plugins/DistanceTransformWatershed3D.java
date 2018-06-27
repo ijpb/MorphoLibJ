@@ -191,7 +191,7 @@ public class DistanceTransformWatershed3D implements PlugIn
 		Images3D.invert( dist );
 
 		ImageStack result = ExtendedMinimaWatershed.extendedMinimaWatershed(
-				dist, image.getImageStack(), dynamic, connectivity.value, false );
+				dist, image.getImageStack(), dynamic, connectivity.value, 32, false );
 		ImagePlus ip = new ImagePlus( image.getShortTitle() + "dist-watershed",
 				result );
 		ip.setCalibration( image.getCalibration() );
@@ -211,7 +211,7 @@ public class DistanceTransformWatershed3D implements PlugIn
 		Images3D.invert( dist );
 
 		ImageStack result = ExtendedMinimaWatershed.extendedMinimaWatershed(
-				dist, image.getImageStack(), dynamic, connectivity.value, false );
+				dist, image.getImageStack(), dynamic, connectivity.value, 16, false );
 		ImagePlus ip = new ImagePlus( image.getShortTitle() + "dist-watershed",
 				result );
 		ip.setCalibration( image.getCalibration() );

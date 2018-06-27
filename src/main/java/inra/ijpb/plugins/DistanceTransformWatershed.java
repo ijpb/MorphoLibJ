@@ -264,7 +264,7 @@ DialogListener
 		dist.invert();
 
 		return ExtendedMinimaWatershed.extendedMinimaWatershed(
-				dist, image, dynamic, connectivity, false );
+				dist, image, dynamic, connectivity, 32, false );
 	}
 
 	private ImageProcessor processShort(
@@ -278,7 +278,7 @@ DialogListener
 		dist.invert();
 
 		return ExtendedMinimaWatershed.extendedMinimaWatershed(
-				dist, image, dynamic, connectivity, false );
+				dist, image, dynamic, connectivity, 16, false );
 	}
 
 	private static String createResultImageName(ImagePlus baseImage) {
