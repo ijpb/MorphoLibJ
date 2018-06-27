@@ -1327,6 +1327,10 @@ public class MorphologicalSegmentation implements PlugIn {
 			// merge labels under the ROI
 			LabelImages.mergeLabels( resultImage, roi, true );
 
+			// remove ROI after merging labels
+			resultImage.deleteRoi();
+			resultImage.updateAndDraw();
+
 			if ( showColorOverlay )
 				updateResultOverlay();
 
