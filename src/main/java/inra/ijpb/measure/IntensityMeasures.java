@@ -388,7 +388,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 		final int numLabels = objectVoxels.length;
 		// check if the mean intensity per label has already
 		// been calculated
-		if( null != this.mean )
+		if( null == this.mean )
 			this.mean = meanPerLabel();
 
 		double[] skewness = new double[ numLabels ];
@@ -508,7 +508,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 		final int numLabels = objectVoxels.length;
 		// check if the mean intensity per label has already
 		// been calculated
-		if( null != this.mean )
+		if( null == this.mean )
 			this.mean = meanPerLabel();
 
 		double[] kurtosis = new double[ numLabels ];
@@ -608,7 +608,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 		
 		// check if the mean intensity per label has already
 		// been calculated
-		if( null != this.mean )
+		if( null == this.mean )
 			this.mean = meanPerLabel();
 		double[] sd = new double[ numLabels ];
 
