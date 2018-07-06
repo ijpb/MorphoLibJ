@@ -40,6 +40,7 @@ import org.junit.Test;
  * @author dlegland
  *
  */
+@Deprecated
 public class GeodesicDiameterFloatTest
 {
 	/**

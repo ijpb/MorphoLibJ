@@ -42,11 +42,12 @@ import inra.ijpb.algo.Algo;
  * }
  * </pre>
  *
- * @see inra.ijpb.binary.geodesic.GeodesicDiameterShort
- * @see inra.ijpb.binary.geodesic.GeodesicDiameterFloat
+ * @deprecated since 1.3.5, use inra.ijpb.measure.GeodesicDiameter instead 
+ * @see inra.ijpb.measure.GeodesicDiameter
  * 
  * @author dlegland
  */
+@Deprecated
 public interface GeodesicDiameter extends Algo
 {
 	public abstract ResultsTable analyzeImage(ImageProcessor labelImage);

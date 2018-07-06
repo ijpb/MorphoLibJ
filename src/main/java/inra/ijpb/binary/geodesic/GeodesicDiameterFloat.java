@@ -52,10 +52,13 @@ import java.util.TreeMap;
  *	table.show("Geodesic Diameter");
  *}</pre>
  *
- * @see inra.ijpb.binary.geodesic.GeodesicDiameterShort
+ * @deprecated since 1.3.5, use inra.ijpb.measure.GeodesicDiameter instead 
+ * @see inra.ijpb.measure.GeodesicDiameter
+ * 
  * @author dlegland
  *
  */
+@Deprecated
 public class GeodesicDiameterFloat extends AlgoStub implements GeodesicDiameter
 {
 	// ==================================================

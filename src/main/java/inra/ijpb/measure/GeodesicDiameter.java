@@ -44,27 +44,41 @@ import inra.ijpb.label.LabelValues;
 import inra.ijpb.label.LabelValues.PositionValuePair;
 
 /**
- * Computes geodesic diameter of a set of labeled particles or regions, using 
- * floating point values (32 bits) for propagating chamfer distances.
+ * <p>
+ * Computes geodesic diameter of a set of labeled particles or regions, using an
+ * inner instance of {@link inra.ijpb.binary.geodesic.GeodesicDistanceTransform} for propagating chamfer distances.
+ * </p>
  * 
+ * <p>
+ * The result of the algorithm is stored in a collection of
+ * {@link GeodesicDiameter.Result} instances, that returns the diameter,
+ * coordinates of extreme points, and eventually the geodesic path corresponding
+ * to each region.
+ * </p>
+ * 
+ * <p>
  * This version uses optimized algorithm, that propagates distances of all
- * particles during each pass. This reduces computation overhead due to 
+ * particles during each pass. This reduces computation overhead due to
  * iteration over particles.
+ * </p>
  * 
  * <p>
  * Example of use:
- *<pre>{@code
- *	GeodesicDiameter algo = new GeodesicDiameter(ChamferWeights.CHESSKNIGHT);
- *	Map<Integer,GeodesicDiameter.Result> geodDiams = algo.process(inputLabelImage);
- *	for (int label : geodDiams.keySet())
+ * 
+ * <pre>
+ * {@code
+ *  GeodesicDiameter algo = new GeodesicDiameter(ChamferWeights.CHESSKNIGHT);
+ *  Map<Integer,GeodesicDiameter.Result> geodDiams = algo.process(inputLabelImage);
+ *  for (int label : geodDiams.keySet())
  *  {
  *      double diam = geodDiams.get(label).diameter;
  *      System.out.printl(String.format("geod. diam. of label %d is %5.2f", label, diam);
  *  }
- *}</pre>
+ *}
+ * </pre>
  *
- * @see inra.ijpb.binary.geodesic.GeodesicDiameterFloat
  * @see inra.ijpb.binary.geodesic.GeodesicDistanceTransform
+ * @see inra.ijpb.measure.GeodesicDiameter.Result
  * 
  * @since 1.3.5
  * 
@@ -75,6 +89,14 @@ import inra.ijpb.label.LabelValues.PositionValuePair;
 	// ==================================================
 	// Static methods 
 	
+	/**
+	 * Utility method that transforms the mapping between labels and result
+	 * instances into a ResultsTable that can be displayed with ImageJ.
+	 * 
+	 * @param map
+	 *            the mapping between labels and results
+	 * @return a ResultsTable that can be displayed with ImageJ.
+	 */
 	public static ResultsTable asTable(Map<Integer, Result> map)
 	{
 		// Initialize a new result table
@@ -106,7 +128,6 @@ import inra.ijpb.label.LabelValues.PositionValuePair;
 		}
 	
 		return table;
-	
 	}
 
 	
@@ -464,22 +485,48 @@ import inra.ijpb.label.LabelValues.PositionValuePair;
 	// ==================================================
 	// Inner class used for representing computation results
 	
+	/**
+	 * Inner class used for representing results of geodesic diameters
+	 * computations. Each instance corresponds to a single region / particle.
+	 * 
+	 * @author dlegland
+	 *
+	 */
 	public class Result
 	{
+		/** The geodesic diameter of the region */
 		public double diameter;
 
+		/**
+		 * The initial point used for propagating distances, corresponding the
+		 * center of one of the minimum inscribed circles.
+		 */
 		public Point2D initialPoint;
 
+		/**
+		 * The radius of the largest inner circle. Value may depends on the chamfer weihgts.
+		 */
 		public double innerRadius;
 
+		/**
+		 * The first geodesic extremity found by the algorithm.
+		 */
 		public Point2D firstExtremity;
 
+		/**
+		 * The second geodesic extremity found by the algorithm.
+		 */
 		public Point2D secondExtremity;
 
+		/**
+		 * The largest geodesic path within the particle, joining the first and
+		 * the second geodesic extremities.
+		 */
 		public List<Point2D> path = null;
 
 		/**
-		 * Computes the result corresponding to the spatial calibration.
+		 * Computes the result corresponding to the spatial calibration. The
+		 * current result instance is not modified.
 		 * 
 		 * @param calib
 		 *            the spatial calibration of an image
@@ -504,12 +551,12 @@ import inra.ijpb.label.LabelValues.PositionValuePair;
 			// calibrate the geodesic path if any
 			if (this.path != null)
 			{
-				List<Point2D> path = new ArrayList<Point2D>(this.path.size());
+				List<Point2D> newPath = new ArrayList<Point2D>(this.path.size());
 				for (Point2D point : this.path)
 				{
-					path.add(calibrate(point, calib));
+					newPath.add(calibrate(point, calib));
 				}
-				res.path = path;
+				res.path = newPath;
 			}
 			
 			// return the calibrated result

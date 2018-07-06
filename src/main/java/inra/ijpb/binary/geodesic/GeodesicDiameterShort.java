@@ -52,12 +52,13 @@ import inra.ijpb.label.LabelValues;
  *	table.show("Geodesic Diameter");
  *}</pre>
  *
- * @see inra.ijpb.binary.geodesic.GeodesicDiameterFloat
- * @see inra.ijpb.binary.geodesic.GeodesicDistanceTransform
+ * @deprecated since 1.3.5, use inra.ijpb.measure.GeodesicDiameter instead 
+ * @see inra.ijpb.measure.GeodesicDiameter
  * 
  * @author David Legland
  *
  */
+@Deprecated
 public class GeodesicDiameterShort extends AlgoStub implements GeodesicDiameter
 {
 	// ==================================================
