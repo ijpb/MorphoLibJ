@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/lgpl-3.0.html>.
  * #L%
  */
-package inra.ijpb;
+package inra.ijpb.geometry;
 
 
 import org.junit.runner.RunWith;
@@ -28,16 +28,8 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	// generic classes
-	inra.ijpb.OpenResourceImage.class, 
-	inra.ijpb.binary.AllTestsRecurse.class,
-	inra.ijpb.geometry.AllTests.class,
-	inra.ijpb.label.AllTests.class,
-    inra.ijpb.math.AllTests.class,
-    inra.ijpb.measure.AllTests.class,
-	inra.ijpb.morphology.AllTestsRecurse.class,
-    inra.ijpb.plugins.AllTests.class,
-	inra.ijpb.util.AllTests.class,
+	Vector3DTest.class,
 	})
-public class AllTestsRecurse {
+public class AllTests {
   //nothing
 }

@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/lgpl-3.0.html>.
  * #L%
  */
-package inra.ijpb.measure;
+package inra.ijpb.geometry;
 
 /**
  * Represents a triplet of coordinates in linear space, and provides some
@@ -27,13 +27,10 @@ package inra.ijpb.measure;
  * 
  * The class is immutable. 
  * 
- * @deprecated since 1.3.6, replaced by inra.ijpb.geometry.Vector3D
  * @author dlegland
  *
- * @see inra.ijpb.geometry.Vector3D
  */
-@Deprecated
-public class Vector3d 
+public class Vector3D 
 {
 
 	// ===================================================================
@@ -50,7 +47,7 @@ public class Vector3d
 	/**
 	 * Empty constructor, with all coordinates initialized to zero. 
 	 */
-	public Vector3d()
+	public Vector3D()
 	{
 		this.x = 0;
 		this.y = 0;
@@ -64,7 +61,7 @@ public class Vector3d
 	 * @param y the y coordinate
 	 * @param z the z coordinate
 	 */
-	public Vector3d(double x, double y, double z)
+	public Vector3D(double x, double y, double z)
 	{
 		this.x = x;
 		this.y = y;
@@ -83,9 +80,9 @@ public class Vector3d
 	 * @param v2 the second vector
 	 * @return the cross product of the two vectors
 	 */
-	public static final Vector3d crossProduct(Vector3d v1, Vector3d v2)
+	public static final Vector3D crossProduct(Vector3D v1, Vector3D v2)
 	{
-		return new Vector3d(
+		return new Vector3D(
 				v1.y * v2.z - v1.z * v2.y, 
 				v1.z * v2.x - v1.x * v2.z, 
 				v1.x * v2.y - v1.y * v2.x);
@@ -104,7 +101,7 @@ public class Vector3d
 	 * @param v2 the second vector
 	 * @return the dot product of the two vectors
 	 */
-	public static final double dotProduct(Vector3d v1, Vector3d v2)
+	public static final double dotProduct(Vector3D v1, Vector3D v2)
 	{
 		return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 	}
@@ -117,13 +114,13 @@ public class Vector3d
 	 * @param v2 the second vector
 	 * @return the angle between the two vectors, in radians
 	 */
-	public static final double angle(Vector3d v1, Vector3d v2)
+	public static final double angle(Vector3D v1, Vector3D v2)
 	{
 		// compute angle using arc-tangent to get better precision for angles
 		// near zero, see the discussion in: 
 		// http://www.mathworks.com/matlabcentral/newsreader/view_thread/151925#381952
-		double norm = Vector3d.crossProduct(v1, v2).getNorm();
-		double det = Vector3d.dotProduct(v1, v2);
+		double norm = Vector3D.crossProduct(v1, v2).getNorm();
+		double det = Vector3D.dotProduct(v1, v2);
 		return Math.atan2(norm, det);
 	}
 	
@@ -170,12 +167,12 @@ public class Vector3d
 	 * @param v the vector to add
 	 * @return the results of the vector addition 
 	 */
-	public Vector3d plus(Vector3d v)
+	public Vector3D plus(Vector3D v)
 	{
 		double x = this.x + v.x;
 		double y = this.y + v.y;
 		double z = this.z + v.z;
-		return new Vector3d(x, y, z);
+		return new Vector3D(x, y, z);
 	}
 	
 	/**
@@ -184,12 +181,12 @@ public class Vector3d
 	 * @param v the vector to subtract
 	 * @return the results of the vector subtraction 
 	 */
-	public Vector3d minus(Vector3d v)
+	public Vector3D minus(Vector3D v)
 	{
 		double x = this.x - v.x;
 		double y = this.y - v.y;
 		double z = this.z - v.z;
-		return new Vector3d(x, y, z);
+		return new Vector3D(x, y, z);
 	}
 	
 	/**
@@ -199,12 +196,12 @@ public class Vector3d
 	 * @return the results of scalar multiplication 
 
 	 */
-	public Vector3d times(double k)
+	public Vector3D times(double k)
 	{
 		double x = this.x * k;
 		double y = this.y * k;
 		double z = this.z * k;
-		return new Vector3d(x, y, z);
+		return new Vector3D(x, y, z);
 	}
 	
 	/**
@@ -212,10 +209,10 @@ public class Vector3d
 	 * 
 	 * @return the normalized vector with same direction as this.
 	 */
-	public Vector3d normalize()
+	public Vector3D normalize()
 	{
 		double norm = this.getNorm();
-		return new Vector3d(this.x / norm, this.y / norm, this.z / norm);
+		return new Vector3D(this.x / norm, this.y / norm, this.z / norm);
 	}
 
 	/**
@@ -241,7 +238,7 @@ public class Vector3d
 	 *            the absolute tolerance for comparing coodinates
 	 * @return true if vector have same coordinates with respect to tolerance
 	 */
-	public boolean almostEquals(Vector3d v, double eps)
+	public boolean almostEquals(Vector3D v, double eps)
 	{
 		if (Math.abs(this.x - v.x) > eps) return false;
 		if (Math.abs(this.y - v.y) > eps) return false;

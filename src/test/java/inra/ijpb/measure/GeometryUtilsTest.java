@@ -25,6 +25,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import inra.ijpb.geometry.Vector3D;
+
 public class GeometryUtilsTest {
 
 	/**
@@ -32,16 +34,16 @@ public class GeometryUtilsTest {
 	 */
 	@Test
 	public void testSphericalVoronoiDomainArea_D13_Poo() {
-		Vector3d germ = new Vector3d(1, 0, 0);
-		Vector3d[] neighbors = new Vector3d[] { 
-				new Vector3d(+1, -1, -1),
-				new Vector3d(+1, -1,  0),
-				new Vector3d(+1, -1, +1),
-				new Vector3d(+1,  0, +1),
-				new Vector3d(+1, +1, +1),
-				new Vector3d(+1, +1,  0),
-				new Vector3d(+1, +1, -1),
-				new Vector3d(+1,  0, -1),
+		Vector3D germ = new Vector3D(1, 0, 0);
+		Vector3D[] neighbors = new Vector3D[] { 
+				new Vector3D(+1, -1, -1),
+				new Vector3D(+1, -1,  0),
+				new Vector3D(+1, -1, +1),
+				new Vector3D(+1,  0, +1),
+				new Vector3D(+1, +1, +1),
+				new Vector3D(+1, +1,  0),
+				new Vector3D(+1, +1, -1),
+				new Vector3D(+1,  0, -1),
 		};
 		
 		double area = GeometryUtils.sphericalVoronoiDomainArea(germ, neighbors);
@@ -54,12 +56,12 @@ public class GeometryUtilsTest {
 	 */
 	@Test
 	public void testSphericalVoronoiDomainArea_D13_PPo() {
-		Vector3d germ = new Vector3d(1, 1, 0);
-		Vector3d[] neighbors = new Vector3d[] { 
-				new Vector3d(+1,  0,  0),
-				new Vector3d(+1, +1, +1),
-				new Vector3d( 0, +1,  0),
-				new Vector3d(+1, +1, -1),
+		Vector3D germ = new Vector3D(1, 1, 0);
+		Vector3D[] neighbors = new Vector3D[] { 
+				new Vector3D(+1,  0,  0),
+				new Vector3D(+1, +1, +1),
+				new Vector3D( 0, +1,  0),
+				new Vector3D(+1, +1, -1),
 		};
 		
 		double area = GeometryUtils.sphericalVoronoiDomainArea(germ, neighbors);
@@ -72,14 +74,14 @@ public class GeometryUtilsTest {
 	 */
 	@Test
 	public void testSphericalVoronoiDomainArea_D13_PPP() {
-		Vector3d germ = new Vector3d(1, 1, 1);
-		Vector3d[] neighbors = new Vector3d[] { 
-				new Vector3d(+1,  0, +1),
-				new Vector3d( 0,  0, +1),
-				new Vector3d( 0, +1, +1),
-				new Vector3d( 0, +1,  0),
-				new Vector3d(+1, +1,  0),
-				new Vector3d(+1,  0,  0),
+		Vector3D germ = new Vector3D(1, 1, 1);
+		Vector3D[] neighbors = new Vector3D[] { 
+				new Vector3D(+1,  0, +1),
+				new Vector3D( 0,  0, +1),
+				new Vector3D( 0, +1, +1),
+				new Vector3D( 0, +1,  0),
+				new Vector3D(+1, +1,  0),
+				new Vector3D(+1,  0,  0),
 		};
 		
 		double area = GeometryUtils.sphericalVoronoiDomainArea(germ, neighbors);
@@ -90,9 +92,9 @@ public class GeometryUtilsTest {
 	
 	@Test
 	public void testSphericalAngle() {
-		Vector3d v1 = new Vector3d(1, 0, 0);
-		Vector3d v2 = new Vector3d(0, 1, 0);
-		Vector3d v3 = new Vector3d(0, 0, 1);
+		Vector3D v1 = new Vector3D(1, 0, 0);
+		Vector3D v2 = new Vector3D(0, 1, 0);
+		Vector3D v3 = new Vector3D(0, 0, 1);
 		
 		double angle = GeometryUtils.sphericalAngle(v1, v2, v3);
 		assertEquals(Math.PI / 2, angle, .001);

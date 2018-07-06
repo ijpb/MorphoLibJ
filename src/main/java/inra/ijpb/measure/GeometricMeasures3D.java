@@ -32,6 +32,7 @@ import ij.ImageStack;
 import ij.measure.ResultsTable;
 import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.data.Cursor3D;
+import inra.ijpb.geometry.Vector3D;
 import inra.ijpb.label.LabelImages;
 
 import java.util.ArrayList;
@@ -692,58 +693,58 @@ public class GeometricMeasures3D
 		// equal to +dy, and z-coordinate equal to -dz. 
 			
 		// direction vectors pointing below the OXY plane
-		Vector3d vPNN = new Vector3d( dx, -dy, -dz).normalize(); 
-		Vector3d vPZN = new Vector3d( dx,   0, -dz).normalize(); 
-		Vector3d vNPN = new Vector3d(-dx,  dy, -dz).normalize(); 
-		Vector3d vZPN = new Vector3d(  0,  dy, -dz).normalize(); 
-		Vector3d vPPN = new Vector3d( dx,  dy, -dz).normalize(); 
+		Vector3D vPNN = new Vector3D( dx, -dy, -dz).normalize(); 
+		Vector3D vPZN = new Vector3D( dx,   0, -dz).normalize(); 
+		Vector3D vNPN = new Vector3D(-dx,  dy, -dz).normalize(); 
+		Vector3D vZPN = new Vector3D(  0,  dy, -dz).normalize(); 
+		Vector3D vPPN = new Vector3D( dx,  dy, -dz).normalize(); 
 		
 		// direction vectors pointing belonging to the OXY plane
-		Vector3d vPNZ = new Vector3d( dx, -dy,   0).normalize();
-		Vector3d vPZZ = new Vector3d( dx,   0,   0).normalize();
-		Vector3d vNPZ = new Vector3d(-dx,  dy,   0).normalize();
-		Vector3d vZPZ = new Vector3d(  0,  dy,   0).normalize();
-		Vector3d vPPZ = new Vector3d( dx,  dy,   0).normalize();
+		Vector3D vPNZ = new Vector3D( dx, -dy,   0).normalize();
+		Vector3D vPZZ = new Vector3D( dx,   0,   0).normalize();
+		Vector3D vNPZ = new Vector3D(-dx,  dy,   0).normalize();
+		Vector3D vZPZ = new Vector3D(  0,  dy,   0).normalize();
+		Vector3D vPPZ = new Vector3D( dx,  dy,   0).normalize();
 		
 		// direction vectors pointing above the OXY plane
-		Vector3d vNNP = new Vector3d(-dx, -dy,  dz).normalize(); 
-		Vector3d vZNP = new Vector3d(  0, -dy,  dz).normalize(); 
-		Vector3d vPNP = new Vector3d( dx, -dy,  dz).normalize(); 
-		Vector3d vNZP = new Vector3d(-dx,   0,  dz).normalize(); 
-		Vector3d vZZP = new Vector3d(  0,   0,  dz).normalize(); 
-		Vector3d vPZP = new Vector3d( dx,   0,  dz).normalize(); 
-		Vector3d vNPP = new Vector3d(-dx,  dy,  dz).normalize(); 
-		Vector3d vZPP = new Vector3d(  0,  dy,  dz).normalize(); 
-		Vector3d vPPP = new Vector3d( dx,  dy,  dz).normalize(); 
+		Vector3D vNNP = new Vector3D(-dx, -dy,  dz).normalize(); 
+		Vector3D vZNP = new Vector3D(  0, -dy,  dz).normalize(); 
+		Vector3D vPNP = new Vector3D( dx, -dy,  dz).normalize(); 
+		Vector3D vNZP = new Vector3D(-dx,   0,  dz).normalize(); 
+		Vector3D vZZP = new Vector3D(  0,   0,  dz).normalize(); 
+		Vector3D vPZP = new Vector3D( dx,   0,  dz).normalize(); 
+		Vector3D vNPP = new Vector3D(-dx,  dy,  dz).normalize(); 
+		Vector3D vZPP = new Vector3D(  0,  dy,  dz).normalize(); 
+		Vector3D vPPP = new Vector3D( dx,  dy,  dz).normalize(); 
 
-		Vector3d[] neighbors;
+		Vector3D[] neighbors;
 		
 		// Spherical cap type 1, direction [1 0 0]
-		neighbors = new Vector3d[]{vPNN, vPNZ, vPNP, vPZP, vPPP, vPPZ, vPPN, vPZN};
+		neighbors = new Vector3D[]{vPNN, vPNZ, vPNP, vPZP, vPPP, vPPZ, vPPN, vPZN};
 		weights[0] = GeometryUtils.sphericalVoronoiDomainArea(vPZZ, neighbors) / (2 * Math.PI);
 		
 		// Spherical cap type 1, direction [0 1 0]
-		neighbors = new Vector3d[]{vPPZ, vPPP, vZPP, vNPP, vNPZ, vNPN, vZPN, vPPN};
+		neighbors = new Vector3D[]{vPPZ, vPPP, vZPP, vNPP, vNPZ, vNPN, vZPN, vPPN};
 		weights[1] = GeometryUtils.sphericalVoronoiDomainArea(vZPZ, neighbors) / (2 * Math.PI);
 
 		// Spherical cap type 1, direction [0 0 1]
-		neighbors = new Vector3d[]{vPZP, vPPP, vZPP, vNPP, vNZP, vNNP, vZNP, vPNP};
+		neighbors = new Vector3D[]{vPZP, vPPP, vZPP, vNPP, vNZP, vNNP, vZNP, vPNP};
 		weights[2] = GeometryUtils.sphericalVoronoiDomainArea(vZZP, neighbors) / (2 * Math.PI);
 
 		// Spherical cap type 2, direction [1 1 0]
-		neighbors = new Vector3d[]{vPZZ, vPPP, vZPZ, vPPN};
+		neighbors = new Vector3D[]{vPZZ, vPPP, vZPZ, vPPN};
 		weights[3] = GeometryUtils.sphericalVoronoiDomainArea(vPPZ, neighbors) / (2 * Math.PI);
 
 		// Spherical cap type 2, direction [1 0 1]
-		neighbors = new Vector3d[]{vPZZ, vPPP, vZZP, vPNP};
+		neighbors = new Vector3D[]{vPZZ, vPPP, vZZP, vPNP};
 		weights[4] = GeometryUtils.sphericalVoronoiDomainArea(vPZP, neighbors) / (2 * Math.PI);
 
 		// Spherical cap type 2, direction [0 1 1]
-		neighbors = new Vector3d[]{vZPZ, vNPP, vZZP, vPPP};
+		neighbors = new Vector3D[]{vZPZ, vNPP, vZZP, vPPP};
 		weights[5] = GeometryUtils.sphericalVoronoiDomainArea(vZPP, neighbors) / (2 * Math.PI);
 
 		// Spherical cap type 2, direction [1 0 1]
-		neighbors = new Vector3d[]{vPZP, vZZP, vZPP, vZPZ, vPPZ, vPZZ};
+		neighbors = new Vector3D[]{vPZP, vZZP, vZPP, vZPZ, vPPZ, vPZZ};
 		weights[6] = GeometryUtils.sphericalVoronoiDomainArea(vPPP, neighbors) / (2 * Math.PI);
 		
 		return weights;

@@ -32,7 +32,6 @@ import org.junit.runners.Suite;
 	GeometricMeasures2DTest.class,
 	GeometricMeasures3DTest.class,
 	GeometryUtilsTest.class,
-	Vector3dTest.class,
 	ResultsBuilderTest.class,
 	})
 public class AllTests {

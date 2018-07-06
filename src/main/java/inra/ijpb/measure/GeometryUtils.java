@@ -21,6 +21,8 @@
  */
 package inra.ijpb.measure;
 
+import inra.ijpb.geometry.Vector3D;
+
 /**
  * Some utilities for geometric computations.
  * 
@@ -36,7 +38,7 @@ public class GeometryUtils
 	{
 	}
 
-	public static final double sphericalVoronoiDomainArea(Vector3d germ, Vector3d[] neighbors)
+	public static final double sphericalVoronoiDomainArea(Vector3D germ, Vector3D[] neighbors)
 	{
 		// ensure unit vector 
 		germ = germ.normalize();
@@ -45,7 +47,7 @@ public class GeometryUtils
 		
 		// For each neighbor, compute normal vector of the median plane between
 		// neighbor and germ. Normal is oriented towards germ.
-		Vector3d[] planeNormals = new Vector3d[nNeighbors];
+		Vector3D[] planeNormals = new Vector3D[nNeighbors];
 		for (int i = 0; i < nNeighbors; i++)
 		{
 			planeNormals[i] = neighbors[i].normalize().minus(germ).normalize();
@@ -53,12 +55,12 @@ public class GeometryUtils
 		
 		// Compute intersection line of each couple of median planes.
 		// keep only the direction of the line.
-		Vector3d[] lineDirections = new Vector3d[nNeighbors];
+		Vector3D[] lineDirections = new Vector3D[nNeighbors];
 		for (int i = 0; i < nNeighbors; i++)
 		{
-			Vector3d v1 = planeNormals[i];
-			Vector3d v2 = planeNormals[(i + 1) % nNeighbors];
-			lineDirections[i] = Vector3d.crossProduct(v1, v2);
+			Vector3D v1 = planeNormals[i];
+			Vector3D v2 = planeNormals[(i + 1) % nNeighbors];
+			lineDirections[i] = Vector3D.crossProduct(v1, v2);
 		}
 		
 		// Compute spherical angle at each vertex of the spherical polygon
@@ -66,9 +68,9 @@ public class GeometryUtils
 		double[] angles = new double[nNeighbors];
 		for (int i = 0; i < nNeighbors; i++)
 		{
-			Vector3d v1 = lineDirections[i];
-			Vector3d v2 = lineDirections[(i + 1) % nNeighbors];
-			Vector3d v3 = lineDirections[(i + 2) % nNeighbors];
+			Vector3D v1 = lineDirections[i];
+			Vector3D v2 = lineDirections[(i + 1) % nNeighbors];
+			Vector3D v3 = lineDirections[(i + 2) % nNeighbors];
 			angles[i] = sphericalAngle(v1, v2, v3);
 			
 			// ensure angle is comprised between 0 and PI
@@ -90,18 +92,18 @@ public class GeometryUtils
 		return area;
 	}
 	
-	public static final double sphericalAngle(Vector3d v1, Vector3d v2, Vector3d v3)
+	public static final double sphericalAngle(Vector3D v1, Vector3D v2, Vector3D v3)
 	{
 		// compute normal vectors of planes containing couple of vectors
-		Vector3d normal12 = Vector3d.crossProduct(v1, v2); 
-		Vector3d normal23 = Vector3d.crossProduct(v2, v3);
+		Vector3D normal12 = Vector3D.crossProduct(v1, v2); 
+		Vector3D normal23 = Vector3D.crossProduct(v2, v3);
 
 		// project vector differences onto the plane normal to the vector v2
-		Vector3d v21o = Vector3d.crossProduct(v2, normal12);
-		Vector3d v23o = Vector3d.crossProduct(normal23, v2);
+		Vector3D v21o = Vector3D.crossProduct(v2, normal12);
+		Vector3D v23o = Vector3D.crossProduct(normal23, v2);
 		
 		// compute angle between the two vectors, between 0 and PI
-		double theta = Vector3d.angle(v21o,  v23o);
+		double theta = Vector3D.angle(v21o,  v23o);
 		
 		return theta;
 	}
