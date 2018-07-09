@@ -42,8 +42,6 @@ import inra.ijpb.data.image.Images3D;
  */
 public class DistanceTransform3D4WeightsShort extends AlgoStub implements DistanceTransform3D 
 {
-	private final static int DEFAULT_MASK_LABEL = 255;
-
 	private short[] weights;
 
 	/**
@@ -58,8 +56,6 @@ public class DistanceTransform3D4WeightsShort extends AlgoStub implements Distan
 	private int sizeZ;
 
 	private byte[][] maskSlices;
-
-	int maskLabel = DEFAULT_MASK_LABEL;
 
 	/**
 	 * The result image that will store the distance map. The content
@@ -249,7 +245,7 @@ public class DistanceTransform3D4WeightsShort extends AlgoStub implements Distan
 					int index = sizeX * y + x;
 
 					// check if we need to update current voxel
-					if ((maskSlice[index] & 0x00FF) != maskLabel)
+					if ((maskSlice[index] & 0x00FF) == 0)
 						continue;
 					
 					int value = currentSlice[index];
@@ -332,7 +328,7 @@ public class DistanceTransform3D4WeightsShort extends AlgoStub implements Distan
 					int index = sizeX * y + x;
 
 					// check if we need to update current voxel
-					if ((maskSlice[index] & 0x00FF) != maskLabel)
+					if ((maskSlice[index] & 0x00FF) == 0)
 						continue;
 					
 					int value = currentSlice[index];

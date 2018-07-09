@@ -134,9 +134,9 @@ public class DistanceTransform3x3Float extends AlgoStub implements
 		
 		// Two iterations are enough to compute distance map to boundary
 		this.fireStatusChanged(new AlgoEvent(this, "Forward Scan"));
-		forwardIteration(distMap, labelImage);
+		forwardScan(distMap, labelImage);
 		this.fireStatusChanged(new AlgoEvent(this, "Backward Scan"));
-		backwardIteration(distMap, labelImage);
+		backwardScan(distMap, labelImage);
 
 		// Normalize values by the first weight
 		if (this.normalizeMap)
@@ -167,6 +167,10 @@ public class DistanceTransform3x3Float extends AlgoStub implements
 		return distMap;
 	}
 
+	
+	// ==================================================
+	// Inner computation methods 
+	
 	private FloatProcessor initializeResult(ImageProcessor labelImage)
 	{
 		// size of image
@@ -191,7 +195,7 @@ public class DistanceTransform3x3Float extends AlgoStub implements
 		return distMap;
 	}
 	
-	private void forwardIteration(FloatProcessor distMap, ImageProcessor labelImage) 
+	private void forwardScan(FloatProcessor distMap, ImageProcessor labelImage) 
 	{
 		// Initialize pairs of offset and weights
 		int[] dx = new int[]{-1, 0, +1, -1};
@@ -254,7 +258,7 @@ public class DistanceTransform3x3Float extends AlgoStub implements
 		this.fireProgressChanged(this, sizeY, sizeY);
 	}
 
-	private void backwardIteration(FloatProcessor distMap, ImageProcessor labelImage) 
+	private void backwardScan(FloatProcessor distMap, ImageProcessor labelImage) 
 	{
 		// Initialize pairs of offset and weights
 		int[] dx = new int[]{+1, 0, -1, +1};

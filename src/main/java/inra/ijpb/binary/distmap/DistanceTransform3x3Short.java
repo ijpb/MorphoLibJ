@@ -134,9 +134,9 @@ public class DistanceTransform3x3Short extends AlgoStub implements DistanceTrans
 		
 		// Two iterations are enough to compute distance map to boundary
 		this.fireStatusChanged(new AlgoEvent(this, "Forward Scan"));
-		forwardIteration(distMap, labelImage);
+		forwardScan(distMap, labelImage);
 		this.fireStatusChanged(new AlgoEvent(this, "Backward Scan"));
-		backwardIteration(distMap, labelImage);
+		backwardScan(distMap, labelImage);
 
 		// Normalize values by the first weight
 		if (this.normalizeMap)
@@ -167,6 +167,10 @@ public class DistanceTransform3x3Short extends AlgoStub implements DistanceTrans
 		return distMap;
 	}
 
+	
+	// ==================================================
+	// Inner computation methods 
+	
 	private ShortProcessor initializeResult(ImageProcessor labelImage)
 	{
 		// size of image
@@ -191,7 +195,7 @@ public class DistanceTransform3x3Short extends AlgoStub implements DistanceTrans
 		return distMap;
 	}
 
-	private void forwardIteration(ShortProcessor distMap, ImageProcessor labelImage) 
+	private void forwardScan(ShortProcessor distMap, ImageProcessor labelImage) 
 	{
 		int[] dx = new int[]{-1, 0, +1, -1};
 		int[] dy = new int[]{-1, -1, -1, 0};
@@ -253,7 +257,7 @@ public class DistanceTransform3x3Short extends AlgoStub implements DistanceTrans
 		this.fireProgressChanged(this, sizeY, sizeY);
 	}
 
-	private void backwardIteration(ShortProcessor distMap, ImageProcessor labelImage) 
+	private void backwardScan(ShortProcessor distMap, ImageProcessor labelImage) 
 	{
 		int[] dx = new int[]{+1, 0, -1, +1};
 		int[] dy = new int[]{+1, +1, +1, 0};
