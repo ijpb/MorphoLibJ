@@ -39,6 +39,12 @@ import inra.ijpb.data.image.Images3D;
  */
 public class DistanceTransform3D4WeightsFloat extends AlgoStub implements DistanceTransform3D 
 {
+	// ==================================================
+	// Class variables
+
+	/**
+	 * The chamfer weights used to propagate distances to neighbor voxels.
+	 */
 	private float[] weights;
 
 	/**
@@ -61,6 +67,9 @@ public class DistanceTransform3D4WeightsFloat extends AlgoStub implements Distan
 	 */
 	private float[][] resultSlices;
 	
+
+	// ==================================================
+	// Constructors 
 	
 	/**
 	 * Default constructor that specifies the chamfer weights.
@@ -111,6 +120,10 @@ public class DistanceTransform3D4WeightsFloat extends AlgoStub implements Distan
 		this.normalizeMap = normalize;
 	}
 
+	
+	// ==================================================
+	// Implementation of DistanceTransform3D interface 
+	
 	/**
 	 * Computes the distance map from a 3D binary image. Distance is computed
 	 * for each foreground (white) pixel, as the chamfer distance to the nearest
@@ -139,7 +152,35 @@ public class DistanceTransform3D4WeightsFloat extends AlgoStub implements Distan
 		this.resultSlices = Images3D.getFloatArrays(buffer);
 
 		// initialize empty image with either 0 (background) or max value (foreground)
+		initializeResultSlices(); 
+		
+		// Two iterations are enough to compute distance map to boundary
+		forwardScan();
+		backwardScan();
+
+		// Normalize values by the first weight
+		if (this.normalizeMap) 
+		{
+			normalizeResultSlices(); 
+		}
+				
+		fireStatusChanged(this, "");
+		return buffer;
+	}
+	
+	
+	// ==================================================
+	// Inner computation methods 
+	
+	/**
+	 * Fill result image with zero for background voxels, and Float.MAX for
+	 * foreground voxels.
+	 */
+	private void initializeResultSlices()
+	{
 		fireStatusChanged(this, "Initialization..."); 
+
+		// iterate over slices
 		for (int z = 0; z < sizeZ; z++) 
 		{
 			byte[] maskSlice = this.maskSlices[z];
@@ -156,38 +197,6 @@ public class DistanceTransform3D4WeightsFloat extends AlgoStub implements Distan
 			}
 		}
 		fireProgressChanged(this, 1, 1); 
-		
-		// Two iterations are enough to compute distance map to boundary
-		forwardScan();
-		backwardScan();
-
-		// Normalize values by the first weight
-		if (this.normalizeMap) 
-		{
-			fireStatusChanged(this, "Normalize map..."); 
-			for (int z = 0; z < sizeZ; z++) 
-			{
-				fireProgressChanged(this, z, sizeZ); 
-
-				byte[] maskSlice = this.maskSlices[z];
-				float[] resultSlice = this.resultSlices[z];
-				
-				for (int y = 0; y < sizeY; y++) 
-				{
-					for (int x = 0; x < sizeX; x++) 
-					{
-						int index = sizeX * y + x;
-						if (maskSlice[index] != 0)
-						{
-							resultSlice[index] = resultSlice[index] / weights[0];
-						}
-					}
-				}
-			}
-			fireProgressChanged(this, 1, 1); 
-		}
-				
-		return buffer;
 	}
 	
 	private void forwardScan() 
@@ -356,6 +365,31 @@ public class DistanceTransform3D4WeightsFloat extends AlgoStub implements Distan
 		fireProgressChanged(this, 1, 1); 
 	}
 	
+	private void normalizeResultSlices()
+	{
+		fireStatusChanged(this, "Normalize map..."); 
+		for (int z = 0; z < sizeZ; z++) 
+		{
+			fireProgressChanged(this, z, sizeZ); 
+
+			byte[] maskSlice = this.maskSlices[z];
+			float[] resultSlice = this.resultSlices[z];
+			
+			for (int y = 0; y < sizeY; y++) 
+			{
+				for (int x = 0; x < sizeX; x++) 
+				{
+					int index = sizeX * y + x;
+					if (maskSlice[index] != 0)
+					{
+						resultSlice[index] = resultSlice[index] / weights[0];
+					}
+				}
+			}
+		}
+		fireProgressChanged(this, 1, 1); 
+	}
+
 	private class WeightedOffset
 	{
 		int dx;

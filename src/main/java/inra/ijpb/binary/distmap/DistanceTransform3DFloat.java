@@ -22,6 +22,7 @@
 package inra.ijpb.binary.distmap;
 
 import static java.lang.Math.min;
+
 import ij.ImageStack;
 import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.binary.ChamferWeights3D;
@@ -36,6 +37,12 @@ import inra.ijpb.data.image.Images3D;
  */
 public class DistanceTransform3DFloat extends AlgoStub implements DistanceTransform3D 
 {
+	// ==================================================
+	// Class variables
+
+	/**
+	 * The chamfer weights used to propagate distances to neighbor voxels.
+	 */
 	private float[] weights;
 
 	/**
@@ -58,6 +65,9 @@ public class DistanceTransform3DFloat extends AlgoStub implements DistanceTransf
 	 */
 	private float[][] resultSlices;
 	
+
+	// ==================================================
+	// Constructors 
 	
 	/**
 	 * Default constructor that specifies the chamfer weights.
@@ -112,6 +122,10 @@ public class DistanceTransform3DFloat extends AlgoStub implements DistanceTransf
 		this.normalizeMap = normalize;
 	}
 
+	
+	// ==================================================
+	// Implementation of DistanceTransform3D interface 
+	
 	/**
 	 * Computes the distance map from a 3D binary image. Distance is computed
 	 * for each foreground (white) pixel, as the chamfer distance to the nearest
@@ -135,12 +149,40 @@ public class DistanceTransform3DFloat extends AlgoStub implements DistanceTransf
 		// store wrapper to mask image
 		this.maskSlices = Images3D.getByteArrays(image);
 
-		// create new empty image, and fill it with black
+		// create new empty image
 		ImageStack buffer = ImageStack.create(sizeX, sizeY, sizeZ, 32);
 		this.resultSlices = Images3D.getFloatArrays(buffer);
 
-		// initialize empty image with either 0 (background) or max value (foreground)
+		// initialize values of result image slices with max values
+		initializeResultSlices();
+		
+		// Two iterations are enough to compute distance map to boundary
+		forwardScan();
+		backwardScan();
+
+		// Normalize values by the first weight
+		if (this.normalizeMap) 
+		{
+			normalizeResultSlices(); 
+		}
+				
+		fireStatusChanged(this, "");
+		return buffer;
+	}
+	
+	
+	// ==================================================
+	// Inner computation methods 
+	
+	/**
+	 * Fill result image with zero for background voxels, and Float.MAX for
+	 * foreground voxels.
+	 */
+	private void initializeResultSlices()
+	{
 		fireStatusChanged(this, "Initialization..."); 
+
+		// iterate over slices
 		for (int z = 0; z < sizeZ; z++) 
 		{
 			byte[] maskSlice = this.maskSlices[z];
@@ -157,38 +199,6 @@ public class DistanceTransform3DFloat extends AlgoStub implements DistanceTransf
 			}
 		}
 		fireProgressChanged(this, 1, 1); 
-		
-		// Two iterations are enough to compute distance map to boundary
-		forwardScan();
-		backwardScan();
-
-		// Normalize values by the first weight
-		if (this.normalizeMap) 
-		{
-			fireStatusChanged(this, "Normalize map..."); 
-			for (int z = 0; z < sizeZ; z++) 
-			{
-				fireProgressChanged(this, z, sizeZ); 
-
-				byte[] maskSlice = this.maskSlices[z];
-				float[] resultSlice = this.resultSlices[z];
-				
-				for (int y = 0; y < sizeY; y++) 
-				{
-					for (int x = 0; x < sizeX; x++) 
-					{
-						int index = sizeX * y + x;
-						if (maskSlice[index] != 0)
-						{
-							resultSlice[index] = resultSlice[index] / weights[0];
-						}
-					}
-				}
-			}
-			fireProgressChanged(this, 1, 1); 
-		}
-				
-		return buffer;
 	}
 	
 	private void forwardScan() 
@@ -418,5 +428,30 @@ public class DistanceTransform3DFloat extends AlgoStub implements DistanceTransf
 		{
 			resultSlices[k][index] = (float) newVal;
 		}
+	}
+	
+	private void normalizeResultSlices()
+	{
+		fireStatusChanged(this, "Normalize map..."); 
+		for (int z = 0; z < sizeZ; z++) 
+		{
+			fireProgressChanged(this, z, sizeZ); 
+
+			byte[] maskSlice = this.maskSlices[z];
+			float[] resultSlice = this.resultSlices[z];
+			
+			for (int y = 0; y < sizeY; y++) 
+			{
+				for (int x = 0; x < sizeX; x++) 
+				{
+					int index = sizeX * y + x;
+					if (maskSlice[index] != 0)
+					{
+						resultSlice[index] = resultSlice[index] / weights[0];
+					}
+				}
+			}
+		}
+		fireProgressChanged(this, 1, 1); 
 	}
 }

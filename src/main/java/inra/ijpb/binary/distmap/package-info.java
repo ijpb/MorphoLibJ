@@ -29,12 +29,12 @@
  * <p>
  * Example of use:
  * <pre><code>
- *	short[] shortWeights = ChamferWeights.CHESSKNIGHT.getShortWeights();
+ *	ChamferWeights weights = ChamferWeights.CHESSKNIGHT;
  *	boolean normalize = true;
- *	DistanceTransform dt = new DistanceTransform5x5Short(shortWeights, normalize);
+ *	DistanceTransform dt = new DistanceTransform5x5Short(weights, normalize);
  *	ImageProcessor result = dt.distanceMap(inputImage);
  *	// or:
- *	ImagePlus resultPlus = BinaryImages.distanceMap(imagePlus, shortWeights, normalize);
+ *	ImagePlus resultPlus = BinaryImages.distanceMap(imagePlus, weights.getShortWeights(), normalize);
  * </code></pre>
  * 
  * @see inra.ijpb.binary.BinaryImages#distanceMap(ImageProcessor, short[], boolean)

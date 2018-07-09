@@ -63,7 +63,7 @@ public class DistanceTransform5x5Float extends AlgoStub implements DistanceTrans
 	// Class variables
 	
 	/**
-	 * The chamfer weights to propagate to neighbor pixels.
+	 * The chamfer weights used to propagate distances to neighbor pixels.
 	 */
 	private float[] weights;
 
@@ -163,36 +163,17 @@ public class DistanceTransform5x5Float extends AlgoStub implements DistanceTrans
 	 */
 	public FloatProcessor distanceMap(ImageProcessor labelImage) 
 	{
-		//  size of image
-		int sizeX = labelImage.getWidth();
-		int sizeY = labelImage.getHeight();
-
-		this.fireStatusChanged(new AlgoEvent(this, "Initialization"));
 		FloatProcessor distMap = initializeResult(labelImage);
 		
 		// Two iterations are enough to compute distance map to boundary
-		this.fireStatusChanged(new AlgoEvent(this, "Forward Scan"));
 		forwardScan(distMap, labelImage);
-		this.fireStatusChanged(new AlgoEvent(this, "Backward Scan"));
 		backwardScan(distMap, labelImage);
 
 		// Normalize values by the first weight
 		if (this.normalizeMap)
 		{
-			this.fireStatusChanged(new AlgoEvent(this, "Normalization"));
-			for (int y = 0; y < sizeY; y++)
-			{
-				for (int x = 0; x < sizeX; x++)
-				{
-					if (labelImage.getPixel(x, y) != 0)
-					{
-						distMap.setf(x, y, distMap.getf(x, y) / weights[0]);
-					}
-				}
-			}
+			normalizeResult(distMap, labelImage);
 		}
-
-		this.fireStatusChanged(new AlgoEvent(this, ""));
 
 		// Compute max value within the mask for setting min/max of ImageProcessor
 		double maxVal = LabelValues.maxValueWithinLabels(distMap, labelImage);
@@ -201,6 +182,8 @@ public class DistanceTransform5x5Float extends AlgoStub implements DistanceTrans
 		// Forces the display to non-inverted LUT
 		if (distMap.isInvertedLut())
 			distMap.invertLut();
+
+		this.fireStatusChanged(new AlgoEvent(this, ""));
 
 		return distMap;
 	}
@@ -211,6 +194,8 @@ public class DistanceTransform5x5Float extends AlgoStub implements DistanceTrans
 	
 	private FloatProcessor initializeResult(ImageProcessor labelImage)
 	{
+		this.fireStatusChanged(new AlgoEvent(this, "Initialization"));
+
 		// size of image
 		int sizeX = labelImage.getWidth();
 		int sizeY = labelImage.getHeight();
@@ -236,6 +221,8 @@ public class DistanceTransform5x5Float extends AlgoStub implements DistanceTrans
 
 	private void forwardScan(FloatProcessor distMap, ImageProcessor labelImage) 
 	{
+		this.fireStatusChanged(new AlgoEvent(this, "Forward Scan"));
+		
 		// Initialize pairs of offset and weights
 		int[] dx = new int[]{-1, +1,  -2, -1,  0, +1, +2,  -1};
 		int[] dy = new int[]{-2, -2,  -1, -1, -1, -1, -1,   0};
@@ -303,6 +290,8 @@ public class DistanceTransform5x5Float extends AlgoStub implements DistanceTrans
 
 	private void backwardScan(FloatProcessor distMap, ImageProcessor labelImage) 
 	{
+		this.fireStatusChanged(new AlgoEvent(this, "Backward Scan"));
+		
 		int[] dx = new int[]{+1, -1,  +2, +1,  0, -1, -2,  +1};
 		int[] dy = new int[]{+2, +2,  +1, +1, +1, +1, +1,   0};
 		
@@ -365,5 +354,28 @@ public class DistanceTransform5x5Float extends AlgoStub implements DistanceTrans
 		}
 		
 		this.fireProgressChanged(this, sizeY, sizeY);
+	}
+	
+	private void normalizeResult(FloatProcessor distMap, ImageProcessor labelImage)
+	{
+		this.fireStatusChanged(new AlgoEvent(this, "Normalization"));
+		
+		// size of image
+		int sizeX = labelImage.getWidth();
+		int sizeY = labelImage.getHeight();
+
+		// normalization weight
+		float w0 = weights[0];
+		
+		for (int y = 0; y < sizeY; y++)
+		{
+			for (int x = 0; x < sizeX; x++)
+			{
+				if ((int) labelImage.getf(x, y) > 0)
+				{
+					distMap.setf(x, y, distMap.getf(x, y) / w0);
+				}
+			}
+		}
 	}
 }

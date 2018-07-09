@@ -28,17 +28,23 @@ import inra.ijpb.binary.ChamferWeights3D;
 import inra.ijpb.data.image.Images3D;
 
 /**
- * Computes Chamfer distances in a 3x3x3 neighborhood using short point 
- * calculation.
+ * Computes Chamfer distances in a 3x3x3 neighborhood and storing result in
+ * 16-bits image.
  * 
- * In practice, computations are done with floats, but result is stored in a
- * 3D short image, thus requiring less memory than floating point. 
+ * In practice, computations are done with integers, but result is stored in a
+ * 3D short image, thus requiring less memory than floating point.
  * 
  * @author David Legland
  * 
  */
 public class DistanceTransform3DShort extends AlgoStub implements DistanceTransform3D 
 {
+	// ==================================================
+	// Class variables
+
+	/**
+	 * The chamfer weights used to propagate distances to neighbor voxels.
+	 */
 	private short[] weights;
 
 	/**
@@ -59,6 +65,10 @@ public class DistanceTransform3DShort extends AlgoStub implements DistanceTransf
 	 * of the buffer is updated during forward and backward iterations.
 	 */
 	private short[][] resultSlices;
+	
+
+	// ==================================================
+	// Constructors 
 	
 	/**
 	 * Default constructor that specifies the chamfer weights.
@@ -105,6 +115,10 @@ public class DistanceTransform3DShort extends AlgoStub implements DistanceTransf
 		this.normalizeMap = normalize;
 	}
 
+	
+	// ==================================================
+	// Implementation of DistanceTransform3D interface 
+	
 	/**
 	 * Computes the distance map from a 3D binary image. 
 	 * Distance is computed for each foreground (white) pixel, as the 
@@ -130,8 +144,36 @@ public class DistanceTransform3DShort extends AlgoStub implements DistanceTransf
 		ImageStack buffer = ImageStack.create(sizeX, sizeY, sizeZ, 16);
 		this.resultSlices = Images3D.getShortArrays(buffer);
 
-		// initialize empty image with either 0 (background) or Inf (foreground)
+		// initialize empty image with either 0 (background) or max value (foreground)
+		initializeResultSlices();
+		
+		// Two iterations are enough to compute distance map to boundary
+		forwardScan();
+		backwardScan();
+
+		// Normalize values by the first weight
+		if (this.normalizeMap) 
+		{
+			normalizeResultSlices();
+		}
+				
+		fireStatusChanged(this, "");
+		return buffer;
+	}
+	
+	
+	// ==================================================
+	// Inner computation methods 
+	
+	/**
+	 * Fill result image with zero for background voxels, and Short.MAX for
+	 * foreground voxels.
+	 */
+	private void initializeResultSlices()
+	{
 		fireStatusChanged(this, "Initialization..."); 
+
+		// iterate over slices
 		for (int z = 0; z < sizeZ; z++) 
 		{
 			fireProgressChanged(this, z, sizeZ);
@@ -150,38 +192,6 @@ public class DistanceTransform3DShort extends AlgoStub implements DistanceTransf
 			}
 		}
 		fireProgressChanged(this, 1, 1); 
-		
-		// Two iterations are enough to compute distance map to boundary
-		forwardScan();
-		backwardScan();
-
-		// Normalize values by the first weight
-		if (this.normalizeMap) 
-		{
-			fireStatusChanged(this, "Normalize map..."); 
-			for (int z = 0; z < sizeZ; z++) 
-			{
-				fireProgressChanged(this, z, sizeZ);
-				
-				byte[] maskSlice = this.maskSlices[z];
-				short[] resultSlice = this.resultSlices[z];
-
-				for (int y = 0; y < sizeY; y++) 
-				{
-					for (int x = 0; x < sizeX; x++) 
-					{
-						int index = sizeX * y + x;
-						if (maskSlice[index] != 0)
-						{
-							resultSlice[index] = (short) ((resultSlice[index] & 0x00FFFF) / weights[0]);
-						}
-					}
-				}
-			}
-			fireProgressChanged(this, 1, 1); 
-		}
-				
-		return buffer;
 	}
 	
 	private void forwardScan() 
@@ -411,5 +421,30 @@ public class DistanceTransform3DShort extends AlgoStub implements DistanceTransf
 		{
 			resultSlices[k][index] = (short) newVal;
 		}
+	}
+
+	private void normalizeResultSlices()
+	{
+		fireStatusChanged(this, "Normalize map..."); 
+		for (int z = 0; z < sizeZ; z++) 
+		{
+			fireProgressChanged(this, z, sizeZ);
+			
+			byte[] maskSlice = this.maskSlices[z];
+			short[] resultSlice = this.resultSlices[z];
+
+			for (int y = 0; y < sizeY; y++) 
+			{
+				for (int x = 0; x < sizeX; x++) 
+				{
+					int index = sizeX * y + x;
+					if (maskSlice[index] != 0)
+					{
+						resultSlice[index] = (short) ((resultSlice[index] & 0x00FFFF) / weights[0]);
+					}
+				}
+			}
+		}
+		fireProgressChanged(this, 1, 1); 
 	}
 }
