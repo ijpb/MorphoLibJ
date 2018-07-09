@@ -27,7 +27,7 @@ import inra.ijpb.binary.ChamferWeights3D;
 
 import org.junit.Test;
 
-public class DistanceTransform3DFloatTest
+public class DistanceTransform3D4WeightsFloatTest
 {
 	@Test
 	public void testDistanceMap()
@@ -45,17 +45,12 @@ public class DistanceTransform3DFloatTest
 			}
 		}
 
-		float[] weights = ChamferWeights3D.BORGEFORS.getFloatWeights();
-		DistanceTransform3D algo = new DistanceTransform3DFloat(weights, true);
+		float[] weights = ChamferWeights3D.WEIGHTS_3_4_5_7.getFloatWeights();
+		DistanceTransform3D algo = new DistanceTransform3D4WeightsFloat(weights, true);
 		
 		ImageStack result = algo.distanceMap(image);
 		assertEquals(32, result.getBitDepth());
 		
-//		System.out.println("result:");
-//		for (int x = 0; x < 100; x++)
-//		{
-//			System.out.print(((int)result.getVoxel(x, 50, 50)) + " ");
-//		}
 		double middle = result.getVoxel(10, 10, 10);
 		assertEquals(9, middle, .1);
 	}
@@ -77,8 +72,8 @@ public class DistanceTransform3DFloatTest
 		}
 		image.setVoxel(10, 10, 10, 0);
 
-		float[] weights = ChamferWeights3D.BORGEFORS.getFloatWeights();
-		DistanceTransform3D algo = new DistanceTransform3DFloat(weights, true);
+		float[] weights = ChamferWeights3D.WEIGHTS_3_4_5_7.getFloatWeights();
+		DistanceTransform3D algo = new DistanceTransform3D4WeightsFloat(weights, true);
 		
 		ImageStack result = algo.distanceMap(image);
 		assertEquals(32, result.getBitDepth());
@@ -100,61 +95,5 @@ public class DistanceTransform3DFloatTest
 		assertEquals(exp, result.getVoxel( 0, 20, 20), .01);
 		assertEquals(exp, result.getVoxel(20, 20, 20), .01);
 	}
-
-//	/**
-//	 * Test propagation of distance maps within touching labels
-//	 */
-//	@Test
-//	public void testDistanceMap_Labels()
-//	{
-//		// create 3D image containing a cube 
-//		ImageStack image = ImageStack.create(11, 11, 11, 8);
-//		for (int z = 0; z < 3; z++)
-//		{
-//			for (int y = 0; y < 3; y++)
-//			{
-//				for (int x = 0; x < 3; x++)
-//				{
-//					image.setVoxel(x+1, y+1, z+1, 1);
-//					image.setVoxel(x+4, y+1, z+1, 2);
-//					image.setVoxel(x+1, y+4, z+1, 3);
-//					image.setVoxel(x+4, y+4, z+1, 4);
-//					image.setVoxel(x+1, y+1, z+4, 5);
-//					image.setVoxel(x+4, y+1, z+4, 6);
-//					image.setVoxel(x+1, y+4, z+4, 7);
-//					image.setVoxel(x+4, y+4, z+4, 8);
-//				}
-//			}
-//		}
-//
-//		ChamferWeights3D weights = ChamferWeights3D.BORGEFORS;
-//		DistanceTransform3D algo = new DistanceTransform3DFloat(weights, true);
-//		
-//		ImageStack result = algo.distanceMap(image);
-//		assertEquals(32, result.getBitDepth());
-//		
-////		System.out.println("result:");
-////		for (int x = 0; x < 100; x++)
-////		{
-////			System.out.print(((int)result.getVoxel(x, 50, 50)) + " ");
-////		}
-//		assertEquals(2, result.getVoxel(2, 2, 2), .1);
-//		assertEquals(2, result.getVoxel(5, 2, 2), .1);
-//		assertEquals(2, result.getVoxel(2, 5, 2), .1);
-//		assertEquals(2, result.getVoxel(5, 5, 2), .1);
-//		assertEquals(2, result.getVoxel(2, 2, 5), .1);
-//		assertEquals(2, result.getVoxel(5, 2, 5), .1);
-//		assertEquals(2, result.getVoxel(2, 5, 5), .1);
-//		assertEquals(2, result.getVoxel(5, 5, 5), .1);
-//		
-//		assertEquals(1, result.getVoxel(3, 3, 3), .1);
-//		assertEquals(1, result.getVoxel(4, 3, 3), .1);
-//		assertEquals(1, result.getVoxel(3, 4, 3), .1);
-//		assertEquals(1, result.getVoxel(4, 4, 3), .1);
-//		assertEquals(1, result.getVoxel(3, 3, 4), .1);
-//		assertEquals(1, result.getVoxel(4, 3, 4), .1);
-//		assertEquals(1, result.getVoxel(3, 4, 4), .1);
-//		assertEquals(1, result.getVoxel(4, 4, 4), .1);
-//	}
 
 }

@@ -24,6 +24,7 @@ package inra.ijpb.binary.distmap;
 import static java.lang.Math.min;
 import ij.ImageStack;
 import inra.ijpb.algo.AlgoStub;
+import inra.ijpb.binary.ChamferWeights3D;
 import inra.ijpb.data.image.Images3D;
 
 /**
@@ -38,8 +39,6 @@ import inra.ijpb.data.image.Images3D;
  */
 public class DistanceTransform3DShort extends AlgoStub implements DistanceTransform3D 
 {
-	private final static int DEFAULT_MASK_LABEL = 255;
-
 	private short[] weights;
 
 	/**
@@ -55,8 +54,6 @@ public class DistanceTransform3DShort extends AlgoStub implements DistanceTransf
 
 	private byte[][] maskSlices;
 
-	int maskLabel = DEFAULT_MASK_LABEL;
-
 	/**
 	 * The result image that will store the distance map. The content
 	 * of the buffer is updated during forward and backward iterations.
@@ -67,11 +64,33 @@ public class DistanceTransform3DShort extends AlgoStub implements DistanceTransf
 	 * Default constructor that specifies the chamfer weights.
 	 * @param weights an array of two weights for orthogonal and diagonal directions
 	 */
+	public DistanceTransform3DShort(ChamferWeights3D weights)
+	{
+		this(weights.getShortWeights());
+	}
+
+	/**
+	 * Default constructor that specifies the chamfer weights.
+	 * @param weights an array of two weights for orthogonal and diagonal directions
+	 */
 	public DistanceTransform3DShort(short[] weights)
 	{
 		this.weights = weights;
 	}
 
+	/**
+	 * Constructor specifying the chamfer weights and the optional normalization.
+	 * @param weights
+	 *            an array of two weights for orthogonal and diagonal directions
+	 * @param normalize
+	 *            flag indicating whether the final distance map should be
+	 *            normalized by the first weight
+	 */
+	public DistanceTransform3DShort(ChamferWeights3D weights, boolean normalize)
+	{
+		this(weights.getShortWeights(), normalize);
+	}
+	
 	/**
 	 * Constructor specifying the chamfer weights and the optional normalization.
 	 * @param weights
@@ -133,8 +152,8 @@ public class DistanceTransform3DShort extends AlgoStub implements DistanceTransf
 		fireProgressChanged(this, 1, 1); 
 		
 		// Two iterations are enough to compute distance map to boundary
-		forwardIteration();
-		backwardIteration();
+		forwardScan();
+		backwardScan();
 
 		// Normalize values by the first weight
 		if (this.normalizeMap) 
@@ -165,7 +184,7 @@ public class DistanceTransform3DShort extends AlgoStub implements DistanceTransf
 		return buffer;
 	}
 	
-	private void forwardIteration() 
+	private void forwardScan() 
 	{
 		fireStatusChanged(this, "Forward scan..."); 
 		// iterate on image voxels
@@ -189,7 +208,7 @@ public class DistanceTransform3DShort extends AlgoStub implements DistanceTransf
 					int index = sizeX * y + x;
 
 					// check if we need to update current voxel
-					if ((maskSlice[index] & 0x00FF) != maskLabel)
+					if ((maskSlice[index] & 0x00FF) == 0)
 						continue;
 					
 					// init new values for current voxel
@@ -268,7 +287,7 @@ public class DistanceTransform3DShort extends AlgoStub implements DistanceTransf
 		fireProgressChanged(this, 1, 1); 
 	}
 
-	private void backwardIteration() 
+	private void backwardScan() 
 	{
 		fireStatusChanged(this, "Backward scan..."); 
 		// iterate on image voxels in backward order
@@ -292,7 +311,7 @@ public class DistanceTransform3DShort extends AlgoStub implements DistanceTransf
 					int index = sizeX * y + x;
 
 					// check if we need to update current voxel
-					if ((maskSlice[index] & 0x00FF) != maskLabel)
+					if ((maskSlice[index] & 0x00FF) == 0)
 						continue;
 					
 					// init new values for current voxel

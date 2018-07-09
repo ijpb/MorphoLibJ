@@ -27,6 +27,7 @@ import java.util.ArrayList;
 
 import ij.ImageStack;
 import inra.ijpb.algo.AlgoStub;
+import inra.ijpb.binary.ChamferWeights3D;
 import inra.ijpb.data.image.Images3D;
 
 /**
@@ -70,6 +71,15 @@ public class DistanceTransform3D4WeightsShort extends AlgoStub implements Distan
 	 * Default constructor that specifies the chamfer weights.
 	 * @param weights an array of two weights for orthogonal and diagonal directions
 	 */
+	public DistanceTransform3D4WeightsShort(ChamferWeights3D weights)
+	{
+		this(weights.getShortWeights());
+	}
+
+	/**
+	 * Default constructor that specifies the chamfer weights.
+	 * @param weights an array of two weights for orthogonal and diagonal directions
+	 */
 	public DistanceTransform3D4WeightsShort(short[] weights)
 	{
 		this.weights = weights;
@@ -77,6 +87,19 @@ public class DistanceTransform3D4WeightsShort extends AlgoStub implements Distan
 		{
 			throw new IllegalArgumentException("Weights array must have length equal to 4");
 		}
+	}
+
+	/**
+	 * Constructor specifying the chamfer weights and the optional normalization.
+	 * @param weights
+	 *            an array of two weights for orthogonal and diagonal directions
+	 * @param normalize
+	 *            flag indicating whether the final distance map should be
+	 *            normalized by the first weight
+	 */
+	public DistanceTransform3D4WeightsShort(ChamferWeights3D weights, boolean normalize)
+	{
+		this(weights.getShortWeights(), normalize);
 	}
 
 	/**
@@ -140,8 +163,8 @@ public class DistanceTransform3D4WeightsShort extends AlgoStub implements Distan
 		fireProgressChanged(this, 1, 1); 
 		
 		// Two iterations are enough to compute distance map to boundary
-		forwardIteration();
-		backwardIteration();
+		forwardScan();
+		backwardScan();
 
 		// Normalize values by the first weight
 		if (this.normalizeMap) 
@@ -172,7 +195,7 @@ public class DistanceTransform3D4WeightsShort extends AlgoStub implements Distan
 		return buffer;
 	}
 	
-	private void forwardIteration() 
+	private void forwardScan() 
 	{
 		fireStatusChanged(this, "Forward scan..."); 
 		
@@ -255,7 +278,7 @@ public class DistanceTransform3D4WeightsShort extends AlgoStub implements Distan
 		fireProgressChanged(this, 1, 1); 
 	}
 
-	private void backwardIteration() 
+	private void backwardScan() 
 	{
 		fireStatusChanged(this, "Backward scan..."); 
 		

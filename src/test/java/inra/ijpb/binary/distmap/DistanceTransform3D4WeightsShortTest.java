@@ -27,7 +27,7 @@ import inra.ijpb.binary.ChamferWeights3D;
 
 import org.junit.Test;
 
-public class DistanceTransform3DShortTest
+public class DistanceTransform3D4WeightsShortTest
 {
 
 	@Test
@@ -45,8 +45,8 @@ public class DistanceTransform3DShortTest
 				}
 			}
 		}
-		short[] weights = ChamferWeights3D.BORGEFORS.getShortWeights();
-		DistanceTransform3D algo = new DistanceTransform3DShort(weights, true);
+		ChamferWeights3D weights = ChamferWeights3D.WEIGHTS_3_4_5_7;
+		DistanceTransform3D algo = new DistanceTransform3D4WeightsShort(weights, true);
 		
 		ImageStack result = algo.distanceMap(image);
 		assertEquals(16, result.getBitDepth());
@@ -77,8 +77,8 @@ public class DistanceTransform3DShortTest
 		}
 		image.setVoxel(5, 5, 5, 0);
 
-		short[] weights = ChamferWeights3D.BORGEFORS.getShortWeights();
-		DistanceTransform3D algo = new DistanceTransform3DShort(weights, true);
+		ChamferWeights3D weights = ChamferWeights3D.WEIGHTS_3_4_5_7;
+		DistanceTransform3D algo = new DistanceTransform3D4WeightsShort(weights, true);
 		
 		ImageStack result = algo.distanceMap(image);
 		assertEquals(16, result.getBitDepth());
