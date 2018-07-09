@@ -65,6 +65,96 @@ public class Polygons2D
 	}
 	
 	/**
+	 * Uses the gift wrap algorithm with floating point values to find the
+	 * convex hull and returns it as a list of points.
+	 * 
+	 * Code from ij.gui.PolygonRoi.getConvexHull(), adapted to return a polygon
+	 * oriented counter-clockwise.
+	 * 
+	 * @param points
+	 *            a set of points coordinates in the 2D space
+	 * @return the convex hull of the points, as a list of ordered vertices
+	 */
+	public static final ArrayList<Point2D> convexHull_jarvis(
+			ArrayList<? extends Point2D> points)
+	{
+		// Get polygon info
+		int n = points.size();
+		double[] xCoordinates = new double[n];
+		double[] yCoordinates = new double[n];
+		
+		// index of left-most vertex of horizontal line with smallest y
+		int pStart = 0;
+		double ymin = java.lang.Double.MAX_VALUE;
+		double smallestX = java.lang.Double.MAX_VALUE;
+
+		// Iterate over vertices to 1) extract coordinates and 2) identify index
+		// of point with lowest y-coord.
+		for (int i = 0; i < n; i++)
+		{
+			Point2D vertex = points.get(i);
+			double x = vertex.getX();
+			double y = vertex.getY();
+			xCoordinates[i] = x;
+			yCoordinates[i] = y;
+
+			// update lowest vertex index
+			if (y < ymin)
+			{
+				ymin = y;
+				if (x < smallestX)
+				{
+					smallestX = x;
+					pStart = i;
+				}
+			}
+		}
+		
+		// convex hull coordinates
+		ArrayList<Point2D> hull = new ArrayList<Point2D>();
+		
+		// p1: index of current hull vertex
+		// p2: index of current candidate for next hull vertex
+		// p3: index of iterator on point set
+		
+		int p1 = pStart;
+		do
+		{
+			// coordinates of current convex hull vertex
+			double x1 = xCoordinates[p1];
+			double y1 = yCoordinates[p1];
+			
+			// coordinates of next vertex candidate
+			int p2 = (p1 + 1) % n;
+			double x2 = xCoordinates[p2];
+			double y2 = yCoordinates[p2];
+	
+			// find the next "wrapping" vertex by computing oriented angle
+			int p3 = (p2 + 1) % n;
+			do
+			{
+				double x3 = xCoordinates[p3];
+				double y3 = yCoordinates[p3];
+				
+				// if V1-V2-V3 is oriented CW, use V3 as next wrapping candidate
+				double det = x1 * (y2 - y3) - y1 * (x2 - x3) + (y3 * x2 - y2 * x3);
+				if (det < 0)
+				{
+					x2 = x3;
+					y2 = y3;
+					p2 = p3;
+				}
+				p3 = (p3 + 1) % n;
+			} while (p3 != p1);
+			
+			hull.add(new Point2D.Double(x1, y1));
+			p1 = p2;
+		} while (p1 != pStart);
+	
+		return hull;
+	}
+
+	/**
 	 * Uses the gift wrap algorithm with integer values to find the convex hull
 	 * of a list of vertices, and returns it as an ordered list of points.
 	 * 
@@ -97,6 +187,7 @@ public class Polygons2D
 			Point vertex = points.get(i);
 			xCoords[i] = vertex.x;
 			yCoords[i] = vertex.y;
+			
 			
 			ymin = Math.min(ymin, vertex.y);
 			if (vertex.y == ymin && vertex.x < xmin)
