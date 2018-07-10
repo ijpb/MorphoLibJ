@@ -17,15 +17,34 @@ import inra.ijpb.geometry.Vector2D;
 import inra.ijpb.label.LabelImages;
 
 /**
+ * Collection of static methods for computing min and max Feret Diameters.
+ * 
  * @author dlegland
  *
  */
 public class FeretDiameters
 {
+	// ==================================================
+	// Private static constants 
+
 	private final static double TWO_PI = Math.PI * 2;
 	
+	// ==================================================
+	// Constructor
+
 	/**
-	 * Converts the result of maximum feret diamters computation to a
+	 * Private constructor to prevent instantiations
+	 */
+	private FeretDiameters()
+	{
+	}
+
+	
+	// ==================================================
+	// Static methods 
+
+	/**
+	 * Converts the result of maximum Feret diameters computation to a
 	 * ResultsTable that can be displayed within ImageJ.
 	 * 
 	 * @param maxDiamsPairs
@@ -77,7 +96,6 @@ public class FeretDiameters
 
         // For each label, create a list of corner points
 		IJ.showStatus("Find Label Corner Points");
-//        HashMap<Integer, ArrayList<Point2D>> labelCornerPoints = computeLabelsCorners(image, labels);
         ArrayList<Point2D>[] labelCornerPointsArray = RegionBoundaries.regionsCornersArray(image, labels);
                 
         // Compute the oriented box of each set of corner points
@@ -87,8 +105,6 @@ public class FeretDiameters
         {
         	IJ.showProgress(i, nLabels);
         	int label = labels[i];
-        	
-//        	AngleDiameterPair maxFeretDiam = maxFeretDiameter(labelCornerPointsArray[i]);
         	labelMaxDiamMap.put(label, maxFeretDiameter(labelCornerPointsArray[i]));
         }
         
@@ -109,8 +125,6 @@ public class FeretDiameters
 	 */
 	public final static PointPair maxFeretDiameterSingle(ImageProcessor image)
 	{
-//		ArrayList<Point> points = boundaryPoints(image);
-//		ArrayList<Point> convHull = Polygons2D.convexHull_jarvis_int(points);
 		ArrayList<Point2D> points = RegionBoundaries.binaryParticleCorners(image);
 		ArrayList<Point2D> convHull = Polygons2D.convexHull_jarvis(points);
 
@@ -177,6 +191,59 @@ public class FeretDiameters
 		return minFeretDiameterNaive(points);
 	}
 	 
+	/**
+	 * Computes Minimum Feret diameter of a set of points, using exhaustive
+	 * search for all edges of the convex hull.
+	 * 
+	 * @param points
+	 *            a collection of planar points
+	 * @return the minimum Feret diameter of the point set
+	 */
+	public final static AngleDiameterPair minFeretDiameterNaive(ArrayList<? extends Point2D> points)
+	{
+		// first compute convex hull to simplify
+		ArrayList<Point2D> convHull = Polygons2D.convexHull_jarvis(points);
+		int n = convHull.size();
+	
+		// initialize result
+		double widthMin = Double.POSITIVE_INFINITY;
+		double angleMin = 0;
+		StraightLine2D line;
+	
+		for (int i = 0; i < n; i++)
+		{
+			Point2D p1 = convHull.get(i);
+			Point2D p2 = convHull.get((i + 1) % n);
+			
+			// avoid degenerated lines
+			if (p1.distance(p2) < 1e-12)
+			{
+				continue;
+			}
+	
+			// Compute the width for this polygon edge
+			line = new StraightLine2D(p1, p2);
+			double width = 0;
+			for (Point2D p : convHull)
+			{
+				double dist = line.distance(p);
+				width = Math.max(width, dist);
+			}
+			
+			// check if smallest width
+			if (width < widthMin)
+			{
+				widthMin = width;
+				double dx = p2.getX() - p1.getX();
+				double dy = p2.getY() - p1.getY();
+				angleMin = Math.atan2(dy, dx);
+			}
+		}
+				
+		return new AngleDiameterPair(angleMin - Math.PI/2, widthMin);				
+	}
+
+
 	/**
 	 * Computes Minimum Feret diameter of a set of points, using the rotating
 	 * caliper algorithm.
@@ -273,58 +340,8 @@ public class FeretDiameters
 		return new AngleDiameterPair(angleMin - Math.PI/2, widthMin);				
 	}
 	
-	/**
-	 * Computes Minimum Feret diameter of a set of points, using the rotating
-	 * caliper algorithm.
-	 * 
-	 * @param points
-	 *            a collection of planar points
-	 * @return the minimum Feret diameter of the point set
-	 */
-	public final static AngleDiameterPair minFeretDiameterNaive(ArrayList<? extends Point2D> points)
-	{
-		// first compute convex hull to simplify
-		ArrayList<Point2D> convHull = Polygons2D.convexHull_jarvis(points);
-		int n = convHull.size();
-
-		// initialize result
-		double widthMin = Double.POSITIVE_INFINITY;
-		double angleMin = 0;
-		StraightLine2D line;
-
-		for (int i = 0; i < n; i++)
-		{
-			Point2D p1 = convHull.get(i);
-			Point2D p2 = convHull.get((i + 1) % n);
-			
-			// avoid degenerated lines
-			if (p1.distance(p2) < 1e-12)
-			{
-				continue;
-			}
-
-			// Compute the width for this polygon edge
-			line = new StraightLine2D(p1, p2);
-			double width = 0;
-			for (Point2D p : convHull)
-			{
-				double dist = line.distance(p);
-				width = Math.max(width, dist);
-			}
-			
-			// check if smallest width
-			if (width < widthMin)
-			{
-				widthMin = width;
-				double dx = p2.getX() - p1.getX();
-				double dy = p2.getY() - p1.getY();
-				angleMin = Math.atan2(dy, dx);
-			}
-		}
-				
-		return new AngleDiameterPair(angleMin - Math.PI/2, widthMin);				
-	}
-	
+	// ==================================================
+	// Utility classes 
 
 	/**
 	 * Data structure used to return result of Maximum Feret diameters computation. 

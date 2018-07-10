@@ -36,10 +36,9 @@ import ij.gui.Roi;
 import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
-import ij.process.ImageProcessor;
 import inra.ijpb.label.LabelImages;
-import inra.ijpb.measure.FeretDiameters;
-import inra.ijpb.measure.FeretDiameters.PointPair;
+import inra.ijpb.measure.MaxFeretDiameter;
+import inra.ijpb.measure.MaxFeretDiameter.PointPair;
 
 /**
  * Computes Maximum Feret Diameters of a binary or label image.
@@ -49,7 +48,7 @@ import inra.ijpb.measure.FeretDiameters.PointPair;
  * @author dlegland
  *
  */
-public class MaxFeretDiameters implements PlugIn
+public class MaxFeretDiameterPlugin implements PlugIn
 {
     // ====================================================
     // Global Constants
@@ -100,7 +99,6 @@ public class MaxFeretDiameters implements PlugIn
 		// Set Chessknight weights as default
 		gd.addCheckbox("Show Overlay Result", true);
 		gd.addChoice("Image to overlay:", imageNames, selectedImageName);
-//		gd.addCheckbox("Export to ROI Manager", true);
 		gd.showDialog();
 		
 		if (gd.wasCanceled())
@@ -111,7 +109,6 @@ public class MaxFeretDiameters implements PlugIn
 		ImagePlus labelPlus = WindowManager.getImage(labelImageIndex+1);
         boolean overlay = gd.getNextBoolean();
 		int resultImageIndex = gd.getNextChoiceIndex();
-//		boolean createPathRois = gd.getNextBoolean();
 		
 		// check if image is a label image
 		if (!LabelImages.isLabelImageType(labelPlus))
@@ -120,26 +117,11 @@ public class MaxFeretDiameters implements PlugIn
 			return;
 		}
 		
-		// Extract spatial calibration
-		Calibration cal = labelPlus.getCalibration();
-		double[] resol = new double[]{1, 1};
-		if (cal.scaled())
-		{
-			resol[0] = cal.pixelWidth;
-			resol[1] = cal.pixelHeight;
-			if (resol[0] != resol[1])
-			{
-				IJ.error("Calibration Error", "Requires Images to have same calibration for X and Y axes");
-				return;
-			}
-		}
-
 		// Compute max Feret diameters
-		ImageProcessor labelImage = labelPlus.getProcessor();
-		Map<Integer, PointPair> maxDiamsMap = FeretDiameters.maxFeretDiameters(labelImage);
+		Map<Integer, PointPair> maxDiamsMap = new MaxFeretDiameter().process(labelPlus);
 		
 		// Display the result Table
-        ResultsTable results = FeretDiameters.maxFeretDiametersTable(maxDiamsMap);
+        ResultsTable results = MaxFeretDiameter.asTable(maxDiamsMap);
 
         // create string for indexing results
 		String tableName = labelPlus.getShortTitle() + "-FeretDiams"; 
@@ -163,7 +145,7 @@ public class MaxFeretDiameters implements PlugIn
 		for (PointPair result : geodDiams.values())
 		{
 			Roi roi = createDiametersRoi(result, calib);
-		    roi.setStrokeColor(Color.RED);
+		    roi.setStrokeColor(Color.BLUE);
 		    overlay.add(roi);
 		}
 
@@ -196,61 +178,4 @@ public class MaxFeretDiameters implements PlugIn
 		double y = (point.getY() - calib.yOrigin) / calib.pixelHeight;
 		return new Point2D.Double(x, y);
 	}
-	
-//    /**
-//	 * Main body of the plugin.
-//	 * 
-//	 * @param imagePlus
-//	 *            the image to analyze
-//	 * @return the instance of ResultsTable containing ellipse parameters for
-//	 *         each label
-//	 */
-//    public ResultsTable process(ImagePlus imagePlus) {
-//        // Check validity of parameters
-//        if (imagePlus==null) 
-//            return null;
-//
-//        if (debug) {
-//        	System.out.println("Compute Feret Diameters on image '" 
-//        			+ imagePlus.getTitle());
-//        }
-//        
-//        // Extract spatial calibration
-//        Calibration cal = imagePlus.getCalibration();
-//        double[] resol = new double[]{1, 1};
-//        if (cal.scaled())
-//        {
-//        	resol[0] = cal.pixelWidth;
-//        	resol[1] = cal.pixelHeight;
-//        	if (resol[0] != resol[1])
-//        	{
-//        		IJ.error("Calibration Error", "Requires Images to have same calibration for X and Y axes");
-//        	}
-//        }
-//
-//        ImageProcessor image = imagePlus.getProcessor();
-//        Map<Integer, PointPair> maxDiamsMap = FeretDiameters.maxFeretDiameters(image);
-//        
-//        // Create data table
-//		ResultsTable table = new ResultsTable();
-//
-//		// compute ellipse parameters for each region
-//		for (int label : maxDiamsMap.keySet()) 
-//		{
-//			table.incrementCounter();
-//			table.addLabel(Integer.toString(label));
-//			
-//			// add coordinates of origin pixel (IJ coordinate system)
-//			PointPair maxDiam = maxDiamsMap.get(label);
-//			table.addValue("Diameter", maxDiam.diameter());
-//			table.addValue("Orientation", Math.toDegrees(maxDiam.angle()));
-//			table.addValue("p1.x", maxDiam.p1.getX());
-//			table.addValue("p1.y", maxDiam.p1.getY());
-//			table.addValue("p2.x", maxDiam.p2.getX());
-//			table.addValue("p2.y", maxDiam.p2.getY());
-//		}
-//		
-//		// return the created array
-//		return table;
-//    }
 }
