@@ -142,6 +142,44 @@ public class MaxFeretDiameter extends AlgoStub
 		if (image == null)
 			return null;
 
+		// extract particle labels
+		fireStatusChanged(this, "Find Labels");
+		int[] labels = LabelImages.findAllLabels(image);
+		int nLabels = labels.length;
+		
+		// computemax feret diameter for each label
+		PointPair[] maxDiams = process(image, labels, calib);
+
+		// encapsulate into map
+		Map<Integer, PointPair> labelMaxDiamMap = new TreeMap<Integer, PointPair>();
+		for (int i = 0; i < nLabels; i++)
+		{
+			labelMaxDiamMap.put(labels[i], maxDiams[i]);
+		}
+
+        return labelMaxDiamMap;
+	}
+	
+	/**
+	 * Computes maximum Feret Diameter for each label of the input label image.
+	 * 
+	 * Computes diameter between corners of image pixels, so the result is
+	 * always greater than or equal to one.
+	 * 
+	 * @param image
+	 *            a label image (8, 16 or 32 bits)
+	 * @param labels
+	 *            the set of labels within the image
+	 * @param calib
+	 *            the spatial calibration of the image
+	 * @return a ResultsTable containing oriented box parameters
+	 */
+	public PointPair[] process(ImageProcessor image, int[] labels, Calibration calib)
+	{
+		// Check validity of parameters
+		if (image == null)
+			return null;
+
 		// Extract spatial calibration of image
 		double sx = 1, sy = 1;
 		double ox = 0, oy = 1;
@@ -153,9 +191,6 @@ public class MaxFeretDiameter extends AlgoStub
 			oy = calib.yOrigin;
 		}
 		
-		// extract particle labels
-		fireStatusChanged(this, "Find Labels");
-		int[] labels = LabelImages.findAllLabels(image);
 		int nLabels = labels.length;
 
         // For each label, create a list of corner points
@@ -163,12 +198,11 @@ public class MaxFeretDiameter extends AlgoStub
         ArrayList<Point2D>[] labelCornerPointsArray = RegionBoundaries.regionsCornersArray(image, labels);
                 
         // Compute the oriented box of each set of corner points
-        Map<Integer, PointPair> labelMaxDiamMap = new TreeMap<Integer, PointPair>();
+        PointPair[] labelMaxDiams = new PointPair[nLabels];
         fireStatusChanged(this, "Compute feret Diameters");
         for (int i = 0; i < nLabels; i++)
         {
         	this.fireProgressChanged(this, i, nLabels);
-        	int label = labels[i];
         	
         	ArrayList<Point2D> hull = labelCornerPointsArray[i];
     		// calibrate coordinates of hull vertices
@@ -180,12 +214,12 @@ public class MaxFeretDiameter extends AlgoStub
     		}
 
     		// compute Feret diameter of calibrated hull
-        	labelMaxDiamMap.put(label, maxFeretDiameter(hull));
+        	labelMaxDiams[i] = maxFeretDiameter(hull);
         }
         
         fireProgressChanged(this, 1, 1);
         fireStatusChanged(this, "");
-        return labelMaxDiamMap;
+        return labelMaxDiams;
 	}
 	
 	
