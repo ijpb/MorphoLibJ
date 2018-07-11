@@ -37,8 +37,8 @@ import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
 import inra.ijpb.label.LabelImages;
-import inra.ijpb.measure.MaxFeretDiameter;
-import inra.ijpb.measure.MaxFeretDiameter.PointPair;
+import inra.ijpb.measure.region2d.MaxFeretDiameter;
+import inra.ijpb.measure.region2d.MaxFeretDiameter.PointPair;
 
 /**
  * Computes Maximum Feret Diameters of a binary or label image.

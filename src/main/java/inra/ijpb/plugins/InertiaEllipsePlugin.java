@@ -24,12 +24,11 @@ package inra.ijpb.plugins;
 
 import ij.IJ;
 import ij.ImagePlus;
-import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
 import inra.ijpb.label.LabelImages;
-import inra.ijpb.measure.GeometricMeasures2D;
+import inra.ijpb.measure.region2d.InertiaEllipse;
 
 public class InertiaEllipsePlugin implements PlugInFilter
 {
@@ -79,7 +78,7 @@ public class InertiaEllipsePlugin implements PlugInFilter
 		}
         
         // Execute the plugin
-        ResultsTable results = process(imagePlus);
+        ResultsTable results = InertiaEllipse.asTable(InertiaEllipse.compute(imagePlus));
         
 		// create string for indexing results
 		String tableName = imagePlus.getShortTitle() + "-Ellipses"; 
@@ -87,40 +86,4 @@ public class InertiaEllipsePlugin implements PlugInFilter
 		// show result
 		results.show(tableName);
     }
-    
-    /**
-	 * Main body of the plugin.
-	 * 
-	 * @param imagePlus
-	 *            the image to analyze
-	 * @return the instance of ResultsTable containing ellipse parameters for
-	 *         each label
-	 */
-    public ResultsTable process(ImagePlus imagePlus) {
-        // Check validity of parameters
-        if (imagePlus==null) 
-            return null;
-
-        if (debug) {
-        	System.out.println("Compute Inertia ellipses on image '" 
-        			+ imagePlus.getTitle());
-        }
-        
-        ImageProcessor proc = imagePlus.getProcessor();
-        
-        // Extract spatial calibration
-        Calibration cal = imagePlus.getCalibration();
-        double[] resol = new double[]{1, 1};
-        if (cal.scaled()) {
-        	resol[0] = cal.pixelWidth;
-        	resol[1] = cal.pixelHeight;
-        }
-        //TODO: use spatial calibration of ImagePlus
-
-        ResultsTable results = GeometricMeasures2D.inertiaEllipse(proc);
-        
-		// return the created array
-		return results;
-    }
-
 }

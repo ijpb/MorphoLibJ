@@ -1,7 +1,7 @@
 /**
  * 
  */
-package inra.ijpb.measure;
+package inra.ijpb.measure.region2d;
 
 import java.awt.Point;
 import java.awt.geom.Point2D;

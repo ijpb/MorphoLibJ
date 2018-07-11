@@ -32,7 +32,7 @@ import ij.process.ImageProcessor;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.GeodesicDiameter;
 import inra.ijpb.measure.GeometricMeasures2D;
-import inra.ijpb.measure.MaxFeretDiameter;
+import inra.ijpb.measure.region2d.MaxFeretDiameter;
 
 public class RegionAnalysis implements PlugInFilter 
 {
