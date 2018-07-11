@@ -74,8 +74,8 @@ public class LargestInscribedCircle
 	 * 
 	 * @param labelImage
 	 *            the input image containing label of particles
-	 * @param resol
-	 *            an array containing the size of the pixel in each direction
+	 * @param calib
+	 *            the spatial calibration of the image
 	 * @return a ResultsTable with as many rows as the number of unique labels
 	 *         in label image, and columns "Label", "xi", "yi" and "Radius".
 	 */
@@ -107,8 +107,8 @@ public class LargestInscribedCircle
 	 *            the input image containing label of particles
 	 * @param labels
 	 *            the set of labels within the image
-	 * @param resol
-	 *            an array containing the size of the pixel in each direction
+	 * @param calib
+	 *            the spatial calibration of the image
 	 * @return a ResultsTable with as many rows as the number of unique labels
 	 *         in label image, and columns "Label", "xi", "yi" and "Radius".
 	 */

@@ -31,7 +31,7 @@ public class MaxFeretDiameter extends AlgoStub
 	 * Converts the result of maximum Feret diameters computation to a
 	 * ResultsTable that can be displayed within ImageJ.
 	 * 
-	 * @param maxDiamsPairs
+	 * @param maxDiamsMap
 	 *            the map of PointPair for each label within a label image
 	 * @return a ResultsTable instance
 	 */
@@ -109,7 +109,7 @@ public class MaxFeretDiameter extends AlgoStub
 	/**
 	 * Computes maximum Feret Diameter for each label of the input label image.
 	 * 
-	 * @param image
+	 * @param imagePlus
 	 *            a label image (8, 16 or 32 bits)
 	 * @return a ResultsTable containing oriented box parameters
 	 */
@@ -231,6 +231,8 @@ public class MaxFeretDiameter extends AlgoStub
 	 * 
 	 * @param image
 	 *            a binary image representing the particle.
+	 * @param calib
+	 *            the spatial calibration
 	 * @return the maximum Feret diameter of the particle
 	 */
 	public final static PointPair processBinary(ImageProcessor image, double[] calib)

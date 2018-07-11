@@ -33,6 +33,8 @@ public class RegionBoundaries
 	 * 
 	 * @param image
 	 *            a binary image representing the particle
+	 * @param labels
+	 *            the list of labels to process
 	 * @return a list of points that can be used for convex hull computation
 	 */
 	public final static Map<Integer, ArrayList<Point2D>> regionsCorners(ImageProcessor image, int[] labels)
@@ -123,6 +125,8 @@ public class RegionBoundaries
 	 * 
 	 * @param image
 	 *            a binary image representing the particle
+	 * @param labels
+	 *            the list of labels to process
 	 * @return for each label, an array of points
 	 */
 	public final static ArrayList<Point2D>[] regionsCornersArray(ImageProcessor image, int[] labels)

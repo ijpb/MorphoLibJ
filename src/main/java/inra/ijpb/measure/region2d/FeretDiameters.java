@@ -47,7 +47,7 @@ public class FeretDiameters
 	 * Converts the result of maximum Feret diameters computation to a
 	 * ResultsTable that can be displayed within ImageJ.
 	 * 
-	 * @param maxDiamsPairs
+	 * @param maxDiamsMap
 	 *            the map of PointPair for each label within a label image
 	 * @return a ResultsTable instance
 	 */
