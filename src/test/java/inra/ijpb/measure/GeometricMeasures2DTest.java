@@ -185,6 +185,7 @@ public class GeometricMeasures2DTest
 	 * Test method for {@link ijt.measure.geometric.GeometricMeasures2D#inertiaEllipse(ij.process.ImageProcessor)}.
 	 */
 	@Test
+	@Deprecated
 	public final void testInertiaEllipse() 
 	{
 		String fileName = getClass().getResource("/files/ellipse_A40_B20_T30.tif").getFile();
@@ -205,6 +206,7 @@ public class GeometricMeasures2DTest
 	 * Test method for {@link ijt.measure.geometric.GeometricMeasures2D#maxInscribedCircle(ij.process.ImageProcessor)}.
 	 */
 	@Test
+	@Deprecated
 	public final void testMaxInscribedCircle() 
 	{
 		ImageProcessor image = new ByteProcessor(14, 9);

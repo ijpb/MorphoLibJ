@@ -33,6 +33,8 @@ import inra.ijpb.geometry.PointPair2D;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.GeodesicDiameter;
 import inra.ijpb.measure.GeometricMeasures2D;
+import inra.ijpb.measure.region2d.InertiaEllipse;
+import inra.ijpb.measure.region2d.LargestInscribedCircle;
 import inra.ijpb.measure.region2d.MaxFeretDiameter;
 
 public class RegionAnalysis implements PlugInFilter 
@@ -178,7 +180,7 @@ public class RegionAnalysis implements PlugInFilter
 
     	if (computeInertiaEllipse)
     	{
-    		ResultsTable ellipseTable = GeometricMeasures2D.inertiaEllipse(image);
+    		ResultsTable ellipseTable = InertiaEllipse.asTable(new InertiaEllipse().compute(image, calib));
     		addAllColumns(table, ellipseTable);
     	}
 
@@ -204,7 +206,7 @@ public class RegionAnalysis implements PlugInFilter
 
     	if (computeMaxInscribedDisc)
     	{
-    		ResultsTable inscribedCircleTable = GeometricMeasures2D.maximumInscribedCircle(image, resol);
+    		ResultsTable inscribedCircleTable = LargestInscribedCircle.asTable(LargestInscribedCircle.compute(image, calib));
     		addAllColumns(table, inscribedCircleTable);
     	}
 

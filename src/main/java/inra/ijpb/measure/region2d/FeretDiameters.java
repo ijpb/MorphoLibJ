@@ -19,9 +19,11 @@ import inra.ijpb.label.LabelImages;
 /**
  * Collection of static methods for computing min and max Feret Diameters.
  * 
+ * @deprecated replaced by MaxFeretDiameter class instead
  * @author dlegland
  *
  */
+@Deprecated
 public class FeretDiameters
 {
 	// ==================================================

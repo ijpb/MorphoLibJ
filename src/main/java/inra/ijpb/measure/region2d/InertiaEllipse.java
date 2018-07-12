@@ -54,8 +54,8 @@ public class InertiaEllipse
 			
 			// coordinates of centroid
 			Point2D center = ellipse.center();
-			table.addValue("Centroid.X", center.getX());
-			table.addValue("Centroid.Y", center.getY());
+			table.addValue("Ellipse.CenterX", center.getX());
+			table.addValue("Ellipse.CenterY", center.getY());
 			
 			// ellipse size
 			table.addValue("Ellipse.Radius1", ellipse.radius1());

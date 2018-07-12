@@ -164,27 +164,12 @@ public class LargestInscribedCircle
 	}
     
 	
-	// ==================================================
-	// Class variables
-	
-	/**
-	 * The inertia center of the region.
-	 */
-	Point2D center;
-	
-	/**
-	 * The radius of the circle.
-	 */
-	double radius;
-
 	
 	// ==================================================
 	// Constructors
 	
-	public LargestInscribedCircle(Point2D center, double radius)
+	public LargestInscribedCircle()
 	{
-		this.center = center;
-		this.radius = radius;
 	}
 	
 	/**

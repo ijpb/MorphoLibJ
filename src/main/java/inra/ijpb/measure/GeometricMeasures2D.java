@@ -23,17 +23,18 @@ package inra.ijpb.measure;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static java.lang.Math.sqrt;
-import ij.IJ;
-import ij.measure.ResultsTable;
-import ij.process.ImageProcessor;
-import inra.ijpb.binary.BinaryImages;
-import inra.ijpb.label.LabelImages;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
+
+import ij.IJ;
+import ij.measure.Calibration;
+import ij.measure.ResultsTable;
+import ij.process.ImageProcessor;
+import inra.ijpb.label.LabelImages;
+import inra.ijpb.measure.region2d.InertiaEllipse;
+import inra.ijpb.measure.region2d.LargestInscribedCircle;
 
 /**
  * Provides a set of static methods to compute geometric measures such as area,
@@ -1065,126 +1066,36 @@ public class GeometricMeasures2D
 	/**
 	 * Computes inertia ellipse of each region in input label image.
 	 * 
+	 * @deprecated use inra.ijpb.measure.region2d.InertiaEllipse instead
+	 * 
 	 * @param image
 	 *            the input image containing label of particles
 	 * @return an ResultsTable containing for each label, the parameters of the
 	 *         inertia ellipsoid, in pixel coordinates
 	 */
+	@Deprecated
 	public final static ResultsTable inertiaEllipse(ImageProcessor image)
 	{
 		// Check validity of parameters
 		if (image == null)
 			return null;
 
-		// size of image
-		int width = image.getWidth();
-		int height = image.getHeight();
-
-		// extract particle labels
-		int[] labels = LabelImages.findAllLabels(image);
-		int nLabels = labels.length;
-
-		// create associative array to know index of each label
-        HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
-
-		// allocate memory for result
-		int[] counts = new int[nLabels];
-		double[] cx = new double[nLabels];
-		double[] cy = new double[nLabels];
-		double[] Ixx = new double[nLabels];
-		double[] Iyy = new double[nLabels];
-		double[] Ixy = new double[nLabels];
-
-		// compute centroid of each region
-		for (int y = 0; y < height; y++) 
-		{
-			for (int x = 0; x < width; x++)
-			{
-				int label = (int) image.getf(x, y);
-				if (label == 0)
-					continue;
-
-				int index = labelIndices.get(label);
-				cx[index] += x;
-				cy[index] += y;
-				counts[index]++;
-			}
-		}
-
-		// normalize by number of pixels in each region
-		for (int i = 0; i < nLabels; i++)
-		{
-			cx[i] = cx[i] / counts[i];
-			cy[i] = cy[i] / counts[i];
-		}
-
-		// compute centered inertia matrix of each label
-		for (int y = 0; y < height; y++) 
-		{
-			for (int x = 0; x < width; x++)
-			{
-				int label = image.get(x, y);
-				if (label == 0)
-					continue;
-
-				int index = labelIndices.get(label);
-				double x2 = x - cx[index];
-				double y2 = y - cy[index];
-				Ixx[index] += x2 * x2;
-				Ixy[index] += x2 * y2;
-				Iyy[index] += y2 * y2;
-			}
-		}
-
-		// normalize by number of pixels in each region
-		for (int i = 0; i < nLabels; i++)
-		{
-			Ixx[i] = Ixx[i] / counts[i] + 1. / 12.;
-			Ixy[i] = Ixy[i] / counts[i];
-			Iyy[i] = Iyy[i] / counts[i] + 1. / 12.;
-		}
-
-		// Create data table
-		ResultsTable table = new ResultsTable();
-
-		// compute ellipse parameters for each region
-		final double sqrt2 = sqrt(2);
-		for (int i = 0; i < nLabels; i++) 
-		{
-			double xx = Ixx[i];
-			double xy = Ixy[i];
-			double yy = Iyy[i];
-
-			// compute ellipse semi-axes lengths
-			double common = sqrt((xx - yy) * (xx - yy) + 4 * xy * xy);
-			double ra = sqrt2 * sqrt(xx + yy + common);
-			double rb = sqrt2 * sqrt(xx + yy - common);
-
-			// compute ellipse angle and convert into degrees
-			double theta = Math.toDegrees(Math.atan2(2 * xy, xx - yy) / 2);
-
-			table.incrementCounter();
-			table.addLabel(Integer.toString(labels[i]));
-			// add coordinates of origin pixel (IJ coordinate system)
-			table.addValue("XCentroid", cx[i] + .5);
-			table.addValue("YCentroid", cy[i] + .5);
-			table.addValue("Radius1", ra);
-			table.addValue("Radius2", rb);
-			table.addValue("Orientation", theta);
-		}
-
-		return table;
+		Calibration calib = new Calibration(); 
+		return InertiaEllipse.asTable(new InertiaEllipse().compute(image, calib));
 	}
 
 	/**
 	 * Computes radius and center of maximum inscribed disk of each particle. 
 	 * Particles must be disjoint.
+	 *
+	 * @deprecated use class inra.ijpb.measure.region2d.largestInscribedCircle instead
 	 * 
 	 * @param labelImage
 	 *            the input image containing label of particles
 	 * @return a ResultsTable with as many rows as the number of unique labels
 	 *         in label image, and columns "Label", "xi", "yi" and "Radius".
 	 */
+    @Deprecated
     public final static ResultsTable maximumInscribedCircle(ImageProcessor labelImage)
     {
     	return maximumInscribedCircle(labelImage, new double[]{1, 1});
@@ -1194,129 +1105,22 @@ public class GeometricMeasures2D
 	 * Radius of maximum inscribed disk of each particle. Particles must be
 	 * disjoint.
 	 * 
+	 * @deprecated use class inra.ijpb.measure.region2d.largestInscribedCircle instead
+	 * 
 	 * @param labelImage
 	 *            the input image containing label of particles
 	 * @param resol an array containing the size of the pixel in each direction
 	 * @return a ResultsTable with as many rows as the number of unique labels
 	 *         in label image, and columns "Label", "xi", "yi" and "Radius".
 	 */
+    @Deprecated
     public final static ResultsTable maximumInscribedCircle(ImageProcessor labelImage, 
     		double[] resol)
     {
-    	// compute max label within image
-    	int[] labels = LabelImages.findAllLabels(labelImage);
-    	int nbLabels = labels.length;
+    	Calibration calib = new Calibration();
+    	calib.pixelWidth = resol[0];
+    	calib.pixelHeight = resol[1];
     	
-		// first distance propagation to find an arbitrary center
-		ImageProcessor distanceMap = BinaryImages.distanceMap(labelImage);
-		
-		// Extract position of maxima
-		Point[] posCenter;
-		posCenter = findPositionOfMaxValues(distanceMap, labelImage, labels);
-		float[] radii = getValues(distanceMap, posCenter);
-
-		// Create result data table
-		ResultsTable table = new ResultsTable();
-		for (int i = 0; i < nbLabels; i++) 
-		{
-			// add an entry to the resulting data table
-			table.incrementCounter();
-			table.addValue("Label", labels[i]);
-			table.addValue("xi", posCenter[i].x * resol[0]);
-			table.addValue("yi", posCenter[i].y * resol[1]);
-			table.addValue("Radius", radii[i] * resol[0]);
-		}
-
-		return table;
+    	return LargestInscribedCircle.asTable(LargestInscribedCircle.compute(labelImage, calib));
     }
-    
-	/**
-	 * Find one position of maximum value within each label.
-	 * 
-	 * @param image
-	 *            the input image containing the value (for example a distance 
-	 *            map)
-	 * @param labelImage
-	 *            the input image containing label of particles
-	 * @param labels
-	 *            the set of labels contained in the label image
-	 *            
-	 */
-	private final static Point[] findPositionOfMaxValues(ImageProcessor image,
-			ImageProcessor labelImage, int[] labels)
-	{
-		int width 	= labelImage.getWidth();
-		int height 	= labelImage.getHeight();
-		
-		// Compute value of greatest label
-		int nbLabel = labels.length;
-		int maxLabel = 0;
-		for (int i = 0; i < nbLabel; i++)
-		{
-			maxLabel = Math.max(maxLabel, labels[i]);
-		}
-		
-		// init index of each label
-		// to make correspondence between label value and label index
-		int[] labelIndex = new int[maxLabel+1];
-		for (int i = 0; i < nbLabel; i++)
-		{
-			labelIndex[labels[i]] = i;
-		}
-		
-		// Init Position and value of maximum for each label
-		Point[] posMax 	= new Point[nbLabel];
-		int[] maxValues = new int[nbLabel];
-		for (int i = 0; i < nbLabel; i++) 
-		{
-			maxValues[i] = -1;
-			posMax[i] = new Point(-1, -1);
-		}
-		
-		// store current value
-		int value;
-		int index;
-		
-		// iterate on image pixels
-		for (int y = 0; y < height; y++) 
-		{
-			for (int x = 0; x < width; x++) 
-			{
-				int label = (int) labelImage.getf(x, y);
-				
-				// do not process pixels that do not belong to particle
-				if (label==0)
-					continue;
-
-				index = labelIndex[label];
-				
-				// update values and positions
-				value = image.get(x, y);
-				if (value > maxValues[index])
-				{
-					posMax[index].setLocation(x, y);
-					maxValues[index] = value;
-				}
-			}
-		}
-				
-		return posMax;
-	}
-	
-	/**
-	 * Get values in input image for each specified position.
-	 */
-	private final static float[] getValues(ImageProcessor image, 
-			Point[] positions) 
-	{
-		float[] values = new float[positions.length];
-		
-		// iterate on positions
-		for (int i = 0; i < positions.length; i++) 
-		{
-			values[i] = image.getf(positions[i].x, positions[i].y);
-		}
-				
-		return values;
-	}
 }

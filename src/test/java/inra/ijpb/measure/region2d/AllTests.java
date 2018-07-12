@@ -29,6 +29,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
 	// generic classes
 	InertiaEllipseTest.class,
+	LargestInscribedCircleTest.class,
 	MaxFeretDiameterTest.class,
 	})
 public class AllTests {
