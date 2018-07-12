@@ -101,8 +101,9 @@ public class InertiaEllipsePlugin implements PlugIn
         }
 
         // Execute the plugin
-		Map<Integer, Ellipse> ellipses = new InertiaEllipse().compute(labelImage);
-        ResultsTable results = InertiaEllipse.asTable(ellipses);
+		InertiaEllipse op = new InertiaEllipse();
+		Map<Integer, Ellipse> ellipses = op.analyzeRegions(labelImage);
+        ResultsTable results = op.createTable(ellipses);
         
 		// show result
     	String tableName = labelImage.getShortTitle() + "-Ellipses"; 

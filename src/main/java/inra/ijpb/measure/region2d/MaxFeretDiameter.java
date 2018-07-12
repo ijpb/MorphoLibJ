@@ -16,6 +16,7 @@ import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.geometry.PointPair2D;
 import inra.ijpb.geometry.Polygons2D;
 import inra.ijpb.label.LabelImages;
+import inra.ijpb.measure.RegionAnalyzer;
 
 /**
  * Collection of static methods for computing min and max Feret Diameters.
@@ -23,44 +24,11 @@ import inra.ijpb.label.LabelImages;
  * @author dlegland
  *
  */
-public class MaxFeretDiameter extends AlgoStub
+public class MaxFeretDiameter extends AlgoStub implements RegionAnalyzer<PointPair2D>
 {
 	// ==================================================
 	// Static methods 
 	
-	/**
-	 * Converts the result of maximum Feret diameters computation to a
-	 * ResultsTable that can be displayed within ImageJ.
-	 * 
-	 * @param maxDiamsMap
-	 *            the map of PointPair2D for each label within a label image
-	 * @return a ResultsTable instance
-	 */
-	public final static ResultsTable asTable(Map<Integer, PointPair2D> maxDiamsMap)
-	{
-		// Create data table
-		ResultsTable table = new ResultsTable();
-	
-		// compute ellipse parameters for each region
-		for (int label : maxDiamsMap.keySet()) 
-		{
-			table.incrementCounter();
-			table.addLabel(Integer.toString(label));
-			
-			// add coordinates of origin pixel (IJ coordinate system)
-			PointPair2D maxDiam = maxDiamsMap.get(label);
-			table.addValue("Diameter", maxDiam.diameter());
-			table.addValue("Orientation", Math.toDegrees(maxDiam.angle()));
-			table.addValue("P1.x", maxDiam.p1.getX());
-			table.addValue("P1.y", maxDiam.p1.getY());
-			table.addValue("P2.x", maxDiam.p2.getX());
-			table.addValue("p2.y", maxDiam.p2.getY());
-		}
-		
-		// return the created array
-		return table;
-	}
-
 	/**
 	 * Computes Maximum Feret diameter of a set of points.
 	 * 
@@ -105,8 +73,46 @@ public class MaxFeretDiameter extends AlgoStub
 
 	
 	// ==================================================
-	// Computation methods 
+	// Implementation of RegionAnalyzer interface
 
+	public ResultsTable computeTable(ImagePlus labelPlus)
+	{
+		return createTable(analyzeRegions(labelPlus.getProcessor(), labelPlus.getCalibration()));
+	}
+
+	/**
+	 * Converts the result of maximum Feret diameters computation to a
+	 * ResultsTable that can be displayed within ImageJ.
+	 * 
+	 * @param maxDiamsMap
+	 *            the map of PointPair2D for each label within a label image
+	 * @return a ResultsTable instance
+	 */
+	public ResultsTable createTable(Map<Integer, PointPair2D> maxDiamsMap)
+	{
+		// Create data table
+		ResultsTable table = new ResultsTable();
+	
+		// compute ellipse parameters for each region
+		for (int label : maxDiamsMap.keySet()) 
+		{
+			table.incrementCounter();
+			table.addLabel(Integer.toString(label));
+			
+			// add coordinates of origin pixel (IJ coordinate system)
+			PointPair2D maxDiam = maxDiamsMap.get(label);
+			table.addValue("Diameter", maxDiam.diameter());
+			table.addValue("Orientation", Math.toDegrees(maxDiam.angle()));
+			table.addValue("P1.x", maxDiam.p1.getX());
+			table.addValue("P1.y", maxDiam.p1.getY());
+			table.addValue("P2.x", maxDiam.p2.getX());
+			table.addValue("p2.y", maxDiam.p2.getY());
+		}
+		
+		// return the created array
+		return table;
+	}
+	
 	/**
 	 * Computes maximum Feret Diameter for each label of the input label image.
 	 * 
@@ -114,17 +120,20 @@ public class MaxFeretDiameter extends AlgoStub
 	 *            a label image (8, 16 or 32 bits)
 	 * @return a ResultsTable containing oriented box parameters
 	 */
-	public Map<Integer, PointPair2D> process(ImagePlus imagePlus)
+	public Map<Integer, PointPair2D> analyzeRegions(ImagePlus imagePlus)
 	{
 		// Extract spatial calibration
 		Calibration calib = imagePlus.getCalibration();
 
 		// Compute calibrated Feret diameter
-		Map<Integer, PointPair2D> result = process(imagePlus.getProcessor(), calib);
+		Map<Integer, PointPair2D> result = analyzeRegions(imagePlus.getProcessor(), calib);
 		return result;
 	}
 	
 	
+	// ==================================================
+	// Computation methods 
+
 	/**
 	 * Computes maximum Feret Diameter for each label of the input label image.
 	 * 
@@ -137,7 +146,7 @@ public class MaxFeretDiameter extends AlgoStub
 	 *            the spatial calibration of the image
 	 * @return a ResultsTable containing oriented box parameters
 	 */
-	public Map<Integer, PointPair2D> process(ImageProcessor image, Calibration calib)
+	public Map<Integer, PointPair2D> analyzeRegions(ImageProcessor image, Calibration calib)
 	{
 		// Check validity of parameters
 		if (image == null)
@@ -149,7 +158,7 @@ public class MaxFeretDiameter extends AlgoStub
 		int nLabels = labels.length;
 		
 		// computemax feret diameter for each label
-		PointPair2D[] maxDiams = process(image, labels, calib);
+		PointPair2D[] maxDiams = analyzeRegions(image, labels, calib);
 
 		// encapsulate into map
 		Map<Integer, PointPair2D> labelMaxDiamMap = new TreeMap<Integer, PointPair2D>();
@@ -175,7 +184,7 @@ public class MaxFeretDiameter extends AlgoStub
 	 *            the spatial calibration of the image
 	 * @return a ResultsTable containing oriented box parameters
 	 */
-	public PointPair2D[] process(ImageProcessor image, int[] labels, Calibration calib)
+	public PointPair2D[] analyzeRegions(ImageProcessor image, int[] labels, Calibration calib)
 	{
 		// Check validity of parameters
 		if (image == null)
@@ -236,7 +245,7 @@ public class MaxFeretDiameter extends AlgoStub
 	 *            the spatial calibration
 	 * @return the maximum Feret diameter of the particle
 	 */
-	public final static PointPair2D processBinary(ImageProcessor image, double[] calib)
+	public PointPair2D analyzeBinary(ImageProcessor image, double[] calib)
 	{
 		ArrayList<Point2D> points = RegionBoundaries.binaryParticleCorners(image);
 		ArrayList<Point2D> convHull = Polygons2D.convexHull_jarvis(points);

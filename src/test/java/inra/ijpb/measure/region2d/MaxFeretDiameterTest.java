@@ -22,16 +22,16 @@ public class MaxFeretDiameterTest
 {
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.region2d.MaxFeretDiameter#process(ij.ImagePlus)}.
+	 * Test method for {@link inra.ijpb.measure.region2d.MaxFeretDiameter#analyzeRegions(ij.ImagePlus)}.
 	 */
 	@Test
-	public void testProcess_circles()
+	public void testAnalyzeRegions_circles()
 	{
 		ImagePlus imagePlus = IJ.openImage(getClass().getResource("/files/circles.tif").getFile());
 	
 		MaxFeretDiameter algo = new MaxFeretDiameter();
 		
-		Map<Integer, PointPair2D> maxFeretDiams = algo.process(imagePlus);
+		Map<Integer, PointPair2D> maxFeretDiams = algo.analyzeRegions(imagePlus);
 
 		assertEquals(1, maxFeretDiams.size());
 		
@@ -39,24 +39,24 @@ public class MaxFeretDiameterTest
 		
 		assertEquals(272.7, diam.diameter(), .2);
 		
-		ResultsTable table = MaxFeretDiameter.asTable(maxFeretDiams);
+		ResultsTable table = algo.createTable(maxFeretDiams);
 		assertEquals(1, table.size());
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.region2d.MaxFeretDiameter#process(ij.ImagePlus)}.
+	 * Test method for {@link inra.ijpb.measure.region2d.MaxFeretDiameter#analyzeRegions(ij.ImagePlus)}.
 	 */
 	@Test
-	public void testProcess_riceGrains()
+	public void testAnalyzeRegions_riceGrains()
 	{
 		ImagePlus imagePlus = IJ.openImage(getClass().getResource("/files/grains-med-WTH-lbl.tif").getFile());
 	
 		MaxFeretDiameter algo = new MaxFeretDiameter();
-		Map<Integer, PointPair2D> maxFeretDiams = algo.process(imagePlus);
+		Map<Integer, PointPair2D> maxFeretDiams = algo.analyzeRegions(imagePlus);
 		
 		assertEquals(96, maxFeretDiams.size());
 		
-		ResultsTable table = MaxFeretDiameter.asTable(maxFeretDiams);
+		ResultsTable table = algo.createTable(maxFeretDiams);
 		assertEquals(96, table.size());
 	}
 }

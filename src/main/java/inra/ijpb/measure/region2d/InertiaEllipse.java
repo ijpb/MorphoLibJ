@@ -16,6 +16,7 @@ import ij.measure.ResultsTable;
 import ij.process.ImageProcessor;
 import inra.ijpb.geometry.Ellipse;
 import inra.ijpb.label.LabelImages;
+import inra.ijpb.measure.RegionAnalyzer;
 
 /**
  * Compute parameters of inertia ellipse from label images.
@@ -23,10 +24,29 @@ import inra.ijpb.label.LabelImages;
  * @author dlegland
  *
  */
-public class InertiaEllipse
+public class InertiaEllipse implements RegionAnalyzer<Ellipse>
 {
 	// ==================================================
 	// Static methods 
+	
+	// ==================================================
+	// Constructor
+
+	/**
+	 * Default constructor
+	 */
+	public InertiaEllipse()
+	{
+	}
+
+	
+	// ==================================================
+	// Implementation of RegionAnalyzer interface
+
+	public ResultsTable computeTable(ImagePlus labelPlus)
+	{
+		return createTable(analyzeRegions(labelPlus));
+	}
 	
 	/**
 	 * Utility method that transforms the mapping between labels and inertia
@@ -36,7 +56,7 @@ public class InertiaEllipse
 	 *            the mapping between labels and Inertia Ellipses
 	 * @return a ResultsTable that can be displayed with ImageJ.
 	 */
-	public static ResultsTable asTable(Map<Integer, Ellipse> map)
+	public ResultsTable createTable(Map<Integer, Ellipse> map)
 	{
 		// Initialize a new result table
 		ResultsTable table = new ResultsTable();
@@ -54,47 +74,34 @@ public class InertiaEllipse
 			
 			// coordinates of centroid
 			Point2D center = ellipse.center();
-			table.addValue("Ellipse.CenterX", center.getX());
-			table.addValue("Ellipse.CenterY", center.getY());
+			table.addValue("Ellipse.Center.X", center.getX());
+			table.addValue("Ellipse.Center.Y", center.getY());
 			
 			// ellipse size
 			table.addValue("Ellipse.Radius1", ellipse.radius1());
 			table.addValue("Ellipse.Radius2", ellipse.radius2());
-
+	
 			// ellipse orientation (degrees)
 			table.addValue("Ellipse.Orientation", ellipse.orientation());
 		}
 	
 		return table;
-	}	
-	
-	// ==================================================
-	// Constructor
-
-	/**
-	 * Default constructor
-	 */
-	public InertiaEllipse()
-	{
 	}
 
+	public Map<Integer, Ellipse> analyzeRegions(ImagePlus labelPlus)
+	{
+		return analyzeRegions(labelPlus.getProcessor(), labelPlus.getCalibration());
+	}
+
+	
 	// ==================================================
 	// Computation methods 
 
-	public ResultsTable computeTable(ImagePlus labelPlus)
-	{
-		return asTable(compute(labelPlus.getProcessor(), labelPlus.getCalibration()));
-	}
 
-	public Map<Integer, Ellipse> compute(ImagePlus labelPlus)
-	{
-		return compute(labelPlus.getProcessor(), labelPlus.getCalibration());
-	}
-
-	public Map<Integer, Ellipse> compute(ImageProcessor labelImage, Calibration calib)
+	public Map<Integer, Ellipse> analyzeRegions(ImageProcessor labelImage, Calibration calib)
 	{
 		int[] labels = LabelImages.findAllLabels(labelImage);
-		Ellipse[] ellipses = compute(labelImage, labels, calib);
+		Ellipse[] ellipses = analyzeRegions(labelImage, labels, calib);
 		
 		// convert the arrays into a map of index-value pairs
 		Map<Integer, Ellipse> map = new TreeMap<Integer, Ellipse>();
@@ -118,7 +125,7 @@ public class InertiaEllipse
 	 * @return an ResultsTable containing for each label, the parameters of the
 	 *         inertia ellipsoid, in pixel coordinates
 	 */
-	public Ellipse[] compute(ImageProcessor image, int[] labels, Calibration calib)
+	public Ellipse[] analyzeRegions(ImageProcessor image, int[] labels, Calibration calib)
 	{
 		// Check validity of parameters
 		if (image == null)

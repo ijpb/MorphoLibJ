@@ -20,10 +20,10 @@ public class LargestInscribedCircleTest
 {
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.region2d.LargestInscribedCircle#compute(ij.ImagePlus)}.
+	 * Test method for {@link inra.ijpb.measure.region2d.LargestInscribedCircle#analyzeRegions(ij.ImagePlus)}.
 	 */
 	@Test
-	public final void testComputeImagePlus_Rectangles()
+	public final void testAnalyzeRegionsImagePlus_Rectangles()
 	{
 		ImageProcessor image = new ByteProcessor(14, 9);
 		image.set(1, 1, 1);
@@ -31,7 +31,8 @@ public class LargestInscribedCircleTest
 		fillRect(image, 1, 1+3, 4, 4+3, 3); // radius 4
 		fillRect(image, 6, 6+6, 1, 1+6, 4); // radius 7
 		
-		ResultsTable table = LargestInscribedCircle.asTable(LargestInscribedCircle.compute(image, new Calibration()));
+		LargestInscribedCircle op = new LargestInscribedCircle();
+		ResultsTable table = op.createTable(op.analyzeRegions(image, new Calibration()));
 		
 		assertEquals(1, table.getValue("InscrCircle.Radius", 0), .1);
 		assertEquals(1, table.getValue("InscrCircle.Radius", 1), .1);

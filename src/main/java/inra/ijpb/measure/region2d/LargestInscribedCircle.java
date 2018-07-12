@@ -15,6 +15,7 @@ import ij.process.ImageProcessor;
 import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.geometry.Circle2D;
 import inra.ijpb.label.LabelImages;
+import inra.ijpb.measure.RegionAnalyzer;
 
 /**
  * Computes the largest inscribed circle for each region of a label or binary
@@ -23,11 +24,27 @@ import inra.ijpb.label.LabelImages;
  * @author dlegland
  *
  */
-public class LargestInscribedCircle
+public class LargestInscribedCircle implements RegionAnalyzer<Circle2D>
 {
 	// ==================================================
 	// Static methods
 	
+	
+	// ==================================================
+	// Constructors
+	
+	public LargestInscribedCircle()
+	{
+	}
+	
+	// ==================================================
+	// Implementation of RegionAnalyzer interface
+
+	public ResultsTable computeTable(ImagePlus labelPlus)
+	{
+		return createTable(analyzeRegions(labelPlus));
+	}
+
 	/**
 	 * Utility method that transforms the mapping between labels and inscribed
 	 * circle instances into a ResultsTable that can be displayed with ImageJ.
@@ -36,7 +53,7 @@ public class LargestInscribedCircle
 	 *            the mapping between labels and Inertia Ellipses
 	 * @return a ResultsTable that can be displayed with ImageJ.
 	 */
-	public static ResultsTable asTable(Map<Integer, Circle2D> map)
+	public ResultsTable createTable(Map<Integer, Circle2D> map)
 	{
 		// Initialize a new result table
 		ResultsTable table = new ResultsTable();
@@ -50,11 +67,11 @@ public class LargestInscribedCircle
 			
 			// add an entry to the resulting data table
 			table.incrementCounter();
-			table.addValue("Label", label);
+			table.addLabel(Integer.toString(label));
 			
 			// coordinates of circle center
-			table.addValue("InscrCircle.X", circle.getCenter().getX());
-			table.addValue("InscrCircle.Y", circle.getCenter().getY());
+			table.addValue("InscrCircle.Center.X", circle.getCenter().getX());
+			table.addValue("InscrCircle.Center.Y", circle.getCenter().getY());
 			
 			// circle radius
 			table.addValue("InscrCircle.Radius", circle.getRadius());
@@ -63,10 +80,15 @@ public class LargestInscribedCircle
 		return table;
 	}
 	
-	public final static Map<Integer, Circle2D> compute(ImagePlus labelPlus)
+	
+	public Map<Integer, Circle2D> analyzeRegions(ImagePlus labelPlus)
 	{
-		return compute(labelPlus.getProcessor(), labelPlus.getCalibration());
+		return analyzeRegions(labelPlus.getProcessor(), labelPlus.getCalibration());
 	}
+
+	
+	// ==================================================
+	// Computation methods
 
 	/**
 	 * Computes largest inscribed disk of each particle. Particles must be
@@ -79,14 +101,13 @@ public class LargestInscribedCircle
 	 * @return a ResultsTable with as many rows as the number of unique labels
 	 *         in label image, and columns "Label", "xi", "yi" and "Radius".
 	 */
-	public final static Map<Integer, Circle2D> compute(
-			ImageProcessor labelImage, Calibration calib)
+	public Map<Integer, Circle2D> analyzeRegions(ImageProcessor labelImage, Calibration calib)
     {
     	// compute all labels within image
     	int[] labels = LabelImages.findAllLabels(labelImage);
     	
     	// compute largest inscribed circles
-    	Circle2D[] circles = compute(labelImage, labels, calib);
+    	Circle2D[] circles = analyzeRegions(labelImage, labels, calib);
     	
     	// convert circle array into label-circle map
     	Map<Integer, Circle2D> map = new TreeMap<Integer, Circle2D>();
@@ -112,8 +133,7 @@ public class LargestInscribedCircle
 	 * @return a ResultsTable with as many rows as the number of unique labels
 	 *         in label image, and columns "Label", "xi", "yi" and "Radius".
 	 */
-	public final static Circle2D[] compute(
-			ImageProcessor labelImage, int[] labels, Calibration calib)
+	public Circle2D[] analyzeRegions(ImageProcessor labelImage, int[] labels, Calibration calib)
     {
     	// compute max label within image
     	int nLabels = labels.length;
@@ -163,15 +183,6 @@ public class LargestInscribedCircle
 		return values;
 	}
     
-	
-	
-	// ==================================================
-	// Constructors
-	
-	public LargestInscribedCircle()
-	{
-	}
-	
 	/**
 	 * Find one position of maximum value within each label.
 	 * 

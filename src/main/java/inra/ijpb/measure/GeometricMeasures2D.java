@@ -1080,8 +1080,9 @@ public class GeometricMeasures2D
 		if (image == null)
 			return null;
 
-		Calibration calib = new Calibration(); 
-		return InertiaEllipse.asTable(new InertiaEllipse().compute(image, calib));
+		Calibration calib = new Calibration();
+		InertiaEllipse op = new InertiaEllipse();
+		return op.createTable(op.analyzeRegions(image, calib));
 	}
 
 	/**
@@ -1121,6 +1122,7 @@ public class GeometricMeasures2D
     	calib.pixelWidth = resol[0];
     	calib.pixelHeight = resol[1];
     	
-    	return LargestInscribedCircle.asTable(LargestInscribedCircle.compute(labelImage, calib));
+    	LargestInscribedCircle op = new LargestInscribedCircle();
+		return op.createTable(op.analyzeRegions(labelImage, calib));
     }
 }

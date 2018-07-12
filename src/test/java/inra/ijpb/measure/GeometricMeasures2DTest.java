@@ -195,11 +195,11 @@ public class GeometricMeasures2DTest
 		
 		ResultsTable table = GeometricMeasures2D.inertiaEllipse(image);
 		
-		assertEquals(49.5, table.getValue("XCentroid", 0), .1);
-		assertEquals(49.5, table.getValue("YCentroid", 0), .1);
-		assertEquals(40, table.getValue("Radius1", 0), .2);
-		assertEquals(20, table.getValue("Radius2", 0), .2);
-		assertEquals(30, table.getValue("Orientation", 0), 1);
+		assertEquals(49.5, table.getValue("Ellipse.Center.X", 0), .1);
+		assertEquals(49.5, table.getValue("Ellipse.Center.Y", 0), .1);
+		assertEquals(40, table.getValue("Ellipse.Radius1", 0), .2);
+		assertEquals(20, table.getValue("Ellipse.Radius2", 0), .2);
+		assertEquals(30, table.getValue("Ellipse.Orientation", 0), 1);
 	}
 	
 	/**
@@ -217,10 +217,10 @@ public class GeometricMeasures2DTest
 		
 		ResultsTable table = GeometricMeasures2D.maximumInscribedCircle(image);
 		
-		assertEquals(1, table.getValue("Radius", 0), .1);
-		assertEquals(1, table.getValue("Radius", 1), .1);
-		assertEquals(2, table.getValue("Radius", 2), .1);
-		assertEquals(4, table.getValue("Radius", 3), .1);
+		assertEquals(1, table.getValue("InscrCircle.Radius", 0), .1);
+		assertEquals(1, table.getValue("InscrCircle.Radius", 1), .1);
+		assertEquals(2, table.getValue("InscrCircle.Radius", 2), .1);
+		assertEquals(4, table.getValue("InscrCircle.Radius", 3), .1);
 	}
 
 	private static final void fillRect(ImageProcessor image, int xmin,

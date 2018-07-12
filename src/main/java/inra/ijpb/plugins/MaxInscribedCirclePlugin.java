@@ -105,10 +105,11 @@ public class MaxInscribedCirclePlugin implements PlugIn
         }
         
 		// Execute the plugin
-		Map<Integer, Circle2D> results = LargestInscribedCircle.compute(labelImage);
+    	LargestInscribedCircle op = new LargestInscribedCircle();
+		Map<Integer, Circle2D> results = op.analyzeRegions(labelImage);
        
         // Display plugin result as table
-		ResultsTable table = LargestInscribedCircle.asTable(results);
+		ResultsTable table = op.createTable(results);
 		String tableName = labelImage.getShortTitle() + "-MaxInscribedCircle"; 
 		table.show(tableName);
 		
@@ -137,7 +138,7 @@ public class MaxInscribedCirclePlugin implements PlugIn
         // Check validity of parameters
         if (imagePlus==null) 
             return null;
-        ResultsTable results = LargestInscribedCircle.asTable(LargestInscribedCircle.compute(imagePlus));
+        ResultsTable results = new LargestInscribedCircle().computeTable(imagePlus);
 		return new Object[]{"Morphometry", results};
     }
     

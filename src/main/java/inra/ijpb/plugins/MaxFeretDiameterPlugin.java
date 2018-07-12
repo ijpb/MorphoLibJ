@@ -118,10 +118,11 @@ public class MaxFeretDiameterPlugin implements PlugIn
 		}
 		
 		// Compute max Feret diameters
-		Map<Integer, PointPair2D> maxDiamsMap = new MaxFeretDiameter().process(labelPlus);
+		MaxFeretDiameter op = new MaxFeretDiameter();
+		Map<Integer, PointPair2D> maxDiamsMap = op.analyzeRegions(labelPlus);
 		
 		// Display the result Table
-        ResultsTable results = MaxFeretDiameter.asTable(maxDiamsMap);
+        ResultsTable results = op.createTable(maxDiamsMap);
 
         // create string for indexing results
 		String tableName = labelPlus.getShortTitle() + "-FeretDiams"; 

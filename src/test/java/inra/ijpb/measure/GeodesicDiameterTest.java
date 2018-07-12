@@ -42,7 +42,7 @@ public class GeodesicDiameterTest
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.label.geodesic.GeodesicDiameter#process(ij.process.ImageProcessor)}.
+	 * Test method for {@link inra.ijpb.label.geodesic.GeodesicDiameter#analyzeRegions(ij.process.ImageProcessor)}.
 	 */
 	@Test
 	public void testGeodesicDiameter_Circle_ChessKnight()
@@ -57,7 +57,7 @@ public class GeodesicDiameterTest
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.label.geodesic.GeodesicDiameter#process(ij.process.ImageProcessor)}.
+	 * Test method for {@link inra.ijpb.label.geodesic.GeodesicDiameter#analyzeRegions(ij.process.ImageProcessor)}.
 	 */
 	@Test
 	public void testGeodesicDiameter_Grains_ChessKnight()

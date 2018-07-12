@@ -42,21 +42,6 @@ public class RegionAnalysis implements PlugInFilter
     // ====================================================
     // Global Constants
     
-//    /**
-//     * List of available numbers of directions
-//     */
-//    public final static String[] dirNumberLabels = {
-//            "2 directions", 
-//            "4 directions" 
-//    }; 
-//    
-//    /**
-//     *  Array of weights, in the same order than the array of names.
-//     */
-//    public final static int[] dirNumbers = {
-//        2, 4
-//    };
-    
 	boolean computeArea = true;
 	boolean computePerimeter = true;
 	boolean computeInertiaEllipse = true;
@@ -118,7 +103,6 @@ public class RegionAnalysis implements PlugInFilter
         gd.addCheckbox("Max. Feret Diameter", true);
         gd.addCheckbox("Geodesic Diameter", true);
         gd.addCheckbox("Max. Inscribed Disc", true);
-//        gd.addMessage("");
         gd.showDialog();
         
         // If cancel was clicked, do nothing
@@ -144,14 +128,10 @@ public class RegionAnalysis implements PlugInFilter
     
     public ResultsTable process(ImagePlus imagePlus)
     {
+    	ImageProcessor image = imagePlus.getProcessor();
         // Extract spatial calibration
         Calibration calib = imagePlus.getCalibration();
-        return process(imagePlus.getProcessor(), calib);
-    }
-    
-    public ResultsTable process(ImageProcessor image, Calibration calib)
-    {
-		// extract particle labels
+
 		int[] labels = LabelImages.findAllLabels(image);
 		int nLabels = labels.length;
 
@@ -180,13 +160,13 @@ public class RegionAnalysis implements PlugInFilter
 
     	if (computeInertiaEllipse)
     	{
-    		ResultsTable ellipseTable = InertiaEllipse.asTable(new InertiaEllipse().compute(image, calib));
+    		ResultsTable ellipseTable = new InertiaEllipse().computeTable(imagePlus);
     		addAllColumns(table, ellipseTable);
     	}
 
     	if (computeMaxFeretDiameter)
     	{
-    		PointPair2D[] pairs = new MaxFeretDiameter().process(image, labels, calib);
+    		PointPair2D[] pairs = new MaxFeretDiameter().analyzeRegions(image, labels, calib);
     		for (int i = 0; i < nLabels; i++)
         	{
         		table.setValue("MaxFeretDiam", i, pairs[i].diameter());
@@ -206,7 +186,7 @@ public class RegionAnalysis implements PlugInFilter
 
     	if (computeMaxInscribedDisc)
     	{
-    		ResultsTable inscribedCircleTable = LargestInscribedCircle.asTable(LargestInscribedCircle.compute(image, calib));
+    		ResultsTable inscribedCircleTable = new LargestInscribedCircle().computeTable(imagePlus);
     		addAllColumns(table, inscribedCircleTable);
     	}
 
