@@ -182,7 +182,8 @@ public class MaxFeretDiameter extends AlgoStub implements RegionAnalyzer<PointPa
 	 *            the set of labels within the image
 	 * @param calib
 	 *            the spatial calibration of the image
-	 * @return a ResultsTable containing oriented box parameters
+	 * @return an array of PointPair2D representing the coordinates of extreme
+	 *         points, in calibrated coordinates.
 	 */
 	public PointPair2D[] analyzeRegions(ImageProcessor image, int[] labels, Calibration calib)
 	{

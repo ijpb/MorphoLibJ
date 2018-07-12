@@ -110,6 +110,7 @@ public class GeometricMeasures2DTest
 	 * Test method for {@link ijt.measure.geometric.GeometricMeasures2D#croftonPerimeter_D2(ij.process.ImageProcessor, double[])}.
 	 */
 	@Test
+	@Deprecated
 	public final void testCroftonPerimeterD2_DiskR8()
 	{
 		ImageProcessor image = createDiskR8Image();
@@ -132,6 +133,7 @@ public class GeometricMeasures2DTest
 	 * Test method for {@link ijt.measure.geometric.GeometricMeasures2D#croftonPerimeterD4(ij.process.ImageProcessor, double[])}.
 	 */
 	@Test
+	@Deprecated
 	public final void testCroftonPerimeterD4_DiskR8() 
 	{
 		ImageProcessor image = createDiskR8Image();

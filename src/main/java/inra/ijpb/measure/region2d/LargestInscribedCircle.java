@@ -131,8 +131,8 @@ public class LargestInscribedCircle extends AlgoStub implements RegionAnalyzer<C
 	 *            the set of labels within the image
 	 * @param calib
 	 *            the spatial calibration of the image
-	 * @return a ResultsTable with as many rows as the number of unique labels
-	 *         in label image, and columns "Label", "xi", "yi" and "Radius".
+	 * @return an array of Circle2D representing the inscribed circles of each
+	 *         region, in calibrated coordinates
 	 */
 	public Circle2D[] analyzeRegions(ImageProcessor labelImage, int[] labels, Calibration calib)
     {

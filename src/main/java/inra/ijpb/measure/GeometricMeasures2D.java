@@ -24,7 +24,6 @@ package inra.ijpb.measure;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -32,7 +31,9 @@ import ij.IJ;
 import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.process.ImageProcessor;
+import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.label.LabelImages;
+import inra.ijpb.measure.region2d.CroftonPerimeter;
 import inra.ijpb.measure.region2d.InertiaEllipse;
 import inra.ijpb.measure.region2d.LargestInscribedCircle;
 
@@ -338,6 +339,11 @@ public class GeometricMeasures2D
 	/**
 	 * Compute surface area for each label given in the "labels" argument.
 	 * 
+	 * Consists in calling the
+	 * {@link inra.ijpb.measure.region2d.CroftonPerimeter} class.
+	 * 
+	 * @deprecated replaced by {@link inra.ijpb.measure.region2d.CroftonPerimeter}
+	 *  
 	 * @param image
 	 *            the input image containing label of particles
 	 * @param labels
@@ -346,185 +352,42 @@ public class GeometricMeasures2D
 	 *            the spatial resolution
 	 * @param nDirs
 	 *            the number of directions to process, either 2 or 4
-	 * @return an array containing for each label, an estimate of the region perimeter
+	 * @return an array containing for each label, an estimate of the region
+	 *         perimeter
 	 */
+	@Deprecated
 	public final static double[] croftonPerimeter(ImageProcessor image,
 			int[] labels, double[] resol, int nDirs)
 	{
-		// create associative array to know index of each label
-		int nLabels = labels.length;
-        HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
-
-		// pre-compute LUT corresponding to resolution and number of directions
-		IJ.showStatus("Compute LUT...");
-		double[] lut = computePerimeterLut(resol, nDirs);
-
-		// initialize result
-		double[] perimeters = new double[nLabels];
-
-		// size of image
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-
-		// for each configuration of 2x2 pixels, we identify the labels
-		ArrayList<Integer> localLabels = new ArrayList<Integer>(8);
-
-		// iterate on image pixel configurations
-		IJ.showStatus("Measure perimeter...");
-		for (int y = 0; y < sizeY - 1; y++) 
-		{
-			IJ.showProgress(y, sizeY);
-			for (int x = 0; x < sizeX - 1; x++) 
-			{
-
-				// identify labels in current config
-				localLabels.clear();
-				for (int y2 = y; y2 <= y + 1; y2++) 
-				{
-					for (int x2 = x; x2 <= x + 1; x2++)
-					{
-						int label = (int) image.getf(x2, y2);
-						// do not consider background
-						if (label == 0)
-							continue;
-						// keep only one instance of each label
-						if (!localLabels.contains(label))
-							localLabels.add(label);
-					}
-				}
-
-				// if no label in local configuration contribution is zero
-				if (localLabels.size() == 0)
-				{
-					continue;
-				}
-
-				// For each label, compute binary confi
-				for (int label : localLabels) {
-					// Compute index of local configuration
-					int index = 0;
-					index += (int) image.getf(x, y) == label ? 1 : 0;
-					index += (int) image.getf(x + 1, y) == label ? 2 : 0;
-					index += (int) image.getf(x, y + 1) == label ? 4 : 0;
-					index += (int) image.getf(x + 1, y + 1) == label ? 8 : 0;
-
-					// retriev label index from label value
-					int labelIndex = labelIndices.get(label);
-
-					// update measure for current label
-					perimeters[labelIndex] += lut[index];
-				}
-			}
-		}
-
-		IJ.showStatus("");
-		IJ.showProgress(1);
-		return perimeters;
+		CroftonPerimeter algo = new CroftonPerimeter(nDirs);
+		DefaultAlgoListener.monitor(algo);
+		
+		Calibration calib = new Calibration();
+		calib.pixelWidth = resol[0];
+		calib.pixelHeight = resol[1];
+		
+		return algo.analyzeRegions(image, labels, calib);
 	}
 
-	/**
-	 * Computes the Look-up table that is used to compute perimeter. The result
-	 * is an array with 16 entries, each entry corresponding to a binary 2-by-2
-	 * configuration of pixels.
-	 * 
-	 * @param resol
-	 *            the spatial resolution
-	 * @param nDirs
-	 *            the number of directions to process, either 2 or 4
-	 * @return an array containing for each 2-by-2 configuration index, the
-	 *         corresponding contribution to perimeter estimate
-	 */
-	private final static double[] computePerimeterLut(double[] resol, int nDirs)
-	{
-		// distances between a pixel and its neighbors.
-		// di refer to orthogonal neighbors
-		// dij refer to diagonal neighbors
-		double d1 = resol[0];
-		double d2 = resol[1];
-		double d12 = Math.hypot(resol[0], resol[1]);
-		double area = d1 * d2;
-
-		// weights associated to each direction, computed only for four
-		// directions
-		double[] weights = null;
-		if (nDirs == 4)
-		{
-			weights = computeDirectionWeightsD4(resol);
-		}
-
-		// initialize output array (2^(2*2) = 16 configurations in 2D)
-		final int nConfigs = 16;
-		double[] tab = new double[nConfigs];
-
-		// loop for each tile configuration
-		for (int i = 0; i < nConfigs; i++)
-		{
-			// create the binary image representing the 2x2 tile
-			boolean[][] im = new boolean[2][2];
-			im[0][0] = (i & 1) > 0;
-			im[0][1] = (i & 2) > 0;
-			im[1][0] = (i & 4) > 0;
-			im[1][1] = (i & 8) > 0;
-
-			// contributions for isothetic directions
-			double ke1, ke2;
-
-			// contributions for diagonal directions
-			double ke12;
-
-			// iterate over the 4 pixels within the configuration
-			for (int y = 0; y < 2; y++)
-			{
-				for (int x = 0; x < 2; x++)
-				{
-					if (!im[y][x])
-						continue;
-
-					// divides by two to convert intersection count to projected
-					// diameter
-					ke1 = im[y][1 - x] ? 0 : (area / d1) / 2;
-					ke2 = im[1 - y][x] ? 0 : (area / d2) / 2;
-
-					if (nDirs == 2) 
-					{
-						// Count only orthogonal directions
-						// divides by two for average, and by two for
-						// multiplicity
-						tab[i] += (ke1 + ke2) / 4;
-
-					} 
-					else if (nDirs == 4) 
-					{
-						// compute contribution of diagonal directions
-						ke12 = im[1 - y][1 - x] ? 0 : (area / d12) / 2;
-
-						// Decomposition of Crofton formula on 4 directions,
-						// taking into account multiplicities
-						tab[i] += ((ke1 / 2) * weights[0] + (ke2 / 2)
-								* weights[1] + ke12 * weights[2]);
-					}
-				}
-
-			}
-
-			// Add a normalisation constant
-			tab[i] *= Math.PI;
-		}
-
-		return tab;
-	}
 
 	/**
 	 * Computes perimeter of each label using Crofton method with 2 directions.
 	 * 
+	 * Iterates over labels, then iterates over lines in horizontal and vertical
+	 * directions. Slow...
+	 * 
+	 * @deprecated replaced by {@link inra.ijpb.measure.region2d.CroftonPerimeter}
+	 *  
 	 * @param labelImage
 	 *            the input image containing label of particles
 	 * @param labels
 	 *            the array of unique labels in image
 	 * @param resol
 	 *            the spatial resolution
-	 * @return an array containing for each label, an estimate of the region perimeter
+	 * @return an array containing for each label, an estimate of the region
+	 *         perimeter
 	 */
+	@Deprecated
 	public static final double[] croftonPerimeterD2(ImageProcessor labelImage,
 			int[] labels, double[] resol)
 	{
@@ -563,6 +426,10 @@ public class GeometricMeasures2D
 	 * Computes perimeter of each label using Crofton method with 4 directions
 	 * (orthogonal and diagonal).
 	 * 
+	 * Iterates over labels, then iterates over lines in the four main directions. Slow...
+	 * 
+	 * @deprecated replaced by {@link inra.ijpb.measure.region2d.CroftonPerimeter}
+	 *  
 	 * @param labelImage
 	 *            the input image containing label of particles
 	 * @param labels
@@ -571,6 +438,7 @@ public class GeometricMeasures2D
 	 *            the spatial resolution
 	 * @return an array containing for each label, an estimate of the region perimeter
 	 */
+	@Deprecated
 	public static final double[] croftonPerimeterD4(ImageProcessor labelImage,
 			int[] labels, double[] resol)
 	{

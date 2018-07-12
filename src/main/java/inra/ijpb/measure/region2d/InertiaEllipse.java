@@ -123,8 +123,8 @@ public class InertiaEllipse extends AlgoStub implements RegionAnalyzer<Ellipse>
 	 *            the array of labels within the image
 	 * @param calib
 	 *            the calibration of the image
-	 * @return an ResultsTable containing for each label, the parameters of the
-	 *         inertia ellipsoid, in pixel coordinates
+	 * @return an array of Ellipse representing the calibrated coordinates of
+	 *         the inertia ellipse of each region
 	 */
 	public Ellipse[] analyzeRegions(ImageProcessor image, int[] labels, Calibration calib)
 	{

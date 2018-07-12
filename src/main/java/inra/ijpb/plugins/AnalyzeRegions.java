@@ -38,6 +38,7 @@ import inra.ijpb.geometry.Ellipse;
 import inra.ijpb.geometry.PointPair2D;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.GeometricMeasures2D;
+import inra.ijpb.measure.region2d.CroftonPerimeter;
 import inra.ijpb.measure.region2d.GeodesicDiameter;
 import inra.ijpb.measure.region2d.InertiaEllipse;
 import inra.ijpb.measure.region2d.LargestInscribedCircle;
@@ -177,7 +178,10 @@ public class AnalyzeRegions implements PlugInFilter
 
     	if (computePerimeter)
     	{
-    		double[] perimList = GeometricMeasures2D.croftonPerimeter(image, labels, resol, 4);
+    		CroftonPerimeter algo = new CroftonPerimeter();
+    		DefaultAlgoListener.monitor(algo);
+    		
+    		double[] perimList = algo.analyzeRegions(image, labels, calib);
     		addColumn(table, "Perimeter", perimList);
     	}
 
