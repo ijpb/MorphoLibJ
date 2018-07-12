@@ -29,6 +29,7 @@ import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
+import inra.ijpb.geometry.PointPair2D;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.GeodesicDiameter;
 import inra.ijpb.measure.GeometricMeasures2D;
@@ -183,7 +184,7 @@ public class RegionAnalysis implements PlugInFilter
 
     	if (computeMaxFeretDiameter)
     	{
-    		MaxFeretDiameter.PointPair[] pairs = new MaxFeretDiameter().process(image, labels, calib);
+    		PointPair2D[] pairs = new MaxFeretDiameter().process(image, labels, calib);
     		for (int i = 0; i < nLabels; i++)
         	{
         		table.setValue("MaxFeretDiam", i, pairs[i].diameter());

@@ -36,9 +36,9 @@ import ij.gui.Roi;
 import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
+import inra.ijpb.geometry.PointPair2D;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.region2d.MaxFeretDiameter;
-import inra.ijpb.measure.region2d.MaxFeretDiameter.PointPair;
 
 /**
  * Computes Maximum Feret Diameters of a binary or label image.
@@ -118,7 +118,7 @@ public class MaxFeretDiameterPlugin implements PlugIn
 		}
 		
 		// Compute max Feret diameters
-		Map<Integer, PointPair> maxDiamsMap = new MaxFeretDiameter().process(labelPlus);
+		Map<Integer, PointPair2D> maxDiamsMap = new MaxFeretDiameter().process(labelPlus);
 		
 		// Display the result Table
         ResultsTable results = MaxFeretDiameter.asTable(maxDiamsMap);
@@ -137,12 +137,12 @@ public class MaxFeretDiameterPlugin implements PlugIn
 		}
     }
     
-	public void drawDiameters(ImagePlus target, Map<Integer, PointPair> geodDiams)
+	public void drawDiameters(ImagePlus target, Map<Integer, PointPair2D> geodDiams)
 	{
 		Overlay overlay = new Overlay();
 		Calibration calib = target.getCalibration();
 		
-		for (PointPair result : geodDiams.values())
+		for (PointPair2D result : geodDiams.values())
 		{
 			Roi roi = createDiametersRoi(result, calib);
 		    roi.setStrokeColor(Color.BLUE);
@@ -152,7 +152,7 @@ public class MaxFeretDiameterPlugin implements PlugIn
 		target.setOverlay(overlay);
 	}
 
-	private Roi createDiametersRoi(PointPair pointPair, Calibration calib)
+	private Roi createDiametersRoi(PointPair2D pointPair, Calibration calib)
 	{
 		if (pointPair == null)
     	{

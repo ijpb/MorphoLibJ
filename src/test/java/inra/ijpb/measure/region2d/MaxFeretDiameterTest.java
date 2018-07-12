@@ -12,7 +12,7 @@ import org.junit.Test;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.measure.ResultsTable;
-import inra.ijpb.measure.region2d.MaxFeretDiameter.PointPair;
+import inra.ijpb.geometry.PointPair2D;
 
 /**
  * @author dlegland
@@ -31,11 +31,11 @@ public class MaxFeretDiameterTest
 	
 		MaxFeretDiameter algo = new MaxFeretDiameter();
 		
-		Map<Integer, PointPair> maxFeretDiams = algo.process(imagePlus);
+		Map<Integer, PointPair2D> maxFeretDiams = algo.process(imagePlus);
 
 		assertEquals(1, maxFeretDiams.size());
 		
-		PointPair diam = maxFeretDiams.get(255);
+		PointPair2D diam = maxFeretDiams.get(255);
 		
 		assertEquals(272.7, diam.diameter(), .2);
 		
@@ -52,7 +52,7 @@ public class MaxFeretDiameterTest
 		ImagePlus imagePlus = IJ.openImage(getClass().getResource("/files/grains-med-WTH-lbl.tif").getFile());
 	
 		MaxFeretDiameter algo = new MaxFeretDiameter();
-		Map<Integer, PointPair> maxFeretDiams = algo.process(imagePlus);
+		Map<Integer, PointPair2D> maxFeretDiams = algo.process(imagePlus);
 		
 		assertEquals(96, maxFeretDiams.size());
 		
