@@ -14,6 +14,7 @@ import ij.ImagePlus;
 import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.process.ImageProcessor;
+import inra.ijpb.geometry.Ellipse;
 import inra.ijpb.label.LabelImages;
 
 /**
@@ -35,7 +36,7 @@ public class InertiaEllipse
 	 *            the mapping between labels and Inertia Ellipses
 	 * @return a ResultsTable that can be displayed with ImageJ.
 	 */
-	public static ResultsTable asTable(Map<Integer, InertiaEllipse> map)
+	public static ResultsTable asTable(Map<Integer, Ellipse> map)
 	{
 		// Initialize a new result table
 		ResultsTable table = new ResultsTable();
@@ -45,39 +46,58 @@ public class InertiaEllipse
 		for (int label : map.keySet())
 		{
 			// current diameter
-			InertiaEllipse ellipse = map.get(label);
+			Ellipse ellipse = map.get(label);
 			
 			// add an entry to the resulting data table
 			table.incrementCounter();
-			table.addValue("Label", label);
+			table.addLabel(Integer.toString(label));
 			
 			// coordinates of centroid
-			table.addValue("Centroid.X", ellipse.center.getX());
-			table.addValue("Centroid.Y", ellipse.center.getY());
+			Point2D center = ellipse.center();
+			table.addValue("Centroid.X", center.getX());
+			table.addValue("Centroid.Y", center.getY());
 			
 			// ellipse size
-			table.addValue("Ellipse.Radius1", ellipse.radius1);
-			table.addValue("Ellipse.Radius2", ellipse.radius1);
+			table.addValue("Ellipse.Radius1", ellipse.radius1());
+			table.addValue("Ellipse.Radius2", ellipse.radius2());
 
 			// ellipse orientation (degrees)
-			table.addValue("Ellipse.Orientation", ellipse.orientation);
+			table.addValue("Ellipse.Orientation", ellipse.orientation());
 		}
 	
 		return table;
 	}	
 	
-	public final static Map<Integer, InertiaEllipse> compute(ImagePlus labelPlus)
+	// ==================================================
+	// Constructor
+
+	/**
+	 * Default constructor
+	 */
+	public InertiaEllipse()
+	{
+	}
+
+	// ==================================================
+	// Computation methods 
+
+	public ResultsTable computeTable(ImagePlus labelPlus)
+	{
+		return asTable(compute(labelPlus.getProcessor(), labelPlus.getCalibration()));
+	}
+
+	public Map<Integer, Ellipse> compute(ImagePlus labelPlus)
 	{
 		return compute(labelPlus.getProcessor(), labelPlus.getCalibration());
 	}
 
-	public final static Map<Integer, InertiaEllipse> compute(ImageProcessor labelImage, Calibration calib)
+	public Map<Integer, Ellipse> compute(ImageProcessor labelImage, Calibration calib)
 	{
 		int[] labels = LabelImages.findAllLabels(labelImage);
-		InertiaEllipse[] ellipses = compute(labelImage, labels, calib);
+		Ellipse[] ellipses = compute(labelImage, labels, calib);
 		
 		// convert the arrays into a map of index-value pairs
-		Map<Integer, InertiaEllipse> map = new TreeMap<Integer, InertiaEllipse>();
+		Map<Integer, Ellipse> map = new TreeMap<Integer, Ellipse>();
 		for (int i = 0; i < labels.length; i++)
 		{
 			map.put(labels[i], ellipses[i]);
@@ -98,7 +118,7 @@ public class InertiaEllipse
 	 * @return an ResultsTable containing for each label, the parameters of the
 	 *         inertia ellipsoid, in pixel coordinates
 	 */
-	public final static InertiaEllipse[] compute(ImageProcessor image, int[] labels, Calibration calib)
+	public Ellipse[] compute(ImageProcessor image, int[] labels, Calibration calib)
 	{
 		// Check validity of parameters
 		if (image == null)
@@ -181,7 +201,7 @@ public class InertiaEllipse
 		}
 
 		// Create array of result
-		InertiaEllipse[] ellipses = new InertiaEllipse[nLabels];
+		Ellipse[] ellipses = new Ellipse[nLabels];
 		
 		// compute ellipse parameters for each region
 		final double sqrt2 = sqrt(2);
@@ -200,42 +220,11 @@ public class InertiaEllipse
 			double theta = Math.toDegrees(Math.atan2(2 * xy, xx - yy) / 2);
 
 			Point2D center = new Point2D.Double(cx[i] + sx / 2 + ox, cy[i] + sy / 2 + oy);
-			ellipses[i] = new InertiaEllipse(center, ra, rb, theta);
+			ellipses[i] = new Ellipse(center, ra, rb, theta);
 		}
 
 		return ellipses;
 	}
 
-
-	
-	// ==================================================
-	// Class variables
-	
-	/**
-	 * The inertia center of the region.
-	 */
-	Point2D center;
-	
-	double radius1;
-	
-	double radius2;
-	
-	/**
-	 * The orientation of the main axis, in degrees.
-	 */
-	double orientation;
-	
-	
-	// ==================================================
-	// Constructors
-	
-	public InertiaEllipse(Point2D center, double r1, double r2, double theta)
-	{
-		this.center = center;
-		this.radius1 = r1;
-		this.radius2 = r2;
-		this.orientation = theta;
-	}
-	
 }
 

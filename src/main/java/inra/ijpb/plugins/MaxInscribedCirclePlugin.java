@@ -204,7 +204,7 @@ public class MaxInscribedCirclePlugin implements PlugIn
 		Overlay overlay = new Overlay();
 		Roi roi;
 		
-		// add each cirlce to the overlay
+		// add each circle to the overlay
 		for (int label : results.keySet()) 
 		{
 			// Coordinates of inscribed circle, in pixel coordinates

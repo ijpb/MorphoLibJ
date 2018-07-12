@@ -22,15 +22,25 @@
 package inra.ijpb.plugins;
 
 
+import java.awt.Color;
+import java.awt.geom.Point2D;
+import java.util.Map;
+
 import ij.IJ;
 import ij.ImagePlus;
+import ij.WindowManager;
+import ij.gui.GenericDialog;
+import ij.gui.Overlay;
+import ij.gui.PolygonRoi;
+import ij.gui.Roi;
+import ij.measure.Calibration;
 import ij.measure.ResultsTable;
-import ij.plugin.filter.PlugInFilter;
-import ij.process.ImageProcessor;
+import ij.plugin.PlugIn;
+import inra.ijpb.geometry.Ellipse;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.region2d.InertiaEllipse;
 
-public class InertiaEllipsePlugin implements PlugInFilter
+public class InertiaEllipsePlugin implements PlugIn
 {
     // ====================================================
     // Global Constants
@@ -38,52 +48,158 @@ public class InertiaEllipsePlugin implements PlugInFilter
     
     // ====================================================
     // Class variables
-    
-   /**
-     * When this options is set to true, information messages are displayed on
-     * the console. 
-     */
-    public boolean debug  = false;
-    
-	ImagePlus imagePlus;
-	
-    
-    // ====================================================
+ 
+	// ====================================================
     // Calling functions 
     
 	/* (non-Javadoc)
-	 * @see ij.plugin.filter.PlugInFilter#setup(java.lang.String, ij.ImagePlus)
-	 */
-	@Override
-	public int setup(String arg, ImagePlus imp) {
-		if (imp == null) {
-			IJ.noImage();
-			return DONE;
-		}
-		
-		this.imagePlus = imp;
-		return DOES_ALL | NO_CHANGES;
-	}
-
-	/* (non-Javadoc)
      * @see ij.plugin.PlugIn#run(java.lang.String)
      */
-	public void run(ImageProcessor ip)
+	public void run(String args)
 	{
-		// check if image is a label image
-		if (!LabelImages.isLabelImageType(imagePlus))
+		// Open a dialog to choose:
+		// - a label image
+		// - a set of weights
+		int[] indices = WindowManager.getIDList();
+		if (indices==null)
 		{
-			IJ.showMessage("Input image should be a label image");
+			IJ.error("No image", "Need at least one image to work");
 			return;
 		}
-        
+		
+		// create the list of image names
+		String[] imageNames = new String[indices.length];
+		for (int i=0; i<indices.length; i++)
+		{
+			imageNames[i] = WindowManager.getImage(indices[i]).getTitle();
+		}
+		
+		// name of selected image
+		String selectedImageName = IJ.getImage().getTitle();
+
+		// create the dialog
+		GenericDialog gd = new GenericDialog("Inertia Ellipse");
+		gd.addChoice("Label Image:", imageNames, selectedImageName);
+		gd.addCheckbox("Show Overlay Result", true);
+		gd.addChoice("Image to overlay:", imageNames, selectedImageName);
+		gd.showDialog();
+		
+		if (gd.wasCanceled())
+			return;
+		
+		// set up current parameters
+		int labelImageIndex = gd.getNextChoiceIndex();
+		ImagePlus labelImage = WindowManager.getImage(labelImageIndex + 1);
+		boolean showOverlay = gd.getNextBoolean();
+		int resultImageIndex = gd.getNextChoiceIndex();
+		
+		// check if image is a label image
+		if (!LabelImages.isLabelImageType(labelImage))
+		{
+            IJ.showMessage("Input image should be a label image");
+            return;
+        }
+
         // Execute the plugin
-        ResultsTable results = InertiaEllipse.asTable(InertiaEllipse.compute(imagePlus));
+		Map<Integer, Ellipse> ellipses = new InertiaEllipse().compute(labelImage);
+        ResultsTable results = InertiaEllipse.asTable(ellipses);
         
-		// create string for indexing results
-		String tableName = imagePlus.getShortTitle() + "-Ellipses"; 
-    
 		// show result
-		results.show(tableName);
+    	String tableName = labelImage.getShortTitle() + "-Ellipses"; 
+    	results.show(tableName);
+    	
+		// Check if results must be displayed on an image
+		if (showOverlay)
+		{
+			// find image for displaying geometric overlays
+			ImagePlus resultImage = WindowManager.getImage(resultImageIndex + 1);
+			showResultsAsOverlay(ellipses, resultImage);
+		}
     }
+	
+	/**
+	 * Display the result of maximal inscribed circle extraction as overlay on a
+	 * given image.
+	 * 
+	 * @param target
+	 *            the ImagePlus used to display result
+	 * @param table
+	 *            the ResultsTable containing columns "xi", "yi" and "Radius"
+	 * @param the
+	 *            resolution in each direction
+	 */
+	private void showResultsAsOverlay(Map<Integer, Ellipse> results, ImagePlus target)	
+	{
+		// get spatial calibration of target image
+		Calibration calib = target.getCalibration();
+		
+		// create overlay
+		Overlay overlay = new Overlay();
+		Roi roi;
+		
+		// add each ellipse to the overlay
+		for (int label : results.keySet()) 
+		{
+			// Coordinates of inscribed circle, in pixel coordinates
+			Ellipse ellipse = results.get(label);
+			ellipse = uncalibrate(ellipse, calib);
+			roi = createRoi(ellipse);
+			
+			// draw inscribed circle
+			roi.setStrokeColor(Color.BLUE);
+			overlay.add(roi);
+		}
+		
+		target.setOverlay(overlay);
+	}
+
+	/**
+	 * Determines the ellipse corresponding to the uncalibrated version of this
+	 * ellipse, assuming it was defined in calibrated coordinates.
+	 * 
+	 * @param ellipse
+	 *            the ellipse in calibrated coordinates
+	 * @param calib
+	 *            the spatial calibration to consider
+	 * @return the circle in pixel coordinates
+	 */
+	private final static Ellipse uncalibrate(Ellipse ellipse, Calibration calib)
+	{
+		Point2D center = ellipse.center();
+		double xc = (center.getX() - calib.xOrigin) / calib.pixelWidth;
+		double yc = (center.getY() - calib.yOrigin) / calib.pixelHeight;
+		double radius1 = ellipse.radius1() / calib.pixelWidth;
+		double radius2 = ellipse.radius2() / calib.pixelWidth;
+		return new Ellipse(xc, yc, radius1, radius2, ellipse.orientation());
+	}
+	
+	private final static Roi createRoi(Ellipse ellipse)
+	{
+		// Coordinates of ellipse, in pixel coordinates
+		Point2D center = ellipse.center();
+		double xc = center.getX();
+		double yc = center.getY();
+		
+		double r1 = ellipse.radius1();
+		double r2 = ellipse.radius2();
+		double theta = Math.toRadians(ellipse.orientation());
+		
+		double cot = Math.cos(theta);
+		double sit = Math.sin(theta);
+		
+		int nVertices = 100;
+		float[] xv = new float[nVertices];
+		float[] yv = new float[nVertices];
+		for (int i = 0; i < nVertices; i++)
+		{
+			double t = i * Math.PI * 2.0 / nVertices;
+			double x = Math.cos(t) * r1;
+			double y = Math.sin(t) * r2;
+			
+			xv[i] = (float) (x * cot - y * sit + xc);
+			yv[i] = (float) (x * sit + y * cot + yc);
+		}
+		
+		return new PolygonRoi(xv, yv, nVertices, Roi.POLYGON);
+	}
 }
