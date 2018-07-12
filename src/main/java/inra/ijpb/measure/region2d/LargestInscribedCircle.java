@@ -12,6 +12,7 @@ import ij.ImagePlus;
 import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.process.ImageProcessor;
+import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.geometry.Circle2D;
 import inra.ijpb.label.LabelImages;
@@ -24,7 +25,7 @@ import inra.ijpb.measure.RegionAnalyzer;
  * @author dlegland
  *
  */
-public class LargestInscribedCircle implements RegionAnalyzer<Circle2D>
+public class LargestInscribedCircle extends AlgoStub implements RegionAnalyzer<Circle2D>
 {
 	// ==================================================
 	// Static methods
@@ -139,9 +140,11 @@ public class LargestInscribedCircle implements RegionAnalyzer<Circle2D>
     	int nLabels = labels.length;
     	
 		// first distance propagation to find an arbitrary center
+    	fireStatusChanged(this, "Compute distance map");
 		ImageProcessor distanceMap = BinaryImages.distanceMap(labelImage);
 		
 		// Extract position of maxima
+		fireStatusChanged(this, "Find inscribed disks center");
 		Point[] posCenter;
 		posCenter = findPositionOfMaxValues(distanceMap, labelImage, labels);
 		float[] radii = getValues(distanceMap, posCenter);

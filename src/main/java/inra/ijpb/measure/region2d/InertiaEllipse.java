@@ -14,6 +14,7 @@ import ij.ImagePlus;
 import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.process.ImageProcessor;
+import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.geometry.Ellipse;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.RegionAnalyzer;
@@ -24,7 +25,7 @@ import inra.ijpb.measure.RegionAnalyzer;
  * @author dlegland
  *
  */
-public class InertiaEllipse implements RegionAnalyzer<Ellipse>
+public class InertiaEllipse extends AlgoStub implements RegionAnalyzer<Ellipse>
 {
 	// ==================================================
 	// Static methods 
@@ -158,6 +159,7 @@ public class InertiaEllipse implements RegionAnalyzer<Ellipse>
 		double[] Iyy = new double[nLabels];
 		double[] Ixy = new double[nLabels];
 
+    	fireStatusChanged(this, "Compute centroids");
 		// compute centroid of each region
 		for (int y = 0; y < height; y++) 
 		{
@@ -182,6 +184,7 @@ public class InertiaEllipse implements RegionAnalyzer<Ellipse>
 		}
 
 		// compute centered inertia matrix of each label
+    	fireStatusChanged(this, "Compute Inertia Matrices");
 		for (int y = 0; y < height; y++) 
 		{
 			for (int x = 0; x < width; x++)
@@ -211,6 +214,7 @@ public class InertiaEllipse implements RegionAnalyzer<Ellipse>
 		Ellipse[] ellipses = new Ellipse[nLabels];
 		
 		// compute ellipse parameters for each region
+    	fireStatusChanged(this, "Compute Ellipses");
 		final double sqrt2 = sqrt(2);
 		for (int i = 0; i < nLabels; i++) 
 		{
