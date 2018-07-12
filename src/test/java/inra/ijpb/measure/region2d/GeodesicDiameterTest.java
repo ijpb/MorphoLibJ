@@ -1,4 +1,4 @@
-package inra.ijpb.measure;
+package inra.ijpb.measure.region2d;
 
 import static org.junit.Assert.assertEquals;
 
@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import ij.IJ;
 import ij.ImagePlus;
+import ij.measure.Calibration;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.binary.ChamferWeights;
@@ -33,11 +34,12 @@ public class GeodesicDiameterTest
 		}
 		
 		GeodesicDiameter algo = new GeodesicDiameter(ChamferWeights.BORGEFORS);
-		GeodesicDiameter.Result[] geodDiams = algo.process(labelImage, new int[]{1, 2, 3, 4, 5});
+		int[] labels = new int[]{1, 2, 3, 4, 5};
+		GeodesicDiameter.Result[] geodDiams = algo.analyzeRegions(labelImage, labels, new Calibration());
 		
 		for (int i = 0; i < 5; i++)
 		{
-			assertEquals((26.0/3.0)+1.0, geodDiams[i].diameter, .1);
+			assertEquals((26.0/3.0)+1.41, geodDiams[i].diameter, .1);
 		}
 	}
 
@@ -51,7 +53,7 @@ public class GeodesicDiameterTest
 		ImageProcessor image = imagePlus.getProcessor();
 	
 		GeodesicDiameter algo = new GeodesicDiameter(ChamferWeights.CHESSKNIGHT);
-		Map<Integer,GeodesicDiameter.Result> geodDiams = algo.process(image);
+		Map<Integer, GeodesicDiameter.Result> geodDiams = algo.analyzeRegions(image);
 
 		assertEquals(1, geodDiams.size());
 	}
@@ -67,7 +69,7 @@ public class GeodesicDiameterTest
 	
 		// Need to use weights in 3-by-3 neighborhood, to avoid propagating distances to another grain 
 		GeodesicDiameter algo = new GeodesicDiameter(ChamferWeights.CHESSKNIGHT);
-		Map<Integer,GeodesicDiameter.Result> geodDiams = algo.process(image);
+		Map<Integer, GeodesicDiameter.Result> geodDiams = algo.analyzeRegions(image);
 
 		assertEquals(71, geodDiams.size());
 	}
@@ -87,7 +89,7 @@ public class GeodesicDiameterTest
 		GeodesicDiameter algo = new GeodesicDiameter(ChamferWeights.BORGEFORS);
 		algo.setComputePaths(true);
 		
-		Map<Integer,GeodesicDiameter.Result> geodDiams = algo.process(image);
+		Map<Integer, GeodesicDiameter.Result> geodDiams = algo.analyzeRegions(image);
 
 		assertEquals(1, geodDiams.size());
 		List<Point2D> path1 = geodDiams.get(255).path;
@@ -107,7 +109,7 @@ public class GeodesicDiameterTest
 		GeodesicDiameter algo = new GeodesicDiameter(ChamferWeights.BORGEFORS);
 		algo.setComputePaths(true);
 		
-		Map<Integer,GeodesicDiameter.Result> geodDiams = algo.process(image);
+		Map<Integer, GeodesicDiameter.Result> geodDiams = algo.analyzeRegions(image);
 
 		assertEquals(1, geodDiams.size());
 	}
@@ -124,7 +126,7 @@ public class GeodesicDiameterTest
 		GeodesicDiameter algo = new GeodesicDiameter(ChamferWeights.BORGEFORS);
 		algo.setComputePaths(true);
 		
-		Map<Integer,GeodesicDiameter.Result> geodDiams = algo.process(image);
+		Map<Integer, GeodesicDiameter.Result> geodDiams = algo.analyzeRegions(image);
 
         assertEquals(71, geodDiams.size());
     }
@@ -141,15 +143,15 @@ public class GeodesicDiameterTest
 		GeodesicDiameter algo = new GeodesicDiameter(ChamferWeights.BORGEFORS);
 		algo.setComputePaths(true);
 		
-		Map<Integer,GeodesicDiameter.Result> geodDiams = algo.process(image);
+		Map<Integer, GeodesicDiameter.Result> geodDiams = algo.analyzeRegions(image);
 
         assertEquals(6, geodDiams.size());
         
         List<Point2D> lastPath = geodDiams.get(104544).path;
         assertEquals(1, lastPath.size());
         Point2D p = lastPath.get(0);
-        assertEquals(30, p.getX(), .01);
-        assertEquals(32, p.getY(), .01);
+        assertEquals(30.0, p.getX(), .01);
+        assertEquals(32.0, p.getY(), .01);
     }
 
 	/**
@@ -215,9 +217,9 @@ public class GeodesicDiameterTest
 		GeodesicDiameter algo = new GeodesicDiameter(ChamferWeights.BORGEFORS);
 		algo.setComputePaths(true);
 		
-		GeodesicDiameter.Result[] geodDiams = algo.process(labelImage, new int[]{1, 2, 3, 5});
+		GeodesicDiameter.Result[] geodDiams = algo.analyzeRegions(labelImage, new int[]{1, 2, 3, 5}, new Calibration());
 		
-		double[] exp = new double[]{Double.POSITIVE_INFINITY, 3.66, 3.66, 5.33}; 
+		double[] exp = new double[]{Double.POSITIVE_INFINITY, 4.08, 4.08, 5.74}; 
 		for (int i = 0; i < 4; i++)
 		{
 			assertEquals(exp[i], geodDiams[i].diameter, .1);

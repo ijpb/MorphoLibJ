@@ -41,7 +41,7 @@ import ij.plugin.frame.RoiManager;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.binary.ChamferWeights;
 import inra.ijpb.label.LabelImages;
-import inra.ijpb.measure.GeodesicDiameter;
+import inra.ijpb.measure.region2d.GeodesicDiameter;
 import inra.ijpb.util.IJUtils;
 
 /**
@@ -97,7 +97,7 @@ public class GeodesicDiameterPlugin implements PlugIn
 		
 		// set up current parameters
 		int labelImageIndex = gd.getNextChoiceIndex();
-		ImagePlus labelPlus = WindowManager.getImage(labelImageIndex+1);
+		ImagePlus labelPlus = WindowManager.getImage(labelImageIndex + 1);
 		ChamferWeights weights = ChamferWeights.fromLabel(gd.getNextChoice());
         boolean overlayPaths = gd.getNextBoolean();
 		int resultImageIndex = gd.getNextChoiceIndex();
@@ -117,14 +117,14 @@ public class GeodesicDiameterPlugin implements PlugIn
 		
 		// Compute geodesic diameters, using floating-point calculations
 		long start = System.nanoTime();
-		Map<Integer, GeodesicDiameter.Result> geodDiams = algo.process(labelPlus);
+		Map<Integer, GeodesicDiameter.Result> geodDiams = algo.analyzeRegions(labelPlus);
 
 		// Elapsed time, displayed in milli-seconds
 		long finalTime = System.nanoTime();
 		float elapsedTime = (finalTime - start) / 1000000.0f;
 
 		// display the result table
-		ResultsTable table = GeodesicDiameter.asTable(geodDiams);  
+		ResultsTable table = algo.createTable(geodDiams);  
 		String tableName = labelPlus.getShortTitle() + "-GeodDiameters"; 
 		table.show(tableName);
 
@@ -152,7 +152,7 @@ public class GeodesicDiameterPlugin implements PlugIn
     		if (overlayPaths) 
     		{
     			// New image for displaying geometric overlays
-    			ImagePlus resultImage = WindowManager.getImage(resultImageIndex+1);
+    			ImagePlus resultImage = WindowManager.getImage(resultImageIndex + 1);
     			drawPaths(resultImage, geodDiams);
     		}
 

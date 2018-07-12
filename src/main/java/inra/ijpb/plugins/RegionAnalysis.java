@@ -31,8 +31,8 @@ import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
 import inra.ijpb.geometry.PointPair2D;
 import inra.ijpb.label.LabelImages;
-import inra.ijpb.measure.GeodesicDiameter;
 import inra.ijpb.measure.GeometricMeasures2D;
+import inra.ijpb.measure.region2d.GeodesicDiameter;
 import inra.ijpb.measure.region2d.InertiaEllipse;
 import inra.ijpb.measure.region2d.LargestInscribedCircle;
 import inra.ijpb.measure.region2d.MaxFeretDiameter;
@@ -176,11 +176,11 @@ public class RegionAnalysis implements PlugInFilter
 
     	if (computeGeodesicDiameter)
     	{
-    		GeodesicDiameter.Result[] results = new GeodesicDiameter().process(image, labels);
+    		GeodesicDiameter.Result[] results = new GeodesicDiameter().analyzeRegions(image, labels, calib);
     		for (int i = 0; i < nLabels; i++)
         	{
-    			GeodesicDiameter.Result result = results[i].recalibrate(calib);
-        		table.setValue("GeodesicDiam", i, result.diameter);
+    			GeodesicDiameter.Result result = results[i];
+        		table.setValue("GeodesicDiameter", i, result.diameter);
         	}
     	}
 

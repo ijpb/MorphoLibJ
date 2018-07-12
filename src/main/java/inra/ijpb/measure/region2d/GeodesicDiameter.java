@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/lgpl-3.0.html>.
  * #L%
  */
-package inra.ijpb.measure;
+package inra.ijpb.measure.region2d;
 
 import java.awt.Point;
 import java.awt.geom.Point2D;
@@ -42,6 +42,7 @@ import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat5x5;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.label.LabelValues;
 import inra.ijpb.label.LabelValues.PositionValuePair;
+import inra.ijpb.measure.RegionAnalyzer;
 
 /**
  * <p>
@@ -77,64 +78,16 @@ import inra.ijpb.label.LabelValues.PositionValuePair;
  *}
  * </pre>
  *
- * @deprecated replaced by inra.ijpb.measure.region2d.GeodesicDiameter
- * 
  * @see inra.ijpb.binary.geodesic.GeodesicDistanceTransform
- * @see inra.ijpb.measure.GeodesicDiameter.Result
+ * @see inra.ijpb.measure.region2d.GeodesicDiameter.Result
  * 
  * @since 1.3.5
  * 
  * @author David Legland
  *
  */
-@Deprecated
-public class GeodesicDiameter extends AlgoStub
+public class GeodesicDiameter extends AlgoStub implements RegionAnalyzer<GeodesicDiameter.Result>
 {
-	// ==================================================
-	// Static methods 
-	
-	/**
-	 * Utility method that transforms the mapping between labels and result
-	 * instances into a ResultsTable that can be displayed with ImageJ.
-	 * 
-	 * @param map
-	 *            the mapping between labels and results
-	 * @return a ResultsTable that can be displayed with ImageJ.
-	 */
-	public static ResultsTable asTable(Map<Integer, Result> map)
-	{
-		// Initialize a new result table
-		ResultsTable table = new ResultsTable();
-	
-		// Convert all results that were computed during execution of the
-		// "computeGeodesicDistanceMap()" method into rows of the results table
-		for (int label : map.keySet())
-		{
-			// current diameter
-			Result res = map.get(label);
-			
-			// add an entry to the resulting data table
-			table.incrementCounter();
-			table.addValue("Label", label);
-			table.addValue("Geod. Diam", res.diameter);
-			
-			// coordinates of max inscribed circle
-			table.addValue("Radius", res.innerRadius);
-			table.addValue("Geod. Elong.", Math.max(res.diameter / (res.innerRadius * 2), 1.0));
-			table.addValue("xi", res.initialPoint.getX());
-			table.addValue("yi", res.initialPoint.getY());
-			
-		    // coordinate of first and second geodesic extremities 
-			table.addValue("x1", res.firstExtremity.getX());
-			table.addValue("y1", res.firstExtremity.getY());
-			table.addValue("x2", res.secondExtremity.getX());
-			table.addValue("y2", res.secondExtremity.getY());
-		}
-	
-		return table;
-	}
-
-	
 	// ==================================================
 	// Class variables 
 	
@@ -228,8 +181,56 @@ public class GeodesicDiameter extends AlgoStub
 
 	
 	// ==================================================
-	// General methods 
+	// Implementation of the RegionAnalyzer interface 
+
+	@Override
+	public ResultsTable computeTable(ImagePlus labelPlus)
+	{
+		return createTable(analyzeRegions(labelPlus));
+	}
+
+	/**
+	 * Utility method that transforms the mapping between labels and result
+	 * instances into a ResultsTable that can be displayed with ImageJ.
+	 * 
+	 * @param map
+	 *            the mapping between labels and results
+	 * @return a ResultsTable that can be displayed with ImageJ.
+	 */
+	@Override
+	public ResultsTable createTable(Map<Integer, Result> map)
+	{
+		// Initialize a new result table
+		ResultsTable table = new ResultsTable();
 	
+		// Convert all results that were computed during execution of the
+		// "computeGeodesicDistanceMap()" method into rows of the results table
+		for (int label : map.keySet())
+		{
+			// current diameter
+			Result res = map.get(label);
+			
+			// add an entry to the resulting data table
+			table.incrementCounter();
+			table.addLabel(Integer.toString(label));
+			table.addValue("GeodesicDiameter", res.diameter);
+			
+			// coordinates of max inscribed circle
+			table.addValue("Radius", res.innerRadius);
+			table.addValue("InitPoint.X", res.initialPoint.getX());
+			table.addValue("InitPoint.Y", res.initialPoint.getY());
+			table.addValue("GeodesicElongation", Math.max(res.diameter / (res.innerRadius * 2), 1.0));
+			
+		    // coordinate of first and second geodesic extremities 
+			table.addValue("Extremity1.X", res.firstExtremity.getX());
+			table.addValue("Extremity1.Y", res.firstExtremity.getY());
+			table.addValue("Extremity2.X", res.secondExtremity.getX());
+			table.addValue("Extremity2.Y", res.secondExtremity.getY());
+		}
+	
+		return table;
+	}
+
 	/**
 	 * Computes the geodesic diameter of each particle within the given label
 	 * image.
@@ -239,26 +240,19 @@ public class GeodesicDiameter extends AlgoStub
 	 *            region, or zero for background
 	 * @return a the geodesic diameter of each particle within the label image
 	 */
-	public Map<Integer, Result> process(ImagePlus labelImagePlus)
+	@Override
+	public Map<Integer, Result> analyzeRegions(ImagePlus labelImagePlus)
 	{
 		// Extract image processor, and compute geodesic diameter in pixel units
 		ImageProcessor labelImage = labelImagePlus.getProcessor();
 		int[] labels = LabelImages.findAllLabels(labelImage);
-		Result[] geodDiams = process(labelImage, labels);
-		
-		// check spatial calibration
-		Calibration calib = labelImagePlus.getCalibration();
-		if (calib.pixelWidth != calib.pixelHeight)
-		{
-			throw new RuntimeException("Requires image with square pixels");
-		}
+		Result[] geodDiams = analyzeRegions(labelImage, labels, labelImagePlus.getCalibration());
 		
 		// convert the arrays into a map of index-value pairs
 		Map<Integer, Result> map = new TreeMap<Integer, Result>();
 		for (int i = 0; i < labels.length; i++)
 		{
-			// convert to user units
-			map.put(labels[i], geodDiams[i].recalibrate(calib));
+			map.put(labels[i], geodDiams[i]);
 		}
 		
 		return map;
@@ -273,10 +267,10 @@ public class GeodesicDiameter extends AlgoStub
 	 *            region, or zero for background
 	 * @return a the geodesic diameter of each particle within the label image
 	 */
-	public Map<Integer, Result> process(ImageProcessor labelImage)
+	public Map<Integer, Result> analyzeRegions(ImageProcessor labelImage)
 	{
 		int[] labels = LabelImages.findAllLabels(labelImage);
-		Result[] geodDiams = process(labelImage, labels);
+		Result[] geodDiams = analyzeRegions(labelImage, labels, new Calibration());
 		
 		// convert the arrays into a map of index-value pairs
 		Map<Integer, Result> map = new TreeMap<Integer, Result>();
@@ -297,20 +291,30 @@ public class GeodesicDiameter extends AlgoStub
 	 *            region, or zero for background
 	 * @param labels
 	 *            the list of labels to process
+	 * @param calib
+	 *            the spatial caliration of the image
 	 * @return a the geodesic diameter of each particle within the label image
 	 */
-	public Result[] process(ImageProcessor labelImage, int[] labels)
+	public Result[] analyzeRegions(ImageProcessor labelImage, int[] labels, Calibration calib)
 	{
+		// Intitial check-up
+		if (calib.pixelWidth != calib.pixelHeight)
+		{
+			throw new RuntimeException("Requires image with square pixels");
+		}
+
+		// number of labels to process
 		int nLabels = labels.length;
-		float[] weights = ChamferWeights.CHESSKNIGHT.getFloatWeights();
 		
 		// Create new marker image
 		int sizeX = labelImage.getWidth();
 		int sizeY = labelImage.getHeight();
 		ImageProcessor marker = new ByteProcessor(sizeX, sizeY);
 		
-		// Compute distance map from label borders to identify centers 
+		// Compute distance map from label borders to identify centers
+		// (The distance map correctly processes adjacent borders)
 		this.fireStatusChanged(this, "Initializing pseudo geodesic centers...");
+		float[] weights = ChamferWeights.CHESSKNIGHT.getFloatWeights();
 		ImageProcessor distanceMap = BinaryImages.distanceMap(labelImage, weights, true);
 	
 		// Extract position of maxima
@@ -369,8 +373,8 @@ public class GeodesicDiameter extends AlgoStub
 			Result res = new Result();
 					
 			// Get the maximum distance within each label, 
-			// and add 1 to take into account pixel thickness.
-			res.diameter = secondGeodesicExtremities[i].getValue() + 1;
+			// and add sqrt(2) to take into account maximum pixel thickness.
+			res.diameter = secondGeodesicExtremities[i].getValue() + Math.sqrt(2);
 
 			// also keep references to characteristic points
 			res.initialPoint = innerCircles[i].getPosition();
@@ -378,6 +382,7 @@ public class GeodesicDiameter extends AlgoStub
 			res.firstExtremity = firstGeodesicExtremities[i];
 			res.secondExtremity = secondGeodesicExtremities[i].getPosition();
 			
+			// store the result
 			result[i] = res;
 		}
 		
@@ -418,8 +423,19 @@ public class GeodesicDiameter extends AlgoStub
 				
 				result[i].path = path;
 			}
-
 		}
+		
+		// calibrate the results
+		if (calib.scaled())
+		{
+			this.fireStatusChanged(this, "Re-calibrating results");
+			for (int i = 0; i < nLabels; i++)
+			{
+				result[i] = result[i].recalibrate(calib);
+			}
+		}
+		
+		// returns the results
 		return result;
 	}
 	
@@ -484,7 +500,6 @@ public class GeodesicDiameter extends AlgoStub
 	}
 
 	
-	
 
 	// ==================================================
 	// Inner class used for representing computation results
@@ -524,7 +539,7 @@ public class GeodesicDiameter extends AlgoStub
 
 		/**
 		 * The largest geodesic path within the particle, joining the first and
-		 * the second geodesic extremities.
+		 * the second geodesic extremities. Its computation is optional.
 		 */
 		public List<Point2D> path = null;
 
@@ -550,7 +565,7 @@ public class GeodesicDiameter extends AlgoStub
 
 			// calibrate geodesic extremities
 			res.firstExtremity = calibrate(this.firstExtremity, calib); 
-			res.secondExtremity = calibrate(this.firstExtremity, calib);
+			res.secondExtremity = calibrate(this.secondExtremity, calib);
 			
 			// calibrate the geodesic path if any
 			if (this.path != null)
@@ -575,4 +590,5 @@ public class GeodesicDiameter extends AlgoStub
 		}
 		
 	}
+
 }

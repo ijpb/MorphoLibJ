@@ -28,7 +28,6 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	// generic classes
-	GeodesicDiameterTest.class,
 	GeometricMeasures2DTest.class,
 	GeometricMeasures3DTest.class,
 	GeometryUtilsTest.class,
