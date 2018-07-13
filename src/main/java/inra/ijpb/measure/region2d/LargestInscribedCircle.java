@@ -6,14 +6,12 @@ package inra.ijpb.measure.region2d;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.Map;
-import java.util.TreeMap;
 
 import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.process.ImageProcessor;
 import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.geometry.Circle2D;
-import inra.ijpb.label.LabelImages;
 
 /**
  * Computes the largest inscribed circle for each region of a label or binary
@@ -34,39 +32,6 @@ public class LargestInscribedCircle extends RegionAnalyzer2D<Circle2D>
 	public LargestInscribedCircle()
 	{
 	}
-	
-	// ==================================================
-	// Computation methods
-
-	/**
-	 * Computes largest inscribed disk of each particle. Particles must be
-	 * disjoint.
-	 * 
-	 * @param labelImage
-	 *            the input image containing label of particles
-	 * @param calib
-	 *            the spatial calibration of the image
-	 * @return a ResultsTable with as many rows as the number of unique labels
-	 *         in label image, and columns "Label", "xi", "yi" and "Radius".
-	 */
-	public Map<Integer, Circle2D> analyzeRegions(ImageProcessor labelImage, Calibration calib)
-	{
-		// compute all labels within image
-		int[] labels = LabelImages.findAllLabels(labelImage);
-
-		// compute largest inscribed circles
-		Circle2D[] circles = analyzeRegions(labelImage, labels, calib);
-
-		// convert circle array into label-circle map
-		Map<Integer, Circle2D> map = new TreeMap<Integer, Circle2D>();
-		for (int i = 0; i < labels.length; i++)
-		{
-			map.put(labels[i], circles[i]);
-		}
-
-		return map;
-	}
-
 
 	// ==================================================
 	// Implementation of RegionAnalyzer interface
