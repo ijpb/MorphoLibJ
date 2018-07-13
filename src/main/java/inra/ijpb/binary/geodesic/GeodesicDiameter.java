@@ -42,8 +42,8 @@ import inra.ijpb.algo.Algo;
  * }
  * </pre>
  *
- * @deprecated since 1.3.5, use inra.ijpb.measure.GeodesicDiameter instead 
- * @see inra.ijpb.measure.GeodesicDiameter
+ * @deprecated since 1.3.5, use inra.ijpb.measure.region2d.GeodesicDiameter instead 
+ * @see inra.ijpb.measure.region2d.GeodesicDiameter
  * 
  * @author dlegland
  */
