@@ -144,8 +144,8 @@ public class Centroid3D extends RegionAnalyzer3D<Point3D>
 			return null;
 
 		// size of image
-		int width = image.getWidth();
-		int height = image.getHeight();
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
 
 		// Extract spatial calibration
 		double sx = 1, sy = 1, sz = 1;
@@ -172,11 +172,11 @@ public class Centroid3D extends RegionAnalyzer3D<Point3D>
 
     	fireStatusChanged(this, "Compute centroids");
 		// compute centroid of each region
-    	for (int z = 0; z < height; z++) 
+    	for (int z = 0; z < sizeY; z++) 
     	{
-    		for (int y = 0; y < height; y++) 
+    		for (int y = 0; y < sizeY; y++) 
     		{
-    			for (int x = 0; x < width; x++)
+    			for (int x = 0; x < sizeX; x++)
     			{
     				int label = (int) image.getVoxel(x, y, z);
     				if (label == 0)

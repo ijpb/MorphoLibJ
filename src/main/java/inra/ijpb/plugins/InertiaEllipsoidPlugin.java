@@ -24,23 +24,15 @@ package inra.ijpb.plugins;
 
 import ij.IJ;
 import ij.ImagePlus;
-import ij.ImageStack;
-import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
-import inra.ijpb.measure.GeometricMeasures3D;
+import inra.ijpb.algo.DefaultAlgoListener;
+import inra.ijpb.measure.region3d.InertiaEllipsoid;
 
 public class InertiaEllipsoidPlugin implements PlugIn
 {
     // ====================================================
     // Class variables
-    
-   /**
-     * When this options is set to true, information messages are displayed on
-     * the console, and the number of counts for each direction is included in
-     * results table. 
-     */
-    public boolean debug  = false;
     
 	ImagePlus imagePlus;
 	
@@ -61,22 +53,13 @@ public class InertiaEllipsoidPlugin implements PlugIn
 			IJ.error("Requires a Stack");
 			return;
 		}
-		
-		// Extract spatial calibration
-		double[] resol = new double[]{1, 1, 1};
-        Calibration cal = imagePlus.getCalibration();
-        if (cal.scaled()) 
-        {
-        	resol[0] = cal.pixelWidth;
-        	resol[1] = cal.pixelHeight;
-        	resol[2] = cal.pixelDepth;
-        }
 
-        ImageStack image = imagePlus.getStack();
         ResultsTable table;
         try 
         {
-        	table = GeometricMeasures3D.inertiaEllipsoid(image);
+        	InertiaEllipsoid algo = new InertiaEllipsoid();
+        	DefaultAlgoListener.monitor(algo);
+        	table = algo.computeTable(imagePlus);
         } 
         catch (Exception ex) 
         {
