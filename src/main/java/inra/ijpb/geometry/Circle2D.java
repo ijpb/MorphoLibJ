@@ -42,7 +42,7 @@ public class Circle2D
 	
 	// ==================================================
 	// Generic methods
-
+	
 	public double area()
 	{
 		return Math.PI * this.radius * this.radius;

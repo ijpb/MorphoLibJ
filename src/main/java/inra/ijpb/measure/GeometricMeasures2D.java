@@ -136,11 +136,16 @@ public class GeometricMeasures2D
 	 * Compute bounding box of each label in input stack and returns the result
 	 * as a ResultsTable.
 	 * 
+	 * @deprecated use BoundingBox class instead
+	 * 
+	 * @see inra.ijpb.measure.region2d.BoundingBox#analyzeRegions(ImageProcessor, int[], Calibration)
+	 * 
 	 * @param labelImage
 	 *            the input image containing label of particles
 	 * @return a data table containing for each labeled particle the extent in
 	 *         each dimension
 	 */
+	@Deprecated
 	public final static ResultsTable boundingBox(ImageProcessor labelImage) 
 	{
 		int[] labels = LabelImages.findAllLabels(labelImage);
@@ -167,12 +172,17 @@ public class GeometricMeasures2D
 	 * Compute bounding box of each label in input stack and returns the result
 	 * as an array of double for each label.
 	 * 
+	 * @deprecated use BoundingBox class instead
+	 * 
+	 * @see inra.ijpb.measure.region2d.BoundingBox#boundingBox(ImageProcessor, int[])
+	 * 
 	 * @param labelImage
 	 *            the input image containing label of particles
 	 * @param labels an array of unique labels in image
 	 * @return a data table containing for each labeled particle the extent in
 	 *         each dimension
 	 */
+	@Deprecated
 	public final static double[][] boundingBox(ImageProcessor labelImage, int[] labels)
 	{
         // create associative array to know index of each label
