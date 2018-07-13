@@ -19,18 +19,26 @@
  * <http://www.gnu.org/licenses/lgpl-3.0.html>.
  * #L%
  */
-package inra.ijpb.label;
+package inra.ijpb.label.distmap;
 
+import ij.ImageStack;
+import inra.ijpb.algo.Algo;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-	// generic classes
-	AllTests.class,
-	inra.ijpb.label.distmap.AllTests.class,
-	})
-public class AllTestsRecurse {
-  //nothing
+/**
+ * Interface for computing distance maps for 3D label images. 
+ */
+public interface DistanceTransform3D extends Algo
+{
+	/**
+	 * Computes the distance map from a 3D label image. 
+	 * Distance is computed for each foreground (white) pixel, as the 
+	 * chamfer distance to the nearest background (black) pixel.
+	 * 
+	 * @param image a 3D binary image with white pixels (255) as foreground
+	 * @return a new 3D image containing: <ul>
+	 * <li> 0 for each background pixel </li>
+	 * <li> the distance to the nearest background pixel otherwise</li>
+	 * </ul>
+	 */
+	public ImageStack distanceMap(ImageStack image);
 }

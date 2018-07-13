@@ -19,8 +19,7 @@
  * <http://www.gnu.org/licenses/lgpl-3.0.html>.
  * #L%
  */
-package inra.ijpb.label;
-
+package inra.ijpb.label.distmap;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -28,9 +27,9 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	// generic classes
-	AllTests.class,
-	inra.ijpb.label.distmap.AllTests.class,
+	DistanceTransform3DShortTest.class,
+	DistanceTransform3DFloatTest.class,
 	})
-public class AllTestsRecurse {
+public class AllTests {
   //nothing
 }
