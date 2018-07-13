@@ -30,8 +30,8 @@ import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
 import inra.ijpb.label.LabelImages;
-import inra.ijpb.measure.GeometricMeasures2D;
 import inra.ijpb.measure.GeometricMeasures3D;
+import inra.ijpb.measure.region2d.Centroid;
 
 /**
  * Creates a new image larger than the original one, and copies each label identically
@@ -132,7 +132,7 @@ public class ExpandLabelsPlugin implements PlugIn
 	
 		// compute centroids of labels
 		int[] labels = LabelImages.findAllLabels(image);
-		double[][] centroids = GeometricMeasures2D.centroids(image, labels);
+		double[][] centroids = Centroid.centroids(image, labels);
 		
 		// compute shift associated to each label
 		int nLabels = labels.length;

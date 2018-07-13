@@ -21,6 +21,10 @@
  */
 package inra.ijpb.plugins;
 
+import java.awt.Color;
+import java.util.Map;
+import java.util.Set;
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
@@ -34,11 +38,7 @@ import ij.process.ImageProcessor;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.label.RegionAdjacencyGraph;
 import inra.ijpb.label.RegionAdjacencyGraph.LabelPair;
-import inra.ijpb.measure.GeometricMeasures2D;
-
-import java.awt.Color;
-import java.util.Map;
-import java.util.Set;
+import inra.ijpb.measure.region2d.Centroid;
 
 /**
  * @author dlegland
@@ -107,7 +107,7 @@ public class RegionAdjacencyGraphPlugin implements PlugIn
 		ImageProcessor image = imagePlus.getProcessor();
 		int[] labels = LabelImages.findAllLabels(image);
 		Map<Integer, Integer> labelMap = LabelImages.mapLabelIndices(labels);
-		double[][] centroids = GeometricMeasures2D.centroids(image, labels);
+		double[][] centroids = Centroid.centroids(image, labels);
 		
 		// create an overlay for drawing edges
 		Overlay overlay = new Overlay();

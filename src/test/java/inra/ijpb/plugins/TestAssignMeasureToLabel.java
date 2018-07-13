@@ -15,7 +15,7 @@ public class TestAssignMeasureToLabel {
 		ImageJ.main( args );
 		Recorder r = new Recorder(true);
 		IJ.open( TestMorphologicalSegmentation.class.getResource( "/files/blobs-lbl32.tif" ).getFile() );
-		RegionMorphometryPlugin rmp = new RegionMorphometryPlugin();
+		AnalyzeRegions rmp = new AnalyzeRegions();
 		rmp.setup(null, IJ.getImage() );
 		rmp.run( null );
 		new LabelToValuePlugin().run( null );

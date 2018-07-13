@@ -40,6 +40,7 @@ public class GeometricMeasures2DTest
 	 * Test method for {@link ijt.measure.geometric.GeometricMeasures2D#croftonPerimeter_D2(ij.process.ImageProcessor, double[])}.
 	 */
 	@Test
+	@Deprecated
 	public final void testAnalyzeRegions_D2() 
 	{
 		// initialize image with a square of side 4 in the middle
@@ -66,6 +67,7 @@ public class GeometricMeasures2DTest
 	 * Test method for {@link ijt.measure.geometric.GeometricMeasures2D#croftonPerimeter_D2(ij.process.ImageProcessor, double[])}.
 	 */
 	@Test
+	@Deprecated
 	public final void testAnalyzeRegions_DiskR8_D2() 
 	{
 		ImageProcessor image = createDiskR8Image();
@@ -89,6 +91,7 @@ public class GeometricMeasures2DTest
 	 * Test method for {@link ijt.measure.geometric.GeometricMeasures2D#croftonPerimeter_D2(ij.process.ImageProcessor, double[])}.
 	 */
 	@Test
+	@Deprecated
 	public final void testAnalyzeRegions_DiskR8_D4() 
 	{
 		ImageProcessor image = createDiskR8Image();

@@ -73,6 +73,7 @@ public class GeometricMeasures2D
 	 * @return a data table containing the area, the perimeter and the
 	 *         "circularity" of each labeled particle
 	 */
+	@Deprecated
 	public static final ResultsTable analyzeRegions(ImageProcessor labelImage,
 			double[] resol) 
 	{
@@ -92,6 +93,7 @@ public class GeometricMeasures2D
 	 * @return a data table containing the area, the perimeter and the
 	 *         "circularity" of each labeled particle
 	 */
+	@Deprecated
 	public static final ResultsTable analyzeRegions(ImageProcessor labelImage,
 			double[] resol, int nDirs)
 	{
@@ -875,6 +877,10 @@ public class GeometricMeasures2D
 	 * Compute centroid of each label in input stack and returns the result as
 	 * an array of double for each label.
 	 * 
+	 * @deprecated replaced by Centroid.centroids
+	 * 
+	 * @see inra.ijpb.measure.region2d.Centroid#centroids(ImageProcessor, int[])
+	 * 
 	 * @param labelImage
 	 *            the input image containing label of particles
 	 * @param labels
@@ -883,6 +889,7 @@ public class GeometricMeasures2D
 	 * @return an array containing for each label, the coordinates of the
 	 *         centroid, in pixel coordinates
 	 */
+	@Deprecated
 	public final static double[][] centroids(ImageProcessor labelImage,
 			int[] labels) 
 	{

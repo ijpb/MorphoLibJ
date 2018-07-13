@@ -31,6 +31,7 @@ import ij.process.ImageProcessor;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.GeometricMeasures2D;
 
+@Deprecated
 public class RegionMorphometryPlugin implements PlugInFilter {
 
     // ====================================================
