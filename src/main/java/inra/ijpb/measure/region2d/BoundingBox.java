@@ -8,16 +8,12 @@ import static java.lang.Math.min;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
-import ij.ImagePlus;
 import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.process.ImageProcessor;
-import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.geometry.Box2D;
 import inra.ijpb.label.LabelImages;
-import inra.ijpb.measure.RegionAnalyzer;
 
 /**
  * Compute bounding box of each region within a label or binary image.
@@ -25,7 +21,7 @@ import inra.ijpb.measure.RegionAnalyzer;
  * @author dlegland
  *
  */
-public class BoundingBox extends AlgoStub implements RegionAnalyzer<Box2D>
+public class BoundingBox extends RegionAnalyzer2D<Box2D>
 {
 	// ==================================================
 	// Static methods
@@ -93,25 +89,10 @@ public class BoundingBox extends AlgoStub implements RegionAnalyzer<Box2D>
 	{
 	}
 
-	// ==================================================
-	// Computation methods 
-
-
-	public Map<Integer, Box2D> analyzeRegions(ImageProcessor labelImage, Calibration calib)
-	{
-		int[] labels = LabelImages.findAllLabels(labelImage);
-		Box2D[] boxes = analyzeRegions(labelImage, labels, calib);
-		
-		// convert the arrays into a map of index-value pairs
-		Map<Integer, Box2D> map = new TreeMap<Integer, Box2D>();
-		for (int i = 0; i < labels.length; i++)
-		{
-			map.put(labels[i], boxes[i]);
-		}
-		
-		return map;
-	}
 	
+	// ==================================================
+	// Implementation of RegionAnalyzer interface
+
 	/**
 	 * Computes inertia ellipse of each region in input label image.
 	 * 
@@ -190,14 +171,6 @@ public class BoundingBox extends AlgoStub implements RegionAnalyzer<Box2D>
 		return boxes;
 	}
 
-	// ==================================================
-	// Implementation of RegionAnalyzer interface
-
-	public ResultsTable computeTable(ImagePlus labelPlus)
-	{
-		return createTable(analyzeRegions(labelPlus));
-	}
-	
 	/**
 	 * Utility method that transforms the mapping between labels and inertia
 	 * boxes instances into a ResultsTable that can be displayed with ImageJ.
@@ -231,10 +204,4 @@ public class BoundingBox extends AlgoStub implements RegionAnalyzer<Box2D>
 	
 		return table;
 	}
-
-	public Map<Integer, Box2D> analyzeRegions(ImagePlus labelPlus)
-	{
-		return analyzeRegions(labelPlus.getProcessor(), labelPlus.getCalibration());
-	}
-
 }

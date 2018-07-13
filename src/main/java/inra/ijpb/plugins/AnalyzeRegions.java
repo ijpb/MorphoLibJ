@@ -172,7 +172,7 @@ public class AnalyzeRegions implements PlugInFilter
     		Area algo = new Area();
     		DefaultAlgoListener.monitor(algo);
 
-    		double[] areaList = algo.analyzeRegions(image, labels, calib);
+    		Double[] areaList = algo.analyzeRegions(image, labels, calib);
     		addColumn(table, "Area", areaList);
     	}
 
@@ -181,7 +181,7 @@ public class AnalyzeRegions implements PlugInFilter
     		CroftonPerimeter algo = new CroftonPerimeter();
     		DefaultAlgoListener.monitor(algo);
     		
-    		double[] perimList = algo.analyzeRegions(image, labels, calib);
+    		Double[] perimList = algo.analyzeRegions(image, labels, calib);
     		addColumn(table, "Perimeter", perimList);
     	}
 
@@ -284,6 +284,14 @@ public class AnalyzeRegions implements PlugInFilter
     }
     
     private void addColumn(ResultsTable table, String colName, double[] values)
+    {
+    	for (int i = 0; i < values.length; i++)
+    	{
+    		table.setValue(colName, i, values[i]);
+    	}
+    }
+
+    private void addColumn(ResultsTable table, String colName, Double[] values)
     {
     	for (int i = 0; i < values.length; i++)
     	{

@@ -6,25 +6,20 @@ package inra.ijpb.measure.region2d;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.TreeMap;
 
-import ij.ImagePlus;
 import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.process.ImageProcessor;
-import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.geometry.PointPair2D;
 import inra.ijpb.geometry.Polygons2D;
-import inra.ijpb.label.LabelImages;
-import inra.ijpb.measure.RegionAnalyzer;
 
 /**
- * Collection of static methods for computing min and max Feret Diameters.
+ * Computes maximum Feret Diameter for each region of a binary or label image.
  * 
  * @author dlegland
  *
  */
-public class MaxFeretDiameter extends AlgoStub implements RegionAnalyzer<PointPair2D>
+public class MaxFeretDiameter extends RegionAnalyzer2D<PointPair2D>
 {
 	// ==================================================
 	// Static methods 
@@ -71,14 +66,8 @@ public class MaxFeretDiameter extends AlgoStub implements RegionAnalyzer<PointPa
 	{
 	}
 
-	
 	// ==================================================
 	// Implementation of RegionAnalyzer interface
-
-	public ResultsTable computeTable(ImagePlus labelPlus)
-	{
-		return createTable(analyzeRegions(labelPlus.getProcessor(), labelPlus.getCalibration()));
-	}
 
 	/**
 	 * Converts the result of maximum Feret diameters computation to a
@@ -111,63 +100,6 @@ public class MaxFeretDiameter extends AlgoStub implements RegionAnalyzer<PointPa
 		
 		// return the created array
 		return table;
-	}
-	
-	/**
-	 * Computes maximum Feret Diameter for each label of the input label image.
-	 * 
-	 * @param imagePlus
-	 *            a label image (8, 16 or 32 bits)
-	 * @return a ResultsTable containing oriented box parameters
-	 */
-	public Map<Integer, PointPair2D> analyzeRegions(ImagePlus imagePlus)
-	{
-		// Extract spatial calibration
-		Calibration calib = imagePlus.getCalibration();
-
-		// Compute calibrated Feret diameter
-		Map<Integer, PointPair2D> result = analyzeRegions(imagePlus.getProcessor(), calib);
-		return result;
-	}
-	
-	
-	// ==================================================
-	// Computation methods 
-
-	/**
-	 * Computes maximum Feret Diameter for each label of the input label image.
-	 * 
-	 * Computes diameter between corners of image pixels, so the result is
-	 * always greater than or equal to one.
-	 * 
-	 * @param image
-	 *            a label image (8, 16 or 32 bits)
-	 * @param calib
-	 *            the spatial calibration of the image
-	 * @return a ResultsTable containing oriented box parameters
-	 */
-	public Map<Integer, PointPair2D> analyzeRegions(ImageProcessor image, Calibration calib)
-	{
-		// Check validity of parameters
-		if (image == null)
-			return null;
-
-		// extract particle labels
-		fireStatusChanged(this, "Find Labels");
-		int[] labels = LabelImages.findAllLabels(image);
-		int nLabels = labels.length;
-		
-		// computemax feret diameter for each label
-		PointPair2D[] maxDiams = analyzeRegions(image, labels, calib);
-
-		// encapsulate into map
-		Map<Integer, PointPair2D> labelMaxDiamMap = new TreeMap<Integer, PointPair2D>();
-		for (int i = 0; i < nLabels; i++)
-		{
-			labelMaxDiamMap.put(labels[i], maxDiams[i]);
-		}
-
-        return labelMaxDiamMap;
 	}
 	
 	/**

@@ -75,7 +75,7 @@ public class Area extends AlgoStub implements RegionAnalyzer<Double>
 	public Map<Integer, Double> analyzeRegions(ImageProcessor labelImage, Calibration calib)
 	{
 		int[] labels = LabelImages.findAllLabels(labelImage);
-		double[] values = analyzeRegions(labelImage, labels, calib);
+		Double[] values = analyzeRegions(labelImage, labels, calib);
 		
 		// convert the arrays into a map of index-value pairs
 		Map<Integer, Double> map = new TreeMap<Integer, Double>();
@@ -100,7 +100,7 @@ public class Area extends AlgoStub implements RegionAnalyzer<Double>
 	 * @return an array containing for each region, the area of the
 	 *         corresponding region
 	 */
-	public double[] analyzeRegions(ImageProcessor image, int[] labels, Calibration calib)
+	public Double[] analyzeRegions(ImageProcessor image, int[] labels, Calibration calib)
 	{
 		// create associative array to know index of each label
 		int nLabels = labels.length;
@@ -110,7 +110,7 @@ public class Area extends AlgoStub implements RegionAnalyzer<Double>
 		double pixelArea = calib.pixelWidth * calib.pixelHeight;
 		
 		// initialize result
-		double[] areaList = new double[nLabels];
+		Double[] areaList = new Double[nLabels];
 	
 		// size of image
 		int sizeX = image.getWidth();

@@ -29,12 +29,10 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import ij.IJ;
-import ij.ImagePlus;
 import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
-import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.binary.ChamferWeights;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransform;
@@ -42,7 +40,6 @@ import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat5x5;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.label.LabelValues;
 import inra.ijpb.label.LabelValues.PositionValuePair;
-import inra.ijpb.measure.RegionAnalyzer;
 
 /**
  * <p>
@@ -86,7 +83,7 @@ import inra.ijpb.measure.RegionAnalyzer;
  * @author David Legland
  *
  */
-public class GeodesicDiameter extends AlgoStub implements RegionAnalyzer<GeodesicDiameter.Result>
+public class GeodesicDiameter extends RegionAnalyzer2D<GeodesicDiameter.Result>
 {
 	// ==================================================
 	// Class variables 
@@ -160,6 +157,33 @@ public class GeodesicDiameter extends AlgoStub implements RegionAnalyzer<Geodesi
 		this.geodesicDistanceTransform = gdt;
 	}
 	
+	// ==================================================
+	// Specific methods
+
+	/**
+	 * Computes the geodesic diameter of each particle within the given label
+	 * image.
+	 * 
+	 * @param labelImage
+	 *            a label image, containing either the label of a particle or
+	 *            region, or zero for background
+	 * @return a the geodesic diameter of each particle within the label image
+	 */
+	public Map<Integer, Result> analyzeRegions(ImageProcessor labelImage)
+	{
+		int[] labels = LabelImages.findAllLabels(labelImage);
+		Result[] geodDiams = analyzeRegions(labelImage, labels, new Calibration());
+		
+		// convert the arrays into a map of index-value pairs
+		Map<Integer, Result> map = new TreeMap<Integer, Result>();
+		for (int i = 0; i < labels.length; i++)
+		{
+			map.put(labels[i], geodDiams[i]);
+		}
+		
+		return map;
+	}
+	
 
 	// ==================================================
 	// Setters/Getters
@@ -182,12 +206,6 @@ public class GeodesicDiameter extends AlgoStub implements RegionAnalyzer<Geodesi
 	
 	// ==================================================
 	// Implementation of the RegionAnalyzer interface 
-
-	@Override
-	public ResultsTable computeTable(ImagePlus labelPlus)
-	{
-		return createTable(analyzeRegions(labelPlus));
-	}
 
 	/**
 	 * Utility method that transforms the mapping between labels and result
@@ -231,57 +249,6 @@ public class GeodesicDiameter extends AlgoStub implements RegionAnalyzer<Geodesi
 		return table;
 	}
 
-	/**
-	 * Computes the geodesic diameter of each particle within the given label
-	 * image.
-	 * 
-	 * @param labelImagePlus
-	 *            a label image, containing either the label of a particle or
-	 *            region, or zero for background
-	 * @return a the geodesic diameter of each particle within the label image
-	 */
-	@Override
-	public Map<Integer, Result> analyzeRegions(ImagePlus labelImagePlus)
-	{
-		// Extract image processor, and compute geodesic diameter in pixel units
-		ImageProcessor labelImage = labelImagePlus.getProcessor();
-		int[] labels = LabelImages.findAllLabels(labelImage);
-		Result[] geodDiams = analyzeRegions(labelImage, labels, labelImagePlus.getCalibration());
-		
-		// convert the arrays into a map of index-value pairs
-		Map<Integer, Result> map = new TreeMap<Integer, Result>();
-		for (int i = 0; i < labels.length; i++)
-		{
-			map.put(labels[i], geodDiams[i]);
-		}
-		
-		return map;
-	}
-	
-	/**
-	 * Computes the geodesic diameter of each particle within the given label
-	 * image.
-	 * 
-	 * @param labelImage
-	 *            a label image, containing either the label of a particle or
-	 *            region, or zero for background
-	 * @return a the geodesic diameter of each particle within the label image
-	 */
-	public Map<Integer, Result> analyzeRegions(ImageProcessor labelImage)
-	{
-		int[] labels = LabelImages.findAllLabels(labelImage);
-		Result[] geodDiams = analyzeRegions(labelImage, labels, new Calibration());
-		
-		// convert the arrays into a map of index-value pairs
-		Map<Integer, Result> map = new TreeMap<Integer, Result>();
-		for (int i = 0; i < labels.length; i++)
-		{
-			map.put(labels[i], geodDiams[i]);
-		}
-		
-		return map;
-	}
-	
 	/**
 	 * Computes the geodesic diameter of each particle within the given label
 	 * image.

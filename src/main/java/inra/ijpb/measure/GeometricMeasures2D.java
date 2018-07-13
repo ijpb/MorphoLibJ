@@ -373,7 +373,14 @@ public class GeometricMeasures2D
 		calib.pixelWidth = resol[0];
 		calib.pixelHeight = resol[1];
 		
-		return algo.analyzeRegions(image, labels, calib);
+		Double[] res0 = algo.analyzeRegions(image, labels, calib);
+		
+		double[] res = new double[labels.length];
+		for (int i =  0; i < labels.length; i++)
+		{
+			res[i] = res0[i];
+		}
+		return res;
 	}
 
 

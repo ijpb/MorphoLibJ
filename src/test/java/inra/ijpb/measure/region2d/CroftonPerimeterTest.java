@@ -33,7 +33,7 @@ public class CroftonPerimeterTest
 		int[] labels = new int[]{255};
 		CroftonPerimeter algo = new CroftonPerimeter(2);
 		
-		double perims[] = algo.analyzeRegions(image, labels, new Calibration());
+		Double[] perims = algo.analyzeRegions(image, labels, new Calibration());
 
 		assertEquals(1, perims.length);
 
@@ -56,7 +56,7 @@ public class CroftonPerimeterTest
 		int[] labels = new int[]{255};
 		CroftonPerimeter algo = new CroftonPerimeter(4);
 		
-		double perims[] = algo.analyzeRegions(image, labels, new Calibration());
+		Double[] perims = algo.analyzeRegions(image, labels, new Calibration());
 
 		assertEquals(1, perims.length);
 

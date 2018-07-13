@@ -64,7 +64,7 @@ public class AreaTest
 		
 		int[] labels = new int[] {2, 4, 5, 9};
 		Calibration calib = new Calibration();
-		double[] areaList = new Area().analyzeRegions(image, labels, calib);
+		Double[] areaList = new Area().analyzeRegions(image, labels, calib);
 		
 		assertEquals(4, areaList.length);
 		assertEquals(1.0, areaList[0], .01);

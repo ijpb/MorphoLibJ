@@ -17,6 +17,9 @@ import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.RegionAnalyzer;
 
 /**
+ * Computes perimeter of regions within label images using discrete version of
+ * the Crofton formula.
+ * 
  * @author dlegland
  *
  */
@@ -104,7 +107,7 @@ public class CroftonPerimeter extends AlgoStub implements RegionAnalyzer<Double>
 	public Map<Integer, Double> analyzeRegions(ImageProcessor labelImage, Calibration calib)
 	{
 		int[] labels = LabelImages.findAllLabels(labelImage);
-		double[] perims = analyzeRegions(labelImage, labels, calib);
+		Double[] perims = analyzeRegions(labelImage, labels, calib);
 		
 		// convert the arrays into a map of index-value pairs
 		Map<Integer, Double> map = new TreeMap<Integer, Double>();
@@ -126,7 +129,7 @@ public class CroftonPerimeter extends AlgoStub implements RegionAnalyzer<Double>
 	 *            the calibration of the image
 	 * @return an array containing for each region, an estimate of the region perimeter
 	 */
-	public double[] analyzeRegions(ImageProcessor image, int[] labels, Calibration calib)
+	public Double[] analyzeRegions(ImageProcessor image, int[] labels, Calibration calib)
 	{
 		// create associative array to know index of each label
 		int nLabels = labels.length;
@@ -137,7 +140,7 @@ public class CroftonPerimeter extends AlgoStub implements RegionAnalyzer<Double>
 		double[] lut = computePerimeterLut(calib);
 
 		// initialize result
-		double[] perimeters = new double[nLabels];
+		Double[] perimeters = new Double[nLabels];
 
 		// size of image
 		int sizeX = image.getWidth();
@@ -185,7 +188,7 @@ public class CroftonPerimeter extends AlgoStub implements RegionAnalyzer<Double>
 					index += (int) image.getf(x, y + 1) == label ? 4 : 0;
 					index += (int) image.getf(x + 1, y + 1) == label ? 8 : 0;
 
-					// retriev label index from label value
+					// retrieve label index from label value
 					int labelIndex = labelIndices.get(label);
 
 					// update measure for current label

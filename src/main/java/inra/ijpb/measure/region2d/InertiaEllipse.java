@@ -8,16 +8,12 @@ import static java.lang.Math.sqrt;
 import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
-import ij.ImagePlus;
 import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.process.ImageProcessor;
-import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.geometry.Ellipse;
 import inra.ijpb.label.LabelImages;
-import inra.ijpb.measure.RegionAnalyzer;
 
 /**
  * Compute parameters of inertia ellipse from label images.
@@ -25,7 +21,7 @@ import inra.ijpb.measure.RegionAnalyzer;
  * @author dlegland
  *
  */
-public class InertiaEllipse extends AlgoStub implements RegionAnalyzer<Ellipse>
+public class InertiaEllipse extends RegionAnalyzer2D<Ellipse>
 {
 	// ==================================================
 	// Static methods 
@@ -44,11 +40,6 @@ public class InertiaEllipse extends AlgoStub implements RegionAnalyzer<Ellipse>
 	// ==================================================
 	// Implementation of RegionAnalyzer interface
 
-	public ResultsTable computeTable(ImagePlus labelPlus)
-	{
-		return createTable(analyzeRegions(labelPlus));
-	}
-	
 	/**
 	 * Utility method that transforms the mapping between labels and inertia
 	 * ellipses instances into a ResultsTable that can be displayed with ImageJ.
@@ -89,31 +80,6 @@ public class InertiaEllipse extends AlgoStub implements RegionAnalyzer<Ellipse>
 		return table;
 	}
 
-	public Map<Integer, Ellipse> analyzeRegions(ImagePlus labelPlus)
-	{
-		return analyzeRegions(labelPlus.getProcessor(), labelPlus.getCalibration());
-	}
-
-	
-	// ==================================================
-	// Computation methods 
-
-
-	public Map<Integer, Ellipse> analyzeRegions(ImageProcessor labelImage, Calibration calib)
-	{
-		int[] labels = LabelImages.findAllLabels(labelImage);
-		Ellipse[] ellipses = analyzeRegions(labelImage, labels, calib);
-		
-		// convert the arrays into a map of index-value pairs
-		Map<Integer, Ellipse> map = new TreeMap<Integer, Ellipse>();
-		for (int i = 0; i < labels.length; i++)
-		{
-			map.put(labels[i], ellipses[i]);
-		}
-		
-		return map;
-	}
-	
 	/**
 	 * Computes inertia ellipse of each region in input label image.
 	 * 
@@ -128,13 +94,9 @@ public class InertiaEllipse extends AlgoStub implements RegionAnalyzer<Ellipse>
 	 */
 	public Ellipse[] analyzeRegions(ImageProcessor image, int[] labels, Calibration calib)
 	{
-		// Check validity of parameters
-		if (image == null)
-			return null;
-
 		// size of image
-		int width = image.getWidth();
-		int height = image.getHeight();
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
 
 		// Extract spatial calibration
 		double sx = 1, sy = 1;
@@ -161,9 +123,9 @@ public class InertiaEllipse extends AlgoStub implements RegionAnalyzer<Ellipse>
 
     	fireStatusChanged(this, "Compute centroids");
 		// compute centroid of each region
-		for (int y = 0; y < height; y++) 
+		for (int y = 0; y < sizeY; y++) 
 		{
-			for (int x = 0; x < width; x++)
+			for (int x = 0; x < sizeX; x++)
 			{
 				int label = (int) image.getf(x, y);
 				if (label == 0)
@@ -185,9 +147,9 @@ public class InertiaEllipse extends AlgoStub implements RegionAnalyzer<Ellipse>
 
 		// compute centered inertia matrix of each label
     	fireStatusChanged(this, "Compute Inertia Matrices");
-		for (int y = 0; y < height; y++) 
+		for (int y = 0; y < sizeY; y++) 
 		{
-			for (int x = 0; x < width; x++)
+			for (int x = 0; x < sizeX; x++)
 			{
 				int label = image.get(x, y);
 				if (label == 0)
