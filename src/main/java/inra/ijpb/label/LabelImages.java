@@ -45,6 +45,9 @@ import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
+import inra.ijpb.label.distmap.DistanceTransform3D;
+import inra.ijpb.label.distmap.DistanceTransform3DFloat;
+import inra.ijpb.label.distmap.DistanceTransform3DShort;
 
 /**
  * Utility methods for label images (stored as 8-, 16- or 32-bits).
@@ -1857,6 +1860,68 @@ public class LabelImages
 			IJ.error( "Please select at least one label to remove." );
 	}
 
+	/**
+	 * Computes the distance map from a 3D image of labels
+	 * 
+	 * Distance is computed for each label voxel, as the chamfer distance to the
+	 * nearest voxel with a different value.
+	 * 
+	 * @param image
+	 *            the input 3D label image
+	 * @return the distance map obtained after applying the distance transform
+	 */
+	public static final ImageStack distanceMap(ImageStack image)
+	{
+		float[] weights = new float[]{3.0f, 4.0f, 5.0f};
+		DistanceTransform3D algo = new DistanceTransform3DFloat(weights);
+		return algo.distanceMap(image);
+	}
+	
+	/**
+	 * Computes the distance map from a 3D image of labels
+	 * 
+	 * Distance is computed for each label voxel, as the chamfer distance to the
+	 * nearest voxel with a different value.
+	 * 
+	 * @param image
+	 *            the input 3D label image
+	 * @param weights
+	 *            an array of chamfer weights, with at least three values
+	 * @param normalize
+	 *            indicates whether the resulting distance map should be
+	 *            normalized (divide distances by the first chamfer weight)
+	 * @return the distance map obtained after applying the distance transform
+	 */
+	public static final ImageStack distanceMap(ImageStack image,
+			short[] weights, boolean normalize)
+	{
+		DistanceTransform3D	algo = new DistanceTransform3DShort(weights, normalize);
+			
+		return algo.distanceMap(image);
+	}
+	
+	/**
+	 * Computes the distance map from a 3D image of labels
+	 * 
+	 * Distance is computed for each label voxel, as the chamfer distance to the
+	 * nearest voxel with a different value.
+	 * 
+	 * @param image
+	 *            the input 3D label image
+	 * @param weights
+	 *            an array of chamfer weights, with at least three values
+	 * @param normalize
+	 *            indicates whether the resulting distance map should be
+	 *            normalized (divide distances by the first chamfer weight)
+	 * @return the distance map obtained after applying the distance transform
+	 */
+	public static final ImageStack distanceMap(ImageStack image, 
+			float[] weights, boolean normalize)
+	{
+		DistanceTransform3D algo = new DistanceTransform3DFloat(weights, normalize);
+		return algo.distanceMap(image);
+	}
+	
 	/**
 	 * Get list of selected labels in label image. Labels are selected by
 	 * either a freehand ROI or point ROIs. Zero-value label is skipped.
