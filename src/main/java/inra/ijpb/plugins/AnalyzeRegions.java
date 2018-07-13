@@ -37,7 +37,7 @@ import inra.ijpb.geometry.Circle2D;
 import inra.ijpb.geometry.Ellipse;
 import inra.ijpb.geometry.PointPair2D;
 import inra.ijpb.label.LabelImages;
-import inra.ijpb.measure.GeometricMeasures2D;
+import inra.ijpb.measure.region2d.Area;
 import inra.ijpb.measure.region2d.CroftonPerimeter;
 import inra.ijpb.measure.region2d.GeodesicDiameter;
 import inra.ijpb.measure.region2d.InertiaEllipse;
@@ -151,9 +151,6 @@ public class AnalyzeRegions implements PlugInFilter
 		int[] labels = LabelImages.findAllLabels(image);
 		int nLabels = labels.length;
 
-		// create array for resolution
-		double[] resol = new double[] {calib.pixelWidth, calib.pixelHeight};
-		
 		// create results table with appropriate labels
     	ResultsTable table = new ResultsTable();
     	for (int i = 0; i < nLabels; i++)
@@ -172,7 +169,10 @@ public class AnalyzeRegions implements PlugInFilter
     	
     	if (computeArea)
     	{
-    		double[] areaList = GeometricMeasures2D.area(image, labels, resol);
+    		Area algo = new Area();
+    		DefaultAlgoListener.monitor(algo);
+
+    		double[] areaList = algo.analyzeRegions(image, labels, calib);
     		addColumn(table, "Area", areaList);
     	}
 

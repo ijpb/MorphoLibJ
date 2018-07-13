@@ -33,6 +33,7 @@ import ij.measure.ResultsTable;
 import ij.process.ImageProcessor;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.label.LabelImages;
+import inra.ijpb.measure.region2d.Area;
 import inra.ijpb.measure.region2d.CroftonPerimeter;
 import inra.ijpb.measure.region2d.InertiaEllipse;
 import inra.ijpb.measure.region2d.LargestInscribedCircle;
@@ -223,6 +224,10 @@ public class GeometricMeasures2D
 	 * @see inra.ijpb.label.LabelImages#pixelCount(ij.process.ImageProcessor,
 	 *      int[])
 	 * 
+	 * @deprecated use inra.ijpb.measure.region2d.Area instead
+	 * 
+	 * @see inra.ijpb.measure.region2d.Area 
+	 * 
 	 * @param image
 	 *            the input image containing label of particles
 	 * @param labels
@@ -231,6 +236,7 @@ public class GeometricMeasures2D
 	 *            the size of a pixel in each direction
 	 * @return the area of each region
 	 */
+	@Deprecated
 	public static final double[] area(ImageProcessor image, int[] labels,
 			double[] resol) {
 		// pre-compute the area of individual voxel
@@ -258,31 +264,20 @@ public class GeometricMeasures2D
 	/**
 	 * Counts the number of pixel that composes the particle with given label.
 	 * 
+	 * @deprecated replaced by Area.countRegionPixels
+	 *
+	 * @see inra.ijpb.measure.region2d.Area#countRegionPixels(ImageProcessor, int)
+	 * 
 	 * @param image
 	 *            the input image containing label of particles
 	 * @param label
 	 *            the label of the region to process
 	 * @return the number of pixels of the specified region
 	 */
+	@Deprecated
 	public static final int particleArea(ImageProcessor image, int label) 
 	{
-		int width = image.getWidth();
-		int height = image.getHeight();
-
-		int count = 0;
-
-		// count all pixels belonging to the particle
-		for (int y = 0; y < height; y++) 
-		{
-			for (int x = 0; x < width; x++) 
-			{
-				if (((int) image.getf(x, y)) == label)
-				{
-					count++;
-				}
-			}
-		}
-		return count;
+		return Area.countRegionPixels(image, label);
 	}
 
 	/**

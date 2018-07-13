@@ -167,6 +167,7 @@ public class GeometricMeasures2DTest
 	 * Test method for {@link ijt.measure.geometric.GeometricMeasures2D#particleArea(ij.process.ImageProcessor, int)}.
 	 */
 	@Test
+	@Deprecated
 	public final void testParticleArea() 
 	{
 		// initialize image with a square of side 4 in the middle
