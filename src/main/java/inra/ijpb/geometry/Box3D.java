@@ -4,12 +4,12 @@
 package inra.ijpb.geometry;
 
 /**
- * A bounding Box in 2 dimensions
+ * A bounding Box in 3 dimensions
  * 
  * @author dlegland
  *
  */
-public class Box2D
+public class Box3D
 {
 	// ==================================================
 	// Class variables
@@ -18,24 +18,28 @@ public class Box2D
 	double xmax;
 	double ymin;
 	double ymax;
+	double zmin;
+	double zmax;
 	
 	// ==================================================
 	// Constructors
 	
-	public Box2D(double xmin, double xmax, double ymin, double ymax)
+	public Box3D(double xmin, double xmax, double ymin, double ymax, double zmin, double zmax)
 	{
 		this.xmin = xmin;
 		this.xmax = xmax;
 		this.ymin = ymin;
 		this.ymax = ymax;
+		this.zmin = zmin;
+		this.zmax = zmax;
 	}
 	
 	// ==================================================
 	// generic methods
 
-	public double area()
+	public double volume()
 	{
-		return (xmax - xmin) * (ymax - ymin);
+		return (xmax - xmin) * (ymax - ymin) * (zmax - zmin);
 	}
 	
 	public double width()
@@ -46,6 +50,11 @@ public class Box2D
 	public double height()
 	{
 		return  ymax - ymin;
+	}
+	
+	public double depth()
+	{
+		return  zmax - zmin;
 	}
 	
 	
@@ -70,6 +79,16 @@ public class Box2D
 	public double getYMax()
 	{
 		return ymax;
+	}
+	
+	public double getZMin()
+	{
+		return zmin;
+	}
+	
+	public double getZMax()
+	{
+		return zmax;
 	}
 	
 }

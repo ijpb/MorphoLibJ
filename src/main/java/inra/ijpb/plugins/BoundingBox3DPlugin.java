@@ -26,22 +26,24 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
-import inra.ijpb.measure.GeometricMeasures3D;
+import inra.ijpb.measure.region3d.BoundingBox3D;
 
 /**
- * Plugin for measuring geometric quantities such as volume, surface area 
+ * Plugin for measuring extend of 3D bounding box from label images.
+ *  
  * @author David Legland
  *
  */
-public class BoundingBox3DPlugin implements PlugIn {
-  
+public class BoundingBox3DPlugin implements PlugIn 
+{
     // ====================================================
     // Calling functions 
 
 	/* (non-Javadoc)
      * @see ij.plugin.PlugIn#run(java.lang.String)
      */
-    public void run(String args) {
+    public void run(String args) 
+    {
         ImagePlus imagePlus = IJ.getImage();
 
 		if (imagePlus.getStackSize() == 1) {
@@ -49,10 +51,11 @@ public class BoundingBox3DPlugin implements PlugIn {
 			return;
 		}
 		
-        ResultsTable table = GeometricMeasures3D.boundingBox(imagePlus.getStack());
+		
+		ResultsTable table = new BoundingBox3D().computeTable(imagePlus);
         
  		// create string for indexing results
-		String tableName = imagePlus.getShortTitle() + "-bounds"; 
+		String tableName = imagePlus.getShortTitle() + "-bbox"; 
     
 		// show result
 		table.show(tableName);
