@@ -52,6 +52,11 @@ import inra.ijpb.morphology.Morphology;
 import inra.ijpb.morphology.Strel;
 import inra.ijpb.morphology.Strel3D;
 
+/**
+ * Plugin for the manual edition of label images (2D and 3D).
+ * @author iarganda
+ *
+ */
 public class LabelEdition implements PlugIn 
 {			
 	/** main GUI window */
