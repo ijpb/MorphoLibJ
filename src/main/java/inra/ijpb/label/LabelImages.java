@@ -34,14 +34,15 @@ import java.util.TreeSet;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
-import ij.gui.FreehandRoi;
 import ij.gui.PlotWindow;
 import ij.gui.PointRoi;
+import ij.gui.PolygonRoi;
 import ij.gui.ProfilePlot;
 import ij.gui.Roi;
 import ij.measure.ResultsTable;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
+import ij.process.FloatPolygon;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
@@ -1969,23 +1970,63 @@ public class LabelImages
 				}
 			}
 		}
-		else if( roi instanceof FreehandRoi )
+		else if( roi instanceof PolygonRoi && roi.getType() == Roi.FREELINE )
 		{
-			// read values from ROI using a profile plot
-			// save interpolation option
-			boolean interpolateOption = PlotWindow.interpolate;
-			// do not interpolate pixel values
-			PlotWindow.interpolate = false;
-			// get label values from line roi (different from 0)
-			float[] values = ( new ProfilePlot( labelImage ) )
-					.getPlot().getYValues();
-			PlotWindow.interpolate = interpolateOption;
-
-			for( int i=0; i<values.length; i++ )
+			// 1 pixel-thick free-hand lines
+			if( roi.getStrokeWidth() <= 1 )
 			{
-				if( Float.compare( 0f, values[ i ] ) != 0 &&
-						list.contains( values[ i ]) == false )
-					list.add( values[ i ]);
+				// read values from ROI using a profile plot
+				// save interpolation option
+				boolean interpolateOption = PlotWindow.interpolate;
+				// do not interpolate pixel values
+				PlotWindow.interpolate = false;
+				// get label values from line roi (different from 0)
+				float[] values = ( new ProfilePlot( labelImage ) )
+						.getPlot().getYValues();
+				PlotWindow.interpolate = interpolateOption;
+
+				for( int i=0; i<values.length; i++ )
+				{
+					if( Float.compare( 0f, values[ i ] ) != 0 &&
+							list.contains( values[ i ]) == false )
+						list.add( values[ i ]);
+				}
+			}
+			else // thicker lines
+			{
+				final int width = Math.round( roi.getStrokeWidth() );
+				FloatPolygon p = roi.getFloatPolygon();
+				int n = p.npoints;
+				final ImageProcessor ip = labelImage.getProcessor();
+				double x1, y1;
+				double x2 = p.xpoints[0]-(p.xpoints[1]-p.xpoints[0]);
+				double y2 = p.ypoints[0]-(p.ypoints[1]-p.ypoints[0]);
+				for( int i=0; i<n; i++ )
+				{
+					x1 = x2;
+					y1 = y2;
+					x2 = p.xpoints[i];
+					y2 = p.ypoints[i];
+
+					double dx = x2-x1;
+					double dy = y1-y2;
+					double length = (float)Math.sqrt(dx*dx+dy*dy);
+					dx /= length;
+					dy /= length;
+					double x = x2-dy*width/2.0;
+					double y = y2-dx*width/2.0;
+
+					int n2 = width;
+
+					do {
+						float value = ip.getf( (int) (x+0.5), (int) (y+0.5) );
+						if( Float.compare( 0f, value ) != 0 &&
+								list.contains( value ) == false )
+							list.add( (float) value );
+						x += dy;
+						y += dx;
+					} while (--n2>0);
+				}
 			}
 		}
 		return list;
