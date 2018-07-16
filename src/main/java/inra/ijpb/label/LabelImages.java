@@ -26,6 +26,7 @@ import static java.lang.Math.min;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -34,12 +35,14 @@ import java.util.TreeSet;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
+import ij.gui.FreehandRoi;
 import ij.gui.PlotWindow;
 import ij.gui.PointRoi;
-import ij.gui.PolygonRoi;
 import ij.gui.ProfilePlot;
 import ij.gui.Roi;
+import ij.gui.ShapeRoi;
 import ij.measure.ResultsTable;
+import ij.plugin.Selection;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.FloatPolygon;
@@ -1970,64 +1973,114 @@ public class LabelImages
 				}
 			}
 		}
-		else if( roi instanceof PolygonRoi && roi.getType() == Roi.FREELINE )
+		// 1 pixel-thick lines
+		else if( roi.isLine() && roi.getStrokeWidth() <= 1 )
 		{
-			// 1 pixel-thick free-hand lines
-			if( roi.getStrokeWidth() <= 1 )
-			{
-				// read values from ROI using a profile plot
-				// save interpolation option
-				boolean interpolateOption = PlotWindow.interpolate;
-				// do not interpolate pixel values
-				PlotWindow.interpolate = false;
-				// get label values from line roi (different from 0)
-				float[] values = ( new ProfilePlot( labelImage ) )
-						.getPlot().getYValues();
-				PlotWindow.interpolate = interpolateOption;
+			// read values from ROI using a profile plot
+			// save interpolation option
+			boolean interpolateOption = PlotWindow.interpolate;
+			// do not interpolate pixel values
+			PlotWindow.interpolate = false;
+			// get label values from line roi (different from 0)
+			float[] values = ( new ProfilePlot( labelImage ) )
+					.getPlot().getYValues();
+			PlotWindow.interpolate = interpolateOption;
 
-				for( int i=0; i<values.length; i++ )
-				{
-					if( Float.compare( 0f, values[ i ] ) != 0 &&
-							list.contains( values[ i ]) == false )
-						list.add( values[ i ]);
-				}
+			for( int i=0; i<values.length; i++ )
+			{
+				if( Float.compare( 0f, values[ i ] ) != 0 &&
+						list.contains( values[ i ]) == false )
+					list.add( values[ i ]);
 			}
-			else // thicker lines
+		}
+		else if( roi.getType() == Roi.FREELINE  )// freehand thicker lines
+		{
+			final int width = Math.round( roi.getStrokeWidth() );
+			FloatPolygon p = roi.getFloatPolygon();
+			int n = p.npoints;
+			final ImageProcessor ip = labelImage.getProcessor();
+			double x1, y1;
+			double x2 = p.xpoints[0]-(p.xpoints[1]-p.xpoints[0]);
+			double y2 = p.ypoints[0]-(p.ypoints[1]-p.ypoints[0]);
+			for( int i=0; i<n; i++ )
 			{
-				final int width = Math.round( roi.getStrokeWidth() );
-				FloatPolygon p = roi.getFloatPolygon();
-				int n = p.npoints;
-				final ImageProcessor ip = labelImage.getProcessor();
-				double x1, y1;
-				double x2 = p.xpoints[0]-(p.xpoints[1]-p.xpoints[0]);
-				double y2 = p.ypoints[0]-(p.ypoints[1]-p.ypoints[0]);
-				for( int i=0; i<n; i++ )
+				x1 = x2;
+				y1 = y2;
+				x2 = p.xpoints[i];
+				y2 = p.ypoints[i];
+
+				double dx = x2-x1;
+				double dy = y1-y2;
+				double length = (float)Math.sqrt(dx*dx+dy*dy);
+				dx /= length;
+				dy /= length;
+				double x = x2-dy*width/2.0;
+				double y = y2-dx*width/2.0;
+
+				int n2 = width;
+
+				do {
+					float value = ip.getf( (int) (x+0.5), (int) (y+0.5) );
+					if( Float.compare( 0f, value ) != 0 &&
+							list.contains( value ) == false )
+						list.add( (float) value );
+					x += dy;
+					y += dx;
+				} while (--n2>0);
+			}
+		}
+		// for regular rectangles
+		else if ( roi.getType() == Roi.RECTANGLE && roi.getCornerDiameter() == 0 )
+		{
+			final Rectangle rect = roi.getBounds();
+
+			final int x0 = rect.x;
+			final int y0 = rect.y;
+
+			final int lastX = x0 + rect.width;
+			final int lastY = y0 + rect.height;
+			final ImageProcessor ip = labelImage.getProcessor();
+			for( int x = x0; x < lastX; x++ )
+				for( int y = y0; y < lastY; y++ )
 				{
-					x1 = x2;
-					y1 = y2;
-					x2 = p.xpoints[i];
-					y2 = p.ypoints[i];
+					float value = ip.getf( x, y );
+					if( Float.compare( 0f, value ) != 0 &&
+							list.contains( value ) == false )
+						list.add( (float) value );
+				}
+		}
+		else // for the rest of ROIs we get ALL points inside the ROI
+		{
+			final ShapeRoi shapeRoi = roi.isLine() ? new ShapeRoi( Selection.lineToArea( roi ) )
+					: new ShapeRoi( roi );
+			final Rectangle rect = shapeRoi.getBounds();
 
-					double dx = x2-x1;
-					double dy = y1-y2;
-					double length = (float)Math.sqrt(dx*dx+dy*dy);
-					dx /= length;
-					dy /= length;
-					double x = x2-dy*width/2.0;
-					double y = y2-dx*width/2.0;
+			int lastX = rect.x + rect.width ;
+			if( lastX >= labelImage.getWidth() )
+				lastX = labelImage.getWidth() - 1;
+			int lastY = rect.y + rect.height;
+			if( lastY >= labelImage.getHeight() )
+				lastY = labelImage.getHeight() - 1;
+			int firstX = Math.max( rect.x, 0 );
+			int firstY = Math.max( rect.y, 0 );
 
-					int n2 = width;
+			final ImageProcessor ip = labelImage.getProcessor();
+			// create equivalent binary image to speed up the checking
+			// of each pixel belonging to the shape
+			ByteProcessor bp = new ByteProcessor( rect.width, rect.height );
+			bp.setValue( 255 );
+			shapeRoi.setLocation( 0 , 0 );
+			bp.fill( shapeRoi );
 
-					do {
-						float value = ip.getf( (int) (x+0.5), (int) (y+0.5) );
+			for( int x = firstX, rectX = 0; x < lastX; x++, rectX++ )
+				for( int y = firstY, rectY = 0; y < lastY; y++, rectY++ )
+					if( bp.getf(rectX, rectY) > 0 )
+					{
+						float value = ip.getf( x, y );
 						if( Float.compare( 0f, value ) != 0 &&
 								list.contains( value ) == false )
 							list.add( (float) value );
-						x += dy;
-						y += dx;
-					} while (--n2>0);
-				}
-			}
+					}
 		}
 		return list;
 	}
