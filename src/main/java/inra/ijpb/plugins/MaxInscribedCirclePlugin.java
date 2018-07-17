@@ -37,10 +37,8 @@ import ij.gui.TextRoi;
 import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
-import ij.process.ImageProcessor;
 import inra.ijpb.geometry.Circle2D;
 import inra.ijpb.label.LabelImages;
-import inra.ijpb.measure.GeometricMeasures2D;
 import inra.ijpb.measure.region2d.LargestInscribedCircle;
 
 public class MaxInscribedCirclePlugin implements PlugIn 
@@ -160,29 +158,11 @@ public class MaxInscribedCirclePlugin implements PlugIn
         if (imagePlus==null) 
             return null;
 
-        ImageProcessor image = imagePlus.getProcessor();
-        
-        // Extract spatial calibration
-        double[] resol = getPixelSize(imagePlus);
-
-        ResultsTable results = GeometricMeasures2D.maximumInscribedCircle(image, 
-        		resol);
+        LargestInscribedCircle algo = new LargestInscribedCircle();
+        ResultsTable table = algo.createTable(algo.analyzeRegions(imagePlus));
         
 		// return the created array
-		return results;
-    }
-    
-    private static final double[] getPixelSize(ImagePlus imagePlus)
-    {
-    	// Extract spatial calibration
-        Calibration cal = imagePlus.getCalibration();
-        double[] resol = new double[]{1, 1};
-        if (cal.scaled()) 
-        {
-        	resol[0] = cal.pixelWidth;
-        	resol[1] = cal.pixelHeight;
-        }
-        return resol;
+		return table;
     }
     
 	/**
