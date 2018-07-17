@@ -34,8 +34,8 @@ public class IntrinsicVolumes2D
 	 *            the input image containing label of particles
 	 * @param labels
 	 *            the array of unique labels in image
-	 * @param resol
-	 *            the size of a pixel in each direction
+	 * @param calib
+	 *            the spatial calibration of the image
 	 * @return the area of each region
 	 */
 	public static final double[] areas(ImageProcessor image, int[] labels, Calibration calib)
@@ -59,6 +59,37 @@ public class IntrinsicVolumes2D
 		return areas;
 	}
 
+	/**
+	 * Computes the area density for each particle in the label image, taking into
+	 * account image resolution.
+	 * 
+	 * @see inra.ijpb.measure.region2d.Area 
+	 * 
+	 * @param image
+	 *            the input binary image
+	 * @return the area density of the binary structure
+	 */
+	public static final double areaDensity(ImageProcessor image)
+	{
+		// image size
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		
+		// count the number of pixels with value greater than 0
+		int count = 0;
+		for (int y = 0; y < sizeY; y++) 
+		{
+			for (int x = 0; x < sizeX; x++) 
+			{
+				if (image.getf(x, y) > 0) count++;
+			}
+		}
+
+		// normalization by image size
+		double totalArea = sizeX * sizeY;
+		return count / totalArea;
+	}
+
 
 	public static final double perimeter(ImageProcessor image, Calibration calib, int nDirs)
 	{
@@ -70,7 +101,7 @@ public class IntrinsicVolumes2D
 			return perimeterD4(image, calib);
 		default:
 			throw new IllegalArgumentException(
-					"Requires number of directions being 2 or 4.");
+					"Requires number of directions being 2 or 4, not " + nDirs);
 		}
 	}
 	
@@ -194,6 +225,141 @@ public class IntrinsicVolumes2D
         return perim;
 	}
 	
+	/**
+	 * Computes perimeter density of binary image.
+	 * 
+	 * @param image
+	 *            the input binary image
+	 * @param calib
+	 *            the spatial calibration of the image
+	 * @param nDirs
+	 *            the number of directions to consider, either 2 or 4
+	 * @return the perimeter density of the binary image
+	 */
+	public static final double perimeterDensity(ImageProcessor image,
+			Calibration calib, int nDirs)
+	{
+		// create associative array to know index of each label
+		double[] lut = computePerimeterLut(calib, 2);
+
+		// initialize result
+		double perimeter = 0;
+
+		// size of image
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+
+		// iterate on image pixel configurations
+		for (int y = 0; y < sizeY - 1; y++) 
+		{
+			for (int x = 0; x < sizeX - 1; x++) 
+			{
+				// Compute index of local binary configuration
+				int index = 0;
+				index += image.getf(    x,     y) > 0 ? 1 : 0;
+				index += image.getf(x + 1,     y) > 0 ? 2 : 0;
+				index += image.getf(    x, y + 1) > 0 ? 4 : 0;
+				index += image.getf(x + 1, y + 1) > 0 ? 8 : 0;
+
+				// update measure for current label
+				perimeter += lut[index];
+			}
+		}
+
+		double samplingArea = (sizeX - 1) * calib.pixelWidth * (sizeY - 1) * calib.pixelHeight;
+		return perimeter / samplingArea;
+	}
+
+	/**
+	 * Computes the Look-up table that is used to compute perimeter. The result
+	 * is an array with 16 entries, each entry corresponding to a binary 2-by-2
+	 * configuration of pixels.
+	 * 
+	 * @param calib
+	 *            the calibration of the image
+	 * @param nDirs
+	 *            the number of directions to use (2 or 4)
+	 * @return an array containing for each 2-by-2 configuration index, the
+	 *         corresponding contribution to perimeter estimate
+	 */
+	private static final double[] computePerimeterLut(Calibration calib, int nDirs)
+	{
+		// distances between a pixel and its neighbors.
+		// di refer to orthogonal neighbors
+		// dij refer to diagonal neighbors
+		double d1 = calib.pixelWidth;
+		double d2 = calib.pixelHeight;
+		double d12 = Math.hypot(d1, d2);
+		double area = d1 * d2;
+
+		// weights associated to each direction, computed only for four
+		// directions
+		double[] weights = null;
+		if (nDirs == 4)
+		{
+			weights = computeDirectionWeightsD4(d1, d2);
+		}
+
+		// initialize output array (2^(2*2) = 16 configurations in 2D)
+		final int nConfigs = 16;
+		double[] tab = new double[nConfigs];
+
+		// loop for each tile configuration
+		for (int i = 0; i < nConfigs; i++)
+		{
+			// create the binary image representing the 2x2 tile
+			boolean[][] im = new boolean[2][2];
+			im[0][0] = (i & 1) > 0;
+			im[0][1] = (i & 2) > 0;
+			im[1][0] = (i & 4) > 0;
+			im[1][1] = (i & 8) > 0;
+
+			// contributions for isothetic directions
+			double ke1, ke2;
+
+			// contributions for diagonal directions
+			double ke12;
+
+			// iterate over the 4 pixels within the configuration
+			for (int y = 0; y < 2; y++)
+			{
+				for (int x = 0; x < 2; x++)
+				{
+					if (!im[y][x])
+						continue;
+
+					// divides by two to convert intersection count to projected
+					// diameter
+					ke1 = im[y][1 - x] ? 0 : (area / d1) / 2;
+					ke2 = im[1 - y][x] ? 0 : (area / d2) / 2;
+
+					if (nDirs == 2) 
+					{
+						// Count only orthogonal directions
+						// divides by two for average, and by two for
+						// multiplicity
+						tab[i] += (ke1 + ke2) / 4;
+
+					} 
+					else if (nDirs == 4) 
+					{
+						// compute contribution of diagonal directions
+						ke12 = im[1 - y][1 - x] ? 0 : (area / d12) / 2;
+
+						// Decomposition of Crofton formula on 4 directions,
+						// taking into account multiplicities
+						tab[i] += ((ke1 / 2) * weights[0] + (ke2 / 2)
+								* weights[1] + ke12 * weights[2]);
+					}
+				}
+			}
+
+			// Add a normalisation constant
+			tab[i] *= Math.PI;
+		}
+
+		return tab;
+	}
 
 	/**
 	 * Computes a set of weights for the four main directions (orthogonal plus
@@ -207,7 +373,6 @@ public class IntrinsicVolumes2D
 	 */
 	private static final double[] computeDirectionWeightsD4(double dx, double dy) 
 	{
-
 		// angle of the diagonal
 		double theta = Math.atan2(dy, dx);
 
@@ -231,7 +396,7 @@ public class IntrinsicVolumes2D
 		case 4: return eulerNumberC4(image);
 		case 8: return eulerNumberC8(image);
 		default:
-			throw new IllegalArgumentException("Only Connectivity 4 is implemented...");
+			throw new IllegalArgumentException("Connectivity must be 4 or 8, not " + conn);
 		}
 	}
 	
@@ -328,18 +493,14 @@ public class IntrinsicVolumes2D
             	if (b00 && b11) nEdges++;
             	if (b01 && b10) nEdges++;
             	
-            	// triangle faces
+            	// the four triangle faces
             	if (b00 && b01 && b10) nTriangles++;
             	if (b00 && b01 && b11) nTriangles++;
             	if (b00 && b10 && b11) nTriangles++;
             	if (b01 && b10 && b11) nTriangles++;
             	
             	// square faces
-            	if (b00 && b01 && b10 && b11)
-            	{
-//            		nTriangles -= 4;
-            		nSquares++;
-            	}
+            	if (b00 && b01 && b10 && b11) nSquares++;
             	
             	// update left side of 2-by-2 configuration for next iteration
                 b00 = b01;
@@ -362,7 +523,74 @@ public class IntrinsicVolumes2D
         return euler;
 	}
 	
-   
+	public static final double eulerNumberDensity(ImageProcessor image, Calibration calib, int conn)
+	{
+		// create associative array to know index of each label
+		double[] lut = computeEulerNumberLut(conn);
+
+		// initialize result
+		double euler = 0;
+
+		// size of image
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+
+		// iterate on image pixel configurations
+		for (int y = 0; y < sizeY - 1; y++) 
+		{
+			for (int x = 0; x < sizeX - 1; x++) 
+			{
+				// Compute index of local binary configuration
+				int index = 0;
+				index += image.getf(    x,     y) > 0 ? 1 : 0;
+				index += image.getf(x + 1,     y) > 0 ? 2 : 0;
+				index += image.getf(    x, y + 1) > 0 ? 4 : 0;
+				index += image.getf(x + 1, y + 1) > 0 ? 8 : 0;
+
+				// update measure for current label
+				euler += lut[index];
+			}
+		}
+
+		double samplingArea = (sizeX - 1) * calib.pixelWidth * (sizeY - 1) * calib.pixelHeight;
+		return euler / samplingArea;
+	}
+
+	/**
+	 * Computes the Look-up table that is used to compute Euler number density.
+	 * The result is an array with 16 entries, each entry corresponding to a
+	 * binary 2-by-2 configuration of pixels.
+	 * 
+	 * @param conn
+	 *            the connectivity to use (4 or 8)
+	 * @return an array containing for each 2-by-2 configuration index, the
+	 *         corresponding contribution to euler number estimate
+	 */
+	private static final double[] computeEulerNumberLut(int conn)
+	{
+		switch(conn)
+		{
+		case 4: return eulerNumberDensityC4();
+		case 8: return eulerNumberDensityC8();
+		default:
+			throw new IllegalArgumentException("Connectivity must be 4 or 8, not " + conn);
+		}
+	}
+	
+	private final static double[] eulerNumberDensityC4()
+	{
+		return new double[] {
+				0,  0.25, 0.25, 0,    0.25, 0, 0.5, -0.25,  
+				0.25, 0.5, 0, -0.25,   0, -0.25, -0.25, 0};
+	}
+
+	private final static double[] eulerNumberDensityC8()
+	{
+		return new double[] {
+				0,  0.25, 0.25, 0,    0.25, 0, 0.0, -0.25,  
+				0.25, 0.0, 0, -0.25,   0, -0.25, -0.25, 0};
+	}
+	
 	// ==================================================
     // Constructor
 
