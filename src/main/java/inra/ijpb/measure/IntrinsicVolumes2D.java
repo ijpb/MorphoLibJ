@@ -3,6 +3,9 @@
  */
 package inra.ijpb.measure;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import ij.measure.Calibration;
 import ij.process.ImageProcessor;
 import inra.ijpb.label.LabelImages;
@@ -166,7 +169,6 @@ public class IntrinsicVolumes2D
         
         // area of pixel, used to compute line densities
         double area = d1 * d2;
-
         
         // size of image
         int sizeX = image.getWidth();
@@ -225,6 +227,15 @@ public class IntrinsicVolumes2D
         return perim;
 	}
 	
+	public static final double[] perimeters(ImageProcessor image, int[] labels, Calibration calib, int nDirs)
+	{
+		// pre-compute LUT corresponding to resolution and number of directions
+		double[] lut = computePerimeterLut(calib, nDirs);
+
+		// apply Binary configuration look-up table
+		return applyConfigurationLut(image, labels, lut);
+	}
+
 	/**
 	 * Computes perimeter density of binary image.
 	 * 
@@ -523,6 +534,15 @@ public class IntrinsicVolumes2D
         return euler;
 	}
 	
+	public static final double[] eulerNumbers(ImageProcessor image, int[] labels, int conn)
+	{
+		// pre-compute LUT corresponding to connectivity
+		double[] lut = computeEulerNumberLut(conn);
+
+		// apply Binary configuration look-up table
+		return applyConfigurationLut(image, labels, lut);
+	}
+
 	public static final double eulerNumberDensity(ImageProcessor image, Calibration calib, int conn)
 	{
 		// create associative array to know index of each label
@@ -591,6 +611,86 @@ public class IntrinsicVolumes2D
 				0.25, 0.0, 0, -0.25,   0, -0.25, -0.25, 0};
 	}
 	
+	
+	public static final double[] applyConfigurationLut(ImageProcessor image, int[] labels, double[] lut)
+	{
+		// create associative array to know index of each label
+		int nLabels = labels.length;
+		HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
+
+		// initialize result
+		double[] results = new double[nLabels];
+
+		// size of image
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+
+		// for each configuration of 2x2 pixels, we identify the labels
+		ArrayList<Integer> localLabels = new ArrayList<Integer>(4);
+
+		// values of pixels within current 2-by-2 configuration
+		// (first digit for y, second digit for x)
+		int[] configValues = new int[4];
+		
+		// Iterate over all 2-by-2 configurations containing at least one pixel
+		// within the image.
+        // Current pixel is the lower-right pixel in configuration
+		// (corresponding to b11).
+		for (int y = 0; y < sizeY + 1; y++) 
+		{
+			configValues[0] = 0;
+			configValues[2] = 0;
+			
+			for (int x = 0; x < sizeX + 1; x++) 
+			{
+        		// update pixel values of configuration
+				configValues[1] = x < sizeX & y > 0 ? (int) image.getf(x, y - 1) : 0;
+				configValues[3] = x < sizeX & y < sizeY ? (int) image.getf(x, y) : 0;
+
+				// identify labels in current config
+				localLabels.clear();
+				for (int label : configValues)
+				{
+					if (label == 0)
+						continue;
+					// keep only one instance of each label
+					if (!localLabels.contains(label))
+						localLabels.add(label);
+				}
+
+				// if no label in local configuration contribution is zero
+				if (localLabels.size() == 0)
+				{
+					continue;
+				}
+
+				// For each label, compute binary confi
+				for (int label : localLabels) 
+				{
+					// Compute index of local configuration
+					int index = 0;
+					index += configValues[0] == label ? 1 : 0;
+					index += configValues[1] == label ? 2 : 0;
+					index += configValues[2] == label ? 4 : 0;
+					index += configValues[3] == label ? 8 : 0;
+
+					// retrieve label index from label value
+					int labelIndex = labelIndices.get(label);
+
+					// update measure for current label
+					results[labelIndex] += lut[index];
+				}
+
+				// update values of configuration for next iteration
+				configValues[0] = configValues[1];
+				configValues[2] = configValues[3];
+			}
+		}
+
+		return results;
+	}
+
+
 	// ==================================================
     // Constructor
 

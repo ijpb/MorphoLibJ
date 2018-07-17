@@ -141,6 +141,10 @@ public class CroftonPerimeter extends AlgoStub implements RegionAnalyzer<Double>
 
 		// initialize result
 		Double[] perimeters = new Double[nLabels];
+		for (int i = 0; i< nLabels; i++)
+		{ 
+			perimeters[i] = new Double(0.0);
+		}
 
 		// size of image
 		int sizeX = image.getWidth();

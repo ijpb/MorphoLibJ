@@ -233,10 +233,9 @@ public class GeometricMeasures2D
 	 * Computes the area for each particle in the label image, taking into
 	 * account image resolution.
 	 * 
-	 * @see inra.ijpb.label.LabelImages#pixelCount(ij.process.ImageProcessor,
-	 *      int[])
+	 * @see {@link inra.ijpb.measure.IntrinsicVolumes2D#areas(ImageProcessor, int[], Calibration)}
 	 * 
-	 * @deprecated use inra.ijpb.measure.region2d.Area instead
+	 * @deprecated use {@link inra.ijpb.measure.IntrinsicVolumes2D#areas(ImageProcessor, int[], Calibration)} instead
 	 * 
 	 * @see inra.ijpb.measure.region2d.Area 
 	 * 
