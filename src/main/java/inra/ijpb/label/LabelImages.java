@@ -35,7 +35,6 @@ import java.util.TreeSet;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
-import ij.gui.FreehandRoi;
 import ij.gui.PlotWindow;
 import ij.gui.PointRoi;
 import ij.gui.ProfilePlot;
