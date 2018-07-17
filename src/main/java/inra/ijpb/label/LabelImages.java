@@ -1927,7 +1927,8 @@ public class LabelImages
 	
 	/**
 	 * Get list of selected labels in label image. Labels are selected by
-	 * either a freehand ROI or point ROIs. Zero-value label is skipped.
+	 * any selection tool in the current slice of the input label image.
+	 * Zero-value label is skipped.
 	 *
 	 * @param labelImage  label image
 	 * @param roi  FreehandRoi or PointRoi with selected labels
