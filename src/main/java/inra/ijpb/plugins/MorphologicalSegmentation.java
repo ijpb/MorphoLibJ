@@ -301,7 +301,15 @@ public class MorphologicalSegmentation implements PlugIn {
 	private String stopTip = "Click to abort segmentation";
 
 	/** enumeration of result modes */
-	public static enum ResultMode { OVERLAID_BASINS, OVERLAID_DAMS, BASINS, LINES };
+	public static enum ResultMode {
+		/**	display mode with transparent color basins on top of original image */
+		OVERLAID_BASINS,
+		/** display mode with watershed dams in red on top of original image */
+		OVERLAID_DAMS,
+		/** display mode showing only color basins */
+		BASINS,
+		/** display mode showing only watershed lines in black over white background */
+		LINES };
 
 	// Macro recording constants (corresponding to  
 	// the static method names to be called)
