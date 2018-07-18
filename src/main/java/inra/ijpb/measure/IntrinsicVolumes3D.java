@@ -113,6 +113,25 @@ public class IntrinsicVolumes3D
 	}
 	
 	/**
+	 * Measures the volume density of a single region within a 3D binary image.
+	 * 
+	 * @param image
+	 *            the binary image containing the region
+	 * @param calib
+	 *            the spatial calibration of the image
+	 * @return the volume density of the region within the image
+	 */
+	public static final double volumeDensity(ImageStack image)
+	{
+		// count non-zero voxels
+		int voxelCount = voxelCount(image);
+
+		// Normalizes voxel count by imag volume.
+		int voxelNumber = image.getWidth() * image.getWidth() * image.getSize();
+		return voxelCount / voxelNumber;
+	}
+
+	/**
 	 * Computes surface area of a single region within a 3D binary image.
 	 * 
 	 * Uses discretization of the Crofton formula, that consists in computing
@@ -162,6 +181,33 @@ public class IntrinsicVolumes3D
 		// Compute index of each 2x2x2 binary voxel configuration, associate LUT
 		// contribution, and sum up for each label
 		return sumOfLutContributions(image, labels, surfLut);
+	}
+	
+	/**
+	 * Computes surface area of a single region within a 3D binary image.
+	 * 
+	 * Uses discretization of the Crofton formula, that consists in computing
+	 * numbers of intersections with lines of various directions.
+	 * 
+	 * @param image
+	 *            image containing the label of each particle
+	 * @param calib
+	 *            the spatial calibration of the image
+	 * @param nDirs
+	 *            the number of directions to consider, either 3 or 13
+	 * @return the surface area of each particle in the image
+	 */
+	public static final double surfaceAreaDensity(ImageStack image, Calibration calib, int nDirs)
+	{
+		// pre-compute LUT corresponding to resolution and number of directions
+		double[] surfLut = computeSurfaceAreaLut(calib, nDirs);
+
+		// Compute index of each 2x2x2 binary voxel configuration, associate LUT
+		// contribution, and sum up for each label
+		double surf = innerSumOfLutContributions(image, surfLut);
+		
+		double vol = samplingVolume(image, calib);
+		return surf / vol;
 	}
 	
 	/**
@@ -451,6 +497,31 @@ public class IntrinsicVolumes3D
 	}
 	
 	/**
+	 * Computes Euler number of the region within the binary image,
+	 * using the specified connectivity.
+	 * 
+	 * @param image
+	 *            the input 3D binary image
+	 * @param calib
+	 *            the spatial calibration of the image
+	 * @param conn
+	 *            the connectivity to use (either 6 or 26)
+	 * @return the Euler-Poincare characteristic of the region
+	 */
+	public static final double eulerNumberDensity(ImageStack image, Calibration calib, int conn)
+	{
+		// pre-compute LUT corresponding to resolution and number of directions
+		double[] eulerLut = computeEulerNumberLut(conn);
+
+		// Compute index of each 2x2x2 binary voxel configuration, associate LUT
+		// contribution, and sum up for each label
+		double euler = innerSumOfLutContributions(image, eulerLut);
+		
+		double vol = samplingVolume(image, calib);
+		return euler / vol;
+	}
+	
+	/**
 	 * Computes the look-up table for measuring Euler number in binary 3D image,
 	 * depending on the connectivity. The input structure should not touch image
 	 * border.
@@ -552,15 +623,14 @@ public class IntrinsicVolumes3D
 
 	/**
 	 * Applies a look-up-table for each of the 2x2x2 voxel configurations
-	 * containing at least one voxel of the input binary image, and returns the sum of
-	 * contributions for each label.
+	 * containing at least one voxel of the input binary image, and returns the
+	 * sum of contributions for each label.
 	 * 
-	 * This method is used for computing Euler number and surface area from binary images.
+	 * This method is used for computing Euler number and surface area from
+	 * binary images.
 	 * 
 	 * @param image
-	 *            the input 3D image of labels
-	 * @param labels
-	 *            the set of labels to process
+	 *            the input 3D binary image
 	 * @param lut
 	 *            the look-up-table containing the measure contribution for each
 	 *            of the 256 configuration of 8 voxels
@@ -775,10 +845,104 @@ public class IntrinsicVolumes3D
         return measures;
 	}
 	
+    /**
+	 * Applies a look-up-table for each of the 2x2x2 voxel configurations
+	 * containing at least one voxel of the input binary image, and returns the sum of
+	 * contributions for each label.
+	 * 
+	 * This method is used for computing densities of Euler number and surface area from binary images.
+	 * 
+	 * @param image
+	 *            the input 3D image of labels
+	 * @param lut
+	 *            the look-up-table containing the measure contribution for each
+	 *            of the 256 configuration of 8 voxels
+	 * @return the sum of measure contributions for each label
+	 * 
+	 * @see #surfaceAreaCrofton(ImageStack, int[], double[], int)
+	 * @see #eulerNumber(ImageStack, int[], int)
+	 */
+	private final static double innerSumOfLutContributions(ImageStack image, double[] lut)
+	{   
+		// Algorithm:
+		// iterate on configurations of 2-by-2-by-2 voxels fully contained within 3D image. 
+		// For each configuration, identify the labels within the configuration.
+		// For each label, compute the equivalent binary configuration index, 
+		// and adds is contribution to the measure associated to the label. 
+		
+	    double result = 0;
+	
+		// size of image
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		int sizeZ = image.getSize();
+	
+		// values of pixels within current 2-by-2-by-2 configuration
+		boolean[] configValues = new boolean[8];
+		
+		// Iterate over all 2-by-2-by-2 configurations containing at least one
+		// voxel within the image.
+		// Current pixel is the lower-right voxel in configuration
+		// (corresponding to b111).
+	    for (int z = 1; z < sizeZ; z++) 
+	    {
+			for (int y = 1; y < sizeY; y++) 
+	    	{
+	        	// initialize left voxels
+				configValues[0] = image.getVoxel(0, y - 1, z - 1) > 0;
+				configValues[2] = image.getVoxel(0, y, z - 1) > 0;
+				configValues[4] = image.getVoxel(0, y - 1, z) > 0;
+				configValues[6] = image.getVoxel(0, y, z) > 0;
+	
+	    		for (int x = 1; x < sizeX; x++) 
+	    		{
+	        		// update pixel values of configuration
+	    			configValues[1] = image.getVoxel(x, y - 1, z - 1) > 0;
+	    			configValues[3] = image.getVoxel(x, y, z - 1) > 0;
+	    			configValues[5] = image.getVoxel(x, y - 1, z) > 0;
+	    			configValues[7] = image.getVoxel(x, y, z) > 0;
+	
+	    			// Compute index of local configuration
+	    			int index = 0;
+					index += configValues[0] ?   1 : 0;
+					index += configValues[1] ?   2 : 0;
+					index += configValues[2] ?   4 : 0;
+					index += configValues[3] ?   8 : 0;
+					index += configValues[4] ?  16 : 0;
+					index += configValues[5] ?  32 : 0;
+					index += configValues[6] ?  64 : 0;
+					index += configValues[7] ? 128 : 0;
+	
+	    			// add the contribution of the configuration to the measure
+	    			result += lut[index];
+					
+					// update values of configuration for next iteration
+					configValues[0] = configValues[1];
+					configValues[2] = configValues[3];
+					configValues[4] = configValues[5];
+					configValues[6] = configValues[7];
+	    		}
+	    	}
+	    }
+	    
+	    // reset progress display
+	    return result;
+	}
+
+	private static final double samplingVolume(ImageStack image, Calibration calib)
+	{
+		// size of image
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		int sizeZ = image.getSize();
+		return (sizeX - 1) * calib.pixelWidth * (sizeY - 1) * calib.pixelHeight * (sizeZ - 1) * calib.pixelDepth;	
+	}
+	
+
 	// ==================================================
     // Constructor
 
-    /**
+	/**
      * Private constructor to prevent instantiation
      */
     private IntrinsicVolumes3D()
