@@ -1939,7 +1939,7 @@ public class LabelImages
 			final Roi roi )
 	{
 		final ArrayList<Float> list = new ArrayList<Float>();
-
+		labelImage.setRoi( roi );
 		// if the user makes point selections
 		if( roi instanceof PointRoi )
 		{

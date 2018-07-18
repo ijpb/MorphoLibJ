@@ -35,7 +35,11 @@ import inra.ijpb.morphology.Strel3D;
 import inra.ijpb.watershed.Watershed;
 
 import org.junit.Test;
-
+/**
+ * Class to test the Morphological Segmentation plugin
+ * @author iarganda
+ *
+ */
 public class TestMorphologicalSegmentation {
 	
 	
