@@ -29,9 +29,13 @@ import ij.gui.GenericDialog;
 import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
+import inra.ijpb.geometry.Ellipsoid;
+import inra.ijpb.geometry.Point3D;
+import inra.ijpb.geometry.Sphere;
 import inra.ijpb.label.LabelImages;
-import inra.ijpb.measure.GeometricMeasures3D;
 import inra.ijpb.measure.IntrinsicVolumes3D;
+import inra.ijpb.measure.region3d.InertiaEllipsoid;
+import inra.ijpb.measure.region3d.LargestInscribedBall;
 
 /**
  * Plugin for measuring geometric quantities such as volume, surface area,
@@ -205,9 +209,9 @@ public class ParticleAnalysis3DPlugin implements PlugIn
         double[] surfaces = null;
         double[] eulerNumbers = null;
         double[] sphericities = null;
-        double[][] ellipsoids = null;
+        Ellipsoid[] ellipsoids = null;
         double[][] elongations = null;
-        double[][] inscribedBalls = null;
+        Sphere[] inscribedBalls = null;
         
         
         // Identifies labels within image
@@ -235,17 +239,17 @@ public class ParticleAnalysis3DPlugin implements PlugIn
         // compute inertia ellipsoids and their elongations
         if (computeEllipsoid)
         {
-        	ellipsoids = GeometricMeasures3D.inertiaEllipsoid(image, labels, resol);
+        	ellipsoids = InertiaEllipsoid.inertiaEllipsoids(image, labels, calib);
         }
         if (computeElongations)
         {
-        	elongations = GeometricMeasures3D.computeEllipsoidElongations(ellipsoids);
+        	elongations = Ellipsoid.elongations(ellipsoids);
         }
         
         // compute position and radius of maximal inscribed ball
         if (computeInscribedBall)
         {
-        	inscribedBalls = GeometricMeasures3D.maximumInscribedSphere(image, labels, resol);
+        	inscribedBalls = LargestInscribedBall.largestInscribedBalls(image, labels, calib);
         }
         
         
@@ -270,17 +274,19 @@ public class ParticleAnalysis3DPlugin implements PlugIn
         	if (computeEllipsoid)
         	{
                 // add coordinates of origin pixel (IJ coordinate system) 
-                table.addValue("Elli.Center.X", ellipsoids[i][0]);
-            	table.addValue("Elli.Center.Y", ellipsoids[i][1]);
-            	table.addValue("Elli.Center.Z", ellipsoids[i][2]);
+        		Ellipsoid elli = ellipsoids[i];
+        		Point3D center = elli.center();
+                table.addValue("Elli.Center.X", center.getX());
+            	table.addValue("Elli.Center.Y", center.getY());
+            	table.addValue("Elli.Center.Z", center.getZ());
             	// add scaling parameters 
-                table.addValue("Elli.R1", ellipsoids[i][3]);
-            	table.addValue("Elli.R2", ellipsoids[i][4]);
-            	table.addValue("Elli.R3", ellipsoids[i][5]);
+                table.addValue("Elli.R1", elli.radius1());
+            	table.addValue("Elli.R2", elli.radius2());
+            	table.addValue("Elli.R3", elli.radius3());
             	// add orientation info
-                table.addValue("Elli.Azim", ellipsoids[i][6]);
-            	table.addValue("Elli.Elev", ellipsoids[i][7]);
-            	table.addValue("Elli.Roll", ellipsoids[i][8]);
+                table.addValue("Elli.Azim", elli.phi());
+            	table.addValue("Elli.Elev", elli.theta());
+            	table.addValue("Elli.Roll", elli.psi());
         	}
         	if (computeElongations)
         	{
@@ -291,10 +297,13 @@ public class ParticleAnalysis3DPlugin implements PlugIn
         	
         	if (computeInscribedBall)
         	{
-        		table.addValue("InscrBall.Center.X", inscribedBalls[i][0]);
-        		table.addValue("InscrBall.Center.Y", inscribedBalls[i][1]);
-        		table.addValue("InscrBall.Center.Z", inscribedBalls[i][2]);
-        		table.addValue("InscrBall.Radius", inscribedBalls[i][3]);
+        		Sphere ball = inscribedBalls[i];
+        		Point3D center = ball.center();
+                
+        		table.addValue("InscrBall.Center.X", center.getX());
+        		table.addValue("InscrBall.Center.Y", center.getY());
+        		table.addValue("InscrBall.Center.Z", center.getZ());
+        		table.addValue("InscrBall.Radius", ball.radius());
         	}
         }
         

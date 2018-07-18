@@ -53,6 +53,7 @@ public class GeometricMeasures3DTest {
 	}
 
 	@Test
+	@Deprecated
 	public final void testSurfaceArea_SingleBall_D3() {
 		ImageStack image = createBallImage();
 		double[] resol = new double[]{1, 1, 1};
@@ -63,6 +64,7 @@ public class GeometricMeasures3DTest {
 	}
 
 	@Test
+	@Deprecated
 	public final void testSurfaceArea_SingleBall_D13() {
 		ImageStack image = createBallImage();
 		double[] resol = new double[]{1, 1, 1};
@@ -73,6 +75,7 @@ public class GeometricMeasures3DTest {
 	}
 
 	@Test
+	@Deprecated
 	public final void testSurfaceArea_ManyBalls_D13() {
 		ImageStack image = createManyBallsImage();
 		double[] resol = new double[]{1, 1, 1};
@@ -112,6 +115,7 @@ public class GeometricMeasures3DTest {
 	}
 
 	@Test
+	@Deprecated
 	public final void testInertiaEllipsoid_A30_B20_C10_T00_P00() {
 		String fileName = getClass().getResource("/files/ellipsoid_A30_B20_C10_T00_P00.tif").getFile();
 		ImagePlus imagePlus = IJ.openImage(fileName);

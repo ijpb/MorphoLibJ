@@ -31,6 +31,8 @@ public class BoundingBox extends RegionAnalyzer2D<Box2D>
 	 *            the input image containing label of region
 	 * @param labels
 	 *            an array of unique labels in image
+	 * @param calib
+	 *            the calibration of the image
 	 * @return an array containing the bounding boxes of each region
 	 */
 	public final static Box2D[] boundingBoxes(ImageProcessor labelImage, int[] labels, Calibration calib)

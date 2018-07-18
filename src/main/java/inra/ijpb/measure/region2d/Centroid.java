@@ -32,6 +32,8 @@ public class Centroid extends RegionAnalyzer2D<Point2D>
 	 * @param labels
 	 *            the array of unique labels in image the number of directions
 	 *            to process, either 2 or 4
+	 * @param calib
+	 *            the calibration of the image
 	 * @return an array containing for each label, the coordinates of the
 	 *         centroid, in pixel coordinates
 	 */

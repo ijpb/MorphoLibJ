@@ -6,9 +6,9 @@ package inra.ijpb.measure.region3d;
 import java.util.HashMap;
 import java.util.Map;
 
+import ij.ImageStack;
 import ij.measure.Calibration;
 import ij.measure.ResultsTable;
-import ij.ImageStack;
 import inra.ijpb.geometry.Point3D;
 import inra.ijpb.label.LabelImages;
 
@@ -31,6 +31,8 @@ public class Centroid3D extends RegionAnalyzer3D<Point3D>
 	 *            the input image containing region labels
 	 * @param labels
 	 *            the array of unique labels in image
+	 * @param calib
+	 *            the calibration of the image
 	 * @return an array of Point3D instances, corresponding to the centroid of
 	 *         each region
 	 */
@@ -39,6 +41,69 @@ public class Centroid3D extends RegionAnalyzer3D<Point3D>
 		return new Centroid3D().analyzeRegions(labelImage, labels, calib);
 	}
 	
+	/**
+	 * Computes centroid of each label in input image and returns the result as
+	 * an array of double for each label.
+	 * 
+	 * This version does not take into account the spatial calibration, and
+	 * returns the centroids in pixel coordinates.
+	 * 
+	 * @param labelImage
+	 *            the input image containing label of particles
+	 * @param labels
+	 *            the array of unique labels in image the number of directions
+	 *            to process, either 2 or 4
+	 * @return an array containing for each label, the coordinates of the
+	 *         centroid, in pixel coordinates
+	 */
+	public static final double[][] centroids(ImageStack labelImage, int[] labels) 
+	{
+		// create associative array to know index of each label
+		int nLabels = labels.length;
+        HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
+
+		// allocate memory for result
+		int[] counts = new int[nLabels];
+		double[][] centroids = new double[nLabels][3];
+
+		// compute centroid of each region
+		int sizeX = labelImage.getWidth();
+		int sizeY = labelImage.getHeight();
+		int sizeZ = labelImage.getSize();
+		
+		for (int z = 0; z < sizeZ; z++) 
+		{
+			for (int y = 0; y < sizeY; y++) 
+			{
+				for (int x = 0; x < sizeX; x++)
+				{
+					int label = (int) labelImage.getVoxel(x, y, z);
+					if (label == 0)
+						continue;
+
+					// do not process labels that are not in the input list 
+					if (!labelIndices.containsKey(label))
+						continue;
+
+					int index = labelIndices.get(label);
+					centroids[index][0] += x;
+					centroids[index][1] += y;
+					centroids[index][2] += z;
+					counts[index]++;
+				}
+			}
+		}
+		
+		// normalize by number of voxels in each region
+		for (int i = 0; i < nLabels; i++)
+		{
+			centroids[i][0] /= counts[i];
+			centroids[i][1] /= counts[i];
+			centroids[i][2] /= counts[i];
+		}
+
+		return centroids;
+	}
 	// ==================================================
 	// Constructor
 

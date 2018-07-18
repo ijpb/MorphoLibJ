@@ -31,7 +31,7 @@ public class IntrinsicVolumes2D
 	 * @see inra.ijpb.label.LabelImages#pixelCount(ij.process.ImageProcessor,
 	 *      int[])
 	 * 
-	 * @see inra.ijpb.measure.region2d.Area 
+	 * @see inra.ijpb.label.LabelImages#pixelCount(ImageProcessor, int[]) 
 	 * 
 	 * @param image
 	 *            the input image containing label of particles
@@ -65,8 +65,6 @@ public class IntrinsicVolumes2D
 	/**
 	 * Computes the area density for each particle in the label image, taking into
 	 * account image resolution.
-	 * 
-	 * @see inra.ijpb.measure.region2d.Area 
 	 * 
 	 * @param image
 	 *            the input binary image

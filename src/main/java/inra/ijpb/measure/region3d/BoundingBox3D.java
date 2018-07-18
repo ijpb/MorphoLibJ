@@ -31,6 +31,8 @@ public class BoundingBox3D extends RegionAnalyzer3D<Box3D>
 	 *            the input image containing label of particles
 	 * @param labels
 	 *            an array of unique labels in image
+	 * @param calib
+	 *            the calibration of the image
 	 * @return an array of Box3D instances containing for each region its extent
 	 *         in each dimension
 	 */

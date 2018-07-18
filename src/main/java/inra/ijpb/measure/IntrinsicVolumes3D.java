@@ -117,8 +117,6 @@ public class IntrinsicVolumes3D
 	 * 
 	 * @param image
 	 *            the binary image containing the region
-	 * @param calib
-	 *            the spatial calibration of the image
 	 * @return the volume density of the region within the image
 	 */
 	public static final double volumeDensity(ImageStack image)

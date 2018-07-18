@@ -180,7 +180,7 @@ public class GeometricMeasures2D
 	 * 
 	 * @deprecated use BoundingBox class instead
 	 * 
-	 * @see inra.ijpb.measure.region2d.BoundingBox#boundingBox(ImageProcessor, int[])
+	 * @see inra.ijpb.measure.region2d.BoundingBox#boundingBoxes(ImageProcessor, int[], Calibration)
 	 * 
 	 * @param labelImage
 	 *            the input image containing label of particles
@@ -259,33 +259,16 @@ public class GeometricMeasures2D
 			throw new IllegalArgumentException(
 					"Resolution must be a double array of length 2");
 		}
-//		double pixelArea = resol[0] * resol[1];
+
 		Calibration calib = new Calibration();
 		calib.pixelWidth = resol[0];
 		calib.pixelHeight = resol[1];
 
 		return IntrinsicVolumes2D.areas(image, labels, calib);
-//		// initialize result
-//		int nLabels = labels.length;
-//		double[] areas = new double[nLabels];
-//
-//		// First count the number of pixels in each region
-//		int[] counts = LabelImages.pixelCount(image, labels);
-//
-//		// convert pixel count to areas
-//		for (int i = 0; i < areas.length; i++) {
-//			areas[i] = counts[i] * pixelArea;
-//		}
-//
-//		return areas;
 	}
 
 	/**
 	 * Counts the number of pixel that composes the particle with given label.
-	 * 
-	 * @deprecated replaced by Area.countRegionPixels
-	 *
-	 * @see inra.ijpb.measure.region2d.Area#countRegionPixels(ImageProcessor, int)
 	 * 
 	 * @param image
 	 *            the input image containing label of particles
@@ -325,8 +308,6 @@ public class GeometricMeasures2D
 		int[] labels = LabelImages.findAllLabels(labelImage);
 		int nbLabels = labels.length;
 
-//		double[] areas = area(labelImage, labels, resol);
-//		double[] perims = croftonPerimeter(labelImage, labels, resol, nDirs);
 		Calibration calib = new Calibration();
 		calib.pixelWidth = resol[0];
 		calib.pixelHeight = resol[1];
@@ -360,9 +341,9 @@ public class GeometricMeasures2D
 	 * Compute surface area for each label given in the "labels" argument.
 	 * 
 	 * Consists in calling the
-	 * {@link inra.ijpb.measure.region2d.CroftonPerimeter} class.
+	 * {@link inra.ijpb.measure.IntrinsicVolumes2D} class.
 	 * 
-	 * @deprecated replaced by {@link inra.ijpb.measure.region2d.CroftonPerimeter}
+	 * @deprecated replaced by {@link inra.ijpb.measure.IntrinsicVolumes2D}
 	 *  
 	 * @param image
 	 *            the input image containing label of particles
@@ -379,23 +360,11 @@ public class GeometricMeasures2D
 	public final static double[] croftonPerimeter(ImageProcessor image,
 			int[] labels, double[] resol, int nDirs)
 	{
-//		CroftonPerimeter algo = new CroftonPerimeter(nDirs);
-//		DefaultAlgoListener.monitor(algo);
-		
 		Calibration calib = new Calibration();
 		calib.pixelWidth = resol[0];
 		calib.pixelHeight = resol[1];
 		
 		return IntrinsicVolumes2D.perimeters(image, labels, calib, nDirs);
-//
-//		Double[] res0 = algo.analyzeRegions(image, labels, calib);
-//		
-//		double[] res = new double[labels.length];
-//		for (int i =  0; i < labels.length; i++)
-//		{
-//			res[i] = res0[i];
-//		}
-//		return res;
 	}
 
 
@@ -405,7 +374,10 @@ public class GeometricMeasures2D
 	 * Iterates over labels, then iterates over lines in horizontal and vertical
 	 * directions. Slow...
 	 * 
-	 * @deprecated replaced by {@link inra.ijpb.measure.region2d.CroftonPerimeter}
+	 * Consists in calling the
+	 * {@link inra.ijpb.measure.IntrinsicVolumes2D} class.
+	 * 
+	 * @deprecated replaced by {@link inra.ijpb.measure.IntrinsicVolumes2D}
 	 *  
 	 * @param labelImage
 	 *            the input image containing label of particles
@@ -420,40 +392,11 @@ public class GeometricMeasures2D
 	public static final double[] croftonPerimeterD2(ImageProcessor labelImage,
 			int[] labels, double[] resol)
 	{
-//		// Check validity of parameters
-//		if (labelImage == null)
-//			return null;
-//
-//		int nbLabels = labels.length;
-//
-//		// initialize result
-//		double[] perimeters = new double[nbLabels];
-//
-//		// image resolution in each orthogonal and diagonal directions
-//		double d1 = resol[0];
-//		double d2 = resol[1];
-//
-//		for (int i = 0; i < nbLabels; i++)
-//		{
-//			int label = labels[i];
-//			IJ.showStatus("Compute perimeter of label: " + label);
-//
-//			// Count number of transitions in each direction
-//			int n1 = countTransitionsD00(labelImage, label, true);
-//			int n2 = countTransitionsD90(labelImage, label, true);
-//
-//			// Compute perimeter
-//			perimeters[i] = (n1 * d2 + n2 * d1) * Math.PI / 4.0;
-//		}
-//
-//		IJ.showStatus("");
-//
 		Calibration calib = new Calibration();
 		calib.pixelWidth = resol[0];
 		calib.pixelHeight = resol[1];
 		
 		return IntrinsicVolumes2D.perimeters(labelImage, labels, calib, 2);
-//		return perimeters;
 	}
 
 	/**
@@ -462,7 +405,10 @@ public class GeometricMeasures2D
 	 * 
 	 * Iterates over labels, then iterates over lines in the four main directions. Slow...
 	 * 
-	 * @deprecated replaced by {@link inra.ijpb.measure.region2d.CroftonPerimeter}
+	 * Consists in calling the
+	 * {@link inra.ijpb.measure.IntrinsicVolumes2D} class.
+	 * 
+	 * @deprecated replaced by {@link inra.ijpb.measure.IntrinsicVolumes2D}
 	 *  
 	 * @param labelImage
 	 *            the input image containing label of particles
@@ -481,64 +427,6 @@ public class GeometricMeasures2D
 		calib.pixelHeight = resol[1];
 		
 		return IntrinsicVolumes2D.perimeters(labelImage, labels, calib, 4);
-
-//		// Check validity of parameters
-//		if (labelImage == null)
-//			return null;
-//
-//		int nbLabels = labels.length;
-//
-//		// initialize result
-//		double[] perimeters = new double[nbLabels];
-//
-//		// image resolution in each orthogonal and diagonal directions
-//		double d1 = resol[0];
-//		double d2 = resol[1];
-//		double d12 = Math.hypot(d1, d2);
-//
-//		// area of a pixel (used for computing line densities)
-//		double vol = d1 * d2;
-//
-//		// compute weights associated to each direction
-//		double[] weights = computeDirectionWeightsD4(resol);
-//
-//		for (int i = 0; i < nbLabels; i++)
-//		{
-//			int label = labels[i];
-//			IJ.showStatus("Compute perimeter of label: " + label);
-//
-//			// Count number of transitions in each direction
-//			int n1 = countTransitionsD00(labelImage, label, true);
-//			int n2 = countTransitionsD90(labelImage, label, true);
-//			int n3 = countTransitionsD45(labelImage, label, true);
-//			int n4 = countTransitionsD135(labelImage, label, true);
-//
-//			// Compute weighted diameters and multiplies by associated
-//			// direction weights
-//			double wd1 = n1 * (vol / d1) * weights[0];
-//			double wd2 = n2 * (vol / d2) * weights[1];
-//			double wd3 = n3 * (vol / d12) * weights[2];
-//			double wd4 = n4 * (vol / d12) * weights[3];
-//
-//			// Compute perimeter
-//			perimeters[i] = (wd1 + wd2 + wd3 + wd4) * Math.PI / 2;
-//
-//			if (debug)
-//			{
-//				// Display individual counts
-//				System.out.println(String.format(Locale.ENGLISH,
-//						"dir 1, n=%d, wd=%5.2f", n1, wd1));
-//				System.out.println(String.format(Locale.ENGLISH,
-//						"dir 2, n=%d, wd=%5.2f", n2, wd2));
-//				System.out.println(String.format(Locale.ENGLISH,
-//						"dir 3, n=%d, wd=%5.2f", n3, wd3));
-//				System.out.println(String.format(Locale.ENGLISH,
-//						"dir 4, n=%d, wd=%5.2f", n4, wd4));
-//			}
-//		}
-//		IJ.showStatus("");
-//
-//		return perimeters;
 	}
 
 	/**
@@ -571,6 +459,7 @@ public class GeometricMeasures2D
 	 *            the spatial resolution
 	 * @return an array containing for each label, an estimate of the region perimeter
 	 */
+	@Deprecated
 	private static final ResultsTable perimeterDensity_D2(ImageProcessor image,
 			double[] resol) 
 	{
