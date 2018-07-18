@@ -26,6 +26,24 @@ public class InertiaEllipse extends RegionAnalyzer2D<Ellipse>
 	// ==================================================
 	// Static methods 
 	
+	/**
+	 * Computes inertia ellipse of each region in input label image.
+	 * 
+	 * @param image
+	 *            the input image containing region labels
+	 * @param labels
+	 *            the array of labels within the image
+	 * @param calib
+	 *            the calibration of the image
+	 * @return an array of Ellipse representing the calibrated coordinates of
+	 *         the inertia ellipse of each region
+	 */
+	public static final Ellipse[] inertiaEllipses(ImageProcessor image,
+			int[] labels, Calibration calib)
+	{
+		return new InertiaEllipse().analyzeRegions(image, labels, calib);
+	}
+	
 	// ==================================================
 	// Constructor
 
@@ -84,7 +102,7 @@ public class InertiaEllipse extends RegionAnalyzer2D<Ellipse>
 	 * Computes inertia ellipse of each region in input label image.
 	 * 
 	 * @param image
-	 *            the input image containing label of particles
+	 *            the input image containing region labels
 	 * @param labels
 	 *            the array of labels within the image
 	 * @param calib

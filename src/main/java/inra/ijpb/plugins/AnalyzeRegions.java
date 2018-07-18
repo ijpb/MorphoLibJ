@@ -37,8 +37,7 @@ import inra.ijpb.geometry.Circle2D;
 import inra.ijpb.geometry.Ellipse;
 import inra.ijpb.geometry.PointPair2D;
 import inra.ijpb.label.LabelImages;
-import inra.ijpb.measure.region2d.Area;
-import inra.ijpb.measure.region2d.CroftonPerimeter;
+import inra.ijpb.measure.IntrinsicVolumes2D;
 import inra.ijpb.measure.region2d.GeodesicDiameter;
 import inra.ijpb.measure.region2d.InertiaEllipse;
 import inra.ijpb.measure.region2d.LargestInscribedCircle;
@@ -169,19 +168,15 @@ public class AnalyzeRegions implements PlugInFilter
     	
     	if (computeArea)
     	{
-    		Area algo = new Area();
-    		DefaultAlgoListener.monitor(algo);
-
-    		Double[] areaList = algo.analyzeRegions(image, labels, calib);
+    		IJ.showStatus("Compute area");
+    		double[] areaList = IntrinsicVolumes2D.areas(image, labels, calib);
     		addColumn(table, "Area", areaList);
     	}
 
     	if (computePerimeter)
     	{
-    		CroftonPerimeter algo = new CroftonPerimeter();
-    		DefaultAlgoListener.monitor(algo);
-    		
-    		Double[] perimList = algo.analyzeRegions(image, labels, calib);
+    		IJ.showStatus("Compute perimeter");
+    		double[] perimList = IntrinsicVolumes2D.perimeters(image, labels, calib, 4);
     		addColumn(table, "Perimeter", perimList);
     	}
 
@@ -207,10 +202,8 @@ public class AnalyzeRegions implements PlugInFilter
 
     	if (computeMaxFeretDiameter || computeTortuosity)
     	{
-    		MaxFeretDiameter algo = new MaxFeretDiameter(); 
-    		DefaultAlgoListener.monitor(algo);
-    		maxFeretDiams = algo.analyzeRegions(image, labels, calib);
-    		
+    		IJ.showStatus("Max Feret Diameter");
+    		maxFeretDiams = MaxFeretDiameter.maxFeretDiameters(image, labels, calib);
     	}
 
     	if (computeGeodesicDiameter || computeTortuosity)
@@ -218,7 +211,6 @@ public class AnalyzeRegions implements PlugInFilter
     		GeodesicDiameter algo = new GeodesicDiameter();
     		DefaultAlgoListener.monitor(algo);
     		geodDiams = algo.analyzeRegions(image, labels, calib);
-    		
     	}
 
     	if (computeMaxInscribedDisc || computeGeodesicElongation)
@@ -284,14 +276,6 @@ public class AnalyzeRegions implements PlugInFilter
     }
     
     private void addColumn(ResultsTable table, String colName, double[] values)
-    {
-    	for (int i = 0; i < values.length; i++)
-    	{
-    		table.setValue(colName, i, values[i]);
-    	}
-    }
-
-    private void addColumn(ResultsTable table, String colName, Double[] values)
     {
     	for (int i = 0; i < values.length; i++)
     	{

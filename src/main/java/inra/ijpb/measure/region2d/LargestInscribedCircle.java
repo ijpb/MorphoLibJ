@@ -25,6 +25,23 @@ public class LargestInscribedCircle extends RegionAnalyzer2D<Circle2D>
 	// ==================================================
 	// Static methods
 	
+	/**
+	 * Computes largest inscribed disk of each region within a label image.
+	 * Regions must be disjoint.
+	 * 
+	 * @param labelImage
+	 *            the input image containing region labels
+	 * @param labels
+	 *            the set of labels within the image
+	 * @param calib
+	 *            the spatial calibration of the image
+	 * @return an array of Circle2D representing the inscribed circles of each
+	 *         region, in calibrated coordinates
+	 */
+	public static final Circle2D[] largestInscribedCircles(ImageProcessor labelImage, int[] labels, Calibration calib)
+	{
+		return new LargestInscribedCircle().analyzeRegions(labelImage, labels, calib);
+	}
 	
 	// ==================================================
 	// Constructors
@@ -72,11 +89,11 @@ public class LargestInscribedCircle extends RegionAnalyzer2D<Circle2D>
 	}
 	
 	/**
-	 * Computes largest inscribed disk of each particle. Particles must be
-	 * disjoint.
+	 * Computes largest inscribed disk of each region within a label image.
+	 * Regions must be disjoint.
 	 * 
 	 * @param labelImage
-	 *            the input image containing label of particles
+	 *            the input image containing region labels
 	 * @param labels
 	 *            the set of labels within the image
 	 * @param calib

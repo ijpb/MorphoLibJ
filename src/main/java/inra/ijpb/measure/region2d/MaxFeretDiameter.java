@@ -24,6 +24,11 @@ public class MaxFeretDiameter extends RegionAnalyzer2D<PointPair2D>
 	// ==================================================
 	// Static methods 
 	
+	public final static PointPair2D[] maxFeretDiameters(ImageProcessor image, int[] labels, Calibration calib)
+	{
+		return new MaxFeretDiameter().analyzeRegions(image, labels, calib);
+	}
+	
 	/**
 	 * Computes Maximum Feret diameter of a set of points.
 	 * 

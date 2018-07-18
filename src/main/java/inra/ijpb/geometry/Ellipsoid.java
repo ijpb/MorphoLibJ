@@ -3,9 +3,10 @@
  */
 package inra.ijpb.geometry;
 
-import ij.ImageStack;
-
 /**
+ * An ellipsoid in the 3D space, defined by a center, three radius, and three
+ * orientation angles.
+ * 
  * @author dlegland
  *
  */
@@ -30,9 +31,6 @@ public class Ellipsoid
 	 * @return an array of elongation factors. When radii are ordered such that
 	 *         R1 &gt; R2 &gt; R3, the three elongation factors are defined by
 	 *         ratio of R1 by R2, ratio of R1 by R3, and ratio of R2 by R3.
-	 *         
-	 * @see #inertiaEllipsoid(ImageStack, double[])
-	 * @see #inertiaEllipsoid(ImageStack, int[], double[])
 	 */
 	public static final double[][] elongations(Ellipsoid[] ellipsoids)
     {

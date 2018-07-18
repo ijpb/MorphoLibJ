@@ -3,9 +3,6 @@
  */
 package inra.ijpb.measure.region2d;
 
-import static java.lang.Math.max;
-import static java.lang.Math.min;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,56 +24,18 @@ public class BoundingBox extends RegionAnalyzer2D<Box2D>
 	// Static methods
 
 	/**
-	 * Compute bounding box of each label in input stack and returns the result
-	 * as an array of double for each label.
+	 * Compute bounding box of each region in input image and returns the result
+	 * as an array of Box2D for each label.
 	 * 
 	 * @param labelImage
-	 *            the input image containing label of particles
-	 * @param labels an array of unique labels in image
-	 * @return a data table containing for each labeled particle the extent in
-	 *         each dimension
+	 *            the input image containing label of region
+	 * @param labels
+	 *            an array of unique labels in image
+	 * @return an array containing the bounding boxes of each region
 	 */
-	public final static double[][] boundingBox(ImageProcessor labelImage, int[] labels)
+	public final static Box2D[] boundingBoxes(ImageProcessor labelImage, int[] labels, Calibration calib)
 	{
-        // create associative array to know index of each label
-        HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
-
-        // initialize result
-		int nLabels = labels.length;
-		double[][] boxes = new double[nLabels][6];
-		for (int i = 0; i < nLabels; i++)
-		{
-			boxes[i][0] = Double.POSITIVE_INFINITY;
-			boxes[i][1] = Double.NEGATIVE_INFINITY;
-			boxes[i][2] = Double.POSITIVE_INFINITY;
-			boxes[i][3] = Double.NEGATIVE_INFINITY;
-		}
-
-		
-		// size of image
-		int sizeX = labelImage.getWidth();
-		int sizeY = labelImage.getHeight();
-
-		// iterate on image voxels to update bounding boxes
-		for (int y = 0; y < sizeY; y++)
-		{
-			for (int x = 0; x < sizeX; x++)
-			{
-				int label = labelImage.get(x, y);
-				// do not consider background
-				if (label == 0)
-					continue;
-				int labelIndex = labelIndices.get(label);
-
-				// update bounding box of current label
-				boxes[labelIndex][0] = min(boxes[labelIndex][0], x);
-				boxes[labelIndex][1] = max(boxes[labelIndex][1], x);
-				boxes[labelIndex][2] = min(boxes[labelIndex][2], y);
-				boxes[labelIndex][3] = max(boxes[labelIndex][3], y);
-			}
-		}
-        
-		return boxes;
+        return new BoundingBox().analyzeRegions(labelImage, labels, calib);
 	}
 	
 	// ==================================================

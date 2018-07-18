@@ -24,7 +24,7 @@ public class Centroid extends RegionAnalyzer2D<Point2D>
 	// Static methods
 	
 	/**
-	 * Compute centroid of each label in input stack and returns the result as
+	 * Computes centroid of each label in input image and returns the result as
 	 * an array of double for each label.
 	 * 
 	 * @param labelImage
@@ -35,8 +35,26 @@ public class Centroid extends RegionAnalyzer2D<Point2D>
 	 * @return an array containing for each label, the coordinates of the
 	 *         centroid, in pixel coordinates
 	 */
-	public final static double[][] centroids(ImageProcessor labelImage,
-			int[] labels) 
+	public static final Point2D[] centroids(ImageProcessor labelImage, int[] labels, Calibration calib) 
+	{
+		return new Centroid().analyzeRegions(labelImage, labels, calib);
+	}
+	
+	/**
+	 * Computes centroid of each label in input image and returns the result as
+	 * an array of double for each label. This version does not take into
+	 * account the spatial calibration, and returns the centroids in pixel
+	 * coordinates.
+	 * 
+	 * @param labelImage
+	 *            the input image containing label of particles
+	 * @param labels
+	 *            the array of unique labels in image the number of directions
+	 *            to process, either 2 or 4
+	 * @return an array containing for each label, the coordinates of the
+	 *         centroid, in pixel coordinates
+	 */
+	public static final double[][] centroids(ImageProcessor labelImage, int[] labels) 
 	{
 		// create associative array to know index of each label
 		int nLabels = labels.length;
@@ -78,6 +96,7 @@ public class Centroid extends RegionAnalyzer2D<Point2D>
 		return centroids;
 	}
 	
+
 	// ==================================================
 	// Constructor
 

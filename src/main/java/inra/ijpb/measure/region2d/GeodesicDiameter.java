@@ -86,6 +86,27 @@ import inra.ijpb.label.LabelValues.PositionValuePair;
 public class GeodesicDiameter extends RegionAnalyzer2D<GeodesicDiameter.Result>
 {
 	// ==================================================
+	// Static methods
+	
+	/**
+	 * Computes the geodesic diameter of each region within the given label
+	 * image.
+	 * 
+	 * @param labelImage
+	 *            a label image, containing either the label of a particle or
+	 *            region, or zero for background
+	 * @param labels
+	 *            the list of region labels to process
+	 * @param calib
+	 *            the spatial caliration of the image
+	 * @return the geodesic diameter of each region within the label image
+	 */
+	public static final GeodesicDiameter.Result[] geodesicDiameters(ImageProcessor labelImage, int[] labels, Calibration calib)
+	{
+		return new GeodesicDiameter().analyzeRegions(labelImage, labels, calib);
+	}
+	
+	// ==================================================
 	// Class variables 
 	
 	/**
@@ -250,17 +271,17 @@ public class GeodesicDiameter extends RegionAnalyzer2D<GeodesicDiameter.Result>
 	}
 
 	/**
-	 * Computes the geodesic diameter of each particle within the given label
+	 * Computes the geodesic diameter of each region within the given label
 	 * image.
 	 * 
 	 * @param labelImage
 	 *            a label image, containing either the label of a particle or
 	 *            region, or zero for background
 	 * @param labels
-	 *            the list of labels to process
+	 *            the list of region labels to process
 	 * @param calib
 	 *            the spatial caliration of the image
-	 * @return a the geodesic diameter of each particle within the label image
+	 * @return the geodesic diameter of each region within the label image
 	 */
 	public Result[] analyzeRegions(ImageProcessor labelImage, int[] labels, Calibration calib)
 	{
