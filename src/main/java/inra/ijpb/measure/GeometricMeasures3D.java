@@ -29,13 +29,13 @@ import static java.lang.Math.sqrt;
 import static java.lang.Math.toDegrees;
 import ij.IJ;
 import ij.ImageStack;
+import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.data.Cursor3D;
 import inra.ijpb.geometry.Vector3D;
 import inra.ijpb.label.LabelImages;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import Jama.Matrix;
@@ -182,17 +182,25 @@ public class GeometricMeasures3D
 	/**
 	 * Measures the volume of each particle in a 3D label image.
 	 * 
+	 * @deprecated used IntrinsicVolumes3D instead
+	 * 
 	 * @param labelImage image containing the label of each particle
 	 * @param resol image resolution, as a double array with 3 elements
 	 * @return the volume of each particle in the image
 	 */
+	@Deprecated
 	public final static ResultsTable volume(ImageStack labelImage, double[] resol) 
 	{
+		Calibration calib = new Calibration();
+		calib.pixelWidth = resol[0];
+		calib.pixelHeight = resol[1];
+		calib.pixelDepth = resol[2];
+		
 		IJ.showStatus("Compute volume...");
 		int[] labels = LabelImages.findAllLabels(labelImage);
 		int nbLabels = labels.length;
 
-		double[] volumes = volume(labelImage, labels, resol);
+		double[] volumes = IntrinsicVolumes3D.volumes(labelImage, labels, calib);
 
 		// Create data table
 		ResultsTable table = new ResultsTable();
@@ -209,34 +217,23 @@ public class GeometricMeasures3D
 	
 	/**
 	 * Measures the volume of each particle in the 3D label image.
+	 *
+	 * @deprecated use IntrinsicVolumes3D instead
 	 * 
 	 * @param labelImage image containing the label of each particle
 	 * @param labels the set of labels for which volume has to be computed
 	 * @param resol image resolution, as a double array with 3 elements
 	 * @return the volume of each particle in the image
 	 */
+	@Deprecated
 	public final static double[] volume(ImageStack labelImage, int[] labels, double[] resol)
 	{
-        // create associative array to know index of each label
-		int nLabels = labels.length;
-        
-        // pre-compute the volume of individual voxel
-        if (resol == null || resol.length < 3) 
-        {
-        	throw new IllegalArgumentException("Resolution must be a double array of length 3");
-        }
-        double voxelVolume = resol[0] * resol[1] * resol[2];
-        
-        // initialize result
-		int[] voxelCounts = LabelImages.voxelCount(labelImage, labels);
-
-		// convert voxel counts to particle volumes
-		double[] volumes = new double[nLabels];
-		for (int i = 0; i < nLabels; i++) 
-		{
-			volumes[i] = voxelCounts[i] * voxelVolume;
-		}
-        return volumes;
+		Calibration calib = new Calibration();
+		calib.pixelWidth = resol[0];
+		calib.pixelHeight = resol[1];
+		calib.pixelDepth = resol[2];
+		
+		return IntrinsicVolumes3D.volumes(labelImage, labels, calib);
 	}
 	
 	/**
@@ -250,6 +247,8 @@ public class GeometricMeasures3D
 	 * A perfect ball would have a sphericity index close to 1, a very complex
 	 * particle will present a lower sphericity index.
 	 * 
+	 * @deprecated use IntrinsicVolumes3D instead
+	 * 
 	 * @param volumes
 	 *            the volume of each particle
 	 * @param surfaces
@@ -259,27 +258,10 @@ public class GeometricMeasures3D
 	 * @see #surfaceArea(ImageStack, double[], int)
 	 * @see #volume(ImageStack, int[], double[])
 	 */
+	@Deprecated
 	public final static double[] computeSphericity(double[] volumes, double[] surfaces) 
 	{
-		int n = volumes.length;
-		if (surfaces.length != n) 
-		{
-			throw new IllegalArgumentException("Volume and surface arrays must have the same length");
-		}
-		
-		// normalization constant such that sphere has sphericity equal to 1 
-		double c = 36 * Math.PI;
-
-		// Compute sphericity of each label
-		double[] sphericities = new double[n];
-		for (int i = 0; i < n; i++) 
-		{
-			double v = volumes[i];
-			double s = surfaces[i];
-			sphericities[i] = c * v * v / (s * s * s);
-		}
-		
-		return sphericities;
+		return IntrinsicVolumes3D.computeSphericity(volumes, surfaces);
 	}
 	
 	/**
@@ -304,12 +286,17 @@ public class GeometricMeasures3D
 	public final static ResultsTable surfaceArea(ImageStack labelImage, 
 			double[] resol, int nDirs)
 	{
+		Calibration calib = new Calibration();
+		calib.pixelWidth = resol[0];
+		calib.pixelHeight = resol[1];
+		calib.pixelDepth = resol[2];
+		
 		IJ.showStatus("Count labels...");
 		int[] labels = LabelImages.findAllLabels(labelImage);
 		int nbLabels = labels.length;
 
 		// Compute surface area of ach label
-		double[] surfaces = surfaceAreaCrofton(labelImage, labels, resol, nDirs);
+		double[] surfaces = IntrinsicVolumes3D.surfaceAreas(labelImage, labels, calib, nDirs);
 
 		// Create data table
 		ResultsTable table = new ResultsTable();
@@ -327,6 +314,8 @@ public class GeometricMeasures3D
 	/**
 	 * Computes surface area for each label given in the "labels" argument.
 	 * 
+	 * @deprecated use IntrinsicVolumes3D instead
+	 * 
 	 * @param image
 	 *            image containing the label of each particle
 	 * @param labels
@@ -337,17 +326,16 @@ public class GeometricMeasures3D
 	 *            the number of directions to consider, either 3 or 13
 	 * @return the surface area of each particle in the image
 	 */
+	@Deprecated
 	public final static double[] surfaceAreaCrofton(ImageStack image, int[] labels, 
 			double[] resol, int nDirs)
 	{
-		// pre-compute LUT corresponding to resolution and number of directions
-		IJ.showStatus("Compute LUT...");
-		double[] surfLut = computeSurfaceAreaLut(resol, nDirs);
-
-		// Compute index of each 2x2x2 binary voxel configuration, associate LUT
-		// contribution, and sum up for each label
-		IJ.showStatus("Surface Area...");
-        return sumOfLutContributions(image, labels, surfLut);
+		Calibration calib = new Calibration();
+		calib.pixelWidth = resol[0];
+		calib.pixelHeight = resol[1];
+		calib.pixelDepth = resol[2];
+		
+		return IntrinsicVolumes3D.surfaceAreas(image, labels, calib, nDirs);
 	}
 	
 	/**
@@ -524,6 +512,7 @@ public class GeometricMeasures3D
 	/**
 	 * Computes surface area of a binary image using 3 directions.
 	 * 
+	 * @deprecated use IntrinsicVolumes3D instead
 	 * 
 	 * @param image
 	 *            the input 3D label image (with labels having integer values)
@@ -531,6 +520,7 @@ public class GeometricMeasures3D
 	 *            the resolution of the image, in each direction
 	 * @return the surface area measured for the binary image
 	 */
+	@Deprecated
 	public final static double surfaceAreaCroftonD3(ImageStack image, double[] resol) 
 	{
 		double d1 = resol[0];
@@ -754,6 +744,12 @@ public class GeometricMeasures3D
 	/**
 	 * Computes Euler number for each label given in the "labels" argument,
 	 * using the specified connectivity.
+	 *
+	 * @deprecated use
+	 *             {@link IntrinsicVolumes3D#eulerNumbers(ImageStack, int[], int)}
+	 *             instead
+	 * 
+	 * @see IntrinsicVolumes3D#eulerNumbers(ImageStack, int[], int)
 	 * 
 	 * @param image
 	 *            the input 3D label image (with labels having integer values)
@@ -763,221 +759,13 @@ public class GeometricMeasures3D
 	 *            the connectivity to use (either 6 or 26)
 	 * @return the Euler-Poincare characteristic of each region
 	 */
+	@Deprecated
 	public static final double[] eulerNumber(ImageStack image, int[] labels,
 			int conn)
 	{    
-        // pre-compute LUT corresponding to resolution and number of directions
-		double[] eulerLut = computeEulerNumberLut(conn);
-
-		// Compute index of each 2x2x2 binary voxel configuration, associate LUT
-		// contribution, and sum up for each label
-		IJ.showStatus("Euler Number...");
-		return sumOfLutContributions(image, labels, eulerLut);
-	}
-	
-	/**
-	 * Computes the look-up table for measuring Euler number in binary 3D image,
-	 * depending on the connectivity. The input structure should not touch image
-	 * border.
-	 * 
-	 * See "3D Images of Material Structures", from J. Ohser and K. Schladitz,
-	 * Wiley 2009, tables 3.2 p. 52 and 3.3 p. 53.
-	 * 
-	 * @param conn
-	 *            the 3D connectivity, either 6 or 26
-	 * @return a look-up-table with 256 entries
-	 */
-	private static final double[] computeEulerNumberLut(int conn)
-	{
-		if (conn == 6)
-		{
-			return computeEulerNumberLut_C6();			
-		}
-		else if (conn == 26)
-		{
-			return computeEulerNumberLut_C26();
-		}
-		else
-		{
-			throw new IllegalArgumentException("Connectivity must be either 6 or 26");
-		}
+		return IntrinsicVolumes3D.eulerNumbers(image, labels, conn);
 	}
 
-	/**
-	 * Computes the look-up table for measuring Euler number in binary 3D image,
-	 * for the 6-connectivity.
-	 * 
-	 * @return a look-up-table with 256 entries 
-	 */
-	private static final double[] computeEulerNumberLut_C6()
-	{
-		double[] lut = new double[]{
-			 0,  1,  1,  0,   1,  0,  2, -1,   1,  2,  0, -1,   0, -1, -1,  0, 	//   0 ->  15
-			 1,  0,  2, -1,   2, -1,  3, -2,   2,  1,  1, -2,   1, -2,  0, -1, 	//  16 ->  31
-			 1,  2,  0, -1,   2,  1,  1, -2,   2,  3, -1, -2,   1,  0, -2, -1,	//  32 ->  47
-			 0, -1, -1,  0,   1, -2,  0, -1,   1,  0, -2, -1,   0, -3, -3,  0,  //  48 ->  63
-			 1,  2,  2,  1,   0, -1,  1, -2,   2,  3,  1,  0,  -1, -2, -2, -1,	//  64 ->  79
-			 0, -1,  1, -2,  -1,  0,  0, -1,   1,  0,  0, -3,  -2, -1, -3,  0,	//  80 ->  95
-			 2,  3,  1,  0,   1,  0,  0, -3,   3,  4,  0, -1,   0, -1, -3, -2,	//  96 -> 111
-			-1, -2, -2, -1,  -2, -1, -3,  0,   0, -1, -3, -2,  -3, -2, -6,  1, 	// 112 -> 127
-			
-			 1,  2,  2,  1,   2,  1,  3,  0,   0,  1, -1, -2,  -1, -2, -2, -1,	// 128 -> 145
-			 2,  1,  3,  0,   3,  0,  4, -1,   1,  0,  0, -3,   0, -3, -1, -2,	// 146 -> 159
-			 0,  1, -1, -2,   1,  0,  0, -3,  -1,  0,  0, -1,  -2, -3, -1,  0,	// 160 -> 175
-			-1, -2, -2, -1,   0, -3, -1, -2,  -2, -3, -1,  0,  -3, -6, -2,  1,	// 176 -> 191
-			 0,  1,  1,  0,  -1, -2,  0, -3,  -1,  0, -2, -3,   0, -1, -1,  0,	// 192 -> 207
-			-1, -2,  0, -3,  -2, -1, -1, -2,  -2, -3, -3, -6,  -1,  0, -2,  1,	// 208 -> 223
-			-1,  0, -2, -3,  -2, -3, -3, -6,  -2, -1, -1, -2,  -1, -2,  0,  1,	// 224 -> 239
-			 0, -1, -1,  0,  -1,  0, -2,  1,  -1, -2,  0,  1,   0,  1,  1,  0	// 240 -> 255
-		};
-		
-		for (int i = 0; i < lut.length; i++)
-		{
-			lut[i] /= 8.0;
-		}
-		
-		return lut;
-	}
-
-	/**
-	 * Computes the look-up table for measuring Euler number in binary 3D image,
-	 * for the 26-connectivity.
-	 * 
-	 * @return a look-up-table with 256 entries 
-	 */
-	private static final double[] computeEulerNumberLut_C26()
-	{
-		double[] lut = new double[]{
-			 0,  1,  1,  0,   1,  0, -2, -1,   1,  2,  0, -1,   0, -1, -1,  0, 	//   0 ->  15
-			 1,  0, -2, -1,   2, -1, -1, -2,  -6, -3, -3, -2,  -3, -2,  0, -1, 	//  16 ->  31
-			 1, -2,  0, -1,  -6, -3, -3, -2,  -2, -1, -1, -2,  -3,  0, -2, -1,	//  32 ->  47
-			 0, -1, -1,  0,  -3, -2,  0, -1,  -3,  0, -2, -1,   0, +1, +1,  0,  //  48 ->  63
-			 1, -2, -6, -3,   0, -1, -3, -2,  -2, -1, -3,  0,  -1, -2, -2, -1,	//  64 ->  79
-			 0, -1, -3, -2,  -1,  0,  0, -1,  -3,  0,  0,  1,  -2, -1,  1,  0,	//  80 ->  95
-			-2, -1, -3,  0,  -3,  0,  0,  1,  -1,  4,  0,  3,   0,  3,  1,  2,	//  96 -> 111
-			-1, -2, -2, -1,  -2, -1,  1,  0,   0,  3,  1,  2,   1,  2,  2,  1, 	// 112 -> 127
-			
-			 1, -6, -2, -3,  -2, -3, -1,  0,   0, -3, -1, -2,  -1, -2, -2, -1,	// 128 -> 143
-			-2, -3, -1,  0,  -1,  0,  4,  3,  -3,  0,  0,  1,   0,  1,  3,  2,	// 144 -> 159
-			 0, -3, -1, -2,  -3,  0,  0,  1,  -1,  0,  0, -1,  -2,  1, -1,  0,	// 160 -> 175
-			-1, -2, -2, -1,   0,  1,  3,  2,  -2,  1, -1,  0,   1,  2,  2,  1,	// 176 -> 191
-			 0, -3, -3,  0,  -1, -2,  0,  1,  -1,  0, -2,  1,   0, -1, -1,  0,	// 192 -> 207
-			-1, -2,  0,  1,  -2, -1,  3,  2,  -2,  1,  1,  2,  -1,  0,  2,  1,	// 208 -> 223
-			-1,  0, -2,  1,  -2,  1,  1,  2,  -2,  3, -1,  2,  -1,  2,  0,  1,	// 224 -> 239
-			 0, -1, -1,  0,  -1,  0,  2,  1,  -1,  2,  0,  1,   0,  1,  1,  0	// 240 -> 255
-		};
-		
-		for (int i = 0; i < lut.length; i++)
-		{
-			lut[i] /= 8.0;
-		}
-		
-		return lut;
-	}
-
-	/**
-	 * Applies a look-up-table for each of the 2x2x2 voxel configuration, and
-	 * returns the sum of contributions for each label.
-	 * This method is used for computing Euler number and surface area.
-	 * 
-	 * @param image
-	 *            the input 3D image of labels
-	 * @param labels
-	 *            the set of labels to process
-	 * @param lut
-	 *            the look-up-table containing the measure contribution for each
-	 *            of the 256 configuration of 8 voxels
-	 * @return the sum of measure contributions for each label
-	 * 
-	 * @see #surfaceAreaCrofton(ImageStack, int[], double[], int)
-	 * @see #eulerNumber(ImageStack, int[], int)
-	 */
-	private final static double[] sumOfLutContributions(ImageStack image, int[] labels, 
-			double[] lut)
-	{   
-		// Algorithm:
-		// iterate on configurations of 2-by-2-by-2 voxels within 3D image. 
-		// For each configuration, identify the labels within the configuration.
-		// For each label, compute the equivalent binary configuration index, 
-		// and adds is contribution to the measure associated to the label. 
-		
-        // create associative array to know index of each label
-		HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
-
-		// initialize the result array containing one measure for each label
-		int nLabels = labels.length;
-        double[] measures = new double[nLabels];
-
-		// size of image
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-		int sizeZ = image.getSize();
-
-		// for each configuration of 2x2x2 voxels, we identify the labels
-		ArrayList<Integer> localLabels = new ArrayList<Integer>(8);
-		
-        for (int z = 0; z < sizeZ - 1; z++) 
-        {
-        	IJ.showProgress(z, sizeZ);
-        	for (int y = 0; y < sizeY - 1; y++) 
-        	{
-        		for (int x = 0; x < sizeX - 1; x++) 
-        		{
-        			// identify labels in current config
-        			localLabels.clear();
-					for (int z2 = z; z2 <= z + 1; z2++) 
-					{
-						for (int y2 = y; y2 <= y + 1; y2++) 
-						{
-							for (int x2 = x; x2 <= x + 1; x2++) 
-							{
-								int label = (int) image.getVoxel(x2, y2, z2);
-								// do not consider background
-								if (label == 0)
-									continue;
-								// keep only one instance of each label
-								if (!localLabels.contains(label))
-									localLabels.add(label);
-                			}
-            			}
-        			}
-
-					// if there is no label in the local configuration then the
-					// contribution is zero
-					if (localLabels.size() == 0) 
-					{
-						continue;
-					}
-					
-					// For each label, compute binary confi
-					for (int label : localLabels) 
-					{
-	        			// Compute index of local configuration
-	        			int index = 0;
-	        			index += image.getVoxel(x, y, z) 			== label ? 1 : 0;
-	        			index += image.getVoxel(x + 1, y, z) 		== label ? 2 : 0;
-	        			index += image.getVoxel(x, y + 1, z) 		== label ? 4 : 0;
-	        			index += image.getVoxel(x + 1, y + 1, z) 	== label ? 8 : 0;
-	        			index += image.getVoxel(x, y, z + 1) 		== label ? 16 : 0;
-	        			index += image.getVoxel(x + 1, y, z + 1) 	== label ? 32 : 0;
-	        			index += image.getVoxel(x, y + 1, z + 1) 	== label ? 64 : 0;
-	        			index += image.getVoxel(x + 1, y + 1, z + 1) == label ? 128 : 0;
-
-						// add the contribution of the configuration to the
-						// accumulator for the label
-	        			int labelIndex = labelIndices.get(label);
-	        			measures[labelIndex] += lut[index];
-					}
-        		}
-        	}
-        }
-        
-        // reset progress display
-		IJ.showStatus("");
-    	IJ.showProgress(1);
-        return measures;
-	}
-	
 	/**
 	 * Computes centroid of each label in input stack and returns the result
 	 * as an array of double for each label.

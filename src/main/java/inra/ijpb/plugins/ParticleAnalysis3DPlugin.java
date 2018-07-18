@@ -31,6 +31,7 @@ import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.GeometricMeasures3D;
+import inra.ijpb.measure.IntrinsicVolumes3D;
 
 /**
  * Plugin for measuring geometric quantities such as volume, surface area,
@@ -216,19 +217,19 @@ public class ParticleAnalysis3DPlugin implements PlugIn
         // compute geometrical quantities
         if (computeVolume)
         {
-        	volumes = GeometricMeasures3D.volume(image, labels, resol);
+        	volumes = IntrinsicVolumes3D.volumes(image, labels, calib);
         }
         if (computeSurface)
         {
-        	surfaces = GeometricMeasures3D.surfaceAreaCrofton(image, labels, resol, surfaceAreaDirs);
+        	surfaces = IntrinsicVolumes3D.surfaceAreas(image, labels, calib, surfaceAreaDirs);
         }
         if (computeEulerNumber)
         {
-        	eulerNumbers = GeometricMeasures3D.eulerNumber(image, labels, connectivity);
+        	eulerNumbers = IntrinsicVolumes3D.eulerNumbers(image, labels, connectivity);
         }
         if (computeSphericity)
         {
-        	sphericities = GeometricMeasures3D.computeSphericity(volumes, surfaces);
+        	sphericities = IntrinsicVolumes3D.computeSphericity(volumes, surfaces);
         }
         
         // compute inertia ellipsoids and their elongations

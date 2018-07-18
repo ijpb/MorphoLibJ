@@ -82,6 +82,7 @@ public class GeometricMeasures3DTest {
 	}
 
 	@Test
+	@Deprecated
 	public final void testEulerNumber_C6() 
 	{
 		ImageStack image = createEulerImage();
@@ -95,6 +96,7 @@ public class GeometricMeasures3DTest {
 	}
 
 	@Test
+	@Deprecated
 	public final void testEulerNumber_C26() 
 	{
 		ImageStack image = createEulerImage();

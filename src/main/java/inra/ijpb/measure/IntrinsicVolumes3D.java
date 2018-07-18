@@ -27,6 +27,61 @@ public class IntrinsicVolumes3D
     // Static methods
 	
 	/**
+	 * Measures the volume of a single region within a 3D binary image.
+	 * 
+	 * @param image
+	 *            the binary image containing the region
+	 * @param calib
+	 *            the spatial calibration of the image
+	 * @return the volume of the region in the image
+	 */
+	public static final double volume(ImageStack image, Calibration calib)
+	{
+        // pre-compute the volume of individual voxel
+        double voxelVolume = calib.pixelWidth * calib.pixelHeight * calib.pixelDepth;
+        
+		// count non-zero voxels
+		int voxelCount = voxelCount(image);
+
+		// convert voxel counts to particle volumes
+		double volume = voxelCount * voxelVolume;
+		return volume;
+	}
+	
+	/**
+	 * Counts the number of voxels greater than zero within the image.
+	 * 
+	 * @param image
+	 *            the input3D image, assumed to be binary
+	 * @return the number of voxels greater than zero
+	 */
+	private static final int voxelCount(ImageStack image)
+	{
+		// size of image
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		int sizeZ = image.getSize();
+
+		// iterate on image voxels
+		int count = 0;
+		for (int z = 0; z < sizeZ; z++) 
+        {
+        	for (int y = 0; y < sizeY; y++)
+        	{
+        		for (int x = 0; x < sizeX; x++)
+        		{
+        			if(image.getVoxel(x, y, z) > 0)
+        			{
+        				count++;
+        			}
+        		}
+        	}
+        }
+        
+		return count;
+	}
+	
+	/**
 	 * Measures the volume of each region within a 3D label image.
 	 * 
 	 * @param labelImage
@@ -86,6 +141,13 @@ public class IntrinsicVolumes3D
 	
 	/**
 	 * Computes the Look-up table that is used to compute surface area.
+	 * 
+	 * @param calib
+	 *            the spatial calibration of the image
+	 * @param nDirs
+	 *            the number of directions to consider, either 3 or 13
+	 * @return the look-up-table between binary voxel configuration index and
+	 *         contribution to surface area measure
 	 */
 	private final static double[] computeSurfaceAreaLut(Calibration calib, int nDirs) 
 	{
@@ -276,6 +338,50 @@ public class IntrinsicVolumes3D
 		return weights;
 	}
 	
+	/**
+	 * Helper function that computes the sphericity index of 3D particles, based
+	 * on the value of volume and surface area.
+	 * 
+	 * The sphericity is computed using the following formula: <code>
+	 * sphericity = 36 * PI * V^2 / S^3
+	 * </code>
+	 * 
+	 * A perfect ball would have a sphericity index close to 1, a very complex
+	 * particle will present a lower sphericity index.
+	 * 
+	 * @param volumes
+	 *            the volume of each particle
+	 * @param surfaces
+	 *            the surface area of each particle
+	 * @return the sphericity index of each particle
+	 * 
+	 * @see #surfaceAreas(ImageStack, Calibration, int)
+	 * @see #volumes(ImageStack, Calibration, double[])
+	 */
+	public final static double[] computeSphericity(double[] volumes, double[] surfaces) 
+	{
+		int n = volumes.length;
+		if (surfaces.length != n) 
+		{
+			throw new IllegalArgumentException("Volume and surface arrays must have the same length");
+		}
+		
+		// normalization constant such that sphere has sphericity equal to 1 
+		double c = 36 * Math.PI;
+
+		// Compute sphericity of each label
+		double[] sphericities = new double[n];
+		for (int i = 0; i < n; i++) 
+		{
+			double v = volumes[i];
+			double s = surfaces[i];
+			sphericities[i] = c * v * v / (s * s * s);
+		}
+		
+		return sphericities;
+	}
+	
+
 	/**
 	 * Computes Euler number for each label given in the "labels" argument,
 	 * using the specified connectivity.
