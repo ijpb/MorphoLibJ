@@ -26,6 +26,24 @@ public class LargestInscribedBall extends RegionAnalyzer3D<Sphere>
 	// ==================================================
 	// Static methods
 	
+	/**
+	 * Computes largest inscribed ball of each region with a 3D label image.
+	 * 
+	 * The regions must be disjoint.
+	 * 
+	 * @param labelImage
+	 *            the 3D input image containing label of particles
+	 * @param labels
+	 *            the set of labels within the image
+	 * @param calib
+	 *            the spatial calibration of the image
+	 * @return an array of Sphere representing the inscribed balls of each
+	 *         region, in calibrated coordinates
+	 */
+	public static final Sphere[] largestInscribedBalls(ImageStack labelImage, int[] labels, Calibration calib)
+	{
+		return new LargestInscribedBall().analyzeRegions(labelImage, labels, calib);
+	}
 	
 	// ==================================================
 	// Constructors
@@ -75,8 +93,9 @@ public class LargestInscribedBall extends RegionAnalyzer3D<Sphere>
 	}
 	
 	/**
-	 * Computes largest inscribed ball of each particle. Particles must be
-	 * disjoint.
+	 * Computes largest inscribed ball of each region with a 3D label image.
+	 * 
+	 * The regions must be disjoint.
 	 * 
 	 * @param labelImage
 	 *            the 3D input image containing label of particles

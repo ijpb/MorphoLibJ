@@ -21,62 +21,23 @@ import inra.ijpb.label.LabelImages;
 public class Centroid3D extends RegionAnalyzer3D<Point3D>
 {
 	// ==================================================
-//	// Static methods
-//	
-//	/**
-//	 * Compute centroid of each label in input stack and returns the result as
-//	 * an array of double for each label.
-//	 * 
-//	 * @param labelImage
-//	 *            the input image containing label of particles
-//	 * @param labels
-//	 *            the array of unique labels in image the number of directions
-//	 *            to process, either 2 or 4
-//	 * @return an array containing for each label, the coordinates of the
-//	 *         centroid, in pixel coordinates
-//	 */
-//	public final static double[][] centroids(ImageStack labelImage,
-//			int[] labels) 
-//	{
-//		// create associative array to know index of each label
-//		int nLabels = labels.length;
-//        HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
-//
-//		// allocate memory for result
-//		int[] counts = new int[nLabels];
-//		double[][] centroids = new double[nLabels][2];
-//
-//		// compute centroid of each region
-//		int sizeX = labelImage.getWidth();
-//		int sizeY = labelImage.getHeight();
-//		for (int y = 0; y < sizeY; y++) 
-//		{
-//			for (int x = 0; x < sizeX; x++)
-//			{
-//				int label = (int) labelImage.getf(x, y);
-//				if (label == 0)
-//					continue;
-//
-//				// do not process labels that are not in the input list 
-//				if (!labelIndices.containsKey(label))
-//					continue;
-//				
-//				int index = labelIndices.get(label);
-//				centroids[index][0] += x;
-//				centroids[index][1] += y;
-//				counts[index]++;
-//			}
-//		}
-//
-//		// normalize by number of pixels in each region
-//		for (int i = 0; i < nLabels; i++)
-//		{
-//			centroids[i][0] /= counts[i];
-//			centroids[i][1] /= counts[i];
-//		}
-//
-//		return centroids;
-//	}
+	// Static methods
+	
+	/**
+	 * Compute centroid of each region in input 3D label image and returns the
+	 * result as an array of Point3D.
+	 * 
+	 * @param labelImage
+	 *            the input image containing region labels
+	 * @param labels
+	 *            the array of unique labels in image
+	 * @return an array of Point3D instances, corresponding to the centroid of
+	 *         each region
+	 */
+	public final static Point3D[] centroids(ImageStack labelImage, int[] labels, Calibration calib) 
+	{
+		return new Centroid3D().analyzeRegions(labelImage, labels, calib);
+	}
 	
 	// ==================================================
 	// Constructor

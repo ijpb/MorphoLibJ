@@ -31,6 +31,24 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 	// ==================================================
 	// Static methods 
 	
+	/**
+	 * Computes inertia ellipsoid of each region in the input 3D label image.
+	 * 
+	 * @param image
+	 *            the input image containing label of particles
+	 * @param labels
+	 *            the array of labels within the image
+	 * @param calib
+	 *            the calibration of the image
+	 * @return an array of Ellipsoid instances representing the calibrated
+	 *         coordinates of the inertia ellipsoid of each region
+	 */
+	public static final Ellipsoid[] inertiaEllipsoids(ImageStack image, int[] labels, Calibration calib)
+	{
+		return new InertiaEllipsoid().analyzeRegions(image, labels, calib);
+	}
+	
+	
 	// ==================================================
 	// Constructor
 
@@ -90,7 +108,7 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 	}
 
 	/**
-	 * Computes inertia ellipse of each region in input label image.
+	 * Computes inertia ellipsoid of each region in the input 3D label image.
 	 * 
 	 * @param image
 	 *            the input image containing label of particles
@@ -98,8 +116,8 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 	 *            the array of labels within the image
 	 * @param calib
 	 *            the calibration of the image
-	 * @return an array of Ellipsoid representing the calibrated coordinates of
-	 *         the inertia ellipse of each region
+	 * @return an array of Ellipsoid instances representing the calibrated
+	 *         coordinates of the inertia ellipsoid of each region
 	 */
 	public Ellipsoid[] analyzeRegions(ImageStack image, int[] labels, Calibration calib)
 	{
@@ -279,7 +297,6 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
     	}
 
     	return ellipsoids;
-
 	}
 
 }

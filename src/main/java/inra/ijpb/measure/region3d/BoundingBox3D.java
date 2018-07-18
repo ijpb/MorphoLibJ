@@ -3,13 +3,9 @@
  */
 package inra.ijpb.measure.region3d;
 
-import static java.lang.Math.max;
-import static java.lang.Math.min;
-
 import java.util.HashMap;
 import java.util.Map;
 
-import ij.IJ;
 import ij.ImageStack;
 import ij.measure.Calibration;
 import ij.measure.ResultsTable;
@@ -28,70 +24,19 @@ public class BoundingBox3D extends RegionAnalyzer3D<Box3D>
 	// Static methods
 
 	/**
-	 * Compute bounding box of each label in input stack and returns the result
-	 * as an array of double for each label.
+	 * Compute bounding box of each region in input 3D label image and returns
+	 * the result as an array of Box3D for each region.
 	 * 
 	 * @param labelImage
 	 *            the input image containing label of particles
-	 * @param labels an array of unique labels in image
-	 * @return a data table containing for each labeled particle the extent in
-	 *         each dimension
+	 * @param labels
+	 *            an array of unique labels in image
+	 * @return an array of Box3D instances containing for each region its extent
+	 *         in each dimension
 	 */
-	public final static double[][] boundingBox(ImageStack labelImage, int[] labels)
+	public static final Box3D[] boundingBoxes(ImageStack labelImage, int[] labels, Calibration calib)
 	{
-        // create associative array to know index of each label
-        HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
-
-        // initialize result
-		int nLabels = labels.length;
-		double[][] boxes = new double[nLabels][6];
-		for (int i = 0; i < nLabels; i++)
-		{
-			boxes[i][0] = Double.POSITIVE_INFINITY;
-			boxes[i][1] = Double.NEGATIVE_INFINITY;
-			boxes[i][2] = Double.POSITIVE_INFINITY;
-			boxes[i][3] = Double.NEGATIVE_INFINITY;
-			boxes[i][4] = Double.POSITIVE_INFINITY;
-			boxes[i][5] = Double.NEGATIVE_INFINITY;
-		}
-
-		
-		// size of image
-		int sizeX = labelImage.getWidth();
-		int sizeY = labelImage.getHeight();
-		int sizeZ = labelImage.getSize();
-
-		// iterate on image voxels to update bounding boxes
-        for (int z = 0; z < sizeZ; z++) 
-        {
-        	IJ.showProgress(z, sizeZ);
-        	for (int y = 0; y < sizeY; y++)
-        	{
-        		for (int x = 0; x < sizeX; x++)
-        		{
-        			int label = (int) labelImage.getVoxel(x, y, z);
-        			
-					// do not consider background
-					if (label == 0)
-						continue;
-					
-					// do not processes labels not in the list
-					if (!labelIndices.containsKey(label))
-						continue;
-
-					// update bounding box of current label
-					int labelIndex = labelIndices.get(label);
-					boxes[labelIndex][0] = min(boxes[labelIndex][0], x);
-					boxes[labelIndex][1] = max(boxes[labelIndex][1], x + 1);
-					boxes[labelIndex][2] = min(boxes[labelIndex][2], y);
-					boxes[labelIndex][3] = max(boxes[labelIndex][3], y + 1);
-					boxes[labelIndex][4] = min(boxes[labelIndex][4], z);
-					boxes[labelIndex][5] = max(boxes[labelIndex][5], z + 1);
-        		}
-        	}
-        }
-        
-		return boxes;
+        return new BoundingBox3D().analyzeRegions(labelImage, labels, calib);
 	}
 	
 	// ==================================================
