@@ -229,7 +229,7 @@ public class ParticleAnalysis3DPlugin implements PlugIn
         }
         if (computeSphericity)
         {
-        	sphericities = IntrinsicVolumes3D.computeSphericity(volumes, surfaces);
+        	sphericities = IntrinsicVolumes3D.sphericity(volumes, surfaces);
         }
         
         // compute inertia ellipsoids and their elongations

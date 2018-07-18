@@ -52,7 +52,7 @@ public class IntrinsicVolumes2DTest
 	}
 	
 	/**
-	 * Test method for {@link inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D#eulerNumbers(ij.process.ImageProcessor, int)}.
+	 * Test method for {@link inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D#eulerNumber(ij.process.ImageProcessor, int)}.
 	 */
 	@Test
 	public final void testEulerNumber_singleSquareC4()
@@ -67,12 +67,12 @@ public class IntrinsicVolumes2DTest
 			}
 		}
 		
-		int euler = IntrinsicVolumes2D.eulerNumbers(image, 4);
+		int euler = IntrinsicVolumes2D.eulerNumber(image, 4);
 		assertEquals(1, euler);
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D#eulerNumbers(ij.process.ImageProcessor, int)}.
+	 * Test method for {@link inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D#eulerNumber(ij.process.ImageProcessor, int)}.
 	 */
 	@Test
 	public final void testEulerNumber_singleSquareC8()
@@ -87,12 +87,12 @@ public class IntrinsicVolumes2DTest
 			}
 		}
 		
-		int euler = IntrinsicVolumes2D.eulerNumbers(image, 8);
+		int euler = IntrinsicVolumes2D.eulerNumber(image, 8);
 		assertEquals(1, euler);
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D#eulerNumbers(ij.process.ImageProcessor, int)}.
+	 * Test method for {@link inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D#eulerNumber(ij.process.ImageProcessor, int)}.
 	 */
 	@Test
 	public final void testEulerNumber_fullSquareC4()
@@ -107,12 +107,12 @@ public class IntrinsicVolumes2DTest
 			}
 		}
 		
-		int euler = IntrinsicVolumes2D.eulerNumbers(image, 4);
+		int euler = IntrinsicVolumes2D.eulerNumber(image, 4);
 		assertEquals(1, euler);
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D#eulerNumbers(ij.process.ImageProcessor, int)}.
+	 * Test method for {@link inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D#eulerNumber(ij.process.ImageProcessor, int)}.
 	 */
 	@Test
 	public final void testEulerNumber_fullSquareC8()
@@ -127,12 +127,12 @@ public class IntrinsicVolumes2DTest
 			}
 		}
 		
-		int euler = IntrinsicVolumes2D.eulerNumbers(image, 8);
+		int euler = IntrinsicVolumes2D.eulerNumber(image, 8);
 		assertEquals(1, euler);
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D#eulerNumbers(ij.process.ImageProcessor, int)}.
+	 * Test method for {@link inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D#eulerNumber(ij.process.ImageProcessor, int)}.
 	 */
 	@Test
 	public final void testEulerNumber_torusC4()
@@ -154,12 +154,12 @@ public class IntrinsicVolumes2DTest
 			}
 		}
 		
-		int euler = IntrinsicVolumes2D.eulerNumbers(image, 4);
+		int euler = IntrinsicVolumes2D.eulerNumber(image, 4);
 		assertEquals(0, euler);
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D#eulerNumbers(ij.process.ImageProcessor, int)}.
+	 * Test method for {@link inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D#eulerNumber(ij.process.ImageProcessor, int)}.
 	 */
 	@Test
 	public final void testEulerNumber_torusC8()
@@ -181,12 +181,12 @@ public class IntrinsicVolumes2DTest
 			}
 		}
 		
-		int euler = IntrinsicVolumes2D.eulerNumbers(image, 8);
+		int euler = IntrinsicVolumes2D.eulerNumber(image, 8);
 		assertEquals(0, euler);
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D#eulerNumbers(ij.process.ImageProcessor, int)}.
+	 * Test method for {@link inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D#eulerNumber(ij.process.ImageProcessor, int)}.
 	 */
 	@Test
 	public final void testEulerNumber_crossC4()
@@ -201,12 +201,12 @@ public class IntrinsicVolumes2DTest
 			image.set(5, i, 255);
 		}
 		
-		int euler = IntrinsicVolumes2D.eulerNumbers(image, 4);
+		int euler = IntrinsicVolumes2D.eulerNumber(image, 4);
 		assertEquals(1, euler);
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D#eulerNumbers(ij.process.ImageProcessor, int)}.
+	 * Test method for {@link inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D#eulerNumber(ij.process.ImageProcessor, int)}.
 	 */
 	@Test
 	public final void testEulerNumber_crossC8()
@@ -221,12 +221,12 @@ public class IntrinsicVolumes2DTest
 			image.set(5, i, 255);
 		}
 		
-		int euler = IntrinsicVolumes2D.eulerNumbers(image, 8);
+		int euler = IntrinsicVolumes2D.eulerNumber(image, 8);
 		assertEquals(1, euler);
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D#eulerNumbers(ij.process.ImageProcessor, int)}.
+	 * Test method for {@link inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D#eulerNumber(ij.process.ImageProcessor, int)}.
 	 */
 	@Test
 	public final void testEulerNumber_crossTouchingBordersC4()
@@ -241,12 +241,12 @@ public class IntrinsicVolumes2DTest
 			image.set(3, i, 255);
 		}
 		
-		int euler = IntrinsicVolumes2D.eulerNumbers(image, 4);
+		int euler = IntrinsicVolumes2D.eulerNumber(image, 4);
 		assertEquals(1, euler);
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D#eulerNumbers(ij.process.ImageProcessor, int)}.
+	 * Test method for {@link inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D#eulerNumber(ij.process.ImageProcessor, int)}.
 	 */
 	@Test
 	public final void testEulerNumber_crossTouchingBordersC8()
@@ -261,7 +261,7 @@ public class IntrinsicVolumes2DTest
 			image.set(3, i, 255);
 		}
 		
-		int euler = IntrinsicVolumes2D.eulerNumbers(image, 8);
+		int euler = IntrinsicVolumes2D.eulerNumber(image, 8);
 		assertEquals(1, euler);
 	}
 	

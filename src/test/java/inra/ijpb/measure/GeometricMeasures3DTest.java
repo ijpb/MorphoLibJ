@@ -33,6 +33,7 @@ import org.junit.Test;
 public class GeometricMeasures3DTest {
 
 	@Test
+	@Deprecated
 	public final void testSurfaceAreaByLut_D13() {
 		ImageStack image = createBallImage();
 		double[] resol = new double[]{1, 1, 1};
@@ -42,6 +43,7 @@ public class GeometricMeasures3DTest {
 	}
 
 	@Test
+	@Deprecated
 	public final void testSurfaceAreaByLut_D3() {
 		ImageStack image = createBallImage();
 		double[] resol = new double[]{1, 1, 1};

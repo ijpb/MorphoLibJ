@@ -35,6 +35,52 @@ public class IntrinsicVolumes3DTest
 	}
 
 	/**
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3D#surfaceArea(ij.ImageStack, ij.measure.Calibration, int)}.
+	 */
+	@Test
+	public final void testSurfaceArea_SmallCube_D3()
+	{
+		ImageStack image = ImageStack.create(4, 4, 4, 8);
+		image.setVoxel(1, 1, 1, 255);
+		image.setVoxel(2, 1, 1, 255);
+		image.setVoxel(1, 2, 1, 255);
+		image.setVoxel(2, 2, 1, 255);
+		image.setVoxel(1, 1, 2, 255);
+		image.setVoxel(2, 1, 2, 255);
+		image.setVoxel(1, 2, 2, 255);
+		image.setVoxel(2, 2, 2, 255);
+		Calibration calib = new Calibration();
+		
+		double surface = IntrinsicVolumes3D.surfaceArea(image, calib, 3);
+		
+		double exp = 16.0;
+		assertEquals(exp, surface, 16.0*0.2);
+	}
+
+	/**
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3D#surfaceArea(ij.ImageStack, ij.measure.Calibration, int)}.
+	 */
+	@Test
+	public final void testSurfaceArea_SmallCubeTouchingBorder_D3()
+	{
+		ImageStack image = ImageStack.create(2, 2, 2, 8);
+		image.setVoxel(0, 0, 0, 255);
+		image.setVoxel(1, 0, 0, 255);
+		image.setVoxel(0, 1, 0, 255);
+		image.setVoxel(1, 1, 0, 255);
+		image.setVoxel(0, 0, 1, 255);
+		image.setVoxel(1, 0, 1, 255);
+		image.setVoxel(0, 1, 1, 255);
+		image.setVoxel(1, 1, 1, 255);
+		Calibration calib = new Calibration();
+		
+		double surface = IntrinsicVolumes3D.surfaceArea(image, calib, 3);
+		
+		double exp = 16.0;
+		assertEquals(exp, surface, 16.0*0.2);
+	}
+
+	/**
 	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3D#surfaceAreas(ij.ImageStack, int[], ij.measure.Calibration, int)}.
 	 */
 	@Test
@@ -93,6 +139,104 @@ public class IntrinsicVolumes3DTest
 	}
 
 	/**
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3D#surfaceAreas(ij.ImageStack, int[], ij.measure.Calibration, int)}.
+	 */
+	@Test
+	public final void testSurfaceAreas_TouchingLabels_D3()
+	{
+		ImageStack image = ImageStack.create(9, 9, 9, 8);
+		for (int i = 0; i < 3; i++)
+		{
+			for (int j = 0; j < 3; j++)
+			{
+				for (int k = 0; k < 3; k++)
+				{
+					image.setVoxel(    i,     j,     k,  1);
+					image.setVoxel(i + 3,     j,     k,  2);
+					image.setVoxel(    i, j + 3,     k,  3);
+					image.setVoxel(i + 3, j + 3,     k,  4);
+					image.setVoxel(    i,     j, k + 3,  5);
+					image.setVoxel(i + 3,     j, k + 3,  6);
+					image.setVoxel(    i, j + 3, k + 3,  7);
+					image.setVoxel(i + 3, j + 3, k + 3,  8);
+				}
+			}
+		}
+		int[] labels = new int[] {1, 2, 3, 4, 5, 6, 7, 8};
+		Calibration calib = new Calibration();
+		
+		double[] surfaces = IntrinsicVolumes3D.surfaceAreas(image, labels, calib, 3);
+		double exp = 36.0;
+		assertEquals(8, surfaces.length);
+		for (int i = 0; i < 8; i++)
+		{
+			assertEquals(exp, surfaces[i], exp * 0.2);
+		}
+	}
+
+	/**
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3D#surfaceAreas(ij.ImageStack, int[], ij.measure.Calibration, int)}.
+	 */
+	@Test
+	public final void testSurfaceAreas_TouchingLabels_D13()
+	{
+		ImageStack image = ImageStack.create(9, 9, 9, 8);
+		for (int i = 0; i < 3; i++)
+		{
+			for (int j = 0; j < 3; j++)
+			{
+				for (int k = 0; k < 3; k++)
+				{
+					image.setVoxel(    i,     j,     k,  1);
+					image.setVoxel(i + 3,     j,     k,  2);
+					image.setVoxel(    i, j + 3,     k,  3);
+					image.setVoxel(i + 3, j + 3,     k,  4);
+					image.setVoxel(    i,     j, k + 3,  5);
+					image.setVoxel(i + 3,     j, k + 3,  6);
+					image.setVoxel(    i, j + 3, k + 3,  7);
+					image.setVoxel(i + 3, j + 3, k + 3,  8);
+				}
+			}
+		}
+		int[] labels = new int[] {1, 2, 3, 4, 5, 6, 7, 8};
+		Calibration calib = new Calibration();
+		
+		double[] surfaces = IntrinsicVolumes3D.surfaceAreas(image, labels, calib, 13);
+		double exp = 41.07;
+		assertEquals(8, surfaces.length);
+		for (int i = 0; i < 8; i++)
+		{
+			assertEquals(exp, surfaces[i], exp * 0.05);
+		}
+	}
+
+	/**
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3D#eulerNumber(ij.ImageStack, int)}.
+	 */
+	@Test
+	public final void testEulerNumber_ball_C6()
+	{
+		ImageStack image = createBallImage();
+	
+		double euler = IntrinsicVolumes3D.eulerNumber(image, 6);
+		
+		assertEquals(1, euler, 0.1);
+	}
+
+	/**
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3D#eulerNumber(ij.ImageStack, int)}.
+	 */
+	@Test
+	public final void testEulerNumber_ball_C26()
+	{
+		ImageStack image = createBallImage();
+	
+		double euler = IntrinsicVolumes3D.eulerNumber(image, 26);
+		
+		assertEquals(1, euler, 0.1);
+	}
+
+	/**
 	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3D#eulerNumbers(ij.ImageStack, int[], int)}.
 	 */
 	@Test
@@ -108,7 +252,6 @@ public class IntrinsicVolumes3DTest
 		assertEquals(0, euler[2], 0.1);
 		assertEquals(2, euler[3], 0.1);
 	}
-
 
 	/**
 	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3D#eulerNumbers(ij.ImageStack, int[], int)}.

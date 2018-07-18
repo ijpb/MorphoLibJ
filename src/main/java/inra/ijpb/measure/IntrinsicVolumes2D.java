@@ -400,7 +400,7 @@ public class IntrinsicVolumes2D
 		return new double[] { alpha1, alpha2, alpha34, alpha34 };
 	}
 	
-	public static final int eulerNumbers(ImageProcessor image, int conn)
+	public static final int eulerNumber(ImageProcessor image, int conn)
 	{
 		switch(conn)
 		{
@@ -612,7 +612,7 @@ public class IntrinsicVolumes2D
 	}
 	
 	
-	public static final double[] applyConfigurationLut(ImageProcessor image, int[] labels, double[] lut)
+	private static final double[] applyConfigurationLut(ImageProcessor image, int[] labels, double[] lut)
 	{
 		// create associative array to know index of each label
 		int nLabels = labels.length;

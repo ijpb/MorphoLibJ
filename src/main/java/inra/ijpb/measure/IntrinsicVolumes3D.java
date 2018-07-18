@@ -113,6 +113,31 @@ public class IntrinsicVolumes3D
 	}
 	
 	/**
+	 * Computes surface area of a single region within a 3D binary image.
+	 * 
+	 * Uses discretization of the Crofton formula, that consists in computing
+	 * numbers of intersections with lines of various directions.
+	 * 
+	 * @param image
+	 *            image containing the label of each particle
+	 * @param calib
+	 *            the spatial calibration of the image
+	 * @param nDirs
+	 *            the number of directions to consider, either 3 or 13
+	 * @return the surface area of each particle in the image
+	 */
+	public static final double surfaceArea(ImageStack image, Calibration calib, int nDirs)
+	{
+		// pre-compute LUT corresponding to resolution and number of directions
+		double[] surfLut = computeSurfaceAreaLut(calib, nDirs);
+
+		// Compute index of each 2x2x2 binary voxel configuration, associate LUT
+		// contribution, and sum up for each label
+		return sumOfLutContributions(image, surfLut);
+	}
+	
+
+	/**
 	 * Computes surface area for each region within a label image.
 	 * 
 	 * Uses discretization of the Crofton formula, that consists in computing
@@ -355,10 +380,10 @@ public class IntrinsicVolumes3D
 	 *            the surface area of each particle
 	 * @return the sphericity index of each particle
 	 * 
-	 * @see #surfaceAreas(ImageStack, Calibration, int)
-	 * @see #volumes(ImageStack, Calibration, double[])
+	 * @see #surfaceAreas(ij.ImageStack, int[], ij.measure.Calibration, int)
+	 * @see #volumes(ij.ImageStack, int[], ij.measure.Calibration)
 	 */
-	public final static double[] computeSphericity(double[] volumes, double[] surfaces) 
+	public final static double[] sphericity(double[] volumes, double[] surfaces) 
 	{
 		int n = volumes.length;
 		if (surfaces.length != n) 
@@ -381,7 +406,26 @@ public class IntrinsicVolumes3D
 		return sphericities;
 	}
 	
+	/**
+	 * Computes Euler number of the region within the binary image,
+	 * using the specified connectivity.
+	 * 
+	 * @param image
+	 *            the input 3D binary image
+	 * @param conn
+	 *            the connectivity to use (either 6 or 26)
+	 * @return the Euler-Poincare characteristic of the region
+	 */
+	public static final double eulerNumber(ImageStack image, int conn)
+	{
+        // pre-compute LUT corresponding to the chosen connectivity
+		double[] eulerLut = computeEulerNumberLut(conn);
 
+		// Compute index of each 2x2x2 binary voxel configuration, associate LUT
+		// contribution, and sum up for each label
+		return sumOfLutContributions(image, eulerLut);
+	}
+	
 	/**
 	 * Computes Euler number for each label given in the "labels" argument,
 	 * using the specified connectivity.
@@ -397,7 +441,7 @@ public class IntrinsicVolumes3D
 	public final static double[] eulerNumbers(ImageStack image, int[] labels,
 			int conn)
 	{    
-        // pre-compute LUT corresponding to resolution and number of directions
+        // pre-compute LUT corresponding to the chosen connectivity
 		double[] eulerLut = computeEulerNumberLut(conn);
 
 		// Compute index of each 2x2x2 binary voxel configuration, associate LUT
@@ -507,8 +551,105 @@ public class IntrinsicVolumes3D
 	}
 
 	/**
-	 * Applies a look-up-table for each of the 2x2x2 voxel configuration, and
-	 * returns the sum of contributions for each label.
+	 * Applies a look-up-table for each of the 2x2x2 voxel configurations
+	 * containing at least one voxel of the input binary image, and returns the sum of
+	 * contributions for each label.
+	 * 
+	 * This method is used for computing Euler number and surface area from binary images.
+	 * 
+	 * @param image
+	 *            the input 3D image of labels
+	 * @param labels
+	 *            the set of labels to process
+	 * @param lut
+	 *            the look-up-table containing the measure contribution for each
+	 *            of the 256 configuration of 8 voxels
+	 * @return the sum of measure contributions for each label
+	 * 
+	 * @see #surfaceAreaCrofton(ImageStack, int[], double[], int)
+	 * @see #eulerNumber(ImageStack, int[], int)
+	 */
+	private final static double sumOfLutContributions(ImageStack image, double[] lut)
+	{   
+		// Algorithm:
+		// iterate on configurations of 2-by-2-by-2 voxels containing on voxel of 3D image. 
+		// For each configuration, identify the labels within the configuration.
+		// For each label, compute the equivalent binary configuration index, 
+		// and adds is contribution to the measure associated to the label. 
+		
+        double result = 0;
+
+		// size of image
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		int sizeZ = image.getSize();
+
+		// values of pixels within current 2-by-2-by-2 configuration
+		boolean[] configValues = new boolean[8];
+		
+		// Iterate over all 2-by-2-by-2 configurations containing at least one
+		// voxel within the image.
+		// Current pixel is the lower-right pixel in configuration
+		// (corresponding to b111).
+        for (int z = 0; z < sizeZ + 1; z++) 
+        {
+			for (int y = 0; y < sizeY + 1; y++) 
+        	{
+	        	// initialize left voxels
+				configValues[0] = false;
+				configValues[2] = false;
+				configValues[4] = false;
+				configValues[6] = false;
+
+        		for (int x = 0; x < sizeX + 1; x++) 
+        		{
+            		// update pixel values of configuration
+        			if (x < sizeX)
+        			{
+    					configValues[1] = y > 0 & z > 0 ? image.getVoxel(x, y - 1, z - 1) > 0 : false;
+    					configValues[3] = y < sizeY & z > 0 ? image.getVoxel(x, y, z - 1) > 0 : false;
+    					configValues[5] = y > 0 & z < sizeZ ? image.getVoxel(x, y - 1, z) > 0 : false;
+    					configValues[7] = y < sizeY & z < sizeZ ? image.getVoxel(x, y, z) > 0 : false;
+        			}
+        			else
+        			{
+						// if reference voxel outside of image, the four new
+						// values are outside, and are set to background
+        				configValues[1] = configValues[3] = configValues[5] = configValues[7] = false;   
+        			}
+
+        			// Compute index of local configuration
+        			int index = 0;
+					index += configValues[0] ?   1 : 0;
+					index += configValues[1] ?   2 : 0;
+					index += configValues[2] ?   4 : 0;
+					index += configValues[3] ?   8 : 0;
+					index += configValues[4] ?  16 : 0;
+					index += configValues[5] ?  32 : 0;
+					index += configValues[6] ?  64 : 0;
+					index += configValues[7] ? 128 : 0;
+
+        			// add the contribution of the configuration to the measure
+        			result += lut[index];
+					
+					// update values of configuration for next iteration
+					configValues[0] = configValues[1];
+					configValues[2] = configValues[3];
+					configValues[4] = configValues[5];
+					configValues[6] = configValues[7];
+        		}
+        	}
+        }
+        
+        // reset progress display
+        return result;
+	}
+	
+	/**
+	 * Applies a look-up-table for each of the 2x2x2 voxel configurations
+	 * containing at least one voxel of the input image, and returns the sum of
+	 * contributions for each label.
+	 * 
 	 * This method is used for computing Euler number and surface area.
 	 * 
 	 * @param image
@@ -527,7 +668,7 @@ public class IntrinsicVolumes3D
 			double[] lut)
 	{   
 		// Algorithm:
-		// iterate on configurations of 2-by-2-by-2 voxels within 3D image. 
+		// iterate on configurations of 2-by-2-by-2 voxels containing on voxel of 3D image. 
 		// For each configuration, identify the labels within the configuration.
 		// For each label, compute the equivalent binary configuration index, 
 		// and adds is contribution to the measure associated to the label. 
@@ -547,31 +688,50 @@ public class IntrinsicVolumes3D
 		// for each configuration of 2x2x2 voxels, we identify the labels
 		ArrayList<Integer> localLabels = new ArrayList<Integer>(8);
 		
-        for (int z = 0; z < sizeZ - 1; z++) 
+		// values of pixels within current 2-by-2-by-2 configuration
+		int[] configValues = new int[8];
+		
+		// Iterate over all 2-by-2-by-2 configurations containing at least one
+		// voxel within the image.
+		// Current pixel is the lower-right pixel in configuration
+		// (corresponding to b111).
+        for (int z = 0; z < sizeZ + 1; z++) 
         {
-        	IJ.showProgress(z, sizeZ);
-        	for (int y = 0; y < sizeY - 1; y++) 
+			for (int y = 0; y < sizeY + 1; y++) 
         	{
-        		for (int x = 0; x < sizeX - 1; x++) 
+	        	// initialize left voxels
+				configValues[0] = 0;
+				configValues[2] = 0;
+				configValues[4] = 0;
+				configValues[6] = 0;
+
+        		for (int x = 0; x < sizeX + 1; x++) 
         		{
-        			// identify labels in current config
-        			localLabels.clear();
-					for (int z2 = z; z2 <= z + 1; z2++) 
-					{
-						for (int y2 = y; y2 <= y + 1; y2++) 
-						{
-							for (int x2 = x; x2 <= x + 1; x2++) 
-							{
-								int label = (int) image.getVoxel(x2, y2, z2);
-								// do not consider background
-								if (label == 0)
-									continue;
-								// keep only one instance of each label
-								if (!localLabels.contains(label))
-									localLabels.add(label);
-                			}
-            			}
+            		// update pixel values of configuration
+        			if (x < sizeX)
+        			{
+    					configValues[1] = y > 0 & z > 0 ? (int) image.getVoxel(x, y - 1, z - 1) : 0;
+    					configValues[3] = y < sizeY & z > 0 ? (int) image.getVoxel(x, y, z - 1) : 0;
+    					configValues[5] = y > 0 & z < sizeZ ? (int) image.getVoxel(x, y - 1, z) : 0;
+    					configValues[7] = y < sizeY & z < sizeZ ? (int) image.getVoxel(x, y, z) : 0;
         			}
+        			else
+        			{
+						// if reference voxel outside of image, the four new
+						// values are outside, and are set to zero
+        				configValues[1] = configValues[3] = configValues[5] = configValues[7] = 0;   
+        			}
+
+    				// identify labels in current config
+        			localLabels.clear();
+    				for (int label : configValues)
+    				{
+    					if (label == 0)
+    						continue;
+    					// keep only one instance of each label
+    					if (!localLabels.contains(label))
+    						localLabels.add(label);
+    				}
 
 					// if there is no label in the local configuration then the
 					// contribution is zero
@@ -585,27 +745,33 @@ public class IntrinsicVolumes3D
 					{
 	        			// Compute index of local configuration
 	        			int index = 0;
-	        			index += image.getVoxel(x, y, z) 			== label ? 1 : 0;
-	        			index += image.getVoxel(x + 1, y, z) 		== label ? 2 : 0;
-	        			index += image.getVoxel(x, y + 1, z) 		== label ? 4 : 0;
-	        			index += image.getVoxel(x + 1, y + 1, z) 	== label ? 8 : 0;
-	        			index += image.getVoxel(x, y, z + 1) 		== label ? 16 : 0;
-	        			index += image.getVoxel(x + 1, y, z + 1) 	== label ? 32 : 0;
-	        			index += image.getVoxel(x, y + 1, z + 1) 	== label ? 64 : 0;
-	        			index += image.getVoxel(x + 1, y + 1, z + 1) == label ? 128 : 0;
+						index += configValues[0] == label ?   1 : 0;
+						index += configValues[1] == label ?   2 : 0;
+						index += configValues[2] == label ?   4 : 0;
+						index += configValues[3] == label ?   8 : 0;
+						index += configValues[4] == label ?  16 : 0;
+						index += configValues[5] == label ?  32 : 0;
+						index += configValues[6] == label ?  64 : 0;
+						index += configValues[7] == label ? 128 : 0;
 
-						// add the contribution of the configuration to the
-						// accumulator for the label
+						// retrieve label index from label value
 	        			int labelIndex = labelIndices.get(label);
+
+	        			// add the contribution of the configuration to the
+						// accumulator for the label
 	        			measures[labelIndex] += lut[index];
 					}
+					
+					// update values of configuration for next iteration
+					configValues[0] = configValues[1];
+					configValues[2] = configValues[3];
+					configValues[4] = configValues[5];
+					configValues[6] = configValues[7];
         		}
         	}
         }
         
         // reset progress display
-		IJ.showStatus("");
-    	IJ.showProgress(1);
         return measures;
 	}
 	

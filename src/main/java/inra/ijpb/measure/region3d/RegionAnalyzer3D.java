@@ -10,7 +10,6 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.measure.Calibration;
 import ij.measure.ResultsTable;
-import ij.process.ImageProcessor;
 import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.RegionAnalyzer;
@@ -76,7 +75,7 @@ public abstract class RegionAnalyzer3D<T> extends AlgoStub implements RegionAnal
 
 	/**
 	 * Default implementation of the analyzeRegions method, that calls the more
-	 * specialized {@link #analyzeRegions(ImageProcessor, int[], Calibration)}
+	 * specialized {@link #analyzeRegions(ImageStack, int[], ij.measure.Calibration)}
 	 * method and transforms the result into a map.
 	 * 
 	 * @param labelPlus
