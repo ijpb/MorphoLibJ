@@ -400,7 +400,7 @@ public class IntrinsicVolumes2D
 		return new double[] { alpha1, alpha2, alpha34, alpha34 };
 	}
 	
-	public static final int eulerNumber(ImageProcessor image, int conn)
+	public static final int eulerNumbers(ImageProcessor image, int conn)
 	{
 		switch(conn)
 		{

@@ -28,10 +28,11 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	// generic classes
-	GeometricMeasures2DTest.class,
-	GeometricMeasures3DTest.class,
+//	GeometricMeasures2DTest.class,
+//	GeometricMeasures3DTest.class,
 	GeometryUtilsTest.class,
 	IntrinsicVolumes2DTest.class,
+	IntrinsicVolumes3DTest.class,
 	ResultsBuilderTest.class,
 	})
 public class AllTests {

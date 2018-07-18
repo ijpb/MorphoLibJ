@@ -29,7 +29,7 @@ import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
-import inra.ijpb.measure.GeometricMeasures2D;
+import inra.ijpb.measure.IntrinsicVolumes2D;
 
 public class MicrostructureAnalysisPlugin implements PlugInFilter {
 
@@ -160,32 +160,30 @@ public class MicrostructureAnalysisPlugin implements PlugInFilter {
         ImageProcessor proc = image.getProcessor();
         
         // Extract spatial calibration
-        Calibration cal = image.getCalibration();
-        double[] resol = new double[]{1, 1};
-        if (cal.scaled()) {
-        	resol[0] = cal.pixelWidth;
-        	resol[1] = cal.pixelHeight;
-        }
+        Calibration calib = image.getCalibration();
         
         // Compute basis measures
-        ResultsTable results = GeometricMeasures2D.perimeterDensity(proc, resol, nDirs);
+        double areaDensity =  IntrinsicVolumes2D.areaDensity(proc);
+        double perimDensity = IntrinsicVolumes2D.perimeterDensity(proc, calib, nDirs);
+        ResultsTable table = new ResultsTable();
+        table.incrementCounter();
+        table.addValue("AreaDensity", areaDensity);
+        table.addValue("PerimeterDensity", perimDensity);
         
         // eventually add the porosity for those who do not want to subtract by hand...
-        if (addPorosity) {
-        	int nRows = results.getColumn(0).length;
-        	for (int i = 0; i < nRows; i++) {
-        		double areaDensity = results.getValue("A. Density", i);
-        		results.setValue("Porosity", i, 1-areaDensity);
-        	}
+        if (addPorosity)
+        {
+       	 table.addValue("Porosity", 1-areaDensity);
         }
+
 		// create string for indexing results
 		String tableName = removeImageExtension(image.getTitle()) + "-Densities"; 
     
 		// show result
-		results.show(tableName);
+		table.show(tableName);
 		
 		// return the created array
-		return new Object[]{"Crofton Densties", results};
+		return new Object[]{"Crofton Densties", table};
     }
 
     /**
@@ -218,27 +216,24 @@ public class MicrostructureAnalysisPlugin implements PlugInFilter {
          ImageProcessor proc = image.getProcessor();
          
          // Extract spatial calibration
-         Calibration cal = image.getCalibration();
-         double[] resol = new double[]{1, 1};
-         if (cal.scaled()) {
-         	resol[0] = cal.pixelWidth;
-         	resol[1] = cal.pixelHeight;
-         }
+         Calibration calib = image.getCalibration();
          
          // Compute basis measures
-         ResultsTable results = GeometricMeasures2D.perimeterDensity(proc, resol, nDirs);
+         double areaDensity =  IntrinsicVolumes2D.areaDensity(proc);
+         double perimDensity = IntrinsicVolumes2D.perimeterDensity(proc, calib, nDirs);
+         ResultsTable table = new ResultsTable();
+         table.incrementCounter();
+         table.addValue("AreaDensity", areaDensity);
+         table.addValue("PerimeterDensity", perimDensity);
          
          // eventually add the porosity for those who do not want to subtract by hand...
-         if (addPorosity) {
-         	int nRows = results.getColumn(0).length;
-         	for (int i = 0; i < nRows; i++) {
-         		double areaDensity = results.getValue("A. Density", i);
-         		results.setValue("Porosity", i, 1-areaDensity);
-         	}
+         if (addPorosity)
+         {
+        	 table.addValue("Porosity", 1-areaDensity);
          }
  	
          // return the created table
-         return results;
+         return table;
      }
 
      /**
