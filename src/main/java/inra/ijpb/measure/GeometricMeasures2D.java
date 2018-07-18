@@ -551,6 +551,7 @@ public class GeometricMeasures2D
 	 * @param nDirs the number of directions to consider, either 2 or 4 
 	 * @return a results table containing for each label, an estimate of the region perimeter
 	 */
+	@Deprecated
 	public static final ResultsTable perimeterDensity(ImageProcessor image,
 			double[] resol, int nDirs) 
 	{
