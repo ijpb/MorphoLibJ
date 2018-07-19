@@ -6852,17 +6852,45 @@ minitoc
 \end_layout
 
 \begin_layout Section
-Intrinsic volumes
+Region Analysis 
 \end_layout
 
 \begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
-name "sec:Particle-Analysis"
+name "sec:Region-Analysis"
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+TODO: 
+\end_layout
+
+\begin_layout Itemize
+introduction
+\end_layout
+
+\begin_layout Itemize
+introduces Feret diameters
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Intrinsic volumes
+\end_layout
+
+\begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:Intrinsic-Volumes"
@@ -6907,6 +6935,19 @@ reference "fig:Euler-Number"
 
 -a).
  
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+reprendre figure avec illustration périmètre ?
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -7007,65 +7048,8 @@ Illustration of Euler Number definition.
 
 \end_layout
 
-\begin_layout Standard
-For 3D particles, intrinsic volumes correspond to the 
-\series bold
-volume
-\series default
-, the
-\series bold
- surface area
-\series default
-, the 
-\series bold
-mean breadth 
-\series default
-(a quantity proportional to the integral of the mean curvature over the
- surface) and the 
-\series bold
-(3D) Euler number
-\series default
-.
- In 3D the Euler number equals the number of connected components minus
- the number of 
-\begin_inset Quotes eld
-\end_inset
-
-handles
-\begin_inset Quotes erd
-\end_inset
-
- or 
-\begin_inset Quotes eld
-\end_inset
-
-tunnels
-\begin_inset Quotes eld
-\end_inset
-
- through the structure, plus the number of bubbles within the particles
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Serra_1982,Ohser2009"
-
-\end_inset
-
-, see Figure
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Euler-Number"
-
-\end_inset
-
--b.
-\end_layout
-
-\begin_layout Subsection
-Estimation from 2D or 3D images
+\begin_layout Subsubsection
+Estimation from discrete images
 \end_layout
 
 \begin_layout Standard
@@ -7191,34 +7175,7 @@ key "Lehmann_2012_ij"
 .
 \end_layout
 
-\begin_layout Standard
-The 
-\series bold
-estimation of surface area 
-\series default
-follows the same principle 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Lang2001,Legland2007"
-
-\end_inset
-
-.
- The number of directions is typically chosen equal to 3 (the three main
- axes in image), or 13 (by considering also diagonals).
- As for perimeter estimation, surface area estimation in usually biased,
- but is usually more precise than measuring the surface area of the polygonal
- mesh reconstructed from binary images 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Lehmann_2012_ij"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Subsection
+\begin_layout Subsubsection
 Euler number
 \end_layout
 
@@ -7275,6 +7232,30 @@ reference "fig:Euler-Number-Computation-2D"
 \end_inset
 
 -b).
+ The connectivity is also considered for computing morphological reconstructions
+ (section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Morphological-Reconstruction"
+
+\end_inset
+
+), or for computing the connected component labeling of a binary image (section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Connected-Components-Labeling"
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Standard
@@ -7449,56 +7430,7 @@ reference "fig:Euler-Number-Computation-2D"
 -c).
 \end_layout
 
-\begin_layout Standard
-In 3D, the 6-connectivity considers the neighbors in the three main directions
- within the image, whereas the 26 connectivity also consider the diagonals.
- Other connectivities have been proposed but are not implemented in MorphoLibJ
- 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Ohser2009"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-The connectivity is also considered for computing morphological reconstructions
- (section
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:Morphological-Reconstruction"
-
-\end_inset
-
-), or for computing the connected component labeling of a binary image (section
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:Connected-Components-Labeling"
-
-\end_inset
-
-).
-\end_layout
-
-\begin_layout Standard
-In the current implementation in MorphoLibJ, the Euler number is not taken
- into account for intersection of particles with image borders, as they
- usually do not correspond to real boundaries.
- This may however result in non-integer result if the particle(s) of interest
- touches image border.
-\end_layout
-
-\begin_layout Subsection
+\begin_layout Subsubsection
 Shape factors
 \end_layout
 
@@ -7582,24 +7514,7 @@ elongation index
 
 \end_layout
 
-\begin_layout Standard
-In 3D, the 
-\series bold
-sphericity index
-\series default
- can be defined as the ratio of the squared volume over the cube of the
- surface area, normalized such that the value for a ball equals one:
-\begin_inset Formula 
-\begin{eqnarray}
-\mbox{sphericity} & = & 36\pi\frac{V^{2}}{S^{3}}
-\end{eqnarray}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
+\begin_layout Subsubsection
 ImageJ plugins
 \end_layout
 
@@ -7633,7 +7548,7 @@ Analyze
  menu.
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Paragraph
 Particle analysis 2D
 \end_layout
 
@@ -7700,86 +7615,7 @@ Elongation the normalized ratio of the square of the perimeter by the area:
  The values range from 1 (round), and increase with elongation of the particle.
 \end_layout
 
-\begin_layout Subsubsection
-Particle analysis 3D
-\end_layout
-
-\begin_layout Standard
-The plugin calculating these measurements is found under 
-\begin_inset Quotes eld
-\end_inset
-
-Plugins\SpecialChar menuseparator
-MorphoLibJ\SpecialChar menuseparator
-Analyze\SpecialChar menuseparator
-Particle Analysis 3D
-\begin_inset Quotes erd
-\end_inset
-
-.
- The results are provided in an ImageJ 
-\emph on
-ResultsTable
-\emph default
-, whose name contains the name of the original image.
- 
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Label the label of the particle measured on the current line (it can be
- different from the row number if some labels do no exist in original image).
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Bounding
-\begin_inset space ~
-\end_inset
-
-box returns the minimal and maximal coordinates in each direction for each
- label.
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Volume computes the number of voxels comprising the particle, multiplied
- by the volume of an individual voxel.
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Surface
-\begin_inset space ~
-\end_inset
-
-area the surface area computed using a discretized version of the Crofton
- formula, that computes intersections with line grids of various orientations
- (currently either 3 or 13).
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Sphericity
-\begin_inset space ~
-\end_inset
-
-index defined as 
-\begin_inset Formula $36\pi V^{2}/S^{3}$
-\end_inset
-
-.
- 
-\end_layout
-
-\begin_layout Standard
-\begin_inset Newpage clearpage
-\end_inset
-
-
-\end_layout
-
-\begin_layout Section
+\begin_layout Subsection
 Inertia ellipse and ellipsoid
 \end_layout
 
@@ -7794,38 +7630,7 @@ ds to an integral of its indicator function, with various degrees along
  ellipse or ellipsoid.
 \end_layout
 
-\begin_layout Standard
-The 
-\series bold
-Inertia
-\begin_inset space ~
-\end_inset
-
-ellipsoid plugin
-\series default
- returns the centroid (center of gravity) as well as the size and the orientatio
-n of the inertia ellipsoid of each 3D particle.
- Radii are sorted in decreasing order.
- Angles are given in degrees, and correspond to the azimut (
-\begin_inset Quotes eld
-\end_inset
-
-yaw
-\begin_inset Quotes erd
-\end_inset
-
-), the elevation (
-\begin_inset Quotes eld
-\end_inset
-
-pitch
-\begin_inset Quotes erd
-\end_inset
-
-), and the roll around the main axis.
-\end_layout
-
-\begin_layout Section
+\begin_layout Subsection
 Geodesic measurements
 \end_layout
 
@@ -8030,6 +7835,295 @@ yi the y-coordinate of the inscribed circle.
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
 radius the radius of the inscribed circle.
+\end_layout
+
+\begin_layout Section
+Region Analysis 3D
+\end_layout
+
+\begin_layout Subsection
+Intrinsic volumes
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+définitions plus mathématiques ?
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For 3D particles, intrinsic volumes correspond to the 
+\series bold
+volume
+\series default
+, the
+\series bold
+ surface area
+\series default
+, the 
+\series bold
+mean breadth 
+\series default
+(a quantity proportional to the integral of the mean curvature over the
+ surface) and the 
+\series bold
+(3D) Euler number
+\series default
+.
+ In 3D the Euler number equals the number of connected components minus
+ the number of 
+\begin_inset Quotes eld
+\end_inset
+
+handles
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+tunnels
+\begin_inset Quotes eld
+\end_inset
+
+ through the structure, plus the number of bubbles within the particles
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Serra_1982,Ohser2009"
+
+\end_inset
+
+, see Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Euler-Number"
+
+\end_inset
+
+-b.
+\end_layout
+
+\begin_layout Subsubsection
+Surface area estimation
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+estimation of surface area 
+\series default
+follows the same principle 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Lang2001,Legland2007"
+
+\end_inset
+
+.
+ The number of directions is typically chosen equal to 3 (the three main
+ axes in image), or 13 (by considering also diagonals).
+ As for perimeter estimation, surface area estimation in usually biased,
+ but is usually more precise than measuring the surface area of the polygonal
+ mesh reconstructed from binary images 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Lehmann_2012_ij"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+Sphericity
+\end_layout
+
+\begin_layout Standard
+In 3D, the 
+\series bold
+sphericity index
+\series default
+ can be defined as the ratio of the squared volume over the cube of the
+ surface area, normalized such that the value for a ball equals one:
+\begin_inset Formula 
+\begin{eqnarray}
+\mbox{sphericity} & = & 36\pi\frac{V^{2}}{S^{3}}
+\end{eqnarray}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Euler number
+\end_layout
+
+\begin_layout Standard
+In 3D, the 6-connectivity considers the neighbors in the three main directions
+ within the image, whereas the 26 connectivity also considers the diagonals.
+ Other connectivities have been proposed but are not implemented in MorphoLibJ
+ 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Ohser2009"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+In the current implementation in MorphoLibJ, the Euler number is not taken
+ into account for intersection of particles with image borders, as they
+ usually do not correspond to real boundaries.
+ This may however result in non-integer result if the particle(s) of interest
+ touches image border.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Plugins
+\end_layout
+
+\begin_layout Paragraph
+Particle analysis 3D
+\end_layout
+
+\begin_layout Standard
+The plugin calculating these measurements is found under 
+\begin_inset Quotes eld
+\end_inset
+
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
+Analyze\SpecialChar menuseparator
+Particle Analysis 3D
+\begin_inset Quotes erd
+\end_inset
+
+.
+ The results are provided in an ImageJ 
+\emph on
+ResultsTable
+\emph default
+, whose name contains the name of the original image.
+ 
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Label the label of the particle measured on the current line (it can be
+ different from the row number if some labels do no exist in original image).
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Bounding
+\begin_inset space ~
+\end_inset
+
+box returns the minimal and maximal coordinates in each direction for each
+ label.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Volume computes the number of voxels comprising the particle, multiplied
+ by the volume of an individual voxel.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Surface
+\begin_inset space ~
+\end_inset
+
+area the surface area computed using a discretized version of the Crofton
+ formula, that computes intersections with line grids of various orientations
+ (currently either 3 or 13).
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Sphericity
+\begin_inset space ~
+\end_inset
+
+index defined as 
+\begin_inset Formula $36\pi V^{2}/S^{3}$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Subsection
+Inertia Ellipsoid
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+un petit schéma ?
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+Inertia
+\begin_inset space ~
+\end_inset
+
+ellipsoid plugin
+\series default
+ returns the centroid (center of gravity) as well as the size and the orientatio
+n of the inertia ellipsoid of each 3D particle.
+ Radii are sorted in decreasing order.
+ Angles are given in degrees, and correspond to the azimut (
+\begin_inset Quotes eld
+\end_inset
+
+yaw
+\begin_inset Quotes erd
+\end_inset
+
+), the elevation (
+\begin_inset Quotes eld
+\end_inset
+
+pitch
+\begin_inset Quotes erd
+\end_inset
+
+), and the roll around the main axis.
 \end_layout
 
 \begin_layout Section
@@ -8382,6 +8476,20 @@ status open
 Microstructure analysis
 \end_layout
 
+\begin_layout Itemize
+Densities of geometric measures (area, perimeter...)
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+reprendre illustrations du poster présenté à EMC 2015
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Covariance
+\end_layout
+
 \end_inset
 
 
@@ -8566,7 +8674,7 @@ minitoc
 \end_layout
 
 \begin_layout Section
-Distances transforms
+Distance transforms
 \end_layout
 
 \begin_layout Subsection
@@ -10995,6 +11103,11 @@ inra.ijpb.data contains generic data structures for manipulating 2D or 3D
 \begin_layout Description
 inra.ijpb.binary contains the set of utilities for working on binary images
  (connected component labeling, distance transform, geodesic distance transform...)
+\end_layout
+
+\begin_layout Description
+inra.ijpb.geometry contains utility functions for geometric computing, and
+ several classes for representing geometric primitives (ellipse, point pair...)
 \end_layout
 
 \begin_layout Description
