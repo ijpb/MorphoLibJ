@@ -35,7 +35,7 @@ public class Centroid extends RegionAnalyzer2D<Point2D>
 	 * @param calib
 	 *            the calibration of the image
 	 * @return an array containing for each label, the coordinates of the
-	 *         centroid, in pixel coordinates
+	 *         centroid, in calibrated coordinates
 	 */
 	public static final Point2D[] centroids(ImageProcessor labelImage, int[] labels, Calibration calib) 
 	{
@@ -114,11 +114,11 @@ public class Centroid extends RegionAnalyzer2D<Point2D>
 	// Implementation of RegionAnalyzer interface
 
 	/**
-	 * Utility method that transforms the mapping between labels and inertia
-	 * ellipses instances into a ResultsTable that can be displayed with ImageJ.
+	 * Utility method that transforms the mapping between labels and Point2D
+	 * instances into a ResultsTable that can be displayed with ImageJ.
 	 * 
 	 * @param map
-	 *            the mapping between labels and Inertia Point2Ds
+	 *            the mapping between labels and centroids
 	 * @return a ResultsTable that can be displayed with ImageJ.
 	 */
 	public ResultsTable createTable(Map<Integer, Point2D> map)

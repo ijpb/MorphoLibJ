@@ -53,14 +53,19 @@ import inra.ijpb.measure.region3d.LargestInscribedBall;
  * 
  * <p>
  * Example of code:
- * <pre>{@code
+ * 
+ * <pre>
+ * {@code
  *  ImageStack labelImage = ...
  *  int[] labels = LabelImages.findAllLabels(image);
  *  double[] resol = new double[]{1, 1, 1};
  *  double[][] ellipsoids = GeometricMeasures3D.inertiaEllipsoid(labelImage,
  *  	labels, resol);
  *  double[][] elongations = GeometricMeasures3D.computeEllipsoidElongations(ellipsoids);
- * }</pre>
+ * }
+ * </pre>
+ * 
+ * @deprecated replaced by inra.ijpb.measure.IntrinsicVolumes3D
  * 
  * @author David Legland
  *
@@ -403,10 +408,13 @@ public class GeometricMeasures3D
 	 * Computes centroid of each label in input stack and returns the result
 	 * as an array of double for each label.
 	 * 
+	 * @deprecated use {@link inra.ijpb.measure.region3d.Centroid3D#centroids(ImageStack, int[])} instead
+	 * 
 	 * @param labelImage an instance of ImageStack containing region labels
 	 * @param labels the set of indices contained in the image
 	 * @return the centroid of each region, as an array of double[3]
 	 */
+	@Deprecated
 	public final static double[][] centroids(ImageStack labelImage,
 			int[] labels) 
 	{
@@ -460,12 +468,14 @@ public class GeometricMeasures3D
 	/**
      * Computes inertia ellipsoid of each 3D region in input 3D label image.
      * 
+	 * @deprecated use {@link inra.ijpb.measure.region3d.InertiaEllipsoid} instead
 	 * 
 	 * @param image an instance of ImageStack containing region labels
 	 * @return the parameters of the inertia ellipsoid for each region
 	 *
      * @throws RuntimeException if jama package is not found.
      */
+	@Deprecated
     public final static ResultsTable inertiaEllipsoid(ImageStack image)
     {
     	return inertiaEllipsoid(image, new double[]{1, 1, 1});
@@ -483,7 +493,7 @@ public class GeometricMeasures3D
 	 * values), the radius of the ellipsoid (3 values), and the orientation,
 	 * given as azimut, elevation, and roll angles, in degrees (3 values).
 	 * 
-	 * @deprecated use InertiaEllipsoid instead
+	 * @deprecated use {@link inra.ijpb.measure.region3d.InertiaEllipsoid} instead
 	 * 
 	 * @param image
 	 *            an instance of ImageStack containing region labels
@@ -528,7 +538,7 @@ public class GeometricMeasures3D
 	 * double[][] elongations = GeometricMeasures3D.computeEllipsoidElongations(ellipsoids);
 	 * </code></pre>
 	 *
-	 * @deprecated use InertiaEllipsoid class instead 
+	 * @deprecated use {@link inra.ijpb.measure.region3d.InertiaEllipsoid} instead
 	 * 
 	 * @param image
 	 *            input image containing label of each particle

@@ -172,7 +172,7 @@ public class MaxFeretDiameter extends RegionAnalyzer2D<PointPair2D>
 	
 	
 	/**
-	 * Computes Maximum Feret diameter from a single particle in a binary image.
+	 * Computes Maximum Feret diameter from a single region in a binary image.
 	 * 
 	 * Computes diameter between corners of image pixels, so the result is
 	 * always greater than or equal to one.
@@ -181,7 +181,7 @@ public class MaxFeretDiameter extends RegionAnalyzer2D<PointPair2D>
 	 *            a binary image representing the particle.
 	 * @param calib
 	 *            the spatial calibration
-	 * @return the maximum Feret diameter of the particle
+	 * @return the maximum Feret diameter of the binary region
 	 */
 	public PointPair2D analyzeBinary(ImageProcessor image, double[] calib)
 	{

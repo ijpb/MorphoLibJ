@@ -45,6 +45,8 @@ import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat5x5;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort5x5;
+import inra.ijpb.data.image.Image3D;
+import inra.ijpb.data.image.Images3D;
 import inra.ijpb.label.LabelImages;
 
 /**
@@ -102,6 +104,65 @@ public class BinaryImages
 		return true;
 	}
 
+	/**
+	 * Counts the number of foreground pixels. The foreground pixels are the
+	 * pixels with a value greater than zero.
+	 * 
+	 * @param image
+	 *            a binary image with zero values for background
+	 * @return the number of pixels with value greater than zero
+	 */
+	public static final int countForegroundPixels(ImageProcessor image)
+	{
+		int width = image.getWidth();
+		int height = image.getHeight();
+
+		int count = 0;
+		
+		for (int y = 0; y < height; y++)
+		{
+			for (int x = 0; x < width; x++) 
+			{
+				if (image.getf(x, y) > 0) 
+					count++;
+			}
+		}
+		
+		return count;
+	}
+	
+	/**
+	 * Counts the number of foreground voxels. The foreground voxels are the
+	 * voxels with a value greater than zero.
+	 * 
+	 * @param image
+	 *            a binary 3D image with zero values for background
+	 * @return the number of voxels with value greater than zero
+	 */
+	public static final int countForegroundVoxels(ImageStack image)
+	{
+		int width = image.getWidth();
+		int height = image.getHeight();
+		int depth = image.getSize();
+
+		int count = 0;
+		
+		// iterate over 3D image, using Image3D wrapper
+		Image3D image3d = Images3D.createWrapper(image);
+		for (int z = 0; z < depth; z++)
+		{
+			for (int y = 0; y < height; y++)
+			{
+				for (int x = 0; x < width; x++) 
+				{
+					if (image3d.get(x, y, z) > 0)
+						count++;
+				}
+			}
+		}		
+		return count;
+	}
+	
 	/**
 	 * Computes the labels in the binary 2D or 3D image contained in the given
 	 * ImagePlus, and computes the maximum label to set up the display range of

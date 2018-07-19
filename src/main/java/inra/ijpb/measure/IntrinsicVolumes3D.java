@@ -9,14 +9,17 @@ import java.util.HashMap;
 import ij.IJ;
 import ij.ImageStack;
 import ij.measure.Calibration;
+import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.geometry.Vector3D;
 import inra.ijpb.label.LabelImages;
 
 /**
- * Computation of intrinsic volumes (volume, surface area, Euler number) for
- * binary or label 3D images.
+ * Computation of intrinsic volumes (volume, surface area, mean breadth and
+ * Euler number) for binary or label 3D images.
  *
- * This class provides only static methods. 
+ * This class provides only static methods.
+ *
+ * @see IntrinsicVolumes2D
  * 
  * @author dlegland
  *
@@ -28,6 +31,8 @@ public class IntrinsicVolumes3D
 	
 	/**
 	 * Measures the volume of a single region within a 3D binary image.
+	 * 
+	 * @see inra.ijpb.binary.BinaryImages#countForegroundVoxels(ImageStack) 
 	 * 
 	 * @param image
 	 *            the binary image containing the region
@@ -41,46 +46,13 @@ public class IntrinsicVolumes3D
         double voxelVolume = calib.pixelWidth * calib.pixelHeight * calib.pixelDepth;
         
 		// count non-zero voxels
-		int voxelCount = voxelCount(image);
+		int voxelCount = BinaryImages.countForegroundVoxels(image);
 
-		// convert voxel counts to particle volumes
+		// convert voxel count to particle volume
 		double volume = voxelCount * voxelVolume;
 		return volume;
 	}
-	
-	/**
-	 * Counts the number of voxels greater than zero within the image.
-	 * 
-	 * @param image
-	 *            the input3D image, assumed to be binary
-	 * @return the number of voxels greater than zero
-	 */
-	private static final int voxelCount(ImageStack image)
-	{
-		// size of image
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-		int sizeZ = image.getSize();
-
-		// iterate on image voxels
-		int count = 0;
-		for (int z = 0; z < sizeZ; z++) 
-        {
-        	for (int y = 0; y < sizeY; y++)
-        	{
-        		for (int x = 0; x < sizeX; x++)
-        		{
-        			if(image.getVoxel(x, y, z) > 0)
-        			{
-        				count++;
-        			}
-        		}
-        	}
-        }
-        
-		return count;
-	}
-	
+		
 	/**
 	 * Measures the volume of each region within a 3D label image.
 	 * 
@@ -122,15 +94,15 @@ public class IntrinsicVolumes3D
 	public static final double volumeDensity(ImageStack image)
 	{
 		// count non-zero voxels
-		int voxelCount = voxelCount(image);
+		int voxelCount = BinaryImages.countForegroundVoxels(image);
 
-		// Normalizes voxel count by imag volume.
+		// Normalizes voxel count by image volume.
 		int voxelNumber = image.getWidth() * image.getWidth() * image.getSize();
 		return voxelCount / voxelNumber;
 	}
 
 	/**
-	 * Computes surface area of a single region within a 3D binary image.
+	 * Measures the surface area of a single region within a 3D binary image.
 	 * 
 	 * Uses discretization of the Crofton formula, that consists in computing
 	 * numbers of intersections with lines of various directions.
@@ -155,7 +127,7 @@ public class IntrinsicVolumes3D
 	
 
 	/**
-	 * Computes surface area for each region within a label image.
+	 * Measures the surface area of each region within a label image.
 	 * 
 	 * Uses discretization of the Crofton formula, that consists in computing
 	 * numbers of intersections with lines of various directions.
@@ -182,7 +154,7 @@ public class IntrinsicVolumes3D
 	}
 	
 	/**
-	 * Computes surface area density of a single region within a 3D binary image.
+	 * Measures the surface area density of a single region within a 3D binary image.
 	 * 
 	 * Uses discretization of the Crofton formula, that consists in computing
 	 * numbers of intersections with lines of various directions.
@@ -236,12 +208,11 @@ public class IntrinsicVolumes3D
 	}
 	
 	/**
-	 * Computes the Look-up table that is used to compute surface area using three directions.
+	 * Computes the Look-up table that is used to compute surface area using
+	 * three directions.
 	 * 
 	 * @param calib
 	 *            the spatial calibration of the image
-	 * @param nDirs
-	 *            the number of directions to consider, either 3 or 13
 	 * @return the look-up-table between binary voxel configuration index and
 	 *         contribution to surface area measure
 	 */
@@ -296,12 +267,11 @@ public class IntrinsicVolumes3D
 	}
 
 	/**
-	 * Computes the Look-up table that is used to compute surface area.
+	 * Computes the Look-up table that is used to compute surface area using 13
+	 * directions.
 	 * 
 	 * @param calib
 	 *            the spatial calibration of the image
-	 * @param nDirs
-	 *            the number of directions to consider, either 3 or 13
 	 * @return the look-up-table between binary voxel configuration index and
 	 *         contribution to surface area measure
 	 */
@@ -419,7 +389,7 @@ public class IntrinsicVolumes3D
 	}
 	
 	/**
-	 * Computes mean breadth of a single region within a 3D binary image.
+	 * Measures the mean breadth of a single region within a 3D binary image.
 	 * 
 	 * The mean breadth is proportional to the integral of mean curvature: mb =
 	 * 2*pi*IMC.
@@ -443,7 +413,7 @@ public class IntrinsicVolumes3D
 	}
 
 	/**
-	 * Computes the mean breadth of each region within a label image. The mean
+	 * Measures the mean breadth of each region within a label image. The mean
 	 * breadth is proportional to the integral of mean curvature: mb = 2*pi*IMC.
 	 * 
 	 * Uses discretization of the Crofton formula, that consists in computing
@@ -471,7 +441,7 @@ public class IntrinsicVolumes3D
 	}
 
 	/**
-	 * Computes mean breadth density of a single region within a 3D binary image.
+	 * Measures the mean breadth density of a single region within a 3D binary image.
 	 * 
 	 * Uses discretization of the Crofton formula, that consists in computing
 	 * euler number of intersection with planes of various orientations.
@@ -497,6 +467,15 @@ public class IntrinsicVolumes3D
 		return surf / vol;
 	}
 
+	/**
+	 * Computes the Look-up table used to measure mean breadth within 3D images.
+	 * 
+	 * @param calib
+	 *            the spatial calibration of image
+	 * @param nDirs
+	 *            the number of directions
+	 * @return a look-up table with 256 entries
+	 */
 	private static final double[] meanBreadthLut(Calibration calib, int nDirs)
 	{
 		if (nDirs == 3)
@@ -513,6 +492,14 @@ public class IntrinsicVolumes3D
 		}
 	}
 	
+	/**
+	 * Computes the Look-up table used to measure mean breadth within 3D images
+	 * using three directions.
+	 * 
+	 * @param calib
+	 *            the spatial calibration of image
+	 * @return a look-up table with 256 entries
+	 */
 	private static final double[] meanBreadthLutD3(Calibration calib)
 	{
 		// distances between a voxel and its neighbors.
@@ -585,6 +572,14 @@ public class IntrinsicVolumes3D
 		return lut;		
 	}
 
+	/**
+	 * Computes the Look-up table used to measure mean breadth within 3D images
+	 * using three directions.
+	 * 
+	 * @param calib
+	 *            the spatial calibration of image
+	 * @return a look-up table with 256 entries
+	 */
 	private static final double[] meanBreadthLutD13(Calibration calib)
 	{
 		// distances between a voxel and its neighbors.
@@ -700,9 +695,15 @@ public class IntrinsicVolumes3D
 	    tile[1][1][0] = (tileIndex & 64) > 0;
 	    tile[1][1][1] = (tileIndex & 128) > 0;
 	}
+	
 	/**
-	 * Return an array with seven values corresponding the unique direction 
+	 * Return an array with seven values corresponding the unique direction
 	 * vectors obtained with 13 directions.
+	 * 
+	 * @param calib
+	 *            the spatial calibration of the 3D image
+	 * @return an array of seven values, corresponding to the three isothetic,
+	 *         three plane diagonal, and one cube diagonal directions.
 	 */
 	private static final double[] computeDirectionWeights3d13(Calibration calib) 
 	{
@@ -792,6 +793,19 @@ public class IntrinsicVolumes3D
 		return weights;
 	}
 
+	/**
+	 * Computes the contribution to Euler number of the reference vertex within
+	 * a rectangular grid tile.
+	 * 
+	 * @param face
+	 *            the boolean values of the four vertices of the rectangular
+	 *            tile
+	 * @param d1
+	 *            distance between vertex 1 and vertex 2
+	 * @param d2
+	 *            distance between vertex 1 and vertex 3
+	 * @return the contribution to the Euler number
+	 */
 	private static final double eulerContribTile2dC8(boolean[] face, double d1, double d2)
 	{
 		// if reference vertex is not with structure, contribution is zero 
@@ -848,7 +862,7 @@ public class IntrinsicVolumes3D
 	
 	/**
 	 * Computes the contribution to Euler number of the reference vertex within
-	 * a triangular face.
+	 * a triangular grid tile.
 	 * 
 	 * @param face
 	 *            the boolean values of the three vertices of the triangular
@@ -903,8 +917,8 @@ public class IntrinsicVolumes3D
 	}
 
 	/**
-	 * Computes Euler number of the region within the binary image,
-	 * using the specified connectivity.
+	 * Measures the Euler number of the region within the binary image, using
+	 * the specified connectivity.
 	 * 
 	 * @param image
 	 *            the input 3D binary image
@@ -923,7 +937,7 @@ public class IntrinsicVolumes3D
 	}
 	
 	/**
-	 * Computes Euler number for each label given in the "labels" argument,
+	 * Measures the Euler number of each region given in the "labels" argument,
 	 * using the specified connectivity.
 	 * 
 	 * @param image
@@ -947,8 +961,8 @@ public class IntrinsicVolumes3D
 	}
 	
 	/**
-	 * Computes Euler number of the region within the binary image,
-	 * using the specified connectivity.
+	 * Measures the Euler number density of the foreground region within a
+	 * binary image, using the specified connectivity.
 	 * 
 	 * @param image
 	 *            the input 3D binary image

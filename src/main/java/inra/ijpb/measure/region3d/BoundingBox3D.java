@@ -56,7 +56,7 @@ public class BoundingBox3D extends RegionAnalyzer3D<Box3D>
 	// Implementation of RegionAnalyzer interface
 
 	/**
-	 * Computes inertia ellipse of each region in input label image.
+	 * Computes the bounding box of each region within a 3D label image.
 	 * 
 	 * @param image
 	 *            the input image containing label of particles
@@ -65,7 +65,7 @@ public class BoundingBox3D extends RegionAnalyzer3D<Box3D>
 	 * @param calib
 	 *            the calibration of the image
 	 * @return an array of Box3D representing the calibrated coordinates of
-	 *         the inertia ellipse of each region
+	 *         the bounding box of each region
 	 */
 	public Box3D[] analyzeRegions(ImageStack image, int[] labels, Calibration calib)
 	{
@@ -147,11 +147,11 @@ public class BoundingBox3D extends RegionAnalyzer3D<Box3D>
 	}
 
 	/**
-	 * Utility method that transforms the mapping between labels and inertia
-	 * boxes instances into a ResultsTable that can be displayed with ImageJ.
+	 * Utility method that transforms the mapping between labels and Box3D
+	 * instances into a ResultsTable that can be displayed with ImageJ.
 	 * 
 	 * @param map
-	 *            the mapping between labels and Inertia Box3Ds
+	 *            the mapping between labels and Box3D instances
 	 * @return a ResultsTable that can be displayed with ImageJ.
 	 */
 	public ResultsTable createTable(Map<Integer, Box3D> map)

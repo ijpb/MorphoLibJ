@@ -8,13 +8,16 @@ import java.util.HashMap;
 
 import ij.measure.Calibration;
 import ij.process.ImageProcessor;
+import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.label.LabelImages;
 
 /**
  * Computation of intrinsic volumes (area, perimeter and Euler number) for
  * binary or label 2D images.
  *
- * This class provides only static methods. 
+ * This class provides only static methods.
+ * 
+ * @see IntrinsicVolumes3D
  * 
  * @author dlegland
  *
@@ -25,13 +28,36 @@ public class IntrinsicVolumes2D
     // Static methods
 
 	/**
-	 * Computes the area for each particle in the label image, taking into
+	 * Measures the area of the foreground region within a binary image.
+	 * 
+	 * @see #perimeter(ImageProcessor, Calibration, int)
+	 * @see #eulerNumber(ImageProcessor, int)
+	 *  
+	 * @see inra.ijpb.binary.BinaryImages#countForegroundPixels(ImageProcessor) 
+	 * 
+	 * @param image
+	 *            the input binary image containing the region to analyze
+	 * @param calib
+	 *            the spatial calibration of the image
+	 * @return the area of each region
+	 */
+	public static final double area(ImageProcessor image, Calibration calib)
+	{
+		// area of individual pixel
+		double pixelArea = calib.pixelWidth * calib.pixelHeight;
+
+		// First count the number of pixels in each region
+		int count = BinaryImages.countForegroundPixels(image);
+		double area = count * pixelArea;
+		return area;
+	}
+
+
+	/**
+	 * Measures the area of each region within a label image, taking into
 	 * account image resolution.
 	 * 
-	 * @see inra.ijpb.label.LabelImages#pixelCount(ij.process.ImageProcessor,
-	 *      int[])
-	 * 
-	 * @see inra.ijpb.label.LabelImages#pixelCount(ImageProcessor, int[]) 
+	 * @see inra.ijpb.binary.LabelImages#pixelCount(ImageProcessor, int[]) 
 	 * 
 	 * @param image
 	 *            the input image containing label of particles
@@ -92,6 +118,20 @@ public class IntrinsicVolumes2D
 	}
 
 
+	/**
+	 * Measures the perimeter of the foreground region within a binary image.
+	 * 
+	 * @see #area(ImageProcessor, Calibration)
+	 * @see #eulerNumber(ImageProcessor, int)
+	 * 
+	 * @param image
+	 *            the input binary image containing the region to analyze
+	 * @param calib
+	 *            the spatial calibration of the image
+	 * @param nDirs
+	 *            the number of directions to consider, either 2 or 4
+	 * @return the perimeter of the binary region
+	 */
 	public static final double perimeter(ImageProcessor image, Calibration calib, int nDirs)
 	{
 		switch (nDirs)
@@ -225,10 +265,26 @@ public class IntrinsicVolumes2D
         return perim;
 	}
 	
+	/**
+	 * Measures the perimeter of each region within a label image.
+	 * 
+	 * @see #areas(ImageProcessor, int[], Calibration)
+	 * @see #eulerNumbers(ImageProcessor, int[], int)
+	 * 
+	 * @param image
+	 *            the input image containing the labels of regions to analyze
+	 * @param labels
+	 *            the labels of the regions within the image
+	 * @param calib
+	 *            the spatial calibration of the image
+	 * @param nDirs
+	 *            the number of directions to consider, either 2 or 4
+	 * @return the perimeter of each region within the image
+	 */
 	public static final double[] perimeters(ImageProcessor image, int[] labels, Calibration calib, int nDirs)
 	{
 		// pre-compute LUT corresponding to resolution and number of directions
-		double[] lut = computePerimeterLut(calib, nDirs);
+		double[] lut = perimeterLut(calib, nDirs);
 
 		// apply Binary configuration look-up table
 		return applyConfigurationLut(image, labels, lut);
@@ -249,7 +305,7 @@ public class IntrinsicVolumes2D
 			Calibration calib, int nDirs)
 	{
 		// create associative array to know index of each label
-		double[] lut = computePerimeterLut(calib, 2);
+		double[] lut = perimeterLut(calib, 2);
 
 		// initialize result
 		double perimeter = 0;
@@ -291,7 +347,7 @@ public class IntrinsicVolumes2D
 	 * @return an array containing for each 2-by-2 configuration index, the
 	 *         corresponding contribution to perimeter estimate
 	 */
-	private static final double[] computePerimeterLut(Calibration calib, int nDirs)
+	private static final double[] perimeterLut(Calibration calib, int nDirs)
 	{
 		// distances between a pixel and its neighbors.
 		// di refer to orthogonal neighbors
@@ -398,12 +454,30 @@ public class IntrinsicVolumes2D
 		return new double[] { alpha1, alpha2, alpha34, alpha34 };
 	}
 	
+	/**
+	 * Measures the Euler number of the foreground region within a binary image.
+	 * 
+	 * The Euler number is equal to the number of connected components minus the
+	 * number of holes within the structure. The result depends on the
+	 * connectivity used for computation.
+	 * 
+	 * @see #area(ImageProcessor, Calibration)
+	 * @see #perimeter(ImageProcessor, Calibration, int)
+	 * 
+	 * @param image
+	 *            the input binary image containing the region to analyze
+	 * @param conn
+	 *            the connectivity to use, either 4 or 8
+	 * @return the Euler number of the binary region
+	 */
 	public static final int eulerNumber(ImageProcessor image, int conn)
 	{
 		switch(conn)
 		{
-		case 4: return eulerNumberC4(image);
-		case 8: return eulerNumberC8(image);
+		case 4:
+			return eulerNumberC4(image);
+		case 8:
+			return eulerNumberC8(image);
 		default:
 			throw new IllegalArgumentException("Connectivity must be 4 or 8, not " + conn);
 		}
@@ -535,7 +609,7 @@ public class IntrinsicVolumes2D
 	public static final double[] eulerNumbers(ImageProcessor image, int[] labels, int conn)
 	{
 		// pre-compute LUT corresponding to connectivity
-		double[] lut = computeEulerNumberLut(conn);
+		double[] lut = eulerNumberLut(conn);
 
 		// apply Binary configuration look-up table
 		return applyConfigurationLut(image, labels, lut);
@@ -544,7 +618,7 @@ public class IntrinsicVolumes2D
 	public static final double eulerNumberDensity(ImageProcessor image, Calibration calib, int conn)
 	{
 		// create associative array to know index of each label
-		double[] lut = computeEulerNumberLut(conn);
+		double[] lut = eulerNumberLut(conn);
 
 		// initialize result
 		double euler = 0;
@@ -584,7 +658,7 @@ public class IntrinsicVolumes2D
 	 * @return an array containing for each 2-by-2 configuration index, the
 	 *         corresponding contribution to euler number estimate
 	 */
-	private static final double[] computeEulerNumberLut(int conn)
+	private static final double[] eulerNumberLut(int conn)
 	{
 		switch(conn)
 		{

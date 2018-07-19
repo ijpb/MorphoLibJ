@@ -58,7 +58,7 @@ public class LargestInscribedCircle extends RegionAnalyzer2D<Circle2D>
 	 * circle instances into a ResultsTable that can be displayed with ImageJ.
 	 * 
 	 * @param map
-	 *            the mapping between labels and Inertia Ellipses
+	 *            the mapping between labels and Circle2D instances
 	 * @return a ResultsTable that can be displayed with ImageJ.
 	 */
 	public ResultsTable createTable(Map<Integer, Circle2D> map)

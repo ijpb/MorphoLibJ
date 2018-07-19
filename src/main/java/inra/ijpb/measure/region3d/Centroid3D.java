@@ -119,11 +119,11 @@ public class Centroid3D extends RegionAnalyzer3D<Point3D>
 	// Implementation of RegionAnalyzer interface
 
 	/**
-	 * Utility method that transforms the mapping between labels and inertia
-	 * ellipses instances into a ResultsTable that can be displayed with ImageJ.
+	 * Utility method that transforms the mapping between labels and Point3D
+	 * instances into a ResultsTable that can be displayed with ImageJ.
 	 * 
 	 * @param map
-	 *            the mapping between labels and Inertia Point3Ds
+	 *            the mapping between labels and Point3Ds
 	 * @return a ResultsTable that can be displayed with ImageJ.
 	 */
 	public ResultsTable createTable(Map<Integer, Point3D> map)

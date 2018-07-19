@@ -55,7 +55,7 @@ public class BoundingBox extends RegionAnalyzer2D<Box2D>
 	// Implementation of RegionAnalyzer interface
 
 	/**
-	 * Computes inertia ellipse of each region in input label image.
+	 * Computes bounding box of each region in input label image.
 	 * 
 	 * @param image
 	 *            the input image containing label of particles
@@ -64,7 +64,7 @@ public class BoundingBox extends RegionAnalyzer2D<Box2D>
 	 * @param calib
 	 *            the calibration of the image
 	 * @return an array of Box2D representing the calibrated coordinates of
-	 *         the inertia ellipse of each region
+	 *         the bounding box of each region
 	 */
 	public Box2D[] analyzeRegions(ImageProcessor image, int[] labels, Calibration calib)
 	{
@@ -133,11 +133,11 @@ public class BoundingBox extends RegionAnalyzer2D<Box2D>
 	}
 
 	/**
-	 * Utility method that transforms the mapping between labels and inertia
+	 * Utility method that transforms the mapping between labels and bounding
 	 * boxes instances into a ResultsTable that can be displayed with ImageJ.
 	 * 
 	 * @param map
-	 *            the mapping between labels and Inertia Box2Ds
+	 *            the mapping between labels and bounding Boxes
 	 * @return a ResultsTable that can be displayed with ImageJ.
 	 */
 	public ResultsTable createTable(Map<Integer, Box2D> map)
