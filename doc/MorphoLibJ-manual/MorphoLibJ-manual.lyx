@@ -6791,12 +6791,56 @@ Measurements
 \end_layout
 
 \begin_layout Standard
-MorphoLibJ contains several tools for quantifying the size, the shape, or
- the spatial organization, from 
+MorphoLibJ contains several tools for quantifying the 
 \series bold
-binary or label
+size
 \series default
- 2D and 3D images.
+, the 
+\series bold
+shape
+\series default
+, the 
+\series bold
+intensities
+\series default
+, or the 
+\series bold
+spatial organization
+\series default
+ of biological structures observed within images 2D or 3D images.
+ 
+\end_layout
+
+\begin_layout Standard
+Sections 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Region-Analysis"
+
+\end_inset
+
+ and refer 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Region-Analysis-3D"
+
+\end_inset
+
+ to the analysis of 2D and 3D regions, respectively.
+ Most region analysis operators of the MorphoLibJ library assume the input
+ image to be either a binary image representing a single region, or a label
+ image representing a collection of disjoint regions (see section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:label-images"
+
+\end_inset
+
+).
  The aim is to facilitate the management of label images, contrary to the
  built-in 
 \begin_inset Quotes eld
@@ -6811,21 +6855,28 @@ Analyze Particles...
 \end_layout
 
 \begin_layout Standard
-In label image, each particle or region is represented by an integer label
- (see section
-\begin_inset space ~
-\end_inset
-
-
+The library also provides plugins for intensity measurements (section 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sec:label-images"
+reference "sec:Intensity-Measurements"
+
+\end_inset
+
+), the comparison of label images (section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Label-Overlap-measures"
+
+\end_inset
+
+), and the quantification of spatial organization (section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Spatial-Organization"
 
 \end_inset
 
 ).
- We first define and describe the implemented features, then we present
- the plugins that integrate them.
 \end_layout
 
 \begin_layout Standard
@@ -6866,15 +6917,30 @@ name "sec:Region-Analysis"
 \end_layout
 
 \begin_layout Standard
+Region analysis usually refers to the quantification of features related
+ to the 
+\series bold
+size
+\series default
+ and the 
+\series bold
+shape
+\series default
+ of regions identified within images.
+\end_layout
+
+\begin_layout Standard
+We first provide mathematical definitions of the implemented features, eventuall
+y completed by the methods used to measure them from discrete images, and
+ finally we present the plugins that integrate them.
+\end_layout
+
+\begin_layout Standard
 \begin_inset Note Note
 status open
 
 \begin_layout Plain Layout
 TODO: 
-\end_layout
-
-\begin_layout Itemize
-introduction
 \end_layout
 
 \begin_layout Itemize
@@ -6907,8 +6973,8 @@ intrinsic volumes
 \series default
 are a set of features with interesting mathematical properties that are
  commonly used for describing individual particles as well as binary microstruct
-rues.
- In the planar case, they correspond to the 
+ures.
+ In 2D, they correspond to the 
 \series bold
 area
 \series default
@@ -6921,8 +6987,85 @@ perimeter
 Euler number
 \series default
 .
- The Euler number is a topological characteristic that equals the number
- of connected components minus the number of holes (Fig.
+\end_layout
+
+\begin_layout Subsubsection
+Definitions
+\end_layout
+
+\begin_layout Paragraph
+Area and perimeter
+\end_layout
+
+\begin_layout Standard
+\begin_inset space ~
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+area
+\series default
+ and the 
+\series bold
+perimeter
+\series default
+ of a set 
+\begin_inset Formula $X$
+\end_inset
+
+ with smooth surface 
+\begin_inset Formula $\partial X$
+\end_inset
+
+ can be defined using integrals over the set, or over its boundary:
+\begin_inset Formula 
+\begin{align}
+A(X) & =\int_{X}dx\\
+P(X) & =\int_{\partial X}dx
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In image analysis, the 
+\series bold
+measurement of area 
+\series default
+of 2D particles simply consists in counting the number of pixels that constitute
+ it, weighted by the area of an individual pixel.
+ 
+\end_layout
+
+\begin_layout Paragraph
+Euler number
+\end_layout
+
+\begin_layout Standard
+\begin_inset space ~
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+Euler number
+\series default
+ is a feature that describes the 
+\series bold
+topology 
+\series default
+of a region.
+ It corresponds to the number of connected components, minus the number
+ of holes (Fig.
 \begin_inset space ~
 \end_inset
 
@@ -6938,26 +7081,6 @@ reference "fig:Euler-Number"
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-reprendre figure avec illustration périmètre ?
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
 \begin_inset Float figure
 wide false
 sideways false
@@ -6966,56 +7089,8 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename images/analysis/euler-number-2d.png
+	filename images/analysis/euler-number-2d-horiz.png
 	height 4cm
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-2D Euler number
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename images/analysis/negativeEulerNumber.png
-	height 4cm
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-3D Euler number
-\end_layout
-
-\end_inset
-
-
-\end_layout
 
 \end_inset
 
@@ -7032,16 +7107,42 @@ name "fig:Euler-Number"
 
 \end_inset
 
-Illustration of Euler Number definition.
- (a) Three particles with Euler numbers equal to 1, 0 and -1, respectively.
- (b) Example of a 3D particle with an Euler number equal to -1, corresponding
- to the subtraction of 1 connected components minus two handles.
+Euler Number for 2D regions.
+ Particle A is composed of a single component, its Euler number is 1.
+ Particles B and C present one and two holes respectively.
+ Their corresponding Euler numbers are equal to 
+\begin_inset Formula $0=1-1$
+\end_inset
+
+ and 
+\begin_inset Formula $-1=1-2$
+\end_inset
+
+.
+ 
 \end_layout
 
 \end_inset
 
 
 \end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In 2D, the Euler number of a region with smooth boundary also equals the
+ 
+\series bold
+integral of the curvature
+\series default
+ over the boundary of the set:
+\begin_inset Formula 
+\begin{equation}
+\chi(X)=\frac{1}{2\pi}\int_{\partial X}\kappa(x)dx
+\end{equation}
 
 \end_inset
 
@@ -7049,7 +7150,7 @@ Illustration of Euler Number definition.
 \end_layout
 
 \begin_layout Subsubsection
-Estimation from discrete images
+Measurement of perimeter
 \end_layout
 
 \begin_layout Standard
@@ -7063,50 +7164,52 @@ name "subsec:Surface-Area-And-Perimeter"
 \end_layout
 
 \begin_layout Standard
-In image analysis, the 
-\series bold
-estimation of area 
-\series default
-of 2D particles and of 
-\series bold
-volume of 3D particles 
-\series default
-simply consists in counting the number of pixels or voxels that constitute
- it, weighted by the area of an individual pixel or the volume of an individual
- voxel.
- 
-\end_layout
-
-\begin_layout Standard
-The implemented method for 
-\series bold
-perimeter measurement 
-\series default
-aims at providing a better estimate of the perimeter than traditional boundary
- pixel count.
- The principle is to consider a set of lines with various orientations,
- and to count the number of intersections with the region(s) of interest
- (Figure
+An intuitive approach for measuring the perimeter of a binary region is
+ to count the number of boundary pixels (Figure
 \begin_inset space ~
 \end_inset
 
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Perimeter-Estimation-With-Crofton"
+reference "fig:Perimeter-Estimation"
 
 \end_inset
 
 ).
- The number of intersections is proportional to the perimeter 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Serra_1982,Legland2007,Ohser2009"
+ However, this approach is rather inaccurate.
+ For example, when counting the boundary pixels of a discretized disk, one
+ obtain the same perimeter value as the length of the bounding rectangle,
+ leading to a relative error of more than 25%
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+If 
+\begin_inset Formula $d$
+\end_inset
+
+ is the diameter of the circle, the expected perimeter is 
+\begin_inset Formula $\pi d$
+\end_inset
+
+.
+ The number of boundary pixels measure the perimeter of the enclosing square,
+ equal to 
+\begin_inset Formula $4d$
+\end_inset
+
+.
+ The relative error is 
+\begin_inset Formula $(4d-\pi d)/\pi d\simeq27\%$
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
 .
- By averaging over all possible directions, the estimate is unbiased.
 \end_layout
 
 \begin_layout Standard
@@ -7117,10 +7220,66 @@ status open
 
 \begin_layout Plain Layout
 \align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
 \begin_inset Graphics
-	filename images/analysis/crofton-principle-2d.png
+	filename images/analysis/perimeter-measure-boundaryCount.png
 	lyxscale 50
-	height 4.5cm
+	height 6cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Boundary pixels count
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/analysis/perimeter-measure-Crofton.png
+	lyxscale 50
+	height 6cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Crofton method
+\end_layout
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
@@ -7133,14 +7292,13 @@ status open
 \begin_layout Plain Layout
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Perimeter-Estimation-With-Crofton"
+name "fig:Perimeter-Estimation"
 
 \end_inset
 
-Principle of perimeter estimation by counting the number of intersections
- with a set of lines.
- The number of intersection points is proportional to the perimeter of the
- particle.
+Measurement of perimeter within a discrete image of a disk.
+ (a) Counting the number of boundary pixels.
+ (b) Counting the number of intersection with parallel lines.
  
 \end_layout
 
@@ -7155,8 +7313,37 @@ Principle of perimeter estimation by counting the number of intersections
 \end_layout
 
 \begin_layout Standard
-Perimeter can be estimated using either two directions (horizontal and vertical)
-, or four directions (by adding the diagonals).
+The discrete version of Crofton formula can provide a better estimate of
+ the perimeter than traditional boundary pixel count.
+ The principle is to consider a set of parallel lines with a random orientation,
+ and to count the number of intersections with the region of interest (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Perimeter-Estimation"
+
+\end_inset
+
+).
+ The number of intersections is proportional to the line density and to
+ the perimeter 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Serra_1982,Legland2007,Ohser2009"
+
+\end_inset
+
+.
+ By averaging over all possible directions, an unbiased estimate can be
+ obtained.
+\end_layout
+
+\begin_layout Standard
+Perimeter can be measured using either two directions (horizontal and vertical),
+ or four directions (by adding the diagonals).
  Restricting the number of directions introduces an estimation bias, with
  known theoretical bounds 
 \begin_inset CommandInset citation
@@ -7165,7 +7352,9 @@ key "Moran1966,Legland2007"
 
 \end_inset
 
-, that is usually better than boundary pixel count 
+.
+ The error made by counting intersections is usually better than boundary
+ pixel count 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Lehmann_2012_ij"
@@ -7176,7 +7365,7 @@ key "Lehmann_2012_ij"
 \end_layout
 
 \begin_layout Subsubsection
-Euler number
+Measurement of Euler number
 \end_layout
 
 \begin_layout Standard
@@ -7549,7 +7738,7 @@ Analyze
 \end_layout
 
 \begin_layout Paragraph
-Particle analysis 2D
+Analyze Regions
 \end_layout
 
 \begin_layout Standard
@@ -7557,7 +7746,7 @@ The
 \series bold
 global geometry
 \series default
- of particles in 2D images can be characterized with the Region Morphometry
+ of particles in 2D images can be characterized with the Analyze Regions
  plugin (under 
 \begin_inset Quotes eld
 \end_inset
@@ -7565,7 +7754,7 @@ global geometry
 Plugins\SpecialChar menuseparator
 MorphoLibJ\SpecialChar menuseparator
 Analyze\SpecialChar menuseparator
-Region Morphometry
+Analyze Regions
 \begin_inset Quotes erd
 \end_inset
 
@@ -7615,19 +7804,194 @@ Elongation the normalized ratio of the square of the perimeter by the area:
  The values range from 1 (round), and increase with elongation of the particle.
 \end_layout
 
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
-Inertia ellipse and ellipsoid
+Geometric moments and inertia ellipse 
 \end_layout
 
 \begin_layout Standard
-A binary particle may be described mathematically by its moments which correspon
-ds to an integral of its indicator function, with various degrees along
- the directions.
- The first moment corresponds to the area or to the volume of the particle.
- The normalization of the first-order indicator functions leads to the 2D
- or 3D centroid of the particle.
- The second order moments can be used to compute the equivalent inertia
- ellipse or ellipsoid.
+A binary region may be described mathematically by its geometric moments
+ 
+\begin_inset Formula $m_{pq}$
+\end_inset
+
+ of order 
+\begin_inset Formula $(p,q)$
+\end_inset
+
+, which correspond to an integral of its indicator function 
+\begin_inset Formula $I_{X}$
+\end_inset
+
+, with various degrees along the directions:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align}
+m_{pq}(X) & =\int\int I_{X}(x,y)x^{p}y^{q}\cdot dx\cdot dy\label{eq:Moment-of-X-2D}
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The area of 
+\begin_inset Formula $X$
+\end_inset
+
+ simply corresponds to the moment of order 
+\begin_inset Formula $(0,0)$
+\end_inset
+
+: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+m_{00} & =\int\int I_{X}(x,y)\cdot dx\cdot dy\\
+ & =A(X)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The coordinates of the centroid of 
+\begin_inset Formula $X$
+\end_inset
+
+ can be expressed from the first-order moments:
+\begin_inset Formula 
+\begin{align*}
+x_{c} & =\frac{m_{10}}{m_{00}}=\frac{1}{Area(X)}\int\int I_{X}(x,y)\cdot x\cdot dx\cdot dy\\
+y_{c} & =\frac{m_{01}}{m_{00}}=\frac{1}{Area(X)}\int\int I_{X}(x,y)\cdot y\cdot dx\cdot dy
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+It is often more convenient to work with centered moments, given by:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align}
+\mu_{pq} & =\int\int I_{X}(x,y)\left(x-x_{c}\right)^{p}\left(y-yc\right)^{q}\cdot dx\cdot dy
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/analysis/inertia-ellipse.png
+	height 4cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Inertia-ellipse"
+
+\end_inset
+
+Inertia ellipse.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The second order centered moments can be used to compute the inertia matrix:
+\begin_inset Formula 
+\[
+\left[\begin{array}{cc}
+\mu_{20} & \mu_{11}\\
+\mu_{11} & \mu_{02}
+\end{array}\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+By computing the parameters of the ellipse that produces the same inertia
+ matrix, one obtain the equivalent 
+\series bold
+inertia ellipse
+\series default
+ 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Burger_Burge_2008"
+
+\end_inset
+
+.
+ In particular, the orientation 
+\begin_inset Formula $\theta$
+\end_inset
+
+ of the inertia ellipse is given by 
+\begin_inset Formula $\theta=\frac{1}{2}\text{atan2}\left(2\cdot\mu_{11},\mu_{20}-\mu_{02}\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -7841,21 +8205,24 @@ radius the radius of the inscribed circle.
 Region Analysis 3D
 \end_layout
 
-\begin_layout Subsection
-Intrinsic volumes
-\end_layout
-
 \begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-définitions plus mathématiques ?
-\end_layout
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Region-Analysis-3D"
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+Region analysis may also be performed on 3D images.
+ As for 2D images, input images may be either binary (corresponding to a
+ single region), or contain the labels of the different regions to analyze.
+\end_layout
+
+\begin_layout Subsection
+Intrinsic volumes
 \end_layout
 
 \begin_layout Standard
@@ -7869,16 +8236,101 @@ volume
 \series default
 , the 
 \series bold
-mean breadth 
+mean breadth
 \series default
-(a quantity proportional to the integral of the mean curvature over the
- surface) and the 
+ and the 
 \series bold
-(3D) Euler number
+3D Euler number
 \series default
 .
- In 3D the Euler number equals the number of connected components minus
- the number of 
+ While the volume and the surface area are rather common, the latter two
+ are less intuitive.
+ Both the mean breadth and the 3D Euler number can be related to the curvatures
+ that can be measured on smooth surfaces.
+\end_layout
+
+\begin_layout Subsubsection
+Definitions
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+volume
+\series default
+ and the 
+\series bold
+surface area
+\series default
+ of a set 
+\begin_inset Formula $X$
+\end_inset
+
+ with smooth surface 
+\begin_inset Formula $\partial X$
+\end_inset
+
+ can be defined using integrals over the set, or over its boundary:
+\begin_inset Formula 
+\begin{align}
+V(X) & =\int_{X}dx\\
+S(X) & =\int_{\partial X}dx
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+mean breadth 
+\series default
+
+\begin_inset Formula $\bar{b}$
+\end_inset
+
+ of a convex set can be seen as the average of the caliper diameter over
+ all directions.
+ For a set 
+\begin_inset Formula $X$
+\end_inset
+
+ with smooth boundary 
+\begin_inset Formula $\partial X$
+\end_inset
+
+, the mean breadth is proportionnal to the 
+\series bold
+integral of the mean curvature
+\series default
+ 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Serra_1982,Ohser2009"
+
+\end_inset
+
+: 
+\begin_inset Formula 
+\begin{align}
+\bar{b}(X) & =\frac{1}{2\pi}\int_{\partial X}\frac{\kappa_{1}(x)+\kappa_{2}(x)}{2}dx
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+As in 2D, the 
+\series bold
+3D Euler number 
+\series default
+also quantify the topology of a set.
+ It corresponds to the number of connected components, minus the number
+ of 
 \begin_inset Quotes eld
 \end_inset
 
@@ -7915,16 +8367,115 @@ reference "fig:Euler-Number"
 -b.
 \end_layout
 
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/analysis/euler-number-3d.png
+	height 4cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Euler-Number-3d"
+
+\end_inset
+
+Euler Number of a 3D particle.
+ The Euler number equals -1, corresponding to the subtraction of 1 connected
+ components minus two handles.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For a set 
+\begin_inset Formula $X$
+\end_inset
+
+ with smooth boundary 
+\begin_inset Formula $\partial X$
+\end_inset
+
+, the 3D Euler number is proportionnal to the integral of the 
+\series bold
+gaussian curvature
+\series default
+, corresponding to the product of the curvatures:
+\begin_inset Formula 
+\begin{align}
+\chi(X) & =\frac{1}{4\pi}\int_{\partial X}\kappa_{1}(x)\cdot\kappa_{2}(x)dx
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsubsection
-Surface area estimation
+Shape indices
+\end_layout
+
+\begin_layout Standard
+In 3D, the 
+\series bold
+sphericity index
+\series default
+ can be defined as the ratio of the squared volume over the cube of the
+ surface area, normalized such that the value for a ball equals one:
+\begin_inset Formula 
+\begin{eqnarray}
+\mbox{sphericity} & = & 36\pi\frac{V^{2}}{S^{3}}
+\end{eqnarray}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Measures from discrete images
+\end_layout
+
+\begin_layout Standard
+The measurement of 
+\series bold
+volume of 3D region
+\series default
+ is as straightforward as in 2D: it consists in counting voxels that belong
+ to the 3D region, weighted by the volume of an individual voxel.
+ 
 \end_layout
 
 \begin_layout Standard
 The 
 \series bold
-estimation of surface area 
+measurement of surface area 
 \series default
-follows the same principle 
+from 3D binary images follows the same principle as the estimation of perimeter.
+ One considers the intersections of the region with straight lines, and
+ average over all possible directions 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Lang2001,Legland2007"
@@ -7946,33 +8497,10 @@ key "Lehmann_2012_ij"
 .
 \end_layout
 
-\begin_layout Subsubsection
-Sphericity
-\end_layout
-
 \begin_layout Standard
-In 3D, the 
-\series bold
-sphericity index
-\series default
- can be defined as the ratio of the squared volume over the cube of the
- surface area, normalized such that the value for a ball equals one:
-\begin_inset Formula 
-\begin{eqnarray}
-\mbox{sphericity} & = & 36\pi\frac{V^{2}}{S^{3}}
-\end{eqnarray}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsubsection
-Euler number
-\end_layout
-
-\begin_layout Standard
-In 3D, the 6-connectivity considers the neighbors in the three main directions
+As for 2D images, the measurement of Euler number from 3D images also relies
+ on the choice of a connectivity between adjacent voxels.
+ In 3D, the 6-connectivity considers the neighbors in the three main directions
  within the image, whereas the 26 connectivity also considers the diagonals.
  Other connectivities have been proposed but are not implemented in MorphoLibJ
  
@@ -7985,16 +8513,16 @@ key "Ohser2009"
 .
 \end_layout
 
+\begin_layout Subsection
+Inertia Ellipsoid
+\end_layout
+
 \begin_layout Standard
 \begin_inset Note Note
 status open
 
 \begin_layout Plain Layout
-In the current implementation in MorphoLibJ, the Euler number is not taken
- into account for intersection of particles with image borders, as they
- usually do not correspond to real boundaries.
- This may however result in non-integer result if the particle(s) of interest
- touches image border.
+un petit schéma ?
 \end_layout
 
 \end_inset
@@ -8002,23 +8530,73 @@ In the current implementation in MorphoLibJ, the Euler number is not taken
 
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Standard
+The mathematical definition of the geometric moments for 3D regions is similar
+ to the 2D case.
+ The first moment corresponds to the volume of the particle.
+ The normalization of the first-order moments leads to the 3D centroid of
+ the particle.
+ The second-order moments can be used to compute the equivalent inertia
+ ellipse or ellipsoid.
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+Inertia
+\begin_inset space ~
+\end_inset
+
+Ellipsoid plugin
+\series default
+ returns the centroid (center of gravity) as well as the size and the orientatio
+n of the inertia ellipsoid of each 3D particle.
+ Radii are sorted in decreasing order.
+ Angles are given in degrees, and correspond to the azimut (
+\begin_inset Quotes eld
+\end_inset
+
+yaw
+\begin_inset Quotes erd
+\end_inset
+
+), the elevation (
+\begin_inset Quotes eld
+\end_inset
+
+pitch
+\begin_inset Quotes erd
+\end_inset
+
+), and the roll around the main axis.
+\end_layout
+
+\begin_layout Subsection
 Plugins
 \end_layout
 
 \begin_layout Paragraph
-Particle analysis 3D
+Aalyze Regions 3D
 \end_layout
 
 \begin_layout Standard
-The plugin calculating these measurements is found under 
+The plugin 
+\begin_inset Quotes eld
+\end_inset
+
+Analyze Regions 3D
+\begin_inset Quotes erd
+\end_inset
+
+ gathers most 3D measures implemented within the MorphoLibJ library.
+ It can be found under 
 \begin_inset Quotes eld
 \end_inset
 
 Plugins\SpecialChar menuseparator
 MorphoLibJ\SpecialChar menuseparator
 Analyze\SpecialChar menuseparator
-Particle Analysis 3D
+Analyze Regions 3D
 \begin_inset Quotes erd
 \end_inset
 
@@ -8078,56 +8656,18 @@ index defined as
  
 \end_layout
 
-\begin_layout Subsection
-Inertia Ellipsoid
-\end_layout
-
-\begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-un petit schéma ?
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The 
-\series bold
-Inertia
-\begin_inset space ~
-\end_inset
-
-ellipsoid plugin
-\series default
- returns the centroid (center of gravity) as well as the size and the orientatio
-n of the inertia ellipsoid of each 3D particle.
- Radii are sorted in decreasing order.
- Angles are given in degrees, and correspond to the azimut (
-\begin_inset Quotes eld
-\end_inset
-
-yaw
-\begin_inset Quotes erd
-\end_inset
-
-), the elevation (
-\begin_inset Quotes eld
-\end_inset
-
-pitch
-\begin_inset Quotes erd
-\end_inset
-
-), and the roll around the main axis.
-\end_layout
-
 \begin_layout Section
 Intensity measurements
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Intensity-Measurements"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -8164,6 +8704,9 @@ ResultsTable
 
 \begin_layout Section
 Label Overlap measures
+\end_layout
+
+\begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
 name "sec:Label-Overlap-measures"
@@ -8497,6 +9040,16 @@ Covariance
 
 \begin_layout Section
 Spatial organization
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Spatial-Organization"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
