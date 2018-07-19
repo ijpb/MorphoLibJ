@@ -57,7 +57,7 @@ public class IntrinsicVolumes2D
 	 * Measures the area of each region within a label image, taking into
 	 * account image resolution.
 	 * 
-	 * @see inra.ijpb.binary.LabelImages#pixelCount(ImageProcessor, int[]) 
+	 * @see inra.ijpb.label.LabelImages#pixelCount(ImageProcessor, int[]) 
 	 * 
 	 * @param image
 	 *            the input image containing label of particles

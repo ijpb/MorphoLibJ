@@ -123,9 +123,9 @@ public class GeometricMeasures3DTest {
 		ImageStack image = imagePlus.getStack();
 		
 		ResultsTable table = GeometricMeasures3D.inertiaEllipsoid(image);
-		assertEquals(30, table.getValue("Radius1", 0), .1);
-		assertEquals(20, table.getValue("Radius2", 0), .1);
-		assertEquals(10, table.getValue("Radius3", 0), .1);
+		assertEquals(30, table.getValueAsDouble(3, 0), .1);
+		assertEquals(20, table.getValueAsDouble(4, 0), .1);
+		assertEquals(10, table.getValueAsDouble(5, 0), .1);
 	}
 	
 	
