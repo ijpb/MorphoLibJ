@@ -211,6 +211,82 @@ public class IntrinsicVolumes3DTest
 	}
 
 	/**
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3D#meanBreadth(ij.ImageStack, ij.measure.Calibration, int)}.
+	 */
+	@Test
+	public final void testMeanBreadth_SmallCube_D3()
+	{
+		ImageStack image = ImageStack.create(4, 4, 4, 8);
+		image.setVoxel(1, 1, 1, 255);
+		image.setVoxel(2, 1, 1, 255);
+		image.setVoxel(1, 2, 1, 255);
+		image.setVoxel(2, 2, 1, 255);
+		image.setVoxel(1, 1, 2, 255);
+		image.setVoxel(2, 1, 2, 255);
+		image.setVoxel(1, 2, 2, 255);
+		image.setVoxel(2, 2, 2, 255);
+		Calibration calib = new Calibration();
+		
+		double meanBreadth = IntrinsicVolumes3D.meanBreadth(image, calib, 3);
+		
+		double exp = 2.0;
+		assertEquals(exp, meanBreadth, exp * 0.2);
+	}
+
+	/**
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3D#meanBreadth(ij.ImageStack, ij.measure.Calibration, int)}.
+	 */
+	@Test
+	public final void testMeanBreadth_SmallCube_D13()
+	{
+		ImageStack image = ImageStack.create(4, 4, 4, 8);
+		image.setVoxel(1, 1, 1, 255);
+		image.setVoxel(2, 1, 1, 255);
+		image.setVoxel(1, 2, 1, 255);
+		image.setVoxel(2, 2, 1, 255);
+		image.setVoxel(1, 1, 2, 255);
+		image.setVoxel(2, 1, 2, 255);
+		image.setVoxel(1, 2, 2, 255);
+		image.setVoxel(2, 2, 2, 255);
+		Calibration calib = new Calibration();
+		
+		double meanBreadth = IntrinsicVolumes3D.meanBreadth(image, calib, 13);
+		
+		double exp = 2.141;
+		assertEquals(exp, meanBreadth, exp * 0.2);
+	}
+
+	/**
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3D#meanBreadth(ij.ImageStack, ij.measure.Calibration, int)}.
+	 */
+	@Test
+	public final void testMeanBreadth_SingleBall_D3()
+	{
+		ImageStack image = createBallImage();
+		Calibration calib = new Calibration();
+		
+		double meanBreadth = IntrinsicVolumes3D.meanBreadth(image, calib, 3);
+		
+		double exp = 40.0;
+		assertEquals(exp, meanBreadth, exp * 0.2);
+	}
+
+	/**
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3D#meanBreadth(ij.ImageStack, ij.measure.Calibration, int)}.
+	 */
+	@Test
+	public final void testMeanBreadth_SingleBall_D13()
+	{
+		ImageStack image = createBallImage();
+		Calibration calib = new Calibration();
+		
+		double meanBreadth = IntrinsicVolumes3D.meanBreadth(image, calib, 13);
+		
+		double exp = 40.0;
+		assertEquals(exp, meanBreadth, exp * 0.2);
+	}
+
+	/**
 	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3D#eulerNumber(ij.ImageStack, int)}.
 	 */
 	@Test
@@ -275,6 +351,7 @@ public class IntrinsicVolumes3DTest
 	 * center not exactly in the center of the central voxel.
 	 * 
 	 * Expected surface area is around 5026.
+	 * Expected mean breadth is equal to the diameter, i.e. 40.
 	 */
 	private final static ImageStack createBallImage() {
 		// ball features
