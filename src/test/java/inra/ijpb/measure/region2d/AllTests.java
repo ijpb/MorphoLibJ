@@ -28,6 +28,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	// generic classes
+	BinaryConfigurations2DTest.class,
 	GeodesicDiameterTest.class,
 	InertiaEllipseTest.class,
 	LargestInscribedCircleTest.class,

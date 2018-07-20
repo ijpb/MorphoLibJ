@@ -3,13 +3,11 @@
  */
 package inra.ijpb.measure;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import ij.measure.Calibration;
 import ij.process.ImageProcessor;
 import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.label.LabelImages;
+import inra.ijpb.measure.region2d.BinaryConfigurations2D;
 
 /**
  * Computation of intrinsic volumes (area, perimeter and Euler number) for
@@ -79,7 +77,7 @@ public class IntrinsicVolumes2D
 		// First count the number of pixels in each region
 		int[] counts = LabelImages.pixelCount(image, labels);
 
-		// convert pixel count to areas
+		// convert pixel counts to areas
 		for (int i = 0; i < areas.length; i++) 
 		{
 			areas[i] = counts[i] * pixelArea;
@@ -101,19 +99,12 @@ public class IntrinsicVolumes2D
 		// image size
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
+		double totalArea = sizeX * sizeY;
 		
 		// count the number of pixels with value greater than 0
-		int count = 0;
-		for (int y = 0; y < sizeY; y++) 
-		{
-			for (int x = 0; x < sizeX; x++) 
-			{
-				if (image.getf(x, y) > 0) count++;
-			}
-		}
+		double count = BinaryImages.countForegroundPixels(image);
 
 		// normalization by image size
-		double totalArea = sizeX * sizeY;
 		return count / totalArea;
 	}
 
@@ -286,8 +277,11 @@ public class IntrinsicVolumes2D
 		// pre-compute LUT corresponding to resolution and number of directions
 		double[] lut = perimeterLut(calib, nDirs);
 
+		// histogram of configurations for each label
+		int[][] histos = BinaryConfigurations2D.histograms(image, labels);
+		
 		// apply Binary configuration look-up table
-		return applyConfigurationLut(image, labels, lut);
+		return BinaryConfigurations2D.applyLut(histos, lut);
 	}
 
 	/**
@@ -305,34 +299,14 @@ public class IntrinsicVolumes2D
 			Calibration calib, int nDirs)
 	{
 		// create associative array to know index of each label
-		double[] lut = perimeterLut(calib, 2);
+		double[] lut = perimeterLut(calib, nDirs);
 
-		// initialize result
-		double perimeter = 0;
-
-		// size of image
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-
-		// iterate on image pixel configurations
-		for (int y = 0; y < sizeY - 1; y++) 
-		{
-			for (int x = 0; x < sizeX - 1; x++) 
-			{
-				// Compute index of local binary configuration
-				int index = 0;
-				index += image.getf(    x,     y) > 0 ? 1 : 0;
-				index += image.getf(x + 1,     y) > 0 ? 2 : 0;
-				index += image.getf(    x, y + 1) > 0 ? 4 : 0;
-				index += image.getf(x + 1, y + 1) > 0 ? 8 : 0;
-
-				// update measure for current label
-				perimeter += lut[index];
-			}
-		}
-
-		double samplingArea = (sizeX - 1) * calib.pixelWidth * (sizeY - 1) * calib.pixelHeight;
-		return perimeter / samplingArea;
+		// histogram of configurations for each label
+		int[] histo = BinaryConfigurations2D.innerHistogram(image);
+		
+		// apply Binary configuration look-up table
+		double perim = BinaryConfigurations2D.applyLut(histo, lut);
+		return perim / samplingArea(image, calib);
 	}
 
 	/**
@@ -611,8 +585,11 @@ public class IntrinsicVolumes2D
 		// pre-compute LUT corresponding to connectivity
 		double[] lut = eulerNumberLut(conn);
 
+		// histogram of configurations for each label
+		int[][] histos = BinaryConfigurations2D.histograms(image, labels);
+		
 		// apply Binary configuration look-up table
-		return applyConfigurationLut(image, labels, lut);
+		return BinaryConfigurations2D.applyLut(histos, lut);
 	}
 
 	public static final double eulerNumberDensity(ImageProcessor image, Calibration calib, int conn)
@@ -620,32 +597,12 @@ public class IntrinsicVolumes2D
 		// create associative array to know index of each label
 		double[] lut = eulerNumberLut(conn);
 
-		// initialize result
-		double euler = 0;
-
-		// size of image
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-
-		// iterate on image pixel configurations
-		for (int y = 0; y < sizeY - 1; y++) 
-		{
-			for (int x = 0; x < sizeX - 1; x++) 
-			{
-				// Compute index of local binary configuration
-				int index = 0;
-				index += image.getf(    x,     y) > 0 ? 1 : 0;
-				index += image.getf(x + 1,     y) > 0 ? 2 : 0;
-				index += image.getf(    x, y + 1) > 0 ? 4 : 0;
-				index += image.getf(x + 1, y + 1) > 0 ? 8 : 0;
-
-				// update measure for current label
-				euler += lut[index];
-			}
-		}
-
-		double samplingArea = (sizeX - 1) * calib.pixelWidth * (sizeY - 1) * calib.pixelHeight;
-		return euler / samplingArea;
+		// histogram of configurations for each label
+		int[] histo = BinaryConfigurations2D.innerHistogram(image);
+		
+		// apply Binary configuration look-up table
+		double euler = BinaryConfigurations2D.applyLut(histo, lut);
+		return euler / samplingArea(image, calib);
 	}
 
 	/**
@@ -662,107 +619,46 @@ public class IntrinsicVolumes2D
 	{
 		switch(conn)
 		{
-		case 4: return eulerNumberDensityC4();
-		case 8: return eulerNumberDensityC8();
+		case 4:
+			return eulerNumberLutC4();
+		case 8:
+			return eulerNumberLutC8();
 		default:
 			throw new IllegalArgumentException("Connectivity must be 4 or 8, not " + conn);
 		}
 	}
 	
-	private final static double[] eulerNumberDensityC4()
+	private final static double[] eulerNumberLutC4()
 	{
 		return new double[] {
 				0,  0.25, 0.25, 0,    0.25, 0, 0.5, -0.25,  
 				0.25, 0.5, 0, -0.25,   0, -0.25, -0.25, 0};
 	}
 
-	private final static double[] eulerNumberDensityC8()
+	private final static double[] eulerNumberLutC8()
 	{
 		return new double[] {
-				0,  0.25, 0.25, 0,    0.25, 0, 0.0, -0.25,  
-				0.25, 0.0, 0, -0.25,   0, -0.25, -0.25, 0};
+				0,  0.25, 0.25, 0,    0.25, 0, -0.5, -0.25,  
+				0.25, -0.5, 0, -0.25,   0, -0.25, -0.25, 0};
 	}
 	
-	
-	private static final double[] applyConfigurationLut(ImageProcessor image, int[] labels, double[] lut)
+	/**
+	 * Computes the area of the sampling window, for estimation of densities.
+	 * 
+	 * @param image
+	 *            the image to analyze
+	 * @param calib
+	 *            the spatial calibration
+	 * @return the calibrated area of the sampling window
+	 */
+	private static final double samplingArea(ImageProcessor image, Calibration calib)
 	{
-		// create associative array to know index of each label
-		int nLabels = labels.length;
-		HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
-
-		// initialize result
-		double[] results = new double[nLabels];
-
-		// size of image
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-
-		// for each configuration of 2x2 pixels, we identify the labels
-		ArrayList<Integer> localLabels = new ArrayList<Integer>(4);
-
-		// values of pixels within current 2-by-2 configuration
-		// (first digit for y, second digit for x)
-		int[] configValues = new int[4];
-		
-		// Iterate over all 2-by-2 configurations containing at least one pixel
-		// within the image.
-        // Current pixel is the lower-right pixel in configuration
-		// (corresponding to b11).
-		for (int y = 0; y < sizeY + 1; y++) 
-		{
-			configValues[0] = 0;
-			configValues[2] = 0;
-			
-			for (int x = 0; x < sizeX + 1; x++) 
-			{
-        		// update pixel values of configuration
-				configValues[1] = x < sizeX & y > 0 ? (int) image.getf(x, y - 1) : 0;
-				configValues[3] = x < sizeX & y < sizeY ? (int) image.getf(x, y) : 0;
-
-				// identify labels in current config
-				localLabels.clear();
-				for (int label : configValues)
-				{
-					if (label == 0)
-						continue;
-					// keep only one instance of each label
-					if (!localLabels.contains(label))
-						localLabels.add(label);
-				}
-
-				// if no label in local configuration contribution is zero
-				if (localLabels.size() == 0)
-				{
-					continue;
-				}
-
-				// For each label, compute binary confi
-				for (int label : localLabels) 
-				{
-					// Compute index of local configuration
-					int index = 0;
-					index += configValues[0] == label ? 1 : 0;
-					index += configValues[1] == label ? 2 : 0;
-					index += configValues[2] == label ? 4 : 0;
-					index += configValues[3] == label ? 8 : 0;
-
-					// retrieve label index from label value
-					int labelIndex = labelIndices.get(label);
-
-					// update measure for current label
-					results[labelIndex] += lut[index];
-				}
-
-				// update values of configuration for next iteration
-				configValues[0] = configValues[1];
-				configValues[2] = configValues[3];
-			}
-		}
-
-		return results;
+        // size of image
+        int sizeX = image.getWidth();
+        int sizeY = image.getHeight();
+		return (sizeX - 1) * calib.pixelWidth * (sizeY - 1) * calib.pixelHeight;
 	}
-
-
+	
 	// ==================================================
     // Constructor
 

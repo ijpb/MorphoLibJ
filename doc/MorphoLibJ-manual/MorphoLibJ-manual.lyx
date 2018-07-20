@@ -7703,107 +7703,6 @@ elongation index
 
 \end_layout
 
-\begin_layout Subsubsection
-ImageJ plugins
-\end_layout
-
-\begin_layout Standard
-Most MorphoLibJ plugins consider the current image as input, that must be
- either binary (only one region is considered), or label (typically the
- result of a connected components labeling, see section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:Connected-Components-Labeling"
-
-\end_inset
-
-).
- The output is a results table (ImageJ 
-\emph on
-ResultsTable
-\emph default
-) containing one row for each label actually present within the image.
- The spatial calibration of the image is taken into account in most measurements.
- All plugins can be found under the 
-\begin_inset Quotes eld
-\end_inset
-
-Plugins\SpecialChar menuseparator
-MorphoLibJ\SpecialChar menuseparator
-Analyze
-\begin_inset Quotes erd
-\end_inset
-
- menu.
-\end_layout
-
-\begin_layout Paragraph
-Analyze Regions
-\end_layout
-
-\begin_layout Standard
-The 
-\series bold
-global geometry
-\series default
- of particles in 2D images can be characterized with the Analyze Regions
- plugin (under 
-\begin_inset Quotes eld
-\end_inset
-
-Plugins\SpecialChar menuseparator
-MorphoLibJ\SpecialChar menuseparator
-Analyze\SpecialChar menuseparator
-Analyze Regions
-\begin_inset Quotes erd
-\end_inset
-
-).
- For 2D particles, the area, the perimeter and derived features are implemented.
- The columns of the results table are:
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Label the label of the particle measured on the current line (it can be
- different from the row number if some labels do no exist in original image).
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Area the number of pixels within each region, multiplied by the area of
- each pixel.
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Perimeter an estimate of the perimeter, using Crofton formula.
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Circularity the normalized ratio of area by the square of the perimeter:
- 
-\begin_inset Formula $4\pi\cdot A/p^{2}$
-\end_inset
-
-.
- The value should be comprised between 0 (very elongated) and 1 (close to
- circular).
- Values superior to 1 may appear due to discretization effect.
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Elongation the normalized ratio of the square of the perimeter by the area:
- 
-\begin_inset Formula $p^{2}/\left(4\pi\cdot A\right)$
-\end_inset
-
-, corresponding to the inverse of the circularity.
- The values range from 1 (round), and increase with elongation of the particle.
-\end_layout
-
 \begin_layout Standard
 \begin_inset Newpage clearpage
 \end_inset
@@ -8098,8 +7997,193 @@ largest circle that can be inscribed within the particle
  
 \end_layout
 
+\begin_layout Subsection
+Plugins
+\end_layout
+
 \begin_layout Standard
-This 
+Most MorphoLibJ plugins consider the current image as input, that must be
+ either binary (only one region is considered), or label (typically the
+ result of a connected components labeling, see section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Connected-Components-Labeling"
+
+\end_inset
+
+).
+ The output is a results table (ImageJ 
+\emph on
+ResultsTable
+\emph default
+) containing one row for each label actually present within the image.
+ The spatial calibration of the image is taken into account in most measurements.
+ All plugins can be found under the 
+\begin_inset Quotes eld
+\end_inset
+
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
+Analyze
+\begin_inset Quotes erd
+\end_inset
+
+ menu.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/leaf/leaf-contour-bbox.png
+	lyxscale 50
+	width 18text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/leaf/leaf-contour-ellipse.png
+	lyxscale 50
+	width 18text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/leaf/leaf-contour-maxFeret.png
+	lyxscale 50
+	width 18text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/leaf/leaf-contour-geodDiameter.png
+	lyxscale 50
+	width 18text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/leaf/leaf-contour-inscribedDisk.png
+	lyxscale 50
+	width 18text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Sample images resulting from region analyses.
+ From leftto right: bounding box, inertia ellipse, maximum Feret diameter,
+ geodesic diameter, largest inscribed disk.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Analyze Regions
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+global geometry
+\series default
+ of particles in 2D images can be characterized with the 
+\series bold
+Analyze Regions
+\series default
+ plugin (under 
+\begin_inset Quotes eld
+\end_inset
+
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
+Analyze\SpecialChar menuseparator
+Analyze Regions
+\begin_inset Quotes erd
+\end_inset
+
+).
+ For 2D particles, the area, the perimeter and derived features are implemented.
+ The columns of the results table are:
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Label the label of the particle measured on the current line (it can be
+ different from the row number if some labels do no exist in original image).
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Area the number of pixels within each region, multiplied by the area of
+ each pixel.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Perimeter an estimate of the perimeter, using Crofton formula.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Circularity the normalized ratio of area by the square of the perimeter:
+ 
+\begin_inset Formula $4\pi\cdot A/p^{2}$
+\end_inset
+
+.
+ The value should be comprised between 0 (very elongated) and 1 (close to
+ circular).
+ Values superior to 1 may appear due to discretization effect.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Elongation the normalized ratio of the square of the perimeter by the area:
+ 
+\begin_inset Formula $p^{2}/\left(4\pi\cdot A\right)$
+\end_inset
+
+, corresponding to the inverse of the circularity.
+ The values range from 1 (round), and increase with elongation of the particle.
+\end_layout
+
+\begin_layout Subsubsection
+Geodesic Diameter
+\end_layout
+
+\begin_layout Standard
+The 
 \series bold
 Geodesic Diameter plugin
 \series default
@@ -8166,6 +8250,10 @@ x2,
 \end_inset
 
 y2 coordinates of another geodesic extremity of the particle.
+\end_layout
+
+\begin_layout Subsubsection
+Largest inscribed disk
 \end_layout
 
 \begin_layout Standard
