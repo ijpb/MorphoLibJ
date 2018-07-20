@@ -184,21 +184,11 @@ public class BinaryConfigurations2D
 						localLabels.add(label);
 				}
 
-				// if no label in local configuration contribution is zero
-				if (localLabels.size() == 0)
-				{
-					continue;
-				}
-
 				// For each label, compute binary confi
 				for (int label : localLabels) 
 				{
 					// Compute index of local configuration
-					int index = 0;
-					index += configValues[0] == label ? 1 : 0;
-					index += configValues[1] == label ? 2 : 0;
-					index += configValues[2] == label ? 4 : 0;
-					index += configValues[3] == label ? 8 : 0;
+					int index = configIndex(configValues, label);
 
 					// retrieve label index from label value
 					int labelIndex = labelIndices.get(label);
@@ -215,6 +205,18 @@ public class BinaryConfigurations2D
 
 		return histograms;
 	}
+
+	private static final int configIndex(int[] configValues, int label)
+	{
+		// Compute index of local configuration
+		int index = 0;
+		index += configValues[0] == label ? 1 : 0;
+		index += configValues[1] == label ? 2 : 0;
+		index += configValues[2] == label ? 4 : 0;
+		index += configValues[3] == label ? 8 : 0;
+		return index;
+	}
+
 
 	public static final double applyLut(int[] histogram, double[] lut)
 	{

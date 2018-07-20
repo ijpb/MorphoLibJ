@@ -3,15 +3,12 @@
  */
 package inra.ijpb.measure;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import ij.IJ;
 import ij.ImageStack;
 import ij.measure.Calibration;
 import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.geometry.Vector3D;
 import inra.ijpb.label.LabelImages;
+import inra.ijpb.measure.region3d.BinaryConfigurations3D;
 
 /**
  * Computation of intrinsic volumes (volume, surface area, mean breadth and
@@ -57,12 +54,12 @@ public class IntrinsicVolumes3D
 	 * Measures the volume of each region within a 3D label image.
 	 * 
 	 * @param labelImage
-	 *            image containing the label of each particle
+	 *            image containing the label of each region
 	 * @param labels
 	 *            the set of labels for which volume has to be computed
 	 * @param calib
 	 *            the spatial calibration of the image
-	 * @return the volume of each particle in the image
+	 * @return the volume of each region within the image
 	 */
 	public static final double[] volumes(ImageStack labelImage, int[] labels, Calibration calib)
 	{
@@ -113,16 +110,17 @@ public class IntrinsicVolumes3D
 	 *            the spatial calibration of the image
 	 * @param nDirs
 	 *            the number of directions to consider, either 3 or 13
-	 * @return the surface area of each particle in the image
+	 * @return the surface area of each region within the image
 	 */
 	public static final double surfaceArea(ImageStack image, Calibration calib, int nDirs)
 	{
 		// pre-compute LUT corresponding to resolution and number of directions
-		double[] surfLut = surfaceAreaLut(calib, nDirs);
+		double[] lut = surfaceAreaLut(calib, nDirs);
 
 		// Compute index of each 2x2x2 binary voxel configuration, associate LUT
 		// contribution, and sum up for each label
-		return sumOfLutContributions(image, surfLut);
+		int[] histo = BinaryConfigurations3D.histogram(image);
+		return BinaryConfigurations3D.applyLut(histo, lut);
 	}
 	
 
@@ -146,11 +144,12 @@ public class IntrinsicVolumes3D
 			Calibration calib, int nDirs)
 	{
 		// pre-compute LUT corresponding to resolution and number of directions
-		double[] surfLut = surfaceAreaLut(calib, nDirs);
+		double[] lut = surfaceAreaLut(calib, nDirs);
 
 		// Compute index of each 2x2x2 binary voxel configuration, associate LUT
 		// contribution, and sum up for each label
-		return sumOfLutContributions(image, labels, surfLut);
+		int[][] histos = BinaryConfigurations3D.histograms(image, labels);
+		return BinaryConfigurations3D.applyLut(histos, lut);
 	}
 	
 	/**
@@ -170,12 +169,14 @@ public class IntrinsicVolumes3D
 	public static final double surfaceAreaDensity(ImageStack image, Calibration calib, int nDirs)
 	{
 		// pre-compute LUT corresponding to resolution and number of directions
-		double[] surfLut = surfaceAreaLut(calib, nDirs);
+		double[] lut = surfaceAreaLut(calib, nDirs);
 
 		// Compute index of each 2x2x2 binary voxel configuration, associate LUT
-		// contribution, and sum up for each label
-		double surf = innerSumOfLutContributions(image, surfLut);
+		// contribution, and sum up
+		int[] histo = BinaryConfigurations3D.innerHistogram(image);
+		double surf = BinaryConfigurations3D.applyLut(histo, lut);
 		
+		// normalize by volume of sampling window
 		double vol = samplingVolume(image, calib);
 		return surf / vol;
 	}
@@ -405,11 +406,12 @@ public class IntrinsicVolumes3D
 	public static final double meanBreadth(ImageStack image, Calibration calib, int nDirs)
 	{
 		// pre-compute LUT corresponding to resolution and number of directions
-		double[] breadthLut = meanBreadthLut(calib, nDirs);
+		double[] lut = meanBreadthLut(calib, nDirs);
 
 		// Compute index of each 2x2x2 binary voxel configuration, associate LUT
-		// contribution, and sum up for each label
-		return sumOfLutContributions(image, breadthLut);
+		// contribution, and sum up
+		int[] histo = BinaryConfigurations3D.histogram(image);
+		return BinaryConfigurations3D.applyLut(histo, lut);
 	}
 
 	/**
@@ -420,7 +422,7 @@ public class IntrinsicVolumes3D
 	 * euler number of intersection with planes of various orientations.
 	 * 
 	 * @param image
-	 *            image containing the label of each particle
+	 *            image containing the label of each region
 	 * @param labels
 	 *            the set of labels in the image
 	 * @param calib
@@ -433,11 +435,12 @@ public class IntrinsicVolumes3D
 			Calibration calib, int nDirs)
 	{
 		// pre-compute LUT corresponding to resolution and number of directions
-		double[] meanBreadthLut = meanBreadthLut(calib, nDirs);
+		double[] lut = meanBreadthLut(calib, nDirs);
 
 		// Compute index of each 2x2x2 binary voxel configuration, associate LUT
 		// contribution, and sum up for each label
-		return sumOfLutContributions(image, labels, meanBreadthLut);
+		int[][] histos = BinaryConfigurations3D.histograms(image, labels);
+		return BinaryConfigurations3D.applyLut(histos, lut);
 	}
 
 	/**
@@ -447,7 +450,7 @@ public class IntrinsicVolumes3D
 	 * euler number of intersection with planes of various orientations.
 	 * 
 	 * @param image
-	 *            image containing the label of each particle
+	 *            image containing a binary region
 	 * @param calib
 	 *            the spatial calibration of the image
 	 * @param nDirs
@@ -457,14 +460,16 @@ public class IntrinsicVolumes3D
 	public static final double meanBreadthDensity(ImageStack image, Calibration calib, int nDirs)
 	{
 		// pre-compute LUT corresponding to resolution and number of directions
-		double[] meanBreadthLut = meanBreadthLut(calib, nDirs);
+		double[] lut = meanBreadthLut(calib, nDirs);
 
 		// Compute index of each 2x2x2 binary voxel configuration, associate LUT
-		// contribution, and sum up for each label
-		double surf = innerSumOfLutContributions(image, meanBreadthLut);
+		// contribution, and sum u
+		int[] histo = BinaryConfigurations3D.innerHistogram(image);
+		double meanBreadth = BinaryConfigurations3D.applyLut(histo, lut);
 		
+		// normalize by volume of sampling window
 		double vol = samplingVolume(image, calib);
-		return surf / vol;
+		return meanBreadth / vol;
 	}
 
 	/**
@@ -924,16 +929,17 @@ public class IntrinsicVolumes3D
 	 *            the input 3D binary image
 	 * @param conn
 	 *            the connectivity to use (either 6 or 26)
-	 * @return the Euler-Poincare characteristic of the region
+	 * @return the Euler number of the region within the binary image
 	 */
 	public static final double eulerNumber(ImageStack image, int conn)
 	{
         // pre-compute LUT corresponding to the chosen connectivity
-		double[] eulerLut = eulerNumberLut(conn);
+		double[] lut = eulerNumberLut(conn);
 
 		// Compute index of each 2x2x2 binary voxel configuration, associate LUT
-		// contribution, and sum up for each label
-		return sumOfLutContributions(image, eulerLut);
+		// contribution, and sum up
+		int[] histo = BinaryConfigurations3D.histogram(image);
+		return BinaryConfigurations3D.applyLut(histo, lut);
 	}
 	
 	/**
@@ -946,18 +952,18 @@ public class IntrinsicVolumes3D
 	 *            the set of unique labels in image
 	 * @param conn
 	 *            the connectivity to use (either 6 or 26)
-	 * @return the Euler-Poincare characteristic of each region
+	 * @return the Euler number of each region within the image
 	 */
 	public final static double[] eulerNumbers(ImageStack image, int[] labels,
 			int conn)
 	{    
         // pre-compute LUT corresponding to the chosen connectivity
-		double[] eulerLut = eulerNumberLut(conn);
+		double[] lut = eulerNumberLut(conn);
 
 		// Compute index of each 2x2x2 binary voxel configuration, associate LUT
 		// contribution, and sum up for each label
-		IJ.showStatus("Euler Number...");
-		return sumOfLutContributions(image, labels, eulerLut);
+		int[][] histos = BinaryConfigurations3D.histograms(image, labels);
+		return BinaryConfigurations3D.applyLut(histos, lut);
 	}
 	
 	/**
@@ -970,17 +976,19 @@ public class IntrinsicVolumes3D
 	 *            the spatial calibration of the image
 	 * @param conn
 	 *            the connectivity to use (either 6 or 26)
-	 * @return the Euler-Poincare characteristic of the region
+	 * @return the Euler number density within the binary image
 	 */
 	public static final double eulerNumberDensity(ImageStack image, Calibration calib, int conn)
 	{
 		// pre-compute LUT corresponding to resolution and number of directions
-		double[] eulerLut = eulerNumberLut(conn);
+		double[] lut = eulerNumberLut(conn);
 
 		// Compute index of each 2x2x2 binary voxel configuration, associate LUT
-		// contribution, and sum up for each label
-		double euler = innerSumOfLutContributions(image, eulerLut);
+		// contribution, and sum up
+		int[] histo = BinaryConfigurations3D.innerHistogram(image);
+		double euler = BinaryConfigurations3D.applyLut(histo, lut);
 		
+		// normalize by the volume of the sampling window
 		double vol = samplingVolume(image, calib);
 		return euler / vol;
 	}
@@ -1083,314 +1091,6 @@ public class IntrinsicVolumes3D
 		}
 		
 		return lut;
-	}
-
-	/**
-	 * Applies a look-up-table for each of the 2x2x2 voxel configurations
-	 * containing at least one voxel of the input binary image, and returns the
-	 * sum of contributions for each label.
-	 * 
-	 * This method is used for computing Euler number and surface area from
-	 * binary images.
-	 * 
-	 * @param image
-	 *            the input 3D binary image
-	 * @param lut
-	 *            the look-up-table containing the measure contribution for each
-	 *            of the 256 configuration of 8 voxels
-	 * @return the sum of measure contributions for each label
-	 * 
-	 * @see #surfaceAreaCrofton(ImageStack, int[], double[], int)
-	 * @see #eulerNumber(ImageStack, int[], int)
-	 */
-	private final static double sumOfLutContributions(ImageStack image, double[] lut)
-	{   
-		// Algorithm:
-		// iterate on configurations of 2-by-2-by-2 voxels containing on voxel of 3D image. 
-		// For each configuration, identify the labels within the configuration.
-		// For each label, compute the equivalent binary configuration index, 
-		// and adds is contribution to the measure associated to the label. 
-		
-        double result = 0;
-
-		// size of image
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-		int sizeZ = image.getSize();
-
-		// values of pixels within current 2-by-2-by-2 configuration
-		boolean[] configValues = new boolean[8];
-		
-		// Iterate over all 2-by-2-by-2 configurations containing at least one
-		// voxel within the image.
-		// Current pixel is the lower-right pixel in configuration
-		// (corresponding to b111).
-        for (int z = 0; z < sizeZ + 1; z++) 
-        {
-			for (int y = 0; y < sizeY + 1; y++) 
-        	{
-	        	// initialize left voxels
-				configValues[0] = false;
-				configValues[2] = false;
-				configValues[4] = false;
-				configValues[6] = false;
-
-        		for (int x = 0; x < sizeX + 1; x++) 
-        		{
-            		// update pixel values of configuration
-        			if (x < sizeX)
-        			{
-    					configValues[1] = y > 0 & z > 0 ? image.getVoxel(x, y - 1, z - 1) > 0 : false;
-    					configValues[3] = y < sizeY & z > 0 ? image.getVoxel(x, y, z - 1) > 0 : false;
-    					configValues[5] = y > 0 & z < sizeZ ? image.getVoxel(x, y - 1, z) > 0 : false;
-    					configValues[7] = y < sizeY & z < sizeZ ? image.getVoxel(x, y, z) > 0 : false;
-        			}
-        			else
-        			{
-						// if reference voxel outside of image, the four new
-						// values are outside, and are set to background
-        				configValues[1] = configValues[3] = configValues[5] = configValues[7] = false;   
-        			}
-
-        			// Compute index of local configuration
-        			int index = 0;
-					index += configValues[0] ?   1 : 0;
-					index += configValues[1] ?   2 : 0;
-					index += configValues[2] ?   4 : 0;
-					index += configValues[3] ?   8 : 0;
-					index += configValues[4] ?  16 : 0;
-					index += configValues[5] ?  32 : 0;
-					index += configValues[6] ?  64 : 0;
-					index += configValues[7] ? 128 : 0;
-
-        			// add the contribution of the configuration to the measure
-        			result += lut[index];
-					
-					// update values of configuration for next iteration
-					configValues[0] = configValues[1];
-					configValues[2] = configValues[3];
-					configValues[4] = configValues[5];
-					configValues[6] = configValues[7];
-        		}
-        	}
-        }
-        
-        // reset progress display
-        return result;
-	}
-	
-	/**
-	 * Applies a look-up-table for each of the 2x2x2 voxel configurations
-	 * containing at least one voxel of the input image, and returns the sum of
-	 * contributions for each label.
-	 * 
-	 * This method is used for computing Euler number and surface area.
-	 * 
-	 * @param image
-	 *            the input 3D image of labels
-	 * @param labels
-	 *            the set of labels to process
-	 * @param lut
-	 *            the look-up-table containing the measure contribution for each
-	 *            of the 256 configuration of 8 voxels
-	 * @return the sum of measure contributions for each label
-	 * 
-	 * @see #surfaceAreaCrofton(ImageStack, int[], double[], int)
-	 * @see #eulerNumber(ImageStack, int[], int)
-	 */
-	private final static double[] sumOfLutContributions(ImageStack image, int[] labels, 
-			double[] lut)
-	{   
-		// Algorithm:
-		// iterate on configurations of 2-by-2-by-2 voxels containing on voxel of 3D image. 
-		// For each configuration, identify the labels within the configuration.
-		// For each label, compute the equivalent binary configuration index, 
-		// and adds is contribution to the measure associated to the label. 
-		
-        // create associative array to know index of each label
-		HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
-
-		// initialize the result array containing one measure for each label
-		int nLabels = labels.length;
-        double[] measures = new double[nLabels];
-
-		// size of image
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-		int sizeZ = image.getSize();
-
-		// for each configuration of 2x2x2 voxels, we identify the labels
-		ArrayList<Integer> localLabels = new ArrayList<Integer>(8);
-		
-		// values of pixels within current 2-by-2-by-2 configuration
-		int[] configValues = new int[8];
-		
-		// Iterate over all 2-by-2-by-2 configurations containing at least one
-		// voxel within the image.
-		// Current pixel is the lower-right pixel in configuration
-		// (corresponding to b111).
-        for (int z = 0; z < sizeZ + 1; z++) 
-        {
-			for (int y = 0; y < sizeY + 1; y++) 
-        	{
-	        	// initialize left voxels
-				configValues[0] = 0;
-				configValues[2] = 0;
-				configValues[4] = 0;
-				configValues[6] = 0;
-
-        		for (int x = 0; x < sizeX + 1; x++) 
-        		{
-            		// update pixel values of configuration
-        			if (x < sizeX)
-        			{
-    					configValues[1] = y > 0 & z > 0 ? (int) image.getVoxel(x, y - 1, z - 1) : 0;
-    					configValues[3] = y < sizeY & z > 0 ? (int) image.getVoxel(x, y, z - 1) : 0;
-    					configValues[5] = y > 0 & z < sizeZ ? (int) image.getVoxel(x, y - 1, z) : 0;
-    					configValues[7] = y < sizeY & z < sizeZ ? (int) image.getVoxel(x, y, z) : 0;
-        			}
-        			else
-        			{
-						// if reference voxel outside of image, the four new
-						// values are outside, and are set to zero
-        				configValues[1] = configValues[3] = configValues[5] = configValues[7] = 0;   
-        			}
-
-    				// identify labels in current config
-        			localLabels.clear();
-    				for (int label : configValues)
-    				{
-    					if (label == 0)
-    						continue;
-    					// keep only one instance of each label
-    					if (!localLabels.contains(label))
-    						localLabels.add(label);
-    				}
-
-					// if there is no label in the local configuration then the
-					// contribution is zero
-					if (localLabels.size() == 0) 
-					{
-						continue;
-					}
-					
-					// For each label, compute binary confi
-					for (int label : localLabels) 
-					{
-	        			// Compute index of local configuration
-	        			int index = 0;
-						index += configValues[0] == label ?   1 : 0;
-						index += configValues[1] == label ?   2 : 0;
-						index += configValues[2] == label ?   4 : 0;
-						index += configValues[3] == label ?   8 : 0;
-						index += configValues[4] == label ?  16 : 0;
-						index += configValues[5] == label ?  32 : 0;
-						index += configValues[6] == label ?  64 : 0;
-						index += configValues[7] == label ? 128 : 0;
-
-						// retrieve label index from label value
-	        			int labelIndex = labelIndices.get(label);
-
-	        			// add the contribution of the configuration to the
-						// accumulator for the label
-	        			measures[labelIndex] += lut[index];
-					}
-					
-					// update values of configuration for next iteration
-					configValues[0] = configValues[1];
-					configValues[2] = configValues[3];
-					configValues[4] = configValues[5];
-					configValues[6] = configValues[7];
-        		}
-        	}
-        }
-        
-        // reset progress display
-        return measures;
-	}
-	
-    /**
-	 * Applies a look-up-table for each of the 2x2x2 voxel configurations
-	 * containing at least one voxel of the input binary image, and returns the sum of
-	 * contributions for each label.
-	 * 
-	 * This method is used for computing densities of Euler number and surface area from binary images.
-	 * 
-	 * @param image
-	 *            the input 3D image of labels
-	 * @param lut
-	 *            the look-up-table containing the measure contribution for each
-	 *            of the 256 configuration of 8 voxels
-	 * @return the sum of measure contributions for each label
-	 * 
-	 * @see #surfaceAreaCrofton(ImageStack, int[], double[], int)
-	 * @see #eulerNumber(ImageStack, int[], int)
-	 */
-	private final static double innerSumOfLutContributions(ImageStack image, double[] lut)
-	{   
-		// Algorithm:
-		// iterate on configurations of 2-by-2-by-2 voxels fully contained within 3D image. 
-		// For each configuration, identify the labels within the configuration.
-		// For each label, compute the equivalent binary configuration index, 
-		// and adds is contribution to the measure associated to the label. 
-		
-	    double result = 0;
-	
-		// size of image
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-		int sizeZ = image.getSize();
-	
-		// values of pixels within current 2-by-2-by-2 configuration
-		boolean[] configValues = new boolean[8];
-		
-		// Iterate over all 2-by-2-by-2 configurations containing at least one
-		// voxel within the image.
-		// Current pixel is the lower-right voxel in configuration
-		// (corresponding to b111).
-	    for (int z = 1; z < sizeZ; z++) 
-	    {
-			for (int y = 1; y < sizeY; y++) 
-	    	{
-	        	// initialize left voxels
-				configValues[0] = image.getVoxel(0, y - 1, z - 1) > 0;
-				configValues[2] = image.getVoxel(0, y, z - 1) > 0;
-				configValues[4] = image.getVoxel(0, y - 1, z) > 0;
-				configValues[6] = image.getVoxel(0, y, z) > 0;
-	
-	    		for (int x = 1; x < sizeX; x++) 
-	    		{
-	        		// update pixel values of configuration
-	    			configValues[1] = image.getVoxel(x, y - 1, z - 1) > 0;
-	    			configValues[3] = image.getVoxel(x, y, z - 1) > 0;
-	    			configValues[5] = image.getVoxel(x, y - 1, z) > 0;
-	    			configValues[7] = image.getVoxel(x, y, z) > 0;
-	
-	    			// Compute index of local configuration
-	    			int index = 0;
-					index += configValues[0] ?   1 : 0;
-					index += configValues[1] ?   2 : 0;
-					index += configValues[2] ?   4 : 0;
-					index += configValues[3] ?   8 : 0;
-					index += configValues[4] ?  16 : 0;
-					index += configValues[5] ?  32 : 0;
-					index += configValues[6] ?  64 : 0;
-					index += configValues[7] ? 128 : 0;
-	
-	    			// add the contribution of the configuration to the measure
-	    			result += lut[index];
-					
-					// update values of configuration for next iteration
-					configValues[0] = configValues[1];
-					configValues[2] = configValues[3];
-					configValues[4] = configValues[5];
-					configValues[6] = configValues[7];
-	    		}
-	    	}
-	    }
-	    
-	    // reset progress display
-	    return result;
 	}
 
 	private static final double samplingVolume(ImageStack image, Calibration calib)
