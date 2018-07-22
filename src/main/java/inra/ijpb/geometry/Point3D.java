@@ -29,6 +29,14 @@ public class Point3D
 		this.z = z;
 	}
 	
+	public double distance(Point3D point)
+	{
+		double dx = (point.x - x);
+		double dy = (point.y - y);
+		double dz = (point.z - z);
+		return Math.hypot(Math.hypot(dx, dy), dz);
+	}
+	
 	public double getX()
 	{
 		return x;

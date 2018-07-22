@@ -28,8 +28,10 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	// generic classes
-	InertiaEllipsoidTest.class,
-	})
-public class AllTests {
-  //nothing
+		InertiaEllipsoidTest.class, 
+		MaxFeretDiameter3DTest.class 
+})
+public class AllTests
+{
+	// nothing
 }
