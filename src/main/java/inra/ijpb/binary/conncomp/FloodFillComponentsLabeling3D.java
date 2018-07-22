@@ -149,6 +149,7 @@ public class FloodFillComponentsLabeling3D extends AlgoStub implements
 					
 					// increment label index, and propagate
 					nLabels++;
+					fireStatusChanged(this, "Process label " + nLabels);
 					FloodFill3D.floodFillFloat(image, x, y, z, labels, nLabels, this.connectivity);
 				}
 			}
