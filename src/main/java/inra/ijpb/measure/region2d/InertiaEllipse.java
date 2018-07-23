@@ -169,7 +169,7 @@ public class InertiaEllipse extends RegionAnalyzer2D<Ellipse>
 		{
 			for (int x = 0; x < sizeX; x++)
 			{
-				int label = image.get(x, y);
+				int label = (int) image.getf(x, y);
 				if (label == 0)
 					continue;
 
