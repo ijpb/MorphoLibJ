@@ -53,22 +53,20 @@ public class RegionBoundaries
 		for (int y = 0; y < sizeY; y++)
 		{
 			// start from background
-			int currentLabel = 0;
+			int previous = 0;
 
 			// Identify transition inside and outside the each label
 			for (int x = 0; x < sizeX; x++)
 			{
-				int pixel = (int) image.getf(x, y);
-				
-				if (pixel > 0 && pixel != currentLabel)
-				{
+				int current = (int) image.getf(x, y);
 
-					// transition into a new region
-					
+				// check if we have a transition 
+				if (current != previous)
+				{
 					// if leave a region, add a new corner points for the end of the region
-					if (currentLabel > 0)
+					if (previous > 0)
 					{
-						ArrayList<Point2D> corners = labelCornerPoints.get(currentLabel);
+						ArrayList<Point2D> corners = labelCornerPoints.get(previous);
 						Point2D p = new Point2D.Double(x, y);
 						if (!corners.contains(p))
 						{
@@ -77,36 +75,28 @@ public class RegionBoundaries
 						corners.add(new Point2D.Double(x, y+1));
 					}
 					
-					// add a new corner points for the beginning of the new region
-					ArrayList<Point2D> corners = labelCornerPoints.get(pixel);
-					Point2D p = new Point2D.Double(x, y);
-					if (!corners.contains(p))
+					// transition into a new region
+					if (current > 0)
 					{
-						corners.add(p);
+						// add a new corner points for the beginning of the new region
+						ArrayList<Point2D> corners = labelCornerPoints.get(current);
+						Point2D p = new Point2D.Double(x, y);
+						if (!corners.contains(p))
+						{
+							corners.add(p);
+						}
+						corners.add(new Point2D.Double(x, y+1));
 					}
-					corners.add(new Point2D.Double(x, y+1));
 					
 					// update current label
-					currentLabel = pixel;
-				} 
-				else if (pixel == 0 && currentLabel > 0)
-				{
-					// transition from a label to the  background 
-					ArrayList<Point2D> corners = labelCornerPoints.get(currentLabel);
-					Point2D p = new Point2D.Double(x, y);
-					if (!corners.contains(p))
-					{
-						corners.add(p);
-					}
-					corners.add(new Point2D.Double(x, y+1));
-					currentLabel = 0;
+					previous = current;
 				}
 			}
 			
 			// if particle touches right border, add another point
-			if (currentLabel > 0)
+			if (previous > 0)
 			{
-				ArrayList<Point2D> corners = labelCornerPoints.get(currentLabel);
+				ArrayList<Point2D> corners = labelCornerPoints.get(previous);
 				Point2D p = new Point2D.Double(sizeX, y);
 				if (!corners.contains(p))
 				{
