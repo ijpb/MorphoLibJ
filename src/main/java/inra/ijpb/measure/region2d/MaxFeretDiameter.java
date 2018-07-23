@@ -10,6 +10,7 @@ import java.util.Map;
 import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.process.ImageProcessor;
+import inra.ijpb.geometry.FeretDiameters;
 import inra.ijpb.geometry.PointPair2D;
 import inra.ijpb.geometry.Polygons2D;
 
@@ -27,37 +28,6 @@ public class MaxFeretDiameter extends RegionAnalyzer2D<PointPair2D>
 	public final static PointPair2D[] maxFeretDiameters(ImageProcessor image, int[] labels, Calibration calib)
 	{
 		return new MaxFeretDiameter().analyzeRegions(image, labels, calib);
-	}
-	
-	/**
-	 * Computes Maximum Feret diameter of a set of points.
-	 * 
-	 * Note: it is often a good idea to compute convex hull before computing
-	 * Feret diameter.
-	 * 
-	 * @param points
-	 *            a collection of planar points
-	 * @return the maximum Feret diameter of the point set
-	 */
-	public final static PointPair2D maxFeretDiameter(ArrayList<? extends Point2D> points)
-	{
-		double distMax = Double.NEGATIVE_INFINITY;
-		PointPair2D maxDiam = null;
-		
-		for (Point2D p1 : points)
-		{
-			for (Point2D p2 : points)
-			{
-				double dist = p1.distance(p2);
-				if (dist > distMax)
-				{
-					maxDiam = new PointPair2D(p1, p2);
-					distMax = dist;
-				}
-			}
-		}
-	
-		return maxDiam;
 	}
 	
 	
@@ -162,7 +132,7 @@ public class MaxFeretDiameter extends RegionAnalyzer2D<PointPair2D>
     		}
 
     		// compute Feret diameter of calibrated hull
-        	labelMaxDiams[i] = maxFeretDiameter(hull);
+        	labelMaxDiams[i] = FeretDiameters.maxFeretDiameter(hull);
         }
         
         fireProgressChanged(this, 1, 1);
@@ -197,6 +167,6 @@ public class MaxFeretDiameter extends RegionAnalyzer2D<PointPair2D>
 		}
 		
 		// compute Feret diameter of calibrated vertices
-		return maxFeretDiameter(convHull);
+		return FeretDiameters.maxFeretDiameter(convHull);
 	}
 }
