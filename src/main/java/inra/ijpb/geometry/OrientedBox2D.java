@@ -1,0 +1,89 @@
+/**
+ * 
+ */
+package inra.ijpb.geometry;
+
+import java.awt.geom.Point2D;
+
+/**
+ * An oriented Box in 2 dimensions, used to store results of oriented bounding box.
+ * 
+ * @author dlegland
+ *
+ */
+public class OrientedBox2D
+{
+	// ==================================================
+	// Class variables
+	
+	double xc;
+	double yc;
+	double length;
+	double width;
+	
+	/**
+	 * The orientation of this box, in degrees counted counter-clockwise.
+	 */
+	double orientation;
+	
+	// ==================================================
+	// Constructors
+	
+	/**
+	 * Default constructor for OrientedBox2D.
+	 * 
+	 */
+	public OrientedBox2D(Point2D center, double length, double width, double orientation)
+	{
+		this(center.getX(), center.getY(), length, width, orientation);
+	}
+	
+	/**
+	 * Default constructor for OrientedBox2D, that specifies center as two
+	 * coordinates.
+	 */
+	public OrientedBox2D(double xc, double yc, double length, double width, double orientation)
+	{
+		this.xc = xc;
+		this.yc = yc;
+		this.length = length;
+		this.width = width;
+		this.orientation = orientation;
+	}
+	
+	// ==================================================
+	// generic methods
+
+	/**
+	 * Computes the area of this  box.
+	 * 
+	 * @return the area of the box.
+	 */
+	public double area()
+	{
+		return length * width;
+	}
+	
+	// ==================================================
+	// accessors
+
+	public Point2D center()
+	{
+		return new Point2D.Double(xc, yc);
+	}
+	
+	public double length()
+	{
+		return this.length;
+	}
+	
+	public double width()
+	{
+		return this.width;
+	}
+	
+	public double orientation()
+	{
+		return this.orientation;
+	}
+}

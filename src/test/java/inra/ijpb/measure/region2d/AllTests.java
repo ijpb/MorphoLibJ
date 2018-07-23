@@ -33,6 +33,7 @@ import org.junit.runners.Suite;
 	InertiaEllipseTest.class,
 	LargestInscribedCircleTest.class,
 	MaxFeretDiameterTest.class,
+	OrientedBoundingBox2DTest.class,
 	})
 public class AllTests {
   //nothing

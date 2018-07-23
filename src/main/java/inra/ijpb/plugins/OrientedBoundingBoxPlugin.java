@@ -23,6 +23,7 @@ package inra.ijpb.plugins;
 
 
 import java.awt.Color;
+import java.awt.geom.Point2D;
 import java.util.Map;
 
 import ij.IJ;
@@ -30,15 +31,16 @@ import ij.ImagePlus;
 import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.gui.Overlay;
+import ij.gui.PolygonRoi;
 import ij.gui.Roi;
 import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
-import inra.ijpb.geometry.Box2D;
+import inra.ijpb.geometry.OrientedBox2D;
 import inra.ijpb.label.LabelImages;
-import inra.ijpb.measure.region2d.BoundingBox;
+import inra.ijpb.measure.region2d.OrientedBoundingBox2D;
 
-public class BoundingBoxPlugin implements PlugIn
+public class OrientedBoundingBoxPlugin implements PlugIn
 {
     // ====================================================
     // Global Constants
@@ -99,8 +101,8 @@ public class BoundingBoxPlugin implements PlugIn
         }
 
         // Execute the plugin
-		BoundingBox op = new BoundingBox();
-		Map<Integer, Box2D> boxes = op.analyzeRegions(labelImage);
+		OrientedBoundingBox2D op = new OrientedBoundingBox2D();
+		Map<Integer, OrientedBox2D> boxes = op.analyzeRegions(labelImage);
         ResultsTable results = op.createTable(boxes);
         
 		// show result
@@ -117,15 +119,15 @@ public class BoundingBoxPlugin implements PlugIn
     }
 	
 	/**
-	 * Display the result of bounding box extraction as overlay on a given
-	 * image.
+	 * Display the result of oriented bounding box extraction as overlay on a
+	 * given image.
 	 * 
 	 * @param target
 	 *            the ImagePlus used to display result
 	 * @param results
 	 *            the associative map between region label and bounding box
 	 */
-	private void showResultsAsOverlay(Map<Integer, Box2D> results, ImagePlus target)	
+	private void showResultsAsOverlay(Map<Integer, OrientedBox2D> results, ImagePlus target)	
 	{
 		// get spatial calibration of target image
 		Calibration calib = target.getCalibration();
@@ -138,12 +140,11 @@ public class BoundingBoxPlugin implements PlugIn
 		for (int label : results.keySet()) 
 		{
 			// Coordinates of inscribed circle, in pixel coordinates
-			Box2D box = results.get(label);
-			box = uncalibrate(box, calib);
-			roi = createRoi(box);
+			OrientedBox2D box = results.get(label);
+			roi = createUncalibratedRoi(box, calib);
 			
 			// draw inscribed circle
-			roi.setStrokeColor(Color.BLUE);
+			roi.setStrokeColor(Color.GREEN);
 			overlay.add(roi);
 		}
 		
@@ -151,33 +152,59 @@ public class BoundingBoxPlugin implements PlugIn
 	}
 
 	/**
-	 * Determines the box corresponding to the uncalibrated version of this
+	 * Determines the ROI corresponding to the uncalibrated version of this
 	 * box, assuming it was defined in calibrated coordinates.
 	 * 
 	 * @param box
-	 *            the box in calibrated coordinates
+	 *            the oriented box in calibrated coordinates
 	 * @param calib
 	 *            the spatial calibration to consider
-	 * @return the circle in pixel coordinates
+	 * @return the ROI corresponding to the box
 	 */
-	private final static Box2D uncalibrate(Box2D box, Calibration calib)
+	private final static Roi createUncalibratedRoi(OrientedBox2D box, Calibration calib)
 	{
+		Point2D center = box.center();
+		double xc = center.getX();
+		double yc = center.getY();
+		double dx = box.length() / 2;
+		double dy = box.width() / 2;
+		double theta = Math.toRadians(box.orientation());
+		double cot = Math.cos(theta);
+		double sit = Math.sin(theta);
 		
-		double xmin = (box.getXMin() - calib.xOrigin) / calib.pixelWidth;
-		double xmax = (box.getXMax() - calib.xOrigin) / calib.pixelWidth;
-		double ymin = (box.getYMin() - calib.yOrigin) / calib.pixelHeight;
-		double ymax = (box.getYMax() - calib.yOrigin) / calib.pixelHeight;
-		return new Box2D(xmin, xmax, ymin, ymax);
+		// coordinates of polygon ROI
+		float[] xp = new float[4];
+		float[] yp = new float[4];
+		
+		// iterate over vertices
+		double x, y;
+		x = xc + dx * cot - dy * sit;
+		y = yc + dx * sit + dy * cot;
+		xp[0] = (float) ((x - calib.xOrigin) / calib.pixelWidth);
+		yp[0] = (float) ((y - calib.yOrigin) / calib.pixelHeight);
+		x = xc - dx * cot - dy * sit;
+		y = yc - dx * sit + dy * cot;
+		xp[1] = (float) ((x - calib.xOrigin) / calib.pixelWidth);
+		yp[1] = (float) ((y - calib.yOrigin) / calib.pixelHeight);
+		x = xc - dx * cot + dy * sit;
+		y = yc - dx * sit - dy * cot;
+		xp[2] = (float) ((x - calib.xOrigin) / calib.pixelWidth);
+		yp[2] = (float) ((y - calib.yOrigin) / calib.pixelHeight);
+		x = xc + dx * cot + dy * sit;
+		y = yc + dx * sit - dy * cot;
+		xp[3] = (float) ((x - calib.xOrigin) / calib.pixelWidth);
+		yp[3] = (float) ((y - calib.yOrigin) / calib.pixelHeight);
+		return new PolygonRoi(xp, yp, 4, Roi.POLYGON);
 	}
 	
-	private final static Roi createRoi(Box2D box)
-	{
-		// Coordinates of box, in pixel coordinates
-		double xmin = box.getXMin();
-		double xmax = box.getXMax();
-		double ymin = box.getYMin();
-		double ymax = box.getYMax();
-		
-		return new Roi(xmin, ymin, xmax - xmin, ymax - ymin);
-	}
+//	private final static Roi createRoi(Box2D box)
+//	{
+//		// Coordinates of box, in pixel coordinates
+//		double xmin = box.getXMin();
+//		double xmax = box.getXMax();
+//		double ymin = box.getYMin();
+//		double ymax = box.getYMax();
+//		
+//		return new Roi(xmin, ymin, xmax - xmin, ymax - ymin);
+//	}
 }
