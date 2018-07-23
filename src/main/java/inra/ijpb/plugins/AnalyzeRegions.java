@@ -23,7 +23,6 @@ package inra.ijpb.plugins;
 
 
 import java.awt.geom.Point2D;
-import java.util.Map;
 
 import ij.IJ;
 import ij.ImagePlus;
@@ -35,6 +34,7 @@ import ij.process.ImageProcessor;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.geometry.Circle2D;
 import inra.ijpb.geometry.Ellipse;
+import inra.ijpb.geometry.OrientedBox2D;
 import inra.ijpb.geometry.PointPair2D;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.IntrinsicVolumes2D;
@@ -42,6 +42,7 @@ import inra.ijpb.measure.region2d.GeodesicDiameter;
 import inra.ijpb.measure.region2d.InertiaEllipse;
 import inra.ijpb.measure.region2d.LargestInscribedCircle;
 import inra.ijpb.measure.region2d.MaxFeretDiameter;
+import inra.ijpb.measure.region2d.OrientedBoundingBox2D;
 
 public class AnalyzeRegions implements PlugInFilter 
 {
@@ -53,6 +54,8 @@ public class AnalyzeRegions implements PlugInFilter
 	boolean computeInertiaEllipse = true;
 	boolean computeEllipseElongation = true;
 	boolean computeMaxFeretDiameter = true;
+	boolean computeOrientedBox = true;
+	boolean computeOrientedBoxElongation = true;
 	boolean computeGeodesicDiameter = true;
 	boolean computeTortuosity = true;
 	boolean computeMaxInscribedDisc = true;
@@ -111,6 +114,8 @@ public class AnalyzeRegions implements PlugInFilter
         gd.addCheckbox("Inertia Ellipse", true);
         gd.addCheckbox("Ellipse Elong.", true);
         gd.addCheckbox("Max. Feret Diameter", true);
+        gd.addCheckbox("Oriented Box", true);
+        gd.addCheckbox("Oriented Box Elong.", true);
         gd.addCheckbox("Geodesic Diameter", true);
         gd.addCheckbox("Tortuosity", true);
         gd.addCheckbox("Max. Inscribed Disc", true);
@@ -127,6 +132,8 @@ public class AnalyzeRegions implements PlugInFilter
         computeInertiaEllipse     = gd.getNextBoolean();
         computeEllipseElongation  = gd.getNextBoolean();
         computeMaxFeretDiameter   = gd.getNextBoolean();
+        computeOrientedBox   	  = gd.getNextBoolean();
+        computeOrientedBoxElongation = gd.getNextBoolean();
         computeGeodesicDiameter   = gd.getNextBoolean();
         computeTortuosity         = gd.getNextBoolean();
         computeMaxInscribedDisc   = gd.getNextBoolean();
@@ -159,7 +166,9 @@ public class AnalyzeRegions implements PlugInFilter
     	}
     	
     	// Parameters to be computed
+    	Ellipse[] ellipses = null;
     	PointPair2D[] maxFeretDiams = null;
+    	OrientedBox2D[] orientedBoxes = null;
     	GeodesicDiameter.Result[] geodDiams = null;
     	Circle2D[] inscrDiscs = null;
     	
@@ -170,34 +179,22 @@ public class AnalyzeRegions implements PlugInFilter
     	{
     		IJ.showStatus("Compute area");
     		double[] areaList = IntrinsicVolumes2D.areas(image, labels, calib);
-    		addColumn(table, "Area", areaList);
+    		addColumnToTable(table, "Area", areaList);
     	}
 
     	if (computePerimeter)
     	{
     		IJ.showStatus("Compute perimeter");
     		double[] perimList = IntrinsicVolumes2D.perimeters(image, labels, calib, 4);
-    		addColumn(table, "Perimeter", perimList);
+    		addColumnToTable(table, "Perimeter", perimList);
     	}
 
-    	if (computeInertiaEllipse)
+    	if (computeInertiaEllipse || computeEllipseElongation)
     	{
+    		IJ.showStatus("Inertia Ellipse");
     		InertiaEllipse algo = new InertiaEllipse();
     		DefaultAlgoListener.monitor(algo);
-    		Map<Integer, Ellipse> ellipses = algo.analyzeRegions(imagePlus);
-    		
-    		addAllColumns(table, algo.createTable(ellipses));
-    		
-    		if (computeEllipseElongation)
-    		{
-    			double[] elong = new double[nLabels];
-    			for (int i = 0; i < nLabels; i++)
-    			{
-    				Ellipse elli = ellipses.get(labels[i]);
-    				elong[i] = elli.radius1() / elli.radius2();
-    			}
-    			addColumn(table, "Ellipse.Elong", elong);
-    		}
+    		ellipses = algo.analyzeRegions(image, labels, calib);
     	}
 
     	if (computeMaxFeretDiameter || computeTortuosity)
@@ -206,6 +203,14 @@ public class AnalyzeRegions implements PlugInFilter
     		maxFeretDiams = MaxFeretDiameter.maxFeretDiameters(image, labels, calib);
     	}
 
+    	if (computeOrientedBox)
+    	{
+    		IJ.showStatus("Oriented Bounding Box");
+    		OrientedBoundingBox2D algo = new OrientedBoundingBox2D();
+    		DefaultAlgoListener.monitor(algo);
+    		orientedBoxes = algo.analyzeRegions(image, labels, calib);
+    	}
+    	
     	if (computeGeodesicDiameter || computeTortuosity)
     	{
     		GeodesicDiameter algo = new GeodesicDiameter();
@@ -223,7 +228,32 @@ public class AnalyzeRegions implements PlugInFilter
     	
     	// Fill results table
 
-    	if (computeMaxFeretDiameter)
+    	if (computeInertiaEllipse)
+    	{
+			for (int i = 0; i < nLabels; i++)
+			{
+				Ellipse elli = ellipses[i];
+				Point2D center = elli.center();
+				table.setValue("Ellipse.Center.X", i, center.getX());
+				table.setValue("Ellipse.Center.Y", i, center.getY());
+				table.setValue("Ellipse.Radius1", i, elli.radius1());
+				table.setValue("Ellipse.Radius2", i, elli.radius2());
+				table.setValue("Ellipse.Orientation", i, elli.orientation());
+			}
+    	}
+
+		if (computeEllipseElongation)
+		{
+			double[] elong = new double[nLabels];
+			for (int i = 0; i < nLabels; i++)
+			{
+				Ellipse elli = ellipses[i];
+				elong[i] = elli.radius1() / elli.radius2();
+			}
+			addColumnToTable(table, "Ellipse.Elong", elong);
+		}
+
+		if (computeMaxFeretDiameter)
 		{
 			for (int i = 0; i < nLabels; i++)
 			{
@@ -232,6 +262,20 @@ public class AnalyzeRegions implements PlugInFilter
 			}
 		}
 		
+    	if (computeOrientedBox)
+    	{
+			for (int i = 0; i < nLabels; i++)
+			{
+				OrientedBox2D obox = orientedBoxes[i];
+				Point2D center = obox.center();
+				table.setValue("OBox.Center.X", i, center.getX());
+				table.setValue("OBox.Center.Y", i, center.getY());
+				table.setValue("OBox.Length", i, obox.length());
+				table.setValue("OBox.Width", i, obox.width());
+				table.setValue("OBox.Orientation", i, obox.orientation());
+			}
+    	}
+
 		if (computeGeodesicDiameter)
 		{
 			for (int i = 0; i < nLabels; i++)
@@ -248,7 +292,7 @@ public class AnalyzeRegions implements PlugInFilter
 			{
 				tortuosity[i] = geodDiams[i].diameter / maxFeretDiams[i].diameter();
 			}
-			addColumn(table, "Tortuosity", tortuosity);
+			addColumnToTable(table, "Tortuosity", tortuosity);
     	}
     	
     	if (computeMaxInscribedDisc)
@@ -269,29 +313,17 @@ public class AnalyzeRegions implements PlugInFilter
 			{
 				elong[i] = geodDiams[i].diameter / (inscrDiscs[i].getRadius() * 2);
 			}
-			addColumn(table, "GeodesicElongation", elong);
+			addColumnToTable(table, "GeodesicElongation", elong);
     	}
     	    	
     	return table;
     }
     
-    private void addColumn(ResultsTable table, String colName, double[] values)
+    private static final void addColumnToTable(ResultsTable table, String colName, double[] values)
     {
     	for (int i = 0; i < values.length; i++)
     	{
     		table.setValue(colName, i, values[i]);
-    	}
-    }
-
-    private void addAllColumns(ResultsTable table, ResultsTable otherTable)
-    {
-    	for (int c = 0; c <= otherTable.getLastColumn(); c++)
-    	{
-    		String colName = otherTable.getColumnHeading(c);
-        	for (int i = 0; i < otherTable.getCounter(); i++)
-        	{
-        		table.setValue(colName, i, otherTable.getValue(colName, i));
-        	}
     	}
     }
 }
