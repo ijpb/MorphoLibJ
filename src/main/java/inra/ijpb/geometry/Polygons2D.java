@@ -7,9 +7,6 @@ import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-import ij.gui.PolygonRoi;
-import ij.gui.Roi;
-
 /**
  * A set of static methods operating on polygons.
  * 
@@ -26,47 +23,10 @@ public class Polygons2D
 	}
 
 	/**
-	 * Computes the centroid of a polygon defined by an ordered list of
-	 * vertices.
-	 * 
-	 * @param vertices
-	 *            the ordered list of vertices
-	 * @return the centroid of the polygon.
-	 */
-	public static final Point2D centroid(ArrayList<? extends Point2D> vertices)
-	{
-		// accumulators
-		double sumC = 0;
-		double sumX = 0;
-		double sumY = 0;
-		
-		// iterate on vertex pairs
-		int n = vertices.size();
-		for (int i = 1; i <= n; i++)
-		{
-			Point2D p1 = vertices.get(i - 1);
-			Point2D p2 = vertices.get(i % n);
-			double x1 = p1.getX();
-			double y1 = p1.getY();
-			double x2 = p2.getX();
-			double y2 = p2.getY();
-			double common = x1 * y2 - x2 * y1;
-			
-			sumX += (x1 + x2) * common;
-			sumY += (y1 + y2) * common;
-			sumC += common;
-		}
-		
-		// the area is the sum of the common factors divided by 2, 
-		// but we need to divide by 6 for centroid computation, 
-		// resulting in a factor 3.
-		sumC *= 6 / 2;
-		return new Point2D.Double(sumX / sumC, sumY / sumC);
-	}
-	
-	/**
 	 * Uses the gift wrap algorithm with floating point values to find the
 	 * convex hull and returns it as a list of points.
+	 * 
+	 * Uses Jarvis algorithm, also known as "Gift wrap" algorithm.
 	 * 
 	 * Code from ij.gui.PolygonRoi.getConvexHull(), adapted to return a polygon
 	 * oriented counter-clockwise.
@@ -75,33 +35,32 @@ public class Polygons2D
 	 *            a set of points coordinates in the 2D space
 	 * @return the convex hull of the points, as a list of ordered vertices
 	 */
-	public static final ArrayList<Point2D> convexHull_jarvis(
-			ArrayList<? extends Point2D> points)
+	public static final Polygon2D convexHull(ArrayList<? extends Point2D> points)
 	{
 		// Get polygon info
 		int n = points.size();
-		double[] xCoordinates = new double[n];
-		double[] yCoordinates = new double[n];
 		
 		// index of left-most vertex of horizontal line with smallest y
 		int pStart = 0;
 		double ymin = java.lang.Double.MAX_VALUE;
 		double smallestX = java.lang.Double.MAX_VALUE;
 
-		// Iterate over vertices to 1) extract coordinates and 2) identify index
-		// of point with lowest y-coord.
+		// Iterate over vertices to identify index of point with lowest y-coord.
 		for (int i = 0; i < n; i++)
 		{
 			Point2D vertex = points.get(i);
-			double x = vertex.getX();
 			double y = vertex.getY();
-			xCoordinates[i] = x;
-			yCoordinates[i] = y;
 
 			// update lowest vertex index
 			if (y < ymin)
 			{
 				ymin = y;
+				pStart = i;
+				smallestX = java.lang.Double.MAX_VALUE;
+			}
+			else if (y == ymin)
+			{
+				double x = vertex.getX();
 				if (x < smallestX)
 				{
 					smallestX = x;
@@ -110,31 +69,34 @@ public class Polygons2D
 			}
 		}
 		
-		// convex hull coordinates
-		ArrayList<Point2D> hull = new ArrayList<Point2D>();
+		// convex hull
+		Polygon2D convHull = new Polygon2D();
 		
 		// p1: index of current hull vertex
 		// p2: index of current candidate for next hull vertex
 		// p3: index of iterator on point set
 		
-		int p1 = pStart;
+		int ip1 = pStart;
 		do
 		{
 			// coordinates of current convex hull vertex
-			double x1 = xCoordinates[p1];
-			double y1 = yCoordinates[p1];
+			Point2D p1 = points.get(ip1);
+			double x1 = p1.getX();
+			double y1 = p1.getY();
 			
 			// coordinates of next vertex candidate
-			int p2 = (p1 + 1) % n;
-			double x2 = xCoordinates[p2];
-			double y2 = yCoordinates[p2];
+			int ip2 = (ip1 + 1) % n;
+			Point2D p2 = points.get(ip2);
+			double x2 = p2.getX();
+			double y2 = p2.getY();
 	
 			// find the next "wrapping" vertex by computing oriented angle
-			int p3 = (p2 + 1) % n;
+			int ip3 = (ip2 + 1) % n;
 			do
 			{
-				double x3 = xCoordinates[p3];
-				double y3 = yCoordinates[p3];
+				Point2D p3 = points.get(ip3);
+				double x3 = p3.getX();
+				double y3 = p3.getY();
 				
 				// if V1-V2-V3 is oriented CW, use V3 as next wrapping candidate
 				double det = x1 * (y2 - y3) - y1 * (x2 - x3) + (y3 * x2 - y2 * x3);
@@ -142,16 +104,16 @@ public class Polygons2D
 				{
 					x2 = x3;
 					y2 = y3;
-					p2 = p3;
+					ip2 = ip3;
 				}
-				p3 = (p3 + 1) % n;
-			} while (p3 != p1);
+				ip3 = (ip3 + 1) % n;
+			} while (ip3 != ip1);
 			
-			hull.add(new Point2D.Double(x1, y1));
-			p1 = p2;
-		} while (p1 != pStart);
+			convHull.addVertex(new Point2D.Double(x1, y1));
+			ip1 = ip2;
+		} while (ip1 != pStart);
 	
-		return hull;
+		return convHull;
 	}
 
 	/**
@@ -166,7 +128,7 @@ public class Polygons2D
 	 * @return the convex hull of the points, as a list of ordered vertices with
 	 *         integer coordinates
 	 */
-	public static final ArrayList<Point> convexHull_jarvis_int(ArrayList<Point> points)
+	public static final ArrayList<Point> convexHull_int(ArrayList<Point> points)
 	{
 		// create array for storing polygon coordinates
 		int n = points.size();
@@ -188,9 +150,13 @@ public class Polygons2D
 			xCoords[i] = vertex.x;
 			yCoords[i] = vertex.y;
 			
-			
-			ymin = Math.min(ymin, vertex.y);
-			if (vertex.y == ymin && vertex.x < xmin)
+			if (vertex.y < ymin)
+			{
+				ymin = vertex.y;
+				pStart = i;
+				xmin = Integer.MAX_VALUE;
+			}
+			else if (vertex.y == ymin && vertex.x < xmin)
 			{
 				xmin = vertex.x;
 				pStart = i;
@@ -240,31 +206,4 @@ public class Polygons2D
 	
 		return hull;
 	}
-
-	/**
-	 * Converts an ordered list of vertices into an ImageJ Polygon ROI.
-	 * 
-	 * @param vertices
-	 *            an ordered list of vertices
-	 * @return the corresponding PolygonRoi
-	 */
-	public static PolygonRoi createPolygonRoi(ArrayList<Point2D> vertices)
-	{
-		// allocate memory for data arrays
-		int n = vertices.size();
-		float[] px = new float[n];
-		float[] py = new float[n];
-		
-		// extract coordinates
-		for (int i = 0; i < n; i++)
-		{
-			Point2D p = vertices.get(i);
-			px[i] = (float) p.getX();
-			py[i] = (float) p.getY();
-		}
-
-		// create ROI data structure
-		return new PolygonRoi(px, py, n, Roi.POLYGON);
-	}
-
 }

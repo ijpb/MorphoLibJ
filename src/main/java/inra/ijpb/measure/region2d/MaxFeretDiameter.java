@@ -12,6 +12,7 @@ import ij.measure.ResultsTable;
 import ij.process.ImageProcessor;
 import inra.ijpb.geometry.FeretDiameters;
 import inra.ijpb.geometry.PointPair2D;
+import inra.ijpb.geometry.Polygon2D;
 import inra.ijpb.geometry.Polygons2D;
 
 /**
@@ -156,17 +157,17 @@ public class MaxFeretDiameter extends RegionAnalyzer2D<PointPair2D>
 	public PointPair2D analyzeBinary(ImageProcessor image, double[] calib)
 	{
 		ArrayList<Point2D> points = RegionBoundaries.binaryParticleCorners(image);
-		ArrayList<Point2D> convHull = Polygons2D.convexHull_jarvis(points);
+		Polygon2D convHull = Polygons2D.convexHull(points);
 
 		// calibrate coordinates of convex hull vertices
-		for (int i = 0; i < convHull.size(); i++)
+		for (int i = 0; i < convHull.vertexNumber(); i++)
 		{
-			Point2D vertex = convHull.get(i);
+			Point2D vertex = convHull.getVertex(i);
 			vertex = new Point2D.Double(vertex.getX() * calib[0], vertex.getY() * calib[1]);
-			convHull.set(i, vertex);
+			convHull.setVertex(i, vertex);
 		}
 		
 		// compute Feret diameter of calibrated vertices
-		return FeretDiameters.maxFeretDiameter(convHull);
+		return FeretDiameters.maxFeretDiameter(convHull.vertices());
 	}
 }

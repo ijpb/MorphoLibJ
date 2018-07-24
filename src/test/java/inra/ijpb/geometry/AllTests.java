@@ -28,6 +28,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	// generic classes
+	Polygon2DTest.class,
 	Polygons2DTest.class,
 	StraightLine2DTest.class,
 	Vector3DTest.class,

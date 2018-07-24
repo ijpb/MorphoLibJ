@@ -13,6 +13,7 @@ import ij.process.ImageProcessor;
 import inra.ijpb.geometry.AngleDiameterPair;
 import inra.ijpb.geometry.FeretDiameters;
 import inra.ijpb.geometry.OrientedBox2D;
+import inra.ijpb.geometry.Polygon2D;
 import inra.ijpb.geometry.Polygons2D;
 
 /**
@@ -33,17 +34,18 @@ public class OrientedBoundingBox2D extends RegionAnalyzer2D<OrientedBox2D>
 	 */
 	public static final OrientedBox2D orientedBoundingBox(ArrayList<? extends Point2D> points)
 	{
-		ArrayList<Point2D> convexHull = Polygons2D.convexHull_jarvis(points);
+		// Compute convex hull to reduce complexity
+		Polygon2D convexHull = Polygons2D.convexHull(points);
 		
 		// compute convex hull centroid
-		Point2D center = Polygons2D.centroid(convexHull);
+		Point2D center = convexHull.centroid();
 		double cx = center.getX();
 		double cy = center.getY();
 		
-		AngleDiameterPair minFeret = FeretDiameters.minFeretDiameter(convexHull);
+		AngleDiameterPair minFeret = FeretDiameters.minFeretDiameter(convexHull.vertices());
 		
 		// recenter the convex hull
-		ArrayList<Point2D> centeredHull = new ArrayList<Point2D>(convexHull.size());
+		ArrayList<Point2D> centeredHull = new ArrayList<Point2D>(convexHull.vertexNumber());
 		for (Point2D p : convexHull)
 		{
 			centeredHull.add(new Point2D.Double(p.getX() - cx, p.getY() - cy));
