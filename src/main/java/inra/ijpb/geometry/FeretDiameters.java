@@ -28,10 +28,14 @@ public class FeretDiameters
 		double distMax = Double.NEGATIVE_INFINITY;
 		PointPair2D maxDiam = null;
 		
-		for (Point2D p1 : points)
+		int n = points.size();
+		for (int i1 = 0; i1 < n - 1; i1++)
 		{
-			for (Point2D p2 : points)
+			Point2D p1 = points.get(i1);
+			for (int i2 = i1 + 1; i2 < n; i2++)
 			{
+				Point2D p2 = points.get(i2);
+		
 				double dist = p1.distance(p2);
 				if (dist > distMax)
 				{

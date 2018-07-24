@@ -6,9 +6,9 @@ package inra.ijpb.measure.region3d;
 import java.util.ArrayList;
 import java.util.Map;
 
+import ij.ImageStack;
 import ij.measure.Calibration;
 import ij.measure.ResultsTable;
-import ij.ImageStack;
 import inra.ijpb.geometry.Point3D;
 import inra.ijpb.geometry.PointPair3D;
 
@@ -44,10 +44,14 @@ public class MaxFeretDiameter3D extends RegionAnalyzer3D<PointPair3D>
 		double distMax = Double.NEGATIVE_INFINITY;
 		PointPair3D maxDiam = null;
 		
-		for (Point3D p1 : points)
+		int n = points.size();
+		for (int i1 = 0; i1 < n - 1; i1++)
 		{
-			for (Point3D p2 : points)
+			Point3D p1 = points.get(i1);
+			for (int i2 = i1 + 1; i2 < n; i2++)
 			{
+				Point3D p2 = points.get(i2);
+		
 				double dist = p1.distance(p2);
 				if (dist > distMax)
 				{
