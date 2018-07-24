@@ -114,7 +114,7 @@ public class MaxFeretDiameter extends RegionAnalyzer2D<PointPair2D>
 
         // For each label, create a list of corner points
 		fireStatusChanged(this, "Find Label Corner Points");
-        ArrayList<Point2D>[] labelCornerPointsArray = RegionBoundaries.regionsCornersArray(image, labels);
+        ArrayList<Point2D>[] cornerPointsArrays = RegionBoundaries.runlengthsCorners(image, labels);
                 
         // Compute the oriented box of each set of corner points
         PointPair2D[] labelMaxDiams = new PointPair2D[nLabels];
@@ -123,17 +123,17 @@ public class MaxFeretDiameter extends RegionAnalyzer2D<PointPair2D>
         {
         	this.fireProgressChanged(this, i, nLabels);
         	
-        	ArrayList<Point2D> hull = labelCornerPointsArray[i];
+        	ArrayList<Point2D> corners = cornerPointsArrays[i];
     		// calibrate coordinates of hull vertices
-    		for (int iv = 0; iv < hull.size(); iv++)
+    		for (int iv = 0; iv < corners.size(); iv++)
     		{
-    			Point2D vertex = hull.get(iv);
+    			Point2D vertex = corners.get(iv);
     			vertex = new Point2D.Double(vertex.getX() * sx + ox, vertex.getY() * sy + oy);
-    			hull.set(iv, vertex);
+    			corners.set(iv, vertex);
     		}
 
     		// compute Feret diameter of calibrated hull
-        	labelMaxDiams[i] = FeretDiameters.maxFeretDiameter(hull);
+        	labelMaxDiams[i] = FeretDiameters.maxFeretDiameter(corners);
         }
         
         fireProgressChanged(this, 1, 1);
@@ -156,7 +156,7 @@ public class MaxFeretDiameter extends RegionAnalyzer2D<PointPair2D>
 	 */
 	public PointPair2D analyzeBinary(ImageProcessor image, double[] calib)
 	{
-		ArrayList<Point2D> points = RegionBoundaries.binaryParticleCorners(image);
+		ArrayList<Point2D> points = RegionBoundaries.runLengthsCorners(image);
 		Polygon2D convHull = Polygons2D.convexHull(points);
 
 		// calibrate coordinates of convex hull vertices

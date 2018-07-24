@@ -146,7 +146,7 @@ public class OrientedBoundingBox2D extends RegionAnalyzer2D<OrientedBox2D>
 	{
         // For each label, create a list of corner points
 		this.fireStatusChanged(this, "Find Label Corner Points");
-        ArrayList<Point2D>[] labelCornerPointsArray = RegionBoundaries.regionsCornersArray(image, labels);
+        ArrayList<Point2D>[] cornerPointsArrays = RegionBoundaries.runlengthsCorners(image, labels);
                 
         // allocate memory for result
 		int nLabels = labels.length;
@@ -157,7 +157,7 @@ public class OrientedBoundingBox2D extends RegionAnalyzer2D<OrientedBox2D>
         for (int i = 0; i < nLabels; i++)
         {
         	this.fireProgressChanged(this, i, nLabels);
-        	boxes[i] = orientedBoundingBox(calibrate(labelCornerPointsArray[i], calib));
+        	boxes[i] = orientedBoundingBox(calibrate(cornerPointsArrays[i], calib));
         }
         
 		this.fireStatusChanged(this, "");

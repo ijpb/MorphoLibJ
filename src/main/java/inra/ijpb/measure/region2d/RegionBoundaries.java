@@ -28,7 +28,7 @@ public class RegionBoundaries
 	}
 
 	/**
-	 * Returns a set of points located at the corners of a binary particle.
+	 * Returns a set of points located at the corners of each region.
 	 * Point coordinates are integer (ImageJ locates pixels in a [0 1]^d area.
 	 * 
 	 * @param image
@@ -37,7 +37,7 @@ public class RegionBoundaries
 	 *            the list of labels to process
 	 * @return a list of points that can be used for convex hull computation
 	 */
-	public final static Map<Integer, ArrayList<Point2D>> regionsCorners(ImageProcessor image, int[] labels)
+	public final static Map<Integer, ArrayList<Point2D>> runLengthsCornersMap(ImageProcessor image, int[] labels)
 	{
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
@@ -119,10 +119,10 @@ public class RegionBoundaries
 	 *            the list of labels to process
 	 * @return for each label, an array of points
 	 */
-	public final static ArrayList<Point2D>[] regionsCornersArray(ImageProcessor image, int[] labels)
+	public final static ArrayList<Point2D>[] runlengthsCorners(ImageProcessor image, int[] labels)
 	{
 		// Compute corner points for each label
-		Map<Integer, ArrayList<Point2D>> cornerPointsMap = regionsCorners(image, labels);
+		Map<Integer, ArrayList<Point2D>> cornerPointsMap = runLengthsCornersMap(image, labels);
 		
 		// allocate array
 		int nLabels = labels.length;
@@ -145,7 +145,7 @@ public class RegionBoundaries
 	 *            a binary image representing the particle
 	 * @return a list of points that can be used for convex hull computation
 	 */
-	public final static ArrayList<Point> boundaryPoints(ImageProcessor image)
+	public final static ArrayList<Point> runLengthsBoundaryPixels(ImageProcessor image)
 	{
 		// size of input image
 		int sizeX = image.getWidth();
@@ -192,7 +192,7 @@ public class RegionBoundaries
 	 *            a binary image representing the particle
 	 * @return a list of points that can be used for convex hull computation
 	 */
-	public final static ArrayList<Point2D> binaryParticleCorners(ImageProcessor image)
+	public final static ArrayList<Point2D> runLengthsCorners(ImageProcessor image)
 	{
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
