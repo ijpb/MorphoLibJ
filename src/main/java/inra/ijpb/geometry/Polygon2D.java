@@ -174,7 +174,99 @@ public class Polygon2D implements Iterable <Point2D>
 		return new Point2D.Double(sumX / sumC, sumY / sumC);
 	}
 	
+	public boolean contains(Point2D point)
+	{
+		// the winding number counter for the point
+        int wn = 0; 
 
+        // Extract the last point of the collection
+        Point2D previous = vertices.get(vertices.size() - 1);
+        double y1 = previous.getY();
+        double y2;
+
+        // y-coordinate of query point
+        double y = point.getY();
+
+        // Iterate on couple of vertices, starting from couple (last,first)
+        for (Point2D current : vertices) 
+        {
+            // second vertex of current edge
+            y2 = current.getY();
+            
+			if (y1 <= y)
+			{
+				if (y2 > y) // an upward crossing
+					if (isLeft(previous, current, point) > 0)
+						wn++;
+			} 
+			else
+			{
+				if (y2 <= y) // a downward crossing
+					if (isLeft(previous, current, point) < 0)
+						wn--;
+			}
+
+            // for next iteration
+            y1 = y2;
+            previous = current;
+        }
+
+		if (this.signedArea() > 0)
+		{
+			return wn == 1;
+		} else
+		{
+			return wn == 0;
+		}
+	}
+	
+    /**
+	 * Tests if a point is Left|On|Right of an infinite line.
+	 * 
+	 * Returns:<ul> 
+	 * <li> positive value for query point left of the line through P0 and P1</li> 
+	 * <li> zero value for query point on the line </li>
+	 * <li> negative for query point right of the line</li> 
+	 * </ul>
+	 * See: the January 2001 Algorithm "Area of 2D and 3D Triangles and Polygons"
+	 * 
+	 * @param p1
+	 *            first point on the line (P1,P2)
+	 * @param p2
+	 *            second point on the line (P1,P2)
+	 * @param pt
+	 *            the query point
+	 * @return >0 if query point is on left side of the line, <0 if query point
+	 *         is on right side, and 0 if query point is on the line
+	 */
+	private final static int isLeft(Point2D p1, Point2D p2, Point2D pt)
+	{
+    	double x = p1.getX();
+    	double y = p1.getY();
+    	return (int) Math.signum(
+    			(p2.getX() - x) * (pt.getY() - y) - (pt.getX() - x) * (p2.getY() - y));
+    }
+    
+	/**
+	 * Computes the complementary polygon, whose interior is the exterior of
+	 * this polygon.
+	 * 
+	 * Keeps the same vertex as initial vertex.
+	 * 
+	 * @return the inverted polygon
+	 */
+	public Polygon2D invert()
+	{
+		int n = this.vertices.size();
+		Polygon2D result = new Polygon2D(n);
+		result.addVertex(this.getVertex(0));
+		for (int i = n-1; i > 0; i--)
+		{
+			result.addVertex(vertices.get(i));
+		}
+		return result;
+	}
+	
     // ====================================================
     // GUI Tools
     

@@ -73,6 +73,30 @@ public class Polygon2DTest
 		
 		assertEquals(exp, area, .01);
 	}
+	
+	/**
+	 * Test method for {@link inra.ijpb.geometry.Polygon2D#area()}.
+	 */
+	@Test
+	public final void testInvert_Rect()
+	{
+		Polygon2D poly = new Polygon2D(4);
+		poly.addVertex(new Point2D.Double(10, 20));
+		poly.addVertex(new Point2D.Double(10+30, 20));
+		poly.addVertex(new Point2D.Double(10+30, 20+40));
+		poly.addVertex(new Point2D.Double(10, 20+40));
+		
+		double exp = 30.0 * 40.0;
+		double area = poly.signedArea();
+		assertEquals(exp, area, .01);
+		
+		poly = poly.invert();
+		area = poly.signedArea();
+		assertEquals(-exp, area, .01);
+		
+		// First vertex should be the same
+		assertEquals(0, poly.getVertex(0).distance(10, 20), .01);
+	}
 
 	/**
 	 * Test method for {@link inra.ijpb.geometry.Polygon2D#centroid()}.
