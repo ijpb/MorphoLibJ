@@ -246,4 +246,45 @@ public class RegionBoundaries
 		return points;
 	}
 
+	public static final ArrayList<Point2D> boundaryPixelsMiddleEdges(ImageProcessor binaryImage)
+	{
+		// size of image
+		int sizeX = binaryImage.getWidth();
+		int sizeY = binaryImage.getHeight();
+
+		ArrayList<Point2D> points = new ArrayList<Point2D>();
+		
+		boolean[] configValues = new boolean[4];
+		
+		// iterate on image pixel configurations
+		for (int y = 0; y < sizeY + 1; y++) 
+		{
+//			configValues[0] = false;
+			configValues[2] = false;
+			
+			for (int x = 0; x < sizeX + 1; x++) 
+			{
+        		// update pixel values of configuration
+				configValues[1] = x < sizeX & y > 0 ? (int) binaryImage.getf(x, y - 1) > 0: false;
+				configValues[3] = x < sizeX & y < sizeY ? (int) binaryImage.getf(x, y) > 0: false;
+
+				// check boundary with upper pixel
+				if (configValues[1] != configValues[3])
+				{
+					points.add(new Point2D.Double(x + .5, y));
+				}
+				if (configValues[2] != configValues[3])
+				{
+					points.add(new Point2D.Double(x, y + .5));
+				}
+
+				// update values of configuration for next iteration
+//				configValues[0] = configValues[1];
+				configValues[2] = configValues[3];
+			}
+		}
+
+		return points;
+	}
+
 }

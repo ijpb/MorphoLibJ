@@ -277,6 +277,27 @@ public class LabelImages
 		return result;
 	}
 
+	public static final ImageProcessor binarize(ImageProcessor image, int label)
+	{
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+
+		ByteProcessor result = new ByteProcessor( sizeX, sizeY );
+		for (int y = 0; y < sizeY; y++)
+		{
+			for (int x = 0; x < sizeX; x++)
+			{
+				// process only specified label
+				int val = (int) image.getf(x, y);
+				if (val == label)
+				{
+					result.set(x, y, 255);
+				}
+			}
+		}
+		return result;
+	}
+
 	/**
 	 * Returns a binary image that contains only the selected particle or
 	 * region, by automatically cropping the image and eventually adding some

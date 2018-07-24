@@ -38,6 +38,7 @@ import inra.ijpb.geometry.OrientedBox2D;
 import inra.ijpb.geometry.PointPair2D;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.IntrinsicVolumes2D;
+import inra.ijpb.measure.region2d.Convexity;
 import inra.ijpb.measure.region2d.GeodesicDiameter;
 import inra.ijpb.measure.region2d.InertiaEllipse;
 import inra.ijpb.measure.region2d.LargestInscribedCircle;
@@ -53,6 +54,7 @@ public class AnalyzeRegions implements PlugInFilter
 	boolean computePerimeter = true;
 	boolean computeInertiaEllipse = true;
 	boolean computeEllipseElongation = true;
+	boolean computeConvexity = true;
 	boolean computeMaxFeretDiameter = true;
 	boolean computeOrientedBox = true;
 	boolean computeOrientedBoxElongation = true;
@@ -113,6 +115,7 @@ public class AnalyzeRegions implements PlugInFilter
         gd.addCheckbox("Perimeter", true);
         gd.addCheckbox("Inertia Ellipse", true);
         gd.addCheckbox("Ellipse Elong.", true);
+        gd.addCheckbox("Convexity", true);
         gd.addCheckbox("Max. Feret Diameter", true);
         gd.addCheckbox("Oriented Box", true);
         gd.addCheckbox("Oriented Box Elong.", true);
@@ -131,6 +134,7 @@ public class AnalyzeRegions implements PlugInFilter
         computePerimeter          = gd.getNextBoolean();
         computeInertiaEllipse     = gd.getNextBoolean();
         computeEllipseElongation  = gd.getNextBoolean();
+        computeConvexity          = gd.getNextBoolean();
         computeMaxFeretDiameter   = gd.getNextBoolean();
         computeOrientedBox   	  = gd.getNextBoolean();
         computeOrientedBoxElongation = gd.getNextBoolean();
@@ -167,6 +171,7 @@ public class AnalyzeRegions implements PlugInFilter
     	
     	// Parameters to be computed
     	Ellipse[] ellipses = null;
+    	Convexity.Result[] convexities = null;
     	PointPair2D[] maxFeretDiams = null;
     	OrientedBox2D[] orientedBoxes = null;
     	GeodesicDiameter.Result[] geodDiams = null;
@@ -195,6 +200,14 @@ public class AnalyzeRegions implements PlugInFilter
     		InertiaEllipse algo = new InertiaEllipse();
     		DefaultAlgoListener.monitor(algo);
     		ellipses = algo.analyzeRegions(image, labels, calib);
+    	}
+
+    	if (computePerimeter)
+    	{
+    		IJ.showStatus("Compute convexity");
+    		Convexity algo = new Convexity();
+    		DefaultAlgoListener.monitor(algo);
+    		convexities = algo.analyzeRegions(image, labels, calib);
     	}
 
     	if (computeMaxFeretDiameter || computeTortuosity)
@@ -251,6 +264,15 @@ public class AnalyzeRegions implements PlugInFilter
 				elong[i] = elli.radius1() / elli.radius2();
 			}
 			addColumnToTable(table, "Ellipse.Elong", elong);
+		}
+
+		if (computeConvexity)
+		{
+			for (int i = 0; i < nLabels; i++)
+			{
+				table.setValue("ConvexArea", i, convexities[i].convexArea);
+				table.setValue("Convexity", i, convexities[i].convexity);
+			}
 		}
 
 		if (computeMaxFeretDiameter)
