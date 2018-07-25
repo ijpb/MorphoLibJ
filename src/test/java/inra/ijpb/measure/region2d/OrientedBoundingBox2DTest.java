@@ -5,6 +5,8 @@ package inra.ijpb.measure.region2d;
 
 import static org.junit.Assert.*;
 
+import java.util.Map;
+
 import org.junit.Test;
 
 import ij.IJ;
@@ -102,13 +104,23 @@ public class OrientedBoundingBox2DTest
 	}
 
 
-//	/**
-//	 * Test method for {@link inra.ijpb.measure.region2d.OrientedBoundingBox2D#analyzeRegions(ij.process.ImageProcessor, int[], ij.measure.Calibration)}.
-//	 */
-//	@Test
-//	public final void testAnalyzeRegionsImageProcessorIntArrayCalibration()
-//	{
-//		fail("Not yet implemented"); // TODO
-//	}
+	@Test
+	public final void testAnalyzeRegions_leafEricSmall()
+	{
+		String fileName = getClass().getResource("/files/CA_QK_004_H1_small_seg.tif").getFile();
+		ImagePlus imagePlus = IJ.openImage(fileName);
+		assertNotNull(imagePlus);
+
+		OrientedBoundingBox2D algo = new OrientedBoundingBox2D();
+		Map<Integer, OrientedBox2D> boxes = algo.analyzeRegions(imagePlus);
+		
+		assertEquals(1, boxes.size());
+		
+		// first box
+		OrientedBox2D box1 = boxes.get(255);
+		assertTrue(box1.length() > 4.2);
+		assertTrue(box1.width() > 2.0);
+	}
+
 
 }

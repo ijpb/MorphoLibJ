@@ -78,7 +78,7 @@ public class OrientedBoundingBoxPlugin implements PlugIn
 		String selectedImageName = IJ.getImage().getTitle();
 
 		// create the dialog
-		GenericDialog gd = new GenericDialog("Bounding Box");
+		GenericDialog gd = new GenericDialog("Oriented Bounding Box");
 		gd.addChoice("Label Image:", imageNames, selectedImageName);
 		gd.addCheckbox("Show Overlay Result", true);
 		gd.addChoice("Image to overlay:", imageNames, selectedImageName);
@@ -106,7 +106,7 @@ public class OrientedBoundingBoxPlugin implements PlugIn
         ResultsTable results = op.createTable(boxes);
         
 		// show result
-    	String tableName = labelImage.getShortTitle() + "-BBox"; 
+    	String tableName = labelImage.getShortTitle() + "-OBox"; 
     	results.show(tableName);
     	
 		// Check if results must be displayed on an image
@@ -196,15 +196,5 @@ public class OrientedBoundingBoxPlugin implements PlugIn
 		yp[3] = (float) ((y - calib.yOrigin) / calib.pixelHeight);
 		return new PolygonRoi(xp, yp, 4, Roi.POLYGON);
 	}
-	
-//	private final static Roi createRoi(Box2D box)
-//	{
-//		// Coordinates of box, in pixel coordinates
-//		double xmin = box.getXMin();
-//		double xmax = box.getXMax();
-//		double ymin = box.getYMin();
-//		double ymax = box.getYMax();
-//		
-//		return new Roi(xmin, ymin, xmax - xmin, ymax - ymin);
-//	}
+
 }

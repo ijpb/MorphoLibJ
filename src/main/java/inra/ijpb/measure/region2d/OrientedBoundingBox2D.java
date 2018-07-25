@@ -101,6 +101,85 @@ public class OrientedBoundingBox2D extends RegionAnalyzer2D<OrientedBox2D>
 		return new OrientedBox2D(cx, cy, length, width, angle);
 	}
 	
+	/**
+	 * Computes the object-oriented bounding box of a set of points.
+	 * 
+	 * @param points
+	 *            a list of points (not necessarily ordered)
+	 * @return the oriented box of this set of points.
+	 */
+	public static final OrientedBox2D orientedBoundingBox(ArrayList<? extends Point2D> points, Calibration calib)
+	{
+		// Compute convex hull to reduce complexity
+		Polygon2D convexHull = Polygons2D.convexHull(points);
+		
+		Polygon2D calibratedHull = new Polygon2D(calibrate(convexHull.vertices(), calib));
+				
+		// compute convex hull centroid
+		Point2D center = calibratedHull.centroid();
+		double cx = center.getX();
+		double cy = center.getY();
+		
+		// coordinates of convex hull after spatial calibration and recentering
+		ArrayList<Point2D> centeredHull = new ArrayList<Point2D>(convexHull.vertexNumber());
+		for (Point2D p : calibratedHull)
+		{
+			double x = p.getX() - cx;
+			double y = p.getY() - cy;
+			centeredHull.add(new Point2D.Double(x, y));
+		}
+
+		AngleDiameterPair minFeret = FeretDiameters.minFeretDiameter(centeredHull);
+		
+		// orientation of the main axis
+		// pre-compute trigonometric functions
+		double cot = Math.cos(minFeret.angle);
+		double sit = Math.sin(minFeret.angle);
+
+		// compute elongation in direction of rectangle length and width
+		double xmin = Double.MAX_VALUE;
+		double ymin = Double.MAX_VALUE;
+		double xmax = Double.MIN_VALUE;
+		double ymax = Double.MIN_VALUE;
+		for (Point2D p : centeredHull)
+		{
+			// coordinates of current point
+			double x = p.getX(); 
+			double y = p.getY();
+			
+			// compute rotated coordinates
+			double x2 = x * cot + y * sit; 
+			double y2 = - x * sit + y * cot;
+			
+			// update bounding box
+			xmin = Math.min(xmin, x2);
+			ymin = Math.min(ymin, y2);
+			xmax = Math.max(xmax, x2);
+			ymax = Math.max(ymax, y2);
+		}
+		
+		// position of the center with respect to the centroid compute before
+		double dl = (xmax + xmin) / 2;
+		double dw = (ymax + ymin) / 2;
+
+		// change coordinates from rectangle to user-space
+		double dx  = dl * cot - dw * sit;
+		double dy  = dl * sit + dw * cot;
+
+		// coordinates of oriented box center
+		cx += dx;
+		cy += dy;
+
+		// size of the rectangle
+		double length = ymax - ymin;
+		double width  = xmax - xmin;
+		
+		// store angle in degrees, between 0 and 180
+		double angle = (Math.toDegrees(minFeret.angle) + 270) % 180;
+
+		// Store results in a new instance of OrientedBox2D
+		return new OrientedBox2D(cx, cy, length, width, angle);
+	}
 
 	// ====================================================
 	// Constructor
@@ -157,7 +236,8 @@ public class OrientedBoundingBox2D extends RegionAnalyzer2D<OrientedBox2D>
         for (int i = 0; i < nLabels; i++)
         {
         	this.fireProgressChanged(this, i, nLabels);
-        	boxes[i] = orientedBoundingBox(calibrate(cornerPointsArrays[i], calib));
+//        	boxes[i] = orientedBoundingBox(calibrate(cornerPointsArrays[i], calib));
+        	boxes[i] = orientedBoundingBox(cornerPointsArrays[i], calib);
         }
         
 		this.fireStatusChanged(this, "");
