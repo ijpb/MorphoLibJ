@@ -14,7 +14,7 @@ import ij.gui.Roi;
 /**
  * A polygon shape in the plane.
  * 
- * Polygon is assumed to be simple -> one connected component, no hole.
+ * Polygon is assumed to be simple: only one connected component, no hole.
  * 
  * @author dlegland
  *
@@ -51,6 +51,14 @@ public class Polygon2D implements Iterable <Point2D>
 		this.vertices = new ArrayList<Point2D>(n);
 	}
 	
+	/**
+	 * Creates a new polygon from the coordinates of its vertices.
+	 * 
+	 * @param xCoords 
+	 *            the x-coordinates of the vertices
+	 * @param yCoords 
+	 *            the y-coordinates of the vertices
+	 */
 	public Polygon2D(double[] xCoords, double[] yCoords)
 	{
 		int n = xCoords.length;
@@ -65,6 +73,13 @@ public class Polygon2D implements Iterable <Point2D>
 		}
 	}
 	
+	/**
+	 * Creates a new polygon from a collection of vertices. A new collection is
+	 * created.
+	 * 
+	 * @param vertices
+	 *            the polygon vertices
+	 */
 	public Polygon2D(Collection<Point2D> vertices)
 	{
 		this.vertices = new ArrayList<Point2D>(vertices.size());
@@ -101,7 +116,8 @@ public class Polygon2D implements Iterable <Point2D>
 	/**
 	 * Computes the area of this polygon
 	 * 
-	 * @return the area of this polygon  
+	 * @see #signedArea()
+	 * @return the area of this polygon
 	 */
 	public double area()
 	{
@@ -112,6 +128,7 @@ public class Polygon2D implements Iterable <Point2D>
 	/**
 	 * Computes the signed area of this polygon
 	 * 
+	 * @see #area()
 	 * @return the signed area of this polygon  
 	 */
 	public double signedArea()
@@ -139,9 +156,7 @@ public class Polygon2D implements Iterable <Point2D>
 	/**
 	 * Computes the centroid of this polygon
 	 * 
-	 * @param vertices
-	 *            the ordered list of vertices
-	 * @return the centroid of the polygon.
+	 * @return the centroid position of the polygon.
 	 */
 	public Point2D centroid()
 	{
@@ -339,18 +354,25 @@ public class Polygon2D implements Iterable <Point2D>
 	 * 
 	 * @param i
 	 *            vertex index
-	 * @return the vertex at the specified index
+	 * @param pos
+	 *            the position of the new vertex
 	 */
 	public void setVertex(int i, Point2D pos)
 	{
 		this.setVertex(i, pos);
 	}
 
+	/**
+	 * @return a reference to the inner array of vertices
+	 */
 	public ArrayList<Point2D> vertices()
 	{
 		return this.vertices;
 	}
 	
+	/**
+	 * @return an iterator over the vertices of this polygon
+	 */
 	@Override
 	public Iterator<Point2D> iterator()
 	{

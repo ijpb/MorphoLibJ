@@ -78,7 +78,7 @@ public class OrientedBoundingBox2D extends RegionAnalyzer2D<OrientedBox2D>
 			ymax = Math.max(ymax, y2);
 		}
 		
-		// position of the center with respect to the centroid compute before
+		// position of the center with respect to the centroid computed before
 		double dl = (xmax + xmin) / 2;
 		double dw = (ymax + ymin) / 2;
 
@@ -102,11 +102,16 @@ public class OrientedBoundingBox2D extends RegionAnalyzer2D<OrientedBox2D>
 	}
 	
 	/**
-	 * Computes the object-oriented bounding box of a set of points.
+	 * Computes the object-oriented bounding box of a set of points, computing
+	 * convex hull in pixel coordinates. Due to numerical computation, this
+	 * versions is usually more stable than computing the convex hull on the
+	 * calibrated points.
 	 * 
 	 * @param points
-	 *            a list of points (not necessarily ordered)
-	 * @return the oriented box of this set of points.
+	 *            a list of points, in pixel coordinates
+	 * @param calib
+	 *            the spatial calibration of the points
+	 * @return the oriented box of this set of points, in calibrated coordinates
 	 */
 	public static final OrientedBox2D orientedBoundingBox(ArrayList<? extends Point2D> points, Calibration calib)
 	{
@@ -158,7 +163,7 @@ public class OrientedBoundingBox2D extends RegionAnalyzer2D<OrientedBox2D>
 			ymax = Math.max(ymax, y2);
 		}
 		
-		// position of the center with respect to the centroid compute before
+		// position of the center with respect to the centroid computed before
 		double dl = (xmax + xmin) / 2;
 		double dw = (ymax + ymin) / 2;
 

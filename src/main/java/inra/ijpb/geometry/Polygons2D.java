@@ -31,6 +31,9 @@ public class Polygons2D
 	 * Code from ij.gui.PolygonRoi.getConvexHull(), adapted to return a polygon
 	 * oriented counter-clockwise.
 	 * 
+	 * Uses floating point computation with specific processing of aligned
+	 * vertices.
+	 * 
 	 * @param points
 	 *            a set of points coordinates in the 2D space
 	 * @return the convex hull of the points, as a list of ordered vertices
@@ -56,7 +59,7 @@ public class Polygons2D
 			{
 				ymin = y;
 				pStart = i;
-				smallestX = java.lang.Double.MAX_VALUE;
+				smallestX = vertex.getX();
 			}
 			else if (y == ymin)
 			{
@@ -102,9 +105,28 @@ public class Polygons2D
 				double det = x1 * (y2 - y3) - y1 * (x2 - x3) + (y3 * x2 - y2 * x3);
 				if (det < 0)
 				{
-					x2 = x3;
-					y2 = y3;
-					ip2 = ip3;
+					if (det < -1e-12)
+					{
+						// regular corner
+						x2 = x3;
+						y2 = y3;
+						ip2 = ip3;
+					}
+					else
+					{
+						// specific processing for aligned points
+						// ensure vertices 1,2,3 are aligned in this order
+						double x12 = x2 - x1;
+						double y12 = y2 - y1;
+						double x13 = x3 - x1;
+						double y13 = y3 - y1;
+						if ((x12 * x13 + y12 * y13) > (x13 * x13 + y13 * y13))
+						{
+							x2 = x3;
+							y2 = y3;
+							ip2 = ip3;
+						}
+					}
 				}
 				ip3 = (ip3 + 1) % n;
 			} while (ip3 != ip1);
@@ -154,7 +176,7 @@ public class Polygons2D
 			{
 				ymin = vertex.y;
 				pStart = i;
-				xmin = Integer.MAX_VALUE;
+				xmin = vertex.x;
 			}
 			else if (vertex.y == ymin && vertex.x < xmin)
 			{

@@ -2,6 +2,14 @@ package inra.ijpb.geometry;
 
 import java.awt.geom.Point2D;
 
+/**
+ * A straight line in the plane.
+ * 
+ * Defined by an origin and a direction.
+ * 
+ * @author dlegland
+ *
+ */
 public class StraightLine2D
 {
 	double x0;

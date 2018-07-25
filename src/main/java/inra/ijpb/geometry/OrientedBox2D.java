@@ -32,6 +32,14 @@ public class OrientedBox2D
 	/**
 	 * Default constructor for OrientedBox2D.
 	 * 
+	 * @param center
+	 *            the center of the box
+	 * @param length
+	 *            the box length
+	 * @param width
+	 *            the box width
+	 * @param orientation
+	 *            the orientation of the box, in degrees counter-clockwise
 	 */
 	public OrientedBox2D(Point2D center, double length, double width, double orientation)
 	{
@@ -41,6 +49,17 @@ public class OrientedBox2D
 	/**
 	 * Default constructor for OrientedBox2D, that specifies center as two
 	 * coordinates.
+	 * 
+	 * @param xc
+	 *            the x-coordinate of the box center
+	 * @param yc
+	 *            the y-coordinate of the box center
+	 * @param length
+	 *            the box length
+	 * @param width
+	 *            the box width
+	 * @param orientation
+	 *            the orientation of the box, in degrees counter-clockwise
 	 */
 	public OrientedBox2D(double xc, double yc, double length, double width, double orientation)
 	{
