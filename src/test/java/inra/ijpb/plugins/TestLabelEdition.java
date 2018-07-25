@@ -18,7 +18,7 @@ public class TestLabelEdition {
 	public static void main( final String[] args )
 	{
 		ImageJ.main( args );
-		IJ.open( TestMorphologicalSegmentation.class.getResource( "/files/grains-med-WTH-lbl.tif" ).getFile() );
+		IJ.open( MorphologicalSegmentationTest.class.getResource( "/files/grains-med-WTH-lbl.tif" ).getFile() );
 		new LabelEdition().run( null );
 	}
 }

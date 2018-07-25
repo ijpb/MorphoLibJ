@@ -33,7 +33,7 @@ import inra.ijpb.watershed.Watershed;
 
 import org.junit.Test;
 
-public class TestWatershed2D {
+public class Watershed2DTest {
 
 	long xorshift_state = 1;
 
@@ -56,7 +56,7 @@ public class TestWatershed2D {
 	@Test
 	public void testWatershed()
 	{
-		ImagePlus input = IJ.openImage( TestWatershed2D.class.getResource( "/files/grains.tif" ).getFile() );
+		ImagePlus input = IJ.openImage( Watershed2DTest.class.getResource( "/files/grains.tif" ).getFile() );
 
 		final ImagePlus copy = input.duplicate();
 		
@@ -77,7 +77,7 @@ public class TestWatershed2D {
 			ImageProcessor resultIP8bit = Watershed.computeWatershed( inputIP, maskIP, connectivity );
 			ImagePlus result8bit = new ImagePlus("result", resultIP8bit);
 
-			ImagePlus reference = IJ.openImage( TestWatershed2D.class.getResource(
+			ImagePlus reference = IJ.openImage( Watershed2DTest.class.getResource(
 				"/files/grains_watershed_" + connectivity + ".tif" ).getFile() );
 			
 			assertEquals( "Different result compared to reference image (connectivity = " + connectivity + ")",
@@ -137,7 +137,7 @@ public class TestWatershed2D {
 	{
 		ImageJ.main( args );
 		
-		IJ.open( TestWatershed2D.class.getResource( "/files/grains.tif" ).getFile() );
+		IJ.open( Watershed2DTest.class.getResource( "/files/grains.tif" ).getFile() );
 		
 		new Watershed3DPlugin().run( null );
 	}

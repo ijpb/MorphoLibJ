@@ -281,6 +281,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 	 */
 	private HashMap<Double,Integer>[] getHistogramPerLabel()
 	{
+		@SuppressWarnings("unchecked")
 		HashMap<Double,Integer>[] hm = new HashMap[ objectVoxels.length ];
 		for( int i=0; i<objectVoxels.length; i++ )
 		{
@@ -318,6 +319,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 		if( this.adjList == null )
 			this.adjList = RegionAdjacencyGraph.computeAdjacencies( labelImage );
 
+		@SuppressWarnings("unchecked")
 		HashMap<Double,Integer>[] hm = new HashMap[ numLabels ];
 		for( int i = 0; i < numLabels ; i++ )
 			hm[ i ] = new HashMap< Double,Integer >();
@@ -483,6 +485,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 	{
 		if( this.adjList == null )
 			this.adjList = RegionAdjacencyGraph.computeAdjacencies( labelImage );
+		@SuppressWarnings("unchecked")
 		ArrayList<Double>[] neighborVoxels = new ArrayList[ adjList.size() ];
 		for( int i = 0; i < neighborVoxels.length; i++ )
 			neighborVoxels[ i ] = new ArrayList<Double>();

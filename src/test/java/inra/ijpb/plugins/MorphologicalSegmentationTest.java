@@ -40,7 +40,7 @@ import org.junit.Test;
  * @author iarganda
  *
  */
-public class TestMorphologicalSegmentation {
+public class MorphologicalSegmentationTest {
 	
 	
 	/**
@@ -49,7 +49,7 @@ public class TestMorphologicalSegmentation {
 	@Test
 	public void testSegmentationDifferentImageTypes()
 	{
-		ImagePlus input = IJ.openImage( TestMorphologicalSegmentation.class.getResource( "/files/grains.tif" ).getFile() );
+		ImagePlus input = IJ.openImage( MorphologicalSegmentationTest.class.getResource( "/files/grains.tif" ).getFile() );
 		int dynamic = 10;
 		int connectivity = 6;
 		int gradientRadius = 1;
@@ -130,7 +130,7 @@ public class TestMorphologicalSegmentation {
 	{
 		ImageJ.main( args );
 		
-		IJ.open( TestMorphologicalSegmentation.class.getResource( "/files/grains.tif" ).getFile() );
+		IJ.open( MorphologicalSegmentationTest.class.getResource( "/files/grains.tif" ).getFile() );
 		
 		new MorphologicalSegmentation().run( null );
 	}

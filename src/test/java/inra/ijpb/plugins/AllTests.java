@@ -29,7 +29,9 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
 	// generic classes
     ExtendBordersPluginTest.class, 
-    GeodesicDistanceMapPluginTest.class
+    GeodesicDistanceMapPluginTest.class,
+    MorphologicalSegmentationTest.class, 
+    Watershed2DTest.class, 
     })
 public class AllTests {
   //nothing
