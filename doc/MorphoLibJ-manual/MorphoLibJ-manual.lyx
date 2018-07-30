@@ -6935,23 +6935,6 @@ y completed by the methods used to measure them from discrete images, and
  finally we present the plugins that integrate them.
 \end_layout
 
-\begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-TODO: 
-\end_layout
-
-\begin_layout Itemize
-introduces Feret diameters
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
 \begin_layout Subsection
 Intrinsic volumes
 \end_layout
@@ -6959,7 +6942,7 @@ Intrinsic volumes
 \begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
-name "subsec:Intrinsic-Volumes"
+name "subsec:Intrinsic-Volumes-2D"
 
 \end_inset
 
@@ -7619,104 +7602,26 @@ reference "fig:Euler-Number-Computation-2D"
 -c).
 \end_layout
 
-\begin_layout Subsubsection
-Shape factors
-\end_layout
-
-\begin_layout Standard
-Intrinsic volumes characterize the size of the particles, from different
- points of view.
- Several indices are sometimes used to describe the shape of the particles,
- independently of their size.
-\end_layout
-
-\begin_layout Standard
-In 2D, the 
-\series bold
-isoperimetric deficit index
-\series default
- (or 
-\begin_inset Quotes eld
-\end_inset
-
-shape factor
-\begin_inset Quotes erd
-\end_inset
-
-, or 
-\begin_inset Quotes eld
-\end_inset
-
-circularity
-\begin_inset Quotes erd
-\end_inset
-
-) is defined as the ratio of area over the square of the perimeter, normalized
- such that the value for a disk equals one:
-\begin_inset Formula 
-\begin{eqnarray}
-\mbox{circularity} & = & 4\pi\frac{A}{P^{2}}
-\end{eqnarray}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-While values of circularity range theoretically within the interval 
-\begin_inset Formula $[0;1]$
-\end_inset
-
-, the measurements errors of the perimeter may produce circularity values
- above 1 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Lehmann_2012_ij"
-
-\end_inset
-
-.
- The MorphoLibJ library also considers the inverse of the circularity, referred
- to as 
-\begin_inset Quotes eld
-\end_inset
-
-
-\series bold
-elongation index
-\series default
-
-\begin_inset Quotes erd
-\end_inset
-
-.
- The values of elongation range from 1 for round particles and increase
- for elongated particles.
-\begin_inset Formula 
-\begin{eqnarray}
-\mbox{elongation} & = & \frac{P^{2}}{4\pi\cdot A}
-\end{eqnarray}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Newpage clearpage
-\end_inset
-
-
-\end_layout
-
 \begin_layout Subsection
-Geometric moments and inertia ellipse 
+Geometric moments and inertia ellipse
 \end_layout
 
 \begin_layout Standard
-A binary region may be described mathematically by its geometric moments
- 
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Geometric-Moment-And-Inertia-Ellipse"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+A binary region 
+\begin_inset Formula $X$
+\end_inset
+
+ may be described mathematically by its geometric moments 
 \begin_inset Formula $m_{pq}$
 \end_inset
 
@@ -7811,8 +7716,8 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename images/analysis/inertia-ellipse.png
-	height 4cm
+	filename images/analysis/demoShape-ellipse.png
+	height 4.5cm
 
 \end_inset
 
@@ -7829,7 +7734,7 @@ name "fig:Inertia-ellipse"
 
 \end_inset
 
-Inertia ellipse.
+Inertia ellipse of a binary region.
 \end_layout
 
 \end_inset
@@ -7863,7 +7768,7 @@ The second order centered moments can be used to compute the inertia matrix:
 
 \begin_layout Standard
 By computing the parameters of the ellipse that produces the same inertia
- matrix, one obtain the equivalent 
+ matrix, one obtains the equivalent 
 \series bold
 inertia ellipse
 \series default
@@ -7886,11 +7791,148 @@ key "Burger_Burge_2008"
 .
 \end_layout
 
+\begin_layout Subsection
+Feret diameter and oriented box
+\end_layout
+
 \begin_layout Standard
-\begin_inset Newpage clearpage
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Feret-Diameter-And-Oriented-Box"
+
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+A popular way to assess the size of a region is to measure its 
+\series bold
+largest Feret diameter
+\series default
+.
+ The maximum Feret diameter of a region is simply the maximum distance computed
+ over all the pairs of points belonging to the region:
+\begin_inset Formula 
+\begin{align}
+F_{\text{max}} & =\max_{\boldsymbol{x},\boldsymbol{y}\in X}d(\boldsymbol{x},\boldsymbol{y})
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+It is easy to realize that the search can be performed on the set of boundary
+ points (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Feret-Diameter-And-Oriented-Box"
+
+\end_inset
+
+).
+ In practice, the computation of Maximum Feret diameter can be accelerated
+ by first computing the convex hull of the region.
+ In MorphoLibJ, the maximal Feret diameter is computed over the corners
+ of the regions.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/analysis/demoShape-maxFeret.png
+	height 4.5cm
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/analysis/demoShape-orientedBox.png
+	height 4.5cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Feret-Diameter-And-Oriented-Box"
+
+\end_inset
+
+Feret diameter and oriented box
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The Feret diameter can be performed on any direction.
+ Typical choice is to measure the Feret diameter in the direction perpendicular
+ to the direction of the maximum Feret diameter.
+ The ratio of the largest Feret diameter and of the Feret diameter measured
+ in the perpendicular direction gives an indication on the elongation of
+ the region.
+ 
+\end_layout
+
+\begin_layout Standard
+The notion of 
+\series bold
+object-oriented bounding box
+\series default
+ (sometimes denoted as 
+\begin_inset Quotes eld
+\end_inset
+
+OOBB
+\begin_inset Quotes erd
+\end_inset
+
+) is closely related to that of Feret diameter.
+ One possible definition of oriented bounding box is the rectangle with
+ smallest width that totally encloses the region.
+ An example is illustrated on Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Feret-Diameter-And-Oriented-Box"
+
+\end_inset
+
+.
+ Another definition is the rectangle with smallest area: the two resulting
+ rectangles are often similar, but may differ in some cases.
+ Note that in general, the orientation of the largest axis of the oriented
+ box differs from both the direction of the largest Feret diameter, and
+ the direction of the inertia ellipse.
 \end_layout
 
 \begin_layout Subsection
@@ -7936,7 +7978,7 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename images/analysis/geodesic-diameter.png
+	filename images/analysis/demoShape-geodDiam.png
 	height 4.5cm
 
 \end_inset
@@ -7989,12 +8031,264 @@ key "Staal_2004_tmi"
 \end_layout
 
 \begin_layout Standard
+The implementation of geodesic diameter within MorphoLibJ relies on Chamfer
+ distances propagation (see section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Geodesic-Distance-Transform"
+
+\end_inset
+
+).
+ Hence, the actual value may be somewhat overestimated due to the approximation
+ in the measurements.
+\end_layout
+
+\begin_layout Standard
 Other measurements consider the 
 \series bold
 largest circle that can be inscribed within the particle
 \series default
 .
  
+\end_layout
+
+\begin_layout Subsection
+Measurement of shape
+\end_layout
+
+\begin_layout Standard
+It is often convenient to describe and 
+\series bold
+quantify the shape 
+\series default
+of regions independently of their location, orientation, or relative scaling.
+ Several indices are commonly used to describe the shape of the particles,
+ independently of their size.
+ We present here the definitions used within the MorphoLibJ plugins.
+\end_layout
+
+\begin_layout Subsubsection
+Circularity
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+circularity
+\series default
+ (or 
+\begin_inset Quotes eld
+\end_inset
+
+shape factor
+\begin_inset Quotes erd
+\end_inset
+
+, or 
+\begin_inset Quotes eld
+\end_inset
+
+isperimetric deficit index
+\begin_inset Quotes erd
+\end_inset
+
+) is defined as the ratio of area over the square of the perimeter, normalized
+ such that the value for a disk equals one:
+\begin_inset Formula 
+\begin{eqnarray}
+\mbox{circularity} & = & 4\pi\frac{A}{P^{2}}
+\end{eqnarray}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+While the values of isoperimetric deficit index theoretically range within
+ the interval 
+\begin_inset Formula $[0;1]$
+\end_inset
+
+, the measurements errors of the perimeter may produce circularity values
+ above 1 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Lehmann_2012_ij"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+Convexity
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Convexity"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+convexity
+\series default
+ (also known as 
+\begin_inset Quotes eld
+\end_inset
+
+solidity
+\begin_inset Quotes erd
+\end_inset
+
+) is defined as the ratio of the area of the region over the area of its
+ convex hull.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\text{convexity} & =\frac{A(X)}{A(ConvHull(X))}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/analysis/demoShape-convexity.png
+	height 4.5cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Convexity"
+
+\end_inset
+
+Convexity of a planar region.
+ The convex area is the union of the blue and yellow regions.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Elongation
+\end_layout
+
+\begin_layout Standard
+The MorphoLibJ library provides several shape indices describing the elongation
+ of the regions.
+ Their values is 1 for a disk, and increase for elongated regions.
+\end_layout
+
+\begin_layout Description
+The
+\begin_inset space ~
+\end_inset
+
+ellipse
+\begin_inset space ~
+\end_inset
+
+elongation
+\begin_inset space ~
+\end_inset
+
+factor, defined as the ratio of the largest over the smallest axis lengths,
+ can be used to quantify the shape of the region.
+\end_layout
+
+\begin_layout Description
+The
+\series bold
+
+\begin_inset space ~
+\end_inset
+
+
+\series default
+oriented
+\begin_inset space ~
+\end_inset
+
+box
+\begin_inset space ~
+\end_inset
+
+elongation, defined as the ratio of the length of the oriented bounding
+ box over its width
+\end_layout
+
+\begin_layout Description
+The
+\begin_inset space ~
+\end_inset
+
+geodesic
+\begin_inset space ~
+\end_inset
+
+elongation, defined as the ratio of the geodesic diameter of the diameter
+ of the largest inscribed disk.
+\end_layout
+
+\begin_layout Subsubsection
+Tortuosity
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+tortuosity
+\series default
+ is defined as the ratio of the geodesic diameter over the largest Feret
+ diameter.
+ 
+\end_layout
+
+\begin_layout Standard
+It describes the complexity of the region.
+ Its theroretical value is 1 for convex regions, and increases for regions
+ with complex geometries.
 \end_layout
 
 \begin_layout Subsection
@@ -8017,7 +8311,8 @@ reference "sec:Connected-Components-Labeling"
 ResultsTable
 \emph default
 ) containing one row for each label actually present within the image.
- The spatial calibration of the image is taken into account in most measurements.
+ The spatial calibration of the image is taken into account for most measurement
+s.
  All plugins can be found under the 
 \begin_inset Quotes eld
 \end_inset
@@ -8029,83 +8324,6 @@ Analyze
 \end_inset
 
  menu.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename images/leaf/leaf-contour-bbox.png
-	lyxscale 50
-	width 18text%
-
-\end_inset
-
-
-\begin_inset Graphics
-	filename images/leaf/leaf-contour-ellipse.png
-	lyxscale 50
-	width 18text%
-
-\end_inset
-
-
-\begin_inset Graphics
-	filename images/leaf/leaf-contour-maxFeret.png
-	lyxscale 50
-	width 18text%
-
-\end_inset
-
-
-\begin_inset Graphics
-	filename images/leaf/leaf-contour-geodDiameter.png
-	lyxscale 50
-	width 18text%
-
-\end_inset
-
-
-\begin_inset Graphics
-	filename images/leaf/leaf-contour-inscribedDisk.png
-	lyxscale 50
-	width 18text%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Sample images resulting from region analyses.
- From leftto right: bounding box, inertia ellipse, maximum Feret diameter,
- geodesic diameter, largest inscribed disk.
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Subsubsection
@@ -8134,48 +8352,370 @@ Analyze Regions
 
 ).
  For 2D particles, the area, the perimeter and derived features are implemented.
- The columns of the results table are:
+ 
+\end_layout
+
+\begin_layout Standard
+The options of the dialog correspond to the parameters that can be computed:
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-Label the label of the particle measured on the current line (it can be
- different from the row number if some labels do no exist in original image).
+Area the area of the regions
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-Area the number of pixels within each region, multiplied by the area of
- each pixel.
+Perimeter the perimeter, measured using discrete version of Crofton formula
+ (see section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Intrinsic-Volumes-2D"
+
+\end_inset
+
+)
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-Perimeter an estimate of the perimeter, using Crofton formula.
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Circularity the normalized ratio of area by the square of the perimeter:
+Circularity the normalized ratio of the area by the square of the perimeter:
  
 \begin_inset Formula $4\pi\cdot A/p^{2}$
 \end_inset
 
 .
- The value should be comprised between 0 (very elongated) and 1 (close to
- circular).
  Values superior to 1 may appear due to discretization effect.
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-Elongation the normalized ratio of the square of the perimeter by the area:
- 
-\begin_inset Formula $p^{2}/\left(4\pi\cdot A\right)$
+Inertia
+\begin_inset space ~
 \end_inset
 
-, corresponding to the inverse of the circularity.
- The values range from 1 (round), and increase with elongation of the particle.
+Ellipse the position, size and orientation of the inertia ellipse (see section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Feret-Diameter-And-Oriented-Box"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Ellipse_Elong.
+ the elongation of the inertia ellipse (ratio of axis lengths)
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Convexity the convexity, as defined in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Convexity"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Max.
+\begin_inset space ~
+\end_inset
+
+Feret
+\begin_inset space ~
+\end_inset
+
+Diameter the value of the largest Feret diameter
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Oriented
+\begin_inset space ~
+\end_inset
+
+Box the position, size and orientation of the oriented box with smallest
+ width
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Oriented
+\begin_inset space ~
+\end_inset
+
+Box
+\begin_inset space ~
+\end_inset
+
+Elong.
+ the elongation of the bounding box (ratio of length over width)
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Geodesic
+\begin_inset space ~
+\end_inset
+
+Diameter the length of the geodesic diameter
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Tortuosity the tortuosity, as the ratio of geodesic diameter over largest
+ Feret diameter
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Max
+\begin_inset space ~
+\end_inset
+
+inscribed
+\begin_inset space ~
+\end_inset
+
+disc the position and the radius of the largest circle that can be inscribed
+ within the region
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Geodesic
+\begin_inset space ~
+\end_inset
+
+Elong.
+ the ratio of geodesic diameter over diameter of inscribed circle.
+\end_layout
+
+\begin_layout Standard
+The first columns of the resulting ResultsTable contain the label of the
+ regions, to facilitate their identification.
+\end_layout
+
+\begin_layout Subsubsection
+Bounding Box
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+Bounding Box plugin
+\series default
+ computes the minimum and maximum 
+\begin_inset Formula $x$
+\end_inset
+
+ and 
+\begin_inset Formula $y$
+\end_inset
+
+ coordinates of each region within a binary or label image.
+ The result of the plugin comprises the following features:
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Label the label of the region measured on the current line (equal to 255
+ for bionary images)
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Box2D.XMin the minimum x coordinate
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Box2D.XMax the maximum x coordinate
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Box2D.YMin the minimum y coordinate
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Box2D.YMax the maximum y coordinate
+\end_layout
+
+\begin_layout Standard
+It is also possible to draw the resulting bounding box(es) onto another
+ image.
+\end_layout
+
+\begin_layout Subsubsection
+Inertia Ellipse
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+Inertia Ellipse plugin
+\series default
+ computes the equivalent inertia ellipse for each region within a binary
+ or label image.
+ The result of the plugin comprises the following features:
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Label the label of the region measured on the current line (equal to 255
+ for bionary images)
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Ellipse.Center.X the x coordinate of ellipse center
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Ellipse.Center.X the y coordinate of ellipse center
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Ellipse.Radius1 the length of the largest semi-axis
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Ellipse.Radius2 the length of the smallest semi-axis
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Ellipse.Orientation the orientation of the ellipse, in degrees from the horizonta
+l.
+\end_layout
+
+\begin_layout Standard
+It is also possible to draw the resulting ellipse(s) onto another image.
+\end_layout
+
+\begin_layout Subsubsection
+Max Feret Diameter 
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+Max Feret Diameter plugin
+\series default
+ computes the length of the largest Feret diameter of each region within
+ a binary or label image, as well as the position of the extreme points.
+ The result of the plugin comprises the following features:
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Label the label of the region measured on the current line (equal to 255
+ for bionary images)
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Diameter the length of the Feret diameter
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Orientation the orientation of the diameter, in degrees from the horizontal
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+P1.X the x-coordinate of the first extremity
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+P1.Y the y-coordinate of the first extremity
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+P2.X the x-coordinate of the second extremity
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+P2.Y the y-coordinate of the second extremity
+\end_layout
+
+\begin_layout Standard
+It is also possible to draw the resulting diameter as a line segment onto
+ another image.
+\end_layout
+
+\begin_layout Subsubsection
+Oriented Box
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+Oriented Box plugin
+\series default
+ computes the minimal width oriented bounding box of each region within
+ a binary or label image.
+ The result of the plugin comprises the following features:
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Label the label of the region measured on the current line (equal to 255
+ for bionary images)
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+OBox.Center.X the x coordinate of oriented box center
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+OBox.Center.X the y coordinate of oriented center
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+OBox.Length the length of the oriented box
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+OBox.Width the width of the oriented box
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+OBox.Orientation the orientation of the box, in degrees from the horizontal.
+\end_layout
+
+\begin_layout Standard
+It is also possible to draw the resulting oriented boxe(s) onto another
+ image.
 \end_layout
 
 \begin_layout Subsubsection
@@ -8193,7 +8733,8 @@ Geodesic Diameter plugin
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-Label the label of the particle measured on the current line.
+Label the label of the region measured on the current line (equal to 255
+ for bionary images)
 \end_layout
 
 \begin_layout Labeling
@@ -8271,22 +8812,23 @@ computes for each label the largest disk that can be enclosed within the
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-Label the label of the particle measured on the current line.
+Label the label of the region measured on the current line (equal to 255
+ for bionary images)
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-xi the x-coordinate of the inscribed circle.
+inscrCircle.Center.X the x-coordinate of the inscribed circle.
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-yi the y-coordinate of the inscribed circle.
+inscrCircle.Center.Y the y-coordinate of the inscribed circle.
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-radius the radius of the inscribed circle.
+inscrCircle.Radius the radius of the inscribed circle.
 \end_layout
 
 \begin_layout Section
@@ -8416,7 +8958,7 @@ As in 2D, the
 \series bold
 3D Euler number 
 \series default
-also quantify the topology of a set.
+also quantifies the topology of a set.
  It corresponds to the number of connected components, minus the number
  of 
 \begin_inset Quotes eld
@@ -8551,8 +9093,8 @@ The measurement of
 \series bold
 volume of 3D region
 \series default
- is as straightforward as in 2D: it consists in counting voxels that belong
- to the 3D region, weighted by the volume of an individual voxel.
+ is as straightforward as in 2D: it consists in counting the voxels that
+ belong to the 3D region, multiplied by the volume of an individual voxel.
  
 \end_layout
 
@@ -8657,6 +9199,31 @@ pitch
 \end_inset
 
 ), and the roll around the main axis.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+shape descriptors:
+\end_layout
+
+\begin_layout Itemize
+elongation: r1/r2 (Andrey 2010)
+\end_layout
+
+\begin_layout Itemize
+flatness : r2/r3 (Andrey 2010)
+\end_layout
+
+\begin_layout Itemize
+ellipsoid factor: r3/r2 - r2/r1 (Doube 2015)
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
