@@ -52,6 +52,8 @@ public class AnalyzeRegions implements PlugInFilter
     
 	boolean computeArea = true;
 	boolean computePerimeter = true;
+	boolean computeCircularity = true;
+	boolean computeEulerNumber = true;
 	boolean computeInertiaEllipse = true;
 	boolean computeEllipseElongation = true;
 	boolean computeConvexity = true;
@@ -113,6 +115,8 @@ public class AnalyzeRegions implements PlugInFilter
         GenericDialog gd = new GenericDialog("Particles Analysis 3D");
         gd.addCheckbox("Area", true);
         gd.addCheckbox("Perimeter", true);
+        gd.addCheckbox("Circularity", true);
+        gd.addCheckbox("Euler Number", true);
         gd.addCheckbox("Inertia Ellipse", true);
         gd.addCheckbox("Ellipse Elong.", true);
         gd.addCheckbox("Convexity", true);
@@ -132,6 +136,8 @@ public class AnalyzeRegions implements PlugInFilter
         // Extract features to extract from image
         computeArea               = gd.getNextBoolean();
         computePerimeter          = gd.getNextBoolean();
+        computeCircularity        = gd.getNextBoolean();
+        computeEulerNumber        = gd.getNextBoolean();
         computeInertiaEllipse     = gd.getNextBoolean();
         computeEllipseElongation  = gd.getNextBoolean();
         computeConvexity          = gd.getNextBoolean();
@@ -170,6 +176,9 @@ public class AnalyzeRegions implements PlugInFilter
     	}
     	
     	// Parameters to be computed
+    	double[] areaList = null;
+    	double[] perimList = null;
+    	double[] eulerNumberList = null;
     	Ellipse[] ellipses = null;
     	Convexity.Result[] convexities = null;
     	PointPair2D[] maxFeretDiams = null;
@@ -180,18 +189,24 @@ public class AnalyzeRegions implements PlugInFilter
 
     	// Compute parameters depending on the selected options
     	
-    	if (computeArea)
+    	if (computeArea || computeCircularity)
     	{
     		IJ.showStatus("Compute area");
-    		double[] areaList = IntrinsicVolumes2D.areas(image, labels, calib);
+    		areaList = IntrinsicVolumes2D.areas(image, labels, calib);
     		addColumnToTable(table, "Area", areaList);
     	}
 
-    	if (computePerimeter)
+    	if (computePerimeter || computeCircularity)
     	{
     		IJ.showStatus("Compute perimeter");
-    		double[] perimList = IntrinsicVolumes2D.perimeters(image, labels, calib, 4);
+    		perimList = IntrinsicVolumes2D.perimeters(image, labels, calib, 4);
     		addColumnToTable(table, "Perimeter", perimList);
+    	}
+
+    	if (computeEulerNumber)
+    	{
+    		IJ.showStatus("Compute Euler number");
+    		eulerNumberList = IntrinsicVolumes2D.eulerNumbers(image, labels, 4);
     	}
 
     	if (computeInertiaEllipse || computeEllipseElongation)
@@ -240,6 +255,17 @@ public class AnalyzeRegions implements PlugInFilter
 
     	
     	// Fill results table
+    	
+    	if (computeCircularity)
+    	{
+    		double[] circularities = computeCircularities(areaList, perimList);
+    		addColumnToTable(table, "Circularity", circularities);
+    	}
+
+    	if (computeEulerNumber)
+    	{
+    		addColumnToTable(table, "EulerNumber", eulerNumberList);
+    	}
 
     	if (computeInertiaEllipse)
     	{
@@ -339,6 +365,17 @@ public class AnalyzeRegions implements PlugInFilter
     	}
     	    	
     	return table;
+    }
+
+    private double[] computeCircularities(double[] areas, double[] perims)
+    {
+    	int n = areas.length;
+    	double[] circularities = new double[n];
+    	for (int i = 0; i < n; i++)
+    	{
+    		circularities[i] = 4 * Math.PI * areas[i] / (perims[i] * perims[i]);
+    	}
+    	return circularities;
     }
     
     private static final void addColumnToTable(ResultsTable table, String colName, double[] values)
