@@ -8560,7 +8560,18 @@ Box2D.YMax the maximum y coordinate
 
 \begin_layout Standard
 It is also possible to draw the resulting bounding box(es) onto another
- image.
+ image (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Regions-Analysis-Output-1"
+
+\end_inset
+
+-A).
 \end_layout
 
 \begin_layout Subsubsection
@@ -8610,7 +8621,148 @@ l.
 \end_layout
 
 \begin_layout Standard
-It is also possible to draw the resulting ellipse(s) onto another image.
+It is also possible to draw the resulting ellipse(s) onto another image
+ (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Regions-Analysis-Output-1"
+
+\end_inset
+
+-B).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/blobs/blobs-lbl-bbox-ext.png
+	width 4.6cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Bounding Box
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/blobs/blobs-lbl-ellipse-ext.png
+	width 4.6cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Inertia Ellipse
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/blobs/blobs-lbl-maxFeret-ext.png
+	width 4.6cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Feret Diameter
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Regions-Analysis-Output-1"
+
+\end_inset
+
+Examples of graphical outputs of region analysis plugins.
+ A: Bounding box.
+ B: Inertia ellipse.
+ C: Max Feret diameter.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -8665,7 +8817,18 @@ P2.Y the y-coordinate of the second extremity
 
 \begin_layout Standard
 It is also possible to draw the resulting diameter as a line segment onto
- another image.
+ another image (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Regions-Analysis-Output-1"
+
+\end_inset
+
+-C).
 \end_layout
 
 \begin_layout Subsubsection
@@ -8715,7 +8878,147 @@ OBox.Orientation the orientation of the box, in degrees from the horizontal.
 
 \begin_layout Standard
 It is also possible to draw the resulting oriented boxe(s) onto another
- image.
+ image (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Regions-Analysis-Output-2"
+
+\end_inset
+
+-A).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/blobs/blobs-lbl-obox-ext.png
+	width 4.6cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Oriented box
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/blobs/blobs-lbl-geodDiam-ext.png
+	width 4.6cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Geodesic diameter
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/blobs/blobs-lbl-inscrCircle-ext.png
+	width 4.6cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Inscribed circle
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Regions-Analysis-Output-2"
+
+\end_inset
+
+Examples of graphical output of region analysis plugins.
+ A: Oriented bounding box.
+ B: largest geodesic diameter.
+ C: largest inscribed circle.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -8734,7 +9037,7 @@ Geodesic Diameter plugin
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
 Label the label of the region measured on the current line (equal to 255
- for bionary images)
+ for binary images)
 \end_layout
 
 \begin_layout Labeling
@@ -8793,8 +9096,24 @@ x2,
 y2 coordinates of another geodesic extremity of the particle.
 \end_layout
 
+\begin_layout Standard
+It is also possible to draw the resulting geodesic paths onto another image
+ (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Regions-Analysis-Output-2"
+
+\end_inset
+
+-B).
+\end_layout
+
 \begin_layout Subsubsection
-Largest inscribed disk
+Largest inscribed circle
 \end_layout
 
 \begin_layout Standard
@@ -8829,6 +9148,21 @@ inscrCircle.Center.Y the y-coordinate of the inscribed circle.
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
 inscrCircle.Radius the radius of the inscribed circle.
+\end_layout
+
+\begin_layout Standard
+It is also possible to draw the resulting circle(s) onto another image (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Regions-Analysis-Output-2"
+
+\end_inset
+
+-C).
 \end_layout
 
 \begin_layout Section
