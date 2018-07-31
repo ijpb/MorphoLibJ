@@ -30,6 +30,7 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
 import ij.gui.GenericDialog;
+import ij.gui.Line;
 import ij.gui.Overlay;
 import ij.gui.PolygonRoi;
 import ij.gui.Roi;
@@ -80,7 +81,8 @@ public class InertiaEllipsePlugin implements PlugIn
 		// create the dialog
 		GenericDialog gd = new GenericDialog("Inertia Ellipse");
 		gd.addChoice("Label Image:", imageNames, selectedImageName);
-		gd.addCheckbox("Show Overlay Result", true);
+		gd.addCheckbox("Overlay Ellipse", true);
+		gd.addCheckbox("Overlay Axes", true);
 		gd.addChoice("Image to overlay:", imageNames, selectedImageName);
 		gd.showDialog();
 		
@@ -90,7 +92,8 @@ public class InertiaEllipsePlugin implements PlugIn
 		// set up current parameters
 		int labelImageIndex = gd.getNextChoiceIndex();
 		ImagePlus labelImage = WindowManager.getImage(labelImageIndex + 1);
-		boolean showOverlay = gd.getNextBoolean();
+		boolean showEllipse = gd.getNextBoolean();
+		boolean showAxes = gd.getNextBoolean();
 		int resultImageIndex = gd.getNextChoiceIndex();
 		
 		// check if image is a label image
@@ -110,11 +113,11 @@ public class InertiaEllipsePlugin implements PlugIn
     	results.show(tableName);
     	
 		// Check if results must be displayed on an image
-		if (showOverlay)
+		if (showEllipse || showAxes)
 		{
 			// find image for displaying geometric overlays
 			ImagePlus resultImage = WindowManager.getImage(resultImageIndex + 1);
-			showResultsAsOverlay(ellipses, resultImage);
+			showResultsAsOverlay(ellipses, resultImage, showEllipse, showAxes);
 		}
     }
 	
@@ -129,14 +132,13 @@ public class InertiaEllipsePlugin implements PlugIn
 	 * @param the
 	 *            resolution in each direction
 	 */
-	private void showResultsAsOverlay(Map<Integer, Ellipse> results, ImagePlus target)	
+	private void showResultsAsOverlay(Map<Integer, Ellipse> results, ImagePlus target, boolean showEllipse, boolean showAxes)	
 	{
 		// get spatial calibration of target image
 		Calibration calib = target.getCalibration();
 		
 		// create overlay
 		Overlay overlay = new Overlay();
-		Roi roi;
 		
 		// add each ellipse to the overlay
 		for (int label : results.keySet()) 
@@ -144,16 +146,30 @@ public class InertiaEllipsePlugin implements PlugIn
 			// Coordinates of inscribed circle, in pixel coordinates
 			Ellipse ellipse = results.get(label);
 			ellipse = uncalibrate(ellipse, calib);
-			roi = createRoi(ellipse);
+
+			// roi corresponding to ellipse
+			if (showEllipse)
+			{
+				addRoiToOverlay(overlay, createRoi(ellipse), Color.BLUE);
+			}
 			
-			// draw inscribed circle
-			roi.setStrokeColor(Color.BLUE);
-			overlay.add(roi);
+			// the two roi corresponding to major axes
+			if (showAxes)
+			{
+				addRoiToOverlay(overlay, createMajorAxisRoi(ellipse), Color.BLUE);
+				addRoiToOverlay(overlay, createMinorAxisRoi(ellipse), Color.BLUE);
+			}
 		}
 		
 		target.setOverlay(overlay);
 	}
 
+	private static final void addRoiToOverlay(Overlay overlay, Roi roi, Color color)
+	{
+		roi.setStrokeColor(color);
+		overlay.add(roi);
+	}
+	
 	/**
 	 * Determines the ellipse corresponding to the uncalibrated version of this
 	 * ellipse, assuming it was defined in calibrated coordinates.
@@ -203,4 +219,45 @@ public class InertiaEllipsePlugin implements PlugIn
 		
 		return new PolygonRoi(xv, yv, nVertices, Roi.POLYGON);
 	}
+	
+	private final static Roi createMajorAxisRoi(Ellipse ellipse)
+	{
+		// Coordinates of ellipse, in pixel coordinates
+		Point2D center = ellipse.center();
+		double xc = center.getX();
+		double yc = center.getY();
+		
+		double r1 = ellipse.radius1();
+		double theta = Math.toRadians(ellipse.orientation());
+		
+		double cot = Math.cos(theta);
+		double sit = Math.sin(theta);
+		
+		double x1 = xc + r1 * cot;
+		double y1 = yc + r1 * sit;
+		double x2 = xc - r1 * cot;
+		double y2 = yc - r1 * sit;
+		return new Line(x1, y1, x2, y2);
+	}
+
+	private final static Roi createMinorAxisRoi(Ellipse ellipse)
+	{
+		// Coordinates of ellipse, in pixel coordinates
+		Point2D center = ellipse.center();
+		double xc = center.getX();
+		double yc = center.getY();
+		
+		double r2 = ellipse.radius2();
+		double theta = Math.toRadians(ellipse.orientation() + 90);
+		
+		double cot = Math.cos(theta);
+		double sit = Math.sin(theta);
+		
+		double x1 = xc + r2 * cot;
+		double y1 = yc + r2 * sit;
+		double x2 = xc - r2 * cot;
+		double y2 = yc - r2 * sit;
+		return new Line(x1, y1, x2, y2);
+	}
+
 }
