@@ -25,6 +25,17 @@ import inra.ijpb.label.LabelImages;
  */
 public class Convexity extends RegionAnalyzer2D<Convexity.Result>
 {
+    /**
+     * Computes the binary image representing the convex hull of the input
+     * binary image.
+     *
+     * @see inra.ijpb.geometry.Polygons2D
+     * 
+     * @param binaryImage
+     *            the binary image of a region
+     * @return the binary image representing the convex hull of the region in
+     *         the input image.
+     */
 	public static final ImageProcessor convexify(ImageProcessor binaryImage)
 	{
 		// compute convex hull of boundary points around the binary particle
@@ -89,7 +100,10 @@ public class Convexity extends RegionAnalyzer2D<Convexity.Result>
 		// get image size
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
-
+		
+		// calibrated area of a single pixel
+		double pixelArea = calib.pixelWidth * calib.pixelHeight;
+		
 		// create result array
 		Convexity.Result[] res = new Convexity.Result[labels.length];
 		
@@ -102,7 +116,7 @@ public class Convexity extends RegionAnalyzer2D<Convexity.Result>
 			ArrayList<Point2D> points = RegionBoundaries.boundaryPixelsMiddleEdges(binary);
 			Polygon2D convexHull = Polygons2D.convexHull(points);
 
-			// determines bounds
+			// determine bounds
 			Box2D box = convexHull.boundingBox();
 			int ymin = (int) Math.max(0, Math.floor(box.getYMin()));
 			int ymax = (int) Math.min(sizeY, Math.ceil(box.getYMax()));
@@ -125,21 +139,36 @@ public class Convexity extends RegionAnalyzer2D<Convexity.Result>
 					{
 						convexArea++;
 					}
-					
-					res[i] = new Convexity.Result(area, convexArea);
 				}
 			}
-
+			
+			// calibrate measures
+            area *= pixelArea;
+            convexArea *= pixelArea;
+            
+            // save convexity measures for this label
+            res[i] = new Convexity.Result(area, convexArea);
 		}
 		
 		return res;
 	}
-
+	
+    /**
+     * Simple class for storing the results of convexity computations.
+     */
 	public class Result
 	{
-		public double area;
-		public double convexArea;
-		public double convexity;
+        /** The area of the region in the original image. */
+        public double area;
+        
+        /** The area of the convex hull of the region. */
+        public double convexArea;
+
+        /**
+         * The convexity of the region, computed as the ratio of area over
+         * convex area.
+         */
+        public double convexity;
 		
 		public Result(double area, double convexArea)
 		{
