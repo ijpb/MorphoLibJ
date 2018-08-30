@@ -32,9 +32,29 @@ public class BinaryConfigurationsHistogram2D extends AlgoStub
         return sum;
     }
 
+    public static final int applyLut(int[] histogram, int[] lut)
+    {
+        int sum = 0;
+        for (int i = 0; i < histogram.length; i++)
+        {
+            sum += histogram[i] * lut[i];
+        }
+        return sum;
+    }
+
     public static final double[] applyLut(int[][] histograms, double[] lut)
     {
         double[] sums = new double[histograms.length];
+        for (int iLabel = 0; iLabel < histograms.length; iLabel++)
+        {
+            sums[iLabel] = applyLut(histograms[iLabel], lut);
+        }
+        return sums;
+    }
+
+    public static final int[] applyLut(int[][] histograms, int[] lut)
+    {
+        int[] sums = new int[histograms.length];
         for (int iLabel = 0; iLabel < histograms.length; iLabel++)
         {
             sums[iLabel] = applyLut(histograms[iLabel], lut);

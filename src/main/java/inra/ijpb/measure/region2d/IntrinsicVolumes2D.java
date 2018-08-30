@@ -194,6 +194,50 @@ public class IntrinsicVolumes2D extends RegionAnalyzer2D<IntrinsicVolumes2D.Resu
                 0.25, -0.5, 0, -0.25,   0, -0.25, -0.25, 0};
     }
     
+    /**
+     * Computes the Look-up table that is used to compute Euler number density.
+     * The result is an array with 16 entries, each entry corresponding to a
+     * binary 2-by-2 configuration of pixels.
+     * 
+     * @param conn
+     *            the connectivity to use (4 or 8)
+     * @return an array containing for each 2-by-2 configuration index, the
+     *         corresponding contribution to euler number estimate
+     */
+    public static final int[] eulerNumberIntLut(int conn)
+    {
+        switch(conn)
+        {
+        case 4:
+            return eulerNumberIntLutC4();
+        case 8:
+            return eulerNumberIntLutC8();
+        default:
+            throw new IllegalArgumentException("Connectivity must be 4 or 8, not " + conn);
+        }
+    }
+    
+    private final static int[] eulerNumberIntLutC4()
+    {
+        return new int[] {
+                0, 1, 1,  0,   1,  0,  2, -1,  
+                1, 2, 0, -1,   0, -1, -1,  0};
+//        return new int[] {
+//                0,  0.25, 0.25, 0,    0.25, 0, 0.5, -0.25,  
+//                0.25, 0.5, 0, -0.25,   0, -0.25, -0.25, 0};
+    }
+
+    private final static int[] eulerNumberIntLutC8()
+    {
+        return new int[] {
+                0,  1, 1,  0,   1,  0, -2, -1,  
+                1, -2, 0, -1,   0, -1, -1,  0};
+//        return new int[] {
+//                0,  0.25, 0.25, 0,    0.25, 0, -0.5, -0.25,  
+//                0.25, -0.5, 0, -0.25,   0, -0.25, -0.25, 0};
+    }
+    
+
     // ==================================================
     // Class members
 

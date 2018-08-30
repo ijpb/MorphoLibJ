@@ -29,7 +29,7 @@ import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
-import inra.ijpb.measure.IntrinsicVolumes2DOld;
+import inra.ijpb.measure.Microstructure2D;
 
 public class MicrostructureAnalysisPlugin implements PlugInFilter {
 
@@ -163,8 +163,8 @@ public class MicrostructureAnalysisPlugin implements PlugInFilter {
         Calibration calib = image.getCalibration();
         
         // Compute basis measures
-        double areaDensity =  IntrinsicVolumes2DOld.areaDensity(proc);
-        double perimDensity = IntrinsicVolumes2DOld.perimeterDensity(proc, calib, nDirs);
+        double areaDensity =  Microstructure2D.areaDensity(proc);
+        double perimDensity = Microstructure2D.perimeterDensity(proc, calib, nDirs);
         ResultsTable table = new ResultsTable();
         table.incrementCounter();
         table.addValue("AreaDensity", areaDensity);
@@ -219,8 +219,8 @@ public class MicrostructureAnalysisPlugin implements PlugInFilter {
          Calibration calib = image.getCalibration();
          
          // Compute basis measures
-         double areaDensity =  IntrinsicVolumes2DOld.areaDensity(proc);
-         double perimDensity = IntrinsicVolumes2DOld.perimeterDensity(proc, calib, nDirs);
+         double areaDensity =  Microstructure2D.areaDensity(proc);
+         double perimDensity = Microstructure2D.perimeterDensity(proc, calib, nDirs);
          ResultsTable table = new ResultsTable();
          table.incrementCounter();
          table.addValue("AreaDensity", areaDensity);
