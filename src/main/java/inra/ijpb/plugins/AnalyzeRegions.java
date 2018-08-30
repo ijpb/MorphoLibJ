@@ -217,7 +217,7 @@ public class AnalyzeRegions implements PlugInFilter
     		ellipses = algo.analyzeRegions(image, labels, calib);
     	}
 
-    	if (computePerimeter)
+    	if (computeConvexity)
     	{
     		IJ.showStatus("Compute convexity");
     		Convexity algo = new Convexity();
