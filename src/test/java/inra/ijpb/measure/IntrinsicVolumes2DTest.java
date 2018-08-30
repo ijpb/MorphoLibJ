@@ -42,7 +42,7 @@ public class IntrinsicVolumes2DTest
 		
 		int[] labels = new int[] {2, 4, 5, 9};
 		Calibration calib = new Calibration();
-		double[] areaList = IntrinsicVolumes2D.areas(image, labels, calib);
+		double[] areaList = IntrinsicVolumes2DOld.areas(image, labels, calib);
 		
 		assertEquals(4, areaList.length);
 		assertEquals(1.0, areaList[0], .01);
@@ -59,7 +59,7 @@ public class IntrinsicVolumes2DTest
 	{
 		ImageProcessor image = createOhserMuecklichImage();
 		
-		double density = IntrinsicVolumes2D.areaDensity(image);
+		double density = IntrinsicVolumes2DOld.areaDensity(image);
 		
 		assertEquals(0.3008, density, .001);
 	}
@@ -80,7 +80,7 @@ public class IntrinsicVolumes2DTest
 			}
 		}
 		
-		int euler = IntrinsicVolumes2D.eulerNumber(image, 4);
+		int euler = IntrinsicVolumes2DOld.eulerNumber(image, 4);
 		assertEquals(1, euler);
 	}
 
@@ -100,7 +100,7 @@ public class IntrinsicVolumes2DTest
 			}
 		}
 		
-		int euler = IntrinsicVolumes2D.eulerNumber(image, 8);
+		int euler = IntrinsicVolumes2DOld.eulerNumber(image, 8);
 		assertEquals(1, euler);
 	}
 
@@ -120,7 +120,7 @@ public class IntrinsicVolumes2DTest
 			}
 		}
 		
-		int euler = IntrinsicVolumes2D.eulerNumber(image, 4);
+		int euler = IntrinsicVolumes2DOld.eulerNumber(image, 4);
 		assertEquals(1, euler);
 	}
 
@@ -140,7 +140,7 @@ public class IntrinsicVolumes2DTest
 			}
 		}
 		
-		int euler = IntrinsicVolumes2D.eulerNumber(image, 8);
+		int euler = IntrinsicVolumes2DOld.eulerNumber(image, 8);
 		assertEquals(1, euler);
 	}
 
@@ -167,7 +167,7 @@ public class IntrinsicVolumes2DTest
 			}
 		}
 		
-		int euler = IntrinsicVolumes2D.eulerNumber(image, 4);
+		int euler = IntrinsicVolumes2DOld.eulerNumber(image, 4);
 		assertEquals(0, euler);
 	}
 
@@ -194,7 +194,7 @@ public class IntrinsicVolumes2DTest
 			}
 		}
 		
-		int euler = IntrinsicVolumes2D.eulerNumber(image, 8);
+		int euler = IntrinsicVolumes2DOld.eulerNumber(image, 8);
 		assertEquals(0, euler);
 	}
 
@@ -214,7 +214,7 @@ public class IntrinsicVolumes2DTest
 			image.set(5, i, 255);
 		}
 		
-		int euler = IntrinsicVolumes2D.eulerNumber(image, 4);
+		int euler = IntrinsicVolumes2DOld.eulerNumber(image, 4);
 		assertEquals(1, euler);
 	}
 
@@ -234,7 +234,7 @@ public class IntrinsicVolumes2DTest
 			image.set(5, i, 255);
 		}
 		
-		int euler = IntrinsicVolumes2D.eulerNumber(image, 8);
+		int euler = IntrinsicVolumes2DOld.eulerNumber(image, 8);
 		assertEquals(1, euler);
 	}
 
@@ -254,7 +254,7 @@ public class IntrinsicVolumes2DTest
 			image.set(3, i, 255);
 		}
 		
-		int euler = IntrinsicVolumes2D.eulerNumber(image, 4);
+		int euler = IntrinsicVolumes2DOld.eulerNumber(image, 4);
 		assertEquals(1, euler);
 	}
 
@@ -274,7 +274,7 @@ public class IntrinsicVolumes2DTest
 			image.set(3, i, 255);
 		}
 		
-		int euler = IntrinsicVolumes2D.eulerNumber(image, 8);
+		int euler = IntrinsicVolumes2DOld.eulerNumber(image, 8);
 		assertEquals(1, euler);
 	}
 	
@@ -305,7 +305,7 @@ public class IntrinsicVolumes2DTest
 		image.set(9, 9, 2);
 
 		int[] labels = new int[] {1, 2, 4, 7};
-		double[] eulerNumbers = IntrinsicVolumes2D.eulerNumbers(image, labels, 4);
+		double[] eulerNumbers = IntrinsicVolumes2DOld.eulerNumbers(image, labels, 4);
 		assertEquals(1, eulerNumbers[0], .01);
 		assertEquals(0, eulerNumbers[1], .01);
 		assertEquals(1, eulerNumbers[2], .01);
@@ -339,7 +339,7 @@ public class IntrinsicVolumes2DTest
 		image.set(9, 9, 2);
 
 		int[] labels = new int[] {1, 2, 4, 7};
-		double[] eulerNumbers = IntrinsicVolumes2D.eulerNumbers(image, labels, 8);
+		double[] eulerNumbers = IntrinsicVolumes2DOld.eulerNumbers(image, labels, 8);
 		assertEquals(1, eulerNumbers[0], .01);
 		assertEquals(0, eulerNumbers[1], .01);
 		assertEquals(1, eulerNumbers[2], .01);
@@ -355,7 +355,7 @@ public class IntrinsicVolumes2DTest
 		ImageProcessor image = createOhserMuecklichImage();
 		Calibration calib = new Calibration();
 		
-		double density = IntrinsicVolumes2D.eulerNumberDensity(image, calib, 4);
+		double density = IntrinsicVolumes2DOld.eulerNumberDensity(image, calib, 4);
 		
 		assertEquals(0.0444, density, .001);
 	}
@@ -369,7 +369,7 @@ public class IntrinsicVolumes2DTest
 		ImageProcessor image = createOhserMuecklichImage();
 		Calibration calib = new Calibration();
 		
-		double density = IntrinsicVolumes2D.eulerNumberDensity(image, calib, 8);
+		double density = IntrinsicVolumes2DOld.eulerNumberDensity(image, calib, 8);
 		
 		assertEquals(0.0267, density, .001);
 	}
@@ -391,7 +391,7 @@ public class IntrinsicVolumes2DTest
 			}
 		}
 		
-		double perim = IntrinsicVolumes2D.perimeter(image, new Calibration(), 2);
+		double perim = IntrinsicVolumes2DOld.perimeter(image, new Calibration(), 2);
 		assertEquals(12.5664, perim, .01);
 	}
 
@@ -411,7 +411,7 @@ public class IntrinsicVolumes2DTest
 			}
 		}
 		
-		double perim = IntrinsicVolumes2D.perimeter(image, new Calibration(), 4);
+		double perim = IntrinsicVolumes2DOld.perimeter(image, new Calibration(), 4);
 		assertEquals(14.0582, perim, .01);
 	}
 
@@ -437,7 +437,7 @@ public class IntrinsicVolumes2DTest
 		
 		// compute perimeter with default (1,1) calibration
 		Calibration calib = new Calibration();
-		double perim = IntrinsicVolumes2D.perimeter(image, calib, 2);
+		double perim = IntrinsicVolumes2DOld.perimeter(image, calib, 2);
 		
 		// check to expected value with a tolerance of 5 percents
 		double exp = 2 * Math.PI * radius;
@@ -466,7 +466,7 @@ public class IntrinsicVolumes2DTest
 		
 		// compute perimeter with default (1,1) calibration
 		Calibration calib = new Calibration();
-		double perim = IntrinsicVolumes2D.perimeter(image, calib, 4);
+		double perim = IntrinsicVolumes2DOld.perimeter(image, calib, 4);
 		
 		// check to expected value with a tolerance of 5 percents
 		double exp = 2 * Math.PI * radius;
@@ -492,7 +492,7 @@ public class IntrinsicVolumes2DTest
 		// compute perimeter with default (1,1) calibration
 		Calibration calib = new Calibration();
 		int[] labels = new int[] {255};
-		double[] perims = IntrinsicVolumes2D.perimeters(image, labels, calib, 2);
+		double[] perims = IntrinsicVolumes2DOld.perimeters(image, labels, calib, 2);
 		
 		assertEquals(12.5664, perims[0], .01);
 	}
@@ -526,7 +526,7 @@ public class IntrinsicVolumes2DTest
 		// compute perimeter with default (1,1) calibration
 		Calibration calib = new Calibration();
 		int[] labels = new int[] {1, 2, 3, 4};
-		double[] perims = IntrinsicVolumes2D.perimeters(image, labels, calib, 2);
+		double[] perims = IntrinsicVolumes2DOld.perimeters(image, labels, calib, 2);
 		
 		// check to expected values with a tolerance of 5 percents
 		double exp1 = 2 * Math.PI * r1;
@@ -568,7 +568,7 @@ public class IntrinsicVolumes2DTest
 		// compute perimeter with default (1,1) calibration
 		Calibration calib = new Calibration();
 		int[] labels = new int[] {1, 2, 3, 4};
-		double[] perims = IntrinsicVolumes2D.perimeters(image, labels, calib, 4);
+		double[] perims = IntrinsicVolumes2DOld.perimeters(image, labels, calib, 4);
 		
 		// check to expected values with a tolerance of 5 percents
 		double exp1 = 2 * Math.PI * r1;
@@ -590,7 +590,7 @@ public class IntrinsicVolumes2DTest
 		ImageProcessor image = createOhserMuecklichImage();
 		Calibration calib = new Calibration();
 		
-		double density = IntrinsicVolumes2D.perimeterDensity(image, calib, 2);
+		double density = IntrinsicVolumes2DOld.perimeterDensity(image, calib, 2);
 		
 		assertEquals(0.5, density, .05);
 	}
@@ -604,7 +604,7 @@ public class IntrinsicVolumes2DTest
 		ImageProcessor image = createOhserMuecklichImage();
 		Calibration calib = new Calibration();
 		
-		double density = IntrinsicVolumes2D.perimeterDensity(image, calib, 4);
+		double density = IntrinsicVolumes2DOld.perimeterDensity(image, calib, 4);
 		
 		assertEquals(0.5, density, .05);
 	}

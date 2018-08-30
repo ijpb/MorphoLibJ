@@ -16,7 +16,7 @@ import inra.ijpb.measure.region3d.BinaryConfigurations3D;
  *
  * This class provides only static methods.
  *
- * @see IntrinsicVolumes2D
+ * @see IntrinsicVolumes2DOld
  * 
  * @author dlegland
  *

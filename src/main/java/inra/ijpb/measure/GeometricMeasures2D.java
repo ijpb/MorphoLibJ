@@ -40,7 +40,7 @@ import inra.ijpb.measure.region2d.LargestInscribedCircle;
  * 
  * @deprecated use IntrinsicVolumes2D instead
  * 
- * @see IntrinsicVolumes2D
+ * @see IntrinsicVolumes2DOld
  * 
  * @author David Legland
  *
@@ -112,8 +112,8 @@ public class GeometricMeasures2D
 		Calibration calib = new Calibration();
 		calib.pixelWidth = resol[0];
 		calib.pixelHeight = resol[1];
-		double[] areas = IntrinsicVolumes2D.areas(labelImage, labels, calib);
-		double[] perims = IntrinsicVolumes2D.perimeters(labelImage, labels, calib, nDirs);
+		double[] areas = IntrinsicVolumes2DOld.areas(labelImage, labels, calib);
+		double[] perims = IntrinsicVolumes2DOld.perimeters(labelImage, labels, calib, nDirs);
 
 		// Create data table, and add shape parameters
 		ResultsTable table = new ResultsTable();
@@ -239,9 +239,9 @@ public class GeometricMeasures2D
 	 * Computes the area for each particle in the label image, taking into
 	 * account image resolution.
 	 * 
-	 * @see inra.ijpb.measure.IntrinsicVolumes2D#areas(ImageProcessor, int[], Calibration)
+	 * @see inra.ijpb.measure.IntrinsicVolumes2DOld#areas(ImageProcessor, int[], Calibration)
 	 * 
-	 * @deprecated use {@link inra.ijpb.measure.IntrinsicVolumes2D#areas(ImageProcessor, int[], Calibration)} instead
+	 * @deprecated use {@link inra.ijpb.measure.IntrinsicVolumes2DOld#areas(ImageProcessor, int[], Calibration)} instead
 	 * 
 	 * @param image
 	 *            the input image containing label of particles
@@ -264,7 +264,7 @@ public class GeometricMeasures2D
 		calib.pixelWidth = resol[0];
 		calib.pixelHeight = resol[1];
 
-		return IntrinsicVolumes2D.areas(image, labels, calib);
+		return IntrinsicVolumes2DOld.areas(image, labels, calib);
 	}
 
 	/**
@@ -311,8 +311,8 @@ public class GeometricMeasures2D
 		Calibration calib = new Calibration();
 		calib.pixelWidth = resol[0];
 		calib.pixelHeight = resol[1];
-		double[] areas = IntrinsicVolumes2D.areas(labelImage, labels, calib);
-		double[] perims = IntrinsicVolumes2D.perimeters(labelImage, labels, calib, nDirs);
+		double[] areas = IntrinsicVolumes2DOld.areas(labelImage, labels, calib);
+		double[] perims = IntrinsicVolumes2DOld.perimeters(labelImage, labels, calib, nDirs);
 
 		// Create data table
 		ResultsTable table = new ResultsTable();
@@ -341,9 +341,9 @@ public class GeometricMeasures2D
 	 * Compute surface area for each label given in the "labels" argument.
 	 * 
 	 * Consists in calling the
-	 * {@link inra.ijpb.measure.IntrinsicVolumes2D} class.
+	 * {@link inra.ijpb.measure.IntrinsicVolumes2DOld} class.
 	 * 
-	 * @deprecated replaced by {@link inra.ijpb.measure.IntrinsicVolumes2D}
+	 * @deprecated replaced by {@link inra.ijpb.measure.IntrinsicVolumes2DOld}
 	 *  
 	 * @param image
 	 *            the input image containing label of particles
@@ -364,7 +364,7 @@ public class GeometricMeasures2D
 		calib.pixelWidth = resol[0];
 		calib.pixelHeight = resol[1];
 		
-		return IntrinsicVolumes2D.perimeters(image, labels, calib, nDirs);
+		return IntrinsicVolumes2DOld.perimeters(image, labels, calib, nDirs);
 	}
 
 
@@ -375,9 +375,9 @@ public class GeometricMeasures2D
 	 * directions. Slow...
 	 * 
 	 * Consists in calling the
-	 * {@link inra.ijpb.measure.IntrinsicVolumes2D} class.
+	 * {@link inra.ijpb.measure.IntrinsicVolumes2DOld} class.
 	 * 
-	 * @deprecated replaced by {@link inra.ijpb.measure.IntrinsicVolumes2D}
+	 * @deprecated replaced by {@link inra.ijpb.measure.IntrinsicVolumes2DOld}
 	 *  
 	 * @param labelImage
 	 *            the input image containing label of particles
@@ -396,7 +396,7 @@ public class GeometricMeasures2D
 		calib.pixelWidth = resol[0];
 		calib.pixelHeight = resol[1];
 		
-		return IntrinsicVolumes2D.perimeters(labelImage, labels, calib, 2);
+		return IntrinsicVolumes2DOld.perimeters(labelImage, labels, calib, 2);
 	}
 
 	/**
@@ -406,9 +406,9 @@ public class GeometricMeasures2D
 	 * Iterates over labels, then iterates over lines in the four main directions. Slow...
 	 * 
 	 * Consists in calling the
-	 * {@link inra.ijpb.measure.IntrinsicVolumes2D} class.
+	 * {@link inra.ijpb.measure.IntrinsicVolumes2DOld} class.
 	 * 
-	 * @deprecated replaced by {@link inra.ijpb.measure.IntrinsicVolumes2D}
+	 * @deprecated replaced by {@link inra.ijpb.measure.IntrinsicVolumes2DOld}
 	 *  
 	 * @param labelImage
 	 *            the input image containing label of particles
@@ -426,7 +426,7 @@ public class GeometricMeasures2D
 		calib.pixelWidth = resol[0];
 		calib.pixelHeight = resol[1];
 		
-		return IntrinsicVolumes2D.perimeters(labelImage, labels, calib, 4);
+		return IntrinsicVolumes2DOld.perimeters(labelImage, labels, calib, 4);
 	}
 
 	/**

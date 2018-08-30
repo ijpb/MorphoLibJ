@@ -13,18 +13,9 @@ import ij.process.ByteProcessor;
  * @author dlegland
  *
  */
+@Deprecated
 public class BinaryConfigurations2DTest
 {
-
-//	/**
-//	 * Test method for {@link inra.ijpb.measure.region2d.BinaryConfigurations2D#histogram(ij.process.ImageProcessor)}.
-//	 */
-//	@Test
-//	public final void testHistogram()
-//	{
-//		fail("Not yet implemented"); // TODO
-//	}
-
 	/**
 	 * Test method for {@link inra.ijpb.measure.region2d.BinaryConfigurations2D#innerHistogram(ij.process.ImageProcessor)}.
 	 */

@@ -15,12 +15,14 @@ import inra.ijpb.measure.region2d.BinaryConfigurations2D;
  *
  * This class provides only static methods.
  * 
+ * @deprecated
  * @see IntrinsicVolumes3D
  * 
  * @author dlegland
  *
  */
-public class IntrinsicVolumes2D
+@Deprecated
+public class IntrinsicVolumes2DOld
 {
     // ==================================================
     // Static methods
@@ -665,7 +667,7 @@ public class IntrinsicVolumes2D
     /**
      * Private constructor to prevent instantiation
      */
-    private IntrinsicVolumes2D()
+    private IntrinsicVolumes2DOld()
     {
     }
 }

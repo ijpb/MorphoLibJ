@@ -13,9 +13,11 @@ import inra.ijpb.label.LabelImages;
  * Utility functions for computing histograms of 2-by-2 binary configurations
  * within binary or label 2D images.
  * 
+ * @deprecated
  * @author dlegland
  *
  */
+@Deprecated
 public class BinaryConfigurations2D
 {
 	/**

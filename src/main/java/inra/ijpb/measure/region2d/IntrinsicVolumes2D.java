@@ -8,6 +8,8 @@ import java.util.Map;
 import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.process.ImageProcessor;
+import inra.ijpb.algo.AlgoEvent;
+import inra.ijpb.algo.AlgoListener;
 
 /**
  * Computation of intrinsic volumes (area, perimeter and Euler number) for
@@ -16,7 +18,7 @@ import ij.process.ImageProcessor;
  * @author dlegland
  *
  */
-public class IntrinsicVolumes2D extends RegionAnalyzer2D<IntrinsicVolumes2D.Result>
+public class IntrinsicVolumes2D extends RegionAnalyzer2D<IntrinsicVolumes2D.Result> implements AlgoListener
 {
     // ==================================================
     // Static methods
@@ -195,7 +197,10 @@ public class IntrinsicVolumes2D extends RegionAnalyzer2D<IntrinsicVolumes2D.Resu
     // ==================================================
     // Class members
 
-    // TODO: add getter/setters
+    boolean computeArea = true;
+    boolean computePerimeter = true;
+    boolean computeEulerNumber = true;
+    
     /**
      * Number of directions for computing perimeter with Crofton Formula. Default is 4.
      */
@@ -214,6 +219,30 @@ public class IntrinsicVolumes2D extends RegionAnalyzer2D<IntrinsicVolumes2D.Resu
     {
     }
     
+    
+    // ==================================================
+    // Getter / Setter
+
+    public int getDirectionNumber()
+    {
+        return directionNumber;
+    }
+
+    public void setDirectionNumber(int directionNumber)
+    {
+        this.directionNumber = directionNumber;
+    }
+
+    public int getConnectivity()
+    {
+        return connectivity;
+    }
+
+    public void setConnectivity(int connectivity)
+    {
+        this.connectivity = connectivity;
+    }
+
     
     // ==================================================
     // General methods
@@ -248,25 +277,49 @@ public class IntrinsicVolumes2D extends RegionAnalyzer2D<IntrinsicVolumes2D.Resu
     public IntrinsicVolumes2D.Result[] analyzeRegions(ImageProcessor image, int[] labels,
             Calibration calib)
     {
-        // Compute LUTs for each parameter
-        double[] areaLut = areaLut(calib);
-        double[] perimLut = perimeterLut(calib, this.directionNumber);
-        double[] eulerLut = eulerNumberLut(this.connectivity);
-                
         // Histogram of binary configurations for each region label
-        // TODO: process algo events
-        int[][] histograms = new BinaryConfigurationsHistogram2D().process(image, labels);
-        
-        // Compute values 
-        double[] areas = BinaryConfigurationsHistogram2D.applyLut(histograms, areaLut);
-        double[] perims = BinaryConfigurationsHistogram2D.applyLut(histograms, perimLut);
-        double[] eulers = BinaryConfigurationsHistogram2D.applyLut(histograms, eulerLut);
-        
-        // convert to an array of Result classes
+        BinaryConfigurationsHistogram2D algo = new BinaryConfigurationsHistogram2D();
+        algo.addAlgoListener(this);
+        int[][] histograms = algo.process(image, labels);
+
+        // initialize result array
         Result[] results = new Result[labels.length];
         for (int i = 0; i < labels.length; i++)
         {
-            results[i] = new Result(areas[i], perims[i], eulers[i]);
+            results[i] = new Result();
+        }
+        
+        // Compute area if necessary
+        if (this.computeArea)
+        {
+            double[] areaLut = areaLut(calib);
+            double[] areas = BinaryConfigurationsHistogram2D.applyLut(histograms, areaLut);
+            for (int i = 0; i < labels.length; i++)
+            {
+                results[i].area = areas[i];
+            }
+        }
+        
+        // Compute perimeter if necessary
+        if (this.computePerimeter)
+        {
+            double[] perimLut = perimeterLut(calib, this.directionNumber);
+            double[] perims = BinaryConfigurationsHistogram2D.applyLut(histograms, perimLut);
+            for (int i = 0; i < labels.length; i++)
+            {
+                results[i].perimeter = perims[i];
+            }
+        }
+        
+        // Compute Euler number if necessary
+        if (this.computeEulerNumber)
+        {
+            double[] eulerLut = eulerNumberLut(this.connectivity);
+            double[] eulers = BinaryConfigurationsHistogram2D.applyLut(histograms, eulerLut);
+            for (int i = 0; i < labels.length; i++)
+            {
+                results[i].eulerNumber = eulers[i];
+            }
         }
         
         return results;
@@ -275,13 +328,33 @@ public class IntrinsicVolumes2D extends RegionAnalyzer2D<IntrinsicVolumes2D.Resu
     
  
     // ==================================================
+    // Implementation of Algolistener interface
+    
+    @Override
+    public void algoProgressChanged(AlgoEvent evt)
+    {
+        this.fireProgressChanged(evt);
+    }
+
+    @Override
+    public void algoStatusChanged(AlgoEvent evt)
+    {
+        this.fireStatusChanged(evt);
+    }
+
+    
+    // ==================================================
     // Inner class for storing results
     
     public class Result
     {
-        double area = Double.NaN;
-        double perimeter = Double.NaN;
-        double eulerNumber = Double.NaN;
+        public double area = Double.NaN;
+        public double perimeter = Double.NaN;
+        public double eulerNumber = Double.NaN;
+        
+        public Result()
+        {
+        }
         
         public Result(double area, double perim, double euler)
         {

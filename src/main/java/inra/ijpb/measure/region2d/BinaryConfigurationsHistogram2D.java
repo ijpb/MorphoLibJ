@@ -12,7 +12,7 @@ import inra.ijpb.label.LabelImages;
 
 /**
  * Computes histogram of binary configurations composed of 2-by-2 pixels (planar
- * images) or 2-by-2-by-2 voxels (3D images).
+ * images).
  * 
  * @author dlegland
  *
