@@ -14,6 +14,7 @@ import ij.measure.Calibration;
  * @author dlegland
  *
  */
+@Deprecated
 public class IntrinsicVolumes3DTest
 {
 

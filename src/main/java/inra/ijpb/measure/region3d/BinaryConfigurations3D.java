@@ -16,6 +16,7 @@ import inra.ijpb.label.LabelImages;
  * @author dlegland
  *
  */
+@Deprecated
 public class BinaryConfigurations3D
 {
 	/**

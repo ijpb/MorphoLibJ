@@ -129,6 +129,49 @@ public class RegionMorphometry3D
     }
 
     /**
+     * Helper function that computes the sphericity index of 3D particles, based
+     * on the value of volume and surface area.
+     * 
+     * The sphericity is computed using the following formula: <code>
+     * sphericity = 36 * PI * V^2 / S^3
+     * </code>
+     * 
+     * A perfect ball would have a sphericity index close to 1, a very complex
+     * particle will present a lower sphericity index.
+     * 
+     * @param volumes
+     *            the volume of each particle
+     * @param surfaces
+     *            the surface area of each particle
+     * @return the sphericity index of each particle
+     * 
+     * @see #surfaceAreas(ij.ImageStack, int[], ij.measure.Calibration, int)
+     * @see #volumes(ij.ImageStack, int[], ij.measure.Calibration)
+     */
+    public final static double[] sphericity(double[] volumes, double[] surfaces) 
+    {
+        int n = volumes.length;
+        if (surfaces.length != n) 
+        {
+            throw new IllegalArgumentException("Volume and surface arrays must have the same length");
+        }
+        
+        // normalization constant such that sphere has sphericity equal to 1 
+        double c = 36 * Math.PI;
+
+        // Compute sphericity of each label
+        double[] sphericities = new double[n];
+        for (int i = 0; i < n; i++) 
+        {
+            double v = volumes[i];
+            double s = surfaces[i];
+            sphericities[i] = c * v * v / (s * s * s);
+        }
+        
+        return sphericities;
+    }
+    
+    /**
      * Measures the mean breadth of a single region within a 3D binary image.
      * 
      * The mean breadth is proportional to the integral of mean curvature: mb =

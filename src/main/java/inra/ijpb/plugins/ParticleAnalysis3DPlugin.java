@@ -33,7 +33,7 @@ import inra.ijpb.geometry.Ellipsoid;
 import inra.ijpb.geometry.Point3D;
 import inra.ijpb.geometry.Sphere;
 import inra.ijpb.label.LabelImages;
-import inra.ijpb.measure.IntrinsicVolumes3DOld;
+import inra.ijpb.measure.RegionMorphometry3D;
 import inra.ijpb.measure.region3d.InertiaEllipsoid;
 import inra.ijpb.measure.region3d.LargestInscribedBall;
 
@@ -221,19 +221,19 @@ public class ParticleAnalysis3DPlugin implements PlugIn
         // compute geometrical quantities
         if (computeVolume)
         {
-        	volumes = IntrinsicVolumes3DOld.volumes(image, labels, calib);
+        	volumes = RegionMorphometry3D.volumes(image, labels, calib);
         }
         if (computeSurface)
         {
-        	surfaces = IntrinsicVolumes3DOld.surfaceAreas(image, labels, calib, surfaceAreaDirs);
+        	surfaces = RegionMorphometry3D.surfaceAreas(image, labels, calib, surfaceAreaDirs);
         }
         if (computeEulerNumber)
         {
-        	eulerNumbers = IntrinsicVolumes3DOld.eulerNumbers(image, labels, connectivity);
+        	eulerNumbers = RegionMorphometry3D.eulerNumbers(image, labels, connectivity);
         }
         if (computeSphericity)
         {
-        	sphericities = IntrinsicVolumes3DOld.sphericity(volumes, surfaces);
+        	sphericities = RegionMorphometry3D.sphericity(volumes, surfaces);
         }
         
         // compute inertia ellipsoids and their elongations

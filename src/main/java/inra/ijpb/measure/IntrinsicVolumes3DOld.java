@@ -21,6 +21,7 @@ import inra.ijpb.measure.region3d.BinaryConfigurations3D;
  * @author dlegland
  *
  */
+@Deprecated
 public class IntrinsicVolumes3DOld
 {
 	// ==================================================
