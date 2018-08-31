@@ -18,7 +18,7 @@ public class IntrinsicVolumes3DTest
 {
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3D#volumes(ij.ImageStack, int[], ij.measure.Calibration)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3DOld#volumes(ij.ImageStack, int[], ij.measure.Calibration)}.
 	 */
 	@Test
 	public final void testVolumes()
@@ -27,7 +27,7 @@ public class IntrinsicVolumes3DTest
 		int[] labels = new int[] {255};
 		Calibration calib = new Calibration();
 		
-		double[] volumes = IntrinsicVolumes3D.volumes(image, labels, calib);
+		double[] volumes = IntrinsicVolumes3DOld.volumes(image, labels, calib);
 		
 		double exp = 33510.0;
 		assertEquals(1, volumes.length);
@@ -35,7 +35,7 @@ public class IntrinsicVolumes3DTest
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3D#surfaceArea(ij.ImageStack, ij.measure.Calibration, int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3DOld#surfaceArea(ij.ImageStack, ij.measure.Calibration, int)}.
 	 */
 	@Test
 	public final void testSurfaceArea_SmallCube_D3()
@@ -51,14 +51,14 @@ public class IntrinsicVolumes3DTest
 		image.setVoxel(2, 2, 2, 255);
 		Calibration calib = new Calibration();
 		
-		double surface = IntrinsicVolumes3D.surfaceArea(image, calib, 3);
+		double surface = IntrinsicVolumes3DOld.surfaceArea(image, calib, 3);
 		
 		double exp = 16.0;
 		assertEquals(exp, surface, 16.0*0.2);
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3D#surfaceArea(ij.ImageStack, ij.measure.Calibration, int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3DOld#surfaceArea(ij.ImageStack, ij.measure.Calibration, int)}.
 	 */
 	@Test
 	public final void testSurfaceArea_SmallCubeTouchingBorder_D3()
@@ -74,14 +74,14 @@ public class IntrinsicVolumes3DTest
 		image.setVoxel(1, 1, 1, 255);
 		Calibration calib = new Calibration();
 		
-		double surface = IntrinsicVolumes3D.surfaceArea(image, calib, 3);
+		double surface = IntrinsicVolumes3DOld.surfaceArea(image, calib, 3);
 		
 		double exp = 16.0;
 		assertEquals(exp, surface, 16.0*0.2);
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3D#surfaceAreas(ij.ImageStack, int[], ij.measure.Calibration, int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3DOld#surfaceAreas(ij.ImageStack, int[], ij.measure.Calibration, int)}.
 	 */
 	@Test
 	public final void testSurfaceAreas_SingleBall_D3()
@@ -90,7 +90,7 @@ public class IntrinsicVolumes3DTest
 		int[] labels = new int[] {255};
 		Calibration calib = new Calibration();
 		
-		double[] surfaces = IntrinsicVolumes3D.surfaceAreas(image, labels, calib, 3);
+		double[] surfaces = IntrinsicVolumes3DOld.surfaceAreas(image, labels, calib, 3);
 		
 		double exp = 5026.0;
 		assertEquals(1, surfaces.length);
@@ -98,7 +98,7 @@ public class IntrinsicVolumes3DTest
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3D#surfaceAreas(ij.ImageStack, int[], ij.measure.Calibration, int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3DOld#surfaceAreas(ij.ImageStack, int[], ij.measure.Calibration, int)}.
 	 */
 	@Test
 	public final void testSurfaceAreas_SingleBall_D13()
@@ -107,7 +107,7 @@ public class IntrinsicVolumes3DTest
 		int[] labels = new int[] {255};
 		Calibration calib = new Calibration();
 		
-		double[] surfaces = IntrinsicVolumes3D.surfaceAreas(image, labels, calib, 13);
+		double[] surfaces = IntrinsicVolumes3DOld.surfaceAreas(image, labels, calib, 13);
 		
 		double exp = 5026.0;
 		assertEquals(1, surfaces.length);
@@ -115,7 +115,7 @@ public class IntrinsicVolumes3DTest
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3D#surfaceAreas(ij.ImageStack, int[], ij.measure.Calibration, int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3DOld#surfaceAreas(ij.ImageStack, int[], ij.measure.Calibration, int)}.
 	 */
 	@Test
 	public final void testSurfaceAreas_ManyBalls_D13()
@@ -128,7 +128,7 @@ public class IntrinsicVolumes3DTest
 		}
 		Calibration calib = new Calibration();
 		
-		double[] surfaces = IntrinsicVolumes3D.surfaceAreas(image, labels, calib, 13);
+		double[] surfaces = IntrinsicVolumes3DOld.surfaceAreas(image, labels, calib, 13);
 		
 		double exp = 2000.0;
 		assertEquals(27, surfaces.length);
@@ -139,7 +139,7 @@ public class IntrinsicVolumes3DTest
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3D#surfaceAreas(ij.ImageStack, int[], ij.measure.Calibration, int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3DOld#surfaceAreas(ij.ImageStack, int[], ij.measure.Calibration, int)}.
 	 */
 	@Test
 	public final void testSurfaceAreas_TouchingLabels_D3()
@@ -165,7 +165,7 @@ public class IntrinsicVolumes3DTest
 		int[] labels = new int[] {1, 2, 3, 4, 5, 6, 7, 8};
 		Calibration calib = new Calibration();
 		
-		double[] surfaces = IntrinsicVolumes3D.surfaceAreas(image, labels, calib, 3);
+		double[] surfaces = IntrinsicVolumes3DOld.surfaceAreas(image, labels, calib, 3);
 		double exp = 36.0;
 		assertEquals(8, surfaces.length);
 		for (int i = 0; i < 8; i++)
@@ -175,7 +175,7 @@ public class IntrinsicVolumes3DTest
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3D#surfaceAreas(ij.ImageStack, int[], ij.measure.Calibration, int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3DOld#surfaceAreas(ij.ImageStack, int[], ij.measure.Calibration, int)}.
 	 */
 	@Test
 	public final void testSurfaceAreas_TouchingLabels_D13()
@@ -201,7 +201,7 @@ public class IntrinsicVolumes3DTest
 		int[] labels = new int[] {1, 2, 3, 4, 5, 6, 7, 8};
 		Calibration calib = new Calibration();
 		
-		double[] surfaces = IntrinsicVolumes3D.surfaceAreas(image, labels, calib, 13);
+		double[] surfaces = IntrinsicVolumes3DOld.surfaceAreas(image, labels, calib, 13);
 		double exp = 41.07;
 		assertEquals(8, surfaces.length);
 		for (int i = 0; i < 8; i++)
@@ -211,7 +211,7 @@ public class IntrinsicVolumes3DTest
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3D#meanBreadth(ij.ImageStack, ij.measure.Calibration, int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3DOld#meanBreadth(ij.ImageStack, ij.measure.Calibration, int)}.
 	 */
 	@Test
 	public final void testMeanBreadth_SmallCube_D3()
@@ -227,14 +227,14 @@ public class IntrinsicVolumes3DTest
 		image.setVoxel(2, 2, 2, 255);
 		Calibration calib = new Calibration();
 		
-		double meanBreadth = IntrinsicVolumes3D.meanBreadth(image, calib, 3);
+		double meanBreadth = IntrinsicVolumes3DOld.meanBreadth(image, calib, 3);
 		
 		double exp = 2.0;
 		assertEquals(exp, meanBreadth, exp * 0.2);
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3D#meanBreadth(ij.ImageStack, ij.measure.Calibration, int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3DOld#meanBreadth(ij.ImageStack, ij.measure.Calibration, int)}.
 	 */
 	@Test
 	public final void testMeanBreadth_SmallCube_D13()
@@ -250,14 +250,14 @@ public class IntrinsicVolumes3DTest
 		image.setVoxel(2, 2, 2, 255);
 		Calibration calib = new Calibration();
 		
-		double meanBreadth = IntrinsicVolumes3D.meanBreadth(image, calib, 13);
+		double meanBreadth = IntrinsicVolumes3DOld.meanBreadth(image, calib, 13);
 		
 		double exp = 2.141;
 		assertEquals(exp, meanBreadth, exp * 0.2);
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3D#meanBreadth(ij.ImageStack, ij.measure.Calibration, int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3DOld#meanBreadth(ij.ImageStack, ij.measure.Calibration, int)}.
 	 */
 	@Test
 	public final void testMeanBreadth_SingleBall_D3()
@@ -265,14 +265,14 @@ public class IntrinsicVolumes3DTest
 		ImageStack image = createBallImage();
 		Calibration calib = new Calibration();
 		
-		double meanBreadth = IntrinsicVolumes3D.meanBreadth(image, calib, 3);
+		double meanBreadth = IntrinsicVolumes3DOld.meanBreadth(image, calib, 3);
 		
 		double exp = 40.0;
 		assertEquals(exp, meanBreadth, exp * 0.2);
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3D#meanBreadth(ij.ImageStack, ij.measure.Calibration, int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3DOld#meanBreadth(ij.ImageStack, ij.measure.Calibration, int)}.
 	 */
 	@Test
 	public final void testMeanBreadth_SingleBall_D13()
@@ -280,40 +280,40 @@ public class IntrinsicVolumes3DTest
 		ImageStack image = createBallImage();
 		Calibration calib = new Calibration();
 		
-		double meanBreadth = IntrinsicVolumes3D.meanBreadth(image, calib, 13);
+		double meanBreadth = IntrinsicVolumes3DOld.meanBreadth(image, calib, 13);
 		
 		double exp = 40.0;
 		assertEquals(exp, meanBreadth, exp * 0.2);
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3D#eulerNumber(ij.ImageStack, int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3DOld#eulerNumber(ij.ImageStack, int)}.
 	 */
 	@Test
 	public final void testEulerNumber_ball_C6()
 	{
 		ImageStack image = createBallImage();
 	
-		double euler = IntrinsicVolumes3D.eulerNumber(image, 6);
+		double euler = IntrinsicVolumes3DOld.eulerNumber(image, 6);
 		
 		assertEquals(1, euler, 0.1);
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3D#eulerNumber(ij.ImageStack, int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3DOld#eulerNumber(ij.ImageStack, int)}.
 	 */
 	@Test
 	public final void testEulerNumber_ball_C26()
 	{
 		ImageStack image = createBallImage();
 	
-		double euler = IntrinsicVolumes3D.eulerNumber(image, 26);
+		double euler = IntrinsicVolumes3DOld.eulerNumber(image, 26);
 		
 		assertEquals(1, euler, 0.1);
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3D#eulerNumbers(ij.ImageStack, int[], int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3DOld#eulerNumbers(ij.ImageStack, int[], int)}.
 	 */
 	@Test
 	public final void testEulerNumbers_C6()
@@ -321,7 +321,7 @@ public class IntrinsicVolumes3DTest
 		ImageStack image = createEulerImage();
 		int[] labels = {1, 2, 3, 4};
 
-		double[] euler = IntrinsicVolumes3D.eulerNumbers(image, labels, 6);
+		double[] euler = IntrinsicVolumes3DOld.eulerNumbers(image, labels, 6);
 		
 		assertEquals(1, euler[0], 0.1);
 		assertEquals(8, euler[1], 0.1);
@@ -330,7 +330,7 @@ public class IntrinsicVolumes3DTest
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3D#eulerNumbers(ij.ImageStack, int[], int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3DOld#eulerNumbers(ij.ImageStack, int[], int)}.
 	 */
 	@Test
 	public final void testEulerNumbers_C26()
@@ -338,7 +338,7 @@ public class IntrinsicVolumes3DTest
 		ImageStack image = createEulerImage();
 		int[] labels = {1, 2, 3, 4};
 
-		double[] euler = IntrinsicVolumes3D.eulerNumbers(image, labels, 26);
+		double[] euler = IntrinsicVolumes3DOld.eulerNumbers(image, labels, 26);
 		
 		assertEquals(1, euler[0], 0.1);
 		assertEquals(8, euler[1], 0.1);

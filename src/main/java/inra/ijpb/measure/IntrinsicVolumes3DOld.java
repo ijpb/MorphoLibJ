@@ -21,7 +21,7 @@ import inra.ijpb.measure.region3d.BinaryConfigurations3D;
  * @author dlegland
  *
  */
-public class IntrinsicVolumes3D
+public class IntrinsicVolumes3DOld
 {
 	// ==================================================
     // Static methods
@@ -1109,7 +1109,7 @@ public class IntrinsicVolumes3D
 	/**
      * Private constructor to prevent instantiation
      */
-    private IntrinsicVolumes3D()
+    private IntrinsicVolumes3DOld()
     {
     }
 }
