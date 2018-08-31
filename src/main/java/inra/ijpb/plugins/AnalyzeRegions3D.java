@@ -29,12 +29,14 @@ import ij.gui.GenericDialog;
 import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
+import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.geometry.Ellipsoid;
 import inra.ijpb.geometry.Point3D;
 import inra.ijpb.geometry.Sphere;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.RegionMorphometry3D;
 import inra.ijpb.measure.region3d.InertiaEllipsoid;
+import inra.ijpb.measure.region3d.IntrinsicVolumes3D;
 import inra.ijpb.measure.region3d.LargestInscribedBall;
 
 /**
@@ -147,10 +149,10 @@ public class AnalyzeRegions3D implements PlugIn
         computeVolume 		= gd.getNextBoolean();
         computeSurface 		= gd.getNextBoolean();
         computeMeanBreadth 	= gd.getNextBoolean();
-        computeSphericity 	= gd.getNextBoolean() & computeVolume & computeSurface;
+        computeSphericity 	= gd.getNextBoolean();
         computeEulerNumber	= gd.getNextBoolean();
         computeEllipsoid 	= gd.getNextBoolean();
-        computeElongations 	= gd.getNextBoolean() & computeEllipsoid;
+        computeElongations 	= gd.getNextBoolean();
         computeInscribedBall = gd.getNextBoolean();
         
         
@@ -209,11 +211,7 @@ public class AnalyzeRegions3D implements PlugIn
         }
 
         // declare arrays for results
-        double[] volumes = null;
-        double[] surfaces = null;
-        double[] meanBreadths = null;
-        double[] eulerNumbers = null;
-        double[] sphericities = null;
+        IntrinsicVolumes3D.Result[] intrinsicVolumes = null; 
         Ellipsoid[] ellipsoids = null;
         double[][] elongations = null;
         Sphere[] inscribedBalls = null;
@@ -222,42 +220,38 @@ public class AnalyzeRegions3D implements PlugIn
         // Identifies labels within image
         int[] labels = LabelImages.findAllLabels(image);
 
-               
-        // compute geometrical quantities
-        if (computeVolume)
+        // compute intrinsic volumes
+        if (computeVolume || computeSurface || computeEulerNumber || computeMeanBreadth || computeSphericity)
         {
-        	IJ.showStatus("Volume Analysis");
-        	volumes = RegionMorphometry3D.volumes(image, labels, calib);
-        }
-        if (computeSurface)
-        {
-        	IJ.showStatus("Surface Area Analysis");
-        	surfaces = RegionMorphometry3D.surfaceAreas(image, labels, calib, surfaceAreaDirs);
-        }
-        if (computeMeanBreadth)
-        {
-        	IJ.showStatus("Mean Breadth Anaylsis");
-        	meanBreadths = RegionMorphometry3D.meanBreadths(image, labels, calib, meanBreadthDirs);
-        }
-        if (computeEulerNumber)
-        {
-        	IJ.showStatus("Euler Number Anaylsis");
-        	eulerNumbers = RegionMorphometry3D.eulerNumbers(image, labels, connectivity);
-        }
-        if (computeSphericity)
-        {
-        	IJ.showStatus("Sphericity computation");
-        	sphericities = RegionMorphometry3D.sphericity(volumes, surfaces);
+            IJ.showStatus("Intrinsic Volumes");
+            
+            long tic = System.nanoTime();
+            // Create ans setup computation class
+            IntrinsicVolumes3D algo = new IntrinsicVolumes3D();
+            algo.setDirectionNumber(13);
+            algo.setConnectivity(6);
+            DefaultAlgoListener.monitor(algo);
+            
+            // run analysis
+            intrinsicVolumes = algo.analyzeRegions(image, labels, calib);
+            long toc = System.nanoTime();
+            IJ.log(String.format("Intrinsic volumes: %7.2f ms", (toc - tic) / 1000000.0));
         }
         
         // compute inertia ellipsoids and their elongations
         if (computeEllipsoid)
         {
         	IJ.showStatus("Inertia Ellipsoids");
-        	ellipsoids = InertiaEllipsoid.inertiaEllipsoids(image, labels, calib);
+            long tic = System.nanoTime();
+        	InertiaEllipsoid algo = new InertiaEllipsoid();
+        	DefaultAlgoListener.monitor(algo);
+            ellipsoids = algo.analyzeRegions(image, labels, calib);
+            long toc = System.nanoTime();
+            IJ.log(String.format("inertia ellipsoids: %7.2f ms", (toc - tic) / 1000000.0));
         }
         if (computeElongations)
         {
+            IJ.showStatus("Ellipsoid elongations");
         	elongations = Ellipsoid.elongations(ellipsoids);
         }
         
@@ -265,28 +259,39 @@ public class AnalyzeRegions3D implements PlugIn
         if (computeInscribedBall)
         {
         	IJ.showStatus("Inscribed Balls");
-        	inscribedBalls = LargestInscribedBall.largestInscribedBalls(image, labels, calib);
+            long tic = System.nanoTime();
+        	LargestInscribedBall algo = new LargestInscribedBall();
+        	DefaultAlgoListener.monitor(algo);
+        	inscribedBalls = algo.analyzeRegions(image, labels, calib);
+            long toc = System.nanoTime();
+            IJ.log(String.format("inscribed balls: %7.2f ms", (toc - tic) / 1000000.0));
         }
         
-        
         // Convert to ResultsTable object
+        IJ.showStatus("Create Table");
         ResultsTable table = new ResultsTable();
         for (int i = 0; i < labels.length; i++) 
         {
+            IJ.showProgress(i, labels.length);
+            
         	table.incrementCounter();
         	table.addLabel(Integer.toString(labels[i]));
         	
         	// geometrical quantities
         	if (computeVolume)
-        		table.addValue("Volume", volumes[i]);
+        		table.addValue("Volume", intrinsicVolumes[i].volume);
         	if (computeSurface)
-        		table.addValue("SurfaceArea", surfaces[i]);
+        		table.addValue("SurfaceArea", intrinsicVolumes[i].surfaceArea);
         	if (computeMeanBreadth)
-        		table.addValue("MeanBreadth", meanBreadths[i]);
+        		table.addValue("MeanBreadth", intrinsicVolumes[i].meanBreadth);
         	if (computeSphericity)
-        		table.addValue("Sphericity", sphericities[i]);
+        	{
+                double vol =  intrinsicVolumes[i].volume;
+                double surf =  intrinsicVolumes[i].surfaceArea;
+        		table.addValue("Sphericity", RegionMorphometry3D.sphericity(vol, surf));
+        	}
         	if (computeEulerNumber)
-        		table.addValue("EulerNumber", eulerNumbers[i]);
+        		table.addValue("EulerNumber", intrinsicVolumes[i].eulerNumber);
 
         	// inertia ellipsoids
         	if (computeEllipsoid)
@@ -325,6 +330,10 @@ public class AnalyzeRegions3D implements PlugIn
         	}
         }
         
+        // cleanup algo display
+        IJ.showProgress(1, 1);
+        IJ.showStatus("");
+                
         return table;
     }
 }

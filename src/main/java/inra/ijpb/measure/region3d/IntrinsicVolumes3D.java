@@ -803,6 +803,42 @@ public class IntrinsicVolumes3D extends RegionAnalyzer3D<IntrinsicVolumes3D.Resu
     // ==================================================
     // Implementation of RegionAnalyzer3D methods
 
+    /**
+     * @return the directionNumber
+     */
+    public int getDirectionNumber()
+    {
+        return directionNumber;
+    }
+
+    /**
+     * @param directionNumber the directionNumber to set (either 3 or 13)
+     */
+    public void setDirectionNumber(int directionNumber)
+    {
+        this.directionNumber = directionNumber;
+    }
+
+    /**
+     * @return the connectivity
+     */
+    public int getConnectivity()
+    {
+        return connectivity;
+    }
+
+    /**
+     * @param connectivity the connectivity to set (either 6 or 26)
+     */
+    public void setConnectivity(int connectivity)
+    {
+        this.connectivity = connectivity;
+    }
+
+
+    // ==================================================
+    // Implementation of RegionAnalyzer3D methods
+
     @Override
     public ResultsTable createTable(Map<Integer, Result> results)
     {

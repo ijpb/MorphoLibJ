@@ -139,6 +139,35 @@ public class RegionMorphometry3D
      * A perfect ball would have a sphericity index close to 1, a very complex
      * particle will present a lower sphericity index.
      * 
+     * @param volume
+     *            the volume of a region
+     * @param surface
+     *            the surface area of a region
+     * @return the sphericity index
+     * 
+     * @see #surfaceAreas(ij.ImageStack, int[], ij.measure.Calibration, int)
+     * @see #volumes(ij.ImageStack, int[], ij.measure.Calibration)
+     */
+    public final static double sphericity(double volume, double surface) 
+    {
+        // normalization constant such that sphere has sphericity equal to 1 
+        double c = 36 * Math.PI;
+
+        // Compute sphericity
+        return c * volume * volume / (surface * surface * surface);
+    }
+
+    /**
+     * Helper function that computes the sphericity index of 3D particles, based
+     * on the value of volume and surface area.
+     * 
+     * The sphericity is computed using the following formula: <code>
+     * sphericity = 36 * PI * V^2 / S^3
+     * </code>
+     * 
+     * A perfect ball would have a sphericity index close to 1, a very complex
+     * particle will present a lower sphericity index.
+     * 
      * @param volumes
      *            the volume of each particle
      * @param surfaces
@@ -156,16 +185,11 @@ public class RegionMorphometry3D
             throw new IllegalArgumentException("Volume and surface arrays must have the same length");
         }
         
-        // normalization constant such that sphere has sphericity equal to 1 
-        double c = 36 * Math.PI;
-
         // Compute sphericity of each label
         double[] sphericities = new double[n];
         for (int i = 0; i < n; i++) 
         {
-            double v = volumes[i];
-            double s = surfaces[i];
-            sphericities[i] = c * v * v / (s * s * s);
+            sphericities[i] = sphericity(volumes[i], surfaces[i]);
         }
         
         return sphericities;

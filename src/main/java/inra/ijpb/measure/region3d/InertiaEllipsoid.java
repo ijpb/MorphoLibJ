@@ -166,8 +166,10 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
     	double[] Iyz = new double[nLabels];
 
     	// compute centroid of each region
+    	fireStatusChanged(this, "Ellipsoid: compute centroids");
     	for (int z = 0; z < sizeZ; z++) 
     	{
+            this.fireProgressChanged(this, z, sizeZ);
     		for (int y = 0; y < sizeY; y++)
     		{
     			for (int x = 0; x < sizeX; x++)
@@ -198,8 +200,10 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
     	}
 
     	// compute centered inertia matrix of each label
+        fireStatusChanged(this, "Ellipsoid: compute inertia matrices");
     	for (int z = 0; z < sizeZ; z++) 
     	{
+            this.fireProgressChanged(this, z, sizeZ);
     		for (int y = 0; y < sizeY; y++)
     		{
     			for (int x = 0; x < sizeX; x++) 
@@ -243,9 +247,11 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
     	Ellipsoid[] ellipsoids = new Ellipsoid[nLabels];
 
     	// compute ellipsoid parameters for each region
+        fireStatusChanged(this, "Ellipsoid: compute SVD");
     	Matrix matrix = new Matrix(3, 3);
     	for (int i = 0; i < nLabels; i++) 
     	{
+            this.fireProgressChanged(this, i, nLabels);
     		// fill up the 3x3 inertia matrix
     		matrix.set(0, 0, Ixx[i]);
     		matrix.set(0, 1, Ixy[i]);
