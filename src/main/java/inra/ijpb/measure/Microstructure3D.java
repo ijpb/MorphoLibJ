@@ -117,7 +117,7 @@ public class Microstructure3D
         return euler / vol;
     }
     
-    private static final double samplingVolume(ImageStack image, Calibration calib)
+    public static final double samplingVolume(ImageStack image, Calibration calib)
     {
         // size of image
         int sizeX = image.getWidth();

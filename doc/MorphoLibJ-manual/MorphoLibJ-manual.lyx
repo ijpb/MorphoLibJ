@@ -9477,6 +9477,20 @@ key "Ohser2009"
 .
 \end_layout
 
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+add warnings about possibility of obtaining negative results -> need to
+ regularize the regions before analysis.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 Inertia Ellipsoid
 \end_layout

@@ -228,8 +228,8 @@ public class AnalyzeRegions3D implements PlugIn
             long tic = System.nanoTime();
             // Create ans setup computation class
             IntrinsicVolumes3D algo = new IntrinsicVolumes3D();
-            algo.setDirectionNumber(13);
-            algo.setConnectivity(6);
+            algo.setDirectionNumber(this.surfaceAreaDirs);
+            algo.setConnectivity(this.connectivity);
             DefaultAlgoListener.monitor(algo);
             
             // run analysis
