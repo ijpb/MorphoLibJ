@@ -73,12 +73,14 @@ public class Microstructure3D
      *            the spatial calibration of the image
      * @param nDirs
      *            the number of directions to consider, either 3 or 13
+     * @param conn2d
+     * 		      the connectivity to use on planar sections with square tiles (either 4 or 8)            
      * @return the surface area density of the binary phase within the image
      */
-    public static final double meanBreadthDensity(ImageStack image, Calibration calib, int nDirs)
+    public static final double meanBreadthDensity(ImageStack image, Calibration calib, int nDirs, int conn2d)
     {
         // pre-compute LUT corresponding to resolution and number of directions
-        double[] lut = IntrinsicVolumes3D.meanBreadthLut(calib, nDirs);
+        double[] lut = IntrinsicVolumes3D.meanBreadthLut(calib, nDirs, conn2d);
 
         // Compute index of each 2x2x2 binary voxel configuration, associate LUT
         // contribution, and sum u

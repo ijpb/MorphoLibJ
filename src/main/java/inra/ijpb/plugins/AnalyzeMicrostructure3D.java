@@ -179,7 +179,7 @@ public class AnalyzeMicrostructure3D implements PlugIn
         }
         if (computeMeanBreadth)
         {
-            double[] meanBreadthLut = IntrinsicVolumes3D.meanBreadthLut(calib, meanBreadthDirs);
+            double[] meanBreadthLut = IntrinsicVolumes3D.meanBreadthLut(calib, meanBreadthDirs, 8); // TODO: add option
             double meanBreadth = BinaryConfigurationsHistogram3D.applyLut(histogram, meanBreadthLut);
             table.addValue("MeanBreadthDensity", meanBreadth / vol);
         }

@@ -226,7 +226,7 @@ public class RegionMorphometry3DTest
         image.setVoxel(2, 2, 2, 255);
         Calibration calib = new Calibration();
         
-        double meanBreadth = RegionMorphometry3D.meanBreadth(image, calib, 3);
+        double meanBreadth = RegionMorphometry3D.meanBreadth(image, calib, 3, 8);
         
         double exp = 2.0;
         assertEquals(exp, meanBreadth, exp * 0.2);
@@ -249,7 +249,7 @@ public class RegionMorphometry3DTest
         image.setVoxel(2, 2, 2, 255);
         Calibration calib = new Calibration();
         
-        double meanBreadth = RegionMorphometry3D.meanBreadth(image, calib, 13);
+        double meanBreadth = RegionMorphometry3D.meanBreadth(image, calib, 13, 8);
         
         double exp = 2.141;
         assertEquals(exp, meanBreadth, exp * 0.2);
@@ -264,7 +264,7 @@ public class RegionMorphometry3DTest
         ImageStack image = createBallImage();
         Calibration calib = new Calibration();
         
-        double meanBreadth = RegionMorphometry3D.meanBreadth(image, calib, 3);
+        double meanBreadth = RegionMorphometry3D.meanBreadth(image, calib, 3, 8);
         
         double exp = 40.0;
         assertEquals(exp, meanBreadth, exp * 0.2);
@@ -279,7 +279,7 @@ public class RegionMorphometry3DTest
         ImageStack image = createBallImage();
         Calibration calib = new Calibration();
         
-        double meanBreadth = RegionMorphometry3D.meanBreadth(image, calib, 13);
+        double meanBreadth = RegionMorphometry3D.meanBreadth(image, calib, 13, 8);
         
         double exp = 40.0;
         assertEquals(exp, meanBreadth, exp * 0.2);

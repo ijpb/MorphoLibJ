@@ -229,17 +229,19 @@ public class IntrinsicVolumes3D extends RegionAnalyzer3D<IntrinsicVolumes3D.Resu
      *            the spatial calibration of image
      * @param nDirs
      *            the number of directions (3 or 13)
+     * @param conn2d
+     *            the connectivity to use on square faces of plane sections (4 or 8)
      * @return a look-up table with 256 entries
      */
-    public static final double[] meanBreadthLut(Calibration calib, int nDirs)
+    public static final double[] meanBreadthLut(Calibration calib, int nDirs, int conn2d)
     {
         if (nDirs == 3)
         {
-            return meanBreadthLutD3(calib);
+            return meanBreadthLutD3(calib, conn2d);
         }
         else if (nDirs == 13)
         {
-            return meanBreadthLutD13(calib);
+            return meanBreadthLutD13(calib, conn2d);
         }
         else
         {
@@ -255,7 +257,7 @@ public class IntrinsicVolumes3D extends RegionAnalyzer3D<IntrinsicVolumes3D.Resu
      *            the spatial calibration of image
      * @return a look-up table with 256 entries
      */
-    private static final double[] meanBreadthLutD3(Calibration calib)
+    private static final double[] meanBreadthLutD3(Calibration calib, int conn2d)
     {
         // distances between a voxel and its neighbors.
         // di refer to orthogonal neighbors
@@ -313,9 +315,9 @@ public class IntrinsicVolumes3D extends RegionAnalyzer3D<IntrinsicVolumes3D.Resu
                 boolean[] face3 = new boolean[]{im[p1][p2][p3], im[1-p1][p2][p3], im[p1][1-p2][p3], im[1-p1][1-p2][p3]};
 
                 // compute contribution of voxel on each 2D face
-                double f1 = eulerContribTile2dC8(face1, d3, d2);
-                double f2 = eulerContribTile2dC8(face2, d3, d1);
-                double f3 = eulerContribTile2dC8(face3, d2, d1);
+                double f1 = eulerContribTile2d(face1, conn2d, d3, d2);
+                double f2 = eulerContribTile2d(face2, conn2d, d3, d1);
+                double f3 = eulerContribTile2d(face3, conn2d, d2, d1);
                 
                 // Uses only 3 isothetic directions.
                 // divide by 6. Divide by 3 because of averaging on directions,
@@ -335,7 +337,7 @@ public class IntrinsicVolumes3D extends RegionAnalyzer3D<IntrinsicVolumes3D.Resu
      *            the spatial calibration of image
      * @return a look-up table with 256 entries
      */
-    private static final double[] meanBreadthLutD13(Calibration calib)
+    private static final double[] meanBreadthLutD13(Calibration calib, int conn2d)
     {
         // distances between a voxel and its neighbors.
         // di refer to orthogonal neighbors
@@ -400,9 +402,9 @@ public class IntrinsicVolumes3D extends RegionAnalyzer3D<IntrinsicVolumes3D.Resu
                 boolean[] face3 = new boolean[]{im[p1][p2][p3], im[1-p1][p2][p3], im[p1][1-p2][p3], im[1-p1][1-p2][p3]};
                 
                 // compute contribution of voxel on each 2D face, weighted by face multiplicity
-                diams[0] = eulerContribTile2dC8(face1, d3, d2) / 2.0;
-                diams[1] = eulerContribTile2dC8(face2, d3, d1) / 2.0;
-                diams[2] = eulerContribTile2dC8(face3, d2, d1) / 2.0;
+                diams[0] = eulerContribTile2d(face1, conn2d, d3, d2) / 2.0;
+                diams[1] = eulerContribTile2d(face2, conn2d, d3, d1) / 2.0;
+                diams[2] = eulerContribTile2d(face3, conn2d, d2, d1) / 2.0;
                 
                 // create 2D faces for direction normal to square diagonals
                 // use only the half
@@ -411,9 +413,9 @@ public class IntrinsicVolumes3D extends RegionAnalyzer3D<IntrinsicVolumes3D.Resu
                 boolean[] face8 = new boolean[]{im[p1][p2][p3], im[p1][1-p2][1-p3], im[1-p1][p2][p3], im[1-p1][1-p2][1-p3]};
 
                 // compute contribution of voxel on each 2D face
-                diams[3] = eulerContribTile2dC8(face4, d12, d3);
-                diams[4] = eulerContribTile2dC8(face6, d13, d2);
-                diams[5] = eulerContribTile2dC8(face8, d23, d1);
+                diams[3] = eulerContribTile2d(face4, conn2d, d12, d3);
+                diams[4] = eulerContribTile2d(face6, conn2d, d13, d2);
+                diams[5] = eulerContribTile2d(face8, conn2d, d23, d1);
 
                 // create triangular faces. Reference voxel is the first one
                 boolean[] faceA = new boolean[]{im[p1][p2][p3], im[1-p1][1-p2][p3], im[1-p1][p2][1-p3]};
@@ -438,9 +440,91 @@ public class IntrinsicVolumes3D extends RegionAnalyzer3D<IntrinsicVolumes3D.Resu
         return lut;     
     }
     
+    private static final double eulerContribTile2d(boolean[] face, int conn2d, double d1, double d2)
+    {
+    	if (conn2d == 4)
+    	{
+    		return eulerContribTile2dC4(face, d1, d2);
+    	}
+    	else if (conn2d == 8)
+    	{
+    		return eulerContribTile2dC8(face, d1, d2);
+    	}
+    	else
+    	{
+    		throw new IllegalArgumentException("Connectivity mustbe either 4 or 8");
+    	}
+    }
+    
     /**
      * Computes the contribution to Euler number of the reference vertex within
-     * a rectangular grid tile.
+     * a rectangular grid tile using the 4-connectivity.
+     * 
+     * @param face
+     *            the boolean values of the four vertices of the rectangular
+     *            tile
+     * @param d1
+     *            distance between vertex 1 and vertex 2
+     * @param d2
+     *            distance between vertex 1 and vertex 3
+     * @return the contribution to the Euler number
+     */
+    private static final double eulerContribTile2dC4(boolean[] face, double d1, double d2)
+    {
+        // if reference vertex is not with structure, contribution is zero 
+        if (!face[0])
+        {
+            return 0.0;
+        }
+        
+        // count the number of pixels within the configuration
+        int nPixels = 0;
+        for (int i = 0; i < face.length; i++) 
+        {
+            if (face[i]) nPixels++;
+        }
+        
+        switch (nPixels)
+        {
+        case 1:
+            // in case of a single pixel, contribution is 1/4
+            return 0.25;
+        case 2:
+            // case of two pixels, corresponding to an edge.
+            // If there is one diagonal edge (face[3]), contribution is  (1/4) = 1/2
+            // If there is one isothetic edge (face[1] or face[2]), contribution is 1/4-1/2/2 = 0
+            // (edge is shared with another configuration)
+            return face[3] ? 0.25 : 0.0;
+        case 3:
+            // case of triangular face
+            if (face[3])
+            {
+                // case of an edge viewed from extremity -> 0
+                // contribution is decomposed as follows:
+                // +1 vertex, shared by 4 tiles - +(1/4)
+                // -1 edge shared by 2 tiles -> (-1/2)*(1/2)
+            	// The sum is zero
+                return 0;
+            }
+            else
+            {
+                // case of a triangle viewed from rectangular angle -> -1/4
+                // +1 vertex, shared by 4 tiles - +(1/4)
+                // -2 edges shared by 2 tiles -> 2 * (-1/2) * (1/2) -> -1/2
+                return -.25;
+            }
+        case 4:
+            // case of full face -> no contribution
+            return 0;
+            
+        default:
+            throw new RuntimeException("Uncatched number of pixels: " + nPixels);
+        }
+    }
+    
+    /**
+     * Computes the contribution to Euler number of the reference vertex within
+     * a rectangular grid tile using the 4-connectivity.
      * 
      * @param face
      *            the boolean values of the four vertices of the rectangular
@@ -504,7 +588,7 @@ public class IntrinsicVolumes3D extends RegionAnalyzer3D<IntrinsicVolumes3D.Resu
             throw new RuntimeException("Uncatched number of pixels: " + nPixels);
         }
     }
-    
+
     /**
      * Computes the contribution to Euler number of the reference vertex within
      * a triangular grid tile.
@@ -906,7 +990,7 @@ public class IntrinsicVolumes3D extends RegionAnalyzer3D<IntrinsicVolumes3D.Resu
         // Compute mean breadth if necessary
         if (this.computeMeanBreadth)
         {
-            double[] breadthLut = meanBreadthLut(calib, this.directionNumber);
+            double[] breadthLut = meanBreadthLut(calib, this.directionNumber, 8);
             double[] breadths = BinaryConfigurationsHistogram3D.applyLut(histograms, breadthLut);
             for (int i = 0; i < labels.length; i++)
             {
