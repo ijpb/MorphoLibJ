@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import ij.ImageStack;
 import ij.measure.Calibration;
+import inra.ijpb.geometry.Point3D;
 
 /**
  * @author dlegland
@@ -100,6 +101,88 @@ public class RegionMorphometry3DTest
      * Test method for {@link inra.ijpb.measure.RegionMorphometry3D#surfaceAreas(ij.ImageStack, int[], ij.measure.Calibration, int)}.
      */
     @Test
+    public final void testSurfaceAreas_SingleBall_D3_HalfResolX()
+    {
+        ImageStack image = createBallImage_HalfResolX();
+        int[] labels = new int[] {255};
+        Calibration calib = new Calibration();
+        calib.pixelWidth = 2.0;
+        
+        double[] surfaces = RegionMorphometry3D.surfaceAreas(image, labels, calib, 3);
+        
+        double exp = 5026.0;
+        assertEquals(1, surfaces.length);
+        assertEquals(exp, surfaces[0], exp * 0.02);
+    }
+
+    /**
+     * Test method for {@link inra.ijpb.measure.RegionMorphometry3D#surfaceAreas(ij.ImageStack, int[], ij.measure.Calibration, int)}.
+     */
+    @Test
+    public final void testSurfaceAreas_SingleBall_D3_HalfResolY()
+    {
+        ImageStack image = createBallImage_HalfResolY();
+        int[] labels = new int[] {255};
+        Calibration calib = new Calibration();
+        calib.pixelHeight = 2.0;
+        
+        double[] surfaces = RegionMorphometry3D.surfaceAreas(image, labels, calib, 3);
+        
+        double exp = 5026.0;
+        assertEquals(1, surfaces.length);
+        assertEquals(exp, surfaces[0], exp * 0.02);
+    }
+
+    /**
+     * Test method for {@link inra.ijpb.measure.RegionMorphometry3D#surfaceAreas(ij.ImageStack, int[], ij.measure.Calibration, int)}.
+     */
+    @Test
+    public final void testSurfaceAreas_SingleBall_D3_HalfResolZ()
+    {
+        ImageStack image = createBallImage_HalfResolZ();
+        int[] labels = new int[] {255};
+        Calibration calib = new Calibration();
+        calib.pixelDepth = 2.0;
+        
+        double[] surfaces = RegionMorphometry3D.surfaceAreas(image, labels, calib, 3);
+        
+        double exp = 5026.0;
+        assertEquals(1, surfaces.length);
+        assertEquals(exp, surfaces[0], exp * 0.02);
+    }
+
+    /**
+     * Test method for {@link inra.ijpb.measure.RegionMorphometry3D#surfaceAreas(ij.ImageStack, int[], ij.measure.Calibration, int)}.
+     */
+    @Test
+    public final void testSurfaceAreas_SingleBall_D3_X3_Y4_Z5()
+    {
+    	double radius = 40;
+    	
+    	// create image
+    	ImageStack image = ImageStack.create(100/3, 100/4, 100/5, 8);
+        int[] labels = new int[] {255};
+        Calibration calib = new Calibration();
+        calib.pixelWidth  = 3.0;
+        calib.pixelHeight = 4.0;
+        calib.pixelDepth  = 5.0;
+        calib.xOrigin = 0;
+        calib.yOrigin = 0;
+        calib.zOrigin = 0;
+        
+        Phantoms3D.fillBall(image, calib, new Point3D(50.0, 50.0, 50.0), radius, 255);
+
+        double[] surfaces = RegionMorphometry3D.surfaceAreas(image, labels, calib, 3);
+        
+        double exp = 4 * Math.PI * radius * radius; // 5026.0;
+        assertEquals(1, surfaces.length);
+        assertEquals(exp, surfaces[0], exp * 0.02);
+    }
+
+    /**
+     * Test method for {@link inra.ijpb.measure.RegionMorphometry3D#surfaceAreas(ij.ImageStack, int[], ij.measure.Calibration, int)}.
+     */
+    @Test
     public final void testSurfaceAreas_SingleBall_D13()
     {
         ImageStack image = createBallImage();
@@ -111,6 +194,60 @@ public class RegionMorphometry3DTest
         double exp = 5026.0;
         assertEquals(1, surfaces.length);
         assertEquals(exp, surfaces[0], 2.);
+    }
+
+    /**
+     * Test method for {@link inra.ijpb.measure.RegionMorphometry3D#surfaceAreas(ij.ImageStack, int[], ij.measure.Calibration, int)}.
+     */
+    @Test
+    public final void testSurfaceAreas_SingleBall_D13_HalfResolX()
+    {
+        ImageStack image = createBallImage_HalfResolX();
+        int[] labels = new int[] {255};
+        Calibration calib = new Calibration();
+        calib.pixelWidth = 2.0;
+        
+        double[] surfaces = RegionMorphometry3D.surfaceAreas(image, labels, calib, 13);
+        
+        double exp = 5026.0;
+        assertEquals(1, surfaces.length);
+        assertEquals(exp, surfaces[0], exp * 0.02);
+    }
+
+    /**
+     * Test method for {@link inra.ijpb.measure.RegionMorphometry3D#surfaceAreas(ij.ImageStack, int[], ij.measure.Calibration, int)}.
+     */
+    @Test
+    public final void testSurfaceAreas_SingleBall_D13_HalfResolY()
+    {
+        ImageStack image = createBallImage_HalfResolY();
+        int[] labels = new int[] {255};
+        Calibration calib = new Calibration();
+        calib.pixelHeight = 2.0;
+        
+        double[] surfaces = RegionMorphometry3D.surfaceAreas(image, labels, calib, 13);
+        
+        double exp = 5026.0;
+        assertEquals(1, surfaces.length);
+        assertEquals(exp, surfaces[0], exp * 0.02);
+    }
+
+    /**
+     * Test method for {@link inra.ijpb.measure.RegionMorphometry3D#surfaceAreas(ij.ImageStack, int[], ij.measure.Calibration, int)}.
+     */
+    @Test
+    public final void testSurfaceAreas_SingleBall_D13_HalfResolZ()
+    {
+        ImageStack image = createBallImage_HalfResolZ();
+        int[] labels = new int[] {255};
+        Calibration calib = new Calibration();
+        calib.pixelDepth = 2.0;
+        
+        double[] surfaces = RegionMorphometry3D.surfaceAreas(image, labels, calib, 13);
+        
+        double exp = 5026.0;
+        assertEquals(1, surfaces.length);
+        assertEquals(exp, surfaces[0], exp * 0.02);
     }
 
     /**
@@ -352,8 +489,9 @@ public class RegionMorphometry3DTest
      * Expected surface area is around 5026.
      * Expected mean breadth is equal to the diameter, i.e. 40.
      */
-    private final static ImageStack createBallImage() {
-        // ball features
+	private final static ImageStack createBallImage()
+	{
+		// ball features
         double xc = 25.12;
         double yc = 25.23;
         double zc = 25.34;
@@ -384,6 +522,75 @@ public class RegionMorphometry3DTest
         return result;
     }
     
+	private final static ImageStack createBallImage_HalfResolX()
+	{
+		ImageStack baseImage = createBallImage();
+		int size1 = baseImage.getWidth() / 2;
+		int size2 = baseImage.getHeight();
+		int size3 = baseImage.getSize();
+		
+        ImageStack result = ImageStack.create(size1, size2, size3, 8);
+        
+		for (int z = 0; z < size3; z++)
+		{
+			for (int y = 0; y < size2; y++)
+			{
+				for (int x = 0; x < size1; x++)
+				{
+                    result.setVoxel(x, y, z, baseImage.getVoxel(2 * x, y, z));
+                }
+            }
+        }
+		
+		return result;
+	}
+		
+	private final static ImageStack createBallImage_HalfResolY()
+	{
+		ImageStack baseImage = createBallImage();
+		int size1 = baseImage.getWidth();
+		int size2 = baseImage.getHeight() / 2;
+		int size3 = baseImage.getSize();
+		
+        ImageStack result = ImageStack.create(size1, size2, size3, 8);
+        
+		for (int z = 0; z < size3; z++)
+		{
+			for (int y = 0; y < size2; y++)
+			{
+				for (int x = 0; x < size1; x++)
+				{
+                    result.setVoxel(x, y, z, baseImage.getVoxel(x, 2 * y, z));
+                }
+            }
+        }
+		
+		return result;
+	}
+		
+	private final static ImageStack createBallImage_HalfResolZ()
+	{
+		ImageStack baseImage = createBallImage();
+		int size1 = baseImage.getWidth();
+		int size2 = baseImage.getHeight();
+		int size3 = baseImage.getSize() / 2;
+		
+        ImageStack result = ImageStack.create(size1, size2, size3, 8);
+        
+		for (int z = 0; z < size3; z++)
+		{
+			for (int y = 0; y < size2; y++)
+			{
+				for (int x = 0; x < size1; x++)
+				{
+                    result.setVoxel(x, y, z, baseImage.getVoxel(x, y, 2 * z));
+                }
+            }
+        }
+		
+		return result;
+	}
+		
     /**
      * Generate an image containing 27 balls with same radius.
      * Radius of the ball is 12.61, resulting in a surface area of around 2000.
