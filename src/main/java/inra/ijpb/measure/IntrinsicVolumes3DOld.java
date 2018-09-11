@@ -8,7 +8,7 @@ import ij.measure.Calibration;
 import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.geometry.Vector3D;
 import inra.ijpb.label.LabelImages;
-import inra.ijpb.measure.region3d.BinaryConfigurations3D;
+import inra.ijpb.measure.region3d.BinaryConfigurationsHistogram3D;
 
 /**
  * Computation of intrinsic volumes (volume, surface area, mean breadth and
@@ -120,8 +120,8 @@ public class IntrinsicVolumes3DOld
 
 		// Compute index of each 2x2x2 binary voxel configuration, associate LUT
 		// contribution, and sum up for each label
-		int[] histo = BinaryConfigurations3D.histogram(image);
-		return BinaryConfigurations3D.applyLut(histo, lut);
+		int[] histo = new BinaryConfigurationsHistogram3D().process(image);
+		return BinaryConfigurationsHistogram3D.applyLut(histo, lut);
 	}
 	
 
@@ -149,8 +149,8 @@ public class IntrinsicVolumes3DOld
 
 		// Compute index of each 2x2x2 binary voxel configuration, associate LUT
 		// contribution, and sum up for each label
-		int[][] histos = BinaryConfigurations3D.histograms(image, labels);
-		return BinaryConfigurations3D.applyLut(histos, lut);
+		int[][] histos = new BinaryConfigurationsHistogram3D().process(image, labels);
+		return BinaryConfigurationsHistogram3D.applyLut(histos, lut);
 	}
 	
 	/**
@@ -174,8 +174,8 @@ public class IntrinsicVolumes3DOld
 
 		// Compute index of each 2x2x2 binary voxel configuration, associate LUT
 		// contribution, and sum up
-		int[] histo = BinaryConfigurations3D.innerHistogram(image);
-		double surf = BinaryConfigurations3D.applyLut(histo, lut);
+		int[] histo = new BinaryConfigurationsHistogram3D().processInnerFrame(image);
+		double surf = BinaryConfigurationsHistogram3D.applyLut(histo, lut);
 		
 		// normalize by volume of sampling window
 		double vol = samplingVolume(image, calib);
@@ -411,8 +411,8 @@ public class IntrinsicVolumes3DOld
 
 		// Compute index of each 2x2x2 binary voxel configuration, associate LUT
 		// contribution, and sum up
-		int[] histo = BinaryConfigurations3D.histogram(image);
-		return BinaryConfigurations3D.applyLut(histo, lut);
+		int[] histo = new BinaryConfigurationsHistogram3D().process(image);
+		return BinaryConfigurationsHistogram3D.applyLut(histo, lut);
 	}
 
 	/**
@@ -440,8 +440,8 @@ public class IntrinsicVolumes3DOld
 
 		// Compute index of each 2x2x2 binary voxel configuration, associate LUT
 		// contribution, and sum up for each label
-		int[][] histos = BinaryConfigurations3D.histograms(image, labels);
-		return BinaryConfigurations3D.applyLut(histos, lut);
+		int[][] histos = new BinaryConfigurationsHistogram3D().process(image, labels);
+		return BinaryConfigurationsHistogram3D.applyLut(histos, lut);
 	}
 
 	/**
@@ -465,8 +465,8 @@ public class IntrinsicVolumes3DOld
 
 		// Compute index of each 2x2x2 binary voxel configuration, associate LUT
 		// contribution, and sum u
-		int[] histo = BinaryConfigurations3D.innerHistogram(image);
-		double meanBreadth = BinaryConfigurations3D.applyLut(histo, lut);
+		int[] histo = new BinaryConfigurationsHistogram3D().processInnerFrame(image);
+		double meanBreadth = BinaryConfigurationsHistogram3D.applyLut(histo, lut);
 		
 		// normalize by volume of sampling window
 		double vol = samplingVolume(image, calib);
@@ -939,8 +939,8 @@ public class IntrinsicVolumes3DOld
 
 		// Compute index of each 2x2x2 binary voxel configuration, associate LUT
 		// contribution, and sum up
-		int[] histo = BinaryConfigurations3D.histogram(image);
-		return BinaryConfigurations3D.applyLut(histo, lut);
+		int[] histo = new BinaryConfigurationsHistogram3D().process(image);
+		return BinaryConfigurationsHistogram3D.applyLut(histo, lut);
 	}
 	
 	/**
@@ -963,8 +963,8 @@ public class IntrinsicVolumes3DOld
 
 		// Compute index of each 2x2x2 binary voxel configuration, associate LUT
 		// contribution, and sum up for each label
-		int[][] histos = BinaryConfigurations3D.histograms(image, labels);
-		return BinaryConfigurations3D.applyLut(histos, lut);
+		int[][] histos = new BinaryConfigurationsHistogram3D().process(image, labels);
+		return BinaryConfigurationsHistogram3D.applyLut(histos, lut);
 	}
 	
 	/**
@@ -986,8 +986,8 @@ public class IntrinsicVolumes3DOld
 
 		// Compute index of each 2x2x2 binary voxel configuration, associate LUT
 		// contribution, and sum up
-		int[] histo = BinaryConfigurations3D.innerHistogram(image);
-		double euler = BinaryConfigurations3D.applyLut(histo, lut);
+		int[] histo = new BinaryConfigurationsHistogram3D().processInnerFrame(image);
+		double euler = BinaryConfigurationsHistogram3D.applyLut(histo, lut);
 		
 		// normalize by the volume of the sampling window
 		double vol = samplingVolume(image, calib);
