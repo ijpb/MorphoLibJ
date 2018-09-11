@@ -43,7 +43,7 @@ public class AnalyzeMicrostructure3D implements PlugIn
     /**
      * The list of connectivity names.
      */
-    private final static String[] connectivityNames = {
+    private final static String[] connectivity3dNames = {
         "C6", "C26"
     };
     
@@ -97,7 +97,7 @@ public class AnalyzeMicrostructure3D implements PlugIn
         gd.addChoice("Surface area method:", dirNumberLabels, dirNumberLabels[1]);
         gd.addChoice("Mean breadth method:", dirNumberLabels, dirNumberLabels[1]);
         gd.addChoice("Mean Breadth Conn.:", connectivity2dNames, connectivity2dNames[1]);
-        gd.addChoice("Euler Connectivity:", connectivityNames, connectivityNames[1]);
+        gd.addChoice("Euler Connectivity:", connectivity3dNames, connectivity3dNames[1]);
         gd.showDialog();
         
         // If cancel was clicked, do nothing

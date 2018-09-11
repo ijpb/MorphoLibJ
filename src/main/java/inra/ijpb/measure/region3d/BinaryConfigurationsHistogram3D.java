@@ -11,6 +11,9 @@ import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.label.LabelImages;
 
 /**
+ * Computes histogram of binary 2-by-2-by-2 configurations within a 3D image.
+ * 
+ * Implements the Algo interface, so the progress can be tracked.
  * 
  * @author dlegland
  *
@@ -20,7 +23,6 @@ public class BinaryConfigurationsHistogram3D extends AlgoStub
     // ==================================================
     // Static methods
 
-    //TODO: remove code duplication (?)
     public static final double applyLut(int[] histogram, double[] lut)
     {
         double sum = 0;

@@ -25,10 +25,10 @@ public class Microstructure3D
     public static final double volumeDensity(ImageStack image)
     {
         // count non-zero voxels
-        int voxelCount = BinaryImages.countForegroundVoxels(image);
+        double voxelCount = BinaryImages.countForegroundVoxels(image);
 
         // Normalizes voxel count by image volume.
-        int voxelNumber = image.getWidth() * image.getWidth() * image.getSize();
+        double voxelNumber = image.getWidth() * image.getWidth() * image.getSize();
         return voxelCount / voxelNumber;
     }
 

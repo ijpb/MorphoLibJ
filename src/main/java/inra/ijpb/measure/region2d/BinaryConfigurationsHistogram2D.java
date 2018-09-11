@@ -14,6 +14,8 @@ import inra.ijpb.label.LabelImages;
  * Computes histogram of binary configurations composed of 2-by-2 pixels (planar
  * images).
  * 
+ * Implements the Algo interface, so the progress can be tracked.
+ * 
  * @author dlegland
  *
  */
@@ -131,6 +133,7 @@ public class BinaryConfigurationsHistogram2D extends AlgoStub
             }
         }
 
+        this.fireProgressChanged(this, 1, 1);
         return histogram;
     }
 
@@ -173,6 +176,7 @@ public class BinaryConfigurationsHistogram2D extends AlgoStub
             }
         }
 
+        this.fireProgressChanged(this, 1, 1);
         return histogram;
     }
 
@@ -268,6 +272,7 @@ public class BinaryConfigurationsHistogram2D extends AlgoStub
             }
         }
 
+        this.fireProgressChanged(this, 1, 1);
         return histograms;
     }
 
