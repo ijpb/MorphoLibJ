@@ -14,6 +14,7 @@ import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.measure.Microstructure3D;
 import inra.ijpb.measure.region3d.BinaryConfigurationsHistogram3D;
 import inra.ijpb.measure.region3d.IntrinsicVolumes3D;
+import inra.ijpb.util.IJUtils;
 
 /**
  * @author dlegland
@@ -23,15 +24,6 @@ public class AnalyzeMicrostructure3D implements PlugIn
 {
     // ====================================================
     // Global Constants
-    
-    /**
-     * The list of connectivity names.
-     */
-    private final static String[] connectivityNames = {
-        "C6", "C26"
-    };
-    
-    private final static int[] connectivityValues = new int[]{6, 26};
     
     /**
      * List of available numbers of directions
@@ -48,6 +40,25 @@ public class AnalyzeMicrostructure3D implements PlugIn
         3, 13
     };
     
+    /**
+     * The list of connectivity names.
+     */
+    private final static String[] connectivityNames = {
+        "C6", "C26"
+    };
+    
+    private final static int[] connectivity3dValues = new int[]{6, 26};
+    
+    /**
+     * The list of connectivity names.
+     */
+    private final static String[] connectivity2dNames = {
+        "C4", "C8"
+    };
+    
+    private final static int[] connectivity2dValues = new int[]{4, 8};
+
+    
     // ====================================================
     // Class variables
     
@@ -58,6 +69,7 @@ public class AnalyzeMicrostructure3D implements PlugIn
 
     int surfaceAreaDirs = 13;
     int meanBreadthDirs = 13;
+    int connectivity2d = 8;
     int connectivity = 6;
     
 
@@ -84,6 +96,7 @@ public class AnalyzeMicrostructure3D implements PlugIn
         gd.addMessage("");
         gd.addChoice("Surface area method:", dirNumberLabels, dirNumberLabels[1]);
         gd.addChoice("Mean breadth method:", dirNumberLabels, dirNumberLabels[1]);
+        gd.addChoice("Mean Breadth Conn.:", connectivity2dNames, connectivity2dNames[1]);
         gd.addChoice("Euler Connectivity:", connectivityNames, connectivityNames[1]);
         gd.showDialog();
         
@@ -100,7 +113,8 @@ public class AnalyzeMicrostructure3D implements PlugIn
         // extract analysis options
         surfaceAreaDirs = dirNumbers[gd.getNextChoiceIndex()];
         meanBreadthDirs = dirNumbers[gd.getNextChoiceIndex()];
-        connectivity = connectivityValues[gd.getNextChoiceIndex()];
+        connectivity2d = connectivity2dValues[gd.getNextChoiceIndex()];
+        connectivity = connectivity3dValues[gd.getNextChoiceIndex()];
         
         // Execute the plugin
         ResultsTable table = process(imagePlus);
@@ -128,7 +142,14 @@ public class AnalyzeMicrostructure3D implements PlugIn
         ImageStack image = imagePlus.getStack();
         Calibration calib = imagePlus.getCalibration();
         
-        return process(image, calib);
+        long tic = System.nanoTime();
+        ResultsTable table = process(image, calib);
+        
+        long toc = System.nanoTime();
+        double dt = (toc - tic) / 1000000.0;
+
+        IJUtils.showElapsedTime("Microstructure 3D", dt, imagePlus);
+        return table;
     }
     
     /**
@@ -154,6 +175,7 @@ public class AnalyzeMicrostructure3D implements PlugIn
         // Compute histogram of binary 2-by-2-by-2 configurations (array length: 256)
         BinaryConfigurationsHistogram3D algo = new BinaryConfigurationsHistogram3D();
         DefaultAlgoListener.monitor(algo);
+        IJ.showStatus("Compute Configuration Histogram");
         int[] histogram = algo.processInnerFrame(image);
       
         // pre-compute LUT corresponding to resolution and number of directions
@@ -179,7 +201,7 @@ public class AnalyzeMicrostructure3D implements PlugIn
         }
         if (computeMeanBreadth)
         {
-            double[] meanBreadthLut = IntrinsicVolumes3D.meanBreadthLut(calib, meanBreadthDirs, 8); // TODO: add option
+            double[] meanBreadthLut = IntrinsicVolumes3D.meanBreadthLut(calib, meanBreadthDirs, connectivity2d);
             double meanBreadth = BinaryConfigurationsHistogram3D.applyLut(histogram, meanBreadthLut);
             table.addValue("MeanBreadthDensity", meanBreadth / vol);
         }

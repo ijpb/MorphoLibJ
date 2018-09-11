@@ -179,6 +179,8 @@ public class BinaryConfigurationsHistogram3D extends AlgoStub
         // (corresponding to b111).
         for (int z = 1; z < sizeZ; z++) 
         {
+            this.fireProgressChanged(this, z, sizeZ + 1);
+            
             for (int y = 1; y < sizeY; y++) 
             {
                 // initialize left voxels
@@ -210,6 +212,8 @@ public class BinaryConfigurationsHistogram3D extends AlgoStub
             }
         }
         
+        this.fireProgressChanged(this, 1, 1);
+
         // return the histogram
         return histo;
     }
