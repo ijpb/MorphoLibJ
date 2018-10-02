@@ -80,9 +80,6 @@ public class OrientedBoundingBox2DTest
 	@Test
 	public final void testAnalyzeRegions_circles()
 	{
-		@SuppressWarnings("unused")
-		ImageJ ij = new ImageJ();
-		
 		String fileName = getClass().getResource("/files/circles.tif").getFile();
 		ImagePlus imagePlus = IJ.openImage(fileName);
 		assertNotNull(imagePlus);
