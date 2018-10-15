@@ -13,23 +13,13 @@ import ij.process.ByteProcessor;
  * @author dlegland
  *
  */
-public class BinaryConfigurations2DTest
+public class BinaryConfigurationsHistogram2DTest
 {
-
-//	/**
-//	 * Test method for {@link inra.ijpb.measure.region2d.BinaryConfigurations2D#histogram(ij.process.ImageProcessor)}.
-//	 */
-//	@Test
-//	public final void testHistogram()
-//	{
-//		fail("Not yet implemented"); // TODO
-//	}
-
 	/**
-	 * Test method for {@link inra.ijpb.measure.region2d.BinaryConfigurations2D#innerHistogram(ij.process.ImageProcessor)}.
+	 * Test method for {@link inra.ijpb.measure.region2d.BinaryConfigurationsHistogram2D#processInnerFrame(ij.process.ImageProcessor)}.
 	 */
 	@Test
-	public final void testInnerHistogram()
+	public final void testProcessInnerFrame_OhserMuecklich()
 	{
 		int[][] data = new int[][] {
 			{0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0}, 
@@ -60,7 +50,7 @@ public class BinaryConfigurations2DTest
 			}
 		}
 		
-		int[] histo = BinaryConfigurations2D.innerHistogram(image);
+		int[] histo = new BinaryConfigurationsHistogram2D().processInnerFrame(image);
 		
 		// check size of histogram
 		assertEquals(16, histo.length);
@@ -74,7 +64,7 @@ public class BinaryConfigurations2DTest
 		assertEquals(15*15, sum);
 		
 		// Compare with pre-computed values 
-		// (adapted from Ohser and Muecklich, p. 131. pixel position 1 and 2 are switched)
+		// (adapted from Ohser and Muecklich, p. 131. Pixel positions 1 and 2 are switched)
 		int[] exp = new int[] {70, 12, 13, 12,  13, 21, 2, 5,  16, 2, 19, 5,  11, 5, 7, 12};
 		for (int i = 0; i < 16; i++)
 		{

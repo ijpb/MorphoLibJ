@@ -167,7 +167,7 @@ public class DistanceTransform3DFloat extends AlgoStub implements DistanceTransf
 	// Inner computation methods 
 	
 	/**
-	 * Fill result image with zero for background voxels, and Short.MAX for
+	 * Fill result image with zero for background voxels, and Float.MAX for
 	 * foreground voxels.
 	 */
 	private void initializeResultSlices()
@@ -184,7 +184,7 @@ public class DistanceTransform3DFloat extends AlgoStub implements DistanceTransf
 				for (int x = 0; x < sizeX; x++) 
 				{
 					int val = labels.get(x, y, z);
-					distmap.set(x, y, z, val == 0 ? 0 : Short.MAX_VALUE);
+					distmap.setValue(x, y, z, val == 0 ? 0 : Float.MAX_VALUE);
 				}
 			}
 		}

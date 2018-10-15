@@ -31,8 +31,10 @@ import org.junit.runners.Suite;
 //	GeometricMeasures2DTest.class,
 //	GeometricMeasures3DTest.class,
 	GeometryUtilsTest.class,
-	IntrinsicVolumes2DTest.class,
-	IntrinsicVolumes3DTest.class,
+    Microstructure2DTest.class,
+    Microstructure3DTest.class,
+    RegionMorphometry2DTest.class,
+    RegionMorphometry3DTest.class,
 	ResultsBuilderTest.class,
 	})
 public class AllTests {

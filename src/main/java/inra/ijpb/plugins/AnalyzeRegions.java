@@ -37,10 +37,11 @@ import inra.ijpb.geometry.Ellipse;
 import inra.ijpb.geometry.OrientedBox2D;
 import inra.ijpb.geometry.PointPair2D;
 import inra.ijpb.label.LabelImages;
-import inra.ijpb.measure.IntrinsicVolumes2D;
+//import inra.ijpb.measure.IntrinsicVolumes2D;
 import inra.ijpb.measure.region2d.Convexity;
 import inra.ijpb.measure.region2d.GeodesicDiameter;
 import inra.ijpb.measure.region2d.InertiaEllipse;
+import inra.ijpb.measure.region2d.IntrinsicVolumes2D;
 import inra.ijpb.measure.region2d.LargestInscribedCircle;
 import inra.ijpb.measure.region2d.MaxFeretDiameter;
 import inra.ijpb.measure.region2d.OrientedBoundingBox2D;
@@ -176,9 +177,10 @@ public class AnalyzeRegions implements PlugInFilter
     	}
     	
     	// Parameters to be computed
-    	double[] areaList = null;
-    	double[] perimList = null;
-    	double[] eulerNumberList = null;
+//    	double[] areaList = null;
+//    	double[] perimList = null;
+//    	double[] eulerNumberList = null;
+    	IntrinsicVolumes2D.Result[] intrinsicVolumes = null; 
     	Ellipse[] ellipses = null;
     	Convexity.Result[] convexities = null;
     	PointPair2D[] maxFeretDiams = null;
@@ -187,28 +189,43 @@ public class AnalyzeRegions implements PlugInFilter
     	Circle2D[] inscrDiscs = null;
     	
 
-    	// Compute parameters depending on the selected options
+//    	// Compute parameters depending on the selected options
+//    	
+//    	if (computeArea || computeCircularity)
+//    	{
+//    		IJ.showStatus("Compute area");
+//    		areaList = IntrinsicVolumes2D.areas(image, labels, calib);
+//    		addColumnToTable(table, "Area", areaList);
+//    	}
+//
+//    	if (computePerimeter || computeCircularity)
+//    	{
+//    		IJ.showStatus("Compute perimeter");
+//    		perimList = IntrinsicVolumes2D.perimeters(image, labels, calib, 4);
+//    		addColumnToTable(table, "Perimeter", perimList);
+//    	}
+//
+//    	if (computeEulerNumber)
+//    	{
+//    		IJ.showStatus("Compute Euler number");
+//    		eulerNumberList = IntrinsicVolumes2D.eulerNumbers(image, labels, 4);
+//    	}
+
+    	// compute intrinsic volumes
+    	if (computeArea || computePerimeter || computeEulerNumber || computeCircularity)
+    	{
+    	    IJ.showStatus("Intrinsic Volumes");
+    	    
+    	    // Create ans setup computation class
+            IntrinsicVolumes2D algo = new IntrinsicVolumes2D();
+            algo.setDirectionNumber(4);
+            algo.setConnectivity(4);
+            DefaultAlgoListener.monitor(algo);
+            
+            // run analysis
+            intrinsicVolumes = algo.analyzeRegions(image, labels, calib); 
+    	}
     	
-    	if (computeArea || computeCircularity)
-    	{
-    		IJ.showStatus("Compute area");
-    		areaList = IntrinsicVolumes2D.areas(image, labels, calib);
-    		addColumnToTable(table, "Area", areaList);
-    	}
-
-    	if (computePerimeter || computeCircularity)
-    	{
-    		IJ.showStatus("Compute perimeter");
-    		perimList = IntrinsicVolumes2D.perimeters(image, labels, calib, 4);
-    		addColumnToTable(table, "Perimeter", perimList);
-    	}
-
-    	if (computeEulerNumber)
-    	{
-    		IJ.showStatus("Compute Euler number");
-    		eulerNumberList = IntrinsicVolumes2D.eulerNumbers(image, labels, 4);
-    	}
-
     	if (computeInertiaEllipse || computeEllipseElongation)
     	{
     		IJ.showStatus("Inertia Ellipse");
@@ -256,15 +273,34 @@ public class AnalyzeRegions implements PlugInFilter
     	
     	// Fill results table
     	
+        if (computeArea)
+        {
+            for (int i = 0; i < nLabels; i++)
+            {
+                table.setValue("Area", i, intrinsicVolumes[i].area);
+            }
+        }
+        
+        if (computePerimeter)
+        {
+            for (int i = 0; i < nLabels; i++)
+            {
+                table.setValue("Perimeter", i, intrinsicVolumes[i].perimeter);
+            }
+        }
+        
     	if (computeCircularity)
     	{
-    		double[] circularities = computeCircularities(areaList, perimList);
+    		double[] circularities = computeCircularities(intrinsicVolumes);
     		addColumnToTable(table, "Circularity", circularities);
     	}
 
     	if (computeEulerNumber)
     	{
-    		addColumnToTable(table, "EulerNumber", eulerNumberList);
+            for (int i = 0; i < nLabels; i++)
+            {
+                table.setValue("EulerNumber", i, intrinsicVolumes[i].eulerNumber);
+            }
     	}
 
     	if (computeInertiaEllipse)
@@ -367,15 +403,28 @@ public class AnalyzeRegions implements PlugInFilter
     	return table;
     }
 
-    private double[] computeCircularities(double[] areas, double[] perims)
+//    private double[] computeCircularities(double[] areas, double[] perims)
+//    {
+//        int n = areas.length;
+//        double[] circularities = new double[n];
+//        for (int i = 0; i < n; i++)
+//        {
+//            circularities[i] = 4 * Math.PI * areas[i] / (perims[i] * perims[i]);
+//        }
+//        return circularities;
+//    }
+    
+    private double[] computeCircularities(IntrinsicVolumes2D.Result[] morphos)
     {
-    	int n = areas.length;
-    	double[] circularities = new double[n];
-    	for (int i = 0; i < n; i++)
-    	{
-    		circularities[i] = 4 * Math.PI * areas[i] / (perims[i] * perims[i]);
-    	}
-    	return circularities;
+        int n = morphos.length;
+        double[] circularities = new double[n];
+        for (int i = 0; i < n; i++)
+        {
+            double area = morphos[i].area;
+            double perim = morphos[i].perimeter;
+            circularities[i] = 4 * Math.PI * area / (perim * perim);
+        }
+        return circularities;
     }
     
     private static final void addColumnToTable(ResultsTable table, String colName, double[] values)

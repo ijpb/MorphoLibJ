@@ -114,7 +114,7 @@ public class LargestInscribedBall extends RegionAnalyzer3D<Sphere>
 		// first distance propagation to find an arbitrary center
     	fireStatusChanged(this, "Compute distance map");
 		ImageStack distanceMap = LabelImages.distanceMap(labelImage);
-		
+
 		// Extract position of maxima
 		fireStatusChanged(this, "Find inscribed balls center");
 		Cursor3D[] posCenter;
@@ -122,7 +122,8 @@ public class LargestInscribedBall extends RegionAnalyzer3D<Sphere>
 		float[] radii = getValues(distanceMap, posCenter);
 
 		// Create result data table
-		Sphere[] balls = new Sphere[nLabels];
+		fireStatusChanged(this, "Create ball data");
+        Sphere[] balls = new Sphere[nLabels];
 		for (int i = 0; i < nLabels; i++) 
 		{
 			double xc = posCenter[i].getX() * calib.pixelWidth + calib.xOrigin;
