@@ -11,7 +11,6 @@ import ij.measure.ResultsTable;
 import inra.ijpb.algo.AlgoEvent;
 import inra.ijpb.algo.AlgoListener;
 import inra.ijpb.geometry.Vector3D;
-import inra.ijpb.measure.GeometryUtils;
 
 /**
  * @author dlegland

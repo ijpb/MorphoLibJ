@@ -25,6 +25,8 @@ package inra.ijpb.measure;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
+import inra.ijpb.measure.region3d.GeometryUtilsTest;
+
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	// generic classes

@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/lgpl-3.0.html>.
  * #L%
  */
-package inra.ijpb.measure;
+package inra.ijpb.measure.region3d;
 
 import static org.junit.Assert.*;
 
