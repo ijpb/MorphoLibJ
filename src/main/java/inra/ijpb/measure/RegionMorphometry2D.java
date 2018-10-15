@@ -14,6 +14,12 @@ import inra.ijpb.measure.region2d.IntrinsicVolumes2D;
  * A collection of static methods for computing geometric measures such as area,
  * perimeter, or other measurements in planar binary or label images.
  * 
+ * For binary images, a binary image is expected, together with the spatial
+ * calibration of the image. For label images, the list of region labels within
+ * images should be specified as an array of integers.
+ * 
+ * @see RegionMorphometry3D
+ * 
  * @author dlegland
  *
  */

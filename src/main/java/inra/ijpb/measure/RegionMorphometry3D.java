@@ -11,6 +11,15 @@ import inra.ijpb.measure.region3d.BinaryConfigurationsHistogram3D;
 import inra.ijpb.measure.region3d.IntrinsicVolumes3D;
 
 /**
+ * Computation of intrinsic volumes (volume, surface area, mean breadth and
+ * Euler number) for binary or label 3D images.
+ * 
+ * For binary images, a binary stack is expected, together with the spatial
+ * calibration of the image. For label images, the list of region labels within
+ * images should be specified as an array of integers.
+ * 
+ * @see RegionMorphometry2D
+ * 
  * @author dlegland
  *
  */

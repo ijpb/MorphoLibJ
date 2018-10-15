@@ -10,6 +10,12 @@ import inra.ijpb.measure.region3d.BinaryConfigurationsHistogram3D;
 import inra.ijpb.measure.region3d.IntrinsicVolumes3D;
 
 /**
+ * Characterizes 3D binary microstructures by computing densities of geometrical
+ * measures: volume density, surface area density (or specific surface area),
+ * mean breadth density, 3D euler number density.
+ *
+ * @see Microstructure2D
+ * 
  * @author dlegland
  *
  */

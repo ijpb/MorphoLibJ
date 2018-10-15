@@ -10,6 +10,11 @@ import inra.ijpb.measure.region2d.BinaryConfigurationsHistogram2D;
 import inra.ijpb.measure.region2d.IntrinsicVolumes2D;
 
 /**
+ * Characterizes binary microstructures by computing densities of 2D geometrical
+ * measures: area density, perimeter density, 2D euler number density.
+ * 
+ * @see Microstructure3D
+ *
  * @author dlegland
  *
  */

@@ -16,7 +16,7 @@ import inra.ijpb.measure.region3d.BinaryConfigurationsHistogram3D;
  *
  * This class provides only static methods.
  *
- * @see IntrinsicVolumes2DOld
+ * @see RegionMorphometry3D
  * 
  * @author dlegland
  *

@@ -3,14 +3,15 @@
  */
 package inra.ijpb.measure.region2d;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
 
 import org.junit.Test;
 
 import ij.IJ;
-import ij.ImageJ;
 import ij.ImagePlus;
 import ij.measure.Calibration;
 import ij.process.ByteProcessor;
