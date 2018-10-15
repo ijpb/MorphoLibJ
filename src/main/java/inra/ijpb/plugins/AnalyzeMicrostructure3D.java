@@ -13,7 +13,7 @@ import ij.plugin.PlugIn;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.measure.Microstructure3D;
 import inra.ijpb.measure.region3d.BinaryConfigurationsHistogram3D;
-import inra.ijpb.measure.region3d.IntrinsicVolumes3D;
+import inra.ijpb.measure.region3d.IntrinsicVolumesAnalyzer3D;
 import inra.ijpb.util.IJUtils;
 
 /**
@@ -189,25 +189,25 @@ public class AnalyzeMicrostructure3D implements PlugIn
         // geometrical quantities
         if (computeVolume)
         {
-            double[] volumeLut = IntrinsicVolumes3D.volumeLut(calib);
+            double[] volumeLut = IntrinsicVolumesAnalyzer3D.volumeLut(calib);
             double volume = BinaryConfigurationsHistogram3D.applyLut(histogram, volumeLut);
             table.addValue("VolumeDensity", volume / vol);
         }
         if (computeSurface)
         {
-            double[] surfaceAreaLut = IntrinsicVolumes3D.surfaceAreaLut(calib, surfaceAreaDirs);
+            double[] surfaceAreaLut = IntrinsicVolumesAnalyzer3D.surfaceAreaLut(calib, surfaceAreaDirs);
             double surfaceArea = BinaryConfigurationsHistogram3D.applyLut(histogram, surfaceAreaLut);
             table.addValue("SurfaceAreaDensity", surfaceArea / vol);
         }
         if (computeMeanBreadth)
         {
-            double[] meanBreadthLut = IntrinsicVolumes3D.meanBreadthLut(calib, meanBreadthDirs, connectivity2d);
+            double[] meanBreadthLut = IntrinsicVolumesAnalyzer3D.meanBreadthLut(calib, meanBreadthDirs, connectivity2d);
             double meanBreadth = BinaryConfigurationsHistogram3D.applyLut(histogram, meanBreadthLut);
             table.addValue("MeanBreadthDensity", meanBreadth / vol);
         }
         if (computeEulerNumber)
         {
-            double[] eulerNumberLut = IntrinsicVolumes3D.eulerNumberLut(connectivity);
+            double[] eulerNumberLut = IntrinsicVolumesAnalyzer3D.eulerNumberLut(connectivity);
             double eulerNumber = BinaryConfigurationsHistogram3D.applyLut(histogram, eulerNumberLut);
             table.addValue("EulerNumberDensity", eulerNumber / vol);
         }

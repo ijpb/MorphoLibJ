@@ -18,7 +18,7 @@ import inra.ijpb.algo.AlgoListener;
  * @author dlegland
  *
  */
-public class IntrinsicVolumes2D extends RegionAnalyzer2D<IntrinsicVolumes2D.Result> implements AlgoListener
+public class IntrinsicVolumesAnalyzer2D extends RegionAnalyzer2D<IntrinsicVolumesAnalyzer2D.Result> implements AlgoListener
 {
     // ==================================================
     // Static methods
@@ -259,7 +259,7 @@ public class IntrinsicVolumes2D extends RegionAnalyzer2D<IntrinsicVolumes2D.Resu
     // ==================================================
     // Constructors
 
-    public IntrinsicVolumes2D()
+    public IntrinsicVolumesAnalyzer2D()
     {
     }
     
@@ -292,7 +292,7 @@ public class IntrinsicVolumes2D extends RegionAnalyzer2D<IntrinsicVolumes2D.Resu
     // General methods
 
     @Override
-    public ResultsTable createTable(Map<Integer, IntrinsicVolumes2D.Result> results)
+    public ResultsTable createTable(Map<Integer, IntrinsicVolumesAnalyzer2D.Result> results)
     {
         // Initialize a new result table
         ResultsTable table = new ResultsTable();
@@ -318,7 +318,7 @@ public class IntrinsicVolumes2D extends RegionAnalyzer2D<IntrinsicVolumes2D.Resu
     }
 
     @Override
-    public IntrinsicVolumes2D.Result[] analyzeRegions(ImageProcessor image, int[] labels,
+    public IntrinsicVolumesAnalyzer2D.Result[] analyzeRegions(ImageProcessor image, int[] labels,
             Calibration calib)
     {
         // Histogram of binary configurations for each region label

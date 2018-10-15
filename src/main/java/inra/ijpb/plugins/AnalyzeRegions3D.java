@@ -34,9 +34,9 @@ import inra.ijpb.geometry.Ellipsoid;
 import inra.ijpb.geometry.Point3D;
 import inra.ijpb.geometry.Sphere;
 import inra.ijpb.label.LabelImages;
-import inra.ijpb.measure.RegionMorphometry3D;
+import inra.ijpb.measure.IntrinsicVolumes3D;
 import inra.ijpb.measure.region3d.InertiaEllipsoid;
-import inra.ijpb.measure.region3d.IntrinsicVolumes3D;
+import inra.ijpb.measure.region3d.IntrinsicVolumesAnalyzer3D;
 import inra.ijpb.measure.region3d.LargestInscribedBall;
 
 /**
@@ -211,7 +211,7 @@ public class AnalyzeRegions3D implements PlugIn
         }
 
         // declare arrays for results
-        IntrinsicVolumes3D.Result[] intrinsicVolumes = null; 
+        IntrinsicVolumesAnalyzer3D.Result[] intrinsicVolumes = null; 
         Ellipsoid[] ellipsoids = null;
         double[][] elongations = null;
         Sphere[] inscribedBalls = null;
@@ -227,7 +227,7 @@ public class AnalyzeRegions3D implements PlugIn
             
             long tic = System.nanoTime();
             // Create ans setup computation class
-            IntrinsicVolumes3D algo = new IntrinsicVolumes3D();
+            IntrinsicVolumesAnalyzer3D algo = new IntrinsicVolumesAnalyzer3D();
             algo.setDirectionNumber(this.surfaceAreaDirs);
             algo.setConnectivity(this.connectivity);
             DefaultAlgoListener.monitor(algo);
@@ -288,7 +288,7 @@ public class AnalyzeRegions3D implements PlugIn
         	{
                 double vol =  intrinsicVolumes[i].volume;
                 double surf =  intrinsicVolumes[i].surfaceArea;
-        		table.addValue("Sphericity", RegionMorphometry3D.sphericity(vol, surf));
+        		table.addValue("Sphericity", IntrinsicVolumes3D.sphericity(vol, surf));
         	}
         	if (computeEulerNumber)
         		table.addValue("EulerNumber", intrinsicVolumes[i].eulerNumber);

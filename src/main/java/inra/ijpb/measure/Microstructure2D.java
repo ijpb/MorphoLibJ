@@ -7,7 +7,7 @@ import ij.measure.Calibration;
 import ij.process.ImageProcessor;
 import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.measure.region2d.BinaryConfigurationsHistogram2D;
-import inra.ijpb.measure.region2d.IntrinsicVolumes2D;
+import inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D;
 
 /**
  * Characterizes binary microstructures by computing densities of 2D geometrical
@@ -57,7 +57,7 @@ public class Microstructure2D
             Calibration calib, int nDirs)
     {
         // create associative array to know index of each label
-        double[] lut = IntrinsicVolumes2D.perimeterLut(calib, nDirs);
+        double[] lut = IntrinsicVolumesAnalyzer2D.perimeterLut(calib, nDirs);
 
         // histogram of configurations for each label
         int[] histo = new BinaryConfigurationsHistogram2D().processInnerFrame(image);
@@ -70,7 +70,7 @@ public class Microstructure2D
     public static final double eulerNumberDensity(ImageProcessor image, Calibration calib, int conn)
     {
         // create associative array to know index of each label
-        double[] lut = IntrinsicVolumes2D.eulerNumberLut(conn);
+        double[] lut = IntrinsicVolumesAnalyzer2D.eulerNumberLut(conn);
 
         // histogram of configurations for each label
         int[] histo = new BinaryConfigurationsHistogram2D().processInnerFrame(image);

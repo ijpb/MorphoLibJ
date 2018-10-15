@@ -8,22 +8,22 @@ import ij.process.ImageProcessor;
 import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.region2d.BinaryConfigurationsHistogram2D;
-import inra.ijpb.measure.region2d.IntrinsicVolumes2D;
+import inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D;
 
 /**
- * A collection of static methods for computing geometric measures such as area,
- * perimeter, or other measurements in planar binary or label images.
+ * Computation of intrinsic volumes(area, perimeter, Euler number) in planar
+ * binary or label images.
  * 
  * For binary images, a binary image is expected, together with the spatial
  * calibration of the image. For label images, the list of region labels within
  * images should be specified as an array of integers.
  * 
- * @see RegionMorphometry3D
+ * @see IntrinsicVolumes3D
  * 
  * @author dlegland
  *
  */
-public class RegionMorphometry2D
+public class IntrinsicVolumes2D
 {
     /**
      * Measures the area of the foreground region within a binary image.
@@ -103,7 +103,7 @@ public class RegionMorphometry2D
     public static final double perimeter(ImageProcessor image, Calibration calib, int nDirs)
     {
         // pre-compute LUT corresponding to resolution and number of directions
-        double[] lut = IntrinsicVolumes2D.perimeterLut(calib, nDirs);
+        double[] lut = IntrinsicVolumesAnalyzer2D.perimeterLut(calib, nDirs);
 
         // histogram of configurations for each label
         int[] histo = new BinaryConfigurationsHistogram2D().process(image);
@@ -131,7 +131,7 @@ public class RegionMorphometry2D
     public static final double[] perimeters(ImageProcessor image, int[] labels, Calibration calib, int nDirs)
     {
         // pre-compute LUT corresponding to resolution and number of directions
-        double[] lut = IntrinsicVolumes2D.perimeterLut(calib, nDirs);
+        double[] lut = IntrinsicVolumesAnalyzer2D.perimeterLut(calib, nDirs);
 
         // histogram of configurations for each label
         int[][] histos = new BinaryConfigurationsHistogram2D().process(image, labels);
@@ -143,7 +143,7 @@ public class RegionMorphometry2D
     public static final int eulerNumber(ImageProcessor image, int conn)
     {
         // pre-compute LUT corresponding to connectivity
-        int[] lut = IntrinsicVolumes2D.eulerNumberIntLut(conn);
+        int[] lut = IntrinsicVolumesAnalyzer2D.eulerNumberIntLut(conn);
 
         // histogram of configurations for each label
         int[] histo = new BinaryConfigurationsHistogram2D().process(image);
@@ -155,7 +155,7 @@ public class RegionMorphometry2D
     public static final int[] eulerNumbers(ImageProcessor image, int[] labels, int conn)
     {
         // pre-compute LUT corresponding to connectivity
-        int[] lut = IntrinsicVolumes2D.eulerNumberIntLut(conn);
+        int[] lut = IntrinsicVolumesAnalyzer2D.eulerNumberIntLut(conn);
 
         // histogram of configurations for each label
         int[][] histos = new BinaryConfigurationsHistogram2D().process(image, labels);
@@ -177,7 +177,7 @@ public class RegionMorphometry2D
     /**
      * Private constructor to prevent instantiation.
      */
-    private RegionMorphometry2D() 
+    private IntrinsicVolumes2D() 
     {
     }
 }

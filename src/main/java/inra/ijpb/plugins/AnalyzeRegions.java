@@ -41,7 +41,7 @@ import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.region2d.Convexity;
 import inra.ijpb.measure.region2d.GeodesicDiameter;
 import inra.ijpb.measure.region2d.InertiaEllipse;
-import inra.ijpb.measure.region2d.IntrinsicVolumes2D;
+import inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D;
 import inra.ijpb.measure.region2d.LargestInscribedCircle;
 import inra.ijpb.measure.region2d.MaxFeretDiameter;
 import inra.ijpb.measure.region2d.OrientedBoundingBox2D;
@@ -180,7 +180,7 @@ public class AnalyzeRegions implements PlugInFilter
 //    	double[] areaList = null;
 //    	double[] perimList = null;
 //    	double[] eulerNumberList = null;
-    	IntrinsicVolumes2D.Result[] intrinsicVolumes = null; 
+    	IntrinsicVolumesAnalyzer2D.Result[] intrinsicVolumes = null; 
     	Ellipse[] ellipses = null;
     	Convexity.Result[] convexities = null;
     	PointPair2D[] maxFeretDiams = null;
@@ -217,7 +217,7 @@ public class AnalyzeRegions implements PlugInFilter
     	    IJ.showStatus("Intrinsic Volumes");
     	    
     	    // Create ans setup computation class
-            IntrinsicVolumes2D algo = new IntrinsicVolumes2D();
+            IntrinsicVolumesAnalyzer2D algo = new IntrinsicVolumesAnalyzer2D();
             algo.setDirectionNumber(4);
             algo.setConnectivity(4);
             DefaultAlgoListener.monitor(algo);
@@ -414,7 +414,7 @@ public class AnalyzeRegions implements PlugInFilter
 //        return circularities;
 //    }
     
-    private double[] computeCircularities(IntrinsicVolumes2D.Result[] morphos)
+    private double[] computeCircularities(IntrinsicVolumesAnalyzer2D.Result[] morphos)
     {
         int n = morphos.length;
         double[] circularities = new double[n];

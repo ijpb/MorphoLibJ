@@ -7,7 +7,7 @@ import ij.ImageStack;
 import ij.measure.Calibration;
 import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.measure.region3d.BinaryConfigurationsHistogram3D;
-import inra.ijpb.measure.region3d.IntrinsicVolumes3D;
+import inra.ijpb.measure.region3d.IntrinsicVolumesAnalyzer3D;
 
 /**
  * Characterizes 3D binary microstructures by computing densities of geometrical
@@ -55,7 +55,7 @@ public class Microstructure3D
     public static final double surfaceAreaDensity(ImageStack image, Calibration calib, int nDirs)
     {
         // pre-compute LUT corresponding to resolution and number of directions
-        double[] lut = IntrinsicVolumes3D.surfaceAreaLut(calib, nDirs);
+        double[] lut = IntrinsicVolumesAnalyzer3D.surfaceAreaLut(calib, nDirs);
 
         // Compute index of each 2x2x2 binary voxel configuration, associate LUT
         // contribution, and sum up
@@ -86,7 +86,7 @@ public class Microstructure3D
     public static final double meanBreadthDensity(ImageStack image, Calibration calib, int nDirs, int conn2d)
     {
         // pre-compute LUT corresponding to resolution and number of directions
-        double[] lut = IntrinsicVolumes3D.meanBreadthLut(calib, nDirs, conn2d);
+        double[] lut = IntrinsicVolumesAnalyzer3D.meanBreadthLut(calib, nDirs, conn2d);
 
         // Compute index of each 2x2x2 binary voxel configuration, associate LUT
         // contribution, and sum u
@@ -113,7 +113,7 @@ public class Microstructure3D
     public static final double eulerNumberDensity(ImageStack image, Calibration calib, int conn)
     {
         // pre-compute LUT corresponding to resolution and number of directions
-        double[] lut = IntrinsicVolumes3D.eulerNumberLut(conn);
+        double[] lut = IntrinsicVolumesAnalyzer3D.eulerNumberLut(conn);
 
         // Compute index of each 2x2x2 binary voxel configuration, associate LUT
         // contribution, and sum up

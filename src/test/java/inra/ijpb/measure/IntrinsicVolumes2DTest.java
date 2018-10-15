@@ -15,10 +15,10 @@ import ij.process.ImageProcessor;
  * @author dlegland
  *
  */
-public class RegionMorphometry2DTest
+public class IntrinsicVolumes2DTest
 {
 	/**
-	 * Test method for {@link inra.ijpb.measure.RegionMorphometry2D#areas(ij.process.ImageProcessor, int[], ij.measure.Calibration)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes2D#areas(ij.process.ImageProcessor, int[], ij.measure.Calibration)}.
 	 */
 	@Test
 	public final void testAreas_fourRectangles()
@@ -42,7 +42,7 @@ public class RegionMorphometry2DTest
 		
 		int[] labels = new int[] {2, 4, 5, 9};
 		Calibration calib = new Calibration();
-		double[] areaList = RegionMorphometry2D.areas(image, labels, calib);
+		double[] areaList = IntrinsicVolumes2D.areas(image, labels, calib);
 		
 		assertEquals(4, areaList.length);
 		assertEquals(1.0, areaList[0], .01);
@@ -52,7 +52,7 @@ public class RegionMorphometry2DTest
 	}
 	
 	/**
-	 * Test method for {@link inra.ijpb.measure.RegionMorphometry2D#eulerNumber(ij.process.ImageProcessor, int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes2D#eulerNumber(ij.process.ImageProcessor, int)}.
 	 */
 	@Test
 	public final void testEulerNumber_singleSquareC4()
@@ -67,12 +67,12 @@ public class RegionMorphometry2DTest
 			}
 		}
 		
-		int euler = RegionMorphometry2D.eulerNumber(image, 4);
+		int euler = IntrinsicVolumes2D.eulerNumber(image, 4);
 		assertEquals(1, euler);
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.RegionMorphometry2D#eulerNumber(ij.process.ImageProcessor, int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes2D#eulerNumber(ij.process.ImageProcessor, int)}.
 	 */
 	@Test
 	public final void testEulerNumber_singleSquareC8()
@@ -87,12 +87,12 @@ public class RegionMorphometry2DTest
 			}
 		}
 		
-		int euler = RegionMorphometry2D.eulerNumber(image, 8);
+		int euler = IntrinsicVolumes2D.eulerNumber(image, 8);
 		assertEquals(1, euler);
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.RegionMorphometry2D#eulerNumber(ij.process.ImageProcessor, int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes2D#eulerNumber(ij.process.ImageProcessor, int)}.
 	 */
 	@Test
 	public final void testEulerNumber_fullSquareC4()
@@ -107,12 +107,12 @@ public class RegionMorphometry2DTest
 			}
 		}
 		
-		int euler = RegionMorphometry2D.eulerNumber(image, 4);
+		int euler = IntrinsicVolumes2D.eulerNumber(image, 4);
 		assertEquals(1, euler);
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.RegionMorphometry2D#eulerNumber(ij.process.ImageProcessor, int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes2D#eulerNumber(ij.process.ImageProcessor, int)}.
 	 */
 	@Test
 	public final void testEulerNumber_fullSquareC8()
@@ -127,12 +127,12 @@ public class RegionMorphometry2DTest
 			}
 		}
 		
-		int euler = RegionMorphometry2D.eulerNumber(image, 8);
+		int euler = IntrinsicVolumes2D.eulerNumber(image, 8);
 		assertEquals(1, euler);
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.RegionMorphometry2D#eulerNumber(ij.process.ImageProcessor, int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes2D#eulerNumber(ij.process.ImageProcessor, int)}.
 	 */
 	@Test
 	public final void testEulerNumber_torusC4()
@@ -154,12 +154,12 @@ public class RegionMorphometry2DTest
 			}
 		}
 		
-		int euler = RegionMorphometry2D.eulerNumber(image, 4);
+		int euler = IntrinsicVolumes2D.eulerNumber(image, 4);
 		assertEquals(0, euler);
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.RegionMorphometry2D#eulerNumber(ij.process.ImageProcessor, int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes2D#eulerNumber(ij.process.ImageProcessor, int)}.
 	 */
 	@Test
 	public final void testEulerNumber_torusC8()
@@ -181,12 +181,12 @@ public class RegionMorphometry2DTest
 			}
 		}
 		
-		int euler = RegionMorphometry2D.eulerNumber(image, 8);
+		int euler = IntrinsicVolumes2D.eulerNumber(image, 8);
 		assertEquals(0, euler);
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.RegionMorphometry2D#eulerNumber(ij.process.ImageProcessor, int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes2D#eulerNumber(ij.process.ImageProcessor, int)}.
 	 */
 	@Test
 	public final void testEulerNumber_crossC4()
@@ -201,12 +201,12 @@ public class RegionMorphometry2DTest
 			image.set(5, i, 255);
 		}
 		
-		int euler = RegionMorphometry2D.eulerNumber(image, 4);
+		int euler = IntrinsicVolumes2D.eulerNumber(image, 4);
 		assertEquals(1, euler);
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.RegionMorphometry2D#eulerNumber(ij.process.ImageProcessor, int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes2D#eulerNumber(ij.process.ImageProcessor, int)}.
 	 */
 	@Test
 	public final void testEulerNumber_crossC8()
@@ -221,12 +221,12 @@ public class RegionMorphometry2DTest
 			image.set(5, i, 255);
 		}
 		
-		int euler = RegionMorphometry2D.eulerNumber(image, 8);
+		int euler = IntrinsicVolumes2D.eulerNumber(image, 8);
 		assertEquals(1, euler);
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.RegionMorphometry2D#eulerNumber(ij.process.ImageProcessor, int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes2D#eulerNumber(ij.process.ImageProcessor, int)}.
 	 */
 	@Test
 	public final void testEulerNumber_crossTouchingBordersC4()
@@ -241,12 +241,12 @@ public class RegionMorphometry2DTest
 			image.set(3, i, 255);
 		}
 		
-		int euler = RegionMorphometry2D.eulerNumber(image, 4);
+		int euler = IntrinsicVolumes2D.eulerNumber(image, 4);
 		assertEquals(1, euler);
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.RegionMorphometry2D#eulerNumber(ij.process.ImageProcessor, int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes2D#eulerNumber(ij.process.ImageProcessor, int)}.
 	 */
 	@Test
 	public final void testEulerNumber_crossTouchingBordersC8()
@@ -261,12 +261,12 @@ public class RegionMorphometry2DTest
 			image.set(3, i, 255);
 		}
 		
-		int euler = RegionMorphometry2D.eulerNumber(image, 8);
+		int euler = IntrinsicVolumes2D.eulerNumber(image, 8);
 		assertEquals(1, euler);
 	}
 	
 	/**
-	 * Test method for {@link inra.ijpb.measure.RegionMorphometry2D#eulerNumbers(ij.process.ImageProcessor, int[], int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes2D#eulerNumbers(ij.process.ImageProcessor, int[], int)}.
 	 */
 	@Test
 	public final void testEulerNumbers_smallParticles_C4()
@@ -292,7 +292,7 @@ public class RegionMorphometry2DTest
 		image.set(9, 9, 2);
 
 		int[] labels = new int[] {1, 2, 4, 7};
-		int[] eulerNumbers = RegionMorphometry2D.eulerNumbers(image, labels, 4);
+		int[] eulerNumbers = IntrinsicVolumes2D.eulerNumbers(image, labels, 4);
 		assertEquals(1, eulerNumbers[0], .01);
 		assertEquals(0, eulerNumbers[1], .01);
 		assertEquals(1, eulerNumbers[2], .01);
@@ -300,7 +300,7 @@ public class RegionMorphometry2DTest
 	}
 	
 	/**
-	 * Test method for {@link inra.ijpb.measure.RegionMorphometry2D#eulerNumbers(ij.process.ImageProcessor, int[], int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes2D#eulerNumbers(ij.process.ImageProcessor, int[], int)}.
 	 */
 	@Test
 	public final void testEulerNumbers_smallParticles_C8()
@@ -326,7 +326,7 @@ public class RegionMorphometry2DTest
 		image.set(9, 9, 2);
 
 		int[] labels = new int[] {1, 2, 4, 7};
-		int[] eulerNumbers = RegionMorphometry2D.eulerNumbers(image, labels, 8);
+		int[] eulerNumbers = IntrinsicVolumes2D.eulerNumbers(image, labels, 8);
 		assertEquals(1, eulerNumbers[0], .01);
 		assertEquals(0, eulerNumbers[1], .01);
 		assertEquals(1, eulerNumbers[2], .01);
@@ -335,7 +335,7 @@ public class RegionMorphometry2DTest
 
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.RegionMorphometry2D#perimeter(ij.process.ImageProcessor, Calibration, int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes2D#perimeter(ij.process.ImageProcessor, Calibration, int)}.
 	 */
 	@Test
 	public final void testPerimeter_smallSquare_D2()
@@ -350,12 +350,12 @@ public class RegionMorphometry2DTest
 			}
 		}
 		
-		double perim = RegionMorphometry2D.perimeter(image, new Calibration(), 2);
+		double perim = IntrinsicVolumes2D.perimeter(image, new Calibration(), 2);
 		assertEquals(12.5664, perim, .01);
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.RegionMorphometry2D#perimeter(ij.process.ImageProcessor, Calibration, int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes2D#perimeter(ij.process.ImageProcessor, Calibration, int)}.
 	 */
 	@Test
 	public final void testPerimeter_smallSquare_D4()
@@ -370,12 +370,12 @@ public class RegionMorphometry2DTest
 			}
 		}
 		
-		double perim = RegionMorphometry2D.perimeter(image, new Calibration(), 4);
+		double perim = IntrinsicVolumes2D.perimeter(image, new Calibration(), 4);
 		assertEquals(14.0582, perim, .01);
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.RegionMorphometry2D#perimeter(ij.process.ImageProcessor, Calibration, int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes2D#perimeter(ij.process.ImageProcessor, Calibration, int)}.
 	 */
 	@Test
 	public final void testPerimeter_disk_D2()
@@ -396,7 +396,7 @@ public class RegionMorphometry2DTest
 		
 		// compute perimeter with default (1,1) calibration
 		Calibration calib = new Calibration();
-		double perim = RegionMorphometry2D.perimeter(image, calib, 2);
+		double perim = IntrinsicVolumes2D.perimeter(image, calib, 2);
 		
 		// check to expected value with a tolerance of 5 percents
 		double exp = 2 * Math.PI * radius;
@@ -404,7 +404,7 @@ public class RegionMorphometry2DTest
 	}
 	
 	/**
-	 * Test method for {@link inra.ijpb.measure.RegionMorphometry2D#perimeter(ij.process.ImageProcessor, Calibration, int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes2D#perimeter(ij.process.ImageProcessor, Calibration, int)}.
 	 */
 	@Test
 	public final void testPerimeter_disk_D4()
@@ -425,7 +425,7 @@ public class RegionMorphometry2DTest
 		
 		// compute perimeter with default (1,1) calibration
 		Calibration calib = new Calibration();
-		double perim = RegionMorphometry2D.perimeter(image, calib, 4);
+		double perim = IntrinsicVolumes2D.perimeter(image, calib, 4);
 		
 		// check to expected value with a tolerance of 5 percents
 		double exp = 2 * Math.PI * radius;
@@ -433,7 +433,7 @@ public class RegionMorphometry2DTest
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.RegionMorphometry2D#perimeter(ij.process.ImageProcessor, Calibration, int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes2D#perimeter(ij.process.ImageProcessor, Calibration, int)}.
 	 */
 	@Test
 	public final void testPerimeters_smallSquare_D2()
@@ -451,13 +451,13 @@ public class RegionMorphometry2DTest
 		// compute perimeter with default (1,1) calibration
 		Calibration calib = new Calibration();
 		int[] labels = new int[] {255};
-		double[] perims = RegionMorphometry2D.perimeters(image, labels, calib, 2);
+		double[] perims = IntrinsicVolumes2D.perimeters(image, labels, calib, 2);
 		
 		assertEquals(12.5664, perims[0], .01);
 	}
 
 	/**
-	 * Test method for {@link inra.ijpb.measure.RegionMorphometry2D#perimeters(ij.process.ImageProcessor, int[], Calibration, int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes2D#perimeters(ij.process.ImageProcessor, int[], Calibration, int)}.
 	 */
 	@Test
 	public final void testPerimeters_disks_D2()
@@ -485,7 +485,7 @@ public class RegionMorphometry2DTest
 		// compute perimeter with default (1,1) calibration
 		Calibration calib = new Calibration();
 		int[] labels = new int[] {1, 2, 3, 4};
-		double[] perims = RegionMorphometry2D.perimeters(image, labels, calib, 2);
+		double[] perims = IntrinsicVolumes2D.perimeters(image, labels, calib, 2);
 		
 		// check to expected values with a tolerance of 5 percents
 		double exp1 = 2 * Math.PI * r1;
@@ -499,7 +499,7 @@ public class RegionMorphometry2DTest
 	}
 	
 	/**
-	 * Test method for {@link inra.ijpb.measure.RegionMorphometry2D#perimeters(ij.process.ImageProcessor, int[], Calibration, int)}.
+	 * Test method for {@link inra.ijpb.measure.IntrinsicVolumes2D#perimeters(ij.process.ImageProcessor, int[], Calibration, int)}.
 	 */
 	@Test
 	public final void testPerimeters_disks_D4()
@@ -527,7 +527,7 @@ public class RegionMorphometry2DTest
 		// compute perimeter with default (1,1) calibration
 		Calibration calib = new Calibration();
 		int[] labels = new int[] {1, 2, 3, 4};
-		double[] perims = RegionMorphometry2D.perimeters(image, labels, calib, 4);
+		double[] perims = IntrinsicVolumes2D.perimeters(image, labels, calib, 4);
 		
 		// check to expected values with a tolerance of 5 percents
 		double exp1 = 2 * Math.PI * r1;

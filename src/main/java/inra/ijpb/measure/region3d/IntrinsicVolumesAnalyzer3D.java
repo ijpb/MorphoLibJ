@@ -16,7 +16,7 @@ import inra.ijpb.geometry.Vector3D;
  * @author dlegland
  *
  */
-public class IntrinsicVolumes3D extends RegionAnalyzer3D<IntrinsicVolumes3D.Result>
+public class IntrinsicVolumesAnalyzer3D extends RegionAnalyzer3D<IntrinsicVolumesAnalyzer3D.Result>
         implements AlgoListener
 {
     // ==================================================
@@ -878,7 +878,7 @@ public class IntrinsicVolumes3D extends RegionAnalyzer3D<IntrinsicVolumes3D.Resu
     // ==================================================
     // Constructors
 
-    public IntrinsicVolumes3D()
+    public IntrinsicVolumesAnalyzer3D()
     {
     }
     

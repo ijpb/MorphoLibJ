@@ -189,7 +189,7 @@ public class GeometricMeasures3D
 		int[] labels = LabelImages.findAllLabels(labelImage);
 		int nbLabels = labels.length;
 
-		double[] volumes = RegionMorphometry3D.volumes(labelImage, labels, calib);
+		double[] volumes = IntrinsicVolumes3D.volumes(labelImage, labels, calib);
 
 		// Create data table
 		ResultsTable table = new ResultsTable();
@@ -222,7 +222,7 @@ public class GeometricMeasures3D
 		calib.pixelHeight = resol[1];
 		calib.pixelDepth = resol[2];
 		
-		return RegionMorphometry3D.volumes(labelImage, labels, calib);
+		return IntrinsicVolumes3D.volumes(labelImage, labels, calib);
 	}
 	
 	/**
@@ -250,7 +250,7 @@ public class GeometricMeasures3D
 	@Deprecated
 	public final static double[] computeSphericity(double[] volumes, double[] surfaces) 
 	{
-		return RegionMorphometry3D.sphericity(volumes, surfaces);
+		return IntrinsicVolumes3D.sphericity(volumes, surfaces);
 	}
 	
 	/**
@@ -285,7 +285,7 @@ public class GeometricMeasures3D
 		int nbLabels = labels.length;
 
 		// Compute surface area of ach label
-		double[] surfaces = RegionMorphometry3D.surfaceAreas(labelImage, labels, calib, nDirs);
+		double[] surfaces = IntrinsicVolumes3D.surfaceAreas(labelImage, labels, calib, nDirs);
 
 		// Create data table
 		ResultsTable table = new ResultsTable();
@@ -324,7 +324,7 @@ public class GeometricMeasures3D
 		calib.pixelHeight = resol[1];
 		calib.pixelDepth = resol[2];
 		
-		return RegionMorphometry3D.surfaceAreas(image, labels, calib, nDirs);
+		return IntrinsicVolumes3D.surfaceAreas(image, labels, calib, nDirs);
 	}
 	
 	/**
@@ -355,7 +355,7 @@ public class GeometricMeasures3D
 		calib.pixelDepth = resol[2];
 		
 		image = LabelImages.cropLabel(image, label, 0);
-		return RegionMorphometry3D.surfaceArea(image, calib, nDirs);
+		return IntrinsicVolumes3D.surfaceArea(image, calib, nDirs);
 	}
 	
 	/**
@@ -376,7 +376,7 @@ public class GeometricMeasures3D
 		calib.pixelWidth = resol[0];
 		calib.pixelHeight = resol[1];
 		calib.pixelDepth = resol[2];
-		return RegionMorphometry3D.surfaceArea(image, calib, 3);
+		return IntrinsicVolumes3D.surfaceArea(image, calib, 3);
 	}
 
 	/**
@@ -384,10 +384,10 @@ public class GeometricMeasures3D
 	 * using the specified connectivity.
 	 *
 	 * @deprecated use
-	 *             {@link RegionMorphometry3D#eulerNumbers(ImageStack, int[], int)}
+	 *             {@link IntrinsicVolumes3D#eulerNumbers(ImageStack, int[], int)}
 	 *             instead
 	 * 
-	 * @see RegionMorphometry3D#eulerNumbers(ImageStack, int[], int)
+	 * @see IntrinsicVolumes3D#eulerNumbers(ImageStack, int[], int)
 	 * 
 	 * @param image
 	 *            the input 3D label image (with labels having integer values)
@@ -401,7 +401,7 @@ public class GeometricMeasures3D
 	public static final double[] eulerNumber(ImageStack image, int[] labels,
 			int conn)
 	{    
-		return RegionMorphometry3D.eulerNumbers(image, labels, conn);
+		return IntrinsicVolumes3D.eulerNumbers(image, labels, conn);
 	}
 
 	/**
