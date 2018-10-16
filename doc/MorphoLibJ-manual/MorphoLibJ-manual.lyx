@@ -9439,7 +9439,7 @@ measurement of surface area
 \series default
 from 3D binary images follows the same principle as the estimation of perimeter.
  One considers the intersections of the region with straight lines, and
- average over all possible directions 
+ averages over all possible directions 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Lang2001,Legland2007"
@@ -9496,12 +9496,12 @@ Inertia Ellipsoid
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-un petit schéma ?
-\end_layout
+The mathematical definition of the geometric moments for 3D regions is similar
+ to the 2D case:
+\begin_inset Formula 
+\begin{align}
+m_{pqr}(X) & =\int\int I_{X}(x,y,z)x^{p}y^{q}z^{r}\cdot dx\cdot dy\cdot dz\label{eq:Moment-of-X-3D}
+\end{align}
 
 \end_inset
 
@@ -9509,13 +9509,15 @@ un petit schéma ?
 \end_layout
 
 \begin_layout Standard
-The mathematical definition of the geometric moments for 3D regions is similar
- to the 2D case.
- The first moment corresponds to the volume of the particle.
+The first moment 
+\begin_inset Formula $m_{000}(X)$
+\end_inset
+
+ corresponds to the volume of the particle.
  The normalization of the first-order moments leads to the 3D centroid of
  the particle.
  The second-order moments can be used to compute the equivalent inertia
- ellipse or ellipsoid.
+ ellipsoid.
 \end_layout
 
 \begin_layout Standard
@@ -9527,46 +9529,83 @@ Inertia
 
 Ellipsoid plugin
 \series default
- returns the centroid (center of gravity) as well as the size and the orientatio
-n of the inertia ellipsoid of each 3D particle.
- Radii are sorted in decreasing order.
- Angles are given in degrees, and correspond to the azimut (
+ returns the parameters of the inertia ellipsoid into a ResultsTable with
+ the following columns:
+\end_layout
+
+\begin_layout Description
+Ellipsoid.Center.X the x-coordinate of the center of gravity
+\end_layout
+
+\begin_layout Description
+Ellipsoid.Center.Y the y-coordinate of the center of gravity
+\end_layout
+
+\begin_layout Description
+Ellipsoid.Center.Z the z-coordinate of the center of gravity
+\end_layout
+
+\begin_layout Description
+Ellipsoid.Radius1 the length of the largest semi-axis
+\end_layout
+
+\begin_layout Description
+Ellipsoid.Radius2 the length of the medium semi-axis
+\end_layout
+
+\begin_layout Description
+Ellipsoid.Radius3 the length of the smallest semi-axis
+\end_layout
+
+\begin_layout Description
+Ellipsoid.Phi the azimut of the projection of the major axis on the XY plane,
+ in degrees
+\end_layout
+
+\begin_layout Description
+Ellipsoid.Phi the elevation of the major axis on the XY plane, in degrees
+\end_layout
+
+\begin_layout Description
+Ellipsoid.Psi the rotation of the ellispoid around the main axis (
 \begin_inset Quotes eld
 \end_inset
 
-yaw
+roll
 \begin_inset Quotes erd
 \end_inset
 
-), the elevation (
-\begin_inset Quotes eld
-\end_inset
-
-pitch
-\begin_inset Quotes erd
-\end_inset
-
-), and the roll around the main axis.
+), in degrees
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Note
+\begin_inset Float figure
+wide false
+sideways false
 status open
 
 \begin_layout Plain Layout
-shape descriptors:
+\align center
+\begin_inset Graphics
+	filename images/analysis/ellipsoid-angles.png
+	width 60text%
+
+\end_inset
+
+
 \end_layout
 
-\begin_layout Itemize
-elongation: r1/r2 (Andrey 2010)
-\end_layout
+\begin_layout Plain Layout
+\begin_inset Caption Standard
 
-\begin_layout Itemize
-flatness : r2/r3 (Andrey 2010)
-\end_layout
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Ellipsoid-Angles"
 
-\begin_layout Itemize
-ellipsoid factor: r3/r2 - r2/r1 (Doube 2015)
+\end_inset
+
+Angles of inertia ellipsoid.
 \end_layout
 
 \end_inset
@@ -9574,12 +9613,105 @@ ellipsoid factor: r3/r2 - r2/r1 (Doube 2015)
 
 \end_layout
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The three angles correspond to a succession of three rotations (see Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Ellipsoid-Angles"
+
+\end_inset
+
+):
+\end_layout
+
+\begin_layout Enumerate
+a rotation around the 
+\begin_inset Formula $x$
+\end_inset
+
+-axis by 
+\begin_inset Formula $\psi$
+\end_inset
+
+ degrees (positive when the 
+\begin_inset Formula $y$
+\end_inset
+
+-axis moves towards the 
+\begin_inset Formula $z$
+\end_inset
+
+-axis)
+\end_layout
+
+\begin_layout Enumerate
+a rotation around the 
+\begin_inset Formula $y$
+\end_inset
+
+-axis by 
+\begin_inset Formula $\theta$
+\end_inset
+
+ degrees (positive when the 
+\begin_inset Formula $z$
+\end_inset
+
+-axis moves towards the 
+\begin_inset Formula $x$
+\end_inset
+
+-axis)
+\end_layout
+
+\begin_layout Enumerate
+a rotation around the 
+\begin_inset Formula $z$
+\end_inset
+
+-axis by 
+\begin_inset Formula $\varphi$
+\end_inset
+
+ degrees (positive when the 
+\begin_inset Formula $x$
+\end_inset
+
+-axis moves towards the 
+\begin_inset Formula $y$
+\end_inset
+
+-axis)
+\end_layout
+
+\begin_layout Standard
+When the plugin 
+\begin_inset Quotes eld
+\end_inset
+
+Analyze regions 3D
+\begin_inset Quotes erd
+\end_inset
+
+ is used, it is also possible to compute elongation factors computed from
+ ellipsoid radius.
+\end_layout
+
 \begin_layout Subsection
-Plugins
+Analyze Regions 3D
 \end_layout
 
 \begin_layout Paragraph
-Aalyze Regions 3D
+Analyze Regions 3D
 \end_layout
 
 \begin_layout Standard
@@ -9609,53 +9741,6 @@ Analyze Regions 3D
 ResultsTable
 \emph default
 , whose name contains the name of the original image.
- 
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Label the label of the particle measured on the current line (it can be
- different from the row number if some labels do no exist in original image).
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Bounding
-\begin_inset space ~
-\end_inset
-
-box returns the minimal and maximal coordinates in each direction for each
- label.
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Volume computes the number of voxels comprising the particle, multiplied
- by the volume of an individual voxel.
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Surface
-\begin_inset space ~
-\end_inset
-
-area the surface area computed using a discretized version of the Crofton
- formula, that computes intersections with line grids of various orientations
- (currently either 3 or 13).
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Sphericity
-\begin_inset space ~
-\end_inset
-
-index defined as 
-\begin_inset Formula $36\pi V^{2}/S^{3}$
-\end_inset
-
-.
  
 \end_layout
 
