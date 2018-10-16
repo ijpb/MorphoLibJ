@@ -11,7 +11,7 @@ import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
 import inra.ijpb.algo.DefaultAlgoListener;
-import inra.ijpb.measure.Microstructure3D;
+import inra.ijpb.measure.IntrinsicVolumes3D;
 import inra.ijpb.measure.region3d.BinaryConfigurationsHistogram3D;
 import inra.ijpb.measure.region3d.IntrinsicVolumesAnalyzer3D;
 import inra.ijpb.util.IJUtils;
@@ -179,7 +179,7 @@ public class AnalyzeMicrostructure3D implements PlugIn
         int[] histogram = algo.processInnerFrame(image);
       
         // pre-compute LUT corresponding to resolution and number of directions
-        double vol = Microstructure3D.samplingVolume(image, calib);
+        double vol = IntrinsicVolumes3D.samplingVolume(image, calib);
         
         // Convert to ResultsTable object
         IJ.showStatus("Create Table");

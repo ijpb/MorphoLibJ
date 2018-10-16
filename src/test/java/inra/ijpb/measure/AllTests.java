@@ -30,8 +30,6 @@ import org.junit.runners.Suite;
 	// generic classes
 	GeometricMeasures2DTest.class,
 	GeometricMeasures3DTest.class,
-    Microstructure2DTest.class,
-    Microstructure3DTest.class,
     IntrinsicVolumes2DTest.class,
     IntrinsicVolumes3DTest.class,
 	ResultsBuilderTest.class,
