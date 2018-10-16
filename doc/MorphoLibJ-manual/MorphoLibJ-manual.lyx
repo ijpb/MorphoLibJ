@@ -8571,7 +8571,7 @@ reference "fig:Regions-Analysis-Output-1"
 
 \end_inset
 
--A).
+-a).
 \end_layout
 
 \begin_layout Subsubsection
@@ -8633,7 +8633,7 @@ reference "fig:Regions-Analysis-Output-1"
 
 \end_inset
 
--B).
+-b).
 \end_layout
 
 \begin_layout Standard
@@ -8750,9 +8750,9 @@ name "fig:Regions-Analysis-Output-1"
 \end_inset
 
 Examples of graphical outputs of region analysis plugins.
- A: Bounding box.
- B: Inertia ellipse.
- C: Max Feret diameter.
+ (a) Bounding box.
+ (b) Inertia ellipse.
+ (c) Max Feret diameter.
 \end_layout
 
 \end_inset
@@ -8828,7 +8828,7 @@ reference "fig:Regions-Analysis-Output-1"
 
 \end_inset
 
--C).
+-c).
 \end_layout
 
 \begin_layout Subsubsection
@@ -8889,7 +8889,7 @@ reference "fig:Regions-Analysis-Output-2"
 
 \end_inset
 
--A).
+-a).
 \end_layout
 
 \begin_layout Standard
@@ -9006,9 +9006,9 @@ name "fig:Regions-Analysis-Output-2"
 \end_inset
 
 Examples of graphical output of region analysis plugins.
- A: Oriented bounding box.
- B: largest geodesic diameter.
- C: largest inscribed circle.
+ (a) Oriented bounding box.
+ (b) Largest geodesic diameter.
+ (c) Largest inscribed circle.
 \end_layout
 
 \end_inset
@@ -9109,7 +9109,7 @@ reference "fig:Regions-Analysis-Output-2"
 
 \end_inset
 
--B).
+-b).
 \end_layout
 
 \begin_layout Subsubsection
@@ -9162,7 +9162,7 @@ reference "fig:Regions-Analysis-Output-2"
 
 \end_inset
 
--C).
+-c).
 \end_layout
 
 \begin_layout Section
@@ -9324,11 +9324,11 @@ key "Serra_1982,Ohser2009"
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Euler-Number"
+reference "fig:Euler-Number-3d"
 
 \end_inset
 
--b.
+.
 \end_layout
 
 \begin_layout Standard
@@ -9533,41 +9533,50 @@ Ellipsoid plugin
  the following columns:
 \end_layout
 
-\begin_layout Description
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
 Ellipsoid.Center.X the x-coordinate of the center of gravity
 \end_layout
 
-\begin_layout Description
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
 Ellipsoid.Center.Y the y-coordinate of the center of gravity
 \end_layout
 
-\begin_layout Description
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
 Ellipsoid.Center.Z the z-coordinate of the center of gravity
 \end_layout
 
-\begin_layout Description
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
 Ellipsoid.Radius1 the length of the largest semi-axis
 \end_layout
 
-\begin_layout Description
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
 Ellipsoid.Radius2 the length of the medium semi-axis
 \end_layout
 
-\begin_layout Description
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
 Ellipsoid.Radius3 the length of the smallest semi-axis
 \end_layout
 
-\begin_layout Description
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
 Ellipsoid.Phi the azimut of the projection of the major axis on the XY plane,
  in degrees
 \end_layout
 
-\begin_layout Description
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
 Ellipsoid.Phi the elevation of the major axis on the XY plane, in degrees
 \end_layout
 
-\begin_layout Description
-Ellipsoid.Psi the rotation of the ellispoid around the main axis (
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Ellipsoid.Psi the rotation of the ellipsoid around the main axis (
 \begin_inset Quotes eld
 \end_inset
 
@@ -10100,25 +10109,225 @@ FP=\frac{\sum_{r}|S{}_{r}\setminus T{}_{r}|}{\sum_{r}|S_{r}|}
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Note
-status open
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
 
 \begin_layout Section
 Microstructure analysis
 \end_layout
 
-\begin_layout Itemize
-Densities of geometric measures (area, perimeter...)
+\begin_layout Standard
+In some cases, the content of the image to analyze is better seen as a represent
+ative observation of a stationnary binary process.
+ This context arise frequently in material sciences or in the study of porous
+ media such as bone material 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Lang2001,Ohser2009,Doube2010"
+
+\end_inset
+
+.
+ An example of such image (obtained from a dairy gel) is represented in
+ Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Binary-Microstructure"
+
+\end_inset
+
+-a.
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
-reprendre illustrations du poster présenté à EMC 2015
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
 \end_layout
 
-\end_deeper
-\begin_layout Itemize
-Covariance
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/microstructure/gel-seg-crop2-inv.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Sample image
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/microstructure/gel-crop-ovrBlue.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Perimeter density
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Binary-Microstructure"
+
+\end_inset
+
+Analysis of binary microstrucure.
+ (a) Original binary image.
+ (b) Estimation of perimeter density.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+To analyze such images, the notion of particle analysis is not relevant
+ anymore.
+ One possibility is to adapt the definitions of intrinsic volumes, by considerin
+g that the image corresponds to a sampling window.
+ This induces the two modifications:
+\end_layout
+
+\begin_layout Enumerate
+the integral over boundaries are restricted to the boundary 
+\series bold
+within the sampling window
+\series default
+ (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Binary-Microstructure"
+
+\end_inset
+
+-b)
+\end_layout
+
+\begin_layout Enumerate
+the result is normalized by the area (or the volume) of the sampling window.
+\end_layout
+
+\begin_layout Standard
+For the planar case, one obtains the following definitions:
+\begin_inset Formula 
+\begin{align}
+A_{A}(X) & =\frac{\int_{X\cap W}dx}{A(W)}\\
+P_{A}(X) & =\frac{\int_{\partial X\cap W}dx}{A(W)}\\
+\chi_{A}(X) & =\frac{\int_{\partial X\cap W}\kappa(x)dx}{A(W)}
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The plugins are available in 
+\begin_inset Quotes eld
+\end_inset
+
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
+Analyze\SpecialChar menuseparator
+Microstructure Analysis
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
+Analyze\SpecialChar menuseparator
+Microstructure 3D
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+covariance
 \end_layout
 
 \end_inset
