@@ -157,6 +157,17 @@ public class IntrinsicVolumesAnalyzer2D extends RegionAnalyzer2D<IntrinsicVolume
         return new double[] { alpha1, alpha2, alpha34, alpha34 };
     }
     
+    public static final double[] computeCircularities(Result[] morphos)
+    {
+        int n = morphos.length;
+        double[] circularities = new double[n];
+        for (int i = 0; i < n; i++)
+        {
+            circularities[i] = morphos[i].circularity();
+        }
+        return circularities;
+    }
+
     /**
      * Computes the Look-up table that is used to compute Euler number density.
      * The result is an array with 16 entries, each entry corresponding to a
@@ -267,21 +278,37 @@ public class IntrinsicVolumesAnalyzer2D extends RegionAnalyzer2D<IntrinsicVolume
     // ==================================================
     // Getter / Setter
 
+    /**
+     * @return the number of directions used to compute perimeter
+     */
     public int getDirectionNumber()
     {
         return directionNumber;
     }
 
+    /**
+     * @param directionNumber
+     *            the number of directions used to compute perimeter (either 2
+     *            or 4, default is 4)
+     */
     public void setDirectionNumber(int directionNumber)
     {
         this.directionNumber = directionNumber;
     }
 
+    /**
+     * @return the connectivity used for computing Euler number
+     */
     public int getConnectivity()
     {
         return connectivity;
     }
 
+    /**
+     * @param connectivity
+     *            the connectivity for computing Euler number (either 4 or 8,
+     *            default is 4)
+     */
     public void setConnectivity(int connectivity)
     {
         this.connectivity = connectivity;
@@ -405,6 +432,20 @@ public class IntrinsicVolumesAnalyzer2D extends RegionAnalyzer2D<IntrinsicVolume
             this.area = area;
             this.perimeter = perim;
             this.eulerNumber = euler;
+        }
+        
+        /**
+         * Computes the circularity value associated with this result.
+         * 
+         * Circularity <code>circ</code> is defined as the ratio of area with
+         * the square of the perimeter, normalized such that a disk has a circularity close to 1. 
+         * 
+         * 
+         * @return the circularity value.
+         */
+        public double circularity()
+        {
+            return 4 * Math.PI * area / (perimeter * perimeter);
         }
     }
 }
