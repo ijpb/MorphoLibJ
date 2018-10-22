@@ -13,6 +13,26 @@ import java.awt.geom.Point2D;
  */
 public class Ellipse
 {
+    // ==================================================
+    // Static methods
+    
+    /**
+     * Initializes center array from ellipse array.
+     *
+     * @param ellipses
+     *            an array of ellipses
+     * @return the array of points corresponding to the centers of the ellipses.
+     */
+    public static final Point2D[] centers(Ellipse[] ellipses)
+    {
+        Point2D[] centroids = new Point2D[ellipses.length];
+        for (int i = 0; i < ellipses.length; i++)
+        {
+            centroids[i] = ellipses[i].center();
+        }
+        return centroids;
+    }
+    
 	// ==================================================
 	// Class variables
 	

@@ -887,7 +887,7 @@ public class IntrinsicVolumesAnalyzer3D extends RegionAnalyzer3D<IntrinsicVolume
     // Implementation of RegionAnalyzer3D methods
 
     /**
-     * @return the directionNumber
+     * @return the directionNumber used to compute surface area and mean breadth
      */
     public int getDirectionNumber()
     {
@@ -895,7 +895,9 @@ public class IntrinsicVolumesAnalyzer3D extends RegionAnalyzer3D<IntrinsicVolume
     }
 
     /**
-     * @param directionNumber the directionNumber to set (either 3 or 13)
+     * @param directionNumber
+     *            the number of directions used to compute surface area and mean
+     *            breadth (either 3 or 13, default is 13)
      */
     public void setDirectionNumber(int directionNumber)
     {
@@ -903,7 +905,7 @@ public class IntrinsicVolumesAnalyzer3D extends RegionAnalyzer3D<IntrinsicVolume
     }
 
     /**
-     * @return the connectivity
+     * @return the connectivity used to compute Euler number
      */
     public int getConnectivity()
     {
@@ -911,7 +913,9 @@ public class IntrinsicVolumesAnalyzer3D extends RegionAnalyzer3D<IntrinsicVolume
     }
 
     /**
-     * @param connectivity the connectivity to set (either 6 or 26)
+     * @param connectivity
+     *            the connectivity used to compute Euler number (either 6 or 26,
+     *            default is 6)
      */
     public void setConnectivity(int connectivity)
     {

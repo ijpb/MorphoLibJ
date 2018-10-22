@@ -35,6 +35,7 @@ import inra.ijpb.geometry.Point3D;
 import inra.ijpb.geometry.Sphere;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.IntrinsicVolumes3D;
+import inra.ijpb.measure.region3d.Centroid3D;
 import inra.ijpb.measure.region3d.InertiaEllipsoid;
 import inra.ijpb.measure.region3d.IntrinsicVolumesAnalyzer3D;
 import inra.ijpb.measure.region3d.LargestInscribedBall;
@@ -100,7 +101,8 @@ public class AnalyzeRegions3D implements PlugIn
 	boolean computeMeanBreadth  = true;
 	boolean computeEulerNumber	= true;
 	boolean computeSphericity 	= true;
-	boolean computeEllipsoid 	= true;
+    boolean computeCentroid     = true;
+    boolean computeEllipsoid    = true;
 	boolean computeElongations 	= true;
 	boolean computeInscribedBall = true;
 	
@@ -129,16 +131,17 @@ public class AnalyzeRegions3D implements PlugIn
         // create the dialog, with operator options
         GenericDialog gd = new GenericDialog("Particles Analysis 3D");
         gd.addCheckbox("Volume", true);
-        gd.addCheckbox("Surface Area", true);
+        gd.addCheckbox("Surface_Area", true);
         gd.addCheckbox("Mean_Breadth", true);
         gd.addCheckbox("Sphericity", true);
-        gd.addCheckbox("Euler Number", true);
-        gd.addCheckbox("Inertia Ellipsoid", true);
-        gd.addCheckbox("Ellipsoid Elongations", true);
+        gd.addCheckbox("Euler_Number", true);
+        gd.addCheckbox("Centroid", true);
+        gd.addCheckbox("Inertia_Ellipsoid", true);
+        gd.addCheckbox("Ellipsoid_Elongations", true);
         gd.addCheckbox("Max._Inscribed Ball", true);
         gd.addMessage("");
-        gd.addChoice("Surface area method:", surfaceAreaMethods, surfaceAreaMethods[1]);
-        gd.addChoice("Euler Connectivity:", connectivityNames, connectivityNames[1]);
+        gd.addChoice("Surface_area_method:", surfaceAreaMethods, surfaceAreaMethods[1]);
+        gd.addChoice("Euler_Connectivity:", connectivityNames, connectivityNames[1]);
         gd.showDialog();
         
         // If cancel was clicked, do nothing
@@ -151,7 +154,8 @@ public class AnalyzeRegions3D implements PlugIn
         computeMeanBreadth 	= gd.getNextBoolean();
         computeSphericity 	= gd.getNextBoolean();
         computeEulerNumber	= gd.getNextBoolean();
-        computeEllipsoid 	= gd.getNextBoolean();
+        computeCentroid     = gd.getNextBoolean();
+        computeEllipsoid    = gd.getNextBoolean();
         computeElongations 	= gd.getNextBoolean();
         computeInscribedBall = gd.getNextBoolean();
         
@@ -212,6 +216,7 @@ public class AnalyzeRegions3D implements PlugIn
 
         // declare arrays for results
         IntrinsicVolumesAnalyzer3D.Result[] intrinsicVolumes = null; 
+        Point3D[] centroids = null;
         Ellipsoid[] ellipsoids = null;
         double[][] elongations = null;
         Sphere[] inscribedBalls = null;
@@ -248,7 +253,22 @@ public class AnalyzeRegions3D implements PlugIn
             ellipsoids = algo.analyzeRegions(image, labels, calib);
             long toc = System.nanoTime();
             IJ.log(String.format("inertia ellipsoids: %7.2f ms", (toc - tic) / 1000000.0));
+
+            if (computeCentroid)
+            {
+                // initialize centroid array from ellipsoid array
+                centroids = Ellipsoid.centers(ellipsoids);
+            }
+        } 
+        else if (computeCentroid)
+        {
+            // Compute centroids if not computed from inertia ellipsoid
+            IJ.showStatus("Centroid");
+            Centroid3D algo = new Centroid3D();
+            DefaultAlgoListener.monitor(algo);
+            centroids = algo.analyzeRegions(image, labels, calib);
         }
+        
         if (computeElongations)
         {
             IJ.showStatus("Ellipsoid elongations");
@@ -292,6 +312,14 @@ public class AnalyzeRegions3D implements PlugIn
         	}
         	if (computeEulerNumber)
         		table.addValue("EulerNumber", intrinsicVolumes[i].eulerNumber);
+
+            if (computeCentroid)
+            {
+                Point3D center = centroids[i];
+                table.addValue("Centroid.X", center.getX());
+                table.addValue("Centroid.Y", center.getY());
+                table.addValue("Centroid.Z", center.getZ());
+            }
 
         	// inertia ellipsoids
         	if (computeEllipsoid)

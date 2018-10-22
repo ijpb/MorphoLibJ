@@ -15,6 +15,24 @@ public class Ellipsoid
 	// ==================================================
 	// Static methods
 	
+    /**
+     * Initializes center array from ellipsoid array.
+     *
+     * @param ellipsoids
+     *            an array of ellipsoids
+     * @return the array of points corresponding to the centers of the
+     *         ellipsoids.
+     */
+    public static final Point3D[] centers(Ellipsoid[] ellipsoids)
+    {
+        Point3D[] centroids = new Point3D[ellipsoids.length];
+        for (int i = 0; i < ellipsoids.length; i++)
+        {
+            centroids[i] = ellipsoids[i].center();
+        }
+        return centroids;
+    }
+    
 	/**
 	 * Computes the three elongation factors for an array of ellipsoids.
 	 * 

@@ -215,12 +215,7 @@ public class AnalyzeRegions implements PlugInFilter
     		
     		if (computeCentroid)
     		{
-    		    // initialize centroid array from ellipse array
-    		    centroids = new Point2D[ellipses.length];
-    		    for (int i = 0; i < ellipses.length; i++)
-    		    {
-    		        centroids[i] = ellipses[i].center();
-    		    }
+    		    centroids = Ellipse.centers(ellipses);
     		}
     	}
         else if (computeCentroid)
