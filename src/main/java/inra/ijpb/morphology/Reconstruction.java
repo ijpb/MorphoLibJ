@@ -86,12 +86,12 @@ public abstract class Reconstruction
 		ImageProcessor markers = image.duplicate();
 		for (int y = 1; y < height-1; y++) 
 		{
-			for (int x = 1; x < width-1; x++) 
-			{
-				markers.set(x, y, 0); //TODO: replace by min value
-			}
+		    for (int x = 1; x < width-1; x++) 
+		    {
+		        markers.setf(x, y, Float.NEGATIVE_INFINITY);
+		    }
 		}
-		
+
 		// Reconstruct image from borders to find touching structures
 		ImageProcessor result = reconstructByDilation(markers, image);
 		
@@ -101,7 +101,7 @@ public abstract class Reconstruction
 			for (int x = 0; x < width; x++) 
 			{
 				int val = image.get(x, y) - result.get(x, y);
-				result.set(x, y, Math.max(val, 0)); //TODO: check if max is needed
+				result.set(x, y, Math.max(val, 0));
 			}
 		}
 		
@@ -130,7 +130,7 @@ public abstract class Reconstruction
 		{
 			for (int x = 1; x < width-1; x++) 
 			{
-				markers.set(x, y, 255);//TODO: replace by max value
+				markers.setf(x, y, Float.MAX_VALUE);
 			}
 		}
 		
