@@ -319,7 +319,7 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 
             // extract |cos(theta)| 
             Matrix mat = svd.getU();
-            double tmp = hypot(mat.get(1, 1), mat.get(2, 1));
+            double tmp = hypot(mat.get(0, 0), mat.get(1, 0));
             double phi, theta, psi;
 
             // avoid dividing by 0

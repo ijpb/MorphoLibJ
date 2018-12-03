@@ -82,4 +82,128 @@ public class InertiaEllipsoidTest
         assertEquals(20, elli.theta(), 1.0);
         assertEquals(10, elli.psi(), 1.0);
     }
+
+    /**
+     * Test method for {@link inra.ijpb.measure.region3d.InertiaEllipsoid#inertiaEllipsoids(ij.ImageStack, int[], ij.measure.Calibration)}.
+     */
+    @Test
+    public final void testCuboid_X30_Y20_Z10()
+    {
+        ImageStack image = createCenteredCuboid(50, 50, 50, 30, 20, 10);
+        
+        Calibration calib = new Calibration();
+        Ellipsoid elli = InertiaEllipsoid.inertiaEllipsoids(image, new int[] {255}, calib)[0];
+        
+        assertEquals( 0, ensureAngleWithin0And180(elli.phi()),   1.0);
+        assertEquals( 0, ensureAngleWithin0And180(elli.theta()), 1.0);
+        assertEquals( 0, ensureAngleWithin0And180(elli.psi() ),  1.0);
+    }
+
+    /**
+     * Test method for {@link inra.ijpb.measure.region3d.InertiaEllipsoid#inertiaEllipsoids(ij.ImageStack, int[], ij.measure.Calibration)}.
+     */
+    @Test
+    public final void testCuboid_X30_Y10_Z20()
+    {
+        ImageStack image = createCenteredCuboid(50, 50, 50, 30, 10, 20);
+        
+        Calibration calib = new Calibration();
+        Ellipsoid elli = InertiaEllipsoid.inertiaEllipsoids(image, new int[] {255}, calib)[0];
+        
+        assertEquals( 0, ensureAngleWithin0And180(elli.phi()),   1.0);
+        assertEquals( 0, ensureAngleWithin0And180(elli.theta()), 1.0);
+        assertEquals(90, ensureAngleWithin0And180(elli.psi() ),  1.0);
+    }
+    
+    /**
+     * Test method for {@link inra.ijpb.measure.region3d.InertiaEllipsoid#inertiaEllipsoids(ij.ImageStack, int[], ij.measure.Calibration)}.
+     */
+    @Test
+    public final void testCuboid_X20_Y30_Z10()
+    {
+        ImageStack image = createCenteredCuboid(50, 50, 50, 20, 30, 10);
+        
+        Calibration calib = new Calibration();
+        Ellipsoid elli = InertiaEllipsoid.inertiaEllipsoids(image, new int[] {255}, calib)[0];
+        
+        assertEquals(90, ensureAngleWithin0And180(elli.phi()),   1.0);
+        assertEquals( 0, ensureAngleWithin0And180(elli.theta()), 1.0);
+        assertEquals( 0, ensureAngleWithin0And180(elli.psi() ),  1.0);
+    }
+    
+    /**
+     * Test method for {@link inra.ijpb.measure.region3d.InertiaEllipsoid#inertiaEllipsoids(ij.ImageStack, int[], ij.measure.Calibration)}.
+     */
+    @Test
+    public final void testCuboid_X10_Y30_Z20()
+    {
+        ImageStack image = createCenteredCuboid(50, 50, 50, 10, 30, 20);
+        
+        Calibration calib = new Calibration();
+        Ellipsoid elli = InertiaEllipsoid.inertiaEllipsoids(image, new int[] {255}, calib)[0];
+        
+        assertEquals(90, ensureAngleWithin0And180(elli.phi()),   1.0);
+        assertEquals( 0, ensureAngleWithin0And180(elli.theta()), 1.0);
+        assertEquals(90, ensureAngleWithin0And180(elli.psi() ),  1.0);
+    }
+    
+    /**
+     * Test method for {@link inra.ijpb.measure.region3d.InertiaEllipsoid#inertiaEllipsoids(ij.ImageStack, int[], ij.measure.Calibration)}.
+     */
+    @Test
+    public final void testCuboid_X10_Y20_Z30()
+    {
+        ImageStack image = createCenteredCuboid(50, 50, 50, 10, 20, 30);
+        
+        Calibration calib = new Calibration();
+        Ellipsoid elli = InertiaEllipsoid.inertiaEllipsoids(image, new int[] {255}, calib)[0];
+        
+        assertEquals( 0, ensureAngleWithin0And180(elli.phi()),   1.0);
+        assertEquals(90, ensureAngleWithin0And180(elli.theta()), 1.0);
+        assertEquals( 0, ensureAngleWithin0And180(elli.psi() ),  1.0);
+    }
+    
+    /**
+     * Test method for {@link inra.ijpb.measure.region3d.InertiaEllipsoid#inertiaEllipsoids(ij.ImageStack, int[], ij.measure.Calibration)}.
+     */
+    @Test
+    public final void testCuboid_X20_Y10_Z30()
+    {
+        ImageStack image = createCenteredCuboid(50, 50, 50, 20, 10, 30);
+        
+        Calibration calib = new Calibration();
+        Ellipsoid elli = InertiaEllipsoid.inertiaEllipsoids(image, new int[] {255}, calib)[0];
+        
+        assertEquals( 0, ensureAngleWithin0And180(elli.phi()),   1.0);
+        assertEquals(90, ensureAngleWithin0And180(elli.theta()), 1.0);
+        assertEquals(90, ensureAngleWithin0And180(elli.psi() ),  1.0);
+    }
+    
+
+    private ImageStack createCenteredCuboid(int dimX, int dimY, int dimZ, int sizeX, int sizeY, int sizeZ)
+    {
+        ImageStack image = ImageStack.create(dimX, dimY, dimZ, 8);
+
+        int hwx = sizeX / 2;
+        int hwy = sizeY / 2;
+        int hwz = sizeZ / 2;
+        
+        for (int z = dimZ/2 - hwz; z < dimZ/2 + hwz; z++)
+        {
+            for (int y = dimY/2 - hwy; y < dimY/2 + hwy; y++)
+            {
+                for (int x = dimX/2 - hwx; x < dimX/2 + hwx; x++)
+                {
+                    image.setVoxel(x, y, z, 255);
+                }
+            }
+        }
+        
+        return image;
+    }
+    
+    private static final double ensureAngleWithin0And180(double angleInDegrees)
+    {
+        return ((angleInDegrees % 180) + 180 ) % 180;
+    }
 }
