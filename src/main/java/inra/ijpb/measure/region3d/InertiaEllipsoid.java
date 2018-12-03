@@ -154,16 +154,11 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 
     	// allocate memory for result
     	int nLabels = labels.length;
-    	int[] counts = new int[nLabels];
-    	double[] cx = new double[nLabels];
-    	double[] cy = new double[nLabels];
-    	double[] cz = new double[nLabels];
-    	double[] Ixx = new double[nLabels];
-    	double[] Iyy = new double[nLabels];
-    	double[] Izz = new double[nLabels];
-    	double[] Ixy = new double[nLabels];
-    	double[] Ixz = new double[nLabels];
-    	double[] Iyz = new double[nLabels];
+    	InertiaMoments3D[] moments = new InertiaMoments3D[nLabels]; 
+    	for (int i = 0; i < nLabels; i++)
+    	{
+    	    moments[i] = new InertiaMoments3D();
+    	}
 
     	// compute centroid of each region
     	fireStatusChanged(this, "Ellipsoid: compute centroids");
@@ -180,13 +175,19 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
     					continue;
 
     				// convert label to its index
+    				if (!labelIndices.containsKey(label))
+    				{
+    				    System.err.println("Label image contains unknown label: " + label);
+    				    continue;
+    				}
     				int index = labelIndices.get(label);
 
-    				// update sum coordinates, taking into account the spatial calibration 
-    				cx[index] += x * sx;
-    				cy[index] += y * sy;
-    				cz[index] += z * sz;
-    				counts[index]++;
+    				// update sum coordinates, taking into account the spatial calibration
+    				InertiaMoments3D moment = moments[index];
+    				moment.cx += x * sx;
+    				moment.cy += y * sy;
+    				moment.cz += z * sz;
+    				moment.count++;
     			}
     		}
     	}
@@ -194,9 +195,9 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
     	// normalize by number of pixels in each region
     	for (int i = 0; i < nLabels; i++) 
     	{
-    		cx[i] = cx[i] / counts[i];
-    		cy[i] = cy[i] / counts[i];
-    		cz[i] = cz[i] / counts[i];
+            moments[i].cx /= moments[i].count;
+            moments[i].cy /= moments[i].count;
+            moments[i].cz /= moments[i].count;
     	}
 
     	// compute centered inertia matrix of each label
@@ -215,19 +216,20 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 
     				// convert label to its index
     				int index = labelIndices.get(label);
+                    InertiaMoments3D moment = moments[index];
 
     				// convert coordinates relative to centroid 
-    				double x2 = x * sx - cx[index];
-    				double y2 = y * sy - cy[index];
-    				double z2 = z * sz - cz[index];
+                    double x2 = x * sx - moment.cx;
+                    double y2 = y * sy - moment.cy;
+                    double z2 = z * sz - moment.cz;
 
     				// update coefficients of inertia matrix
-    				Ixx[index] += x2 * x2;
-    				Iyy[index] += y2 * y2;
-    				Izz[index] += z2 * z2;
-    				Ixy[index] += x2 * y2;
-    				Ixz[index] += x2 * z2;
-    				Iyz[index] += y2 * z2;
+                    moment.Ixx += x2 * x2;
+                    moment.Iyy += y2 * y2;
+                    moment.Izz += z2 * z2;
+                    moment.Ixy += x2 * y2;
+                    moment.Ixz += x2 * z2;
+                    moment.Iyz += y2 * z2;
     			}
     		}
     	}
@@ -235,12 +237,12 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
     	// normalize by number of pixels in each region 
     	for (int i = 0; i < nLabels; i++) 
     	{
-    		Ixx[i] = Ixx[i] / counts[i];
-    		Iyy[i] = Iyy[i] / counts[i];
-    		Izz[i] = Izz[i] / counts[i];
-    		Ixy[i] = Ixy[i] / counts[i];
-    		Ixz[i] = Ixz[i] / counts[i];
-    		Iyz[i] = Iyz[i] / counts[i];
+            moments[i].Ixx /= moments[i].count;
+            moments[i].Iyy /= moments[i].count;
+            moments[i].Izz /= moments[i].count;
+            moments[i].Ixy /= moments[i].count;
+            moments[i].Ixz /= moments[i].count;
+            moments[i].Iyz /= moments[i].count;
     	}
 
     	// Create result array
@@ -253,15 +255,16 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
     	{
             this.fireProgressChanged(this, i, nLabels);
     		// fill up the 3x3 inertia matrix
-    		matrix.set(0, 0, Ixx[i]);
-    		matrix.set(0, 1, Ixy[i]);
-    		matrix.set(0, 2, Ixz[i]);
-    		matrix.set(1, 0, Ixy[i]);
-    		matrix.set(1, 1, Iyy[i]);
-    		matrix.set(1, 2, Iyz[i]);
-    		matrix.set(2, 0, Ixz[i]);
-    		matrix.set(2, 1, Iyz[i]);
-    		matrix.set(2, 2, Izz[i]);
+            InertiaMoments3D moment = moments[i];
+            matrix.set(0, 0, moment.Ixx);
+            matrix.set(0, 1, moment.Ixy);
+            matrix.set(0, 2, moment.Ixz);
+            matrix.set(1, 0, moment.Ixy);
+            matrix.set(1, 1, moment.Iyy);
+            matrix.set(1, 2, moment.Iyz);
+            matrix.set(2, 0, moment.Ixz);
+            matrix.set(2, 1, moment.Iyz);
+            matrix.set(2, 2, moment.Izz);
 
     		// Extract singular values
     		SingularValueDecomposition svd = new SingularValueDecomposition(matrix);
@@ -294,15 +297,34 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
     		}
 
     		// add coordinates of origin pixel (IJ coordinate system)
-    		double xc = cx[i] + .5 * sx + ox;
-    		double yc = cy[i] + .5 * sy + oy;
-    		double zc = cz[i] + .5 * sz + oz;
+    		double xc = moment.cx + .5 * sx + ox;
+    		double yc = moment.cy + .5 * sy + oy;
+    		double zc = moment.cz + .5 * sz + oz;
     		
     		// create the new ellipsoid
     		ellipsoids[i] = new Ellipsoid(xc, yc, zc, r1, r2, r3, toDegrees(phi), toDegrees(theta), toDegrees(psi));
     	}
 
     	return ellipsoids;
+	}
+	
+	public class InertiaMoments3D
+	{
+	    // the number of voxels 
+	    int count = 0;
+	    
+	    // The coordinates of the center
+        double cx = 0;
+        double cy = 0;
+        double cz = 0;
+        
+        // the second-order coefficients
+        double Ixx = 0;
+        double Ixy = 0;
+        double Ixz = 0;
+        double Iyy = 0;
+        double Iyz = 0;
+        double Izz = 0;
 	}
 
 }
