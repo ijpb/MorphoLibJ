@@ -8,6 +8,7 @@ import static java.lang.Math.hypot;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.toDegrees;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import inra.ijpb.geometry.Ellipsoid;
 import inra.ijpb.geometry.Point3D;
+import inra.ijpb.geometry.Vector3D;
 import inra.ijpb.label.LabelImages;
 
 /**
@@ -297,19 +299,8 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
         
         public Ellipsoid equivalentEllipsoid()
         {
-            Matrix matrix = new Matrix(3, 3);
-            matrix.set(0, 0, this.Ixx);
-            matrix.set(0, 1, this.Ixy);
-            matrix.set(0, 2, this.Ixz);
-            matrix.set(1, 0, this.Ixy);
-            matrix.set(1, 1, this.Iyy);
-            matrix.set(1, 2, this.Iyz);
-            matrix.set(2, 0, this.Ixz);
-            matrix.set(2, 1, this.Iyz);
-            matrix.set(2, 2, this.Izz);
-
             // Extract singular values
-            SingularValueDecomposition svd = new SingularValueDecomposition(matrix);
+            SingularValueDecomposition svd = svd();
             Matrix values = svd.getS();
 
             // convert singular values to ellipsoid radii 
@@ -340,6 +331,37 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 
             // create the new ellipsoid
             return new Ellipsoid(this.cx, this.cy, this.cz, r1, r2, r3, toDegrees(phi), toDegrees(theta), toDegrees(psi));
+        }
+
+        public ArrayList<Vector3D> eigenVectors()
+        {
+            // Extract singular values
+            Matrix mat = svd().getU();
+            
+            ArrayList<Vector3D> res = new ArrayList<Vector3D>(3);
+            for (int i = 0; i < 3; i++)
+            {
+                res.add(new Vector3D(mat.get(i, 0), mat.get(i, 1), mat.get(i, 2)));
+            }
+            return res;
+        }
+        
+        private SingularValueDecomposition svd()
+        {
+            // create the matrix
+            Matrix matrix = new Matrix(3, 3);
+            matrix.set(0, 0, this.Ixx);
+            matrix.set(0, 1, this.Ixy);
+            matrix.set(0, 2, this.Ixz);
+            matrix.set(1, 0, this.Ixy);
+            matrix.set(1, 1, this.Iyy);
+            matrix.set(1, 2, this.Iyz);
+            matrix.set(2, 0, this.Ixz);
+            matrix.set(2, 1, this.Iyz);
+            matrix.set(2, 2, this.Izz);
+
+            // Extract singular values
+            return new SingularValueDecomposition(matrix);
         }
 	}
 
