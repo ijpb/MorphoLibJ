@@ -100,7 +100,7 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 			table.addValue("Ellipsoid.Radius2", ellipse.radius2());
 			table.addValue("Ellipsoid.Radius3", ellipse.radius3());
 	
-			// ellipse orientation (degrees)
+			// ellipse orientation (in degrees)
 			table.addValue("Ellipsoid.Phi", ellipse.phi());
 			table.addValue("Ellipsoid.Theta", ellipse.theta());
 			table.addValue("Ellipsoid.Psi", ellipse.psi());
@@ -134,22 +134,33 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
         }
         
         // Compute 2D inertia moments for each label
-        InertiaMoments3D[] moments = computeMoments(image, labels, calib);
+    	InertiaMoments3D[] moments = computeMoments(image, labels, calib);
 
-        // Create result array
-        int nLabels = labels.length;
-    	Ellipsoid[] ellipsoids = new Ellipsoid[nLabels];
+        // convert moment array to ellipsoid array 
+    	Ellipsoid[] ellipsoids = momentsToEllipsoids(moments);
+
+    	// cleanup algorithm monitoring
+        fireStatusChanged(this, "");
+
+        return ellipsoids;
+	}
+	
+	private Ellipsoid[] momentsToEllipsoids(InertiaMoments3D[] moments)
+	{
+		int n = moments.length;
+    	Ellipsoid[] ellipsoids = new Ellipsoid[n];
 
     	// compute ellipsoid parameters for each region
         fireStatusChanged(this, "Ellipsoid: compute SVD");
-    	for (int i = 0; i < nLabels; i++) 
+    	for (int i = 0; i < n; i++) 
     	{
-            this.fireProgressChanged(this, i, nLabels);
+            this.fireProgressChanged(this, i, n);
             // create the new ellipsoid
             ellipsoids[i] = moments[i].equivalentEllipsoid();
     	}
-
-    	return ellipsoids;
+        fireProgressChanged(this, 1, 1);
+    	
+		return ellipsoids;
 	}
 	
 	public InertiaMoments3D[] computeMoments(ImageStack image, int[] labels, Calibration calib)
@@ -172,7 +183,9 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 	        oz = calib.zOrigin;
 	    }
 
-	    // create associative array to know index of each label
+        fireStatusChanged(this, "Ellipsoid: compute Moments");
+
+        // create associative array to know index of each label
 	    HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
 
 	    // allocate memory for result
@@ -341,7 +354,7 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
             ArrayList<Vector3D> res = new ArrayList<Vector3D>(3);
             for (int i = 0; i < 3; i++)
             {
-                res.add(new Vector3D(mat.get(i, 0), mat.get(i, 1), mat.get(i, 2)));
+                res.add(new Vector3D(mat.get(0, i), mat.get(1, i), mat.get(2, i)));
             }
             return res;
         }

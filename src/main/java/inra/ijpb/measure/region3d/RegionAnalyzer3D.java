@@ -27,6 +27,34 @@ import inra.ijpb.measure.RegionAnalyzer;
 public abstract class RegionAnalyzer3D<T> extends AlgoStub implements RegionAnalyzer<T>
 {
 	/**
+	 * Utility method that convert an array of result into a map using labels as
+	 * keys.
+	 * 
+	 * @param labels
+	 *            the array of labels to use as keys
+	 * @param data
+	 *            the array of objects to map
+	 * @return a map between each entry of label array and data array
+	 */
+	public static final <T2> Map<Integer, T2> createMap(int[] labels, T2[] data)
+	{
+		// check input sizes
+		int nLabels = labels.length;
+		if (data.length != nLabels)
+		{
+			throw new IllegalArgumentException("Require same number of elements for label array and data array");
+		}
+		
+		// iterate over labels
+		Map<Integer, T2> map = new TreeMap<Integer, T2>();
+		for (int i = 0; i < nLabels; i++)
+		{
+			map.put(labels[i], data[i]);
+		}
+        return map;
+	}
+
+	/**
 	 * Computes an instance of the generic type T for each region in input label image.
 	 * 
 	 * @param image
@@ -55,7 +83,6 @@ public abstract class RegionAnalyzer3D<T> extends AlgoStub implements RegionAnal
 		// extract particle labels
 		fireStatusChanged(this, "Find Labels");
 		int[] labels = LabelImages.findAllLabels(image);
-		int nLabels = labels.length;
 		
 		// compute analysis result for each label
 		fireStatusChanged(this, "Analyze regions");
@@ -63,16 +90,13 @@ public abstract class RegionAnalyzer3D<T> extends AlgoStub implements RegionAnal
 
 		// encapsulate into map
 		fireStatusChanged(this, "Convert to map");
-		Map<Integer, T> map = new TreeMap<Integer, T>();
-		for (int i = 0; i < nLabels; i++)
-		{
-			map.put(labels[i], results[i]);
-		}
+		Map<Integer, T> map = createMap(labels, results);
 
+		// cleanup monitoring
+		fireStatusChanged(this, "");
         return map;
 	}
 	
-
 	/**
 	 * Default implementation of the analyzeRegions method, that calls the more
 	 * specialized {@link #analyzeRegions(ImageStack, int[], ij.measure.Calibration)}
@@ -85,19 +109,21 @@ public abstract class RegionAnalyzer3D<T> extends AlgoStub implements RegionAnal
 	 */
 	public Map<Integer, T> analyzeRegions(ImagePlus labelPlus)
 	{
-		ImageStack labelImage = labelPlus.getStack();
-		int[] labels = LabelImages.findAllLabels(labelImage);
+		// extract particle labels
+		fireStatusChanged(this, "Find Labels");
+		int[] labels = LabelImages.findAllLabels(labelPlus);
 		
-		T[] results = analyzeRegions(labelImage, labels, labelPlus.getCalibration());
+		// compute analysis result for each label
+		fireStatusChanged(this, "Analyze regions");
+		T[] results = analyzeRegions(labelPlus.getImageStack(), labels, labelPlus.getCalibration());
 		
-		// convert the arrays into a map of index-value pairs
-		Map<Integer, T> map = new TreeMap<Integer, T>();
-		for (int i = 0; i < labels.length; i++)
-		{
-			map.put(labels[i], results[i]);
-		}
-		
-		return map;
+		// encapsulate into map
+		fireStatusChanged(this, "Convert to map");
+		Map<Integer, T> map = createMap(labels, results);
+
+		// cleanup monitoring
+		fireStatusChanged(this, "");
+        return map;
 	}
 
 

@@ -22,12 +22,19 @@
 package inra.ijpb.plugins;
 
 
+import java.util.ArrayList;
+
 import ij.IJ;
 import ij.ImagePlus;
+import ij.ImageStack;
+import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
 import inra.ijpb.algo.DefaultAlgoListener;
+import inra.ijpb.geometry.Vector3D;
+import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.region3d.InertiaEllipsoid;
+import inra.ijpb.measure.region3d.InertiaEllipsoid.InertiaMoments3D;
 
 public class InertiaEllipsoidPlugin implements PlugIn
 {
@@ -54,12 +61,27 @@ public class InertiaEllipsoidPlugin implements PlugIn
 			return;
 		}
 
+		// Extract required information
+		ImageStack image = imagePlus.getStack();
+		int[] labels = LabelImages.findAllLabels(imagePlus);
+		Calibration calib= imagePlus.getCalibration();
+		
+		// Compute inertia moments
         ResultsTable table;
+        ResultsTable vectorTable;
         try 
         {
         	InertiaEllipsoid algo = new InertiaEllipsoid();
         	DefaultAlgoListener.monitor(algo);
         	table = algo.computeTable(imagePlus);
+            // show table results
+            String title = imagePlus.getShortTitle() + "-ellipsoid";
+            table.show(title);
+        	
+            InertiaMoments3D[] moments = algo.computeMoments(image, labels, calib);
+        	vectorTable = createVectorTable(labels, moments);
+            title = imagePlus.getShortTitle() + "-eigenVectors";
+            vectorTable.show(title);
         } 
         catch (Exception ex) 
         {
@@ -70,8 +92,38 @@ public class InertiaEllipsoidPlugin implements PlugIn
         	return;
         }
 
-        // show table results
-        String title = imagePlus.getShortTitle() + "-ellipsoid";
-        table.show(title);
+    }
+    
+    private ResultsTable createVectorTable(int[] labels, InertiaMoments3D[] moments)
+    {
+		// Initialize a new result table
+		ResultsTable table = new ResultsTable();
+	
+		for (int i = 0; i < labels.length; i++)
+		{
+			// add an entry to the resulting data table
+			table.incrementCounter();
+			table.addLabel(Integer.toString(labels[i]));
+
+			ArrayList<Vector3D> vectors = moments[i].eigenVectors();
+			
+			Vector3D v1 = vectors.get(0);
+			table.addValue("EigenVector1.X", v1.getX());
+			table.addValue("EigenVector1.Y", v1.getY());
+			table.addValue("EigenVector1.Z", v1.getZ());
+			
+			Vector3D v2 = vectors.get(1);
+			table.addValue("EigenVector2.X", v2.getX());
+			table.addValue("EigenVector2.Y", v2.getY());
+			table.addValue("EigenVector2.Z", v2.getZ());
+			
+			Vector3D v3 = vectors.get(2);
+			table.addValue("EigenVector3.X", v3.getX());
+			table.addValue("EigenVector3.Y", v3.getY());
+			table.addValue("EigenVector3.Z", v3.getZ());
+
+		}
+		
+    	return table;
     }
 }
