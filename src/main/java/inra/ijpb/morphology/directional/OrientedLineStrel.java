@@ -83,7 +83,7 @@ public class OrientedLineStrel extends AbstractStrel implements Strel
 		double projLength = this.length * dMax;
 
 		// half-size and size of the mask
-		int n2 = (int) ceil((projLength - 1) / 2);
+		int n2 = (int) round((projLength - 1) / 2);
 		int n = 2 * n2 + 1;
 
 		// allocate memory for shifts array
