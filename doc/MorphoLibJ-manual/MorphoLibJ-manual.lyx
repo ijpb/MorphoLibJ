@@ -9912,7 +9912,7 @@ $r$
 
 \begin_inset Formula 
 \[
-UO_{r}=2\frac{|S_{r}\cap T_{r}|}{|S_{r}\cup T_{r}|}
+UO_{r}=\frac{|S_{r}\cap T_{r}|}{|S_{r}\cup T_{r}|}
 \]
 
 \end_inset
@@ -9928,7 +9928,7 @@ Jaccard Index or Union Overlap for all regions:
 
 \begin_inset Formula 
 \[
-UO=2\frac{\sum_{r}|S_{r}\cap T_{r}|}{\sum_{r}|S_{r}\cup T_{r}|}
+UO=\frac{\sum_{r}|S_{r}\cap T_{r}|}{\sum_{r}|S_{r}\cup T_{r}|}
 \]
 
 \end_inset
