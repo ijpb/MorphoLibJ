@@ -348,7 +348,20 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 			    	break;
 			    }
 			}
-
+			// Zoom out if canvas is too large
+			while( ( ic.getWidth() > 0.75 * screenWidth ||
+					ic.getHeight() > 0.75 * screenHeight ) &&
+					ic.getMagnification() > 1/72.0 )
+			{
+				final int canvasWidth = ic.getWidth();
+				ic.zoomOut( 0, 0 );
+				// check if canvas size changed (otherwise stop zooming)
+				if( canvasWidth == ic.getWidth() )
+				{
+					ic.zoomIn(0, 0);
+					break;
+				}
+			}
 			setTitle( "Interactive Marker-controlled Watershed" );
 
 			// select point tool for manual label merging

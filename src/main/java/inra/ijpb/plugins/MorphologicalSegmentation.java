@@ -460,8 +460,8 @@ public class MorphologicalSegmentation implements PlugIn {
 			double screenHeight = screenSize.getHeight();
 			
 			// Zoom in if image is too small
-			while( 	ic.getWidth() < screenWidth/2 &&
-				ic.getHeight() < screenHeight/2 &&
+			while( ( ic.getWidth() < screenWidth/2 ||
+				ic.getHeight() < screenHeight/2 ) &&
 				ic.getMagnification() < 32.0 )			
 			    {
     				final int canvasWidth = ic.getWidth();
@@ -473,6 +473,20 @@ public class MorphologicalSegmentation implements PlugIn {
     					break;
     				}
 			    }
+			// Zoom out if canvas is too large
+			while( ( ic.getWidth() > 0.75 * screenWidth ||
+				ic.getHeight() > 0.75 * screenHeight ) &&
+				ic.getMagnification() > 1/72.0 )
+				{
+	    			final int canvasWidth = ic.getWidth();
+	    			ic.zoomOut( 0, 0 );
+	    			// check if canvas size changed (otherwise stop zooming)
+	    			if( canvasWidth == ic.getWidth() )
+	    			{
+	    				ic.zoomIn(0, 0);
+	    				break;
+	    			}
+				}
 
 			setTitle( "Morphological Segmentation" );
 
