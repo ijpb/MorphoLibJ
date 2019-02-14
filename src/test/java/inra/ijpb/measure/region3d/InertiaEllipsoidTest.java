@@ -87,6 +87,33 @@ public class InertiaEllipsoidTest
      * Test method for {@link inra.ijpb.measure.region3d.InertiaEllipsoid#inertiaEllipsoids(ij.ImageStack, int[], ij.measure.Calibration)}.
      */
     @Test
+    public final void testRadomProlateEllipsoid3()
+    {
+        String fileName = getClass().getResource("/files/random_prolate_ellipsoid_01.tif").getFile();
+        ImagePlus imagePlus = IJ.openImage(fileName);
+        assertNotNull(imagePlus);
+        ImageStack image = imagePlus.getStack();
+
+        Calibration calib = imagePlus.getCalibration();
+        Ellipsoid elli = InertiaEllipsoid.inertiaEllipsoids(image, new int[] {255}, calib)[0];
+        
+        // Compare with values obtained with Matlab equivalent function
+        // https://github.com/mattools/matImage/blob/master/matImage/imMeasures/imInertiaEllipsoid.m
+        assertEquals(25, elli.center().getX(), .5);
+        assertEquals(25, elli.center().getY(), .5);
+        assertEquals(25, elli.center().getZ(), .5);
+        assertEquals(20, elli.radius1(), .5);
+        assertEquals(5, elli.radius2(), .5);
+        assertEquals(5, elli.radius3(), .5);
+        assertEquals(-32.97, elli.phi(), .2);
+        assertEquals(-51.98, elli.theta(), .2);
+        assertEquals(163.05, elli.psi(), .2);
+    }
+
+    /**
+     * Test method for {@link inra.ijpb.measure.region3d.InertiaEllipsoid#inertiaEllipsoids(ij.ImageStack, int[], ij.measure.Calibration)}.
+     */
+    @Test
     public final void testCuboid_X30_Y20_Z10()
     {
         ImageStack image = createCenteredCuboid(50, 50, 50, 30, 20, 10);

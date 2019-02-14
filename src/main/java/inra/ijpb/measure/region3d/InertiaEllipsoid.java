@@ -270,7 +270,7 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
             }
         }
 
-        // normalize by number of pixels in each region 
+        // normalize by number of voxels in each region
         for (int i = 0; i < nLabels; i++) 
         {
             moments[i].Ixx /= moments[i].count;
@@ -280,7 +280,16 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
             moments[i].Ixz /= moments[i].count;
             moments[i].Iyz /= moments[i].count;
         }
-
+        
+        // Also adds the contrbution of the central voxel to avoid zeros
+        // coefficients for labels with only one voxel
+        for (int i = 0; i < nLabels; i++) 
+        {
+            moments[i].Ixx += sx / 12;
+            moments[i].Iyy += sy / 12;
+            moments[i].Izz += sz / 12;
+        }
+        
         // add coordinates of origin pixel (IJ coordinate system)
         for (int i = 0; i < nLabels; i++) 
         {
@@ -313,7 +322,7 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
         public Ellipsoid equivalentEllipsoid()
         {
             // Extract singular values
-            SingularValueDecomposition svd = svd();
+            SingularValueDecomposition svd = computeSVD();
             Matrix values = svd.getS();
 
             // convert singular values to ellipsoid radii 
@@ -349,7 +358,7 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
         public ArrayList<Vector3D> eigenVectors()
         {
             // Extract singular values
-            Matrix mat = svd().getU();
+            Matrix mat = computeSVD().getU();
             
             ArrayList<Vector3D> res = new ArrayList<Vector3D>(3);
             for (int i = 0; i < 3; i++)
@@ -359,7 +368,7 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
             return res;
         }
         
-        private SingularValueDecomposition svd()
+        private SingularValueDecomposition computeSVD()
         {
             // create the matrix
             Matrix matrix = new Matrix(3, 3);
