@@ -64,12 +64,12 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<contributors>
 		<contributor>
 			<name>Curtis Rueden</name>
-			<url>http://imagej.net/User:Rueden</url>
+			<url>https://imagej.net/User:Rueden</url>
 			<properties><id>ctrueden</id></properties>
 		</contributor>
 		<contributor>
 			<name>Olivier Burri</name>
-			<url>http://imagej.net/User:Oburri</url>
+			<url>https://imagej.net/User:Oburri</url>
 			<properties><id>oburri</id></properties>
 		</contributor>
 	</contributors>
@@ -108,7 +108,7 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<repositories>
 		<repository>
 			<id>imagej.public</id>
-			<url>http://maven.imagej.net/content/groups/public</url>
+			<url>https://maven.imagej.net/content/groups/public</url>
 		</repository>
 	</repositories>
 
