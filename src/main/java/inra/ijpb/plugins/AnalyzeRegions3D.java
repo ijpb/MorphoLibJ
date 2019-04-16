@@ -30,11 +30,13 @@ import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
 import inra.ijpb.algo.DefaultAlgoListener;
+import inra.ijpb.geometry.Box3D;
 import inra.ijpb.geometry.Ellipsoid;
 import inra.ijpb.geometry.Point3D;
 import inra.ijpb.geometry.Sphere;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.IntrinsicVolumes3D;
+import inra.ijpb.measure.region3d.BoundingBox3D;
 import inra.ijpb.measure.region3d.Centroid3D;
 import inra.ijpb.measure.region3d.InertiaEllipsoid;
 import inra.ijpb.measure.region3d.IntrinsicVolumesAnalyzer3D;
@@ -101,6 +103,7 @@ public class AnalyzeRegions3D implements PlugIn
 	boolean computeMeanBreadth  = true;
 	boolean computeEulerNumber	= true;
 	boolean computeSphericity 	= true;
+	boolean computeBoundingBox  = true;
     boolean computeCentroid     = true;
     boolean computeEllipsoid    = true;
 	boolean computeElongations 	= true;
@@ -135,6 +138,7 @@ public class AnalyzeRegions3D implements PlugIn
         gd.addCheckbox("Mean_Breadth", true);
         gd.addCheckbox("Sphericity", true);
         gd.addCheckbox("Euler_Number", true);
+        gd.addCheckbox("Bounding_Box", true);
         gd.addCheckbox("Centroid", true);
         gd.addCheckbox("Inertia_Ellipsoid", true);
         gd.addCheckbox("Ellipsoid_Elongations", true);
@@ -154,6 +158,7 @@ public class AnalyzeRegions3D implements PlugIn
         computeMeanBreadth 	= gd.getNextBoolean();
         computeSphericity 	= gd.getNextBoolean();
         computeEulerNumber	= gd.getNextBoolean();
+        computeBoundingBox  = gd.getNextBoolean();
         computeCentroid     = gd.getNextBoolean();
         computeEllipsoid    = gd.getNextBoolean();
         computeElongations 	= gd.getNextBoolean();
@@ -216,6 +221,7 @@ public class AnalyzeRegions3D implements PlugIn
 
         // declare arrays for results
         IntrinsicVolumesAnalyzer3D.Result[] intrinsicVolumes = null; 
+        Box3D[] boxes = null;
         Point3D[] centroids = null;
         Ellipsoid[] ellipsoids = null;
         double[][] elongations = null;
@@ -241,6 +247,18 @@ public class AnalyzeRegions3D implements PlugIn
             intrinsicVolumes = algo.analyzeRegions(image, labels, calib);
             long toc = System.nanoTime();
             IJ.log(String.format("Intrinsic volumes: %7.2f ms", (toc - tic) / 1000000.0));
+        }
+
+        // compute image-aligned bounding box
+        if (computeBoundingBox)
+        {
+        	IJ.showStatus("Bounding Boxes");
+            long tic = System.nanoTime();
+            BoundingBox3D algo = new BoundingBox3D();
+        	DefaultAlgoListener.monitor(algo);
+            boxes = algo.analyzeRegions(image, labels, calib);
+            long toc = System.nanoTime();
+            IJ.log(String.format("Bounding boxes: %7.2f ms", (toc - tic) / 1000000.0));
         }
         
         // compute inertia ellipsoids and their elongations
@@ -313,6 +331,17 @@ public class AnalyzeRegions3D implements PlugIn
         	if (computeEulerNumber)
         		table.addValue("EulerNumber", intrinsicVolumes[i].eulerNumber);
 
+            if (computeBoundingBox)
+            {
+            	Box3D box = boxes[i];
+                table.addValue("Box.X.Min", box.getXMin());
+                table.addValue("Box.X.Max", box.getXMax());
+                table.addValue("Box.Y.Min", box.getYMin());
+                table.addValue("Box.Y.Max", box.getYMax());
+                table.addValue("Box.Z.Min", box.getZMin());
+                table.addValue("Box.Z.Max", box.getZMax());
+            }
+            
             if (computeCentroid)
             {
                 Point3D center = centroids[i];
