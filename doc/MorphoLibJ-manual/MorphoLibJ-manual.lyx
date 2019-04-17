@@ -8535,7 +8535,7 @@ Bounding Box plugin
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
 Label the label of the region measured on the current line (equal to 255
- for bionary images)
+ for binary images)
 \end_layout
 
 \begin_layout Labeling
@@ -9147,7 +9147,7 @@ inscrCircle.Center.Y the y-coordinate of the inscribed circle.
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-inscrCircle.Radius the radius of the inscribed circle.
+inscrCircle.Radius the radius of the inscribed circle.Inertia
 \end_layout
 
 \begin_layout Standard
@@ -9492,7 +9492,7 @@ add warnings about possibility of obtaining negative results -> need to
 \end_layout
 
 \begin_layout Subsection
-Inertia Ellipsoid
+Equivalent Ellipsoid
 \end_layout
 
 \begin_layout Standard
@@ -9514,23 +9514,24 @@ The first moment
 \end_inset
 
  corresponds to the volume of the particle.
- The normalization of the first-order moments leads to the 3D centroid of
- the particle.
- The second-order moments can be used to compute the equivalent inertia
- ellipsoid.
+ The normalization of the first-order moments by the volume leads to the
+ 3D centroid of the particle.
+ The second-order moments can be used to compute the equivalent ellipsoid,
+ defined as the ellipsoid with the same moments up to the second order as
+ the region.
 \end_layout
 
 \begin_layout Standard
 The 
 \series bold
-Inertia
+Equivalent
 \begin_inset space ~
 \end_inset
 
 Ellipsoid plugin
 \series default
- returns the parameters of the inertia ellipsoid into a ResultsTable with
- the following columns:
+ returns the parameters of the equivalent ellipsoid into a ResultsTable
+ with the following columns:
 \end_layout
 
 \begin_layout Labeling
@@ -9571,7 +9572,7 @@ Ellipsoid.Phi the azimut of the projection of the major axis on the XY plane,
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-Ellipsoid.Phi the elevation of the major axis on the XY plane, in degrees
+Ellipsoid.Theta the elevation of the major axis on the XY plane, in degrees
 \end_layout
 
 \begin_layout Labeling
@@ -9713,6 +9714,19 @@ Analyze regions 3D
 
  is used, it is also possible to compute elongation factors computed from
  ellipsoid radius.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+more details and notations ?
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
