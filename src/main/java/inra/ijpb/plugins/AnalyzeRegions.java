@@ -32,11 +32,13 @@ import ij.measure.ResultsTable;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
 import inra.ijpb.algo.DefaultAlgoListener;
+import inra.ijpb.geometry.Box2D;
 import inra.ijpb.geometry.Circle2D;
 import inra.ijpb.geometry.Ellipse;
 import inra.ijpb.geometry.OrientedBox2D;
 import inra.ijpb.geometry.PointPair2D;
 import inra.ijpb.label.LabelImages;
+import inra.ijpb.measure.region2d.BoundingBox;
 import inra.ijpb.measure.region2d.Centroid;
 //import inra.ijpb.measure.IntrinsicVolumes2D;
 import inra.ijpb.measure.region2d.Convexity;
@@ -56,6 +58,7 @@ public class AnalyzeRegions implements PlugInFilter
 	boolean computePerimeter = true;
 	boolean computeCircularity = true;
 	boolean computeEulerNumber = true;
+	boolean computeBoundingBox  = true;
     boolean computeCentroid = true;
     boolean computeInertiaEllipse = true;
 	boolean computeEllipseElongation = true;
@@ -120,6 +123,7 @@ public class AnalyzeRegions implements PlugInFilter
         gd.addCheckbox("Perimeter", true);
         gd.addCheckbox("Circularity", true);
         gd.addCheckbox("Euler_Number", true);
+        gd.addCheckbox("Bounding_Box", true);
         gd.addCheckbox("Centroid", true);
         gd.addCheckbox("Inertia_Ellipse", true);
         gd.addCheckbox("Ellipse_Elong.", true);
@@ -142,6 +146,7 @@ public class AnalyzeRegions implements PlugInFilter
         computePerimeter          = gd.getNextBoolean();
         computeCircularity        = gd.getNextBoolean();
         computeEulerNumber        = gd.getNextBoolean();
+        computeBoundingBox        = gd.getNextBoolean();
         computeCentroid           = gd.getNextBoolean();
         computeInertiaEllipse     = gd.getNextBoolean();
         computeEllipseElongation  = gd.getNextBoolean();
@@ -182,6 +187,7 @@ public class AnalyzeRegions implements PlugInFilter
     	
     	// Parameters to be computed
     	IntrinsicVolumesAnalyzer2D.Result[] intrinsicVolumes = null; 
+        Box2D[] boundingBoxes = null;
     	Point2D[] centroids = null;
     	Ellipse[] ellipses = null;
     	Convexity.Result[] convexities = null;
@@ -206,6 +212,14 @@ public class AnalyzeRegions implements PlugInFilter
             intrinsicVolumes = algo.analyzeRegions(image, labels, calib); 
     	}
     	
+        if (computeBoundingBox)
+        {
+            IJ.showStatus("Compute bounding boxes");
+            BoundingBox algo = new BoundingBox();
+            DefaultAlgoListener.monitor(algo);
+            boundingBoxes = algo.analyzeRegions(image, labels, calib);
+        }
+
         if (computeInertiaEllipse || computeEllipseElongation)
     	{
     		IJ.showStatus("Inertia Ellipse");
@@ -220,8 +234,8 @@ public class AnalyzeRegions implements PlugInFilter
     	}
         else if (computeCentroid)
         {
-            // Compute centroids if not computed from inertia ellipsoid
-            IJ.showStatus("Centroid");
+            // Compute centroids if not already computed from inertia ellipsoid
+            IJ.showStatus("Centroids");
             Centroid algo = new Centroid();
             DefaultAlgoListener.monitor(algo);
             centroids = algo.analyzeRegions(image, labels, calib);
@@ -237,13 +251,13 @@ public class AnalyzeRegions implements PlugInFilter
 
     	if (computeMaxFeretDiameter || computeTortuosity)
     	{
-    		IJ.showStatus("Max Feret Diameter");
+    		IJ.showStatus("Max Feret Diameters");
     		maxFeretDiams = MaxFeretDiameter.maxFeretDiameters(image, labels, calib);
     	}
 
     	if (computeOrientedBox)
     	{
-    		IJ.showStatus("Oriented Bounding Box");
+    		IJ.showStatus("Oriented Bounding Boxes");
     		OrientedBoundingBox2D algo = new OrientedBoundingBox2D();
     		DefaultAlgoListener.monitor(algo);
     		orientedBoxes = algo.analyzeRegions(image, labels, calib);
@@ -251,6 +265,7 @@ public class AnalyzeRegions implements PlugInFilter
     	
     	if (computeGeodesicDiameter || computeTortuosity)
     	{
+            IJ.showStatus("Compute Geodesic diameters");
     		GeodesicDiameter algo = new GeodesicDiameter();
     		DefaultAlgoListener.monitor(algo);
     		geodDiams = algo.analyzeRegions(image, labels, calib);
@@ -258,7 +273,8 @@ public class AnalyzeRegions implements PlugInFilter
 
     	if (computeMaxInscribedDisc || computeGeodesicElongation)
     	{
-    		LargestInscribedCircle algo = new LargestInscribedCircle();
+    	    IJ.showStatus("Compute Inscribed circles");
+            LargestInscribedCircle algo = new LargestInscribedCircle();
     		DefaultAlgoListener.monitor(algo);
     		inscrDiscs = algo.analyzeRegions(image, labels, calib);
     	}
@@ -296,6 +312,18 @@ public class AnalyzeRegions implements PlugInFilter
             }
     	}
 
+        if (computeBoundingBox)
+        {
+            for (int i = 0; i < nLabels; i++)
+            {
+                Box2D box = boundingBoxes[i];
+                table.setValue("Box.X.Min", i, box.getXMin());
+                table.setValue("Box.X.Max", i, box.getXMax());
+                table.setValue("Box.Y.Min", i, box.getYMin());
+                table.setValue("Box.Y.Max", i, box.getYMax());
+            }
+        }
+        
         if (computeCentroid)
         {
             for (int i = 0; i < nLabels; i++)

@@ -4,7 +4,9 @@
 package inra.ijpb.geometry;
 
 /**
- * A bounding Box in 2 dimensions
+ * A bounding Box in 2 dimensions.
+ *
+ * @see Box3D
  * 
  * @author dlegland
  *
@@ -49,7 +51,7 @@ public class Box2D
 	/**
 	 * Computes the area of this bounding box.
 	 * 
-	 * @return the area of the bounding box.
+	 * @return the area enclosed by the bounding box.
 	 */
 	public double area()
 	{
