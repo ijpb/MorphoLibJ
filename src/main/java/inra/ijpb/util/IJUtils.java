@@ -21,10 +21,14 @@
  */
 package inra.ijpb.util;
 
+import java.awt.Frame;
+import java.util.ArrayList;
 import java.util.Locale;
 
 import ij.IJ;
 import ij.ImagePlus;
+import ij.WindowManager;
+import ij.text.TextWindow;
 
 /**
  * A collection of utility methods for interacting with ImageJ.
@@ -77,4 +81,32 @@ public class IJUtils
 		IJ.showStatus(status);
 		return status;
 	}
+	
+    /**
+     * Iterates on the list of TextWindows, and keeps only the ones containing a
+     * non-null ResultsTable
+     * 
+     * @return an array containing the list of open TextWindows
+     */
+    public static final TextWindow[] getTableWindows() 
+    {
+        Frame[] frames = WindowManager.getNonImageWindows();
+        
+        ArrayList<TextWindow> windows = new ArrayList<TextWindow>(frames.length);
+        
+        for (Frame frame : frames) 
+        {
+            if (frame instanceof TextWindow) 
+            {
+                TextWindow tw = (TextWindow) frame;
+                if (tw.getTextPanel().getResultsTable() != null) 
+                {
+                    windows.add(tw);
+                }
+            }
+        }
+        
+        return windows.toArray(new TextWindow[0]);
+    }
+
 }
