@@ -76,8 +76,8 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<mailingLists>
 		<mailingList>
-			<name>ImageJ Forum</name>
-			<archive>http://forum.imagej.net/</archive>
+			<name>Image.sc Forum</name>
+			<archive>https://forum.image.sc/tags/morpholibj</archive>
 		</mailingList>
 	</mailingLists>
 
