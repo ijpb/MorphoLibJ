@@ -209,7 +209,11 @@ public class Centroid3D extends RegionAnalyzer3D<Point3D>
     				if (label == 0)
     					continue;
 
-    				int index = labelIndices.get(label);
+                    // do not process labels that are not in the input list 
+                    if (!labelIndices.containsKey(label))
+                        continue;
+
+                    int index = labelIndices.get(label);
     				cx[index] += x * sx;
     				cy[index] += y * sy;
     				cz[index] += z * sz;

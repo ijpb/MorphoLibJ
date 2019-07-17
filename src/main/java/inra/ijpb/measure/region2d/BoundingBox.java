@@ -112,6 +112,10 @@ public class BoundingBox extends RegionAnalyzer2D<Box2D>
 				if (label == 0)
 					continue;
 
+                // do not process labels that are not in the input list 
+                if (!labelIndices.containsKey(label))
+                    continue;
+                
 				int index = labelIndices.get(label);
 				
 				xmin[index] = Math.min(xmin[index], x);

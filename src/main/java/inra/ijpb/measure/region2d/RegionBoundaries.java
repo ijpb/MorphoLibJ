@@ -64,7 +64,7 @@ public class RegionBoundaries
 				if (current != previous)
 				{
 					// if leave a region, add a new corner points for the end of the region
-					if (previous > 0)
+					if (previous > 0 && labelCornerPoints.containsKey(previous))
 					{
 						ArrayList<Point2D> corners = labelCornerPoints.get(previous);
 						Point2D p = new Point2D.Double(x, y);
@@ -76,7 +76,7 @@ public class RegionBoundaries
 					}
 					
 					// transition into a new region
-					if (current > 0)
+					if (current > 0 && labelCornerPoints.containsKey(current))
 					{
 						// add a new corner points for the beginning of the new region
 						ArrayList<Point2D> corners = labelCornerPoints.get(current);
@@ -94,7 +94,7 @@ public class RegionBoundaries
 			}
 			
 			// if particle touches right border, add another point
-			if (previous > 0)
+			if (previous > 0 && labelCornerPoints.containsKey(previous))
 			{
 				ArrayList<Point2D> corners = labelCornerPoints.get(previous);
 				Point2D p = new Point2D.Double(sizeX, y);
@@ -254,12 +254,13 @@ public class RegionBoundaries
 
 		ArrayList<Point2D> points = new ArrayList<Point2D>();
 		
+		// boolean values within top-left, top-right, left, and current pixels
 		boolean[] configValues = new boolean[4];
 		
 		// iterate on image pixel configurations
 		for (int y = 0; y < sizeY + 1; y++) 
 		{
-//			configValues[0] = false;
+		    // assume values outside image correspond to background
 			configValues[2] = false;
 			
 			for (int x = 0; x < sizeX + 1; x++) 
@@ -279,12 +280,10 @@ public class RegionBoundaries
 				}
 
 				// update values of configuration for next iteration
-//				configValues[0] = configValues[1];
 				configValues[2] = configValues[3];
 			}
 		}
 
 		return points;
 	}
-
 }

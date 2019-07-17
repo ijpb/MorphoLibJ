@@ -213,12 +213,11 @@ public class EquivalentEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 	                if (label == 0)
 	                    continue;
 
-	                // convert label to its index
-	                if (!labelIndices.containsKey(label))
-	                {
-	                    System.err.println("Label image contains unknown label: " + label);
-	                    continue;
-	                }
+                    // do not process labels that are not in the input list 
+                    if (!labelIndices.containsKey(label))
+                        continue;
+
+                    // convert label to its index
 	                int index = labelIndices.get(label);
 
 	                // update sum coordinates, taking into account the spatial calibration

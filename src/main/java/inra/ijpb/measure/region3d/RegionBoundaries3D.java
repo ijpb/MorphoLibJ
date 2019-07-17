@@ -72,7 +72,7 @@ public class RegionBoundaries3D
 						newPoints.add(new Point3D(x, y + 1, z + 1));
 
 						// if leave a region, add a new corner points for the end of the region
-						if (currentLabel > 0)
+						if (currentLabel > 0 && labelCornerPoints.containsKey(currentLabel))
 						{
 							ArrayList<Point3D> corners = labelCornerPoints.get(currentLabel);
 							for (Point3D p : newPoints)
@@ -85,7 +85,7 @@ public class RegionBoundaries3D
 						}
 
 						// transition into a new region
-						if (pixel > 0)
+						if (pixel > 0 && labelCornerPoints.containsKey(pixel))
 						{
 							ArrayList<Point3D> corners = labelCornerPoints.get(pixel);
 							for (Point3D p : newPoints)
@@ -101,9 +101,9 @@ public class RegionBoundaries3D
 				}
 
 				// if particle touches right border, add another point
-				if (currentLabel > 0)
+				if (currentLabel > 0 &&  labelCornerPoints.containsKey(currentLabel))
 				{
-					// creates the four corners corresponding to the
+                    // creates the four corners corresponding to the
 					// transition between current label and background
 					ArrayList<Point3D> newPoints = new ArrayList<Point3D>(4);
 					newPoints.add(new Point3D(sizeX, y, z));
