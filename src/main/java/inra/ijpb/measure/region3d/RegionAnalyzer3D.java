@@ -27,15 +27,17 @@ import inra.ijpb.measure.RegionAnalyzer;
 public abstract class RegionAnalyzer3D<T> extends AlgoStub implements RegionAnalyzer<T>
 {
 	/**
-	 * Utility method that convert an array of result into a map using labels as
-	 * keys.
-	 * 
-	 * @param labels
-	 *            the array of labels to use as keys
-	 * @param data
-	 *            the array of objects to map
-	 * @return a map between each entry of label array and data array
-	 */
+     * Utility method that convert an array of result into a map using labels as
+     * keys.
+     * 
+     * @param <T2>
+     *            the type of data measured for each label
+     * @param labels
+     *            the array of labels to use as keys
+     * @param data
+     *            the array of objects to map
+     * @return a map between each entry of label array and data array
+     */
 	public static final <T2> Map<Integer, T2> createMap(int[] labels, T2[] data)
 	{
 		// check input sizes

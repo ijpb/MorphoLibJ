@@ -26,7 +26,7 @@ import inra.ijpb.label.LabelImages;
  * Compute the parameters of 3D ellipsoids that has the same moments up to the
  * second than the region(s) within a 3D binary / label image.
  * 
- * @see inra.ijpb.measure.region2d.inertiaEllipse
+ * @see inra.ijpb.measure.region2d.InertiaEllipse
  * 
  * @author dlegland
  *

@@ -18,6 +18,8 @@ import inra.ijpb.label.LabelImages;
 /**
  * Compute parameters of inertia ellipse from label images.
  * 
+ * @see inra.ijpb.measure.region3d.EquivalentEllipsoid
+ * 
  * @author dlegland
  *
  */
