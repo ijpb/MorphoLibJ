@@ -38,7 +38,7 @@ import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.IntrinsicVolumes3D;
 import inra.ijpb.measure.region3d.BoundingBox3D;
 import inra.ijpb.measure.region3d.Centroid3D;
-import inra.ijpb.measure.region3d.InertiaEllipsoid;
+import inra.ijpb.measure.region3d.EquivalentEllipsoid;
 import inra.ijpb.measure.region3d.IntrinsicVolumesAnalyzer3D;
 import inra.ijpb.measure.region3d.LargestInscribedBall;
 
@@ -140,7 +140,7 @@ public class AnalyzeRegions3D implements PlugIn
         gd.addCheckbox("Euler_Number", true);
         gd.addCheckbox("Bounding_Box", true);
         gd.addCheckbox("Centroid", true);
-        gd.addCheckbox("Inertia_Ellipsoid", true);
+        gd.addCheckbox("Equivalent_Ellipsoid", true);
         gd.addCheckbox("Ellipsoid_Elongations", true);
         gd.addCheckbox("Max._Inscribed Ball", true);
         gd.addMessage("");
@@ -264,13 +264,13 @@ public class AnalyzeRegions3D implements PlugIn
         // compute inertia ellipsoids and their elongations
         if (computeEllipsoid)
         {
-        	IJ.showStatus("Inertia Ellipsoids");
+        	IJ.showStatus("Equivalent Ellipsoids");
             long tic = System.nanoTime();
-        	InertiaEllipsoid algo = new InertiaEllipsoid();
+        	EquivalentEllipsoid algo = new EquivalentEllipsoid();
         	DefaultAlgoListener.monitor(algo);
             ellipsoids = algo.analyzeRegions(image, labels, calib);
             long toc = System.nanoTime();
-            IJ.log(String.format("inertia ellipsoids: %7.2f ms", (toc - tic) / 1000000.0));
+            IJ.log(String.format("Equivalent ellipsoids: %7.2f ms", (toc - tic) / 1000000.0));
 
             if (computeCentroid)
             {

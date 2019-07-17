@@ -23,20 +23,21 @@ import inra.ijpb.geometry.Vector3D;
 import inra.ijpb.label.LabelImages;
 
 /**
- * Compute parameters of inertia ellipsoids from 3D binary / label images.
+ * Compute the parameters of 3D ellipsoids that has the same moments up to the
+ * second than the region(s) within a 3D binary / label image.
  * 
- * @deprecated replaced by EquivalentEllipsoid (since 1.4.1)
+ * @see inra.ijpb.measure.region2d.inertiaEllipse
+ * 
  * @author dlegland
- * 
+ *
  */
-@Deprecated
-public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
+public class EquivalentEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 {
 	// ==================================================
 	// Static methods 
 	
 	/**
-	 * Computes inertia ellipsoid of each region in the input 3D label image.
+	 * Computes equivalent ellipsoid of each region in the input 3D label image.
 	 * 
 	 * @param image
 	 *            the input image containing label of particles
@@ -45,11 +46,11 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 	 * @param calib
 	 *            the calibration of the image
 	 * @return an array of Ellipsoid instances representing the calibrated
-	 *         coordinates of the inertia ellipsoid of each region
+	 *         coordinates of the equivalent ellipsoid of each region
 	 */
-	public static final Ellipsoid[] inertiaEllipsoids(ImageStack image, int[] labels, Calibration calib)
+	public static final Ellipsoid[] equivalentEllipsoids(ImageStack image, int[] labels, Calibration calib)
 	{
-		return new InertiaEllipsoid().analyzeRegions(image, labels, calib);
+		return new EquivalentEllipsoid().analyzeRegions(image, labels, calib);
 	}
 	
 	
@@ -59,7 +60,7 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 	/**
 	 * Default constructor
 	 */
-	public InertiaEllipsoid()
+	public EquivalentEllipsoid()
 	{
 	}
 
@@ -68,11 +69,11 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 	// Implementation of RegionAnalyzer interface
 
 	/**
-	 * Utility method that transforms the mapping between labels and inertia
+	 * Utility method that transforms the mapping between labels and equivalent
 	 * ellipsoids instances into a ResultsTable that can be displayed with ImageJ.
 	 * 
 	 * @param map
-	 *            the mapping between labels and Inertia Ellipsoids
+	 *            the mapping between labels and Equivalent Ellipsoids
 	 * @return a ResultsTable that can be displayed with ImageJ.
 	 */
 	public ResultsTable createTable(Map<Integer, Ellipsoid> map)
@@ -112,7 +113,7 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 	}
 
 	/**
-	 * Computes inertia ellipsoid of each region in the input 3D label image.
+	 * Computes equivalent ellipsoid of each region in the input 3D label image.
 	 * 
 	 * @param image
 	 *            the input image containing label of particles
@@ -121,7 +122,7 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 	 * @param calib
 	 *            the calibration of the image
 	 * @return an array of Ellipsoid instances representing the calibrated
-	 *         coordinates of the inertia ellipsoid of each region
+	 *         coordinates of the equivalent ellipsoid of each region
 	 */
 	public Ellipsoid[] analyzeRegions(ImageStack image, int[] labels, Calibration calib)
 	{
@@ -136,7 +137,7 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
         }
         
         // Compute 2D inertia moments for each label
-    	InertiaMoments3D[] moments = computeMoments(image, labels, calib);
+    	Moments3D[] moments = computeMoments(image, labels, calib);
 
         // convert moment array to ellipsoid array 
     	Ellipsoid[] ellipsoids = momentsToEllipsoids(moments);
@@ -147,7 +148,7 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
         return ellipsoids;
 	}
 	
-	private Ellipsoid[] momentsToEllipsoids(InertiaMoments3D[] moments)
+	private Ellipsoid[] momentsToEllipsoids(Moments3D[] moments)
 	{
 		int n = moments.length;
     	Ellipsoid[] ellipsoids = new Ellipsoid[n];
@@ -165,7 +166,7 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 		return ellipsoids;
 	}
 	
-	public InertiaMoments3D[] computeMoments(ImageStack image, int[] labels, Calibration calib)
+	public Moments3D[] computeMoments(ImageStack image, int[] labels, Calibration calib)
 	{
 	    // size of image
 	    int sizeX = image.getWidth();
@@ -192,10 +193,10 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 
 	    // allocate memory for result
 	    int nLabels = labels.length;
-	    InertiaMoments3D[] moments = new InertiaMoments3D[nLabels]; 
+	    Moments3D[] moments = new Moments3D[nLabels]; 
 	    for (int i = 0; i < nLabels; i++)
 	    {
-	        moments[i] = new InertiaMoments3D();
+	        moments[i] = new Moments3D();
 	    }
 
 	    // compute centroid of each region
@@ -221,7 +222,7 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 	                int index = labelIndices.get(label);
 
 	                // update sum coordinates, taking into account the spatial calibration
-	                InertiaMoments3D moment = moments[index];
+	                Moments3D moment = moments[index];
 	                moment.cx += x * sx;
 	                moment.cy += y * sy;
 	                moment.cz += z * sz;
@@ -239,7 +240,7 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 	    }
 	    
         // compute centered inertia matrix of each label
-        fireStatusChanged(this, "Ellipsoid: compute inertia matrices");
+        fireStatusChanged(this, "Ellipsoid: compute matrices");
         for (int z = 0; z < sizeZ; z++) 
         {
             this.fireProgressChanged(this, z, sizeZ);
@@ -254,7 +255,7 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 
                     // convert label to its index
                     int index = labelIndices.get(label);
-                    InertiaMoments3D moment = moments[index];
+                    Moments3D moment = moments[index];
 
                     // convert coordinates relative to centroid 
                     double x2 = x * sx - moment.cx;
@@ -303,7 +304,7 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
         return moments;
 	}
 
-	public class InertiaMoments3D
+	public class Moments3D
 	{
 	    // the number of voxels 
 	    int count = 0;

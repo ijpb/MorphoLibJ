@@ -29,7 +29,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
     // generic classes
     GeometryUtilsTest.class, 
-    InertiaEllipsoidTest.class,
+    EquivalentEllipsoidTest.class,
     MaxFeretDiameter3DTest.class })
 public class AllTests
 {

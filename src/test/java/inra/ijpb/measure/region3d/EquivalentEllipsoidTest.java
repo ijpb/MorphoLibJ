@@ -18,14 +18,14 @@ import inra.ijpb.geometry.Ellipsoid;
  * @author dlegland
  *
  */
-public class InertiaEllipsoidTest
+public class EquivalentEllipsoidTest
 {
 
     /**
-     * Test method for {@link inra.ijpb.measure.region3d.InertiaEllipsoid#inertiaEllipsoids(ij.ImageStack, int[], ij.measure.Calibration)}.
+     * Test method for {@link inra.ijpb.measure.region3d.EquivalentEllipsoid#equivalentEllipsoids(ij.ImageStack, int[], ij.measure.Calibration)}.
      */
     @Test
-    public final void testInertiaEllipsoids()
+    public final void testEquivalentEllipsoids()
     {
         String fileName = getClass().getResource("/files/ellipsoid_A30_B20_C10_T00_P00.tif").getFile();
         ImagePlus imagePlus = IJ.openImage(fileName);
@@ -33,7 +33,7 @@ public class InertiaEllipsoidTest
         ImageStack image = imagePlus.getStack();
 
         Calibration calib = imagePlus.getCalibration();
-        Ellipsoid elli = InertiaEllipsoid.inertiaEllipsoids(image, new int[] {255}, calib)[0];
+        Ellipsoid elli = EquivalentEllipsoid.equivalentEllipsoids(image, new int[] {255}, calib)[0];
         
         assertEquals(30, elli.radius1(), .1);
         assertEquals(20, elli.radius2(), .1);
@@ -41,10 +41,10 @@ public class InertiaEllipsoidTest
     }
 
     /**
-     * Test method for {@link inra.ijpb.measure.region3d.InertiaEllipsoid#inertiaEllipsoids(ij.ImageStack, int[], ij.measure.Calibration)}.
+     * Test method for {@link inra.ijpb.measure.region3d.EquivalentEllipsoid#equivalentEllipsoids(ij.ImageStack, int[], ij.measure.Calibration)}.
      */
     @Test
-    public final void testInertiaEllipsoid2()
+    public final void testEquivalentEllipsoid2()
     {
         String fileName = getClass().getResource("/files/ellipsoid_A30_B20_C10_T30_P30.tif").getFile();
         ImagePlus imagePlus = IJ.openImage(fileName);
@@ -52,7 +52,7 @@ public class InertiaEllipsoidTest
         ImageStack image = imagePlus.getStack();
 
         Calibration calib = imagePlus.getCalibration();
-        Ellipsoid elli = InertiaEllipsoid.inertiaEllipsoids(image, new int[] {255}, calib)[0];
+        Ellipsoid elli = EquivalentEllipsoid.equivalentEllipsoids(image, new int[] {255}, calib)[0];
         
         assertEquals(30, elli.radius1(), .1);
         assertEquals(20, elli.radius2(), .1);
@@ -62,10 +62,10 @@ public class InertiaEllipsoidTest
     }
 
     /**
-     * Test method for {@link inra.ijpb.measure.region3d.InertiaEllipsoid#inertiaEllipsoids(ij.ImageStack, int[], ij.measure.Calibration)}.
+     * Test method for {@link inra.ijpb.measure.region3d.EquivalentEllipsoid#equivalentEllipsoids(ij.ImageStack, int[], ij.measure.Calibration)}.
      */
     @Test
-    public final void testInertiaEllipsoid3()
+    public final void testEquivalentEllipsoid3()
     {
         String fileName = getClass().getResource("/files/ellipsoid_A45_B35_C25_T30_P20_R10.tif").getFile();
         ImagePlus imagePlus = IJ.openImage(fileName);
@@ -73,7 +73,7 @@ public class InertiaEllipsoidTest
         ImageStack image = imagePlus.getStack();
 
         Calibration calib = imagePlus.getCalibration();
-        Ellipsoid elli = InertiaEllipsoid.inertiaEllipsoids(image, new int[] {255}, calib)[0];
+        Ellipsoid elli = EquivalentEllipsoid.equivalentEllipsoids(image, new int[] {255}, calib)[0];
         
         assertEquals(45, elli.radius1(), .1);
         assertEquals(35, elli.radius2(), .1);
@@ -84,10 +84,10 @@ public class InertiaEllipsoidTest
     }
 
     /**
-     * Test method for {@link inra.ijpb.measure.region3d.InertiaEllipsoid#inertiaEllipsoids(ij.ImageStack, int[], ij.measure.Calibration)}.
+     * Test method for {@link inra.ijpb.measure.region3d.EquivalentEllipsoid#equivalentEllipsoids(ij.ImageStack, int[], ij.measure.Calibration)}.
      */
     @Test
-    public final void testRadomProlateEllipsoid3()
+    public final void testRandomProlateEllipsoid3()
     {
         String fileName = getClass().getResource("/files/random_prolate_ellipsoid_01.tif").getFile();
         ImagePlus imagePlus = IJ.openImage(fileName);
@@ -95,10 +95,10 @@ public class InertiaEllipsoidTest
         ImageStack image = imagePlus.getStack();
 
         Calibration calib = imagePlus.getCalibration();
-        Ellipsoid elli = InertiaEllipsoid.inertiaEllipsoids(image, new int[] {255}, calib)[0];
+        Ellipsoid elli = EquivalentEllipsoid.equivalentEllipsoids(image, new int[] {255}, calib)[0];
         
         // Compare with values obtained with Matlab equivalent function
-        // https://github.com/mattools/matImage/blob/master/matImage/imMeasures/imInertiaEllipsoid.m
+        // https://github.com/mattools/matImage/blob/master/matImage/imMeasures/imEquivalentEllipsoid.m
         assertEquals(25, elli.center().getX(), .5);
         assertEquals(25, elli.center().getY(), .5);
         assertEquals(25, elli.center().getZ(), .5);
@@ -111,7 +111,7 @@ public class InertiaEllipsoidTest
     }
 
     /**
-     * Test method for {@link inra.ijpb.measure.region3d.InertiaEllipsoid#inertiaEllipsoids(ij.ImageStack, int[], ij.measure.Calibration)}.
+     * Test method for {@link inra.ijpb.measure.region3d.EquivalentEllipsoid#equivalentEllipsoids(ij.ImageStack, int[], ij.measure.Calibration)}.
      */
     @Test
     public final void testCuboid_X30_Y20_Z10()
@@ -119,7 +119,7 @@ public class InertiaEllipsoidTest
         ImageStack image = createCenteredCuboid(50, 50, 50, 30, 20, 10);
         
         Calibration calib = new Calibration();
-        Ellipsoid elli = InertiaEllipsoid.inertiaEllipsoids(image, new int[] {255}, calib)[0];
+        Ellipsoid elli = EquivalentEllipsoid.equivalentEllipsoids(image, new int[] {255}, calib)[0];
         
         assertEquals( 0, ensureAngleWithin0And180(elli.phi()),   1.0);
         assertEquals( 0, ensureAngleWithin0And180(elli.theta()), 1.0);
@@ -127,7 +127,7 @@ public class InertiaEllipsoidTest
     }
 
     /**
-     * Test method for {@link inra.ijpb.measure.region3d.InertiaEllipsoid#inertiaEllipsoids(ij.ImageStack, int[], ij.measure.Calibration)}.
+     * Test method for {@link inra.ijpb.measure.region3d.EquivalentEllipsoid#equivalentEllipsoids(ij.ImageStack, int[], ij.measure.Calibration)}.
      */
     @Test
     public final void testCuboid_X30_Y10_Z20()
@@ -135,7 +135,7 @@ public class InertiaEllipsoidTest
         ImageStack image = createCenteredCuboid(50, 50, 50, 30, 10, 20);
         
         Calibration calib = new Calibration();
-        Ellipsoid elli = InertiaEllipsoid.inertiaEllipsoids(image, new int[] {255}, calib)[0];
+        Ellipsoid elli = EquivalentEllipsoid.equivalentEllipsoids(image, new int[] {255}, calib)[0];
         
         assertEquals( 0, ensureAngleWithin0And180(elli.phi()),   1.0);
         assertEquals( 0, ensureAngleWithin0And180(elli.theta()), 1.0);
@@ -143,7 +143,7 @@ public class InertiaEllipsoidTest
     }
     
     /**
-     * Test method for {@link inra.ijpb.measure.region3d.InertiaEllipsoid#inertiaEllipsoids(ij.ImageStack, int[], ij.measure.Calibration)}.
+     * Test method for {@link inra.ijpb.measure.region3d.EquivalentEllipsoid#equivalentEllipsoids(ij.ImageStack, int[], ij.measure.Calibration)}.
      */
     @Test
     public final void testCuboid_X20_Y30_Z10()
@@ -151,7 +151,7 @@ public class InertiaEllipsoidTest
         ImageStack image = createCenteredCuboid(50, 50, 50, 20, 30, 10);
         
         Calibration calib = new Calibration();
-        Ellipsoid elli = InertiaEllipsoid.inertiaEllipsoids(image, new int[] {255}, calib)[0];
+        Ellipsoid elli = EquivalentEllipsoid.equivalentEllipsoids(image, new int[] {255}, calib)[0];
         
         assertEquals(90, ensureAngleWithin0And180(elli.phi()),   1.0);
         assertEquals( 0, ensureAngleWithin0And180(elli.theta()), 1.0);
@@ -159,7 +159,7 @@ public class InertiaEllipsoidTest
     }
     
     /**
-     * Test method for {@link inra.ijpb.measure.region3d.InertiaEllipsoid#inertiaEllipsoids(ij.ImageStack, int[], ij.measure.Calibration)}.
+     * Test method for {@link inra.ijpb.measure.region3d.EquivalentEllipsoid#equivalentEllipsoids(ij.ImageStack, int[], ij.measure.Calibration)}.
      */
     @Test
     public final void testCuboid_X10_Y30_Z20()
@@ -167,7 +167,7 @@ public class InertiaEllipsoidTest
         ImageStack image = createCenteredCuboid(50, 50, 50, 10, 30, 20);
         
         Calibration calib = new Calibration();
-        Ellipsoid elli = InertiaEllipsoid.inertiaEllipsoids(image, new int[] {255}, calib)[0];
+        Ellipsoid elli = EquivalentEllipsoid.equivalentEllipsoids(image, new int[] {255}, calib)[0];
         
         assertEquals(90, ensureAngleWithin0And180(elli.phi()),   1.0);
         assertEquals( 0, ensureAngleWithin0And180(elli.theta()), 1.0);
@@ -175,7 +175,7 @@ public class InertiaEllipsoidTest
     }
     
     /**
-     * Test method for {@link inra.ijpb.measure.region3d.InertiaEllipsoid#inertiaEllipsoids(ij.ImageStack, int[], ij.measure.Calibration)}.
+     * Test method for {@link inra.ijpb.measure.region3d.EquivalentEllipsoid#equivalentEllipsoids(ij.ImageStack, int[], ij.measure.Calibration)}.
      */
     @Test
     public final void testCuboid_X10_Y20_Z30()
@@ -183,7 +183,7 @@ public class InertiaEllipsoidTest
         ImageStack image = createCenteredCuboid(50, 50, 50, 10, 20, 30);
         
         Calibration calib = new Calibration();
-        Ellipsoid elli = InertiaEllipsoid.inertiaEllipsoids(image, new int[] {255}, calib)[0];
+        Ellipsoid elli = EquivalentEllipsoid.equivalentEllipsoids(image, new int[] {255}, calib)[0];
         
         assertEquals( 0, ensureAngleWithin0And180(elli.phi()),   1.0);
         assertEquals(90, ensureAngleWithin0And180(elli.theta()), 1.0);
@@ -191,7 +191,7 @@ public class InertiaEllipsoidTest
     }
     
     /**
-     * Test method for {@link inra.ijpb.measure.region3d.InertiaEllipsoid#inertiaEllipsoids(ij.ImageStack, int[], ij.measure.Calibration)}.
+     * Test method for {@link inra.ijpb.measure.region3d.EquivalentEllipsoid#equivalentEllipsoids(ij.ImageStack, int[], ij.measure.Calibration)}.
      */
     @Test
     public final void testCuboid_X20_Y10_Z30()
@@ -199,7 +199,7 @@ public class InertiaEllipsoidTest
         ImageStack image = createCenteredCuboid(50, 50, 50, 20, 10, 30);
         
         Calibration calib = new Calibration();
-        Ellipsoid elli = InertiaEllipsoid.inertiaEllipsoids(image, new int[] {255}, calib)[0];
+        Ellipsoid elli = EquivalentEllipsoid.equivalentEllipsoids(image, new int[] {255}, calib)[0];
         
         assertEquals( 0, ensureAngleWithin0And180(elli.phi()),   1.0);
         assertEquals(90, ensureAngleWithin0And180(elli.theta()), 1.0);

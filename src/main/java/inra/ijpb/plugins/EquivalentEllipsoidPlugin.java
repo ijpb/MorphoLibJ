@@ -33,17 +33,17 @@ import ij.plugin.PlugIn;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.geometry.Vector3D;
 import inra.ijpb.label.LabelImages;
-import inra.ijpb.measure.region3d.InertiaEllipsoid;
-import inra.ijpb.measure.region3d.InertiaEllipsoid.InertiaMoments3D;
+import inra.ijpb.measure.region3d.EquivalentEllipsoid;
+import inra.ijpb.measure.region3d.EquivalentEllipsoid.Moments3D;
 
 /**
- * @deprecated replaced by EquivalentEllipsoidPlugin (since 1.4.1)
+ * Computes equivalent ellipsoid for each region with a binary or label 3D
+ * image. The spatial calibration is taken into account.
  * 
  * @author dlegland
  *
  */
-@Deprecated
-public class InertiaEllipsoidPlugin implements PlugIn
+public class EquivalentEllipsoidPlugin implements PlugIn
 {
     // ====================================================
     // Class variables
@@ -78,14 +78,14 @@ public class InertiaEllipsoidPlugin implements PlugIn
         ResultsTable vectorTable;
         try 
         {
-        	InertiaEllipsoid algo = new InertiaEllipsoid();
+        	EquivalentEllipsoid algo = new EquivalentEllipsoid();
         	DefaultAlgoListener.monitor(algo);
         	table = algo.computeTable(imagePlus);
             // show table results
             String title = imagePlus.getShortTitle() + "-ellipsoid";
             table.show(title);
         	
-            InertiaMoments3D[] moments = algo.computeMoments(image, labels, calib);
+            Moments3D[] moments = algo.computeMoments(image, labels, calib);
         	vectorTable = createVectorTable(labels, moments);
             title = imagePlus.getShortTitle() + "-eigenVectors";
             vectorTable.show(title);
@@ -94,14 +94,14 @@ public class InertiaEllipsoidPlugin implements PlugIn
         {
         	String msg = ex.getMessage();
         	IJ.log(msg);
-			IJ.error("Problem occured during Inertia Ellipsoid computation:\n" + msg);
+			IJ.error("Problem occured during Equivalent Ellipsoid computation:\n" + msg);
         	ex.printStackTrace(System.err);
         	return;
         }
 
     }
     
-    private ResultsTable createVectorTable(int[] labels, InertiaMoments3D[] moments)
+    private ResultsTable createVectorTable(int[] labels, Moments3D[] moments)
     {
 		// Initialize a new result table
 		ResultsTable table = new ResultsTable();

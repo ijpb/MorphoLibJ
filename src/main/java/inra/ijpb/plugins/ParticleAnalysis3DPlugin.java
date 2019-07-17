@@ -34,7 +34,7 @@ import inra.ijpb.geometry.Point3D;
 import inra.ijpb.geometry.Sphere;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.IntrinsicVolumes3D;
-import inra.ijpb.measure.region3d.InertiaEllipsoid;
+import inra.ijpb.measure.region3d.EquivalentEllipsoid;
 import inra.ijpb.measure.region3d.LargestInscribedBall;
 
 /**
@@ -128,7 +128,7 @@ public class ParticleAnalysis3DPlugin implements PlugIn
         gd.addCheckbox("Surface Area", true);
         gd.addCheckbox("Sphericity", true);
         gd.addCheckbox("Euler Number", true);
-        gd.addCheckbox("Inertia Ellipsoid", true);
+        gd.addCheckbox("Equivalent Ellipsoid", true);
         gd.addCheckbox("Ellipsoid Elongation", true);
         gd.addCheckbox("Max. Inscribed Ball", true);
         gd.addMessage("");
@@ -236,10 +236,10 @@ public class ParticleAnalysis3DPlugin implements PlugIn
         	sphericities = IntrinsicVolumes3D.sphericity(volumes, surfaces);
         }
         
-        // compute inertia ellipsoids and their elongations
+        // compute equivalent ellipsoids and their elongations
         if (computeEllipsoid)
         {
-        	ellipsoids = InertiaEllipsoid.inertiaEllipsoids(image, labels, calib);
+        	ellipsoids = EquivalentEllipsoid.equivalentEllipsoids(image, labels, calib);
         }
         if (computeElongations)
         {
