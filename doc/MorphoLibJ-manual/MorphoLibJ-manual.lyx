@@ -12167,8 +12167,15 @@ To
 \begin_inset space ~
 \end_inset
 
-Label combines a label image with a results table, and creates a new image
- for which each pixel/voxel is assigned the measurement value corresponding
+Label 
+\begin_inset CommandInset label
+LatexCommand label
+name "op:Colorize-Labels"
+
+\end_inset
+
+combines a label image with a results table, and creates a new image for
+ which each pixel/voxel is assigned the measurement value corresponding
  to the label it belongs to (Figure
 \begin_inset space ~
 \end_inset
@@ -12177,6 +12184,21 @@ Label combines a label image with a results table, and creates a new image
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:Assign-Measure-To-Label"
+
+\end_inset
+
+).
+ See also the Draw Label Values plugin (page
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "op:Draw-Label-Values"
+plural "false"
+caps "false"
+noprefix "false"
 
 \end_inset
 
@@ -12544,12 +12566,15 @@ computes the size (area in 2D, volume in 3D) of each region, and remove
  all labels whose size is below the value specified by the user.
 \end_layout
 
-\begin_layout Description
+\begin_layout Paragraph
 Remap
 \begin_inset space ~
 \end_inset
 
-Labels 
+Labels
+\end_layout
+
+\begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
 name "op:Remap-Labels"
@@ -12574,7 +12599,7 @@ empty labels
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -12695,7 +12720,6 @@ Remap Labels
  (a) Original label image.
  (b) Histogram of original label image, showing missing labels.
  (c) Histogram of the remapped label image, without missing labels.
- 
 \end_layout
 
 \end_inset
@@ -12773,6 +12797,128 @@ reference "fig:Remap-Labels"
 -c).
  The number of labels in the image corresponds to the maximal value in the
  image (in this case, 71).
+\end_layout
+
+\begin_layout Paragraph
+Draw
+\begin_inset space ~
+\end_inset
+
+Label
+\begin_inset space ~
+\end_inset
+
+Values
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "op:Draw-Label-Values"
+
+\end_inset
+
+draws the value of a feature measured on each label of an image using two
+ coordinates (bounding box, centroid...) also stored in a ResultsTable.
+ An example is shown on Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Draw-Label-Values"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ See also the plugin Assign
+\begin_inset space ~
+\end_inset
+
+Measure
+\begin_inset space ~
+\end_inset
+
+To
+\begin_inset space ~
+\end_inset
+
+Label (page
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "op:Colorize-Labels"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/grains/grains-WTH-areaOpen-lbl2-border-drawLabelValues.png
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Draw-Label-Values"
+
+\end_inset
+
+Example use of the 
+\begin_inset Quotes eld
+\end_inset
+
+Draw Label Values
+\begin_inset Quotes erd
+\end_inset
+
+ plugin.
+ The value of the elongation column are drawn as overlay on the image using
+ the position given by Bounding Box coordinates.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -16885,7 +17031,7 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="30" columns="10">
+<lyxtabular version="3" rows="31" columns="10">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top">
 <column alignment="center" valignment="top">
@@ -19730,6 +19876,107 @@ n.a.
 \begin_inset CommandInset ref
 LatexCommand pageref
 reference "op:Remap-Labels"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Draw Label Values
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "op:Draw-Label-Values"
+plural "false"
+caps "false"
+noprefix "false"
 
 \end_inset
 
