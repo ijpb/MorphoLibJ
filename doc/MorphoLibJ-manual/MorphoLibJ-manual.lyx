@@ -1,5 +1,5 @@
-#LyX 2.2 created this file. For more info see http://www.lyx.org/
-\lyxformat 508
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
 \begin_document
 \begin_header
 \save_transient_properties true
@@ -99,6 +99,8 @@
 \font_osf false
 \font_sf_scale 100 100
 \font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
 \graphics default
 \default_output_format pdf2
 \output_sync 0
@@ -141,6 +143,7 @@
 \suppress_date false
 \justification true
 \use_refstyle 0
+\use_minted 0
 \index Index
 \shortcut idx
 \color #008000
@@ -149,7 +152,10 @@
 \tocdepth 1
 \paragraph_separation indent
 \paragraph_indentation default
-\quotes_language english
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
@@ -234,11 +240,11 @@ LatexCommand tableofcontents
 
 \begin_layout Abstract
 The 
-\begin_inset Quotes fld
+\begin_inset Quotes cld
 \end_inset
 
 MorphoLibJ
-\begin_inset Quotes frd
+\begin_inset Quotes crd
 \end_inset
 
  library for ImageJ/Fiji contains a variety of plugins for processing and
@@ -286,6 +292,7 @@ The library implements several functionalities that were missing in the
 \begin_inset CommandInset citation
 LatexCommand citet
 key "Schneider_2012_nmeth,Schindelin_2012_nmeth"
+literal "true"
 
 \end_inset
 
@@ -340,6 +347,7 @@ The home page of the project is located at
 \begin_inset CommandInset href
 LatexCommand href
 target "http://ijpb.github.io/MorphoLibJ/"
+literal "false"
 
 \end_inset
 
@@ -347,6 +355,7 @@ target "http://ijpb.github.io/MorphoLibJ/"
 \begin_inset CommandInset href
 LatexCommand href
 target "http://github.com/ijpb/MorphoLibJ"
+literal "false"
 
 \end_inset
 
@@ -381,6 +390,7 @@ The reference publication for MorphoLibJ is
 \begin_inset CommandInset citation
 LatexCommand citet
 key "Legland_2016_bioinformatics"
+literal "true"
 
 \end_inset
 
@@ -427,6 +437,7 @@ If you use Fiji (
 \begin_inset CommandInset citation
 LatexCommand citet
 key "Schindelin_2012_nmeth,Schneider_2012_nmeth"
+literal "true"
 
 \end_inset
 
@@ -584,6 +595,7 @@ The original idea was to define a methodology to describe shapes by using
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Serra_1982,Serra_1992_cssp"
+literal "true"
 
 \end_inset
 
@@ -2060,6 +2072,7 @@ Filtering of a thin structure.
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Legland2009"
+literal "true"
 
 \end_inset
 
@@ -2088,6 +2101,7 @@ An alternative is to apply directional filtering.
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Soille2001,Heneghan_2002_mia,LuengoHendriks2003"
+literal "true"
 
 \end_inset
 
@@ -2610,6 +2624,7 @@ Connected components operators are more general as they propagate information
 \begin_inset CommandInset citation
 LatexCommand citet
 key "Breen_1996_cviu"
+literal "true"
 
 \end_inset
 
@@ -2942,6 +2957,7 @@ reference "fig:Morphological-Reconstruction-Grayscale"
 \begin_inset CommandInset citation
 LatexCommand citet
 key "Vincent_1993_tip,Robinson_2004_prl"
+literal "true"
 
 \end_inset
 
@@ -3771,6 +3787,7 @@ ion algorithm.
 \begin_inset CommandInset citation
 LatexCommand citet
 key "Soille_2003"
+literal "true"
 
 \end_inset
 
@@ -4443,6 +4460,7 @@ Classic Watershed is an ImageJ/Fiji plugin to perform watershed segmentation
 \begin_inset CommandInset citation
 LatexCommand citet
 key "Soille_1990,Vincent_1991_pami"
+literal "true"
 
 \end_inset
 
@@ -4952,6 +4970,7 @@ ed watershed algorithm by
 \begin_inset CommandInset citation
 LatexCommand citet
 key "Meyer_1990_jvcir"
+literal "true"
 
 \end_inset
 
@@ -5154,6 +5173,7 @@ Similar to the Marker-controlled Watershed plugin, this ImageJ/Fiji plugin
 \begin_inset CommandInset citation
 LatexCommand citet
 key "Meyer_1990_jvcir"
+literal "true"
 
 \end_inset
 
@@ -7316,6 +7336,7 @@ reference "fig:Perimeter-Estimation"
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Serra_1982,Legland2007,Ohser2009"
+literal "true"
 
 \end_inset
 
@@ -7332,6 +7353,7 @@ Perimeter can be measured using either two directions (horizontal and vertical),
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Moran1966,Legland2007"
+literal "true"
 
 \end_inset
 
@@ -7341,6 +7363,7 @@ key "Moran1966,Legland2007"
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Lehmann_2012_ij"
+literal "true"
 
 \end_inset
 
@@ -7776,6 +7799,7 @@ inertia ellipse
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Burger_Burge_2008"
+literal "true"
 
 \end_inset
 
@@ -7951,6 +7975,7 @@ may be of interest.
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Lantuejoul1981"
+literal "true"
 
 \end_inset
 
@@ -8011,6 +8036,7 @@ Geodesic diameter.
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Staal_2004_tmi"
+literal "true"
 
 \end_inset
 
@@ -8120,6 +8146,7 @@ While the values of isoperimetric deficit index theoretically range within
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Lehmann_2012_ij"
+literal "true"
 
 \end_inset
 
@@ -9273,6 +9300,7 @@ integral of the mean curvature
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Serra_1982,Ohser2009"
+literal "true"
 
 \end_inset
 
@@ -9314,6 +9342,7 @@ tunnels
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Serra_1982,Ohser2009"
+literal "true"
 
 \end_inset
 
@@ -9443,6 +9472,7 @@ from 3D binary images follows the same principle as the estimation of perimeter.
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Lang2001,Legland2007"
+literal "true"
 
 \end_inset
 
@@ -9455,6 +9485,7 @@ key "Lang2001,Legland2007"
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Lehmann_2012_ij"
+literal "true"
 
 \end_inset
 
@@ -9471,6 +9502,7 @@ As for 2D images, the measurement of Euler number from 3D images also relies
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Ohser2009"
+literal "true"
 
 \end_inset
 
@@ -9516,7 +9548,7 @@ The first moment
  corresponds to the volume of the particle.
  The normalization of the first-order moments by the volume leads to the
  3D centroid of the particle.
- The second-order moments can be used to compute the equivalent ellipsoid,
+ The second-order moments can be used to compute an equivalent ellipsoid,
  defined as the ellipsoid with the same moments up to the second order as
  the region.
 \end_layout
@@ -9567,12 +9599,29 @@ Ellipsoid.Radius3 the length of the smallest semi-axis
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
 Ellipsoid.Phi the azimut of the projection of the major axis on the XY plane,
- in degrees
+ in degrees (
+\begin_inset Quotes eld
+\end_inset
+
+yaw
+\begin_inset Quotes erd
+\end_inset
+
+)
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
 Ellipsoid.Theta the elevation of the major axis on the XY plane, in degrees
+ (
+\begin_inset Quotes eld
+\end_inset
+
+pitch
+\begin_inset Quotes erd
+\end_inset
+
+)
 \end_layout
 
 \begin_layout Labeling
@@ -9615,7 +9664,7 @@ name "fig:Ellipsoid-Angles"
 
 \end_inset
 
-Angles of inertia ellipsoid.
+Definition of angles for representing the orientation of equivalent ellipsoid.
 \end_layout
 
 \end_inset
@@ -9644,7 +9693,11 @@ reference "fig:Ellipsoid-Angles"
 \end_layout
 
 \begin_layout Enumerate
-a rotation around the 
+a rotation 
+\begin_inset Formula $R_{x}(\psi)$
+\end_inset
+
+ about the 
 \begin_inset Formula $x$
 \end_inset
 
@@ -9664,7 +9717,11 @@ a rotation around the
 \end_layout
 
 \begin_layout Enumerate
-a rotation around the 
+a rotation 
+\begin_inset Formula $R_{y}(\theta)$
+\end_inset
+
+ about the 
 \begin_inset Formula $y$
 \end_inset
 
@@ -9684,7 +9741,11 @@ a rotation around the
 \end_layout
 
 \begin_layout Enumerate
-a rotation around the 
+a rotation 
+\begin_inset Formula $R_{z}(\varphi)$
+\end_inset
+
+ about the 
 \begin_inset Formula $z$
 \end_inset
 
@@ -9704,7 +9765,12 @@ a rotation around the
 \end_layout
 
 \begin_layout Standard
-When the plugin 
+The global rotation matrix is assimilated to the product 
+\begin_inset Formula $R_{z}(\varphi)\cdot R_{y}(\theta)\cdot R_{x}(\psi)$
+\end_inset
+
+.
+ When the plugin 
 \begin_inset Quotes eld
 \end_inset
 
@@ -9834,6 +9900,7 @@ Given two label images, there are different measures that allow us to evaluate
 \begin_inset CommandInset citation
 LatexCommand citet
 key "tustison2009introducing"
+literal "true"
 
 \end_inset
 
@@ -10141,6 +10208,7 @@ ative observation of a stationnary binary process.
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Lang2001,Ohser2009,Doube2010"
+literal "true"
 
 \end_inset
 
@@ -10386,6 +10454,7 @@ reference "fig:Region-Adjacency-Graph"
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Florindo_2016_botanique"
+literal "true"
 
 \end_inset
 
@@ -10643,6 +10712,7 @@ Several methods exist for computing distance maps.
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Borgefors1984,Borgefors1986"
+literal "true"
 
 \end_inset
 
@@ -11190,6 +11260,7 @@ Larger neighborhood may be considered, resulting in a better approximation.
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Svensson_Borgefors_2002_prl,Svensson_Borgefors_2002_cviu"
+literal "true"
 
 \end_inset
 
@@ -11444,6 +11515,7 @@ Computation of the geodesic distance map on a binary image from the DRIVE
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Staal_2004_tmi"
+literal "true"
 
 \end_inset
 
@@ -13006,6 +13078,7 @@ All major methods have a general class with static methods that allow calling
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Poulet_2015_bmc"
+literal "true"
 
 \end_inset
 
@@ -13013,6 +13086,7 @@ key "Poulet_2015_bmc"
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Devaux2014"
+literal "true"
 
 \end_inset
 
@@ -13020,6 +13094,7 @@ key "Devaux2014"
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Silva2015"
+literal "true"
 
 \end_inset
 
