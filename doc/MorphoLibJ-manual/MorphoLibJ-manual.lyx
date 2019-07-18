@@ -85,7 +85,7 @@
 \end_preamble
 \use_default_options true
 \maintain_unincluded_children false
-\language american
+\language english
 \language_package default
 \inputencoding auto
 \fontencoding global
@@ -169,8 +169,6 @@
 \begin_body
 
 \begin_layout Standard
-
-\lang french
 \begin_inset ERT
 status open
 
@@ -9532,7 +9530,7 @@ The mathematical definition of the geometric moments for 3D regions is similar
  to the 2D case:
 \begin_inset Formula 
 \begin{align}
-m_{pqr}(X) & =\int\int I_{X}(x,y,z)x^{p}y^{q}z^{r}\cdot dx\cdot dy\cdot dz\label{eq:Moment-of-X-3D}
+m_{pqr}(X) & =\int\int\int I_{X}(x,y,z)x^{p}y^{q}z^{r}\cdot dx\cdot dy\cdot dz\label{eq:Moment-of-X-3D}
 \end{align}
 
 \end_inset
@@ -9550,7 +9548,17 @@ The first moment
  3D centroid of the particle.
  The second-order moments can be used to compute an equivalent ellipsoid,
  defined as the ellipsoid with the same moments up to the second order as
- the region.
+ the region of interest (see section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "chap:Equivalent-Ellipsoid-Computation"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Standard
@@ -9780,19 +9788,6 @@ Analyze regions 3D
 
  is used, it is also possible to compute elongation factors computed from
  ellipsoid radius.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-more details and notations ?
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Subsection
@@ -20106,6 +20101,1093 @@ List of image processing operators (2/2)
 \end_inset
 
 
+\end_layout
+
+\begin_layout Chapter
+Computation of equivalent ellipsoid coefficients
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "chap:Equivalent-Ellipsoid-Computation"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+It is often convenient to represent the results of second order moments
+ (section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Region-Analysis-3D"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) as an 
+\series bold
+equivalent ellipsoid 
+\series default
+that has the same orientation and the same eigen values as the structure
+ of interest.
+ The equivalent ellipsoid can be completely characterised by nine coefficients:
+\end_layout
+
+\begin_layout Itemize
+the three corodinates of the centroid
+\end_layout
+
+\begin_layout Itemize
+the three radius 
+\begin_inset Formula $a,b,c$
+\end_inset
+
+, with 
+\begin_inset Formula $a>b>c$
+\end_inset
+
+, corresponding to the lengths of each semi-axis
+\end_layout
+
+\begin_layout Itemize
+a 3D orientation, that can be represented by three Euler angles.
+\end_layout
+
+\begin_layout Section
+Notations
+\end_layout
+
+\begin_layout Standard
+We consider euclidean spaces of dimension 3.
+ Let 
+\begin_inset Formula $X$
+\end_inset
+
+ be the a 3D set representing the structure of interest.
+\end_layout
+
+\begin_layout Subsection
+Moments
+\end_layout
+
+\begin_layout Standard
+In 3D, the 
+\series bold
+moments
+\series default
+ 
+\begin_inset Formula $m_{pqr}$
+\end_inset
+
+ of order 
+\begin_inset Formula $(p,q,r)$
+\end_inset
+
+ are defined as:
+\begin_inset Formula 
+\begin{align}
+m_{pqr} & =\int\int\int I_{X}(x,y,z)x^{p}y^{q}z^{r}\cdot dx\cdot dy\cdot dz\label{eq:Moment-of-X-3D-1}
+\end{align}
+
+\end_inset
+
+where 
+\begin_inset Formula $I_{X}(x,y,z)$
+\end_inset
+
+ is the indicator function of the set 
+\begin_inset Formula $X$
+\end_inset
+
+, taking value 1 if the specified point is within the set 
+\begin_inset Formula $X$
+\end_inset
+
+, and 
+\begin_inset Formula $0$
+\end_inset
+
+ otherwise.
+ The moment 
+\begin_inset Formula $m_{000}$
+\end_inset
+
+ corresponds to the 
+\series bold
+volume
+\series default
+ of the structure.
+ The 
+\series bold
+centered moments 
+\series default
+are expressed as:
+\begin_inset Formula 
+\begin{align}
+\mu_{pqr} & =\int\int\int I_{X}(x,y,z)\left(x-x_{c}\right)^{p}\left(y-y_{c}\right)^{q}\left(z-z_{c}\right)^{r}\cdot dx\cdot dy\cdot dz\label{eq:Centered-Moment-of-X-3D}
+\end{align}
+
+\end_inset
+
+where 
+\begin_inset Formula $(x_{c},y_{c},z_{c})=(\frac{m_{100}}{m_{000}},\frac{m_{010}}{m_{000}},\frac{m_{001}}{m_{000}})$
+\end_inset
+
+ is the 
+\series bold
+centroid
+\series default
+ of 
+\begin_inset Formula $X$
+\end_inset
+
+.
+ The matrix of second order moments is the symmetric 
+\begin_inset Formula $3\times3$
+\end_inset
+
+ matrix that combines all the centered second order moments:
+\begin_inset Formula 
+\[
+\boldsymbol{M}=\left[\begin{array}{ccc}
+\mu_{200} & \mu_{110} & \mu_{101}\\
+\mu_{110} & \mu_{020} & \mu_{011}\\
+\mu_{101} & \mu_{011} & \mu_{002}
+\end{array}\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Eigen values decomposition
+\end_layout
+
+\begin_layout Standard
+The matrix 
+\begin_inset Formula $\boldsymbol{M}$
+\end_inset
+
+ can be factorized using eigen value decomposition:
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{M} & =\boldsymbol{Q}\boldsymbol{\Lambda}\boldsymbol{Q}^{t}
+\end{align*}
+
+\end_inset
+
+where
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\boldsymbol{Q}$
+\end_inset
+
+ is a 
+\begin_inset Formula $3\times3$
+\end_inset
+
+ orthogonal matrix whose 
+\begin_inset Formula $i$
+\end_inset
+
+-th column is the eigenvector 
+\begin_inset Formula $q_{i}$
+\end_inset
+
+ of 
+\begin_inset Formula $\boldsymbol{M}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\boldsymbol{\Lambda}$
+\end_inset
+
+ is a diagonal 
+\begin_inset Formula $3\times3$
+\end_inset
+
+ matrix whose diagonal elements are the corresponding eigen values, 
+\begin_inset Formula $\Lambda_{ii}=\lambda_{i}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Eigen values are ordered in decreasing order.
+ The matrix 
+\begin_inset Formula $\boldsymbol{Q}$
+\end_inset
+
+ can be used to extract the orientation of the main axes of the structure
+ (section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Equivalent-Ellipsoid-Angles"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+), whereas the eigen values 
+\begin_inset Formula $\lambda_{i}$
+\end_inset
+
+ can be related to the particle dimensions along these axes (section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Equivalent-Ellipsoid-Radius"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Section
+Computation of angles
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Equivalent-Ellipsoid-Angles"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This section largely follows the document of Greg Slabaugh 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Slabaugh_1999"
+literal "false"
+
+\end_inset
+
+ for obtaining Euler angles from a rotation matrix.
+ We mostly follow his notations.
+ Another useful reference may be 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Shoemake_1994_GraphicsGemIV"
+literal "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Rotation matrices
+\end_layout
+
+\begin_layout Standard
+A rotation of 
+\begin_inset Formula $\psi$
+\end_inset
+
+ radians about the 
+\begin_inset Formula $x$
+\end_inset
+
+-axis is noted by:
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{R}_{x}(\psi) & =\left[\begin{array}{ccc}
+1 & 0 & 0\\
+0 & \cos\psi & -\sin\psi\\
+0 & \sin\psi & \cos\psi
+\end{array}\right]
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Similarily, a rotation of 
+\begin_inset Formula $\theta$
+\end_inset
+
+ radians about the 
+\begin_inset Formula $y$
+\end_inset
+
+-axis is noted by:
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{R}_{y}(\theta) & =\left[\begin{array}{ccc}
+\cos\theta & 0 & \sin\theta\\
+0 & 1 & 0\\
+-\sin\theta & 0 & \cos\theta
+\end{array}\right]
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Finally, a rotation of 
+\begin_inset Formula $\varphi$
+\end_inset
+
+ radians about the 
+\begin_inset Formula $z$
+\end_inset
+
+-axis is noted by:
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{R}_{z}(\varphi) & =\left[\begin{array}{ccc}
+\cos\varphi & -\sin\varphi & 0\\
+\sin\varphi & \cos\varphi & 0\\
+0 & 0 & 1
+\end{array}\right]
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+A general rotation matrix may have the following form:
+\begin_inset Formula 
+\[
+\boldsymbol{R}=\left[\begin{array}{ccc}
+R_{11} & R_{12} & R_{13}\\
+R_{21} & R_{22} & R_{23}\\
+R_{31} & R_{32} & R_{33}
+\end{array}\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Such a matrix can be represented by a sequence of three successive rotations
+ around the main axes.
+ As matrix multiplication does not commute, the order of the axes one rotates
+ about will affect the result.
+ In MorphoLibJ, we follow the choice of G.
+ Slabaugh and consider rotation first about the 
+\begin_inset Formula $x$
+\end_inset
+
+-axis, then about the 
+\begin_inset Formula $y$
+\end_inset
+
+-axis, and finally about the 
+\begin_inset Formula $z$
+\end_inset
+
+-axis.
+ Then, the angles 
+\begin_inset Formula $\psi$
+\end_inset
+
+, 
+\begin_inset Formula $\theta$
+\end_inset
+
+ and 
+\begin_inset Formula $\varphi$
+\end_inset
+
+ correspond to Euler angles.
+ Angle 
+\begin_inset Formula $\psi$
+\end_inset
+
+ corresponds to the 
+\begin_inset Quotes eld
+\end_inset
+
+roll
+\begin_inset Quotes erd
+\end_inset
+
+, angle 
+\begin_inset Formula $\theta$
+\end_inset
+
+ to the 
+\begin_inset Quotes eld
+\end_inset
+
+pitch
+\begin_inset Quotes erd
+\end_inset
+
+, and angle 
+\begin_inset Formula $\varphi$
+\end_inset
+
+ to the 
+\begin_inset Quotes eld
+\end_inset
+
+yaw
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The global rotation matrix can be written as follow:
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{R} & =\boldsymbol{R}_{z}(\varphi)\boldsymbol{R}_{y}(\theta)\boldsymbol{R}_{x}(\psi)\\
+ & =\left[\begin{array}{ccc}
+\cos\theta\cos\varphi & \sin\psi\sin\theta\cos\varphi-\cos\psi\sin\varphi & \cos\psi\sin\theta\cos\varphi+\sin\psi\sin\varphi\\
+\cos\theta\sin\varphi & \sin\psi\sin\theta\sin\varphi+\cos\psi\cos\varphi & \cos\psi\sin\theta\sin\varphi-\sin\psi\cos\varphi\\
+-\sin\theta & \sin\psi\cos\theta & \cos\psi\cos\theta
+\end{array}\right]
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The problem is now to identify the three Euler angles 
+\begin_inset Formula $\psi$
+\end_inset
+
+, 
+\begin_inset Formula $\theta$
+\end_inset
+
+ and 
+\begin_inset Formula $\varphi$
+\end_inset
+
+ from the matrix coefficients.
+ This results in nine equations.
+\end_layout
+
+\begin_layout Subsection
+Elevation
+\end_layout
+
+\begin_layout Standard
+We start considering the elevation 
+\begin_inset Formula $\theta$
+\end_inset
+
+, or 
+\begin_inset Quotes eld
+\end_inset
+
+pitch
+\begin_inset Quotes erd
+\end_inset
+
+.
+ From element 
+\begin_inset Formula $R_{31}$
+\end_inset
+
+ of the matrix, one finds
+\begin_inset Formula 
+\begin{align*}
+R_{31} & =-\sin\theta
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+One identifies 
+\begin_inset Formula $\theta$
+\end_inset
+
+ with the following
+\begin_inset Formula 
+\begin{align*}
+\theta & =-\sin^{-1}(R_{31})
+\end{align*}
+
+\end_inset
+
+by keeping the value of 
+\begin_inset Formula $\theta\in[-\frac{\pi}{2};\frac{\pi}{2}]$
+\end_inset
+
+ to remove ambiguity.
+ The case 
+\begin_inset Formula $R_{31}=\pm1$
+\end_inset
+
+ will be considered later.
+ In practice, we replace the 
+\begin_inset Formula $\sin^{-1}$
+\end_inset
+
+ function by 
+\begin_inset Formula $\text{atan2}$
+\end_inset
+
+ function for better numerical stability.
+\end_layout
+
+\begin_layout Standard
+Compared to the document of Slabaugh, keeping 
+\begin_inset Formula $\theta\in[-\frac{\pi}{2};\frac{\pi}{2}]$
+\end_inset
+
+ removes the sign ambiguity of 
+\begin_inset Formula $\cos\theta$
+\end_inset
+
+, and therefore simplifies the remaining computations.
+\end_layout
+
+\begin_layout Subsection
+Roll
+\end_layout
+
+\begin_layout Standard
+The possible values of the roll 
+\begin_inset Formula $\psi$
+\end_inset
+
+ around the 
+\begin_inset Formula $x$
+\end_inset
+
+-axis can be found by
+\begin_inset Formula 
+\begin{align*}
+\frac{R_{32}}{R_{33}} & =\tan\psi
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This lead to the value of 
+\begin_inset Formula $\psi$
+\end_inset
+
+ as 
+\begin_inset Formula 
+\begin{align*}
+\psi & =\text{atan2}(R_{32},R_{33})
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $\text{atan2}(y,x)$
+\end_inset
+
+ is the arc tangent function of the two variables 
+\begin_inset Formula $y$
+\end_inset
+
+ and 
+\begin_inset Formula $x$
+\end_inset
+
+ that extends the 
+\begin_inset Formula $\text{atan}$
+\end_inset
+
+ function to the all four quadrants.
+ The function 
+\begin_inset Formula $\text{atan2}$
+\end_inset
+
+ is available in most programming languages.
+\end_layout
+
+\begin_layout Subsection
+Azimut
+\end_layout
+
+\begin_layout Standard
+The azimut 
+\begin_inset Formula $\varphi$
+\end_inset
+
+, or 
+\begin_inset Quotes eld
+\end_inset
+
+yaw
+\begin_inset Quotes erd
+\end_inset
+
+, can be obtained from 
+\begin_inset Formula 
+\begin{align*}
+\frac{R_{21}}{R_{11}} & =\tan\varphi\\
+\varphi & =\text{atan2}(R_{21},R_{11})
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Special case of 
+\begin_inset Formula $\cos\theta=0$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+When the matrix element 
+\begin_inset Formula $R_{31}=\pm1$
+\end_inset
+
+, this corresponds to an elevation angle of either 
+\begin_inset Formula $+\pi/2$
+\end_inset
+
+ or 
+\begin_inset Formula $-\pi/2$
+\end_inset
+
+: the main axis of the ellipsoid is aligned with the 
+\begin_inset Formula $z$
+\end_inset
+
+-axis.
+\end_layout
+
+\begin_layout Standard
+If 
+\begin_inset Formula $\theta=\pi/2$
+\end_inset
+
+ then 
+\begin_inset Formula 
+\begin{align*}
+R_{12} & =\sin\psi\cos\varphi-\cos\psi\sin\varphi=\sin(\psi-\varphi)\\
+R_{13} & =\cos\psi\cos\varphi-\sin\psi\sin\varphi=\cos(\psi-\varphi)\\
+R_{22} & =\sin\psi\sin\varphi-\cos\psi\cos\varphi=\cos(\psi-\varphi)=R_{13}\\
+R_{23} & =\cos\psi\sin\varphi-\sin\psi\cos\varphi=-\sin(\psi-\varphi)=-R_{12}
+\end{align*}
+
+\end_inset
+
+leading to 
+\begin_inset Formula 
+\begin{align*}
+\psi & =\varphi+\text{atan2}(R_{12},R_{13})
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+If 
+\begin_inset Formula $\theta=-\pi/2$
+\end_inset
+
+ then similar results follow:
+\begin_inset Formula 
+\begin{align*}
+R_{12} & =-\sin\psi\cos\varphi-\cos\psi\sin\varphi=-\sin(\psi-\varphi)\\
+R_{13} & =-\cos\psi\cos\varphi+\sin\psi\sin\varphi=-\cos(\psi-\varphi)\\
+R_{22} & =-\sin\psi\sin\varphi-\cos\psi\cos\varphi=\cos(\psi-\varphi)=-R_{13}\\
+R_{23} & =-\cos\psi\sin\varphi+\sin\psi\cos\varphi=-\sin(\psi-\varphi)=R_{12}
+\end{align*}
+
+\end_inset
+
+leading to
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\psi & =-\varphi+\text{atan2}(-R_{12},-R_{13})
+\end{align*}
+
+\end_inset
+
+When 
+\begin_inset Formula $\theta=\pm\pi/2$
+\end_inset
+
+, the values of 
+\begin_inset Formula $\psi$
+\end_inset
+
+ and 
+\begin_inset Formula $\varphi$
+\end_inset
+
+ are linked, and an infinite number of solutions exists.
+ This phenomenon is called 
+\emph on
+Gimbal lock
+\emph default
+.
+ A convenient way to obtain a single valid solution is to set the value
+ for the azimut 
+\begin_inset Formula $\varphi$
+\end_inset
+
+ arbitrarily to 
+\begin_inset Formula $0$
+\end_inset
+
+, and compute 
+\begin_inset Formula $\psi$
+\end_inset
+
+ from 
+\begin_inset Formula $R_{\text{12}}$
+\end_inset
+
+ and 
+\begin_inset Formula $R_{13}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Pseudocode?
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Computation of ellipsoid radius
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Equivalent-Ellipsoid-Radius"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Let us suppose that the ellipsoid is centered and aligned with the main
+ axes.
+ From centering, we have 
+\begin_inset Formula $m_{pqr}=\mu_{pqr}$
+\end_inset
+
+.
+ For integration, it is more convenient to use spherical coordinates 
+\begin_inset Formula $(\rho,\theta,\varphi)$
+\end_inset
+
+, corresponding to the radius, inclination with the vertical, and azimuth
+ (these notations are different from the ones used for Euler angles).
+ This corresponds to:
+\begin_inset Formula 
+\begin{align*}
+x & =\rho a\cos\varphi\sin\theta\\
+y & =\rho b\sin\varphi\sin\theta\\
+z & =\rho c\cos\theta
+\end{align*}
+
+\end_inset
+
+with 
+\begin_inset Formula $\rho\in[0;+\infty[$
+\end_inset
+
+, 
+\begin_inset Formula $\varphi\in[0;2\pi]$
+\end_inset
+
+ and 
+\begin_inset Formula $\theta\in[0;\pi]$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The Jacobian matrix of the transformation is as follow (see example 3 in
+ 
+\begin_inset Quotes eld
+\end_inset
+
+Jacobian matrix and determinant
+\begin_inset Quotes erd
+\end_inset
+
+ on Wikipedia
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://en.wikipedia.org/wiki/Jacobian_matrix_and_determinant
+\backslash
+#Example_3:_spherical-Cartesian_transformation
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+):
+\begin_inset Formula 
+\[
+J_{\Phi}(x,y,z)=\left[\begin{array}{ccc}
+\frac{\partial x}{\partial\rho} & \frac{\partial x}{\partial\theta} & \frac{\partial x}{\partial\varphi}\\
+\frac{\partial y}{\partial\rho} & \frac{\partial y}{\partial\theta} & \frac{\partial y}{\partial\varphi}\\
+\frac{\partial z}{\partial\rho} & \frac{\partial z}{\partial\theta} & \frac{\partial z}{\partial\varphi}
+\end{array}\right]=\left[\begin{array}{ccc}
+a\cos\varphi\sin\theta & \rho a\cos\varphi\cos\theta & -\rho a\sin\varphi\sin\theta\\
+b\sin\varphi\sin\theta & \rho b\sin\varphi\cos\theta & \rho b\cos\varphi\sin\theta\\
+c\cos\theta & -\rho c\sin\theta & 0
+\end{array}\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The determinant equals 
+\begin_inset Formula $\rho^{2}\sin\theta$
+\end_inset
+
+ if 
+\begin_inset Formula $a=b=c=1$
+\end_inset
+
+.
+ Introducing 
+\begin_inset Formula $a$
+\end_inset
+
+, 
+\begin_inset Formula $b$
+\end_inset
+
+ and 
+\begin_inset Formula $c$
+\end_inset
+
+ gives a determinant equal to 
+\begin_inset Formula $abc\rho^{2}\sin\theta$
+\end_inset
+
+.
+ Then the moment integral is given by:
+\begin_inset Formula 
+\begin{equation}
+\mu_{pqr}=abc\int_{0}^{2\pi}\int_{0}^{\pi}\int_{0}^{1}\left(\rho\cos\varphi\sin\theta\right)^{p}\left(\rho\sin\varphi\sin\theta\right)^{q}\left(\rho\cos\theta\right)^{r}\cdot\rho^{2}\sin\theta\cdot d\rho\cdot d\theta\cdot d\varphi
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Volume moment
+\end_layout
+
+\begin_layout Standard
+It is easy to check that the moment 
+\begin_inset Formula $m_{000}$
+\end_inset
+
+ corresponds to the volume of the ellipsoid (equal to 
+\begin_inset Formula $\frac{4\pi}{3}abc$
+\end_inset
+
+):
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+m_{000} & =abc\int_{0}^{2\pi}\int_{0}^{\pi}\int_{0}^{1}\rho^{2}\sin\theta\cdot d\rho\cdot d\theta\cdot d\varphi\\
+ & =\frac{abc}{3}\int_{0}^{2\pi}\int_{0}^{\pi}\sin\theta\cdot d\theta\cdot d\varphi=\frac{abc}{3}\int_{0}^{2\pi}(-\cos\pi+\cos0)\cdot d\varphi\\
+ & =\frac{2abc}{3}\int_{0}^{2\pi}d\varphi=\frac{4\pi}{3}abc
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Moment m200
+\end_layout
+
+\begin_layout Standard
+When considering centered ellipsoid aligned with principal axes, the eigen
+ values 
+\begin_inset Formula $\lambda_{i}$
+\end_inset
+
+ simply correspond to the moments 
+\begin_inset Formula $\mu_{200}$
+\end_inset
+
+, 
+\begin_inset Formula $\mu_{020}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mu_{002}$
+\end_inset
+
+.
+ Let us focus on the moment 
+\begin_inset Formula $\mu_{200}$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\mu_{200} & =abc\int_{0}^{2\pi}\int_{0}^{\pi}\int_{0}^{1}\left(a\rho\cos\varphi\sin\theta\right)^{2}\rho^{2}\sin\theta\cdot d\rho\cdot d\theta\cdot d\varphi\\
+ & =a^{3}bc\int_{0}^{2\pi}\int_{0}^{\pi}\int_{0}^{1}\rho^{4}d\rho\cdot\cos^{2}\varphi\sin^{3}\theta\cdot d\theta\cdot d\varphi\\
+ & =\frac{a^{3}bc}{5}\int_{0}^{2\pi}\int_{0}^{\pi}\sin^{3}\theta\cdot d\theta\cdot\cos^{2}\varphi\cdot d\varphi
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The integral over 
+\begin_inset Formula $\theta$
+\end_inset
+
+ can be developed using the linearisation of 
+\begin_inset Formula $\sin^{3}\theta$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\sin^{3}\theta & =\frac{3}{4}\sin\theta-\frac{1}{4}\sin\left(3\theta\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Incorporation into the integral gives:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\int_{0}^{\pi}\sin^{3}\theta d\theta & =\int_{0}^{\pi}\left(\frac{3}{4}\sin\theta-\frac{1}{4}\sin\left(3\theta\right)\right)d\theta\\
+ & =-\frac{3}{4}\left(\cos\pi-\cos0\right)-\frac{-1}{12}\left(\cos3\pi-\cos0\right)\\
+ & =\frac{3}{2}-\frac{1}{6}=\frac{4}{3}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Coming back to moment integral:
+\begin_inset Formula 
+\begin{align*}
+\mu_{200} & =\frac{a^{3}bc}{5}\frac{4}{3}\int_{0}^{2\pi}\cos^{2}\varphi\cdot d\varphi==\frac{a^{3}bc}{5}\frac{4}{3}\int_{0}^{2\pi}\frac{1}{2}+\frac{1}{2}\cos\left(2\varphi\right)d\varphi\\
+ & =\frac{a^{3}bc}{5}\frac{4}{3}\frac{1}{2}\left(2\pi-0\right)=\frac{4\pi}{3}\frac{a^{3}bc}{5}=\frac{a^{2}}{5}m_{000}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Then, the central moments are expressed as:
+\begin_inset Formula 
+\begin{align*}
+\lambda_{1}=\mu_{200} & =\frac{a^{2}}{5}m_{000}\\
+\lambda_{2}=\mu_{020} & =\frac{b^{2}}{5}m_{000}\\
+\lambda_{3}=\mu_{002} & =\frac{c^{2}}{5}m_{000}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We therefore have 
+\begin_inset Formula $\lambda_{i}=\frac{r_{i}^{2}}{5}m_{000}$
+\end_inset
+
+, then 
+\begin_inset Formula $r_{i}=\sqrt{5\lambda_{i}/m_{000}}$
+\end_inset
+
+.
 \end_layout
 
 \end_body
