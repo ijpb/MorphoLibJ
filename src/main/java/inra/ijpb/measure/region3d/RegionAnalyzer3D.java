@@ -128,7 +128,6 @@ public abstract class RegionAnalyzer3D<T> extends AlgoStub implements RegionAnal
         return map;
 	}
 
-
 	/**
 	 * Default implementation of computeTable method, using the two other
 	 * methods {@link #analyzeRegions(ImagePlus)} and {@link #createTable(Map)}:

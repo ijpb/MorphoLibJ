@@ -176,34 +176,4 @@ public class MaxFeretDiameter3D extends RegionAnalyzer3D<PointPair3D>
         fireStatusChanged(this, "");
         return labelMaxDiams;
 	}
-	
-	
-//	/**
-//	 * Computes Maximum Feret diameter from a single region in a binary image.
-//	 * 
-//	 * Computes diameter between corners of image pixels, so the result is
-//	 * always greater than or equal to one.
-//	 * 
-//	 * @param image
-//	 *            a binary image representing the particle.
-//	 * @param calib
-//	 *            the spatial calibration
-//	 * @return the maximum Feret diameter of the binary region
-//	 */
-//	public PointPair3D analyzeBinary(ImageStack image, double[] calib)
-//	{
-//		ArrayList<Point2D> points = RegionBoundaries.binaryParticleCorners(image);
-//		ArrayList<Point2D> convHull = Polygons2D.convexHull_jarvis(points);
-//
-//		// calibrate coordinates of convex hull vertices
-//		for (int i = 0; i < convHull.size(); i++)
-//		{
-//			Point2D vertex = convHull.get(i);
-//			vertex = new Point2D.Double(vertex.getX() * calib[0], vertex.getY() * calib[1]);
-//			convHull.set(i, vertex);
-//		}
-//		
-//		// compute Feret diameter of calibrated vertices
-//		return maxFeretDiameter(convHull);
-//	}
 }

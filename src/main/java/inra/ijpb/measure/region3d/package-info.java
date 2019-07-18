@@ -1,5 +1,5 @@
 /**
- * Quantitative measurements on 2D label / binary images of regions.
+ * Quantitative measurements on 3D label / binary images of regions.
  * 
  * @author dlegland
  */

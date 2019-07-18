@@ -13,6 +13,9 @@ import inra.ijpb.algo.AlgoListener;
 import inra.ijpb.geometry.Vector3D;
 
 /**
+ * Computation of Volume, Surface Area, Mean Breadth and Euler Number for 3D
+ * binary or label images.
+ * 
  * @author dlegland
  *
  */

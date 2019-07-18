@@ -12,7 +12,7 @@ import java.util.TreeMap;
 
 /**
  * Utility functions for computing position of boundary points/corners of
- * regions within binary or label images.
+ * regions within 3D binary or label images.
  * 
  * @author dlegland
  *

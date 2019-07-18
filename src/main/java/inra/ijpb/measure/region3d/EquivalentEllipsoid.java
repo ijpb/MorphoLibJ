@@ -283,7 +283,7 @@ public class EquivalentEllipsoid extends RegionAnalyzer3D<Ellipsoid>
             moments[i].Iyz /= moments[i].count;
         }
         
-        // Also adds the contrbution of the central voxel to avoid zeros
+        // Also adds the contribution of the central voxel to avoid zero
         // coefficients for labels with only one voxel
         for (int i = 0; i < nLabels; i++) 
         {
