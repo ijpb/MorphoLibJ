@@ -53,7 +53,7 @@ import inra.ijpb.measure.region3d.LargestInscribedBall;
  * If the input image is calibrated, the spatial resolution is taken into 
  * account for computing geometric features.
  * 
- * @see inra.ijpb.measure.GeometricMeasures3D
+ * @see inra.ijpb.measure.IntrinsicVolumes3D
  * 
  * @author David Legland
  *

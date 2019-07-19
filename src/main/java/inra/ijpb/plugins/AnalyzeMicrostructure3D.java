@@ -17,6 +17,12 @@ import inra.ijpb.measure.region3d.IntrinsicVolumesAnalyzer3D;
 import inra.ijpb.util.IJUtils;
 
 /**
+ * Plugin for computing densities of 3D intrinsic volumes (volume, surface area,
+ * mean breadth and Euler number) from 3D binary images.
+ * 
+ * @see inra.ijpb.plugins.AnalyseRegions3D
+ * @see inra.ijpb.measure.IntrinsicVolumes3D
+ * 
  * @author dlegland
  *
  */
