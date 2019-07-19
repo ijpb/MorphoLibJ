@@ -30,6 +30,7 @@ import org.junit.runners.Suite;
     // generic classes
     GeometryUtilsTest.class, 
     EquivalentEllipsoidTest.class,
+    InterfaceSurfaceAreaTest.class,
     MaxFeretDiameter3DTest.class })
 public class AllTests
 {
