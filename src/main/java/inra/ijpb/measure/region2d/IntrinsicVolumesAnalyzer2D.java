@@ -23,25 +23,24 @@ public class IntrinsicVolumesAnalyzer2D extends RegionAnalyzer2D<IntrinsicVolume
     // ==================================================
     // Static methods
 
+    /**
+     * @deprecated use IntrinsicVolumes2DUtils instead
+     *
+     * @param calib spatial calibration of image
+     * @return area lut
+     */
+    @Deprecated
     public static final double[] areaLut(Calibration calib)
     {
-        // base LUT
-        double[] lut = new double[] {0, 0.25, 0.25, 0.5,  0.25, 0.5, 0.5, 0.75,   0.25, 0.5, 0.5, 0.75,   0.5, 0.75, 0.75, 1.0};
-        
-        // take into account spatial calibration
-        double pixelArea = calib.pixelWidth * calib.pixelHeight;
-        for (int i = 0; i < lut.length; i++)
-        {
-            lut[i] *= pixelArea;
-        }
-        
-        return lut;
+        return IntrinsicVolumes2DUtils.areaLut(calib);
     }
     
     /**
      * Computes the Look-up table that is used to compute perimeter. The result
      * is an array with 16 entries, each entry corresponding to a binary 2-by-2
      * configuration of pixels.
+     * 
+     * @deprecated use IntrinsicVolumes2DUtils instead
      * 
      * @param calib
      *            the calibration of the image
@@ -50,113 +49,14 @@ public class IntrinsicVolumesAnalyzer2D extends RegionAnalyzer2D<IntrinsicVolume
      * @return an array containing for each 2-by-2 configuration index, the
      *         corresponding contribution to perimeter estimate
      */
+    @Deprecated
     public static final double[] perimeterLut(Calibration calib, int nDirs)
     {
-        // distances between a pixel and its neighbors.
-        // di refer to orthogonal neighbors
-        // dij refer to diagonal neighbors
-        double d1 = calib.pixelWidth;
-        double d2 = calib.pixelHeight;
-        double d12 = Math.hypot(d1, d2);
-        double area = d1 * d2;
-
-        // weights associated to each direction, computed only for four
-        // directions
-        double[] weights = null;
-        if (nDirs == 4)
-        {
-            weights = computeDirectionWeightsD4(d1, d2);
-        }
-
-        // initialize output array (2^(2*2) = 16 configurations in 2D)
-        final int nConfigs = 16;
-        double[] tab = new double[nConfigs];
-
-        // loop for each tile configuration
-        for (int i = 0; i < nConfigs; i++)
-        {
-            // create the binary image representing the 2x2 tile
-            boolean[][] im = new boolean[2][2];
-            im[0][0] = (i & 1) > 0;
-            im[0][1] = (i & 2) > 0;
-            im[1][0] = (i & 4) > 0;
-            im[1][1] = (i & 8) > 0;
-
-            // contributions for isothetic directions
-            double ke1, ke2;
-
-            // contributions for diagonal directions
-            double ke12;
-
-            // iterate over the 4 pixels within the configuration
-            for (int y = 0; y < 2; y++)
-            {
-                for (int x = 0; x < 2; x++)
-                {
-                    if (!im[y][x])
-                        continue;
-
-                    // divides by two to convert intersection count to projected
-                    // diameter
-                    ke1 = im[y][1 - x] ? 0 : (area / d1) / 2;
-                    ke2 = im[1 - y][x] ? 0 : (area / d2) / 2;
-
-                    if (nDirs == 2) 
-                    {
-                        // Count only orthogonal directions
-                        // divides by two for average, and by two for
-                        // multiplicity
-                        tab[i] += (ke1 + ke2) / 4;
-
-                    } 
-                    else if (nDirs == 4) 
-                    {
-                        // compute contribution of diagonal directions
-                        ke12 = im[1 - y][1 - x] ? 0 : (area / d12) / 2;
-
-                        // Decomposition of Crofton formula on 4 directions,
-                        // taking into account multiplicities
-                        tab[i] += ((ke1 / 2) * weights[0] + (ke2 / 2)
-                                * weights[1] + ke12 * weights[2]);
-                    }
-                }
-            }
-
-            // Add a normalisation constant
-            tab[i] *= Math.PI;
-        }
-
-        return tab;
+        return IntrinsicVolumes2DUtils.perimeterLut(calib, nDirs);
     }
 
-    /**
-     * Computes a set of weights for the four main directions (orthogonal plus
-     * diagonal) in discrete image. The sum of the weights equals 1.
-     * 
-     * @param dx
-     *            the spatial calibration in the x direction
-     * @param dy
-     *            the spatial calibration in the y direction
-     * @return the set of normalized weights
-     */
-    private static final double[] computeDirectionWeightsD4(double dx, double dy) 
-    {
-        // angle of the diagonal
-        double theta = Math.atan2(dy, dx);
-
-        // angular sector for direction 1 ([1 0])
-        double alpha1 = theta / Math.PI;
-
-        // angular sector for direction 2 ([0 1])
-        double alpha2 = (Math.PI / 2.0 - theta) / Math.PI;
-
-        // angular sector for directions 3 and 4 ([1 1] and [-1 1])
-        double alpha34 = .25;
-
-        // concatenate the different weights
-        return new double[] { alpha1, alpha2, alpha34, alpha34 };
-    }
     
+    @Deprecated
     public static final double[] computeCircularities(Result[] morphos)
     {
         int n = morphos.length;
@@ -173,36 +73,17 @@ public class IntrinsicVolumesAnalyzer2D extends RegionAnalyzer2D<IntrinsicVolume
      * The result is an array with 16 entries, each entry corresponding to a
      * binary 2-by-2 configuration of pixels.
      * 
+     * @deprecated use IntrinsicVolumes2DUtils instead
+     * 
      * @param conn
      *            the connectivity to use (4 or 8)
      * @return an array containing for each 2-by-2 configuration index, the
      *         corresponding contribution to euler number estimate
      */
+    @Deprecated
     public static final double[] eulerNumberLut(int conn)
     {
-        switch(conn)
-        {
-        case 4:
-            return eulerNumberLutC4();
-        case 8:
-            return eulerNumberLutC8();
-        default:
-            throw new IllegalArgumentException("Connectivity must be 4 or 8, not " + conn);
-        }
-    }
-    
-    private final static double[] eulerNumberLutC4()
-    {
-        return new double[] {
-                0,  0.25, 0.25, 0,    0.25, 0, 0.5, -0.25,  
-                0.25, 0.5, 0, -0.25,   0, -0.25, -0.25, 0};
-    }
-
-    private final static double[] eulerNumberLutC8()
-    {
-        return new double[] {
-                0,  0.25, 0.25, 0,    0.25, 0, -0.5, -0.25,  
-                0.25, -0.5, 0, -0.25,   0, -0.25, -0.25, 0};
+        return IntrinsicVolumes2DUtils.eulerNumberLut(conn);
     }
     
     /**
@@ -210,44 +91,19 @@ public class IntrinsicVolumesAnalyzer2D extends RegionAnalyzer2D<IntrinsicVolume
      * The result is an array with 16 entries, each entry corresponding to a
      * binary 2-by-2 configuration of pixels.
      * 
+     * @deprecated use IntrinsicVolumes2DUtils instead
+     * 
      * @param conn
      *            the connectivity to use (4 or 8)
      * @return an array containing for each 2-by-2 configuration index, the
      *         corresponding contribution to euler number estimate
      */
+    @Deprecated
     public static final int[] eulerNumberIntLut(int conn)
     {
-        switch(conn)
-        {
-        case 4:
-            return eulerNumberIntLutC4();
-        case 8:
-            return eulerNumberIntLutC8();
-        default:
-            throw new IllegalArgumentException("Connectivity must be 4 or 8, not " + conn);
-        }
-    }
-    
-    private final static int[] eulerNumberIntLutC4()
-    {
-        return new int[] {
-                0, 1, 1,  0,   1,  0,  2, -1,  
-                1, 2, 0, -1,   0, -1, -1,  0};
-//        return new int[] {
-//                0,  0.25, 0.25, 0,    0.25, 0, 0.5, -0.25,  
-//                0.25, 0.5, 0, -0.25,   0, -0.25, -0.25, 0};
+        return IntrinsicVolumes2DUtils.eulerNumberIntLut(conn);
     }
 
-    private final static int[] eulerNumberIntLutC8()
-    {
-        return new int[] {
-                0,  1, 1,  0,   1,  0, -2, -1,  
-                1, -2, 0, -1,   0, -1, -1,  0};
-//        return new int[] {
-//                0,  0.25, 0.25, 0,    0.25, 0, -0.5, -0.25,  
-//                0.25, -0.5, 0, -0.25,   0, -0.25, -0.25, 0};
-    }
-    
 
     // ==================================================
     // Class members
@@ -363,7 +219,7 @@ public class IntrinsicVolumesAnalyzer2D extends RegionAnalyzer2D<IntrinsicVolume
         // Compute area if necessary
         if (this.computeArea)
         {
-            double[] areaLut = areaLut(calib);
+            double[] areaLut = IntrinsicVolumes2DUtils.areaLut(calib);
             double[] areas = BinaryConfigurationsHistogram2D.applyLut(histograms, areaLut);
             for (int i = 0; i < labels.length; i++)
             {
@@ -374,7 +230,7 @@ public class IntrinsicVolumesAnalyzer2D extends RegionAnalyzer2D<IntrinsicVolume
         // Compute perimeter if necessary
         if (this.computePerimeter)
         {
-            double[] perimLut = perimeterLut(calib, this.directionNumber);
+            double[] perimLut = IntrinsicVolumes2DUtils.perimeterLut(calib, this.directionNumber);
             double[] perims = BinaryConfigurationsHistogram2D.applyLut(histograms, perimLut);
             for (int i = 0; i < labels.length; i++)
             {
@@ -385,7 +241,7 @@ public class IntrinsicVolumesAnalyzer2D extends RegionAnalyzer2D<IntrinsicVolume
         // Compute Euler number if necessary
         if (this.computeEulerNumber)
         {
-            double[] eulerLut = eulerNumberLut(this.connectivity);
+            double[] eulerLut = IntrinsicVolumes2DUtils.eulerNumberLut(this.connectivity);
             double[] eulers = BinaryConfigurationsHistogram2D.applyLut(histograms, eulerLut);
             for (int i = 0; i < labels.length; i++)
             {

@@ -8,7 +8,7 @@ import ij.process.ImageProcessor;
 import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.region2d.BinaryConfigurationsHistogram2D;
-import inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D;
+import inra.ijpb.measure.region2d.IntrinsicVolumes2DUtils;
 
 /**
  * Computation of intrinsic volumes(area, perimeter, Euler number) in planar
@@ -19,6 +19,8 @@ import inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D;
  * images should be specified as an array of integers.
  * 
  * @see IntrinsicVolumes3D
+ * @see inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D
+ * @see inra.ijpb.measure.region2d.IntrinsicVolumes2DUtils
  * 
  * @author dlegland
  *
@@ -124,7 +126,7 @@ public class IntrinsicVolumes2D
     public static final double perimeter(ImageProcessor image, Calibration calib, int nDirs)
     {
         // pre-compute LUT corresponding to resolution and number of directions
-        double[] lut = IntrinsicVolumesAnalyzer2D.perimeterLut(calib, nDirs);
+        double[] lut = IntrinsicVolumes2DUtils.perimeterLut(calib, nDirs);
 
         // histogram of configurations for each label
         int[] histo = new BinaryConfigurationsHistogram2D().process(image);
@@ -152,7 +154,7 @@ public class IntrinsicVolumes2D
     public static final double[] perimeters(ImageProcessor image, int[] labels, Calibration calib, int nDirs)
     {
         // pre-compute LUT corresponding to resolution and number of directions
-        double[] lut = IntrinsicVolumesAnalyzer2D.perimeterLut(calib, nDirs);
+        double[] lut = IntrinsicVolumes2DUtils.perimeterLut(calib, nDirs);
 
         // histogram of configurations for each label
         int[][] histos = new BinaryConfigurationsHistogram2D().process(image, labels);
@@ -176,7 +178,7 @@ public class IntrinsicVolumes2D
             Calibration calib, int nDirs)
     {
         // create associative array to know index of each label
-        double[] lut = IntrinsicVolumesAnalyzer2D.perimeterLut(calib, nDirs);
+        double[] lut = IntrinsicVolumes2DUtils.perimeterLut(calib, nDirs);
 
         // histogram of configurations for each label
         int[] histo = new BinaryConfigurationsHistogram2D().processInnerFrame(image);
@@ -186,11 +188,20 @@ public class IntrinsicVolumes2D
         return perim / samplingArea(image, calib);
     }
 
-
+    /**
+     * Measures the Euler number of the region within the binary image, using
+     * the specified connectivity.
+     * 
+     * @param image
+     *            the input 2D binary image
+     * @param conn
+     *            the connectivity to use (either 4 or 8)
+     * @return the Euler number of the region within the binary image
+     */
     public static final int eulerNumber(ImageProcessor image, int conn)
     {
         // pre-compute LUT corresponding to connectivity
-        int[] lut = IntrinsicVolumesAnalyzer2D.eulerNumberIntLut(conn);
+        int[] lut = IntrinsicVolumes2DUtils.eulerNumberIntLut(conn);
 
         // histogram of configurations for each label
         int[] histo = new BinaryConfigurationsHistogram2D().process(image);
@@ -199,10 +210,22 @@ public class IntrinsicVolumes2D
         return BinaryConfigurationsHistogram2D.applyLut(histo, lut) / 4;
     }
 
+    /**
+     * Measures the Euler number of each region given in the "labels" argument,
+     * using the specified connectivity.
+     * 
+     * @param image
+     *            the input label image (with labels having integer values)
+     * @param labels
+     *            the set of unique labels in image
+     * @param conn
+     *            the connectivity to use (either 4 or 8)
+     * @return the Euler number of each region within the image
+     */
     public static final int[] eulerNumbers(ImageProcessor image, int[] labels, int conn)
     {
         // pre-compute LUT corresponding to connectivity
-        int[] lut = IntrinsicVolumesAnalyzer2D.eulerNumberIntLut(conn);
+        int[] lut = IntrinsicVolumes2DUtils.eulerNumberIntLut(conn);
 
         // histogram of configurations for each label
         int[][] histos = new BinaryConfigurationsHistogram2D().process(image, labels);
@@ -217,10 +240,22 @@ public class IntrinsicVolumes2D
         return euler;
     }
 
+    /**
+     * Measures the Euler number density of the foreground region within a
+     * binary image, using the specified connectivity.
+     * 
+     * @param image
+     *            the input 2D binary image
+     * @param calib
+     *            the spatial calibration of the image
+     * @param conn
+     *            the connectivity to use (either 4 or 8)
+     * @return the Euler number density within the binary image
+     */
     public static final double eulerNumberDensity(ImageProcessor image, Calibration calib, int conn)
     {
         // create associative array to know index of each label
-        double[] lut = IntrinsicVolumesAnalyzer2D.eulerNumberLut(conn);
+        double[] lut = IntrinsicVolumes2DUtils.eulerNumberLut(conn);
 
         // histogram of configurations for each label
         int[] histo = new BinaryConfigurationsHistogram2D().processInnerFrame(image);

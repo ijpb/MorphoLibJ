@@ -44,6 +44,7 @@ import inra.ijpb.measure.region2d.Centroid;
 import inra.ijpb.measure.region2d.Convexity;
 import inra.ijpb.measure.region2d.GeodesicDiameter;
 import inra.ijpb.measure.region2d.InertiaEllipse;
+import inra.ijpb.measure.region2d.IntrinsicVolumes2DUtils;
 import inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D;
 import inra.ijpb.measure.region2d.LargestInscribedCircle;
 import inra.ijpb.measure.region2d.MaxFeretDiameter;
@@ -300,7 +301,7 @@ public class AnalyzeRegions implements PlugInFilter
         
     	if (computeCircularity)
     	{
-    		double[] circularities = IntrinsicVolumesAnalyzer2D.computeCircularities(intrinsicVolumes);
+    		double[] circularities = IntrinsicVolumes2DUtils.computeCircularities(intrinsicVolumes);
     		addColumnToTable(table, "Circularity", circularities);
     	}
 

@@ -77,7 +77,7 @@ public class InterfaceSurfaceArea
         // direction weights corresponding to area of Voronoi partition on the
         // unit sphere, when germs are the 26 directions on the unit cube
         // Sum of (c1+c2+c3 + c4*2+c5*2+c6*2 + c7*4) equals 1.
-        double[] weights = IntrinsicVolumes3DUtils.computeDirectionWeights3d13(calib);
+        double[] weights = IntrinsicVolumes3DUtils.directionWeights3d13(calib);
         
         // contribution to number of intersections for each direction
         double[] kei = new double[7];

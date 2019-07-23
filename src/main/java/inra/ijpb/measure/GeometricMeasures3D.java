@@ -65,7 +65,7 @@ import inra.ijpb.measure.region3d.LargestInscribedBall;
  * }
  * </pre>
  * 
- * @deprecated replaced by inra.ijpb.measure.IntrinsicVolumes3D
+ * @deprecated use IntrinsicVolumes3D instead
  * 
  * @author David Legland
  *

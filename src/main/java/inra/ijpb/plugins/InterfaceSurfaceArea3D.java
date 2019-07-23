@@ -35,7 +35,8 @@ import inra.ijpb.measure.region3d.InterfaceSurfaceArea;
  * Plugin for measuring the surface area of the interface between two labels
  * within a 3D label image.
  * 
- * @see inra.ijpb.measure.AnalyzeRegions3D
+ * @see inra.ijpb.plugins.AnalyzeRegions3D
+ * @see inra.ijpb.measure.IntrinsicVolumes3D
  * 
  * @author David Legland
  *

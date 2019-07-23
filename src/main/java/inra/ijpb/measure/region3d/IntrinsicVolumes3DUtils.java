@@ -3,17 +3,28 @@
  */
 package inra.ijpb.measure.region3d;
 
+import ij.ImageStack;
 import ij.measure.Calibration;
 import inra.ijpb.geometry.Vector3D;
 
 /**
- * Utility functions for classes that compute intrinsic volumes measures.
+ * Utility functions for classes that compute 3D intrinsic volumes measures.
+ * 
+ * @see inra.ijpb.measure.IntrinsicVolumes3D
  * 
  * @author dlegland
  *
  */
 public class IntrinsicVolumes3DUtils
 {
+    /**
+     * Computes the Look-up table that is used to compute volume.
+     * 
+     * @param calib
+     *            the spatial calibration of the image
+     * @return the look-up-table between binary voxel configuration index and
+     *         contribution to volume measure
+     */
     public static final double[] volumeLut(Calibration calib)
     {
         // initialize output array (256 configurations in 3D)
@@ -162,7 +173,7 @@ public class IntrinsicVolumes3DUtils
         // direction weights corresponding to area of Voronoi partition on the
         // unit sphere, when germs are the 26 directions on the unit cube
         // Sum of (c1+c2+c3 + c4*2+c5*2+c6*2 + c7*4) equals 1.
-        double[] weights = computeDirectionWeights3d13(calib);
+        double[] weights = directionWeights3d13(calib);
     
         // initialize output array (256 configurations in 3D)
         int nbConfigs = 256;
@@ -353,7 +364,7 @@ public class IntrinsicVolumes3DUtils
         // direction weights corresponding to area of Voronoi partition on the
         // unit sphere, when germs are the 26 directions on the unit cube
         // Sum of (c1+c2+c3 + c4*2+c5*2+c6*2 + c7*4) equals 1.
-        double[] weights = computeDirectionWeights3d13(calib);
+        double[] weights = directionWeights3d13(calib);
 
         // projected diameters along each direction
         double[] diams = new double[7];
@@ -650,7 +661,23 @@ public class IntrinsicVolumes3DUtils
     }
     
     /**
-     * Return an array with seven values corresponding the unique direction
+     * Returns an array with seven values corresponding the unique direction
+     * vectors obtained with 3 directions. The results simply consists in 1/3
+     * for the three main directions, and 0 otherwise. The method is provided
+     * for the sake of homogeneity with directionWeights3d13.
+     * 
+     * @param calib
+     *            the spatial calibration of the 3D image
+     * @return an array of seven values, corresponding to the three isothetic,
+     *         three plane diagonal, and one cube diagonal directions.
+     */
+    public static final double[] directionWeights3d3(Calibration calib) 
+    {
+        final double third = 1.0 / 3.0;
+        return new double[] { third, third, third, 0, 0, 0, 0, 0, 0, 0 };
+    }
+    /**
+     * Returns an array with seven values corresponding the unique direction
      * vectors obtained with 13 directions.
      * 
      * @param calib
@@ -658,8 +685,7 @@ public class IntrinsicVolumes3DUtils
      * @return an array of seven values, corresponding to the three isothetic,
      *         three plane diagonal, and one cube diagonal directions.
      */
-    //TODO: rename
-    public static final double[] computeDirectionWeights3d13(Calibration calib) 
+    public static final double[] directionWeights3d13(Calibration calib) 
     {
         // extract resolution as individual variables
         double dx = calib.pixelWidth;
@@ -847,7 +873,16 @@ public class IntrinsicVolumes3DUtils
         return lut;
     }
 
-   /**
+    public static final double samplingVolume(ImageStack image, Calibration calib)
+    {
+        // size of image
+        int sizeX = image.getWidth();
+        int sizeY = image.getHeight();
+        int sizeZ = image.getSize();
+        return (sizeX - 1) * calib.pixelWidth * (sizeY - 1) * calib.pixelHeight * (sizeZ - 1) * calib.pixelDepth;   
+    }
+    
+    /**
      * Private constructor to prevent instantiation.
      */
     private IntrinsicVolumes3DUtils()

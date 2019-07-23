@@ -8,17 +8,23 @@ import ij.measure.Calibration;
 import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.region3d.BinaryConfigurationsHistogram3D;
-import inra.ijpb.measure.region3d.IntrinsicVolumesAnalyzer3D;
+import inra.ijpb.measure.region3d.IntrinsicVolumes3DUtils;
 
 /**
- * Computation of intrinsic volumes (volume, surface area, mean breadth and
- * Euler number) for binary or label 3D images.
+ * Collection of static classes for the computation of intrinsic volumes
+ * (volume, surface area, mean breadth and Euler number) for binary or label 3D
+ * images.
+ * 
+ * Static methods provides computation of either the intrinsic volumes for
+ * individual regions / labels, or the density of the intrinsic volumes for
+ * porous media.
  * 
  * For binary images, a binary stack is expected, together with the spatial
  * calibration of the image. For label images, the list of region labels within
  * images should be specified as an array of integers.
  * 
  * @see IntrinsicVolumes2D
+ * @see inra.ijpb.measure.region3d.IntrinsicVolumesAnalyzer3D
  * 
  * @author dlegland
  *
@@ -117,7 +123,7 @@ public class IntrinsicVolumes3D
     public static final double surfaceArea(ImageStack image, Calibration calib, int nDirs)
     {
         // pre-compute LUT corresponding to resolution and number of directions
-        double[] lut = IntrinsicVolumesAnalyzer3D.surfaceAreaLut(calib, nDirs);
+        double[] lut = IntrinsicVolumes3DUtils.surfaceAreaLut(calib, nDirs);
 
         // Compute index of each 2x2x2 binary voxel configuration, associate LUT
         // contribution, and sum up for each label
@@ -146,7 +152,7 @@ public class IntrinsicVolumes3D
             Calibration calib, int nDirs)
     {
         // pre-compute LUT corresponding to resolution and number of directions
-        double[] lut = IntrinsicVolumesAnalyzer3D.surfaceAreaLut(calib, nDirs);
+        double[] lut = IntrinsicVolumes3DUtils.surfaceAreaLut(calib, nDirs);
 
         // Compute index of each 2x2x2 binary voxel configuration, associate LUT
         // contribution, and sum up for each label
@@ -171,7 +177,7 @@ public class IntrinsicVolumes3D
     public static final double surfaceAreaDensity(ImageStack image, Calibration calib, int nDirs)
     {
         // pre-compute LUT corresponding to resolution and number of directions
-        double[] lut = IntrinsicVolumesAnalyzer3D.surfaceAreaLut(calib, nDirs);
+        double[] lut = IntrinsicVolumes3DUtils.surfaceAreaLut(calib, nDirs);
     
         // Compute index of each 2x2x2 binary voxel configuration, associate LUT
         // contribution, and sum up
@@ -269,7 +275,7 @@ public class IntrinsicVolumes3D
     public static final double meanBreadth(ImageStack image, Calibration calib, int nDirs, int conn2d)
     {
         // pre-compute LUT corresponding to resolution and number of directions
-        double[] lut = IntrinsicVolumesAnalyzer3D.meanBreadthLut(calib, nDirs, conn2d);
+        double[] lut = IntrinsicVolumes3DUtils.meanBreadthLut(calib, nDirs, conn2d);
 
         // Compute index of each 2x2x2 binary voxel configuration, associate LUT
         // contribution, and sum up
@@ -300,7 +306,7 @@ public class IntrinsicVolumes3D
             Calibration calib, int nDirs, int conn2d)
     {
         // pre-compute LUT corresponding to resolution and number of directions
-        double[] lut = IntrinsicVolumesAnalyzer3D.meanBreadthLut(calib, nDirs, conn2d);
+        double[] lut = IntrinsicVolumes3DUtils.meanBreadthLut(calib, nDirs, conn2d);
 
         // Compute index of each 2x2x2 binary voxel configuration, associate LUT
         // contribution, and sum up for each label
@@ -327,7 +333,7 @@ public class IntrinsicVolumes3D
     public static final double meanBreadthDensity(ImageStack image, Calibration calib, int nDirs, int conn2d)
     {
         // pre-compute LUT corresponding to resolution and number of directions
-        double[] lut = IntrinsicVolumesAnalyzer3D.meanBreadthLut(calib, nDirs, conn2d);
+        double[] lut = IntrinsicVolumes3DUtils.meanBreadthLut(calib, nDirs, conn2d);
     
         // Compute index of each 2x2x2 binary voxel configuration, associate LUT
         // contribution, and sum u
@@ -352,7 +358,7 @@ public class IntrinsicVolumes3D
     public static final double eulerNumber(ImageStack image, int conn)
     {
         // pre-compute LUT corresponding to the chosen connectivity
-        double[] lut = IntrinsicVolumesAnalyzer3D.eulerNumberLut(conn);
+        double[] lut = IntrinsicVolumes3DUtils.eulerNumberLut(conn);
 
         // Compute index of each 2x2x2 binary voxel configuration, associate LUT
         // contribution, and sum up
@@ -376,7 +382,7 @@ public class IntrinsicVolumes3D
             int conn)
     {    
         // pre-compute LUT corresponding to the chosen connectivity
-        double[] lut = IntrinsicVolumesAnalyzer3D.eulerNumberLut(conn);
+        double[] lut = IntrinsicVolumes3DUtils.eulerNumberLut(conn);
 
         // Compute index of each 2x2x2 binary voxel configuration, associate LUT
         // contribution, and sum up for each label
@@ -399,7 +405,7 @@ public class IntrinsicVolumes3D
     public static final double eulerNumberDensity(ImageStack image, Calibration calib, int conn)
     {
         // pre-compute LUT corresponding to resolution and number of directions
-        double[] lut = IntrinsicVolumesAnalyzer3D.eulerNumberLut(conn);
+        double[] lut = IntrinsicVolumes3DUtils.eulerNumberLut(conn);
 
         // Compute index of each 2x2x2 binary voxel configuration, associate LUT
         // contribution, and sum up

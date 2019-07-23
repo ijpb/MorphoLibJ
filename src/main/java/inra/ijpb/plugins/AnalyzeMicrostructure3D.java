@@ -13,14 +13,14 @@ import ij.plugin.PlugIn;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.measure.IntrinsicVolumes3D;
 import inra.ijpb.measure.region3d.BinaryConfigurationsHistogram3D;
-import inra.ijpb.measure.region3d.IntrinsicVolumesAnalyzer3D;
+import inra.ijpb.measure.region3d.IntrinsicVolumes3DUtils;
 import inra.ijpb.util.IJUtils;
 
 /**
  * Plugin for computing densities of 3D intrinsic volumes (volume, surface area,
  * mean breadth and Euler number) from 3D binary images.
  * 
- * @see inra.ijpb.plugins.AnalyseRegions3D
+ * @see inra.ijpb.plugins.AnalyzeRegions3D
  * @see inra.ijpb.measure.IntrinsicVolumes3D
  * 
  * @author dlegland
@@ -195,25 +195,25 @@ public class AnalyzeMicrostructure3D implements PlugIn
         // geometrical quantities
         if (computeVolume)
         {
-            double[] volumeLut = IntrinsicVolumesAnalyzer3D.volumeLut(calib);
+            double[] volumeLut = IntrinsicVolumes3DUtils.volumeLut(calib);
             double volume = BinaryConfigurationsHistogram3D.applyLut(histogram, volumeLut);
             table.addValue("VolumeDensity", volume / vol);
         }
         if (computeSurface)
         {
-            double[] surfaceAreaLut = IntrinsicVolumesAnalyzer3D.surfaceAreaLut(calib, surfaceAreaDirs);
+            double[] surfaceAreaLut = IntrinsicVolumes3DUtils.surfaceAreaLut(calib, surfaceAreaDirs);
             double surfaceArea = BinaryConfigurationsHistogram3D.applyLut(histogram, surfaceAreaLut);
             table.addValue("SurfaceAreaDensity", surfaceArea / vol);
         }
         if (computeMeanBreadth)
         {
-            double[] meanBreadthLut = IntrinsicVolumesAnalyzer3D.meanBreadthLut(calib, meanBreadthDirs, connectivity2d);
+            double[] meanBreadthLut = IntrinsicVolumes3DUtils.meanBreadthLut(calib, meanBreadthDirs, connectivity2d);
             double meanBreadth = BinaryConfigurationsHistogram3D.applyLut(histogram, meanBreadthLut);
             table.addValue("MeanBreadthDensity", meanBreadth / vol);
         }
         if (computeEulerNumber)
         {
-            double[] eulerNumberLut = IntrinsicVolumesAnalyzer3D.eulerNumberLut(connectivity);
+            double[] eulerNumberLut = IntrinsicVolumes3DUtils.eulerNumberLut(connectivity);
             double eulerNumber = BinaryConfigurationsHistogram3D.applyLut(histogram, eulerNumberLut);
             table.addValue("EulerNumberDensity", eulerNumber / vol);
         }
