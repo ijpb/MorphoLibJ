@@ -8,6 +8,7 @@ import ij.measure.Calibration;
 import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.region3d.BinaryConfigurationsHistogram3D;
+import inra.ijpb.measure.region3d.InterfaceSurfaceArea;
 import inra.ijpb.measure.region3d.IntrinsicVolumes3DUtils;
 
 /**
@@ -106,6 +107,29 @@ public class IntrinsicVolumes3D
         return voxelCount / voxelNumber;
     }
 
+    /**
+     * Measures the surface area of the interface between two regions in a 3D label image.
+     * 
+     * @see inra.ijpb.measure.region3d.InterfaceSurfaceArea
+     * 
+     * @param image
+     *            the 3D image containing the label of each particle
+     * @param label1
+     *            the label of the first region
+     * @param label2
+     *            the label of the second region
+     * @param calib
+     *            the spatial calibration of the image
+     * @param nDirs
+     *            the number of directions to consider, either 3 or 13
+     * @return the surface area of each region within the image
+     */
+    public static final double interfaceSurfaceArea(ImageStack image, int label1, int label2, Calibration calib, int nDirs)
+    {
+        InterfaceSurfaceArea algo = new InterfaceSurfaceArea(nDirs);
+        return algo.process(image, label1, label2, calib);
+    }
+    
     /**
      * Measures the surface area of a single region within a 3D binary image.
      * 

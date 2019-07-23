@@ -29,7 +29,7 @@ import ij.gui.GenericDialog;
 import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
-import inra.ijpb.measure.region3d.InterfaceSurfaceArea;
+import inra.ijpb.measure.IntrinsicVolumes3D;
 
 /**
  * Plugin for measuring the surface area of the interface between two labels
@@ -66,7 +66,7 @@ public class InterfaceSurfaceArea3D implements PlugIn
     // Class variables
 	
     String surfaceAreaMethod = surfaceAreaMethods[1];
-    int surfaceAreaDirs = 13;
+    int nDirs = 13;
 
     
     // ====================================================
@@ -101,15 +101,13 @@ public class InterfaceSurfaceArea3D implements PlugIn
         // extract analysis options
         int label1 = (int) gd.getNextNumber();
         int label2 = (int) gd.getNextNumber();
-        surfaceAreaDirs = dirNumbers[gd.getNextChoiceIndex()];
+        nDirs = dirNumbers[gd.getNextChoiceIndex()];
         
         // Extract Image Stack and its calibration
         ImageStack image = imagePlus.getStack();
         Calibration calib = imagePlus.getCalibration();
 
-        InterfaceSurfaceArea algo = new InterfaceSurfaceArea(surfaceAreaDirs);
-        
-        double S12 = algo.process(image, label1, label2, calib);
+        double S12 = IntrinsicVolumes3D.interfaceSurfaceArea(image, label1, label2, calib, nDirs);
         
         // Execute the plugin
         ResultsTable table = new ResultsTable();
