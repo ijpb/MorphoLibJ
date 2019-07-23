@@ -202,12 +202,18 @@ public class MorphologicalFilterPlugin implements ExtendedPlugInFilter,
 	// About...
 	private void showAbout()
 	{
-		IJ.showMessage("Morphological Filters",
+		IJ.showMessage("MorphoLibJ",
 				"MorphoLibJ,\n" +
-				"http://imagej.net/MorphoLibJ#Morphological_filters\n" +
+				"http://imagej.net/MorphoLibJ\n" +
 				"\n" +
 				"by David Legland\n" +
-				"(david.legland@nantes.inra.fr)");
+				"(david.legland@inra.fr)\n" + 
+				"by Ignacio Arganda-Carreras\n" +
+		        "(iargandacarreras@gmail.com)" + 
+		        "\n" + 
+		        "Project page:\n" + 
+                "https://github.com/ijpb/MorphoLibJ\n" 
+                );
 	}
 
 	private void resetPreview()
