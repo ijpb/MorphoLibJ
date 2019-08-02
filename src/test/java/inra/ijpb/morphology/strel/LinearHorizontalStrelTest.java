@@ -22,6 +22,8 @@
 package inra.ijpb.morphology.strel;
 
 import static org.junit.Assert.assertEquals;
+
+import ij.ImageStack;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.morphology.Strel;
@@ -124,6 +126,24 @@ public class LinearHorizontalStrelTest {
 		}
 	}
 	
+	/**
+	 * Test method for {@link inra.ijpb.morphology.strel.LinearHorizontalStrel#dilation(ij.ImageStack)}.
+	 */
+	@Test
+	public void testDilation_3D() 
+	{
+		ImageStack image = createIsolatedVoxelImage();
+		
+		LinearHorizontalStrel strel = LinearHorizontalStrel.fromDiameter(5);
+		ImageStack result = strel.dilation(image);
+		
+		assertEquals(255, result.getVoxel(5, 5, 5), .01);
+		assertEquals(255, result.getVoxel(3, 5, 5), .01);
+		assertEquals(255, result.getVoxel(7, 5, 5), .01);
+		assertEquals(  0, result.getVoxel(2, 5, 5), .01);
+		assertEquals(  0, result.getVoxel(8, 5, 5), .01);
+	}
+
 	private ImageProcessor createImage_Square4x4 () {
 		ImageProcessor image = new ByteProcessor(10, 10);
 		image.setValue(0);
@@ -149,6 +169,13 @@ public class LinearHorizontalStrelTest {
 			}			
 		}
 		
+		return image;
+	}
+
+	private static final ImageStack createIsolatedVoxelImage()
+	{
+		ImageStack image = ImageStack.create(10, 10, 10, 8);
+		image.setVoxel(5, 5, 5, 255);
 		return image;
 	}
 

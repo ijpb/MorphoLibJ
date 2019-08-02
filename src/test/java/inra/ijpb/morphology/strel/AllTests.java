@@ -32,6 +32,7 @@ import org.junit.runners.Suite;
 	LinearVerticalStrelTest.class,
 	LinearDiagDownStrelTest.class, 
 	LinearDiagUpStrelTest.class,
+	LinearDepthStrel3DTest.class,
 	// compound of linear 
 	SquareStrelTest.class, 
 	OctagonStrelTest.class,
