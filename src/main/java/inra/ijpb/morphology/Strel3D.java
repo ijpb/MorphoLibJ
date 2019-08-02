@@ -30,6 +30,7 @@ import inra.ijpb.morphology.strel.CuboidStrel;
 import inra.ijpb.morphology.strel.DiamondStrel;
 import inra.ijpb.morphology.strel.EllipsoidStrel;
 import inra.ijpb.morphology.strel.ExtrudedStrel;
+import inra.ijpb.morphology.strel.LinearDepthStrel3D;
 import inra.ijpb.morphology.strel.LinearDiagDownStrel;
 import inra.ijpb.morphology.strel.LinearDiagUpStrel;
 import inra.ijpb.morphology.strel.LinearHorizontalStrel;
@@ -103,6 +104,12 @@ public interface Strel3D extends Algo {
 		 */
 		LINE_VERT("Vertical Line"),
 		
+		/** 
+		 * 3D line in the Z direction 
+		 * @see LinearDepthStrel3D
+		 */
+		LINE_Z("Z-Line"),
+
 		/**
 		 * Diagonal line of a given length 
 		 * @see LinearDiagUpStrel
@@ -161,6 +168,8 @@ public interface Strel3D extends Algo {
 				return EllipsoidStrel.fromRadiusList(radiusX, radiusY, radiusZ);
 			if (this == CUBE) 
 				return CuboidStrel.fromRadiusList(radiusX, radiusY, radiusZ);
+			if (this == LINE_Z) 
+				return LinearDepthStrel3D.fromRadius(radiusZ);
 			
 			if (radiusX != radiusY)
 			{
@@ -187,6 +196,8 @@ public interface Strel3D extends Algo {
 				return BallStrel.fromDiameter(diam);
 			if (this == CUBE) 
 				return CubeStrel.fromDiameter(diam);
+			if (this == LINE_Z) 
+				return LinearDepthStrel3D.fromDiameter(diam);
 			if (this == SQUARE) 
 				return new SquareStrel(diam);
 			if (this == DIAMOND) {
@@ -226,6 +237,8 @@ public interface Strel3D extends Algo {
 				return EllipsoidStrel.fromDiameterList(diamX, diamY, diamZ);
 			if (this == CUBE) 
 				return CuboidStrel.fromDiameterList(diamX, diamY, diamZ);
+			if (this == LINE_Z) 
+				return LinearDepthStrel3D.fromDiameter(diamZ);
 			
 			if (diamX != diamY)
 			{
