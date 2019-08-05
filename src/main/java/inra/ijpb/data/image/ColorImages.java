@@ -26,6 +26,8 @@ import ij.ImageStack;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
+import inra.ijpb.algo.DefaultAlgoListener;
+import inra.ijpb.color.BinaryOverlay;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -421,40 +423,9 @@ public class ColorImages
 	public final static ImagePlus binaryOverlay(ImagePlus imagePlus, 
 			ImagePlus maskPlus, Color color)
 	{
-		String newName = imagePlus.getShortTitle() + "-ovr";
-		ImagePlus resultPlus;
-		
-		if (imagePlus.getStackSize() == 1)
-		{
-			ImageProcessor image = imagePlus.getProcessor();
-			ImageProcessor mask = maskPlus.getProcessor();
-			ImageProcessor result = binaryOverlay(image, mask, color);
-			resultPlus = new ImagePlus(newName, result);
-		} 
-		else
-		{
-			// get reference image stack
-			ImageStack image = imagePlus.getStack();
-			
-			// convert image to gray8 if necessary
-			if (imagePlus.getBitDepth() != 24) 
-			{
-				double grayMin = imagePlus.getDisplayRangeMin();
-				double grayMax = imagePlus.getDisplayRangeMax();
-				image = Images3D.adjustDynamic(image, grayMin, grayMax);
-			}
-			
-			// get binary mask
-			ImageStack mask = maskPlus.getStack();
-
-			// overlay binary mask on original image
-			ImageStack result = binaryOverlay(image, mask, color);
-			resultPlus = new ImagePlus(newName, result);
-		}
-		
-		// keep calibration of parent image
-		resultPlus.copyScale(imagePlus);
-		return resultPlus;
+	    BinaryOverlay algo = new BinaryOverlay();
+	    DefaultAlgoListener.monitor(algo);
+	    return algo.process(imagePlus, maskPlus, color);
 	}
 	
 	/**
@@ -472,83 +443,9 @@ public class ColorImages
 	public final static ImageProcessor binaryOverlay(ImageProcessor refImage, 
 			ImageProcessor mask, Color color)
 	{
-		if (refImage instanceof ColorProcessor) 
-		{
-			return binaryOverlayRGB(refImage, mask, color);
-		}
-		else
-		{
-			if (!(refImage instanceof ByteProcessor)) 
-			{
-				refImage = refImage.convertToByteProcessor();
-			}
-			return binaryOverlayGray8(refImage, mask, color);
-		}
-	}
-	
-	/**
-	 * Assumes reference image contains a ByteProcessor.
-	 */
-	private final static ImageProcessor binaryOverlayGray8(ImageProcessor refImage, 
-			ImageProcessor mask, Color color) 
-	{
-		int width = refImage.getWidth(); 
-		int height = refImage.getHeight(); 
-		ColorProcessor result = new ColorProcessor(width, height);
-		
-		int value;
-		int rgbValue = color.getRGB();
-		
-		// Iterate on image pixels, and choose result value depending on mask
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				if(mask.get(x, y) == 0) {
-					// choose value from reference image
-					value = refImage.get(x, y);
-					// convert grayscale to equivalent color
-					value = (value & 0x00FF) << 16 | (value & 0x00FF) << 8 | (value & 0x00FF);
-					result.set(x, y, value);
-
-				} else {
-					// set value to chosen color
-					result.set(x, y, rgbValue);
-				}
-			}
-		}
-		
-		return result;
-	}
-	
-	
-	/**
-	 * Assumes reference image contains a ColorProcessor.
-	 */
-	private final static ImageProcessor binaryOverlayRGB(ImageProcessor refImage, 
-			ImageProcessor mask, Color color)
-	{
-		int width = refImage.getWidth(); 
-		int height = refImage.getHeight(); 
-		ColorProcessor result = new ColorProcessor(width, height);
-		
-		int value;
-		int rgbValue = color.getRGB();
-		
-		// Iterate on image pixels, and choose result value depending on mask
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				if(mask.get(x, y) == 0) {
-					// choose RGB value directly from reference image
-					value = refImage.get(x, y);
-					result.set(x, y, value);
-
-				} else {
-					// set value to chosen color
-					result.set(x, y, rgbValue);
-				}
-			}
-		}
-		
-		return result;
+        BinaryOverlay algo = new BinaryOverlay();
+        DefaultAlgoListener.monitor(algo);
+        return algo.process(refImage, mask, color);
 	}
 
 	/**
@@ -566,73 +463,8 @@ public class ColorImages
 	public final static ImageStack binaryOverlay(ImageStack refImage, 
 			ImageStack mask, Color color) 
 	{
-		int sizeX = refImage.getWidth(); 
-		int sizeY = refImage.getHeight(); 
-		int sizeZ = refImage.getSize();
-		
-		int bitDepth = refImage.getBitDepth();
-		
-		ImageStack result = ImageStack.create(sizeX, sizeY, sizeZ, 24);
-	
-		int intVal;
-		int rgbValue = color.getRGB();
-				
-		// for 16 and 32 bit images, compute gray level extent
-		double vmin = Double.MAX_VALUE, vmax = Double.MIN_VALUE;
-		if (bitDepth == 16 || bitDepth == 32) 
-		{
-			for (int z = 0; z < sizeZ; z++) {
-				for (int y = 0; y < sizeY; y++) {
-					for (int x = 0; x < sizeX; x++) {
-						double value = refImage.getVoxel(x, y, z);
-						vmin = Math.min(vmin, value);
-						vmax = Math.max(vmax, value);
-					}
-				}
-			}
-		}
-		
-		// Iterate on image voxels, and choose result value depending on mask
-		for (int z = 0; z < sizeZ; z++) {
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
-					// For voxels in mask, apply the color of the background 
-					if (mask.getVoxel(x, y, z) > 0) {
-						result.setVoxel(x, y, z, rgbValue);
-						continue;
-					}
-					
-					switch (bitDepth) {
-					case 8:
-						// convert grayscale to equivalent color
-						intVal = (int) refImage.getVoxel(x, y, z);
-						intVal = (intVal & 0x00FF) << 16 | (intVal & 0x00FF) << 8
-								| (intVal & 0x00FF);
-						result.setVoxel(x, y, z, intVal);
-						break;
-						
-					case 16:
-					case 32:
-						// convert grayscale to equivalent color
-						double value = refImage.getVoxel(x, y, z);
-						intVal = (int) (255 * (value - vmin) / (vmax - vmin));
-						intVal = (intVal & 0x00FF) << 16 | (intVal & 0x00FF) << 8
-								| (intVal & 0x00FF);
-						result.setVoxel(x, y, z, intVal);
-						break;
-
-					case 24:
-						// directly copy color code (after double conversion
-						// through double...)
-						result.setVoxel(x, y, z, refImage.getVoxel(x, y, z));
-						break;
-
-					default:
-					}
-				}
-			}
-		}
-		
-		return result;
+        BinaryOverlay algo = new BinaryOverlay();
+        DefaultAlgoListener.monitor(algo);
+        return algo.process(refImage, mask, color);
 	}
 }
