@@ -132,7 +132,7 @@ public class AnalyzeRegions3D implements PlugIn
 		}
 		
         // create the dialog, with operator options
-        GenericDialog gd = new GenericDialog("Particles Analysis 3D");
+        GenericDialog gd = new GenericDialog("Analyze Regions 3D");
         gd.addCheckbox("Volume", true);
         gd.addCheckbox("Surface_Area", true);
         gd.addCheckbox("Mean_Breadth", true);

@@ -119,7 +119,7 @@ public class AnalyzeRegions implements PlugInFilter
         }
 
         // create the dialog, with operator options
-        GenericDialog gd = new GenericDialog("Particles Analysis 3D");
+        GenericDialog gd = new GenericDialog("Analyze Regions");
         gd.addCheckbox("Area", true);
         gd.addCheckbox("Perimeter", true);
         gd.addCheckbox("Circularity", true);

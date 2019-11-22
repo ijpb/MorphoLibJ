@@ -94,7 +94,7 @@ public class AnalyzeMicrostructure3D implements PlugIn
         }
         
         // create the dialog, with operator options
-        GenericDialog gd = new GenericDialog("Microstructure Analysis 3D");
+        GenericDialog gd = new GenericDialog("Microstructure Analysis");
         gd.addCheckbox("Volume", true);
         gd.addCheckbox("Surface Area", true);
         gd.addCheckbox("Mean_Breadth", true);
