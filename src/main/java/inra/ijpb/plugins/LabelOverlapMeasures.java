@@ -61,7 +61,7 @@ public class LabelOverlapMeasures implements PlugIn{
         String[] names = new String[ nbima ];        
         
         for (int i = 0; i < nbima; i++)         
-            names[ i ] = WindowManager.getImage(i + 1).getShortTitle();
+            names[ i ] = WindowManager.getImage(i + 1).getTitle();
         
         if( sourceIndex > nbima-1 )
         	sourceIndex = nbima - 1;

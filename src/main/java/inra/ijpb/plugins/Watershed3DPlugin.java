@@ -99,8 +99,8 @@ public class Watershed3DPlugin implements PlugIn
         
         for (int i = 0; i < nbima; i++) 
         {
-            names[ i ] = WindowManager.getImage(i + 1).getShortTitle();
-            namesMask[ i + 1 ] = WindowManager.getImage(i + 1).getShortTitle();
+            names[ i ] = WindowManager.getImage(i + 1).getTitle();
+            namesMask[ i + 1 ] = WindowManager.getImage(i + 1).getTitle();
         }
         
         GenericDialog gd = new GenericDialog("Classic Watershed");
