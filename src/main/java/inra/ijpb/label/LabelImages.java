@@ -1555,7 +1555,7 @@ public class LabelImages
 	 *            the list of values to keep
 	 * @return a new instance of ImagePlus containing only the specified labels
 	 */
-	public static final ImagePlus keepLabels(ImagePlus imagePlus, int[] labels) 
+	public static final ImagePlus keepLabels(ImagePlus imagePlus, int[] labels)
 	{
 		ImagePlus resultPlus;
 		String newName = imagePlus.getShortTitle() + "-keepLabels";
@@ -1566,6 +1566,8 @@ public class LabelImages
 			// process planar image
 			ImageProcessor image = imagePlus.getProcessor();
 			ImageProcessor result = keepLabels(image, labels);
+			if (!(result instanceof ColorProcessor))
+			    result.setLut(image.getLut());
 			resultPlus = new ImagePlus(newName, result);
 		}
 		else 
@@ -1573,10 +1575,13 @@ public class LabelImages
 			// process image stack
 			ImageStack image = imagePlus.getStack();
 			ImageStack result = keepLabels(image, labels);
-			resultPlus = new ImagePlus(newName, result);
+			result.setColorModel(image.getColorModel());
+            resultPlus = new ImagePlus(newName, result);
 		}
 		
 		resultPlus.copyScale(imagePlus);
+		resultPlus.setDisplayRange(imagePlus.getDisplayRangeMin(), imagePlus.getDisplayRangeMax());
+        
 		return resultPlus;
 	}
 
@@ -1589,7 +1594,7 @@ public class LabelImages
 	 *            the list of values to keep
 	 * @return a new label image containing only the specified labels
 	 */
-	public static final ImageProcessor keepLabels(ImageProcessor image, int[] labels) 
+	public static final ImageProcessor keepLabels(ImageProcessor image, int[] labels)
 	{
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
@@ -1626,7 +1631,7 @@ public class LabelImages
 	 *            the list of values to keep
 	 * @return a new 3D label image containing only the specified labels
 	 */
-	public static final ImageStack keepLabels(ImageStack image, int[] labels) 
+	public static final ImageStack keepLabels(ImageStack image, int[] labels)
 	{
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
@@ -1669,7 +1674,7 @@ public class LabelImages
 	 *         associated to the corresponding pixel, or 0 if the pixel is
 	 *         background
 	 */
-	public static final FloatProcessor applyLut(ImageProcessor labelImage, double[] values) 
+	public static final FloatProcessor applyLut(ImageProcessor labelImage, double[] values)
 	{
 		int width = labelImage.getWidth(); 
 		int height = labelImage.getHeight(); 
@@ -1719,7 +1724,7 @@ public class LabelImages
 	 *         associated to the corresponding pixel, or 0 if the pixel is
 	 *         background
 	 */
-	public static final ImageStack applyLut(ImageStack labelImage, double[] values) 
+	public static final ImageStack applyLut(ImageStack labelImage, double[] values)
 	{
 		int sizeX = labelImage.getWidth(); 
 		int sizeY = labelImage.getHeight(); 

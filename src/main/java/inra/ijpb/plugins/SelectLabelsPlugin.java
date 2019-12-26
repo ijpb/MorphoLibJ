@@ -27,6 +27,7 @@ import ij.ImagePlus;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import inra.ijpb.label.LabelImages;
+import inra.ijpb.util.IJUtils;
 
 /**
  * Creates a new binary image containing only the selected label(s).
@@ -74,7 +75,7 @@ public class SelectLabelsPlugin implements PlugIn {
         // extract label index, and number of pixel border to add
         String labelString = (String) gd.getNextString();
       
-        int[] labels = parseLabels(labelString);
+        int[] labels = IJUtils.parseLabelList(labelString);
         ImagePlus selectedPlus = LabelImages.keepLabels(imagePlus, labels);
         		
         // copy settings
@@ -88,19 +89,6 @@ public class SelectLabelsPlugin implements PlugIn {
         {	
         	selectedPlus.setSlice(imagePlus.getCurrentSlice());
         }
-    }
-    
-    private static final int[] parseLabels(String string) 
-    {
-    	String[] tokens = string.split("[, ]+");
-    	int n = tokens.length;
-    	
-    	int[] labels = new int[n];
-    	for (int i = 0; i < n; i++)
-    	{
-    		labels[i] = Integer.parseInt(tokens[i]);
-    	}
-    	return labels;
     }
     
 }

@@ -109,4 +109,23 @@ public class IJUtils
         return windows.toArray(new TextWindow[0]);
     }
 
+    /**
+     * Extracts a list of integer labels from a string representation.
+     * 
+     * @param string
+     *            the String containing labels, separated by commas or spaces.
+     * @return the list of integer labels identified within the string
+     */
+    public static final int[] parseLabelList(String string) 
+    {
+        String[] tokens = string.split("[, ]+");
+        int n = tokens.length;
+        
+        int[] labels = new int[n];
+        for (int i = 0; i < n; i++)
+        {
+            labels[i] = Integer.parseInt(tokens[i]);
+        }
+        return labels;
+    }
 }
