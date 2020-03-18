@@ -59,7 +59,7 @@ public class IJUtils
 	 */
 	public final static String showElapsedTime(String opName, double timeInMillis, ImagePlus refImage) 
 	{
-		int nElements;
+		double nElements;
 		String elementName;
 		if (refImage.getImageStackSize() == 1) 
 		{
@@ -68,12 +68,12 @@ public class IJUtils
 		}
 		else 
 		{
-			nElements = refImage.getWidth() * refImage.getHeight() * refImage.getStackSize();
+			nElements = ((double) refImage.getWidth()) * refImage.getHeight() * refImage.getStackSize();
 			elementName = "voxels";
 		}
 		
-		double timeInSecs = ((double) timeInMillis) / 1000.;
-		int elementsPerSecond = (int) ((double) nElements / timeInSecs);
+		double timeInSecs = timeInMillis / 1000.0;
+		int elementsPerSecond = (int) (nElements / timeInSecs);
 				
 		String pattern = "%s: %.3f seconds, %d %s/second";
 		String status = String.format(Locale.ENGLISH, pattern, opName, timeInSecs, elementsPerSecond, elementName);
