@@ -28,7 +28,6 @@ import java.util.Set;
 
 import ij.ImagePlus;
 import ij.measure.ResultsTable;
-import inra.ijpb.label.LabelImages;
 import inra.ijpb.label.RegionAdjacencyGraph;
 import inra.ijpb.label.RegionAdjacencyGraph.LabelPair;
 
@@ -41,25 +40,28 @@ import inra.ijpb.label.RegionAdjacencyGraph.LabelPair;
  *
  */
 public class IntensityMeasures extends LabeledVoxelsMeasure{
-	/** adjacency list */
-	Set<LabelPair> adjList = null;
-	/** list of adjacent pixels/voxels per label */
-	ArrayList<Double>[] neighborVoxels = null;
-	/** intensity mode per region labeled and number of pixels/voxels with that intensity */
-	double[][] mode = null;
-	/** maximum intensity value per labeled region */
-	double[] max = null;
-	/** minimum intensity value per labeled region */
-	double[] min = null;
-	/** mean intensity value per labeled region */
-	double[] mean = null;
-	/** neighbors mean intensity value per labeled region */
-	double[] neighborsMean = null;
-	/** intensity histogram per label */
-	HashMap<Double,Integer>[] histogramPerLabel = null;
-	/** label image */
-	ImagePlus labelImage = null;
-	
+    /** adjacency list */
+    Set<LabelPair> adjList = null;
+    /** list of adjacent pixels/voxels per label */
+    ArrayList<Double>[] neighborVoxels = null;
+    /**
+     * intensity mode per region labeled and number of pixels/voxels with that
+     * intensity
+     */
+    double[][] mode = null;
+    /** maximum intensity value per labeled region */
+    double[] max = null;
+    /** minimum intensity value per labeled region */
+    double[] min = null;
+    /** mean intensity value per labeled region */
+    double[] mean = null;
+    /** neighbors mean intensity value per labeled region */
+    double[] neighborsMean = null;
+    /** intensity histogram per label */
+    HashMap<Double, Integer>[] histogramPerLabel = null;
+    /** label image */
+    ImagePlus labelImage = null;
+    
 	/**
 	 * Initialize the measurements by reading the input (grayscale) 
 	 * image and its corresponding labels.
@@ -487,10 +489,11 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 		if( this.adjList == null )
 			this.adjList = RegionAdjacencyGraph.computeAdjacencies( labelImage );
 		
-		// create an array with as many elements as the largest label
-		int[] labels = LabelImages.findAllLabels(labelImage);
+		int numLabels = super.labels.length;
+		
+        // create an array with as many elements as the number of labels
 		@SuppressWarnings("unchecked")
-		ArrayList<Double>[] neighborVoxels = new ArrayList[ labels[labels.length - 1] ];
+		ArrayList<Double>[] neighborVoxels = new ArrayList[ numLabels ];
 		for( int i = 0; i < neighborVoxels.length; i++ )
 			neighborVoxels[ i ] = new ArrayList<Double>();
 		
