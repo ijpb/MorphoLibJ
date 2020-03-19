@@ -28,6 +28,7 @@ import java.util.Set;
 
 import ij.ImagePlus;
 import ij.measure.ResultsTable;
+import inra.ijpb.label.LabelImages;
 import inra.ijpb.label.RegionAdjacencyGraph;
 import inra.ijpb.label.RegionAdjacencyGraph.LabelPair;
 
@@ -485,10 +486,14 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 	{
 		if( this.adjList == null )
 			this.adjList = RegionAdjacencyGraph.computeAdjacencies( labelImage );
+		
+		// create an array with as many elements as the largest label
+		int[] labels = LabelImages.findAllLabels(labelImage);
 		@SuppressWarnings("unchecked")
-		ArrayList<Double>[] neighborVoxels = new ArrayList[ adjList.size() ];
+		ArrayList<Double>[] neighborVoxels = new ArrayList[ labels[labels.length - 1] ];
 		for( int i = 0; i < neighborVoxels.length; i++ )
 			neighborVoxels[ i ] = new ArrayList<Double>();
+		
 		// go through list of adjacent pairs
 		for( LabelPair pair : adjList )
 		{
