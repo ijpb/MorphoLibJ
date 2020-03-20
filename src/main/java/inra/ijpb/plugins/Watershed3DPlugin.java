@@ -27,6 +27,7 @@ import ij.ImagePlus;
 import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
+import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.data.image.Images3D;
 import inra.ijpb.watershed.Watershed;
 
@@ -143,6 +144,15 @@ public class Watershed3DPlugin implements PlugIn
 
             ImagePlus inputImage = WindowManager.getImage( inputIndex + 1 );
             ImagePlus maskImage = maskIndex > 0 ? WindowManager.getImage( maskIndex ) : null;
+            
+            if( null != maskImage )
+            {
+            	if( ! BinaryImages.isBinaryImage( maskImage ) )
+            	{
+            		IJ.error( "Classic Watershed", "Error: selected mask image is not binary!" );
+            		return;
+            	}
+            }
             
             // check minimum and maximum heights
             if( hMin < 0 )
