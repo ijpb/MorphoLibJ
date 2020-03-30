@@ -20,9 +20,11 @@ import inra.ijpb.label.LabelImages;
  * 
  * @see inra.ijpb.measure.region3d.EquivalentEllipsoid
  * 
+ * @deprecated Replaced by EquivalentEllipse (since 1.4.2)
  * @author dlegland
  *
  */
+@Deprecated
 public class InertiaEllipse extends RegionAnalyzer2D<Ellipse>
 {
 	// ==================================================

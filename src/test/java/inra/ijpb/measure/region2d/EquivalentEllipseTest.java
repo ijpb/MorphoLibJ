@@ -12,17 +12,17 @@ import ij.ImagePlus;
 import ij.measure.ResultsTable;
 import inra.ijpb.geometry.Ellipse;
 
-public class InertiaEllipseTest
+public class EquivalentEllipseTest
 {
 	/**
-	 * Test method for {@link inra.ijpb.measure.region2d.InertiaEllipse#analyzeRegions(ij.process.ImageProcessor)}.
+	 * Test method for {@link inra.ijpb.measure.region2d.EquivalentEllipse#analyzeRegions(ij.process.ImageProcessor)}.
 	 */
 	@Test
 	public void testAnalyzeRegions_circles()
 	{
 		ImagePlus imagePlus = IJ.openImage(getClass().getResource("/files/circles.tif").getFile());
 	
-		InertiaEllipse algo = new InertiaEllipse();
+		EquivalentEllipse algo = new EquivalentEllipse();
 		Map<Integer,Ellipse> ellipses = algo.analyzeRegions(imagePlus);
 
 		assertEquals(1, ellipses.size());
@@ -38,7 +38,7 @@ public class InertiaEllipseTest
 	}
 
 	/**
-	 * Test method for {@link ijt.measure.geometric.GeometricMeasures2D#inertiaEllipse(ij.process.ImageProcessor)}.
+	 * Test method for {@link ijt.measure.geometric.GeometricMeasures2D#equivalentEllipse(ij.process.ImageProcessor)}.
 	 */
 	@Test
 	public final void testAnalyzeRegions_OrientedEllipse() 
@@ -47,7 +47,7 @@ public class InertiaEllipseTest
 		ImagePlus imagePlus = IJ.openImage(fileName);
 		assertNotNull(imagePlus);
 		
-		InertiaEllipse op = new InertiaEllipse();
+		EquivalentEllipse op = new EquivalentEllipse();
 		ResultsTable table = op.computeTable(imagePlus);
 		
 		assertEquals(49.5, table.getValue("Ellipse.Center.X", 0), .1);
@@ -58,14 +58,14 @@ public class InertiaEllipseTest
 	}
 	
 	/**
-	 * Test method for {@link inra.ijpb.measure.region2d.InertiaEllipse#analyzeRegions(ij.process.ImageProcessor)}.
+	 * Test method for {@link inra.ijpb.measure.region2d.EquivalentEllipse#analyzeRegions(ij.process.ImageProcessor)}.
 	 */
 	@Test
 	public void testAnalyzeRegions_riceGrains()
 	{
 		ImagePlus imagePlus = IJ.openImage(getClass().getResource("/files/grains-med-WTH-lbl.tif").getFile());
 	
-		InertiaEllipse algo = new InertiaEllipse();
+		EquivalentEllipse algo = new EquivalentEllipse();
 		
 		Map<Integer,Ellipse> ellipses = algo.analyzeRegions(imagePlus);
 		assertEquals(96, ellipses.size());

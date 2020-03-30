@@ -41,6 +41,12 @@ import inra.ijpb.geometry.Ellipse;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.region2d.InertiaEllipse;
 
+/**
+ * @deprecated replaced by EquivalentEllipsePlugin (since 1.4.2).
+ * 
+ * @author dlegland
+ */
+@Deprecated
 public class InertiaEllipsePlugin implements PlugIn
 {
     // ====================================================

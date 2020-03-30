@@ -31,7 +31,7 @@ import org.junit.runners.Suite;
 	BinaryConfigurationsHistogram2DTest.class,
 	ConvexityTest.class,
 	GeodesicDiameterTest.class,
-	InertiaEllipseTest.class,
+	EquivalentEllipseTest.class,
 	LargestInscribedCircleTest.class,
 	MaxFeretDiameterTest.class,
 	OrientedBoundingBox2DTest.class,

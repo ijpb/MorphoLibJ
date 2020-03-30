@@ -15,6 +15,9 @@ import inra.ijpb.label.LabelImages;
 /**
  * Computes centroid position of regions within binary or label images.
  * 
+ * @see inra.ijpb.measure.region2d.EquivalentEllipse
+ * @see inra.ijpb.measure.region3d.Centroid3D
+ * 
  * @author dlegland
  *
  */

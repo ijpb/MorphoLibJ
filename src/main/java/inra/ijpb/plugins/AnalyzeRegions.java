@@ -43,7 +43,7 @@ import inra.ijpb.measure.region2d.Centroid;
 //import inra.ijpb.measure.IntrinsicVolumes2D;
 import inra.ijpb.measure.region2d.Convexity;
 import inra.ijpb.measure.region2d.GeodesicDiameter;
-import inra.ijpb.measure.region2d.InertiaEllipse;
+import inra.ijpb.measure.region2d.EquivalentEllipse;
 import inra.ijpb.measure.region2d.IntrinsicVolumes2DUtils;
 import inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D;
 import inra.ijpb.measure.region2d.LargestInscribedCircle;
@@ -61,7 +61,7 @@ public class AnalyzeRegions implements PlugInFilter
 	boolean computeEulerNumber = true;
 	boolean computeBoundingBox  = true;
     boolean computeCentroid = true;
-    boolean computeInertiaEllipse = true;
+    boolean computeEquivalentEllipse = true;
 	boolean computeEllipseElongation = true;
 	boolean computeConvexity = true;
 	boolean computeMaxFeretDiameter = true;
@@ -126,7 +126,7 @@ public class AnalyzeRegions implements PlugInFilter
         gd.addCheckbox("Euler_Number", true);
         gd.addCheckbox("Bounding_Box", true);
         gd.addCheckbox("Centroid", true);
-        gd.addCheckbox("Inertia_Ellipse", true);
+        gd.addCheckbox("Equivalent_Ellipse", true);
         gd.addCheckbox("Ellipse_Elong.", true);
         gd.addCheckbox("Convexity", true);
         gd.addCheckbox("Max._Feret Diameter", true);
@@ -149,7 +149,7 @@ public class AnalyzeRegions implements PlugInFilter
         computeEulerNumber        = gd.getNextBoolean();
         computeBoundingBox        = gd.getNextBoolean();
         computeCentroid           = gd.getNextBoolean();
-        computeInertiaEllipse     = gd.getNextBoolean();
+        computeEquivalentEllipse     = gd.getNextBoolean();
         computeEllipseElongation  = gd.getNextBoolean();
         computeConvexity          = gd.getNextBoolean();
         computeMaxFeretDiameter   = gd.getNextBoolean();
@@ -221,10 +221,10 @@ public class AnalyzeRegions implements PlugInFilter
             boundingBoxes = algo.analyzeRegions(image, labels, calib);
         }
 
-        if (computeInertiaEllipse || computeEllipseElongation)
+        if (computeEquivalentEllipse || computeEllipseElongation)
     	{
-    		IJ.showStatus("Inertia Ellipse");
-    		InertiaEllipse algo = new InertiaEllipse();
+    		IJ.showStatus("Equivalent Ellipse");
+    		EquivalentEllipse algo = new EquivalentEllipse();
     		DefaultAlgoListener.monitor(algo);
     		ellipses = algo.analyzeRegions(image, labels, calib);
     		
@@ -280,9 +280,11 @@ public class AnalyzeRegions implements PlugInFilter
     		inscrDiscs = algo.analyzeRegions(image, labels, calib);
     	}
 
-    	
+        
     	// Fill results table
     	
+        IJ.showStatus("Populate table");
+
         if (computeArea)
         {
             for (int i = 0; i < nLabels; i++)
@@ -335,7 +337,7 @@ public class AnalyzeRegions implements PlugInFilter
             }
         }
 
-        if (computeInertiaEllipse)
+        if (computeEquivalentEllipse)
     	{
 			for (int i = 0; i < nLabels; i++)
 			{
@@ -432,6 +434,7 @@ public class AnalyzeRegions implements PlugInFilter
 			addColumnToTable(table, "GeodesicElongation", elong);
     	}
     	    	
+        IJ.showStatus("");
     	return table;
     }
         
