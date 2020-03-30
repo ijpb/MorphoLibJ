@@ -38,7 +38,7 @@ import java.util.HashMap;
  * Select binary particles in a planar image based on number of pixels.
  * This version also provides preview of result.
  * 
- * @see AreaOpeningPlugin
+ * @see SizeOpeningPlugin
  * 
  * @author David Legland
  */

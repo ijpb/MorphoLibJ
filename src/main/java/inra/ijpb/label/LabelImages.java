@@ -1080,6 +1080,25 @@ public class LabelImages
 	}
 	
     /**
+     * Computes the number of pixels (or voxels) composing each regions in the
+     * 2D or 3D label image.
+     * 
+     * 
+     * @param image
+     *            a label image (2D or 3D)
+     * @param labels
+     *            the array of label indices to process
+     * @return an array the same size as labels, containing the number of pixels
+     *         / voxels within each region
+     */
+	public static final int[] pixelCount(ImagePlus image, int[] labels)
+	{
+        return image.getStackSize() == 1
+                ? pixelCount(image.getProcessor(), labels)
+                : voxelCount(image.getStack(), labels);
+	}
+	
+    /**
 	 * Computes the number of pixels composing each particle in the label image.
 	 * 
 	 * @see inra.ijpb.measure.GeometricMeasures2D#area(ij.process.ImageProcessor,
