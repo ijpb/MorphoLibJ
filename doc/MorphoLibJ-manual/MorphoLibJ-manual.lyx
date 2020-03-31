@@ -329,7 +329,7 @@ watershed segmentation
 \series bold
 2D/3D measurements
 \series default
-: volume, surface area, inertia ellipse/ellipsoid...
+: volume, surface area, bounding boxes, equivalent ellipse/ellipsoid...
 \end_layout
 
 \begin_layout Itemize
@@ -7624,13 +7624,13 @@ reference "fig:Euler-Number-Computation-2D"
 \end_layout
 
 \begin_layout Subsection
-Geometric moments and inertia ellipse
+Geometric moments and equivalent ellipse
 \end_layout
 
 \begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
-name "subsec:Geometric-Moment-And-Inertia-Ellipse"
+name "subsec:Geometric-Moment-And-Equivalent-Ellipse"
 
 \end_inset
 
@@ -7669,12 +7669,12 @@ m_{pq}(X) & =\int\int I_{X}(x,y)x^{p}y^{q}\cdot dx\cdot dy\label{eq:Moment-of-X-
 \end_layout
 
 \begin_layout Standard
-The area of 
-\begin_inset Formula $X$
+The moment of order 
+\begin_inset Formula $(0,0)$
 \end_inset
 
- simply corresponds to the moment of order 
-\begin_inset Formula $(0,0)$
+ simply corresponds to the area of 
+\begin_inset Formula $X$
 \end_inset
 
 : 
@@ -7710,7 +7710,11 @@ y_{c} & =\frac{m_{01}}{m_{00}}=\frac{1}{Area(X)}\int\int I_{X}(x,y)\cdot y\cdot 
 \end_layout
 
 \begin_layout Standard
-It is often more convenient to work with centered moments, given by:
+It is often more convenient to work with 
+\series bold
+centered moments
+\series default
+, given by:
 \end_layout
 
 \begin_layout Standard
@@ -7755,15 +7759,11 @@ name "fig:Inertia-ellipse"
 
 \end_inset
 
-Inertia ellipse of a binary region.
+Equivalent ellipse of a binary region.
 \end_layout
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Plain Layout
 
 \end_layout
 
@@ -7773,7 +7773,7 @@ Inertia ellipse of a binary region.
 \end_layout
 
 \begin_layout Standard
-The second order centered moments can be used to compute the inertia matrix:
+The second order centered moments can be arranged into a matrix:
 \begin_inset Formula 
 \[
 \left[\begin{array}{cc}
@@ -7788,10 +7788,10 @@ The second order centered moments can be used to compute the inertia matrix:
 \end_layout
 
 \begin_layout Standard
-By computing the parameters of the ellipse that produces the same inertia
- matrix, one obtains the equivalent 
+By computing the parameters of the ellipse that produces the same moments
+ up to the second order, one obtains the 
 \series bold
-inertia ellipse
+equivalent ellipse
 \series default
  
 \begin_inset CommandInset citation
@@ -7806,7 +7806,7 @@ literal "true"
 \begin_inset Formula $\theta$
 \end_inset
 
- of the inertia ellipse is given by 
+ of the equivalent ellipse is given by 
 \begin_inset Formula $\theta=\frac{1}{2}\text{atan2}\left(2\cdot\mu_{11},\mu_{20}-\mu_{02}\right)$
 \end_inset
 
@@ -7954,7 +7954,7 @@ reference "fig:Feret-Diameter-And-Oriented-Box"
  rectangles are often similar, but may differ in some cases.
  Note that in general, the orientation of the largest axis of the oriented
  box differs from both the direction of the largest Feret diameter, and
- the direction of the inertia ellipse.
+ the direction of the equivalent ellipse.
 \end_layout
 
 \begin_layout Subsection
@@ -8068,7 +8068,7 @@ reference "subsec:Geodesic-Distance-Transform"
 \end_inset
 
 ).
- Hence, the actual value may be somewhat overestimated due to the approximation
+ Hence, the actual value may be somewhat over-estimated due to the approximation
  in the measurements.
 \end_layout
 
@@ -8082,7 +8082,7 @@ largest circle that can be inscribed within the particle
 \end_layout
 
 \begin_layout Subsection
-Measurement of shape
+Quantification by shape indices
 \end_layout
 
 \begin_layout Standard
@@ -8429,18 +8429,22 @@ Circularity the normalized ratio of the area by the square of the perimeter:
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-Inertia
+Equivalent
 \begin_inset space ~
 \end_inset
 
-Ellipse the position, size and orientation of the inertia ellipse (see section
+Ellipse the position, size and orientation of the equivalent ellipse (see
+ section
 \begin_inset space ~
 \end_inset
 
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "subsec:Feret-Diameter-And-Oriented-Box"
+reference "subsec:Geometric-Moment-And-Equivalent-Ellipse"
+plural "false"
+caps "false"
+noprefix "false"
 
 \end_inset
 
@@ -8450,7 +8454,7 @@ reference "subsec:Feret-Diameter-And-Oriented-Box"
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
 Ellipse_Elong.
- the elongation of the inertia ellipse (ratio of axis lengths)
+ the elongation of the equivalent ellipse (ratio of axis lengths)
 \end_layout
 
 \begin_layout Labeling
@@ -8610,23 +8614,23 @@ reference "fig:Regions-Analysis-Output-1"
 \end_layout
 
 \begin_layout Subsubsection
-Inertia Ellipse
+Equivalent Ellipse
 \end_layout
 
 \begin_layout Standard
 The 
 \series bold
-Inertia Ellipse plugin
+Equivalent Ellipse plugin
 \series default
- computes the equivalent inertia ellipse for each region within a binary
- or label image.
+ computes the equivalent ellipse for each region within a binary or label
+ image.
  The result of the plugin comprises the following features:
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
 Label the label of the region measured on the current line (equal to 255
- for bionary images)
+ for binary images)
 \end_layout
 
 \begin_layout Labeling
@@ -8730,7 +8734,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Inertia Ellipse
+Equivalent Ellipse
 \end_layout
 
 \end_inset
@@ -8786,7 +8790,7 @@ name "fig:Regions-Analysis-Output-1"
 
 Examples of graphical outputs of region analysis plugins.
  (a) Bounding box.
- (b) Inertia ellipse.
+ (b) Equivalent ellipse.
  (c) Max Feret diameter.
 \end_layout
 
@@ -9182,7 +9186,7 @@ inscrCircle.Center.Y the y-coordinate of the inscribed circle.
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-inscrCircle.Radius the radius of the inscribed circle.Inertia
+inscrCircle.Radius the radius of the inscribed circle.
 \end_layout
 
 \begin_layout Standard
@@ -12752,6 +12756,26 @@ Largest
 \end_inset
 
 Label identifies the largest label, and keep it or remove it
+\end_layout
+
+\begin_layout Description
+Label
+\begin_inset space ~
+\end_inset
+
+Size
+\begin_inset space ~
+\end_inset
+
+Filtering 
+\begin_inset CommandInset label
+LatexCommand label
+name "op:Label-Size-Filtering"
+
+\end_inset
+
+filters the labels according to their size (area in 2D, volume in 3D), by
+ specifying a comparison operator and a threshold value.
 \end_layout
 
 \begin_layout Description
@@ -17239,7 +17263,7 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="31" columns="10">
+<lyxtabular version="3" rows="32" columns="10">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top">
 <column alignment="center" valignment="top">
@@ -20000,6 +20024,107 @@ reference "op:Label-Size-Opening"
 \begin_inset Text
 
 \begin_layout Plain Layout
+Label Size Filtering
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n.a.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+*
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "op:Label-Size-Filtering"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 Remap Labels
 \end_layout
 
@@ -20352,7 +20477,7 @@ that has the same orientation and the same eigen values as the structure
 \end_layout
 
 \begin_layout Itemize
-the three corodinates of the centroid
+the three coordinates of the centroid
 \end_layout
 
 \begin_layout Itemize
