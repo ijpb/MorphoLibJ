@@ -264,7 +264,7 @@ public class DistanceTransform5x5Short extends AlgoStub implements DistanceTrans
 					if ((int) labelImage.getf(x2, y2) != label)
 					{
 						// Update with distance to nearest different label
-						newDist = dw[i];
+						newDist = Math.min(newDist, dw[i]);
 					}
 					else
 					{
@@ -332,7 +332,7 @@ public class DistanceTransform5x5Short extends AlgoStub implements DistanceTrans
 					if ((int) labelImage.getf(x2, y2) != label)
 					{
 						// Update with distance to nearest different label
-						newDist = dw[i];
+					    newDist = Math.min(newDist, dw[i]);
 					}
 					else
 					{
