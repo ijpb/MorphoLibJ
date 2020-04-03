@@ -45,6 +45,7 @@ import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat5x5;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort5x5;
+import inra.ijpb.binary.skeleton.ImageJSkeleton;
 import inra.ijpb.data.image.Image3D;
 import inra.ijpb.data.image.Images3D;
 import inra.ijpb.label.LabelImages;
@@ -1005,4 +1006,18 @@ public class BinaryImages
 		
 		return result;
 	}
+	
+    /**
+     * Computes the skeleton of a binary image, and returns another binary image.
+     * 
+     * Uses an adaptation of the algorithm from ImageJ.
+     * 
+     * @param image
+     *            a binary image
+     * @return a binary image containing 255 for skeleton elements
+     */
+    public static final ImageProcessor skeleton(ImageProcessor image) 
+    {
+        return new ImageJSkeleton().process(image);
+    }
 }

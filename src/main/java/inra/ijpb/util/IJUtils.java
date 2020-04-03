@@ -28,6 +28,7 @@ import java.util.Locale;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
+import ij.process.ImageProcessor;
 import ij.text.TextWindow;
 
 /**
@@ -128,4 +129,24 @@ public class IJUtils
         }
         return labels;
     }
+    
+    /**
+     * Prints the content of the given ImageProcessor on the console. This can be used
+     * for debugging (small) images.
+     * 
+     * @param image the image to display on the console 
+     */
+    public static final void printImage(ImageProcessor image) 
+    {
+        for (int y = 0; y < image.getHeight(); y++)
+        {
+            for (int x = 0; x < image.getWidth(); x++)
+            {
+                System.out.print(String.format("%3d ", (int) image.getf(x, y)));
+            }
+            System.out.println("");
+        }
+    }
+    
+
 }

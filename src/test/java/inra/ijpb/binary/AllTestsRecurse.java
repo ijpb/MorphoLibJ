@@ -31,7 +31,8 @@ import org.junit.runners.Suite;
 	AllTests.class,
 	inra.ijpb.binary.conncomp.AllTests.class,
 	inra.ijpb.binary.distmap.AllTests.class,
-	inra.ijpb.binary.geodesic.AllTests.class,
+    inra.ijpb.binary.geodesic.AllTests.class,
+    inra.ijpb.binary.skeleton.AllTests.class,
 	})
 public class AllTestsRecurse {
   //nothing

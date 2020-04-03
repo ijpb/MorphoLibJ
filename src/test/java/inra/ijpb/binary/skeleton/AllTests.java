@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/lgpl-3.0.html>.
  * #L%
  */
-package inra.ijpb.measure.region2d;
+package inra.ijpb.binary.skeleton;
 
 
 import org.junit.runner.RunWith;
@@ -28,15 +28,8 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	// generic classes
-    AverageThicknessTest.class,
-	BinaryConfigurationsHistogram2DTest.class,
-	ConvexityTest.class,
-	GeodesicDiameterTest.class,
-	EquivalentEllipseTest.class,
-	LargestInscribedCircleTest.class,
-	MaxFeretDiameterTest.class,
-	OrientedBoundingBox2DTest.class,
-	})
+	ImageJSkeletonTest.class,
+})
 public class AllTests {
   //nothing
 }
