@@ -31,11 +31,12 @@ import org.junit.runners.Suite;
     AverageThicknessTest.class,
 	BinaryConfigurationsHistogram2DTest.class,
 	ConvexityTest.class,
-	GeodesicDiameterTest.class,
 	EquivalentEllipseTest.class,
+    GeodesicDiameterTest.class,
 	LargestInscribedCircleTest.class,
 	MaxFeretDiameterTest.class,
 	OrientedBoundingBox2DTest.class,
+    RegionBoundariesTest.class,
 	})
 public class AllTests {
   //nothing

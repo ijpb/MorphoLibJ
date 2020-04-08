@@ -3,17 +3,22 @@
  */
 package inra.ijpb.measure.region2d;
 
-import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
 import ij.process.ImageProcessor;
+import inra.ijpb.label.LabelImages;
 
 /**
  * Utility functions for computing position of boundary points/corners of
  * regions within binary or label images.
+ * 
+ * The methods in this can are mostly used for computing convex hulls.
+ * 
+ * @see inra.ijpb.measures.region2d.Convexity
  * 
  * @author dlegland
  *
@@ -28,9 +33,107 @@ public class RegionBoundaries
 	}
 
 	/**
+     * Returns a set of points located at the corners of a binary particle.
+     * Point coordinates are integer (ImageJ locates pixels in a [0 1]^d area).
+     * 
+     * @param image
+     *            a binary image representing the particle
+     * @return a list of points that can be used for convex hull computation
+     */
+    public final static ArrayList<Point2D> runLengthsCorners(ImageProcessor image)
+    {
+    	int sizeX = image.getWidth();
+    	int sizeY = image.getHeight();
+    	
+    	ArrayList<Point2D> points = new ArrayList<Point2D>();
+    	
+    	// try to find a pair of points for each row
+    	for (int y = 0; y < sizeY; y++)
+    	{
+    		// Identify transition inside and outside the particle 
+    		boolean inside = false;
+    		for (int x = 0; x < sizeX; x++)
+    		{
+    			int pixel = image.get(x, y);
+    			if (pixel > 0 && !inside)
+    			{
+    				// transition from background to foreground
+    				Point2D p = new Point2D.Double(x, y);
+    				if (!points.contains(p))
+    				{
+    					points.add(p);
+    				}
+    				points.add(new Point2D.Double(x, y+1));
+    				inside = true;
+    			} 
+    			else if (pixel == 0 && inside)
+    			{
+    				// transition from foreground to background 
+    				Point2D p = new Point2D.Double(x, y);
+    				if (!points.contains(p))
+    				{
+    					points.add(p);
+    				}
+    				points.add(new Point2D.Double(x, y+1));
+    				inside = false;
+    			}
+    		}
+    		
+    		// if particle touches right border, add another point
+    		if (inside)
+    		{
+    			Point2D p = new Point2D.Double(sizeX, y);
+    			if (!points.contains(p))
+    			{
+    				points.add(p);
+    			}
+    			points.add(new Point2D.Double(sizeX, y+1));
+    		}
+    	}
+    	
+    	return points;
+    }
+
+    /**
+     * Returns a set of points located at the corners of a binary particle.
+     * Point coordinates are integer (ImageJ locates pixels in a [0 1]^d area).
+     * 
+     * This methods computes the results as a Map, and converts the result into
+     * an array.
+     *
+     * @see #runLengthsCornersMap(ImageProcessor, int[])
+     * 
+     * @param image
+     *            a binary image representing the particle
+     * @param labels
+     *            the list of labels to process
+     * @return for each label, an array of points
+     */
+    public final static ArrayList<Point2D>[] runlengthsCorners(ImageProcessor image, int[] labels)
+    {
+    	// Compute corner points for each label
+    	Map<Integer, ArrayList<Point2D>> cornerPointsMap = runLengthsCornersMap(image, labels);
+    	
+    	// allocate array
+    	int nLabels = labels.length;
+    	@SuppressWarnings("unchecked")
+    	ArrayList<Point2D>[] labelCornerPoints = (ArrayList<Point2D>[]) new ArrayList<?>[nLabels];
+    	
+    	// convert map to array
+    	for (int i = 0; i < nLabels; i++)
+    	{
+    		labelCornerPoints[i] = cornerPointsMap.get(labels[i]);
+    	}		
+    	
+    	return labelCornerPoints;
+    }
+
+    /**
 	 * Returns a set of points located at the corners of each region.
-	 * Point coordinates are integer (ImageJ locates pixels in a [0 1]^d area.
+	 * Point coordinates are integer (ImageJ locates pixels in a [0 1]^2 area).
 	 * 
+     * @see #runLengthsCorners(ImageProcessor, int[])
+     * 
 	 * @param image
 	 *            a binary image representing the particle
 	 * @param labels
@@ -39,6 +142,7 @@ public class RegionBoundaries
 	 */
 	public final static Map<Integer, ArrayList<Point2D>> runLengthsCornersMap(ImageProcessor image, int[] labels)
 	{
+	    // get image size
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		
@@ -110,142 +214,25 @@ public class RegionBoundaries
 	}
 
 	/**
-	 * Returns a set of points located at the corners of a binary particle.
-	 * Point coordinates are integer (ImageJ locates pixels in a [0 1]^d area.
-	 * 
-	 * @param image
-	 *            a binary image representing the particle
-	 * @param labels
-	 *            the list of labels to process
-	 * @return for each label, an array of points
-	 */
-	public final static ArrayList<Point2D>[] runlengthsCorners(ImageProcessor image, int[] labels)
-	{
-		// Compute corner points for each label
-		Map<Integer, ArrayList<Point2D>> cornerPointsMap = runLengthsCornersMap(image, labels);
-		
-		// allocate array
-		int nLabels = labels.length;
-		@SuppressWarnings("unchecked")
-		ArrayList<Point2D>[] labelCornerPoints = (ArrayList<Point2D>[]) new ArrayList<?>[nLabels];
-		
-		// convert map to array
-		for (int i = 0; i < nLabels; i++)
-		{
-			labelCornerPoints[i] = cornerPointsMap.get(labels[i]);
-		}		
-		
-		return labelCornerPoints;
-	}
-
-	/**
-	 * Returns a set of boundary points from a binary image.
-	 * 
-	 * @param image
-	 *            a binary image representing the particle
-	 * @return a list of points that can be used for convex hull computation
-	 */
-	public final static ArrayList<Point> runLengthsBoundaryPixels(ImageProcessor image)
-	{
-		// size of input image
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-		
-		ArrayList<Point> points = new ArrayList<Point>();
-		
-		// try to find a pair of points for each row
-		for (int y = 0; y < sizeY; y++)
-		{
-			// Identify transition inside and outside the particle 
-			boolean inside = false;
-			for (int x = 0; x < sizeX; x++)
-			{
-				if (image.get(x, y) > 0 && !inside)
-				{
-					// transition from background to foreground
-					points.add(new Point(x, y));
-					inside = true;
-				} 
-				else if (image.get(x, y) == 0 && inside)
-				{
-					// transition from foreground to background 
-					points.add(new Point(x-1, y));
-					inside = false;
-				}
-			}
-			
-			// if particle touches right border, add another point
-			if (inside)
-			{
-				points.add(new Point(sizeX-1, y));
-			}
-		}
-		
-		return points;
-	}
-	
-	/**
-	 * Returns a set of points located at the corners of a binary particle.
-	 * Point coordinates are integer (ImageJ locates pixels in a [0 1]^d area.
-	 * 
-	 * @param image
-	 *            a binary image representing the particle
-	 * @return a list of points that can be used for convex hull computation
-	 */
-	public final static ArrayList<Point2D> runLengthsCorners(ImageProcessor image)
-	{
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-		
-		ArrayList<Point2D> points = new ArrayList<Point2D>();
-		
-		// try to find a pair of points for each row
-		for (int y = 0; y < sizeY; y++)
-		{
-			// Identify transition inside and outside the particle 
-			boolean inside = false;
-			for (int x = 0; x < sizeX; x++)
-			{
-				int pixel = image.get(x, y);
-				if (pixel > 0 && !inside)
-				{
-					// transition from background to foreground
-					Point2D p = new Point2D.Double(x, y);
-					if (!points.contains(p))
-					{
-						points.add(p);
-					}
-					points.add(new Point2D.Double(x, y+1));
-					inside = true;
-				} 
-				else if (pixel == 0 && inside)
-				{
-					// transition from foreground to background 
-					Point2D p = new Point2D.Double(x, y);
-					if (!points.contains(p))
-					{
-						points.add(p);
-					}
-					points.add(new Point2D.Double(x, y+1));
-					inside = false;
-				}
-			}
-			
-			// if particle touches right border, add another point
-			if (inside)
-			{
-				Point2D p = new Point2D.Double(sizeX, y);
-				if (!points.contains(p))
-				{
-					points.add(p);
-				}
-				points.add(new Point2D.Double(sizeX, y+1));
-			}
-		}
-		
-		return points;
-	}
-
+     * Extracts boundary points from a binary region, keeping middle points of
+     * pixel edges.
+     * 
+     * This method considers middle points of pixel edges, assuming a "diamond
+     * shape" for pixels. For a single pixel (x,y), ImageJ considers equivalent
+     * area to be [x,x+1[ x [y,y+1[, and pixel center at (x+0.5, y+0.5).
+     * 
+     * The boundaries extracted by this methods have following coordinates:
+     * <ul>
+     * <li><it>(x+0.5, y)</it>: top boundary</li>
+     * <li><it>(x , y+0.5)</it>: left boundary</li>
+     * <li><it>(x+1 , y+0.5)</it>: right boundary</li>
+     * <li><it>(x+0.5, y+1)</it>: bottom boundary</li>
+     * </ul>
+     * 
+     * @param binaryImage
+     *            the image processor containing the binary region
+     * @return an array of Point2D, located on the boundary of the region.
+     */
 	public static final ArrayList<Point2D> boundaryPixelsMiddleEdges(ImageProcessor binaryImage)
 	{
 		// size of image
@@ -286,4 +273,102 @@ public class RegionBoundaries
 
 		return points;
 	}
+	
+    /**
+     * Extracts boundary points from the different regions.
+     * 
+     * This method considers middle points of pixel edges, assuming a "diamond
+     * shape" for pixels. For a single pixel (x,y), ImageJ considers equivalent
+     * area to be [x,x+1[ x [y,y+1[, and pixel center at (x+0.5, y+0.5).
+     * 
+     * The boundaries extracted by this methods have following coordinates:
+     * <ul>
+     * <li><it>(x+0.5, y)</it>: top boundary</li>
+     * <li><it>(x , y+0.5)</it>: left boundary</li>
+     * <li><it>(x+1 , y+0.5)</it>: right boundary</li>
+     * <li><it>(x+0.5, y+1)</it>: bottom boundary</li>
+     * </ul>
+     * 
+     * @param labelImage
+     *            the image processor containing the region labels
+     * @param labels
+     *            the array of region labels
+     * @return an array of arrays of boundary points, one array for each label.
+     */
+    public static final ArrayList<Point2D>[] boundaryPixelsMiddleEdges(ImageProcessor labelImage, int[] labels)
+    {
+        // size of image
+        int sizeX = labelImage.getWidth();
+        int sizeY = labelImage.getHeight();
+        
+        int nLabels = labels.length;
+        HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
+        
+        // allocate data structure for storing results
+        @SuppressWarnings("unchecked")
+        ArrayList<Point2D>[] pointArrays = (ArrayList<Point2D>[]) new ArrayList<?>[nLabels];
+        for (int i = 0; i < nLabels; i++)
+        {
+            pointArrays[i] = new ArrayList<Point2D>();
+        }
+        
+        // labels for current, up, and left pixels.
+        int label = 0;
+        int labelUp = 0;
+        int labelLeft = 0;
+        
+        // boolean values within top-left, top-right, left, and current pixels
+        int[] configValues = new int[4];
+        
+        // iterate on image pixel configurations
+        for (int y = 0; y < sizeY + 1; y++) 
+        {
+            // assume values outside image correspond to background
+            configValues[2] = 0;
+            
+            for (int x = 0; x < sizeX + 1; x++) 
+            {
+                // update pixel values of configuration
+                label = x < sizeX & y < sizeY ? (int) labelImage.getf(x, y): 0;
+                labelUp = x < sizeX & y > 0 ? (int) labelImage.getf(x, y - 1): 0;
+
+                // check boundary with upper pixel
+                if (labelUp != label)
+                {
+                    Point2D p = new Point2D.Double(x + .5, y);
+                    if (label != 0)
+                    {
+                        int index = labelIndices.get(label);
+                        pointArrays[index].add(p);
+                    }
+                    if (labelUp != 0)
+                    {
+                        int index = labelIndices.get(labelUp);
+                        pointArrays[index].add(p);
+                    }
+                }
+                
+                // check boundary with left pixel
+                if (labelLeft != label)
+                {
+                    Point2D p = new Point2D.Double(x, y + .5);
+                    if (label != 0)
+                    {
+                        int index = labelIndices.get(label);
+                        pointArrays[index].add(p);
+                    }
+                    if (labelLeft != 0)
+                    {
+                        int index = labelIndices.get(labelLeft);
+                        pointArrays[index].add(p);
+                    }
+                }
+
+                // update values of left label for next iteration
+                labelLeft = label;
+            }
+        }
+
+        return pointArrays;
+    }
 }

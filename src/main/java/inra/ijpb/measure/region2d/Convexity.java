@@ -14,7 +14,6 @@ import ij.process.ImageProcessor;
 import inra.ijpb.geometry.Box2D;
 import inra.ijpb.geometry.Polygon2D;
 import inra.ijpb.geometry.Polygons2D;
-import inra.ijpb.label.LabelImages;
 
 /**
  * Computes convex area and convexity for regions within a binary or label
@@ -107,21 +106,21 @@ public class Convexity extends RegionAnalyzer2D<Convexity.Result>
 		// create result array
 		Convexity.Result[] res = new Convexity.Result[labels.length];
 		
-		// iterate over labels
+        // compute convex hull of boundary points around each region
+        ArrayList<Point2D>[] pointArrays = RegionBoundaries.boundaryPixelsMiddleEdges(image, labels);
+
+        // iterate over labels
 		for (int i = 0; i < labels.length; i++)
 		{
-			ImageProcessor binary = LabelImages.binarize(image, labels[i]);
-			
 			// compute convex hull of boundary points around the binary particle
-			ArrayList<Point2D> points = RegionBoundaries.boundaryPixelsMiddleEdges(binary);
-			Polygon2D convexHull = Polygons2D.convexHull(points);
+            Polygon2D convexHull = Polygons2D.convexHull(pointArrays[i]);
 
 			// determine bounds
 			Box2D box = convexHull.boundingBox();
+            int xmin = (int) Math.max(0, Math.floor(box.getXMin()));
+            int xmax = (int) Math.min(sizeX, Math.ceil(box.getXMax()));
 			int ymin = (int) Math.max(0, Math.floor(box.getYMin()));
 			int ymax = (int) Math.min(sizeY, Math.ceil(box.getYMax()));
-			int xmin = (int) Math.max(0, Math.floor(box.getXMin()));
-			int xmax = (int) Math.min(sizeX, Math.ceil(box.getXMax()));
 			
 			double area = 0;
 			double convexArea = 0;
@@ -131,7 +130,7 @@ public class Convexity extends RegionAnalyzer2D<Convexity.Result>
 			{
 				for (int x = xmin; x < xmax; x++)
 				{
-					if (binary.get(x, y) > 0)
+					if ((int) image.getf(x, y) == labels[i])
 					{
 						area++;
 					}
