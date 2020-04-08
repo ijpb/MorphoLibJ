@@ -3966,6 +3966,13 @@ Max
 3D impose binary minima or maxima on a 3D grayscale image.
 \end_layout
 
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 Attribute filtering
 \end_layout
@@ -6944,7 +6951,15 @@ size
 \series bold
 shape
 \series default
- of regions identified within images.
+ of regions identified within images 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "ArgandaCarreras_Andrey_2017"
+literal "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -6991,7 +7006,7 @@ Euler number
 \end_layout
 
 \begin_layout Subsubsection
-Definitions
+Mathematical definitions
 \end_layout
 
 \begin_layout Paragraph
@@ -7375,7 +7390,7 @@ Measurement of Euler number
 \begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
-name "subsec:Euler-Number"
+name "subsec:Digital-Euler-Number"
 
 \end_inset
 
@@ -7642,7 +7657,11 @@ A binary region
 \begin_inset Formula $X$
 \end_inset
 
- may be described mathematically by its geometric moments 
+ may be described mathematically by its
+\series bold
+ geometric moments
+\series default
+ 
 \begin_inset Formula $m_{pq}$
 \end_inset
 
@@ -7811,6 +7830,13 @@ literal "true"
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -8072,13 +8098,54 @@ reference "subsec:Geodesic-Distance-Transform"
  in the measurements.
 \end_layout
 
+\begin_layout Subsection
+Thickness
+\end_layout
+
 \begin_layout Standard
-Other measurements consider the 
+The thickness is also a convenient measure to describe a region.
+ It may be evaluated by the diameter of the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[subsec:Largest-inscribed-circle-plugin]{largest inscribed circle}
+\end_layout
+
+\end_inset
+
+ plugin (page
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "subsec:Largest-inscribed-circle-plugin"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+ This method however often over-estimates the thickness, as it measures
+ thickness at the largest point within the region.
+\end_layout
+
+\begin_layout Standard
+The MorphoLibJ library also proposes to measure 
 \series bold
-largest circle that can be inscribed within the particle
+average thickness
 \series default
-.
- 
+ by first computing the skeleton of the region, and then to measure for
+ each pixel of the skeleton the distance to the closest background point
+ in the original image.
+ This way, the thickness measure is integrated over the whole region skeleton
+ and is more representative.
 \end_layout
 
 \begin_layout Subsection
@@ -8191,12 +8258,9 @@ solidity
 
 ) is defined as the ratio of the area of the region over the area of its
  convex hull.
-\end_layout
-
-\begin_layout Standard
 \begin_inset Formula 
 \begin{align*}
-\text{convexity} & =\frac{A(X)}{A(ConvHull(X))}
+\text{convexity} & =\frac{A(X)}{A(\text{ConvHull}(X))}
 \end{align*}
 
 \end_inset
@@ -8243,6 +8307,34 @@ Convexity of a planar region.
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+The 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[op:Convexify]{Convexify Plugin}
+\end_layout
+
+\end_inset
+
+ (Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "op:Convexify"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) also allows to compute the convex image corresponding to a binary region.
+ 
 \end_layout
 
 \begin_layout Subsubsection
@@ -8613,73 +8705,11 @@ reference "fig:Regions-Analysis-Output-1"
 -a).
 \end_layout
 
-\begin_layout Subsubsection
-Equivalent Ellipse
-\end_layout
-
-\begin_layout Standard
-The 
-\series bold
-Equivalent Ellipse plugin
-\series default
- computes the equivalent ellipse for each region within a binary or label
- image.
- The result of the plugin comprises the following features:
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Label the label of the region measured on the current line (equal to 255
- for binary images)
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Ellipse.Center.X the x coordinate of ellipse center
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Ellipse.Center.X the y coordinate of ellipse center
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Ellipse.Radius1 the length of the largest semi-axis
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Ellipse.Radius2 the length of the smallest semi-axis
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Ellipse.Orientation the orientation of the ellipse, in degrees from the horizonta
-l.
-\end_layout
-
-\begin_layout Standard
-It is also possible to draw the resulting ellipse(s) onto another image
- (Fig.
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Regions-Analysis-Output-1"
-
-\end_inset
-
--b).
-\end_layout
-
 \begin_layout Standard
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -8802,6 +8832,68 @@ Examples of graphical outputs of region analysis plugins.
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsubsection
+Equivalent Ellipse
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+Equivalent Ellipse plugin
+\series default
+ computes the equivalent ellipse for each region within a binary or label
+ image.
+ The result of the plugin comprises the following features:
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Label the label of the region measured on the current line (equal to 255
+ for binary images)
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Ellipse.Center.X the x coordinate of ellipse center
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Ellipse.Center.X the y coordinate of ellipse center
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Ellipse.Radius1 the length of the largest semi-axis
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Ellipse.Radius2 the length of the smallest semi-axis
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Ellipse.Orientation the orientation of the ellipse, in degrees from the horizonta
+l.
+\end_layout
+
+\begin_layout Standard
+It is also possible to draw the resulting ellipse(s) onto another image
+ (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Regions-Analysis-Output-1"
+
+\end_inset
+
+-b).
 \end_layout
 
 \begin_layout Subsubsection
@@ -9156,6 +9248,16 @@ Largest inscribed circle
 \end_layout
 
 \begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Largest-inscribed-circle-plugin"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 The 
 \series bold
 largest inscribed circle plugin 
@@ -9260,7 +9362,7 @@ mean breadth
 \end_layout
 
 \begin_layout Subsubsection
-Definitions
+Mathematical definitions
 \end_layout
 
 \begin_layout Standard
@@ -9301,8 +9403,8 @@ mean breadth
 \begin_inset Formula $\bar{b}$
 \end_inset
 
- of a convex set can be seen as the average of the caliper diameter over
- all directions.
+ of a convex set can be seen as the average of the caliper diameter (or
+ Feret diameter) over all directions.
  For a set 
 \begin_inset Formula $X$
 \end_inset
@@ -9798,25 +9900,24 @@ The global rotation matrix is assimilated to the product
 \end_inset
 
 .
- When the plugin 
-\begin_inset Quotes eld
-\end_inset
-
-Analyze regions 3D
-\begin_inset Quotes erd
-\end_inset
-
- is used,
+ 
 \end_layout
 
 \begin_layout Subsection
-Shape indices
+3D Shape indices
 \end_layout
 
 \begin_layout Standard
-In 3D, shape indices can be defined to quantify the shape of the regions
+In 3D, shape indices can be also defined to quantify the shape of the regions
  independently of their size.
- The 
+\end_layout
+
+\begin_layout Subsubsection
+Sphericity
+\end_layout
+
+\begin_layout Standard
+The 
 \series bold
 sphericity index
 \series default
@@ -9858,8 +9959,29 @@ status open
 \end_layout
 
 \begin_layout Standard
+Other shape factors may be obtained by computing normalized ratios of volume
+ with mean breadth, or surface with mean breadth.
+ Their interpretation is however often not obvious.
+\end_layout
+
+\begin_layout Subsubsection
+Elongation
+\end_layout
+
+\begin_layout Standard
 It is also possible to compute elongation factors from ratio of the radiuses
  if the equivalent ellipsoid.
+ With three radius values, three ratios can be computed.
+ In MorphoLibJ, the largest radius is used as numerator, resulting in the
+ following ratios:
+\begin_inset Formula 
+\[
+e_{12}=\frac{r_{1}}{r_{2}},\,e_{23}=\frac{r_{2}}{r_{3}},\,e_{13}=\frac{r_{1}}{r_{3}},\text{ with }r_{1}\ge r_{2}\ge r_{3}
+\]
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -10787,12 +10909,14 @@ Think about incorporating gray level granulometries
 \end_layout
 
 \begin_layout Chapter
-Binary and label image utilities
+Binary and label images
 \end_layout
 
 \begin_layout Standard
-The MorphoLibJ library provides several utility functions for the processing
- and the management of binary and label images.
+Binary and label images are a convenient way of representing the result
+ of segmentation algorithms.
+ The MorphoLibJ library provides several plugins for the processing and
+ the management of binary and label images.
 \end_layout
 
 \begin_layout Standard
@@ -11293,7 +11417,7 @@ reference "fig:Chamfer-Weights-3D"
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -11890,6 +12014,198 @@ reference "fig:Geodesic-Distance-Map-3d"
  Binary image is assumed to have cubic voxels.
 \end_layout
 
+\begin_layout Section
+Binary images processing
+\end_layout
+
+\begin_layout Subsection
+Convexification
+\end_layout
+
+\begin_layout Standard
+When processing a binary region, it can sometimes be useful to consider
+ the binary region corresponding to the convex hull of the original region
+ (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Convexification"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+ For example, the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[subsec:Convexity]{convexity measure}
+\end_layout
+
+\end_inset
+
+ (section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Convexity"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) is based on the convex hull.
+ The Convexify plugin allows to generate the smallest convex region containing
+ a binary region.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/binary/batCochlea-z40-inv.png
+	width 30col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Binary image.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/binary/batCochlea-z40-convex-inv.png
+	width 30col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Convexification.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/binary/batCochlea-z40-convex-inv-ovr.png
+	width 30col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Original image over its convex hull.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Convexification"
+
+\end_inset
+
+Convexification of a binary image containing several disjoint components.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Convexify 
+\begin_inset CommandInset label
+LatexCommand label
+name "op:Convexify"
+
+\end_inset
+
+for a binary image, generate the smallest convex region containing a region
+ in the image.
+\end_layout
+
 \begin_layout Standard
 \begin_inset Newpage clearpage
 \end_inset
@@ -11930,15 +12246,20 @@ reference "sec:Connected-Components-Labeling"
 \end_inset
 
 ).
- Segmentation algorithms such as the watershed may also returns result as
- a label image.
+ Segmentation algorithms such as the watershed may also return their result
+ as a label image.
 \end_layout
 
 \begin_layout Standard
 The number of labels that can be represented depends on the image type:
  255 for byte images, 65535 for short images, and around 16 millions for
- 32-bit floating point images (only the 24 mantissa bits are used for label
- representation).
+ 32-bit floating point images (only the 24 bits of the mantissa are used
+ for label representation, leading to a maximum number of labels equal to
+ 
+\begin_inset Formula $2^{24}$
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Subsection
@@ -12216,7 +12537,30 @@ Impact of the connectivity on the result of connected component labeling.
 For 3D images, the 6-connectivity considers only orthogonal neighbors in
  the three main directions, whereas the 26-connectivity considers all the
  neighbors of a given voxel in its 3-by-3-by-3 surrounding.
- The connectivity is also considered for computing morphological reconstructions
+ The connectivity is also considered for computing 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[sec:Morphological-Reconstruction]{
+\end_layout
+
+\end_inset
+
+morphological reconstructions
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
  (section
 \begin_inset space ~
 \end_inset
@@ -12228,14 +12572,41 @@ reference "sec:Morphological-Reconstruction"
 
 \end_inset
 
-), or for computing the Euler number of binary or label images (section
+), or for computing the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[subsec:Digital-Euler-Number]{
+\end_layout
+
+\end_inset
+
+Euler number
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ of binary or label images (section
 \begin_inset space ~
 \end_inset
 
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Euler-Number"
+reference "subsec:Digital-Euler-Number"
+plural "false"
+caps "false"
+noprefix "false"
 
 \end_inset
 
@@ -12400,7 +12771,21 @@ reference "fig:Assign-Measure-To-Label"
 \end_inset
 
 ).
- See also the Draw Label Values plugin (page
+ Background pixels/voxels are associated to NaN (Not-A-Number) value.
+ See also the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[op:Draw-Label-Vales]{Draw Label Values plugin}
+\end_layout
+
+\end_inset
+
+ (page
 \begin_inset space ~
 \end_inset
 
@@ -12422,8 +12807,35 @@ Region and labels selection
 \end_layout
 
 \begin_layout Standard
-The MorphoLibJ library offers several utility tools for automatically selecting
+It is often convenient select regions in a binary or label image based on
+ their size or their location (e.g.
+ removing the regions touching the border).
+ The MorphoLibJ library offers several utility tools for automatically selecting
  or removing specific regions, or to edit the label images.
+ The 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[sec:Label-Edition-plugin]{Label Edition Plugin}
+\end_layout
+
+\end_inset
+
+ (Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Label-Edition-plugin"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) provides some of these operators integrated into a graphical user interface.
 \end_layout
 
 \begin_layout Subsection
@@ -12568,6 +12980,13 @@ Algorithms work for both 2D or 3D images.
  Default connectivity 4 (resp.
  6) is used for 2D (resp.
  3D) images.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -12778,6 +13197,10 @@ filters the labels according to their size (area in 2D, volume in 3D), by
  specifying a comparison operator and a threshold value.
 \end_layout
 
+\begin_layout Standard
+\begin_inset Note Note
+status collapsed
+
 \begin_layout Description
 Label
 \begin_inset space ~
@@ -12796,6 +13219,12 @@ name "op:Label-Size-Opening"
 
 computes the size (area in 2D, volume in 3D) of each region, and remove
  all labels whose size is below the value specified by the user.
+ [Note: deprecated, replaced by Label Size Filtering]
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Paragraph
@@ -12831,7 +13260,7 @@ empty labels
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -13032,61 +13461,27 @@ reference "fig:Remap-Labels"
 \end_layout
 
 \begin_layout Paragraph
-Draw
+Select
 \begin_inset space ~
 \end_inset
 
-Label
+Region
 \begin_inset space ~
 \end_inset
 
-Values
+Neighbors 
 \end_layout
 
 \begin_layout Standard
-\begin_inset CommandInset label
-LatexCommand label
-name "op:Draw-Label-Values"
-
-\end_inset
-
-draws the value of a feature measured on each label of an image using two
- coordinates (bounding box, centroid...) also stored in a ResultsTable.
- An example is shown on Figure
+Extracts the neighbor regions within a label image from a region label,
+ or a list of region labels (See Fig.
 \begin_inset space ~
 \end_inset
 
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Draw-Label-Values"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-.
- See also the plugin Assign
-\begin_inset space ~
-\end_inset
-
-Measure
-\begin_inset space ~
-\end_inset
-
-To
-\begin_inset space ~
-\end_inset
-
-Label (page
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand pageref
-reference "op:Colorize-Labels"
+reference "fig:Extract-Neighbor-Labels"
 plural "false"
 caps "false"
 noprefix "false"
@@ -13105,8 +13500,15 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename images/grains/grains-WTH-areaOpen-lbl2-border-drawLabelValues.png
-	width 100text%
+	filename images/blobs/blobs-basins.png
+	width 35text%
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/blobs/blobs-basins-selectNeighbors.png
+	width 35text%
 
 \end_inset
 
@@ -13119,21 +13521,12 @@ status open
 \begin_layout Plain Layout
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Draw-Label-Values"
+name "fig:Extract-Neighbor-Labels"
 
 \end_inset
 
-Example use of the 
-\begin_inset Quotes eld
-\end_inset
-
-Draw Label Values
-\begin_inset Quotes erd
-\end_inset
-
- plugin.
- The value of the elongation column are drawn as overlay on the image using
- the position given by Bounding Box coordinates.
+An example of a label image containing contiguous regions, and result of
+ the selection of the neighbors of two regions (keeping the original regions).
 \end_layout
 
 \end_inset
@@ -13274,6 +13667,132 @@ Label Edition plugin.
 \end_layout
 
 \begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Utilities
+\end_layout
+
+\begin_layout Paragraph
+Draw
+\begin_inset space ~
+\end_inset
+
+Label
+\begin_inset space ~
+\end_inset
+
+Values
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "op:Draw-Label-Values"
+
+\end_inset
+
+draws the value of a feature measured on each label of an image using two
+ coordinates (bounding box, centroid...) also stored in a ResultsTable.
+ An example is shown on Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Draw-Label-Values"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ See also the plugin Assign
+\begin_inset space ~
+\end_inset
+
+Measure
+\begin_inset space ~
+\end_inset
+
+To
+\begin_inset space ~
+\end_inset
+
+Label (page
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "op:Colorize-Labels"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/grains/grains-WTH-areaOpen-lbl2-border-drawLabelValues.png
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Draw-Label-Values"
+
+\end_inset
+
+Example use of the 
+\begin_inset Quotes eld
+\end_inset
+
+Draw Label Values
+\begin_inset Quotes erd
+\end_inset
+
+ plugin.
+ The value of the elongation column are drawn as overlay on the image using
+ the position given by Bounding Box coordinates.
+\end_layout
+
+\end_inset
+
 
 \end_layout
 
@@ -17263,7 +17782,7 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="32" columns="10">
+<lyxtabular version="3" rows="31" columns="10">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top">
 <column alignment="center" valignment="top">
@@ -19922,104 +20441,6 @@ reference "op:Crop-Label"
 </cell>
 </row>
 <row>
-<cell alignment="left" valignment="top" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Label Size Opening
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-*
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-*
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-*
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-*
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-n.a.
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-*
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-*
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-*
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset CommandInset ref
-LatexCommand pageref
-reference "op:Label-Size-Opening"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
 <cell alignment="center" valignment="top" rightline="true" usebox="none">
 \begin_inset Text
 
@@ -20482,11 +20903,11 @@ the three coordinates of the centroid
 
 \begin_layout Itemize
 the three radius 
-\begin_inset Formula $a,b,c$
+\begin_inset Formula $r_{1},r_{2},r_{3}$
 \end_inset
 
 , with 
-\begin_inset Formula $a>b>c$
+\begin_inset Formula $r_{1}>r_{2}>r_{3}$
 \end_inset
 
 , corresponding to the lengths of each semi-axis
@@ -20899,7 +21320,7 @@ yaw
 The global rotation matrix can be written as follow:
 \begin_inset Formula 
 \begin{align*}
-\boldsymbol{R} & =\boldsymbol{R}_{z}(\varphi)\boldsymbol{R}_{y}(\theta)\boldsymbol{R}_{x}(\psi)\\
+\boldsymbol{R} & =\boldsymbol{R}_{z}(\varphi)\cdot\boldsymbol{R}_{y}(\theta)\cdot\boldsymbol{R}_{x}(\psi)\\
  & =\left[\begin{array}{ccc}
 \cos\theta\cos\varphi & \sin\psi\sin\theta\cos\varphi-\cos\psi\sin\varphi & \cos\psi\sin\theta\cos\varphi+\sin\psi\sin\varphi\\
 \cos\theta\sin\varphi & \sin\psi\sin\theta\sin\varphi+\cos\psi\cos\varphi & \cos\psi\sin\theta\sin\varphi-\sin\psi\cos\varphi\\
@@ -20989,7 +21410,7 @@ by keeping the value of
 \begin_inset Formula $\sin^{-1}$
 \end_inset
 
- function by 
+ function by the 
 \begin_inset Formula $\text{atan2}$
 \end_inset
 
@@ -21037,7 +21458,7 @@ This lead to the value of
 \begin_inset Formula $\psi$
 \end_inset
 
- as 
+ as
 \begin_inset Formula 
 \begin{align*}
 \psi & =\text{atan2}(R_{32},R_{33})
@@ -21198,7 +21619,7 @@ R_{23} & =\cos\psi\sin\varphi-\sin\psi\cos\varphi=-\sin(\psi-\varphi)=-R_{12}
 
 \end_inset
 
-leading to 
+leading to
 \begin_inset Formula 
 \begin{align*}
 \psi & =\varphi+\text{atan2}(R_{12},R_{13})
@@ -21215,9 +21636,6 @@ If
 \end_inset
 
 , similar development leads to:
-\end_layout
-
-\begin_layout Standard
 \begin_inset Formula 
 \begin{align*}
 \psi & =-\varphi+\text{atan2}(-R_{12},-R_{13})
@@ -21267,14 +21685,15 @@ Let us suppose that the ellipsoid is centered and aligned with the main
 \begin_inset Formula $(\rho,\theta,\varphi)$
 \end_inset
 
-, corresponding to the radius, inclination with the vertical, and azimuth
- (these notations are different from the ones used for Euler angles).
+, corresponding to the distance to the origin, to the inclination with the
+ vertical, and to the azimuth (these notations are different from the ones
+ used for Euler angles).
  This corresponds to:
 \begin_inset Formula 
 \begin{align*}
-x & =\rho a\cos\varphi\sin\theta\\
-y & =\rho b\sin\varphi\sin\theta\\
-z & =\rho c\cos\theta
+x & =\rho\cdot r_{1}\cdot\cos\varphi\cdot\sin\theta\\
+y & =\rho\cdot r_{2}\cdot\sin\varphi\cdot\sin\theta\\
+z & =\rho\cdot r_{3}\cdot\cos\theta
 \end{align*}
 
 \end_inset
@@ -21334,9 +21753,9 @@ J_{\Phi}(x,y,z)=\left[\begin{array}{ccc}
 \frac{\partial y}{\partial\rho} & \frac{\partial y}{\partial\theta} & \frac{\partial y}{\partial\varphi}\\
 \frac{\partial z}{\partial\rho} & \frac{\partial z}{\partial\theta} & \frac{\partial z}{\partial\varphi}
 \end{array}\right]=\left[\begin{array}{ccc}
-a\cos\varphi\sin\theta & \rho a\cos\varphi\cos\theta & -\rho a\sin\varphi\sin\theta\\
-b\sin\varphi\sin\theta & \rho b\sin\varphi\cos\theta & \rho b\cos\varphi\sin\theta\\
-c\cos\theta & -\rho c\sin\theta & 0
+r_{1}\cos\varphi\sin\theta & \rho r_{1}\cos\varphi\cos\theta & -\rho r_{1}\sin\varphi\sin\theta\\
+r_{2}\sin\varphi\sin\theta & \rho r_{2}\sin\varphi\cos\theta & \rho r_{2}\cos\varphi\sin\theta\\
+r_{2}\cos\theta & -\rho r_{3}\sin\theta & 0
 \end{array}\right]
 \]
 
@@ -21351,7 +21770,7 @@ The determinant equals
 \end_inset
 
  if 
-\begin_inset Formula $a=b=c=1$
+\begin_inset Formula $r_{1}=r_{2}=r_{3}=1$
 \end_inset
 
 .
@@ -21368,14 +21787,14 @@ The determinant equals
 \end_inset
 
  gives a determinant equal to 
-\begin_inset Formula $abc\rho^{2}\sin\theta$
+\begin_inset Formula $r_{1}r_{2}r_{3}\rho^{2}\sin\theta$
 \end_inset
 
 .
  Then the moment integral is given by:
 \begin_inset Formula 
 \begin{equation}
-\mu_{pqr}=abc\int_{0}^{2\pi}\int_{0}^{\pi}\int_{0}^{1}\left(\rho\cos\varphi\sin\theta\right)^{p}\left(\rho\sin\varphi\sin\theta\right)^{q}\left(\rho\cos\theta\right)^{r}\cdot\rho^{2}\sin\theta\cdot d\rho\cdot d\theta\cdot d\varphi
+\mu_{pqr}=r_{1}r_{2}r_{3}\int_{0}^{2\pi}\int_{0}^{\pi}\int_{0}^{1}\left(\rho\cos\varphi\sin\theta\right)^{p}\left(\rho\sin\varphi\sin\theta\right)^{q}\left(\rho\cos\theta\right)^{r}\cdot\rho^{2}\sin\theta\cdot d\rho\cdot d\theta\cdot d\varphi
 \end{equation}
 
 \end_inset
@@ -21393,7 +21812,7 @@ It is easy to check that the moment
 \end_inset
 
  corresponds to the volume of the ellipsoid (equal to 
-\begin_inset Formula $\frac{4\pi}{3}abc$
+\begin_inset Formula $\frac{4\pi}{3}r_{1}r_{2}r_{3}$
 \end_inset
 
 ):
@@ -21402,9 +21821,9 @@ It is easy to check that the moment
 \begin_layout Standard
 \begin_inset Formula 
 \begin{align*}
-m_{000} & =abc\int_{0}^{2\pi}\int_{0}^{\pi}\int_{0}^{1}\rho^{2}\sin\theta\cdot d\rho\cdot d\theta\cdot d\varphi\\
- & =\frac{abc}{3}\int_{0}^{2\pi}\int_{0}^{\pi}\sin\theta\cdot d\theta\cdot d\varphi=\frac{abc}{3}\int_{0}^{2\pi}(-\cos\pi+\cos0)\cdot d\varphi\\
- & =\frac{2abc}{3}\int_{0}^{2\pi}d\varphi=\frac{4\pi}{3}abc
+m_{000} & =r_{1}r_{2}r_{3}\int_{0}^{2\pi}\int_{0}^{\pi}\int_{0}^{1}\rho^{2}\sin\theta\cdot d\rho\cdot d\theta\cdot d\varphi\\
+ & =\frac{r_{1}r_{2}r_{3}}{3}\int_{0}^{2\pi}\int_{0}^{\pi}\sin\theta\cdot d\theta\cdot d\varphi=\frac{abc}{3}\int_{0}^{2\pi}(-\cos\pi+\cos0)\cdot d\varphi\\
+ & =\frac{2}{3}r_{1}r_{2}r_{3}\int_{0}^{2\pi}d\varphi=\frac{4\pi}{3}r_{1}r_{2}r_{3}
 \end{align*}
 
 \end_inset
@@ -21445,9 +21864,9 @@ When considering centered ellipsoid aligned with principal axes, the eigen
 \begin_layout Standard
 \begin_inset Formula 
 \begin{align*}
-\mu_{200} & =abc\int_{0}^{2\pi}\int_{0}^{\pi}\int_{0}^{1}\left(a\rho\cos\varphi\sin\theta\right)^{2}\rho^{2}\sin\theta\cdot d\rho\cdot d\theta\cdot d\varphi\\
- & =a^{3}bc\int_{0}^{2\pi}\int_{0}^{\pi}\int_{0}^{1}\rho^{4}d\rho\cdot\cos^{2}\varphi\sin^{3}\theta\cdot d\theta\cdot d\varphi\\
- & =\frac{a^{3}bc}{5}\int_{0}^{2\pi}\int_{0}^{\pi}\sin^{3}\theta\cdot d\theta\cdot\cos^{2}\varphi\cdot d\varphi
+\mu_{200} & =r_{1}r_{2}r_{3}\int_{0}^{2\pi}\int_{0}^{\pi}\int_{0}^{1}\left(r_{1}\rho\cos\varphi\sin\theta\right)^{2}\rho^{2}\sin\theta\cdot d\rho\cdot d\theta\cdot d\varphi\\
+ & =r_{1}^{3}r_{2}r_{3}\int_{0}^{2\pi}\int_{0}^{\pi}\int_{0}^{1}\rho^{4}d\rho\cdot\cos^{2}\varphi\sin^{3}\theta\cdot d\theta\cdot d\varphi\\
+ & =\frac{r_{1}^{3}r_{2}r_{3}}{5}\int_{0}^{2\pi}\int_{0}^{\pi}\sin^{3}\theta\cdot d\theta\cdot\cos^{2}\varphi\cdot d\varphi
 \end{align*}
 
 \end_inset
@@ -21481,9 +21900,9 @@ The integral over
 Coming back to moment integral:
 \begin_inset Formula 
 \begin{align*}
-\mu_{200} & =\frac{a^{3}bc}{5}\frac{4}{3}\int_{0}^{2\pi}\cos^{2}\varphi\cdot d\varphi==\frac{a^{3}bc}{5}\frac{4}{3}\int_{0}^{2\pi}\frac{1}{2}+\frac{1}{2}\cos\left(2\varphi\right)d\varphi\\
- & =\frac{a^{3}bc}{5}\frac{4}{3}\frac{1}{2}\left(2\pi-0\right)=\frac{4\pi}{3}\frac{a^{3}bc}{5}\\
- & =\frac{a^{2}}{5}m_{000}
+\mu_{200} & =\frac{r_{1}^{3}r_{2}r_{3}}{5}\frac{4}{3}\int_{0}^{2\pi}\cos^{2}\varphi\cdot d\varphi==\frac{r_{1}^{3}r_{2}r_{3}}{5}\frac{4}{3}\int_{0}^{2\pi}\frac{1}{2}+\frac{1}{2}\cos\left(2\varphi\right)d\varphi\\
+ & =\frac{r_{1}^{3}r_{2}r_{3}}{5}\frac{4}{3}\frac{1}{2}\left(2\pi-0\right)=\frac{4\pi}{3}\frac{r_{1}^{3}r_{2}r_{3}}{5}\\
+ & =\frac{r_{1}^{2}}{5}m_{000}
 \end{align*}
 
 \end_inset
@@ -21495,9 +21914,9 @@ Coming back to moment integral:
 Then, the central moments are expressed as:
 \begin_inset Formula 
 \begin{align*}
-\lambda_{1}=\mu_{200} & =\frac{a^{2}}{5}m_{000}\\
-\lambda_{2}=\mu_{020} & =\frac{b^{2}}{5}m_{000}\\
-\lambda_{3}=\mu_{002} & =\frac{c^{2}}{5}m_{000}
+\lambda_{1}=\mu_{200} & =\frac{r_{1}^{2}}{5}m_{000}\\
+\lambda_{2}=\mu_{020} & =\frac{r_{2}^{2}}{5}m_{000}\\
+\lambda_{3}=\mu_{002} & =\frac{r_{3}^{2}}{5}m_{000}
 \end{align*}
 
 \end_inset
@@ -21510,11 +21929,15 @@ We therefore have
 \begin_inset Formula $\lambda_{i}=\frac{r_{i}^{2}}{5}m_{000}$
 \end_inset
 
-, then 
-\begin_inset Formula $r_{i}=\sqrt{5\lambda_{i}/m_{000}}$
+, leading to:
+\begin_inset Formula 
+\begin{align}
+r_{i} & =\sqrt{\frac{5\cdot\lambda_{i}}{m_{000}}}
+\end{align}
+
 \end_inset
 
-.
+
 \end_layout
 
 \end_body
