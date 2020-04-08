@@ -102,7 +102,7 @@ public class AverageThickness extends RegionAnalyzer2D<AverageThickness.Result>
         {
             Result res = new Result();
             res.meanDist = sums[i] / counts[i];
-            res.avgThickness = res.meanDist * 2;
+            res.avgThickness = res.meanDist * 2 - 1;
             results[i] = res;
         }
         return results;
@@ -124,13 +124,13 @@ public class AverageThickness extends RegionAnalyzer2D<AverageThickness.Result>
         /**
          * Average distance computed along the skeleton
          */
-        double meanDist;
+        public double meanDist;
         
         /**
          * Average thickness value computed from the average distance.
-         * Typically: avgThickness = avgDist * 2.
+         * Typically: avgThickness = avgDist * 2 - 1.
          */
-        double avgThickness;
+        public double avgThickness;
     }
 
 }

@@ -38,6 +38,7 @@ import inra.ijpb.geometry.Ellipse;
 import inra.ijpb.geometry.OrientedBox2D;
 import inra.ijpb.geometry.PointPair2D;
 import inra.ijpb.label.LabelImages;
+import inra.ijpb.measure.region2d.AverageThickness;
 import inra.ijpb.measure.region2d.BoundingBox;
 import inra.ijpb.measure.region2d.Centroid;
 //import inra.ijpb.measure.IntrinsicVolumes2D;
@@ -70,6 +71,7 @@ public class AnalyzeRegions implements PlugInFilter
 	boolean computeGeodesicDiameter = true;
 	boolean computeTortuosity = true;
 	boolean computeMaxInscribedDisc = true;
+    boolean computeAverageThickness = true;
 	boolean computeGeodesicElongation = true;
 	
 
@@ -135,6 +137,7 @@ public class AnalyzeRegions implements PlugInFilter
         gd.addCheckbox("Geodesic Diameter", true);
         gd.addCheckbox("Tortuosity", true);
         gd.addCheckbox("Max._Inscribed_Disc", true);
+        gd.addCheckbox("Average_Thickness", true);
         gd.addCheckbox("Geodesic_Elong.", true);
         gd.showDialog();
         
@@ -158,6 +161,7 @@ public class AnalyzeRegions implements PlugInFilter
         computeGeodesicDiameter   = gd.getNextBoolean();
         computeTortuosity         = gd.getNextBoolean();
         computeMaxInscribedDisc   = gd.getNextBoolean();
+        computeAverageThickness   = gd.getNextBoolean();
         computeGeodesicElongation = gd.getNextBoolean();
         
         
@@ -196,6 +200,7 @@ public class AnalyzeRegions implements PlugInFilter
     	OrientedBox2D[] orientedBoxes = null;
     	GeodesicDiameter.Result[] geodDiams = null;
     	Circle2D[] inscrDiscs = null;
+    	AverageThickness.Result[] avgThickness = null;
     	
 
     	// compute intrinsic volumes
@@ -280,6 +285,13 @@ public class AnalyzeRegions implements PlugInFilter
     		inscrDiscs = algo.analyzeRegions(image, labels, calib);
     	}
 
+        if (computeAverageThickness)
+        {
+            IJ.showStatus("Compute Average Thickness");
+            AverageThickness algo = new AverageThickness();
+            DefaultAlgoListener.monitor(algo);
+            avgThickness = algo.analyzeRegions(image, labels, calib);
+        }
         
     	// Fill results table
     	
@@ -424,6 +436,15 @@ public class AnalyzeRegions implements PlugInFilter
 			}
     	}
 
+    	if (computeAverageThickness)
+    	{
+            for (int i = 0; i < nLabels; i++)
+            {
+                AverageThickness.Result res = avgThickness[i];
+                table.setValue("AverageThickness", i, res.avgThickness);
+            }
+    	}
+    	
     	if (computeGeodesicElongation)
     	{
     		double[] elong = new double[nLabels];
