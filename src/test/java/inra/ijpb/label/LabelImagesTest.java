@@ -217,4 +217,86 @@ public class LabelImagesTest
 		assertEquals(4, sizeOpen10.get(5, 5));
 	}
 
+	
+    @Test
+    public final void testMergeLabelsWithGap_ImageProcessor()
+    {
+        int[][] data = new int[][] {
+            {2, 2, 2, 2, 0, 3, 3, 3, 3}, 
+            {2, 2, 2, 2, 0, 3, 3, 3, 3}, 
+            {2, 2, 2, 0, 6, 0, 3, 3, 3}, 
+            {2, 2, 0, 6, 6, 6, 0, 3, 3}, 
+            {0, 0, 6, 6, 6, 6, 6, 0, 0}, 
+            {5, 5, 0, 6, 6, 6, 0, 8, 8}, 
+            {5, 5, 5, 0, 6, 0, 8, 8, 8}, 
+            {5, 5, 5, 5, 0, 8, 8, 8, 8}, 
+            {5, 5, 5, 5, 0, 8, 8, 8, 8}, 
+        };
+        
+        ImageProcessor labelImage = new ByteProcessor(9, 9);
+        for (int y = 0; y < 9; y++)
+        {
+            for (int x = 0; x < 9; x++)
+            {
+                labelImage.set(x, y, data[y][x]);
+            }
+        }
+        
+        float[] labels = new float[] {3.0f, 5.0f, 6.0f};
+        float refLabel = 3.0f;
+        LabelImages.mergeLabelsWithGap(labelImage, labels, refLabel, 4);
+
+        assertEquals(2, labelImage.get(0, 0));
+        assertEquals(8, labelImage.get(8, 8));
+
+        assertEquals(3, labelImage.get(8, 0));
+        assertEquals(3, labelImage.get(4, 4));
+        assertEquals(3, labelImage.get(0, 8));
+
+        assertEquals(3, labelImage.get(5, 2));
+        assertEquals(3, labelImage.get(2, 5));
+    }
+
+    @Test
+    public final void testMergeLabelsWithGap_3D_cubic()
+    {
+        ImageStack image = ImageStack.create(9, 9, 9, 8);
+        for (int z = 0; z < 4; z++)
+        {
+            for (int y = 0; y < 4; y++)
+            {
+                for (int x = 0; x < 4; x++)
+                {
+                    image.setVoxel(x, y, z, 2);
+                    image.setVoxel(x + 5, y, z, 3);
+                    image.setVoxel(x, y + 5, z, 5);
+                    image.setVoxel(x + 5, y + 5, z, 7);
+                    image.setVoxel(x, y, z + 5, 8);
+                    image.setVoxel(x + 5, y, z + 5, 10);
+                    image.setVoxel(x, y + 5, z + 5, 11);
+                    image.setVoxel(x + 5, y + 5, z + 5, 12);
+                }
+            }
+        }
+
+        float[] labels = new float[] {3.0f, 5.0f, 7.0f};
+        float refLabel = 3.0f;
+        LabelImages.mergeLabelsWithGap(image, labels, refLabel, 6);
+
+        assertEquals(2, image.getVoxel(0, 0, 0), .01);
+        assertEquals(12, image.getVoxel(8, 8, 8), .01);
+
+        assertEquals(3, image.getVoxel(7, 0, 0), .01);
+        assertEquals(3, image.getVoxel(0, 7, 0), .01);
+        assertEquals(3, image.getVoxel(7, 7, 0), .01);
+
+        // should remove boundary between labels 2-3 and 3-5
+        assertEquals(3, image.getVoxel(7, 5, 0), .01);
+        assertEquals(3, image.getVoxel(5, 7, 0), .01);
+
+        // should keep boundary with region with label 2
+        assertEquals(0, image.getVoxel(4, 0, 0), .01);
+        assertEquals(0, image.getVoxel(0, 4, 0), .01);
+    }
+
 }

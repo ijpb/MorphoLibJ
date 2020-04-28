@@ -48,6 +48,8 @@ import ij.process.FloatPolygon;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
+import inra.ijpb.data.Cursor2D;
+import inra.ijpb.data.Cursor3D;
 import inra.ijpb.label.distmap.DistanceTransform3D;
 import inra.ijpb.label.distmap.DistanceTransform3DFloat;
 import inra.ijpb.label.distmap.DistanceTransform3DShort;
@@ -1492,7 +1494,8 @@ public class LabelImages
 		}
 	}
 
-	/**
+ 
+    /**
 	 * Ensures that the labels in the given label image range from 1 to Lmax.
 	 * 
 	 * @param imagePlus
@@ -1866,7 +1869,275 @@ public class LabelImages
 					+ " labels to merge" );
 	}// end method mergeLabels
 
-	/**
+    /**
+     * Merge labels selected by freehand or point tool. Labels are merged
+     * in place (i.e., the input image is modified). Zero-value label is 
+     * merged only if its neighbors contains two different labels.
+     *
+     * @param labelImage  label image to modify
+     * @param roi  selection indicating the labels to merge
+     * @param conn the connectivity to check for neighbors of background labels
+     * @param verbose  option to write in the log window the labels merged
+     */
+    public static final void mergeLabelsWithGap(
+            final ImagePlus labelImage,
+            final Roi roi,
+            final int conn, 
+            final boolean verbose )
+    {
+        if( roi == null )
+        {
+            IJ.showMessage( "Please select some labels to merge using the "
+                    + "freehand or point selection tool." );
+            return;
+        }
+
+        // get labels selected by ROI
+        final ArrayList<Float> list = getSelectedLabels(labelImage, roi);
+        if (list.size() <= 1)
+        {
+            IJ.error("Please select two or more different labels to merge");
+        }
+        
+        // the label value to convert to
+        float finalValue = list.get( 0 );
+        
+        // convert ArrayList to array
+        float[] labelArray = new float[list.size()];
+        int i = 0;
+        for (Float f : list)
+            labelArray[i++] = f != null ? f : Float.NaN;
+
+        // create log message
+        String sLabels = new String("" + (long) labelArray[0]);
+        for (int j = 1; j < labelArray.length; j++)
+            sLabels += ", " + (long) labelArray[j];
+        if (verbose)
+            IJ.log("Merging label(s) " + sLabels + " to label "
+                    + (long) finalValue + " filling gap with conn " + conn);
+        
+        LabelImages.mergeLabelsWithGap(labelImage, labelArray, finalValue, conn);
+    } // end method mergeLabelsWithDams
+
+    /**
+     * Merge several regions identified by their label, filling the gap between
+     * former regions. Labels are merged in place (i.e., the input image is
+     * modified). The background pixels or voxels are merged only if they are
+     * neighbor of at least two regions to be merged, and of no other region.
+     * 
+     * @param imagePlus
+     *            an ImagePlus containing a 3D label image
+     * @param labels
+     *            the list of labels to replace
+     * @param newLabel
+     *            the new value for labels
+     * @param conn
+     *            the connectivity to check neighbors of background pixels
+     */
+    public static final void mergeLabelsWithGap(ImagePlus imagePlus, float[] labels, float newLabel, int conn) 
+    {
+        // Dispatch to appropriate function depending on dimension
+        if (imagePlus.getStackSize() == 1) 
+        {
+            // process planar image
+            ImageProcessor image = imagePlus.getProcessor();
+            mergeLabelsWithGap(image, labels, newLabel, conn);
+        } 
+        else 
+        {
+            // process image stack
+            ImageStack image = imagePlus.getStack();
+            mergeLabelsWithGap(image, labels, newLabel, conn);
+        }
+    }
+
+    /**
+     * Merge several regions identified by their label, filling the gap between
+     * former regions. Labels are merged in place (i.e., the input image is
+     * modified). The background pixels are merged only if they are neighbor of
+     * at least two regions to be merged, and of no other region.
+     * 
+     * @param image
+     *            a label planar image
+     * @param labels
+     *            the list of labels to replace
+     * @param newLabel
+     *            the new value for labels
+     * @param conn
+     *            the connectivity to check neighbors of background pixels
+     */
+    public static final void mergeLabelsWithGap(ImageProcessor image, float[] labels, float newLabel, int conn)
+    {
+        // get image size
+        int sizeX = image.getWidth();
+        int sizeY = image.getHeight();
+        
+        // convert array to tree (to accelerate search)
+        TreeSet<Float> labelSet = new TreeSet<Float>();
+        for (int i = 0; i < labels.length; i++)
+        {
+            labelSet.add(labels[i]);
+        }
+        
+        // determines the shift to compute neighbor coordinates
+        int[][] shifts;
+        if (conn == 4)
+        {
+            shifts = new int[][] {{0, -1}, {-1, 0}, {1, 0}, {0, 1}};
+        }
+        else if (conn == 8)
+        {
+            shifts = new int[][] { 
+                { -1, -1 }, { 0, -1 }, { 1, -1 },   // previous line
+                { -1, 0 }, { 1, 0 },                // current line
+                { -1, 1 }, { 0, 1 }, { 1, 1 } };    // next line
+        }
+        else
+        {
+            throw new IllegalArgumentException("Connectivity value should be either 4 or 8.");
+        }
+        
+        // create structure to store the boundary pixels
+        ArrayList<Cursor2D> boundaryPixels = new ArrayList<Cursor2D>();
+        
+        // process background pixels in-between two or more labels
+        for (int y = 0; y < sizeY; y++)
+        {
+            for (int x = 0; x < sizeX; x++)
+            {
+                // focus on background pixels
+                if (image.getf(x, y) != 0)
+                    continue;
+
+                // extract the neighbor labels
+                ArrayList<Float> neighborLabels = new ArrayList<Float>(shifts.length);
+                for (int[] shift : shifts)
+                {
+                    int x2 = x + shift[0];
+                    if (x2 < 0 || x2 >= sizeX) continue;
+
+                    int y2 = y + shift[1];
+                    if (y2 < 0 || y2 >= sizeY) continue;
+
+                    float value2 = image.getf(x2, y2);
+                    if (value2 == 0) continue;
+
+                    if (!neighborLabels.contains(value2))
+                    {
+                        neighborLabels.add(value2);
+                    }
+                }
+
+                // count number of neighbors
+                if (neighborLabels.size() > 1 && labelSet.containsAll(neighborLabels))
+                    boundaryPixels.add(new Cursor2D(x, y));
+            }
+        }
+        
+        // replace label value of all regions
+        replaceLabels(image, labels, newLabel);
+
+        for (Cursor2D c : boundaryPixels)
+            image.setf(c.getX(), c.getY(), newLabel);          
+    }
+
+    /**
+     * Merge several regions identified by their label, filling the gap between
+     * former regions. Labels are merged in place (i.e., the input image is
+     * modified). The background voxels are merged only if they are neighbor of
+     * at least two regions to be merged, and of no other region.
+     *  
+     * @param image a 3D label image
+     * @param labels the list of labels to replace 
+     * @param newLabel the new value for labels 
+     * @param conn the connectivity to check neighbors of background pixels
+     */
+    public static final void mergeLabelsWithGap(ImageStack image, float[] labels, float newLabel, int conn)
+    {
+        // get image size
+        int sizeX = image.getWidth();
+        int sizeY = image.getHeight();
+        int sizeZ = image.getSize();
+        
+        // convert array to tree (to accelerate search)
+        TreeSet<Float> labelSet = new TreeSet<Float>();
+        for (int i = 0; i < labels.length; i++)
+        {
+            labelSet.add(labels[i]);
+        }
+        
+        // determines the shift to compute neighbor coordinates
+        int[][] shifts;
+        if (conn == 6)
+        {
+            shifts = new int[][] {{0, 0, -1}, {0, -1, 0}, {-1, 0, 0}, {1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+        }
+        else if (conn == 26)
+        {
+            shifts = new int[][] {
+                // previous slice (dz = -1)
+                {-1, -1, -1}, {0, -1, -1}, {1, -1, -1},   {-1, 0, -1}, {0, 0, -1}, {1, 0, -1},   {-1, 1, -1}, {0, 1, -1}, {1, 1, -1},   
+                // current slice (dz = 0)
+                {-1, -1, 0}, {0, -1, 0}, {1, -1, 0},   {-1, 0, 0}, {1, 0, 0},   {-1, 1, 0}, {0, 1, 0}, {1, 1, 0},   
+                // next slice (dz = +1 )
+                {-1, -1, 1}, {0, -1, 1}, {1, -1, 1},   {-1, 0, 1}, {0, 0, 1}, {1, 0, 1},   {-1, 1, 1}, {0, 1, 1}, {1, 1, 1}};
+        }
+        else
+        {
+            throw new IllegalArgumentException("Connectivity value should be either 6 or 26.");
+        }
+        
+        // create structure to store the boundary voxels
+        ArrayList<Cursor3D> boundaryVoxels = new ArrayList<Cursor3D>();
+        
+        // process background pixels in-between two or more labels
+        for (int z = 0; z < sizeZ; z++)
+        {
+            for (int y = 0; y < sizeY; y++)
+            {
+                for (int x = 0; x < sizeX; x++)
+                {
+                    // process only background voxels
+                    if(image.getVoxel(x, y, z) != 0)
+                        continue;
+
+                    // extract the neighbor labels
+                    ArrayList<Float> neighborLabels = new ArrayList<Float>(shifts.length);
+                    for (int[] shift : shifts)
+                    {
+                        int x2 = x + shift[0];
+                        if (x2 < 0 || x2 >= sizeX) continue;
+
+                        int y2 = y + shift[1];
+                        if (y2 < 0 || y2 >= sizeY) continue;
+
+                        int z2 = z + shift[2];
+                        if (z2 < 0 || z2 >= sizeZ) continue;
+
+                        float value2 = (float) image.getVoxel(x2, y2, z2);
+                        if (value2 == 0) continue;
+
+                        if (!neighborLabels.contains(value2))
+                        {
+                            neighborLabels.add(value2);
+                        }
+                    }
+
+                    // check if all neighbor labels are in the label set
+                    if (neighborLabels.size() > 1 && labelSet.containsAll(neighborLabels))
+                        boundaryVoxels.add(new Cursor3D(x, y, z));
+                }
+            }
+        }
+        
+        // replace label value of all regions
+        replaceLabels(image, labels, newLabel);
+        
+        for (Cursor3D c : boundaryVoxels)
+          image.setVoxel(c.getX(), c.getY(), c.getZ(), newLabel);          
+    }
+
+    /**
 	 * Remove labels selected by freehand or point ROIs (in place).
 	 *
 	 * @param labelImage  input label image
