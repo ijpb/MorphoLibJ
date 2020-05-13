@@ -22,8 +22,6 @@
 package inra.ijpb.label;
 
 
-import inra.ijpb.label.LabelImagesTest;
-
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 

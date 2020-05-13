@@ -26,17 +26,16 @@ import static org.junit.Assert.assertFalse;
 
 import java.awt.Color;
 
+import org.junit.Assert;
+import org.junit.Test;
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
-import inra.ijpb.label.LabelImages;
 import inra.ijpb.util.ColorMaps.CommonLabelMaps;
-
-import org.junit.Assert;
-import org.junit.Test;
 
 public class LabelImagesTest
 {

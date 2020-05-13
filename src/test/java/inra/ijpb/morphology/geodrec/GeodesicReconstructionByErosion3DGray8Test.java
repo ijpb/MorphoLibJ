@@ -24,12 +24,12 @@ package inra.ijpb.morphology.geodrec;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
-import inra.ijpb.morphology.geodrec.GeodesicReconstructionByErosion3DGray8;
-
-import org.junit.Test;
 
 public class GeodesicReconstructionByErosion3DGray8Test {
 
