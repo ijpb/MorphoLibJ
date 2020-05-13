@@ -5,14 +5,130 @@ package inra.ijpb.label.select;
 
 /**
  * Implementation of a relational operator that computes a boolean value from
- * two scalar input values. Declare abstract classes for integer and
- * floating-point comparisons.
+ * two scalar input values. Declare abstract methods for integer and
+ * floating-point comparisons. Common relational operators are provided as
+ * static constants.
  * 
  * @author dlegland
  *
  */
 public interface RelationalOperator
 {
+    // ==================================================
+    // Static constants
+
+    /**
+     * Implementation of the "Greater Than" operator.
+     */
+    public static final RelationalOperator GT = new RelationalOperator()
+    {
+        @Override
+        public boolean evaluate(int value1, int value2)
+        {
+            return value1 > value2;
+        }
+
+        @Override
+        public boolean evaluate(double value1, double value2)
+        {
+            return value1 > value2;
+        }
+    };
+
+    /**
+     * Implementation of the "Lower Than" operator.
+     */
+    public static final RelationalOperator LT = new RelationalOperator()
+    {
+        @Override
+        public boolean evaluate(int value1, int value2)
+        {
+            return value1 < value2;
+        }
+
+        @Override
+        public boolean evaluate(double value1, double value2)
+        {
+            return value1 < value2;
+        }
+    };
+
+    /**
+     * Implementation of the "Greater Than Or Equal" operator.
+     */
+    public static final RelationalOperator GE = new RelationalOperator()
+    {
+        @Override
+        public boolean evaluate(int value1, int value2)
+        {
+            return value1 >= value2;
+        }
+
+        @Override
+        public boolean evaluate(double value1, double value2)
+        {
+            return value1 >= value2;
+        }
+    };
+
+    /**
+     * Implementation of the "Lower Than Or Equal" operator.
+     */
+    public static final RelationalOperator LE = new RelationalOperator()
+    {
+        @Override
+        public boolean evaluate(int value1, int value2)
+        {
+            return value1 <= value2;
+        }
+
+        @Override
+        public boolean evaluate(double value1, double value2)
+        {
+            return value1 <= value2;
+        }
+    };
+
+    /**
+     * Implementation of the "Equal" operator.
+     */
+    public static final RelationalOperator EQ = new RelationalOperator()
+    {
+        @Override
+        public boolean evaluate(int value1, int value2)
+        {
+            return value1 == value2;
+        }
+
+        @Override
+        public boolean evaluate(double value1, double value2)
+        {
+            return value1 == value2;
+        }
+    };
+
+    /**
+     * Implementation of the "Not Equal" operator.
+     */
+    public static final RelationalOperator NE = new RelationalOperator()
+    {
+        @Override
+        public boolean evaluate(int value1, int value2)
+        {
+            return value1 != value2;
+        }
+
+        @Override
+        public boolean evaluate(double value1, double value2)
+        {
+            return value1 != value2;
+        }
+    };
+
+
+    // ==================================================
+    // Abstract methods
+
     /**
      * Evaluates this operator from two integer values.
      * 
@@ -35,112 +151,4 @@ public interface RelationalOperator
      */
     public boolean evaluate(double value1, double value2);
     
-    /**
-     * Implementation of the "Greater Than" operator.
-     */
-    public static final class GT implements RelationalOperator
-    {
-        @Override
-        public boolean evaluate(int value1, int value2)
-        {
-            return value1 > value2;
-        }
-
-        @Override
-        public boolean evaluate(double value1, double value2)
-        {
-            return value1 > value2;
-        }
-    }
-
-    /**
-     * Implementation of the "Lower Than" operator.
-     */
-    public static final class LT implements RelationalOperator
-    {
-        @Override
-        public boolean evaluate(int value1, int value2)
-        {
-            return value1 < value2;
-        }
-
-        @Override
-        public boolean evaluate(double value1, double value2)
-        {
-            return value1 < value2;
-        }
-    }
-
-    /**
-     * Implementation of the "Greater Than Or Equal" operator.
-     */
-    public static final class GE implements RelationalOperator
-    {
-        @Override
-        public boolean evaluate(int value1, int value2)
-        {
-            return value1 >= value2;
-        }
-
-        @Override
-        public boolean evaluate(double value1, double value2)
-        {
-            return value1 >= value2;
-        }
-    }
-
-    /**
-     * Implementation of the "Lower Than Or Equal" operator.
-     */
-    public static final class LE implements RelationalOperator
-    {
-        @Override
-        public boolean evaluate(int value1, int value2)
-        {
-            return value1 <= value2;
-        }
-
-        @Override
-        public boolean evaluate(double value1, double value2)
-        {
-            return value1 <= value2;
-        }
-    }
-
-    /**
-     * Implementation of the "Equal" operator.
-     */
-    public static final class EQ implements RelationalOperator
-    {
-        @Override
-        public boolean evaluate(int value1, int value2)
-        {
-            return value1 == value2;
-        }
-
-        @Override
-        public boolean evaluate(double value1, double value2)
-        {
-            return value1 == value2;
-        }
-    }
-
-    /**
-     * Implementation of the "Not Equal" operator.
-     */
-    public static final class NE implements RelationalOperator
-    {
-        @Override
-        public boolean evaluate(int value1, int value2)
-        {
-            return value1 != value2;
-        }
-
-        @Override
-        public boolean evaluate(double value1, double value2)
-        {
-            return value1 != value2;
-        }
-    }
-
 }

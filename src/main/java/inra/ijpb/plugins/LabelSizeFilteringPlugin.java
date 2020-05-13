@@ -41,12 +41,12 @@ public class LabelSizeFilteringPlugin implements PlugIn
      */
     public enum Operation
     {
-        GT("Greater_Than", new RelationalOperator.GT()),
-        LT("Lower_Than", new RelationalOperator.LT()),
-        GE("Greater_Than_Or_Equal", new RelationalOperator.GE()),
-        LE("Lower_Than_Or_Equal", new RelationalOperator.LE()),
-        EQ("Equal", new RelationalOperator.EQ()),
-        NE("Not_Equal", new RelationalOperator.NE());
+        GT("Greater_Than", RelationalOperator.GT),
+        LT("Lower_Than", RelationalOperator.LT),
+        GE("Greater_Than_Or_Equal", RelationalOperator.GE),
+        LE("Lower_Than_Or_Equal", RelationalOperator.LE),
+        EQ("Equal", RelationalOperator.EQ),
+        NE("Not_Equal", RelationalOperator.NE);
         
         /** The label to display in plugin. */
         private final String label;

@@ -20,16 +20,6 @@ import inra.ijpb.label.LabelImages;
  */
 public class LabelSizeFiltering extends AlgoStub
 {
-//    public enum Operator
-//    {
-//        LT,
-//        GT,
-//        LE,
-//        GE,
-//        EQ,
-//        NE
-//    }
-    
     RelationalOperator operator;
     
     int sizeLimit;
@@ -94,8 +84,33 @@ public class LabelSizeFiltering extends AlgoStub
         return result;
     }
 
-    public ImageStack process(ImageStack image)
+    public ImageStack process(ImageStack labelImage)
     {
-        return image;
+        // compute area of each label
+        int[] labels = LabelImages.findAllLabels(labelImage);
+        int[] areas = LabelImages.voxelCount(labelImage, labels);
+        
+        // find labels with sufficient area
+        ArrayList<Integer> labelsToKeep = new ArrayList<Integer>(labels.length);
+        for (int i = 0; i < labels.length; i++) 
+        {
+            if (operator.evaluate(areas[i], sizeLimit))
+            {
+                labelsToKeep.add(labels[i]);
+            }
+        }
+
+        // Convert array list into int array
+        int[] labels2 = new int[labelsToKeep.size()];
+        for (int i = 0; i < labelsToKeep.size(); i++) 
+        {
+            labels2[i] = labelsToKeep.get(i);
+        }
+        
+        // keep only necessary labels
+        ImageStack result = LabelImages.keepLabels(labelImage, labels2);
+        
+        result.setColorModel(labelImage.getColorModel());
+        return result;
     }
 }
