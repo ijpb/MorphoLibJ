@@ -695,10 +695,19 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 		// output labels
 		final int[][][] tabLabels = new int[ size1 ][ size2 ][ size3 ];
 		// value INIT is assigned to each voxel of the output labels
-	    for( int i=0; i<size1; i++ )
-	    	for( int j=0; j<size2; j++ )
-	    		Arrays.fill( tabLabels[i][j], INIT );
-		
+	    if( null == maskImage )
+		{
+			for( int i=0; i<size1; i++ )
+				for( int j=0; j<size2; j++ )
+					Arrays.fill( tabLabels[i][j], INIT );
+		}
+		else
+		{
+			for( int i=0; i<size1; i++ )
+				for( int j=0; j<size2; j++ )
+					for( int k=0; k<size3; k++ )
+						tabLabels[ i ][ j ][ k ] = INIT;
+		}
 		// Make list of voxels and sort it in ascending order
 		IJ.showStatus( "Extracting voxel values..." );
 		if( verbose ) IJ.log("  Extracting voxel values..." );
