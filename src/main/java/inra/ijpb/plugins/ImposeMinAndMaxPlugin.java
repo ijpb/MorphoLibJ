@@ -27,6 +27,7 @@ import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
+import inra.ijpb.morphology.Connectivity2D;
 import inra.ijpb.morphology.MinimaAndMaxima;
 import inra.ijpb.util.IJUtils;
 
@@ -71,6 +72,17 @@ public class ImposeMinAndMaxPlugin implements PlugIn {
 					"Unable to process the " + this + " operation");
 		}
 		
+		public ImageProcessor applyTo(ImageProcessor image,
+				ImageProcessor markers, Connectivity2D conn) {
+			if (this == IMPOSE_MINIMA)
+				return MinimaAndMaxima.imposeMinima(image, markers, conn.getValue());
+			if (this == IMPOSE_MAXIMA)
+				return MinimaAndMaxima.imposeMaxima(image, markers, conn.getValue());
+						
+			throw new RuntimeException(
+					"Unable to process the " + this + " operation");
+		}
+		
 		public String toString() {
 			return this.label;
 		}
@@ -107,9 +119,6 @@ public class ImposeMinAndMaxPlugin implements PlugIn {
 		}
 	};
 
-	private final static String[] connectivityLabels = {"4", "8"}; 
-	private final static int[] connectivityValues = {4, 8}; 
-	
 
 	/* (non-Javadoc)
 	 * @see ij.plugin.PlugIn#run(java.lang.String)
@@ -139,7 +148,7 @@ public class ImposeMinAndMaxPlugin implements PlugIn {
 		gd.addChoice("Operation", 
 				Operation.getAllLabels(), 
 				Operation.IMPOSE_MINIMA.label);
-		gd.addChoice("Connectivity", connectivityLabels, connectivityLabels[0]);
+		gd.addChoice("Connectivity", Connectivity2D.getAllLabels(), Connectivity2D.C4.name());
 		gd.showDialog();
 		
 		if (gd.wasCanceled())
@@ -151,7 +160,7 @@ public class ImposeMinAndMaxPlugin implements PlugIn {
 		int markerImageIndex = gd.getNextChoiceIndex();
 		ImagePlus markerImage = WindowManager.getImage(markerImageIndex + 1);
 		Operation op = Operation.fromLabel(gd.getNextChoice());
-		int conn = connectivityValues[gd.getNextChoiceIndex()];
+		Connectivity2D conn = Connectivity2D.fromLabel(gd.getNextChoice());
 		
 		// Extract image procesors
 		ImageProcessor refProc = refImage.getProcessor();
@@ -159,7 +168,7 @@ public class ImposeMinAndMaxPlugin implements PlugIn {
 		
 		long t0 = System.currentTimeMillis();
 		
-		// Compute geodesic reconstruction
+		// Apply min/max imposition
 		ImageProcessor recProc = op.applyTo(refProc, markerProc, conn);
 		
 		// Keep same color model as 

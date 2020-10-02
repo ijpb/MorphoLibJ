@@ -30,6 +30,7 @@ import ij.plugin.filter.ExtendedPlugInFilter;
 import ij.plugin.filter.PlugInFilterRunner;
 import ij.process.ImageProcessor;
 import ij.process.ByteProcessor;
+import inra.ijpb.morphology.Connectivity2D;
 import inra.ijpb.morphology.MinimaAndMaxima;
 
 import java.awt.AWTEvent;
@@ -64,6 +65,16 @@ public class ExtendedMinAndMaxPlugin implements ExtendedPlugInFilter, DialogList
 				return MinimaAndMaxima.extendedMaxima(image, dynamic);
 			if (this == EXTENDED_MINIMA)
 				return MinimaAndMaxima.extendedMinima(image, dynamic);
+			
+			throw new RuntimeException(
+					"Unable to process the " + this + " morphological operation");
+		}
+		
+		public ImageProcessor apply(ImageProcessor image, int dynamic, Connectivity2D connectivity) {
+			if (this == EXTENDED_MAXIMA)
+				return MinimaAndMaxima.extendedMaxima(image, dynamic, connectivity.getValue());
+			if (this == EXTENDED_MINIMA)
+				return MinimaAndMaxima.extendedMinima(image, dynamic, connectivity.getValue());
 			
 			throw new RuntimeException(
 					"Unable to process the " + this + " morphological operation");
@@ -119,9 +130,6 @@ public class ExtendedMinAndMaxPlugin implements ExtendedPlugInFilter, DialogList
 		}
 	};
 
-	private final static String[] connectivityLabels = {"4", "8"}; 
-	private final static int[] connectivityValues = {4, 8}; 
-	
 	
 	/** Apparently, it's better to store flags in plugin */
 	private int flags = DOES_ALL | KEEP_PREVIEW | FINAL_PROCESSING;
@@ -141,7 +149,7 @@ public class ExtendedMinAndMaxPlugin implements ExtendedPlugInFilter, DialogList
 
 	Operation op = Operation.EXTENDED_MINIMA;
 	int dynamic = 10;
-	int connectivity = 4;
+	Connectivity2D connectivity = Connectivity2D.C4;
 	
 	/**
 	*/
@@ -187,7 +195,7 @@ public class ExtendedMinAndMaxPlugin implements ExtendedPlugInFilter, DialogList
 		double minValue = isGray8 ? 1 : this.baseImage.getMin();
 		double maxValue = isGray8 ? 255 : this.baseImage.getMax();
 		gd.addSlider("Dynamic", minValue, maxValue, 10);
-		gd.addChoice("Connectivity", connectivityLabels, connectivityLabels[0]);
+		gd.addChoice("Connectivity", Connectivity2D.getAllLabels(), connectivity.name());
 		
 		gd.addPreviewCheckbox(pfr);
 		gd.addDialogListener(this);
@@ -216,7 +224,7 @@ public class ExtendedMinAndMaxPlugin implements ExtendedPlugInFilter, DialogList
 		// extract chosen parameters
 		this.op 			= Operation.fromLabel(gd.getNextChoice());
 		this.dynamic 		= (int) gd.getNextNumber();
-		this.connectivity 	= connectivityValues[gd.getNextChoiceIndex()];
+		this.connectivity 	= Connectivity2D.fromLabel(gd.getNextChoice());
     }
 
     public void setNPasses (int nPasses) {
@@ -227,7 +235,7 @@ public class ExtendedMinAndMaxPlugin implements ExtendedPlugInFilter, DialogList
 	public void run(ImageProcessor image) {
 		// Create structuring element of the given size
 		// Execute core of the plugin
-		result = op.apply(image, dynamic, connectivity);
+		result = op.apply(image, dynamic, connectivity.getValue());
 
     	if (previewing) {
     		// Fill up the values of original image with inverted values of the 

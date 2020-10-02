@@ -29,6 +29,7 @@ import ij.gui.GenericDialog;
 import ij.plugin.filter.ExtendedPlugInFilter;
 import ij.plugin.filter.PlugInFilterRunner;
 import ij.process.ImageProcessor;
+import inra.ijpb.morphology.Connectivity2D;
 import inra.ijpb.morphology.MinimaAndMaxima;
 
 import java.awt.AWTEvent;
@@ -63,6 +64,16 @@ public class RegionalMinAndMaxPlugin implements ExtendedPlugInFilter, DialogList
 				return MinimaAndMaxima.regionalMaxima(image, connectivity);
 			if (this == REGIONAL_MINIMA)
 				return MinimaAndMaxima.regionalMinima(image, connectivity);
+			
+			throw new RuntimeException(
+					"Unable to process the " + this + " morphological operation");
+		}
+		
+		public ImageProcessor apply(ImageProcessor image, Connectivity2D connectivity) {
+			if (this == REGIONAL_MAXIMA)
+				return MinimaAndMaxima.regionalMaxima(image, connectivity.getValue());
+			if (this == REGIONAL_MINIMA)
+				return MinimaAndMaxima.regionalMinima(image, connectivity.getValue());
 			
 			throw new RuntimeException(
 					"Unable to process the " + this + " morphological operation");
@@ -108,9 +119,6 @@ public class RegionalMinAndMaxPlugin implements ExtendedPlugInFilter, DialogList
 		}
 	};
 
-	private final static String[] connectivityLabels = {"4", "8"}; 
-	private final static int[] connectivityValues = {4, 8}; 
-	
 	
 	/** keep flags in plugin */
 	private int flags = DOES_ALL | KEEP_PREVIEW | FINAL_PROCESSING;
@@ -131,7 +139,7 @@ public class RegionalMinAndMaxPlugin implements ExtendedPlugInFilter, DialogList
 	
 	ImagePlus image = null;
 	Operation op = Operation.REGIONAL_MINIMA;
-	int connectivity = 4;
+	Connectivity2D connectivity = Connectivity2D.C4;
 	
 	/**
 	*/
@@ -174,7 +182,7 @@ public class RegionalMinAndMaxPlugin implements ExtendedPlugInFilter, DialogList
 		
 		gd.addChoice("Operation", Operation.getAllLabels(), 
 				Operation.REGIONAL_MINIMA.label);
-		gd.addChoice("Connectivity", connectivityLabels, connectivityLabels[0]);
+		gd.addChoice("Connectivity", Connectivity2D.getAllLabels(), connectivity.name());
 		
 		gd.addPreviewCheckbox(pfr);
 		gd.addDialogListener(this);
@@ -201,7 +209,7 @@ public class RegionalMinAndMaxPlugin implements ExtendedPlugInFilter, DialogList
     private void parseDialogParameters(GenericDialog gd) {
 		// extract chosen parameters
 		this.op 			= Operation.fromLabel(gd.getNextChoice());
-		this.connectivity 	= connectivityValues[gd.getNextChoiceIndex()];
+		this.connectivity 	= Connectivity2D.fromLabel(gd.getNextChoice());
     }
 
     public void setNPasses (int nPasses) {

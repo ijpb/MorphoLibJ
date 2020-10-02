@@ -28,6 +28,7 @@ import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import inra.ijpb.data.image.Images3D;
 import inra.ijpb.morphology.AttributeFiltering;
+import inra.ijpb.morphology.Connectivity2D;
 
 /**
  * Plugin to perform between attribute opening, closing, and black or white
@@ -141,16 +142,6 @@ public class GrayscaleAttributeFiltering3D implements PlugIn
 		}
 	};
 
-	/**
-	 * Connectivity labels to be displayed
-	 */
-	final static String[] connectivityLabels = { "6", "26" };
-
-	/**
-	 * Available 3D connectivity values
-	 */
-	final static int[] connectivityValues = { 6, 26 };
-
 	static Operation operation = Operation.OPENING;
 	static Attribute attribute = Attribute.VOLUME;
     static int nPixelMin = 100;
@@ -180,8 +171,8 @@ public class GrayscaleAttributeFiltering3D implements PlugIn
 				attribute.label );
         String label = "Min Voxel Number:";
         gd.addNumericField( label, nPixelMin, 0 );
-        gd.addChoice( "Connectivity", connectivityLabels,
-        					connectivityLabels[ connectivityChoice ] );
+        gd.addChoice( "Connectivity", Connectivity2D.getAllLabels(),
+        		Connectivity2D.C4.name());
         gd.showDialog();
 
         // If cancel was clicked, do nothing
@@ -192,8 +183,7 @@ public class GrayscaleAttributeFiltering3D implements PlugIn
         operation = Operation.fromLabel( gd.getNextChoice() );
         attribute = Attribute.fromLabel( gd.getNextChoice() );
         nPixelMin = (int) gd.getNextNumber();
-        connectivityChoice = gd.getNextChoiceIndex();
-        int connectivity = connectivityValues[ connectivityChoice ];
+        Connectivity2D connectivity = Connectivity2D.fromLabel(gd.getNextChoice());
 
         ImagePlus resultPlus;
         String newName = imagePlus.getShortTitle() + "-attrFilt";
@@ -210,7 +200,7 @@ public class GrayscaleAttributeFiltering3D implements PlugIn
         final ImageStack image = image2.getStack();
         final ImageStack result =
         		AttributeFiltering.volumeOpening(
-        				image, nPixelMin, connectivity );
+        				image, nPixelMin, connectivity.getValue() );
         resultPlus = new ImagePlus( newName, result );
 
         // For top-hat and bottom-hat, we consider the difference with the

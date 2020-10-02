@@ -14,6 +14,8 @@ import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.measure.IntrinsicVolumes3D;
 import inra.ijpb.measure.region3d.BinaryConfigurationsHistogram3D;
 import inra.ijpb.measure.region3d.IntrinsicVolumes3DUtils;
+import inra.ijpb.morphology.Connectivity2D;
+import inra.ijpb.morphology.Connectivity3D;
 import inra.ijpb.util.IJUtils;
 
 /**
@@ -46,24 +48,6 @@ public class AnalyzeMicrostructure3D implements PlugIn
         3, 13
     };
     
-    /**
-     * The list of connectivity names.
-     */
-    private final static String[] connectivity3dNames = {
-        "C6", "C26"
-    };
-    
-    private final static int[] connectivity3dValues = new int[]{6, 26};
-    
-    /**
-     * The list of connectivity names.
-     */
-    private final static String[] connectivity2dNames = {
-        "C4", "C8"
-    };
-    
-    private final static int[] connectivity2dValues = new int[]{4, 8};
-
     
     // ====================================================
     // Class variables
@@ -75,8 +59,8 @@ public class AnalyzeMicrostructure3D implements PlugIn
 
     int surfaceAreaDirs = 13;
     int meanBreadthDirs = 13;
-    int connectivity2d = 8;
-    int connectivity = 6;
+    Connectivity2D connectivity2d = Connectivity2D.C8;
+    Connectivity3D connectivity = Connectivity3D.C6;
     
 
     /* (non-Javadoc)
@@ -102,8 +86,8 @@ public class AnalyzeMicrostructure3D implements PlugIn
         gd.addMessage("");
         gd.addChoice("Surface area method:", dirNumberLabels, dirNumberLabels[1]);
         gd.addChoice("Mean breadth method:", dirNumberLabels, dirNumberLabels[1]);
-        gd.addChoice("Mean Breadth Conn.:", connectivity2dNames, connectivity2dNames[1]);
-        gd.addChoice("Euler Connectivity:", connectivity3dNames, connectivity3dNames[1]);
+        gd.addChoice("Mean Breadth Conn.:", Connectivity2D.getAllLabels(), Connectivity2D.C8.name());
+        gd.addChoice("Euler Connectivity:", Connectivity3D.getAllLabels(), Connectivity3D.C6.name());
         gd.showDialog();
         
         // If cancel was clicked, do nothing
@@ -119,8 +103,8 @@ public class AnalyzeMicrostructure3D implements PlugIn
         // extract analysis options
         surfaceAreaDirs = dirNumbers[gd.getNextChoiceIndex()];
         meanBreadthDirs = dirNumbers[gd.getNextChoiceIndex()];
-        connectivity2d = connectivity2dValues[gd.getNextChoiceIndex()];
-        connectivity = connectivity3dValues[gd.getNextChoiceIndex()];
+        connectivity2d = Connectivity2D.fromLabel(gd.getNextChoice());
+        connectivity = Connectivity3D.fromLabel(gd.getNextChoice());
         
         // Execute the plugin
         ResultsTable table = process(imagePlus);
@@ -207,13 +191,13 @@ public class AnalyzeMicrostructure3D implements PlugIn
         }
         if (computeMeanBreadth)
         {
-            double[] meanBreadthLut = IntrinsicVolumes3DUtils.meanBreadthLut(calib, meanBreadthDirs, connectivity2d);
+            double[] meanBreadthLut = IntrinsicVolumes3DUtils.meanBreadthLut(calib, meanBreadthDirs, connectivity2d.getValue());
             double meanBreadth = BinaryConfigurationsHistogram3D.applyLut(histogram, meanBreadthLut);
             table.addValue("MeanBreadthDensity", meanBreadth / vol);
         }
         if (computeEulerNumber)
         {
-            double[] eulerNumberLut = IntrinsicVolumes3DUtils.eulerNumberLut(connectivity);
+            double[] eulerNumberLut = IntrinsicVolumes3DUtils.eulerNumberLut(connectivity.getValue());
             double eulerNumber = BinaryConfigurationsHistogram3D.applyLut(histogram, eulerNumberLut);
             table.addValue("EulerNumberDensity", eulerNumber / vol);
         }

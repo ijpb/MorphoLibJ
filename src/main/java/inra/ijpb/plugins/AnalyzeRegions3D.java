@@ -41,6 +41,7 @@ import inra.ijpb.measure.region3d.Centroid3D;
 import inra.ijpb.measure.region3d.EquivalentEllipsoid;
 import inra.ijpb.measure.region3d.IntrinsicVolumesAnalyzer3D;
 import inra.ijpb.measure.region3d.LargestInscribedBall;
+import inra.ijpb.morphology.Connectivity3D;
 
 /**
  * Plugin for measuring geometric quantities such as volume, surface area,
@@ -63,15 +64,6 @@ public class AnalyzeRegions3D implements PlugIn
     // ====================================================
     // Global Constants
     
-	/**
-	 * The list of connectivity names.
-	 */
-	private final static String[] connectivityNames = {
-		"C6", "C26"
-	};
-	
-	private final static int[] connectivityValues = new int[]{6, 26};
-	
     /**
      * List of available numbers of directions
      */
@@ -112,7 +104,8 @@ public class AnalyzeRegions3D implements PlugIn
     String surfaceAreaMethod = surfaceAreaMethods[1];
     int surfaceAreaDirs = 13;
     int meanBreadthDirs = 13;
-    int connectivity = 6;
+    Connectivity3D connectivity = Connectivity3D.C6;
+    
     
     // ====================================================
     // Calling functions 
@@ -145,7 +138,7 @@ public class AnalyzeRegions3D implements PlugIn
         gd.addCheckbox("Max._Inscribed Ball", true);
         gd.addMessage("");
         gd.addChoice("Surface_area_method:", surfaceAreaMethods, surfaceAreaMethods[1]);
-        gd.addChoice("Euler_Connectivity:", connectivityNames, connectivityNames[1]);
+        gd.addChoice("Euler_Connectivity:", Connectivity3D.getAllLabels(), Connectivity3D.C6.name());
         gd.showDialog();
         
         // If cancel was clicked, do nothing
@@ -167,7 +160,7 @@ public class AnalyzeRegions3D implements PlugIn
         
         // extract analysis options
         surfaceAreaDirs = dirNumbers[gd.getNextChoiceIndex()];
-        connectivity = connectivityValues[gd.getNextChoiceIndex()];
+        connectivity = Connectivity3D.fromLabel(gd.getNextChoice());
         
         // Execute the plugin
         ResultsTable table = process(imagePlus);
@@ -240,7 +233,7 @@ public class AnalyzeRegions3D implements PlugIn
             // Create ans setup computation class
             IntrinsicVolumesAnalyzer3D algo = new IntrinsicVolumesAnalyzer3D();
             algo.setDirectionNumber(this.surfaceAreaDirs);
-            algo.setConnectivity(this.connectivity);
+            algo.setConnectivity(this.connectivity.getValue());
             DefaultAlgoListener.monitor(algo);
             
             // run analysis

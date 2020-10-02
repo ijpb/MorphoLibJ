@@ -27,6 +27,7 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
+import inra.ijpb.morphology.Connectivity3D;
 import inra.ijpb.morphology.MinimaAndMaxima;
 import inra.ijpb.morphology.MinimaAndMaxima3D;
 import inra.ijpb.util.IJUtils;
@@ -106,9 +107,6 @@ public class RegionalMinAndMax3DPlugin implements PlugIn {
 		}
 	};
 
-	private final static String[] connectivityLabels = {"6", "26"}; 
-	private final static int[] connectivityValues = {6, 26}; 
-
 	
 
 	@Override
@@ -125,7 +123,7 @@ public class RegionalMinAndMax3DPlugin implements PlugIn {
 		GenericDialog gd = new GenericDialog("Regional Min & Max 3D");
 		gd.addChoice("Operation", Operation.getAllLabels(), 
 				Operation.REGIONAL_MINIMA.label);
-		gd.addChoice("Connectivity", connectivityLabels, connectivityLabels[0]);
+		gd.addChoice("Connectivity", Connectivity3D.getAllLabels(), Connectivity3D.C6.name());
 //		gd.addHelp("http://imagejdocu.tudor.lu/doku.php?id=plugin:morphology:fast_morphological_filters:start");
         gd.showDialog();
         if (gd.wasCanceled())
@@ -133,11 +131,11 @@ public class RegionalMinAndMax3DPlugin implements PlugIn {
         
 		// extract chosen parameters
 		Operation op = Operation.fromLabel(gd.getNextChoice());
-		int conn = connectivityValues[gd.getNextChoiceIndex()];
+		Connectivity3D conn = Connectivity3D.fromLabel(gd.getNextChoice());
         
 		long t0 = System.currentTimeMillis();
 		
-		ImageStack result = op.apply(stack, conn);
+		ImageStack result = op.apply(stack, conn.getValue());
 
 		String newName = createResultImageName(imagePlus, op);
 		ImagePlus resultPlus = new ImagePlus(newName, result);

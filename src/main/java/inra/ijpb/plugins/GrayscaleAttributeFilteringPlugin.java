@@ -29,6 +29,7 @@ import ij.plugin.filter.PlugInFilterRunner;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.algo.DefaultAlgoListener;
+import inra.ijpb.morphology.Connectivity2D;
 import inra.ijpb.morphology.attrfilt.AreaOpeningQueue;
 import inra.ijpb.morphology.attrfilt.BoxDiagonalOpeningQueue;
 
@@ -140,9 +141,6 @@ public class GrayscaleAttributeFilteringPlugin implements ExtendedPlugInFilter, 
 		}
 	};
 
-	private final static String[] connectivityLabels = {"4", "8"}; 
-	private final static int[] connectivityValues = {4, 8}; 
-	
 
 	/** keep flags in plugin */
 	private int flags = DOES_ALL | KEEP_PREVIEW | FINAL_PROCESSING | NO_CHANGES;
@@ -165,7 +163,7 @@ public class GrayscaleAttributeFilteringPlugin implements ExtendedPlugInFilter, 
 	Operation operation = Operation.OPENING;
 	Attribute attribute = Attribute.AREA; 
 	int minimumValue = 100;
-	int connectivity = 4;
+	Connectivity2D connectivity = Connectivity2D.C4;
 	
 	
 	@Override
@@ -205,7 +203,7 @@ public class GrayscaleAttributeFilteringPlugin implements ExtendedPlugInFilter, 
 		gd.addChoice("Operation", Operation.getAllLabels(), Operation.OPENING.label);
 		gd.addChoice("Attribute", Attribute.getAllLabels(), Attribute.AREA.label);
 		gd.addNumericField("Minimum Value", 100, 0, 10, "pixels");
-		gd.addChoice("Connectivity", connectivityLabels, connectivityLabels[0]);
+		gd.addChoice("Connectivity", Connectivity2D.getAllLabels(), Connectivity2D.C4.name());
 		
 		gd.addPreviewCheckbox(pfr);
 		gd.addDialogListener(this);
@@ -240,14 +238,14 @@ public class GrayscaleAttributeFilteringPlugin implements ExtendedPlugInFilter, 
 		if (attribute == Attribute.AREA)
 		{
 			AreaOpeningQueue algo = new AreaOpeningQueue();
-			algo.setConnectivity(this.connectivity);
+			algo.setConnectivity(this.connectivity.getValue());
 			DefaultAlgoListener.monitor(algo);
 			this.result = algo.process(image2, this.minimumValue);
 		}
 		else
 		{
 			BoxDiagonalOpeningQueue algo = new BoxDiagonalOpeningQueue();
-			algo.setConnectivity(this.connectivity);
+			algo.setConnectivity(this.connectivity.getValue());
 			DefaultAlgoListener.monitor(algo);
 			this.result = algo.process(image2, this.minimumValue);
 		}
@@ -324,7 +322,7 @@ public class GrayscaleAttributeFilteringPlugin implements ExtendedPlugInFilter, 
 		this.operation 		= Operation.fromLabel(gd.getNextChoice());
 		this.attribute 		= Attribute.fromLabel(gd.getNextChoice());
 		this.minimumValue	= (int) gd.getNextNumber();
-		this.connectivity 	= connectivityValues[gd.getNextChoiceIndex()];
+		this.connectivity 	= Connectivity2D.fromLabel(gd.getNextChoice());
 		this.previewing 	= gd.getPreviewCheckbox().getState();
     }
 

@@ -28,6 +28,7 @@ import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import inra.ijpb.data.image.Images3D;
+import inra.ijpb.morphology.Connectivity3D;
 import inra.ijpb.morphology.Reconstruction3D;
 import inra.ijpb.util.IJUtils;
 
@@ -100,55 +101,6 @@ public class MorphologicalReconstruction3DPlugin implements PlugIn {
 		}
 	};
 
-	/**
-	 * A pre-defined set of 3D connectivities
-	 */
-	enum Conn3D {
-		C6("6", 6),
-		C26("26", 26);
-		
-		private final String label;
-		private final int value;
-		
-		private Conn3D(String label, int value) {
-			this.label = label;
-			this.value = value;
-		}
-		
-		public String toString() {
-			return this.label;
-		}
-		
-		public int getValue() {
-			return this.value;
-		}
-		
-		public static String[] getAllLabels(){
-			int n = Conn3D.values().length;
-			String[] result = new String[n];
-			
-			int i = 0;
-			for (Conn3D op : Conn3D.values())
-				result[i++] = op.label;
-			
-			return result;
-		}
-		
-		/**
-		 * Determines the operation type from its label.
-		 * @throws IllegalArgumentException if label is not recognized.
-		 */
-		public static Conn3D fromLabel(String opLabel) {
-			if (opLabel != null)
-				opLabel = opLabel.toLowerCase();
-			for (Conn3D op : Conn3D.values()) {
-				String cmp = op.label.toLowerCase();
-				if (cmp.equals(opLabel))
-					return op;
-			}
-			throw new IllegalArgumentException("Unable to parse Conn2D with label: " + opLabel);
-		}
-	};
 
 	/* (non-Javadoc)
 	 * @see ij.plugin.PlugIn#run(java.lang.String)
@@ -178,9 +130,7 @@ public class MorphologicalReconstruction3DPlugin implements PlugIn {
 		gd.addChoice("Type of Reconstruction", 
 				Operation.getAllLabels(), 
 				Operation.BY_DILATION.label);
-		gd.addChoice("Connectivity", 
-				Conn3D.getAllLabels(), 
-				Conn3D.C6.label);
+		gd.addChoice("Connectivity", Connectivity3D.getAllLabels(), Connectivity3D.C6.name());
 		gd.showDialog();
 		
 		if (gd.wasCanceled())
@@ -192,7 +142,7 @@ public class MorphologicalReconstruction3DPlugin implements PlugIn {
 		int maskImageIndex = gd.getNextChoiceIndex();
 		ImagePlus maskPlus = WindowManager.getImage(maskImageIndex + 1);
 		Operation op = Operation.fromLabel(gd.getNextChoice());
-		int conn = Conn3D.fromLabel(gd.getNextChoice()).getValue();
+		int conn = Connectivity3D.fromLabel(gd.getNextChoice()).getValue();
 
 		// Extract image procesors
 		ImageStack marker = markerPlus.getStack();

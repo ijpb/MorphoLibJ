@@ -27,6 +27,7 @@ import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import ij.ImageStack;
+import inra.ijpb.morphology.Connectivity3D;
 import inra.ijpb.morphology.MinimaAndMaxima3D;
 import inra.ijpb.util.IJUtils;
 
@@ -107,9 +108,6 @@ public class ImposeMinAndMax3DPlugin implements PlugIn {
 		}
 	};
 
-	private final static String[] connectivityLabels = {"6", "26"}; 
-	private final static int[] connectivityValues = {6, 26}; 
-	
 
 	/* (non-Javadoc)
 	 * @see ij.plugin.PlugIn#run(java.lang.String)
@@ -147,7 +145,7 @@ public class ImposeMinAndMax3DPlugin implements PlugIn {
 		gd.addChoice("Operation", 
 				Operation.getAllLabels(), 
 				Operation.IMPOSE_MINIMA.label);
-		gd.addChoice("Connectivity", connectivityLabels, connectivityLabels[0]);
+		gd.addChoice("Connectivity", Connectivity3D.getAllLabels(), Connectivity3D.C6.name());
 		gd.showDialog();
 		
 		if (gd.wasCanceled())
@@ -159,8 +157,8 @@ public class ImposeMinAndMax3DPlugin implements PlugIn {
 		int markerImageIndex = gd.getNextChoiceIndex();
 		ImagePlus markerImage = WindowManager.getImage(markerImageIndex + 1);
 		Operation op = Operation.fromLabel(gd.getNextChoice());
-		int conn = connectivityValues[gd.getNextChoiceIndex()];
-		
+		Connectivity3D conn = Connectivity3D.fromLabel(gd.getNextChoice());
+        
 		// Extract image processors
 		ImageStack refStack = refImage.getStack();
 		ImageStack markerStack = markerImage.getStack();
@@ -168,7 +166,7 @@ public class ImposeMinAndMax3DPlugin implements PlugIn {
 		long t0 = System.currentTimeMillis();
 		
 		// Compute geodesic reconstruction
-		ImageStack recProc = op.applyTo(refStack, markerStack, conn);
+		ImageStack recProc = op.applyTo(refStack, markerStack, conn.getValue());
 		
 		// Keep same color model as 
 		recProc.setColorModel(refStack.getColorModel());

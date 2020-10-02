@@ -40,6 +40,7 @@ import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
+import inra.ijpb.morphology.Connectivity2D;
 import inra.ijpb.morphology.Reconstruction;
 import inra.ijpb.util.IJUtils;
 
@@ -70,7 +71,7 @@ DialogListener
 	/** keep the original image, to restore it after the preview */
 	private ImageProcessor baseImage;
 
-	private static Conn2D connectivity = Conn2D.C4;
+	private static Connectivity2D connectivity = Connectivity2D.C4;
 	private static Operation operation = Operation.BY_DILATION;
 
 	private NonBlockingGenericDialog gd;
@@ -135,56 +136,6 @@ DialogListener
 					return op;
 			}
 			throw new IllegalArgumentException("Unable to parse Operation with label: " + opLabel);
-		}
-	};
-
-	/**
-	 * A pre-defined set of connectivities
-	 */
-	enum Conn2D {
-		C4("4", 4),
-		C8("8", 8);
-
-		private final String label;
-		private final int value;
-
-		private Conn2D(String label, int value) {
-			this.label = label;
-			this.value = value;
-		}
-
-		public String toString() {
-			return this.label;
-		}
-
-		public int getValue() {
-			return this.value;
-		}
-
-		public static String[] getAllLabels(){
-			int n = Conn2D.values().length;
-			String[] result = new String[n];
-
-			int i = 0;
-			for (Conn2D op : Conn2D.values())
-				result[i++] = op.label;
-
-			return result;
-		}
-
-		/**
-		 * Determines the operation type from its label.
-		 * @throws IllegalArgumentException if label is not recognized.
-		 */
-		public static Conn2D fromLabel(String opLabel) {
-			if (opLabel != null)
-				opLabel = opLabel.toLowerCase();
-			for (Conn2D op : Conn2D.values()) {
-				String cmp = op.label.toLowerCase();
-				if (cmp.equals(opLabel))
-					return op;
-			}
-			throw new IllegalArgumentException("Unable to parse Conn2D with label: " + opLabel);
 		}
 	};
 
@@ -261,8 +212,8 @@ DialogListener
 				Operation.getAllLabels(),
 				operation.label );
 		gd.addChoice("Connectivity",
-				Conn2D.getAllLabels(),
-				connectivity.label );
+				Connectivity2D.getAllLabels(),
+				Connectivity2D.C4.name() );
 		gd.addPreviewCheckbox( pfr );
 		gd.addDialogListener(this);
 		previewing = true;
@@ -275,7 +226,7 @@ DialogListener
 
 		// set up current parameters
 		operation = Operation.fromLabel(gd.getNextChoice());
-		connectivity = Conn2D.fromLabel(gd.getNextChoice());
+		connectivity = Connectivity2D.fromLabel(gd.getNextChoice());
 
 		return flags;
 	}
@@ -288,7 +239,7 @@ DialogListener
 	{
 		// set up current parameters
 		operation = Operation.fromLabel(gd.getNextChoice());
-		connectivity = Conn2D.fromLabel(gd.getNextChoice());
+		connectivity = Connectivity2D.fromLabel(gd.getNextChoice());
 
 		return true;
 	}

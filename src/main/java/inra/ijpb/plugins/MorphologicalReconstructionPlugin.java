@@ -27,6 +27,7 @@ import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
+import inra.ijpb.morphology.Connectivity2D;
 import inra.ijpb.morphology.Reconstruction;
 import inra.ijpb.util.IJUtils;
 
@@ -61,6 +62,17 @@ public class MorphologicalReconstructionPlugin implements PlugIn
 				return Reconstruction.reconstructByDilation(marker, mask, conn);
 			if (this == BY_EROSION)
 				return Reconstruction.reconstructByErosion(marker, mask, conn);
+						
+			throw new RuntimeException(
+					"Unable to process the " + this + " operation");
+		}
+		
+		public ImageProcessor applyTo(ImageProcessor marker, ImageProcessor mask, Connectivity2D conn) 
+		{
+			if (this == BY_DILATION)
+				return Reconstruction.reconstructByDilation(marker, mask, conn.getValue());
+			if (this == BY_EROSION)
+				return Reconstruction.reconstructByErosion(marker, mask, conn.getValue());
 						
 			throw new RuntimeException(
 					"Unable to process the " + this + " operation");
@@ -105,67 +117,6 @@ public class MorphologicalReconstructionPlugin implements PlugIn
 		}
 	};
 
-	/**
-	 * A pre-defined set of connectivities
-	 */
-	enum Conn2D 
-	{
-		C4("4", 4),
-		C8("8", 8);
-		
-		private final String label;
-		private final int value;
-		
-		private Conn2D(String label, int value) 
-		{
-			this.label = label;
-			this.value = value;
-		}
-		
-		public String toString() 
-		{
-			return this.label;
-		}
-		
-		public int getValue() 
-		{
-			return this.value;
-		}
-		
-		public static String[] getAllLabels()
-		{
-			int n = Conn2D.values().length;
-			String[] result = new String[n];
-			
-			int i = 0;
-			for (Conn2D op : Conn2D.values())
-				result[i++] = op.label;
-			
-			return result;
-		}
-		
-		/**
-		 * Determines the operation type from its label.
-		 * 
-		 * @param label
-		 *            the label of the connectivity option
-		 * @throws IllegalArgumentException
-		 *             if label is not recognized.
-		 */
-		public static Conn2D fromLabel(String label)
-		{
-			if (label != null)
-				label = label.toLowerCase();
-			for (Conn2D op : Conn2D.values())
-			{
-				String cmp = op.label.toLowerCase();
-				if (cmp.equals(label))
-					return op;
-			}
-			throw new IllegalArgumentException("Unable to parse Conn2D with label: " + label);
-		}
-	};
-
 	
 	/* (non-Javadoc)
 	 * @see ij.plugin.PlugIn#run(java.lang.String)
@@ -199,8 +150,8 @@ public class MorphologicalReconstructionPlugin implements PlugIn
 				Operation.getAllLabels(),
 				Operation.BY_DILATION.label);
 		gd.addChoice("Connectivity", 
-				Conn2D.getAllLabels(), 
-				Conn2D.C4.label);
+				Connectivity2D.getAllLabels(), 
+				Connectivity2D.C4.name());
 		gd.showDialog();
 		
 		if (gd.wasCanceled())
@@ -212,7 +163,7 @@ public class MorphologicalReconstructionPlugin implements PlugIn
 		int maskImageIndex = gd.getNextChoiceIndex();
 		ImagePlus maskImage = WindowManager.getImage(maskImageIndex + 1);
 		Operation op = Operation.fromLabel(gd.getNextChoice());
-		int conn = Conn2D.fromLabel(gd.getNextChoice()).getValue();
+		Connectivity2D conn = Connectivity2D.fromLabel(gd.getNextChoice());
 		
 		// Extract image procesors
 		ImageProcessor markerProc = markerImage.getProcessor();

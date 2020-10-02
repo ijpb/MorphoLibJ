@@ -37,6 +37,7 @@ import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 import inra.ijpb.data.image.Images3D;
+import inra.ijpb.morphology.Connectivity3D;
 import inra.ijpb.morphology.Reconstruction3D;
 import inra.ijpb.util.IJUtils;
 
@@ -54,7 +55,7 @@ import inra.ijpb.util.IJUtils;
  */
 public class InteractiveMorphologicalReconstruction3D implements PlugIn
 {
-	private static Conn3D connectivity = Conn3D.C6;
+	private static Connectivity3D connectivity = Connectivity3D.C6;
 	private static Operation operation = Operation.BY_DILATION;
 
 	private NonBlockingGenericDialog gd;
@@ -124,57 +125,6 @@ public class InteractiveMorphologicalReconstruction3D implements PlugIn
 		}
 	};
 
-	/**
-	 * A pre-defined set of connectivities
-	 */
-	enum Conn3D {
-		C6( "6", 6 ),
-		C26( "26", 26 );
-
-		private final String label;
-		private final int value;
-
-		private Conn3D( String label, int value ) {
-			this.label = label;
-			this.value = value;
-		}
-
-		public String toString() {
-			return this.label;
-		}
-
-		public int getValue() {
-			return this.value;
-		}
-
-		public static String[] getAllLabels(){
-			int n = Conn3D.values().length;
-			String[] result = new String[n];
-
-			int i = 0;
-			for ( Conn3D op : Conn3D.values() )
-				result[i++] = op.label;
-
-			return result;
-		}
-
-		/**
-		 * Determines the operation type from its label.
-		 * @throws IllegalArgumentException if label is not recognized.
-		 */
-		public static Conn3D fromLabel( String opLabel ) {
-			if (opLabel != null)
-				opLabel = opLabel.toLowerCase();
-			for ( Conn3D op : Conn3D.values() ) {
-				String cmp = op.label.toLowerCase();
-				if (cmp.equals(opLabel))
-					return op;
-			}
-			throw new IllegalArgumentException( "Unable to parse Conn3D with"
-					+ " label: " + opLabel );
-		}
-	};
-
 
 	/**
 	 * Apply the current filter settings to process the given image.
@@ -200,8 +150,8 @@ public class InteractiveMorphologicalReconstruction3D implements PlugIn
 				Operation.getAllLabels(),
 				operation.label);
 		gd.addChoice("Connectivity",
-				Conn3D.getAllLabels(),
-				connectivity.label);
+				Connectivity3D.getAllLabels(),
+				connectivity.name());
 		gd.addHelp( "http://imagej.net/MorphoLibJ" );
 		gd.showDialog();
 
@@ -210,7 +160,7 @@ public class InteractiveMorphologicalReconstruction3D implements PlugIn
 
 		// set up current parameters
 		operation = Operation.fromLabel( gd.getNextChoice() );
-		connectivity = Conn3D.fromLabel( gd.getNextChoice() );
+		connectivity = Connectivity3D.fromLabel( gd.getNextChoice() );
 
 		long t0 = System.currentTimeMillis();
 

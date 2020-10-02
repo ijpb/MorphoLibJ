@@ -27,6 +27,7 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
+import inra.ijpb.morphology.Connectivity3D;
 import inra.ijpb.morphology.MinimaAndMaxima;
 import inra.ijpb.morphology.MinimaAndMaxima3D;
 import inra.ijpb.util.IJUtils;
@@ -66,6 +67,16 @@ public class ExtendedMinAndMax3DPlugin implements PlugIn {
 					"Unable to process the " + this + " morphological operation");
 		}
 		
+		public ImageStack apply(ImageStack image, int dynamic, Connectivity3D connectivity) {
+			if (this == EXTENDED_MAXIMA)
+				return MinimaAndMaxima3D.extendedMaxima(image, dynamic, connectivity.getValue());
+			if (this == EXTENDED_MINIMA)
+				return MinimaAndMaxima3D.extendedMinima(image, dynamic, connectivity.getValue());
+			
+			throw new RuntimeException(
+					"Unable to process the " + this + " morphological operation");
+		}
+
 		public ImageStack apply(ImageStack image, int dynamic, int connectivity) {
 			if (this == EXTENDED_MAXIMA)
 				return MinimaAndMaxima3D.extendedMaxima(image, dynamic, connectivity);
@@ -116,10 +127,6 @@ public class ExtendedMinAndMax3DPlugin implements PlugIn {
 		}
 	};
 
-	private final static String[] connectivityLabels = {"6", "26"}; 
-	private final static int[] connectivityValues = {6, 26}; 
-
-	
 
 	@Override
 	public void run(String arg) {
@@ -166,7 +173,7 @@ public class ExtendedMinAndMax3DPlugin implements PlugIn {
 		gd.addChoice("Operation", Operation.getAllLabels(), 
 				Operation.EXTENDED_MINIMA.label);
 		gd.addSlider("Dynamic", minValue, maxValue, 10);		
-		gd.addChoice("Connectivity", connectivityLabels, connectivityLabels[0]);
+		gd.addChoice("Connectivity", Connectivity3D.getAllLabels(), Connectivity3D.C6.name());
 //		gd.addHelp("http://imagejdocu.tudor.lu/doku.php?id=plugin:morphology:fast_morphological_filters:start");
         gd.showDialog();
         if (gd.wasCanceled())
@@ -177,7 +184,7 @@ public class ExtendedMinAndMax3DPlugin implements PlugIn {
 		// extract chosen parameters
 		Operation op = Operation.fromLabel(gd.getNextChoice());
 		int dynamic = (int) gd.getNextNumber();
-		int conn = connectivityValues[gd.getNextChoiceIndex()];
+		Connectivity3D conn = Connectivity3D.fromLabel(gd.getNextChoice());
         
 		ImageStack result = op.apply(stack, dynamic, conn);
 		
