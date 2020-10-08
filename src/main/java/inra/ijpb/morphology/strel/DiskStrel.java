@@ -195,7 +195,10 @@ public class DiskStrel extends AbstractInPlaceStrel implements InPlaceStrel
 	@Override
 	public void inPlaceDilation(ImageProcessor image)
 	{
-		new RankFilters().rank(image, radius, RankFilters.MAX);
+		if (radius > 0.5)
+		{
+			new RankFilters().rank(image, radius, RankFilters.MAX);
+		}
 	}
 
 	/**
@@ -207,6 +210,9 @@ public class DiskStrel extends AbstractInPlaceStrel implements InPlaceStrel
 	@Override
 	public void inPlaceErosion(ImageProcessor image)
 	{
-		new RankFilters().rank(image, radius, RankFilters.MIN);
+		if (radius > 0.5)
+		{
+			new RankFilters().rank(image, radius, RankFilters.MIN);
+		}
 	}
 }

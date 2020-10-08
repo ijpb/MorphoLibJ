@@ -61,6 +61,26 @@ public class DiskStrelTest {
 	}
 	
 	/**
+	 * Dilates a single pixel by a disk with radius 0, and check the shape of the result.
+	 * The result should be the same as the input image.
+	 */
+	@Test
+	public void testDilate_SinglePixel_Radius0() {
+		Strel strel = DiskStrel.fromRadius(0);
+		
+		ImageProcessor image = new ByteProcessor(10, 10);
+		image.setValue(0);
+		image.fill();
+		image.set(5, 5, 255);
+		ImageProcessor result = strel.dilation(image);
+
+		// Input image should be equal to output image
+		for (int y = 0; y < 9; y++)
+			for (int x = 0; x < 9; x++)
+				assertEquals(image.get(x, y), result.get(x, y));
+	}
+	
+	/**
 	 * Dilates a single pixel by a disk with diameter 4. 
 	 * The result should be larger than dilation with diameter 3.
 	 */
@@ -97,4 +117,26 @@ public class DiskStrelTest {
 		assertTrue(different);
 	}
 
+	/**
+	 * Erodes a single pixel by a disk with radius 0, and checks the shape of the result.
+	 * The result should be the same as the input image.
+	 */
+	@Test
+	public void testErode_SinglePixel_Radius0() 
+	{
+		ImageProcessor image = new ByteProcessor(10, 10);
+		image.setValue(255);
+		image.fill();
+		image.set(5, 5, 0);
+		
+		Strel strel = DiskStrel.fromRadius(0);
+
+		ImageProcessor result = strel.erosion(image);
+
+		// Input image should be equal to output image
+		for (int y = 0; y < 9; y++)
+			for (int x = 0; x < 9; x++)
+				assertEquals(image.get(x, y), result.get(x, y));
+	}
+	
 }
