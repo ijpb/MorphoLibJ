@@ -327,7 +327,7 @@ public class DistanceTransform3D4WeightsShort extends AlgoStub implements Distan
 		// iterate on image voxels in backward order
 		for (int z = sizeZ - 1; z >= 0; z--)
 		{
-			fireProgressChanged(this, sizeZ-1-z, sizeZ); 
+			fireProgressChanged(this, sizeZ-1-z, sizeZ);
 			
 			byte[] maskSlice = this.maskSlices[z];
 			short[] currentSlice = this.resultSlices[z];
@@ -356,11 +356,12 @@ public class DistanceTransform3D4WeightsShort extends AlgoStub implements Distan
 						{
 							newVal = min(newVal, resultSlices[z2][sizeX * y2 + x2] + offset.weight);
 						}
-						
-						if (newVal < value) 
-						{
-							currentSlice[index] = (short) newVal;
-						}
+					}
+
+					// Update current value if necessary
+					if (newVal < value) 
+					{
+						currentSlice[index] = (short) newVal;
 					}
 				}
 			}

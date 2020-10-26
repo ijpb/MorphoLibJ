@@ -353,11 +353,12 @@ public class DistanceTransform3D4WeightsFloat extends AlgoStub implements Distan
 						{
 							newVal = min(newVal, resultSlices[z2][sizeX * y2 + x2] + offset.weight);
 						}
-						
-						if (newVal < value) 
-						{
-							currentSlice[index] = (float) newVal;
-						}
+					}
+
+					// Update current value if necessary
+					if (newVal < value) 
+					{
+						currentSlice[index] = (float) newVal;
 					}
 				}
 			}
