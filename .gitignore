@@ -12,3 +12,22 @@
 
 /javadoc.xml
 /doc/MorphoLibJ-manual/*.pdf
+
+# IntelliJ
+**/.classpath
+**/.project
+**/.settings
+**/target
+.DS_Store
+.classpath
+.project
+.settings
+.factorypath
+.idea
+target
+*.iml
+*.class
+*~
+*.orig
+
+
