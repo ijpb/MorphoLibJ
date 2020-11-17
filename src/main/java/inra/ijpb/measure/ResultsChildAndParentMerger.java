@@ -12,7 +12,7 @@ public class ResultsChildAndParentMerger
 	private final String childTableParentLabelColumn;
 	private final ResultsTable parentTable;
 	private final HashMap< Integer, Map< String, List< Double > > > parentToFeatureToMeasurements;
-	private final HashMap< Integer, Integer > parentLabelToRowIndex;
+	private final HashMap< Integer, Integer > parentToRowIndex;
 
 	public enum AggregationMode
 	{
@@ -29,19 +29,19 @@ public class ResultsChildAndParentMerger
 		this.childTableParentLabelColumn = parentLabelColumn;
 		this.parentTable = parentTable;
 
-		parentLabelToRowIndex = initParentLabelToRowIndex();
+		parentToRowIndex = initParentToRowIndex();
 		parentToFeatureToMeasurements = initFeatureMap();
 		populateFeatureMap( parentToFeatureToMeasurements );
 	}
 
 	public ResultsTable appendToParentTable( AggregationMode mode )
 	{
-		parentToFeatureToMeasurements.keySet().stream().forEach( parentLabel ->
+		parentToFeatureToMeasurements.keySet().stream().forEach( parent ->
 		{
-			parentToFeatureToMeasurements.get( parentLabel ).keySet().stream().forEach( measurement ->
+			parentToFeatureToMeasurements.get( parent ).keySet().stream().forEach( measurement ->
 			{
-				DoubleSummaryStatistics statistics = parentToFeatureToMeasurements.get( parentLabel ).get( measurement ).stream().mapToDouble( x -> x ).summaryStatistics();
-				Integer row = parentLabelToRowIndex.get( parentLabel );
+				DoubleSummaryStatistics statistics = parentToFeatureToMeasurements.get( parent ).get( measurement ).stream().mapToDouble( x -> x ).summaryStatistics();
+				Integer row = parentToRowIndex.get( parent );
 
 				if ( measurement.equals( "Label" ) )
 				{
@@ -94,14 +94,9 @@ public class ResultsChildAndParentMerger
 				{
 					if ( column.equals( "Label" ) )
 					{
-						try
-						{
-							parentToFeatureToMeasurements.get( parentIndex ).get( column ).add( 1.0D );
-						} catch ( Exception e )
-						{
-							int a = 1;
-						}
-					} else
+						parentToFeatureToMeasurements.get( parentIndex ).get( column ).add( 1.0D );
+					}
+					else
 					{
 						final double measurement = childTable.getValue( column, rowIndex );
 						parentToFeatureToMeasurements.get( parentIndex ).get( column ).add( measurement );
@@ -115,7 +110,7 @@ public class ResultsChildAndParentMerger
 		} );
 	}
 
-	private HashMap< Integer, Integer > initParentLabelToRowIndex()
+	private HashMap< Integer, Integer > initParentToRowIndex()
 	{
 		HashMap< Integer, Integer > parentLabelToRowIndex = new HashMap<>();
 		IntStream.range( 0, parentTable.size() ).forEach( row ->
