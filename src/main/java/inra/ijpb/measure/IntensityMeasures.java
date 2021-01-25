@@ -722,7 +722,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 		// calculate maximum voxel value per object
 		for( int i=0; i<numLabels; i++ )
 		{
-			max[ i ] = Double.MIN_VALUE;
+			max[ i ] = Double.NEGATIVE_INFINITY;
 			for( final double v : objectVoxels[ i ] )
 				if( v > max[ i ] )
 					max[ i ] = v;
@@ -815,7 +815,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 		// calculate minimum voxel value per object
 		for( int i=0; i<numLabels; i++ )
 		{
-			min[ i ] = Double.MAX_VALUE;
+			min[ i ] = Double.POSITIVE_INFINITY;
 			for( final double v : objectVoxels[ i ] )
 				if( v < min[ i ] )
 					min[ i ] = v;
