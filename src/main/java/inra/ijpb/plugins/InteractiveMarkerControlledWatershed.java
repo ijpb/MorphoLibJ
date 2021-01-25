@@ -40,11 +40,11 @@ import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.LUT;
 import inra.ijpb.binary.BinaryImages;
+import inra.ijpb.color.ColorMaps;
+import inra.ijpb.color.ColorMaps.CommonLabelMaps;
 import inra.ijpb.data.image.ColorImages;
 import inra.ijpb.data.image.Images3D;
 import inra.ijpb.label.LabelImages;
-import inra.ijpb.util.ColorMaps;
-import inra.ijpb.util.ColorMaps.CommonLabelMaps;
 import inra.ijpb.watershed.Watershed;
 
 import java.awt.Color;

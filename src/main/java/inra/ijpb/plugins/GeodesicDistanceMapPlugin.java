@@ -34,7 +34,7 @@ import inra.ijpb.binary.ChamferWeights;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransform;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat5x5;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort5x5;
-import inra.ijpb.util.ColorMaps;
+import inra.ijpb.color.ColorMaps;
 
 import java.awt.image.IndexColorModel;
 

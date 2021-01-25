@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/lgpl-3.0.html>.
  * #L%
  */
-package inra.ijpb.util;
+package inra.ijpb.color;
 
 import java.awt.Color;
 
@@ -41,9 +41,7 @@ import java.awt.Color;
  * </code></pre>
  * @author dlegland
  *
- * @deprecated use inra.ijpb.color.CommonColors instead (v1.4.3)
  */
-@Deprecated
 public enum CommonColors
 {
 	WHITE("White", 		Color.WHITE), 

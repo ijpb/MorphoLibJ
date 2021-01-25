@@ -46,7 +46,7 @@ import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat5x5;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort5x5;
-import inra.ijpb.util.ColorMaps;
+import inra.ijpb.color.ColorMaps;
 import inra.ijpb.util.IJUtils;
 
 /**

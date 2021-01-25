@@ -29,9 +29,9 @@ import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
-import inra.ijpb.util.ColorMaps;
-import inra.ijpb.util.ColorMaps.CommonLabelMaps;
-import inra.ijpb.util.CommonColors;
+import inra.ijpb.color.ColorMaps;
+import inra.ijpb.color.CommonColors;
+import inra.ijpb.color.ColorMaps.CommonLabelMaps;
 
 import java.awt.AWTEvent;
 import java.awt.Color;

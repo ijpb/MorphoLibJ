@@ -32,8 +32,8 @@ import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.binary.ChamferWeights3D;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransform3D;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransform3DFloat;
+import inra.ijpb.color.ColorMaps;
 import inra.ijpb.data.image.Images3D;
-import inra.ijpb.util.ColorMaps;
 
 import java.awt.image.IndexColorModel;
 

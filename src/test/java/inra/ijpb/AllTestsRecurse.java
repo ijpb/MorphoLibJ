@@ -30,13 +30,13 @@ import org.junit.runners.Suite;
 	// generic classes
 	inra.ijpb.OpenResourceImage.class, 
 	inra.ijpb.binary.AllTestsRecurse.class,
+	inra.ijpb.color.AllTests.class,
 	inra.ijpb.geometry.AllTests.class,
 	inra.ijpb.label.AllTestsRecurse.class,
     inra.ijpb.math.AllTests.class,
     inra.ijpb.measure.AllTestsRecurse.class,
 	inra.ijpb.morphology.AllTestsRecurse.class,
     inra.ijpb.plugins.AllTests.class,
-	inra.ijpb.util.AllTests.class,
 	})
 public class AllTestsRecurse {
   //nothing

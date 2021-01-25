@@ -35,7 +35,7 @@ import ij.ImageStack;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
-import inra.ijpb.util.ColorMaps.CommonLabelMaps;
+import inra.ijpb.color.ColorMaps.CommonLabelMaps;
 
 public class LabelImagesTest
 {

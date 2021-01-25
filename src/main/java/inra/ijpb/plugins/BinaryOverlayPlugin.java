@@ -26,8 +26,8 @@ import ij.ImagePlus;
 import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
+import inra.ijpb.color.CommonColors;
 import inra.ijpb.data.image.ColorImages;
-import inra.ijpb.util.CommonColors;
 
 import java.awt.Color;
 

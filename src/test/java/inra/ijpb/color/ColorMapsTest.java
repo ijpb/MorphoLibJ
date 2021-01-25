@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/lgpl-3.0.html>.
  * #L%
  */
-package inra.ijpb.util;
+package inra.ijpb.color;
 
 import static org.junit.Assert.*;
 

@@ -20,7 +20,7 @@
  * #L%
  */
 /**
- * <p>Various utility classes (colors, gui utils...).</p>
+ * <p>Various utility classes (mainly gui utils...).</p>
  */
 package inra.ijpb.util;
 
