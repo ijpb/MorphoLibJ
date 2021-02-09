@@ -6,10 +6,15 @@
 \origin unavailable
 \textclass scrreprt
 \begin_preamble
-\usepackage[dvipsnames]{xcolor}
+\PassOptionsToPackage{usenames,dvipsnames}{xcolor}
+
+\usepackage[usenames,dvipsnames]{xcolor}
+
+%\usepackage{lstlinebgrd}
+\usepackage[T1]{fontenc}
 
 \usepackage{hyperref}
-\usepackage{lstlinebgrd}
+
 
 \definecolor{bl}{rgb}{0.0,0.2,0.6} 
 
@@ -158,7 +163,8 @@
 \dynamic_quotes 0
 \papercolumns 1
 \papersides 1
-\paperpagestyle default
+\paperpagestyle plain
+\bullet 2 0 10 -1
 \tracking_changes false
 \output_changes false
 \html_math_output 0
@@ -3422,6 +3428,14 @@ name "sec:Minima-Maxima"
 
 \end_layout
 
+\begin_layout Standard
+Minima and maxima within images are important features because they often
+ correspond to relevant structures within the image.
+ In mathematical morphology, the terms minima and maxima correspond to regions,
+ i.e.
+ they are not restricted to single pixels or voxels.
+\end_layout
+
 \begin_layout Subsection
 Regional minima and maxima
 \end_layout
@@ -3592,6 +3606,18 @@ Regional maxima on a grayscale image.
 
 \end_layout
 
+\begin_layout Standard
+MorphoLibJ uses the algorithm described in 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Breen_1996_cviu"
+literal "false"
+
+\end_inset
+
+ for computing regional minima and maxima.
+\end_layout
+
 \begin_layout Subsection
 Extended minima and maxima
 \end_layout
@@ -3613,9 +3639,126 @@ One problem arising with regional minima or maxima is that they are very
 \series bold
 extended extrema
 \series default
-.
- The principle is to use a tolerance value for defining the extrema.
+, that allows filtering spurious extrema.
  
+\end_layout
+
+\begin_layout Standard
+Extended minima and maxima are based on the 
+\series bold
+H-extrema transformations
+\series default
+, that remove extrema based on a contrast criterium denoted by 
+\begin_inset Formula $h$
+\end_inset
+
+.
+ For example, the H-maxima transformation of a function 
+\begin_inset Formula $f$
+\end_inset
+
+ is obtained by performing a morphological reconstruction by dilation of
+ the function 
+\begin_inset Formula $f-h$
+\end_inset
+
+ (the marker) constrained by the original function 
+\begin_inset Formula $f$
+\end_inset
+
+ (the mask).
+ Extended maxima are obtained by computing the regional maxima of the reconstruc
+tion result.
+ An illustration on a 1D signal is provided on Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Extended-Maxima-1D"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/reconstruction/extendedMaxima.png
+	width 60text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Extended-Maxima-1D"
+
+\end_inset
+
+Computation of extended maxima on a 1D function.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For images, 
+\series bold
+extended maxima
+\series default
+ are defined as a connected region containing elements such that the difference
+ of the value of each element within the region with the maximal value within
+ the region is lower than the tolerance, and such that the neighbors of
+ the regions all have values smaller than the maximum within the region
+ minus the tolerance.
+ This definition allows the identification of larger extrema, that better
+ takes into account the noise within the image (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Extended-Maxima"
+
+\end_inset
+
+).
+ The 
+\series bold
+extended minima 
+\series default
+are defined in a similar way, and are efficiently used as pre-processing
+ step for watershed segmentation.
 \end_layout
 
 \begin_layout Standard
@@ -3748,37 +3891,6 @@ Extended maxima on a grayscale image.
 \end_layout
 
 \begin_layout Standard
-For example, 
-\series bold
-extended maxima
-\series default
- are defined as a connected region containing elements such that the difference
- of the value of each element within the region with the maximal value within
- the region is lower than the tolerance, and such that the neighbors of
- the regions all have values smaller than the maximum within the region
- minus the tolerance.
- This definition allows the identification of larger extrema, that better
- takes into account the noise within the image (Fig.
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Extended-Maxima"
-
-\end_inset
-
-).
- The 
-\series bold
-extended minima 
-\series default
-are defined in a similar way, and are efficiently used as pre-processing
- step for watershed segmentation.
-\end_layout
-
-\begin_layout Standard
 Both extended maxima and minima are computed using the morphological reconstruct
 ion algorithm.
  More details can be found in the book of 
@@ -3833,7 +3945,7 @@ The principle is to perform a morphological reconstruction using as a marker
  image a combination of the input image and the minima or maxima, and as
  mask image the original input image.
  The result is a grayscale image whose regional minima or maxima are the
- same as the ones specified.
+ same as the specified ones.
 \end_layout
 
 \begin_layout Subsection
@@ -4692,7 +4804,7 @@ This short macro runs the plugin twice in the blobs sample, first without
 
 \begin_layout Standard
 \begin_inset listings
-lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
 status open
 
@@ -5037,10 +5149,6 @@ Arabidopsis thaliana
 
 \end_layout
 
-\begin_layout Plain Layout
-
-\end_layout
-
 \end_inset
 
 
@@ -5053,10 +5161,6 @@ Usage
 \begin_layout Standard
 Marker-controlled Watershed needs at least two images to run.
  If that's the case, a dialog like the following will pop up:
-\begin_inset Separator latexpar
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -5404,11 +5508,6 @@ reference "fig:MS-display-options"
 \end_inset
 
 ).
- 
-\begin_inset Separator latexpar
-\end_inset
-
-
 \end_layout
 
 \begin_deeper
@@ -5803,11 +5902,6 @@ Only enabled after running the segmentation.
 Display
 \series default
 : list of options to display the segmentation results.
- 
-\begin_inset Separator latexpar
-\end_inset
-
-
 \end_layout
 
 \begin_deeper
@@ -6022,7 +6116,7 @@ Start the plugin:
 
 
 \begin_inset listings
-lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
 status open
 
@@ -6043,7 +6137,7 @@ Select input image:
 
 
 \begin_inset listings
-lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
 status open
 
@@ -6079,7 +6173,7 @@ Run segmentation with specific options:
 
 
 \begin_inset listings
-lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
 status open
 
@@ -6097,7 +6191,7 @@ eDams=true","connectivity=6");
 \begin_layout Itemize
 Toggle result overlay:
 \begin_inset listings
-lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
 status open
 
@@ -6118,7 +6212,7 @@ Set option to display gradient image:
 
 
 \begin_inset listings
-lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
 status open
 
@@ -6139,7 +6233,7 @@ Select display format:
 
 
 \begin_inset listings
-lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
 status open
 
@@ -6199,7 +6293,7 @@ Create new image with the current result:
 
 
 \begin_inset listings
-lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
 status open
 
@@ -6224,7 +6318,7 @@ The following macro opens the Blobs sample image, applies the plugin with
 
 \begin_layout Standard
 \begin_inset listings
-lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
 status open
 
@@ -6458,10 +6552,6 @@ name "subsec:Distance-Transform-Watershed"
 \begin_layout Standard
 Distance Transform Watershed needs one 2D 8-bit binary image to run.
  If that's the case, a dialog like the following will pop up:
-\begin_inset Separator latexpar
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -6662,13 +6752,10 @@ name "subsec:Distance-Transform-Watershed-3d"
 \begin_layout Standard
 Distance Transform Watershed 3D needs one 3D 8-bit binary image to run.
  If that's the case, a dialog like the following will pop up:
-\begin_inset Separator latexpar
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
+\noindent
 \align center
 \begin_inset Graphics
 	filename images/Distance-Transform-Watershed-3D-menu.png
@@ -11620,7 +11707,7 @@ Plugin usage
 
 \begin_layout Standard
 The MorphoLibJ library provides two plugins for computing chamfer distance
- maps for 2D or 3D binary images :
+ maps for 2D or 3D binary images:
 \end_layout
 
 \begin_layout Description
@@ -13816,7 +13903,7 @@ For final users, plugins provide graphical display and intuitive tuning
  of parameters.
  Such plugins can easily be incorporated into a macro:
 \begin_inset listings
-lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
 status open
 
@@ -13841,7 +13928,7 @@ For plugins developers, operators are available through collections of static
  of code.
  Example:
 \begin_inset listings
-lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
 status open
 
@@ -13865,7 +13952,7 @@ For core developers, algorithms are implementations of abstract interfaces,
  making it possible to choose or develop the most appropriate one, and to
  monitor execution events.
 \begin_inset listings
-lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
 status open
 
@@ -14021,7 +14108,7 @@ ical operations (gradient, extended minima and watershed):
 
 \begin_layout Standard
 \begin_inset listings
-lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
 status open
 
@@ -14216,7 +14303,7 @@ n tools it is quite simple to create a script to display each label of an
 
 \begin_layout Standard
 \begin_inset listings
-lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,linebackgroundcolor={\ifodd\value{lstnumber}\color{lightgray}\fi},numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
+lstparams "basicstyle={\scriptsize},breaklines=true,captionpos=b,commentstyle={\color{mygreen}},keywordstyle={\color{blue}},language=Java,numbers=left,showstringspaces=false,stringstyle={\color{magenta}}"
 inline false
 status open
 
