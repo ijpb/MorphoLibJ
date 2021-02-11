@@ -26,6 +26,8 @@ import ij.ImagePlus;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import inra.ijpb.binary.BinaryImages;
+import inra.ijpb.morphology.Connectivity2D;
+import inra.ijpb.morphology.Connectivity3D;
 
 /**
  * Computes label image of connected components in a binary planar image or 3D
@@ -36,12 +38,6 @@ import inra.ijpb.binary.BinaryImages;
  */
 public class LabelingPlugin implements PlugIn 
 {
-	// Widget strings and corresponding values of connectivity option
-	private final static String[] conn2DLabels = {"4", "8"};
-	private final static int[] conn2DValues = {4, 8};
-	private final static String[] conn3DLabels = {"6", "26"};
-	private final static int[] conn3DValues = {6, 26};
-	
 	// Widget labels and corresponding values of output type option
 	private final static String[] resultBitDepthLabels = {"8 bits", "16 bits", "float"};
 	private final static int[] resultBitDepthList = {8, 16, 32}; 
@@ -55,7 +51,7 @@ public class LabelingPlugin implements PlugIn
 		
 		// Display dialog options
 		GenericDialog gd = new GenericDialog("Connected Components Labeling");
-		String[] connLabels = isPlanar ? conn2DLabels : conn3DLabels;
+		String[] connLabels = isPlanar ? Connectivity2D.getAllLabels() : Connectivity3D.getAllLabels();
 		gd.addChoice("Connectivity", connLabels, connLabels[0]);
 		gd.addChoice("Type of result", resultBitDepthLabels, resultBitDepthLabels[1]);
 		
@@ -65,15 +61,16 @@ public class LabelingPlugin implements PlugIn
 			return;
 
 		// parses dialog options
-		int connIndex = gd.getNextChoiceIndex();
+		String str = gd.getNextChoice();
 		int bitDepth = resultBitDepthList[gd.getNextChoiceIndex()];
-		int conn = isPlanar ? conn2DValues[connIndex] : conn3DValues[connIndex];
+		int connValue = isPlanar ? Connectivity2D.fromLabel(str).getValue()
+				: Connectivity3D.fromLabel(str).getValue();
 
 		// Compute components labeling
 		ImagePlus resultPlus;
 		try
 		{ 	
-			resultPlus = BinaryImages.componentsLabeling(imagePlus, conn, bitDepth);
+			resultPlus = BinaryImages.componentsLabeling(imagePlus, connValue, bitDepth);
 		} 
 		catch(RuntimeException ex)
 		{
