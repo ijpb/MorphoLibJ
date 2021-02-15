@@ -66,7 +66,7 @@ public class IntensityMeasures3D implements PlugIn{
         String[] names = new String[ nbima ];        
         
         for (int i = 0; i < nbima; i++)         
-            names[ i ] = WindowManager.getImage(i + 1).getShortTitle();
+            names[ i ] = WindowManager.getImage(i + 1).getTitle();
         
         if( inputIndex > nbima-1 )
         	inputIndex = nbima - 1;
