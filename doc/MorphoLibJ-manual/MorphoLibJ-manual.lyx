@@ -7050,9 +7050,183 @@ literal "false"
 \end_layout
 
 \begin_layout Standard
-We first provide mathematical definitions of the implemented features, eventuall
-y completed by the methods used to measure them from discrete images, and
- finally we present the plugins that integrate them.
+Many region features have been proposed to describe morphology of regions.
+ The MorphoLibJ library proposes plugins to quantify some of the most common
+ ones:
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+intrinsic volumes
+\series default
+ (section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Intrinsic-Volumes-2D"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) encompass the area, the perimeter, and the Euler number, that quantify
+ the topology of the region
+\end_layout
+
+\begin_layout Itemize
+the computation of 
+\series bold
+moments of a region
+\series default
+ can be used to determine the centroid or equivalent ellipse (section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Geometric-Moment-And-Equivalent-Ellipse"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) 
+\end_layout
+
+\begin_layout Itemize
+dimension extent may be determined by use of 
+\series bold
+Feret diameters
+\series default
+ (section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Feret-Diameter-And-Oriented-Box"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) 
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+geodesic features
+\series default
+ allow to investigate the complexity of the region, in particular the tortuosity
+ (section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Geodesic-Measurements"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) 
+\end_layout
+
+\begin_layout Itemize
+the use of the skeleton provide derived features such as the 
+\series bold
+average thickness
+\series default
+ (section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Average-Thickness"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) 
+\end_layout
+
+\begin_layout Itemize
+features describing the size may be combined to obtain
+\series bold
+ shape indices
+\series default
+ that describe the morphology of the regions independantly of their size
+ and location (section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Shape-Indices"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) 
+\end_layout
+
+\begin_layout Standard
+The following sections will present these featuers.
+ For each family of features, we first provide mathematical definitions
+ of the implemented features, eventually completed by the methods used to
+ measure them from discrete images.
+ A final section (section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Analyze-Regions-Plugins"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) presents the different plugins that allow to measure features from images.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+introduces question of discretisation
+\end_layout
+
+\begin_layout Subsection
+Discrete images
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -7093,15 +7267,14 @@ Euler number
 \end_layout
 
 \begin_layout Subsubsection
-Mathematical definitions
-\end_layout
-
-\begin_layout Paragraph
-Area and perimeter
+Area
 \end_layout
 
 \begin_layout Standard
-\begin_inset space ~
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Area"
+
 \end_inset
 
 
@@ -7112,23 +7285,14 @@ The
 \series bold
 area
 \series default
- and the 
-\series bold
-perimeter
-\series default
  of a set 
 \begin_inset Formula $X$
 \end_inset
 
- with smooth surface 
-\begin_inset Formula $\partial X$
-\end_inset
-
- can be defined using integrals over the set, or over its boundary:
+ can be defined using integrals over the set:
 \begin_inset Formula 
 \begin{align}
-A(X) & =\int_{X}dx\\
-P(X) & =\int_{\partial X}dx
+A(X) & =\int_{X}dx
 \end{align}
 
 \end_inset
@@ -7141,17 +7305,19 @@ In image analysis, the
 \series bold
 measurement of area 
 \series default
-of 2D particles simply consists in counting the number of pixels that constitute
- it, weighted by the area of an individual pixel.
- 
+of a region simply consists in counting the number of pixels that constitute
+ it, and to multiply by the area of a single pixel.
 \end_layout
 
-\begin_layout Paragraph
-Euler number
+\begin_layout Subsubsection
+Perimeter
 \end_layout
 
 \begin_layout Standard
-\begin_inset space ~
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Perimeter"
+
 \end_inset
 
 
@@ -7160,106 +7326,19 @@ Euler number
 \begin_layout Standard
 The 
 \series bold
-Euler number
+perimeter
 \series default
- is a feature that describes the 
-\series bold
-topology 
-\series default
-of a region.
- It corresponds to the number of connected components, minus the number
- of holes (Fig.
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Euler-Number"
-
-\end_inset
-
--a).
+ of a region corresponds to the length of its boundary.
+ Its formal definition involves computing an integral over its boundary
  
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename images/analysis/euler-number-2d-horiz.png
-	height 4cm
-
+\begin_inset Formula $\partial X$
 \end_inset
 
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:Euler-Number"
-
-\end_inset
-
-Euler Number for 2D regions.
- Particle A is composed of a single component, its Euler number is 1.
- Particles B and C present one and two holes respectively.
- Their corresponding Euler numbers are equal to 
-\begin_inset Formula $0=1-1$
-\end_inset
-
- and 
-\begin_inset Formula $-1=1-2$
-\end_inset
-
-.
- 
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-In 2D, the Euler number of a region with smooth boundary also equals the
- 
-\series bold
-integral of the curvature
-\series default
- over the boundary of the set:
+:
 \begin_inset Formula 
-\begin{equation}
-\chi(X)=\frac{1}{2\pi}\int_{\partial X}\kappa(x)dx
-\end{equation}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsubsection
-Measurement of perimeter
-\end_layout
-
-\begin_layout Standard
-\begin_inset CommandInset label
-LatexCommand label
-name "subsec:Surface-Area-And-Perimeter"
+\begin{align}
+P(X) & =\int_{\partial X}dx
+\end{align}
 
 \end_inset
 
@@ -7267,8 +7346,11 @@ name "subsec:Surface-Area-And-Perimeter"
 \end_layout
 
 \begin_layout Standard
-An intuitive approach for measuring the perimeter of a binary region is
- to count the number of boundary pixels (Figure
+An intuitive approach for 
+\series bold
+measuring the perimeter
+\series default
+ of a binary region is to count the number of boundary pixels (Figure
 \begin_inset space ~
 \end_inset
 
@@ -7402,7 +7484,6 @@ name "fig:Perimeter-Estimation"
 Measurement of perimeter within a discrete image of a disk.
  (a) Counting the number of boundary pixels.
  (b) Counting the number of intersection with parallel lines.
- 
 \end_layout
 
 \end_inset
@@ -7471,7 +7552,101 @@ literal "true"
 \end_layout
 
 \begin_layout Subsubsection
-Measurement of Euler number
+Euler Number
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+Euler number
+\series default
+ is a feature that describes the 
+\series bold
+topology 
+\series default
+of a region.
+ It corresponds to the number of connected components, minus the number
+ of holes (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Euler-Number"
+
+\end_inset
+
+-a).
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/analysis/euler-number-2d-horiz.png
+	height 3.5cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Euler-Number"
+
+\end_inset
+
+Euler Number for 2D regions.
+ Particle A is composed of a single component, its Euler number is 1.
+ Particles B and C present one and two holes respectively.
+ Their corresponding Euler numbers are equal to 
+\begin_inset Formula $0=1-1$
+\end_inset
+
+ and 
+\begin_inset Formula $-1=1-2$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In 2D, the Euler number of a region with smooth boundary also equals the
+ 
+\series bold
+integral of the curvature
+\series default
+ over the boundary of the set:
+\begin_inset Formula 
+\begin{equation}
+\chi(X)=\frac{1}{2\pi}\int_{\partial X}\kappa(x)dx
+\end{equation}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -7612,11 +7787,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Reconstruction using the
-\begin_inset Newline newline
-\end_inset
-
-4-connectivity 
+4-connectivity
 \end_layout
 
 \end_inset
@@ -7647,10 +7818,6 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Reconstruction using the 
-\begin_inset Newline newline
-\end_inset
-
 8-connectivity
 \end_layout
 
@@ -7683,10 +7850,6 @@ Determination of the Euler number from binary images.
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Plain Layout
 
 \end_layout
 
@@ -8075,6 +8238,16 @@ Geodesic measurements
 \end_layout
 
 \begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Geodesic-Measurements"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 For particles with complex shapes, the 
 \series bold
 geodesic diameter 
@@ -8190,6 +8363,16 @@ Thickness
 \end_layout
 
 \begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Average-Thickness"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 The thickness is also a convenient measure to describe a region.
  It may be evaluated by the diameter of the 
 \begin_inset ERT
@@ -8237,6 +8420,16 @@ average thickness
 
 \begin_layout Subsection
 Quantification by shape indices
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Shape-Indices"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -8507,6 +8700,16 @@ It describes the complexity of the region.
 
 \begin_layout Subsection
 Plugins
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Analyze-Regions-Plugins"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -9449,7 +9652,7 @@ mean breadth
 \end_layout
 
 \begin_layout Subsubsection
-Mathematical definitions
+Volume
 \end_layout
 
 \begin_layout Standard
@@ -9472,13 +9675,92 @@ surface area
  can be defined using integrals over the set, or over its boundary:
 \begin_inset Formula 
 \begin{align}
-V(X) & =\int_{X}dx\\
+V(X) & =\int_{X}dx
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The measurement of 
+\series bold
+volume of 3D region
+\series default
+ is as straightforward as in 2D: it consists in counting the voxels that
+ belong to the 3D region, multiplied by the volume of an individual voxel.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+Surface area
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+surface area
+\series default
+ of a set 
+\begin_inset Formula $X$
+\end_inset
+
+ with smooth surface 
+\begin_inset Formula $\partial X$
+\end_inset
+
+ can be defined using integral over its boundary:
+\begin_inset Formula 
+\begin{align}
 S(X) & =\int_{\partial X}dx
 \end{align}
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+measurement of surface area 
+\series default
+from 3D binary images follows the same principle as the estimation of perimeter.
+ One considers the intersections of the region with straight lines, and
+ averages over all possible directions 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Lang2001,Legland2007"
+literal "true"
+
+\end_inset
+
+.
+ The number of directions is typically chosen equal to 3 (the three main
+ axes in image), or 13 (by considering also diagonals).
+ As for perimeter estimation, surface area estimation is usually biased,
+ but is usually more precise than measuring the surface area of the polygonal
+ mesh reconstructed from binary images 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Lehmann_2012_ij"
+literal "true"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Mean breadth
 \end_layout
 
 \begin_layout Standard
@@ -9521,6 +9803,10 @@ literal "true"
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsubsection
+Euler number 
 \end_layout
 
 \begin_layout Standard
@@ -9634,51 +9920,6 @@ gaussian curvature
 
 \end_layout
 
-\begin_layout Subsubsection
-Measures from discrete images
-\end_layout
-
-\begin_layout Standard
-The measurement of 
-\series bold
-volume of 3D region
-\series default
- is as straightforward as in 2D: it consists in counting the voxels that
- belong to the 3D region, multiplied by the volume of an individual voxel.
- 
-\end_layout
-
-\begin_layout Standard
-The 
-\series bold
-measurement of surface area 
-\series default
-from 3D binary images follows the same principle as the estimation of perimeter.
- One considers the intersections of the region with straight lines, and
- averages over all possible directions 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Lang2001,Legland2007"
-literal "true"
-
-\end_inset
-
-.
- The number of directions is typically chosen equal to 3 (the three main
- axes in image), or 13 (by considering also diagonals).
- As for perimeter estimation, surface area estimation is usually biased,
- but is usually more precise than measuring the surface area of the polygonal
- mesh reconstructed from binary images 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Lehmann_2012_ij"
-literal "true"
-
-\end_inset
-
-.
-\end_layout
-
 \begin_layout Standard
 As for 2D images, the measurement of Euler number from 3D images also relies
  on the choice of a connectivity between adjacent voxels.
@@ -9726,13 +9967,33 @@ status open
 .
 \end_layout
 
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
-Equivalent Ellipsoid
+Geometric moments and equivalent Ellipsoid
 \end_layout
 
 \begin_layout Standard
-The mathematical definition of the geometric moments for 3D regions is similar
- to the 2D case:
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Geometric-Moments-3D"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The mathematical definition of the
+\series bold
+ geometric moments
+\series default
+ for 3D regions is similar to the 2D case:
 \begin_inset Formula 
 \begin{align}
 m_{pqr}(X) & =\int\int\int I_{X}(x,y,z)x^{p}y^{q}z^{r}\cdot dx\cdot dy\cdot dz\label{eq:Moment-of-X-3D}
@@ -9990,8 +10251,25 @@ The global rotation matrix is assimilated to the product
  
 \end_layout
 
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 3D Shape indices
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Shape-Indices-3D"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -10066,6 +10344,13 @@ It is also possible to compute elongation factors from ratio of the radiuses
 e_{12}=\frac{r_{1}}{r_{2}},\,e_{23}=\frac{r_{2}}{r_{3}},\,e_{13}=\frac{r_{1}}{r_{3}},\text{ with }r_{1}\ge r_{2}\ge r_{3}
 \]
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
 \end_inset
 
 
@@ -10235,6 +10520,13 @@ noprefix "false"
 
 ) can provide results that may not seem consistent with the region adjacency
  graph.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
