@@ -57,12 +57,13 @@ public class Watershed
 	 * Soille, Pierre, and Luc M. Vincent. "Determining watersheds in 
 	 * digital pictures via flooding simulations." Lausanne-DL tentative. 
 	 * International Society for Optics and Photonics, 1990.
+	 * Note: it outputs step messages in the Log window.
 	 * 
 	 * @param input original grayscale image (usually a gradient image)
 	 * @param mask binary mask to restrict the regions of interest
 	 * @param connectivity voxel connectivity to define neighborhoods
 	 * @param hMin the minimum value for dynamic
-	 * @param hMax the maximum value for dynamic
+	 * @param hMax the maximum value for dynamic 
 	 * @return image of labeled catchment basins with dams (labels are 1, 2, ...)
 	 */
 	public static ImagePlus computeWatershed( 
@@ -70,11 +71,36 @@ public class Watershed
 			ImagePlus mask,
 			int connectivity,
 			double hMin,
-			double hMax )
+			double hMax)
+	{
+		return Watershed.computeWatershed(input, mask, connectivity, hMin, hMax, true );
+	}
+	/**
+	 * Compute fast watershed using flooding simulations, as described by 
+	 * Soille, Pierre, and Luc M. Vincent. "Determining watersheds in 
+	 * digital pictures via flooding simulations." Lausanne-DL tentative. 
+	 * International Society for Optics and Photonics, 1990.
+	 * 
+	 * @param input original grayscale image (usually a gradient image)
+	 * @param mask binary mask to restrict the regions of interest
+	 * @param connectivity voxel connectivity to define neighborhoods
+	 * @param hMin the minimum value for dynamic
+	 * @param hMax the maximum value for dynamic
+	 * @param verbose flag to output step messages in Log window
+	 * @return image of labeled catchment basins with dams (labels are 1, 2, ...)
+	 */
+	public static ImagePlus computeWatershed( 
+			ImagePlus input,
+			ImagePlus mask,
+			int connectivity,
+			double hMin,
+			double hMax,
+			boolean verbose )
 	{
 		if( connectivity == 6 || connectivity == 26 )
 		{
 			WatershedTransform3D wt = new WatershedTransform3D( input, mask, connectivity );
+			wt.setVerbose( verbose );
 			return wt.apply( hMin, hMax );
 		}
 		else if( connectivity == 4 || connectivity == 8 )
@@ -82,6 +108,7 @@ public class Watershed
 			WatershedTransform2D wt = 
 					new WatershedTransform2D( input.getProcessor(), 
 							null != mask ? mask.getProcessor() : null, connectivity );
+			wt.setVerbose( verbose );
 			final ImageProcessor ip = wt.apply( hMin, hMax );
 			if( null != ip )
 			{
@@ -113,6 +140,36 @@ public class Watershed
 	 * 
 	 * @param input original grayscale image (usually a gradient image)
 	 * @param mask binary mask to restrict the regions of interest
+	 * @param verbose flag to output step messages in Log window
+	 * @param connectivity voxel connectivity to define neighborhoods
+	 * @return image of labeled catchment basins with dams (labels are 1, 2, ...)
+	 */
+	public static ImageStack computeWatershed( 
+			ImageStack input,
+			ImageStack mask,
+			boolean verbose,
+			int connectivity )
+	{
+		final ImagePlus inputIP = new ImagePlus( "input", input );		
+		final ImagePlus binaryMaskIP = ( null != mask ) ? new ImagePlus( "binary mask", mask ) : null;
+		WatershedTransform3D wt = new WatershedTransform3D( inputIP, binaryMaskIP, connectivity );
+		wt.setVerbose( verbose );
+		
+		final ImagePlus ws = wt.apply();
+		if( null != ws )
+			return ws.getImageStack();
+		else 
+			return null;
+	}
+	/**
+	 * Compute fast watershed using flooding simulations, as described by 
+	 * Soille, Pierre, and Luc M. Vincent. "Determining watersheds in 
+	 * digital pictures via flooding simulations." Lausanne-DL tentative. 
+	 * International Society for Optics and Photonics, 1990.
+	 * Note: it outputs step messages in the Log window.
+	 * 
+	 * @param input original grayscale image (usually a gradient image)
+	 * @param mask binary mask to restrict the regions of interest
 	 * @param connectivity voxel connectivity to define neighborhoods
 	 * @return image of labeled catchment basins with dams (labels are 1, 2, ...)
 	 */
@@ -121,15 +178,7 @@ public class Watershed
 			ImageStack mask,
 			int connectivity )
 	{
-		final ImagePlus inputIP = new ImagePlus( "input", input );		
-		final ImagePlus binaryMaskIP = ( null != mask ) ? new ImagePlus( "binary mask", mask ) : null;
-		WatershedTransform3D wt = new WatershedTransform3D( inputIP, binaryMaskIP, connectivity );
-		
-		final ImagePlus ws = wt.apply();
-		if( null != ws )
-			return ws.getImageStack();
-		else 
-			return null;
+		return Watershed.computeWatershed(input, mask, true, connectivity);
 	}
 	
 	/**
@@ -140,6 +189,29 @@ public class Watershed
 	 * 
 	 * @param input original grayscale image (usually a gradient image)
 	 * @param mask binary mask to restrict the regions of interest
+	 * @param verbose flag to output step messages in Log window
+	 * @param connectivity pixel connectivity to define neighborhoods (4 or 8)
+	 * @return image of labeled catchment basins with dams (labels are 1, 2, ...)
+	 */
+	public static ImageProcessor computeWatershed( 
+			ImageProcessor input,
+			ImageProcessor mask,
+			boolean verbose,
+			int connectivity )
+	{		
+		WatershedTransform2D wt = new WatershedTransform2D( input, mask, connectivity );
+		wt.setVerbose( verbose );
+		return wt.apply();
+	}
+	/**
+	 * Compute fast watershed using flooding simulations, as described by 
+	 * Soille, Pierre, and Luc M. Vincent. "Determining watersheds in 
+	 * digital pictures via flooding simulations." Lausanne-DL tentative. 
+	 * International Society for Optics and Photonics, 1990.
+	 * Note: it outputs step messages in Log window.
+	 * 
+	 * @param input original grayscale image (usually a gradient image)
+	 * @param mask binary mask to restrict the regions of interest
 	 * @param connectivity pixel connectivity to define neighborhoods (4 or 8)
 	 * @return image of labeled catchment basins with dams (labels are 1, 2, ...)
 	 */
@@ -147,14 +219,14 @@ public class Watershed
 			ImageProcessor input,
 			ImageProcessor mask,
 			int connectivity )
-	{		
-		WatershedTransform2D wt = new WatershedTransform2D( input, mask, connectivity );
-		return wt.apply();
+	{
+		return Watershed.computeWatershed(input, mask, true, connectivity);
 	}
 
 	/**
 	 * Compute watershed with markers with an optional binary mask
-	 * to restrict the regions of application
+	 * to restrict the regions of application.
+	 * Note: it outputs step messages in Log window.
 	 * 
 	 * @param input original grayscale image (usually a gradient image)
 	 * @param marker image with labeled markers
@@ -175,7 +247,7 @@ public class Watershed
 	}
 	/**
 	 * Compute watershed with markers with an optional binary mask
-	 * to restrict the regions of application
+	 * to restrict the regions of application.
 	 *
 	 * @param input original grayscale image (usually a gradient image)
 	 * @param marker image with labeled markers
@@ -242,7 +314,8 @@ public class Watershed
 
 	/**
 	 * Compute watershed with markers with an optional binary mask
-	 * to restrict the regions of application
+	 * to restrict the regions of application.
+	 * Note: it outputs step messages in Log window.
 	 * 
 	 * @param input original grayscale image (usually a gradient image)
 	 * @param marker image with labeled markers
@@ -296,7 +369,8 @@ public class Watershed
 	}
 	/**
 	 * Compute watershed with markers with an optional binary mask
-	 * to restrict the regions of application
+	 * to restrict the regions of application.
+	 * Note: it outputs step messages in Log window.
 	 * 
 	 * @param input original grayscale image (usually a gradient image)
 	 * @param marker image with labeled markers
@@ -318,7 +392,7 @@ public class Watershed
 
 	/**
 	 * Compute watershed with markers with an optional binary mask
-	 * to restrict the regions of application
+	 * to restrict the regions of application.
 	 *
 	 * @param input original grayscale image (usually a gradient image)
 	 * @param marker image with labeled markers
@@ -353,23 +427,83 @@ public class Watershed
 	 * @param marker image with labeled markers
 	 * @param connectivity voxel connectivity to define neighborhoods
 	 * @param getDams select/deselect the calculation of dams
+	 * @param verbose flag to output step messages in Log window.
 	 * @return image of labeled catchment basins (labels are 1, 2, ...)
 	 */
 	public static ImagePlus computeWatershed( 
 			ImagePlus input,
 			ImagePlus marker,
 			int connectivity,
-			boolean getDams )
+			boolean getDams,
+			boolean verbose )
 	{
 		MarkerControlledWatershedTransform3D wt = new MarkerControlledWatershedTransform3D( input, marker, null, connectivity );
+		wt.setVerbose( verbose );
 		if( getDams )
 			return wt.applyWithPriorityQueueAndDams();
 		else 
 			return wt.applyWithPriorityQueue();
 	}
+	/**
+	 * Compute watershed with markers.
+	 * Note: it outputs step messages in the Log window.
+	 * 
+	 * @param input original grayscale image (usually a gradient image)
+	 * @param marker image with labeled markers
+	 * @param connectivity voxel connectivity to define neighborhoods
+	 * @param getDams select/deselect the calculation of dams
+	 * @return image of labeled catchment basins (labels are 1, 2, ...)
+	 */
+	public static ImagePlus computeWatershed( 
+			ImagePlus input,
+			ImagePlus marker,
+			int connectivity,
+			boolean getDams)
+	{
+		return Watershed.computeWatershed( input, marker, connectivity, getDams, true );
+	}
 	
 	/**
-	 * Compute watershed with markers
+	 * Compute watershed with markers.
+	 * 
+	 * @param input original grayscale image (usually a gradient image)
+	 * @param marker image with labeled markers
+	 * @param connectivity voxel connectivity to define neighborhoods
+	 * @param getDams select/deselect the calculation of dams
+	 * @param verbose flag to output step message in the Log window
+	 * @return image of labeled catchment basins (labels are 1, 2, ...)
+	 */
+	public static ImageStack computeWatershed( 
+			ImageStack input,
+			ImageStack marker,
+			int connectivity,
+			boolean getDams,
+			boolean verbose )
+	{		
+		if ( Thread.currentThread().isInterrupted() )					
+			return null;
+		
+		final ImagePlus inputIP = new ImagePlus( "input", input );
+		final ImagePlus markerIP = new ImagePlus( "marker", marker );	
+		
+		MarkerControlledWatershedTransform3D wt =
+				new MarkerControlledWatershedTransform3D( inputIP, markerIP, null, connectivity );
+		wt.setVerbose( verbose );
+
+		ImagePlus ws = null;
+
+		if( getDams )			
+			ws = wt.applyWithPriorityQueueAndDams();							
+		else			
+			ws = wt.applyWithPriorityQueue();			
+		
+		if( null == ws )
+			return null;
+		return ws.getImageStack();
+	}
+	/**
+	 * Compute watershed with markers.
+	 * Note: it outputs step messages in the Low window.
 	 * 
 	 * @param input original grayscale image (usually a gradient image)
 	 * @param marker image with labeled markers
@@ -382,29 +516,39 @@ public class Watershed
 			ImageStack marker,
 			int connectivity,
 			boolean getDams )
-	{		
-		if ( Thread.currentThread().isInterrupted() )					
-			return null;
-		
-		final ImagePlus inputIP = new ImagePlus( "input", input );
-		final ImagePlus markerIP = new ImagePlus( "marker", marker );	
-		
-		MarkerControlledWatershedTransform3D wt = new MarkerControlledWatershedTransform3D( inputIP, markerIP, null, connectivity );
-		
-		ImagePlus ws = null;
+	{
+		return Watershed.computeWatershed( input, marker, connectivity, getDams, true );
+	}
+	/**
+	 * Compute watershed with markers.
+	 * 
+	 * @param input original grayscale image (usually a gradient image)
+	 * @param marker image with labeled markers
+	 * @param connectivity voxel connectivity to define neighborhoods
+	 * @param getDams select/deselect the calculation of dams
+	 * @param verbose flag to output step messages in the Low window
+	 * @return image of labeled catchment basins (labels are 1, 2, ...)
+	 */
+	public static ImageProcessor computeWatershed( 
+			ImageProcessor input,
+			ImageProcessor marker,
+			int connectivity,
+			boolean getDams,
+			boolean verbose )
+	{												
+		MarkerControlledWatershedTransform2D wt = 
+				new MarkerControlledWatershedTransform2D( input, marker, 
+														  null, connectivity );
+		wt.setVerbose( verbose );
 
 		if( getDams )			
-			ws = wt.applyWithPriorityQueueAndDams();							
+			return wt.applyWithPriorityQueueAndDams();							
 		else			
-			ws = wt.applyWithPriorityQueue();			
-		
-		if( null == ws )
-			return null;
-		return ws.getImageStack();
+			return wt.applyWithPriorityQueue();			
 	}
-	
 	/**
-	 * Compute watershed with markers
+	 * Compute watershed with markers.
+	 * Note: it outputs step message in the Low window.
 	 * 
 	 * @param input original grayscale image (usually a gradient image)
 	 * @param marker image with labeled markers
@@ -417,14 +561,7 @@ public class Watershed
 			ImageProcessor marker,
 			int connectivity,
 			boolean getDams )
-	{												
-		MarkerControlledWatershedTransform2D wt = 
-				new MarkerControlledWatershedTransform2D( input, marker, 
-														  null, connectivity );		
-		if( getDams )			
-			return wt.applyWithPriorityQueueAndDams();							
-		else			
-			return wt.applyWithPriorityQueue();			
+	{
+		return Watershed.computeWatershed(input, marker, connectivity, getDams, true );
 	}
-	
 }
