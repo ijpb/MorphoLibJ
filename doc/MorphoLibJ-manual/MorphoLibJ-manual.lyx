@@ -9766,15 +9766,183 @@ Mean breadth
 \begin_layout Standard
 The 
 \series bold
-mean breadth 
+mean breadth
+\series default
+, also known as the mean width or the mean diameter, is a quantity that
+ computes the size of a set as an average diameter.
+ In the case of a convex set, the average breadth corresponds to the average
+ of the caliper diameter (or Feret diameter) measured over all directions
+ (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Mean-breadth"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+-a).
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/analysis/convexShape-projDiameter.png
+	width 50text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Convex set.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/analysis/demoShape-projDiameter.png
+	width 50text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Non-Convex Set
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Mean-breadth"
+
+\end_inset
+
+Mean breadth of a convex (a) and of a non convex (b) set.
+ In the case of a non-convex set, the concavities are taken into account
+ for measuring the diameters.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In the case of a non-convex set, the concavities are taken into account
+ for measuring the diameters, resulting in 
+\begin_inset Quotes eld
+\end_inset
+
+
+\series bold
+total projected diameter
 \series default
 
+\begin_inset Quotes erd
+\end_inset
+
+ (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Mean-breadth"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+-b).
+ For 3D sets, the measurements of total projected diameter consists in measuring
+ the Euler number of the intersection of the set with planes orthogonal
+ to the direction.
+ The average of total projected diameter over 
+\begin_inset Formula $\Omega$
+\end_inset
+
+, the set of all directions, results in the mean breadth 
 \begin_inset Formula $\bar{b}$
 \end_inset
 
- of a convex set can be seen as the average of the caliper diameter (or
- Feret diameter) over all directions.
- For a set 
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\bar{b}(X)=\int_{\Omega}D_{\omega}(X)\,d\omega
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For a three-dimensional set 
 \begin_inset Formula $X$
 \end_inset
 
@@ -9782,10 +9950,7 @@ mean breadth
 \begin_inset Formula $\partial X$
 \end_inset
 
-, the mean breadth is proportionnal to the 
-\series bold
-integral of the mean curvature
-\series default
+, an alternative definition of the mean breadth is based on integral geometry
  
 \begin_inset CommandInset citation
 LatexCommand citep
@@ -9794,7 +9959,29 @@ literal "true"
 
 \end_inset
 
-: 
+.
+ For each point 
+\begin_inset Formula $x$
+\end_inset
+
+ of the boundary 
+\begin_inset Formula $\partial X$
+\end_inset
+
+, two curvatures 
+\begin_inset Formula $\kappa_{1}(x)$
+\end_inset
+
+ and 
+\begin_inset Formula $\kappa_{2}(x)$
+\end_inset
+
+ can be defined.
+ The integral of their average over the surface, known as the 
+\series bold
+integral of the mean curvature
+\series default
+, is proportional to the mean breadth: 
 \begin_inset Formula 
 \begin{align}
 \bar{b}(X) & =\frac{1}{2\pi}\int_{\partial X}\frac{\kappa_{1}(x)+\kappa_{2}(x)}{2}dx
@@ -9803,6 +9990,26 @@ literal "true"
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+In practice, the mean breadth may be computed from digital binary images
+ by considering elementary configurations of 
+\begin_inset Formula $2\times2\times2$
+\end_inset
+
+ voxels, identifying the contribution of this configuration to the total
+ mean breadth, and combining with the histogram of binary configuration
+ within the image.
+ See 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Ohser2009,Legland2007"
+literal "false"
+
+\end_inset
+
+ for details.
 \end_layout
 
 \begin_layout Subsubsection
