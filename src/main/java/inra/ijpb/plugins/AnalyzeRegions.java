@@ -56,6 +56,7 @@ public class AnalyzeRegions implements PlugInFilter
     // ====================================================
     // Global Constants
     
+	boolean computePixelCount = false;
 	boolean computeArea = true;
 	boolean computePerimeter = true;
 	boolean computeCircularity = true;
@@ -122,6 +123,7 @@ public class AnalyzeRegions implements PlugInFilter
 
         // create the dialog, with operator options
         GenericDialog gd = new GenericDialog("Analyze Regions");
+        gd.addCheckbox("Pixel_Count", false);
         gd.addCheckbox("Area", true);
         gd.addCheckbox("Perimeter", true);
         gd.addCheckbox("Circularity", true);
@@ -146,13 +148,14 @@ public class AnalyzeRegions implements PlugInFilter
             return;
 
         // Extract features to extract from image
+        computePixelCount         = gd.getNextBoolean();
         computeArea               = gd.getNextBoolean();
         computePerimeter          = gd.getNextBoolean();
         computeCircularity        = gd.getNextBoolean();
         computeEulerNumber        = gd.getNextBoolean();
         computeBoundingBox        = gd.getNextBoolean();
         computeCentroid           = gd.getNextBoolean();
-        computeEquivalentEllipse     = gd.getNextBoolean();
+        computeEquivalentEllipse  = gd.getNextBoolean();
         computeEllipseElongation  = gd.getNextBoolean();
         computeConvexity          = gd.getNextBoolean();
         computeMaxFeretDiameter   = gd.getNextBoolean();
@@ -191,6 +194,7 @@ public class AnalyzeRegions implements PlugInFilter
     	}
     	
     	// Parameters to be computed
+    	int[] pixelCounts = null;
     	IntrinsicVolumesAnalyzer2D.Result[] intrinsicVolumes = null; 
         Box2D[] boundingBoxes = null;
     	Point2D[] centroids = null;
@@ -203,6 +207,13 @@ public class AnalyzeRegions implements PlugInFilter
     	AverageThickness.Result[] avgThickness = null;
     	
 
+    	// compute intrinsic volumes
+    	if (computePixelCount)
+    	{
+    	    IJ.showStatus("Pixel Count");
+    	    pixelCounts = LabelImages.pixelCount(image, labels); 
+    	}
+    	
     	// compute intrinsic volumes
     	if (computeArea || computePerimeter || computeEulerNumber || computeCircularity)
     	{
@@ -296,7 +307,12 @@ public class AnalyzeRegions implements PlugInFilter
     	// Fill results table
     	
         IJ.showStatus("Populate table");
-
+        
+        if (computePixelCount)
+        {
+        	addColumnToTable(table, "PixelCount", pixelCounts);
+        }
+        
         if (computeArea)
         {
             for (int i = 0; i < nLabels; i++)
@@ -460,6 +476,14 @@ public class AnalyzeRegions implements PlugInFilter
     }
         
     private static final void addColumnToTable(ResultsTable table, String colName, double[] values)
+    {
+    	for (int i = 0; i < values.length; i++)
+    	{
+    		table.setValue(colName, i, values[i]);
+    	}
+    }
+
+    private static final void addColumnToTable(ResultsTable table, String colName, int[] values)
     {
     	for (int i = 0; i < values.length; i++)
     	{

@@ -90,6 +90,7 @@ public class AnalyzeRegions3D implements PlugIn
      */
     public boolean debug  = false;
     
+	boolean computeVoxelCount 	= true;
 	boolean computeVolume 		= true;
 	boolean computeSurface 		= true;
 	boolean computeMeanBreadth  = true;
@@ -126,6 +127,7 @@ public class AnalyzeRegions3D implements PlugIn
 		
         // create the dialog, with operator options
         GenericDialog gd = new GenericDialog("Analyze Regions 3D");
+        gd.addCheckbox("Voxel_Count", false);
         gd.addCheckbox("Volume", true);
         gd.addCheckbox("Surface_Area", true);
         gd.addCheckbox("Mean_Breadth", true);
@@ -146,6 +148,7 @@ public class AnalyzeRegions3D implements PlugIn
             return;
 
         // Extract features to extract from image
+        computeVoxelCount	= gd.getNextBoolean();
         computeVolume 		= gd.getNextBoolean();
         computeSurface 		= gd.getNextBoolean();
         computeMeanBreadth 	= gd.getNextBoolean();
@@ -156,7 +159,6 @@ public class AnalyzeRegions3D implements PlugIn
         computeEllipsoid    = gd.getNextBoolean();
         computeElongations 	= gd.getNextBoolean();
         computeInscribedBall = gd.getNextBoolean();
-        
         
         // extract analysis options
         surfaceAreaDirs = dirNumbers[gd.getNextChoiceIndex()];
@@ -213,6 +215,7 @@ public class AnalyzeRegions3D implements PlugIn
         }
 
         // declare arrays for results
+        int[] voxelCounts = null;
         IntrinsicVolumesAnalyzer3D.Result[] intrinsicVolumes = null; 
         Box3D[] boxes = null;
         Point3D[] centroids = null;
@@ -224,13 +227,20 @@ public class AnalyzeRegions3D implements PlugIn
         // Identifies labels within image
         int[] labels = LabelImages.findAllLabels(image);
 
-        // compute intrinsic volumes
+    	// compute voxel count
+    	if (computeVoxelCount)
+    	{
+    	    IJ.showStatus("Voxel Count");
+            voxelCounts = LabelImages.voxelCount(image, labels); 
+    	}
+
+    	// compute intrinsic volumes
         if (computeVolume || computeSurface || computeEulerNumber || computeMeanBreadth || computeSphericity)
         {
             IJ.showStatus("Intrinsic Volumes");
             
             long tic = System.nanoTime();
-            // Create ans setup computation class
+            // Create and setup computation class
             IntrinsicVolumesAnalyzer3D algo = new IntrinsicVolumesAnalyzer3D();
             algo.setDirectionNumber(this.surfaceAreaDirs);
             algo.setConnectivity(this.connectivity.getValue());
@@ -307,6 +317,10 @@ public class AnalyzeRegions3D implements PlugIn
             
         	table.incrementCounter();
         	table.addLabel(Integer.toString(labels[i]));
+        	
+        	// voxel count
+        	if (computeVoxelCount)
+        		table.addValue("VoxelCount", voxelCounts[i]);
         	
         	// geometrical quantities
         	if (computeVolume)
