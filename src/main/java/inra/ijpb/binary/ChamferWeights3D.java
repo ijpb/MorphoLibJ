@@ -21,6 +21,10 @@
  */
 package inra.ijpb.binary;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+
 /**
  * <p>
  * A pre-defined set of weights that can be used to compute 3D distance 
@@ -145,5 +149,346 @@ public enum ChamferWeights3D
 		throw new IllegalArgumentException(
 				"Unable to parse ChamferWeights3D with label: " + label);
 	}
+	
+	/**
+	 * Computes the collection of weighted offsets corresponding to a scan of
+	 * the voxels in a 3D image in the forward direction.
+	 * 
+	 * The number of offsets depends on the number of weights (3 or 4 weights
+	 * are required):
+	 * <ul>
+	 * <li>the first weight corresponds to a step in the orthogonal directions
+	 * (three offsets).</li>
+	 * <li>the second weight corresponds to a step in a diagonal direction
+	 * within a plane (six offsets).</li>
+	 * <li>the third weight corresponds to a step in a cube-diagonal direction
+	 * (four offsets).</li>
+	 * <li>the (optional) fourth weight corresponds to a step in a permutation
+	 * of the (2,1,1) vector (twelve offsets).</li>
+	 * </ul>
+	 * 
+	 * 	 
+	 * @see #getForwardOffsets(float[])
+	 * @see #getBackwardOffsets(short[])
+	 * 
+	 * @param weights
+	 *            an array of (short) weights, corresponding to orthogonal,
+	 *            diagonal, and optionally more neighbors.
+	 * @return a collection of offset encapsulating the shift in x, y and z
+	 *         directions, and the associated weight.
+	 */
+	public static Collection<ShortOffset> getForwardOffsets(short[] weights)
+	{
+		int nWeights = weights.length;
+		if (nWeights < 3 || nWeights > 4)
+		{
+			throw new RuntimeException("Can not compute offset when number of weights equal " + nWeights);
+		}
+	
+		// create array of forward shifts
+		ArrayList<ShortOffset> offsets = new ArrayList<ShortOffset>();
+	
+		if (nWeights == 4)
+		{
+			// offsets in the z-2 plane
+			offsets.add(new ShortOffset(-1, -1, -2, weights[3]));
+			offsets.add(new ShortOffset(+1, -1, -2, weights[3]));
+			offsets.add(new ShortOffset(-1, +1, -2, weights[3]));
+			offsets.add(new ShortOffset(+1, +1, -2, weights[3]));
+		}
+	
+		// offsets in the z-1 plane
+		offsets.add(new ShortOffset(-1, -1, -1, weights[2]));
+		offsets.add(new ShortOffset( 0, -1, -1, weights[1]));
+		offsets.add(new ShortOffset(+1, -1, -1, weights[2]));
+		offsets.add(new ShortOffset(-1,  0, -1, weights[1]));
+		offsets.add(new ShortOffset( 0,  0, -1, weights[0]));
+		offsets.add(new ShortOffset(+1,  0, -1, weights[1]));
+		offsets.add(new ShortOffset(-1, +1, -1, weights[2]));
+		offsets.add(new ShortOffset( 0, +1, -1, weights[1]));
+		offsets.add(new ShortOffset(+1, +1, -1, weights[2]));
+	
+		if (nWeights == 4)
+		{
+			offsets.add(new ShortOffset(-1, -2, -1, weights[3]));
+			offsets.add(new ShortOffset(+1, -2, -1, weights[3]));
+			offsets.add(new ShortOffset(-2, -1, -1, weights[3]));
+			offsets.add(new ShortOffset(+2, -1, -1, weights[3]));
+			offsets.add(new ShortOffset(-2, +1, -1, weights[3]));
+			offsets.add(new ShortOffset(+2, +1, -1, weights[3]));
+			offsets.add(new ShortOffset(-1, +2, -1, weights[3]));
+			offsets.add(new ShortOffset(+1, +2, -1, weights[3]));
+		}			
+		// offsets in the current plane
+		offsets.add(new ShortOffset(-1, -1, 0, weights[1]));
+		offsets.add(new ShortOffset( 0, -1, 0, weights[0]));
+		offsets.add(new ShortOffset(+1, -1, 0, weights[1]));
+		offsets.add(new ShortOffset(-1,  0, 0, weights[0]));
+	
+		return offsets;
+	}
 
+	/**
+	 * Computes the collection of weighted offsets corresponding to a scan of
+	 * the voxels in a 3D image in the forward direction.
+	 * 
+	 * The number of offsets depends on the number of weights (3 or 4 weights
+	 * are required):
+	 * <ul>
+	 * <li>the first weight corresponds to a step in the orthogonal directions
+	 * (three offsets).</li>
+	 * <li>the second weight corresponds to a step in a diagonal direction
+	 * within a plane (six offsets).</li>
+	 * <li>the third weight corresponds to a step in a cube-diagonal direction
+	 * (four offsets).</li>
+	 * <li>the (optional) fourth weight corresponds to a step in a permutation
+	 * of the (2,1,1) vector (twelve offsets).</li>
+	 * </ul>
+	 * 
+	 * @see #getForwardOffsets(short[])
+	 * @see #getBackwardOffsets(float[])
+	 * 
+	 * @param weights
+	 *            an array of (short) weights, corresponding to orthogonal,
+	 *            diagonal, and optionally more neighbors.
+	 * @return a collection of offset encapsulating the shift in x, y and z
+	 *         directions, and the associated weight.
+	 */
+	public static Collection<FloatOffset> getForwardOffsets(float[] weights)
+	{
+		int nWeights = weights.length;
+		if (nWeights < 3 || nWeights > 4)
+		{
+			throw new RuntimeException("Can not compute offset when number of weights equal " + nWeights);
+		}
+
+		// create array of forward shifts
+		ArrayList<FloatOffset> offsets = new ArrayList<FloatOffset>();
+
+		if (nWeights == 4)
+		{
+			// offsets in the z-2 plane
+			offsets.add(new FloatOffset(-1, -1, -2, weights[3]));
+			offsets.add(new FloatOffset(+1, -1, -2, weights[3]));
+			offsets.add(new FloatOffset(-1, +1, -2, weights[3]));
+			offsets.add(new FloatOffset(+1, +1, -2, weights[3]));
+		}
+
+		// offsets in the z-1 plane
+		offsets.add(new FloatOffset(-1, -1, -1, weights[2]));
+		offsets.add(new FloatOffset( 0, -1, -1, weights[1]));
+		offsets.add(new FloatOffset(+1, -1, -1, weights[2]));
+		offsets.add(new FloatOffset(-1,  0, -1, weights[1]));
+		offsets.add(new FloatOffset( 0,  0, -1, weights[0]));
+		offsets.add(new FloatOffset(+1,  0, -1, weights[1]));
+		offsets.add(new FloatOffset(-1, +1, -1, weights[2]));
+		offsets.add(new FloatOffset( 0, +1, -1, weights[1]));
+		offsets.add(new FloatOffset(+1, +1, -1, weights[2]));
+
+		if (nWeights == 4)
+		{
+			offsets.add(new FloatOffset(-1, -2, -1, weights[3]));
+			offsets.add(new FloatOffset(+1, -2, -1, weights[3]));
+			offsets.add(new FloatOffset(-2, -1, -1, weights[3]));
+			offsets.add(new FloatOffset(+2, -1, -1, weights[3]));
+			offsets.add(new FloatOffset(-2, +1, -1, weights[3]));
+			offsets.add(new FloatOffset(+2, +1, -1, weights[3]));
+			offsets.add(new FloatOffset(-1, +2, -1, weights[3]));
+			offsets.add(new FloatOffset(+1, +2, -1, weights[3]));
+		}
+
+		// offsets in the current plane
+		offsets.add(new FloatOffset(-1, -1, 0, weights[1]));
+		offsets.add(new FloatOffset( 0, -1, 0, weights[0]));
+		offsets.add(new FloatOffset(+1, -1, 0, weights[1]));
+		offsets.add(new FloatOffset(-1,  0, 0, weights[0]));
+
+		return offsets;
+	}
+
+	/**
+	 * Computes the collection of weighted offsets corresponding to a scan of
+	 * the voxels in a 3D image in the backward direction.
+	 * 
+	 * The number of offsets depends on the number of weights (3 or 4 weights
+	 * are required):
+	 * <ul>
+	 * <li>the first weight corresponds to a step in the orthogonal directions
+	 * (three offsets).</li>
+	 * <li>the second weight corresponds to a step in a diagonal direction
+	 * within a plane (six offsets).</li>
+	 * <li>the third weight corresponds to a step in a cube-diagonal direction
+	 * (four offsets).</li>
+	 * <li>the (optional) fourth weight corresponds to a step in a permutation
+	 * of the (2,1,1) vector (twelve offsets).</li>
+	 * </ul>
+	 * 
+	 * @see #getForwardOffsets(short[])
+	 * 
+	 * @param weights
+	 *            an array of (short) weights, corresponding to orthogonal,
+	 *            diagonal, and optionally more neighbors.
+	 * @return a collection of offset encapsulating the shift in x, y and z
+	 *         directions, and the associated weight.
+	 */
+	public static Collection<ShortOffset> getBackwardOffsets(short[] weights)
+	{
+		int nWeights = weights.length;
+		if (nWeights < 3 || nWeights > 4)
+		{
+			throw new RuntimeException("Can not compute offset when number of weights equal " + nWeights);
+		}
+
+		// create array of backward shifts
+		ArrayList<ShortOffset> offsets = new ArrayList<ShortOffset>();
+
+		if (nWeights == 4)
+		{
+			// offsets in the z+2 plane
+			offsets.add(new ShortOffset(-1, -1, +2, weights[3]));
+			offsets.add(new ShortOffset(+1, -1, +2, weights[3]));
+			offsets.add(new ShortOffset(-1, +1, +2, weights[3]));
+			offsets.add(new ShortOffset(+1, +1, +2, weights[3]));
+		}
+
+		// offsets in the z+1 plane
+		offsets.add(new ShortOffset(-1, -1, +1, weights[2]));
+		offsets.add(new ShortOffset( 0, -1, +1, weights[1]));
+		offsets.add(new ShortOffset(+1, -1, +1, weights[2]));
+		offsets.add(new ShortOffset(-1,  0, +1, weights[1]));
+		offsets.add(new ShortOffset( 0,  0, +1, weights[0]));
+		offsets.add(new ShortOffset(+1,  0, +1, weights[1]));
+		offsets.add(new ShortOffset(-1, +1, +1, weights[2]));
+		offsets.add(new ShortOffset( 0, +1, +1, weights[1]));
+		offsets.add(new ShortOffset(+1, +1, +1, weights[2]));
+
+		if (nWeights == 4)
+		{
+			offsets.add(new ShortOffset(-1, -2, +1, weights[3]));
+			offsets.add(new ShortOffset(+1, -2, +1, weights[3]));
+			offsets.add(new ShortOffset(-2, -1, +1, weights[3]));
+			offsets.add(new ShortOffset(+2, -1, +1, weights[3]));
+			offsets.add(new ShortOffset(-2, +1, +1, weights[3]));
+			offsets.add(new ShortOffset(+2, +1, +1, weights[3]));
+			offsets.add(new ShortOffset(-1, +2, +1, weights[3]));
+			offsets.add(new ShortOffset(+1, +2, +1, weights[3]));
+		}
+
+		// offsets in the current plane
+		offsets.add(new ShortOffset(-1, +1, 0, weights[1]));
+		offsets.add(new ShortOffset( 0, +1, 0, weights[0]));
+		offsets.add(new ShortOffset(+1, +1, 0, weights[1]));
+		offsets.add(new ShortOffset(+1,  0, 0, weights[0]));
+
+		return offsets;
+	}
+
+	/**
+	 * Computes the collection of weighted offsets corresponding to a scan of
+	 * the voxels in a 3D image in the backward direction.
+	 * 
+	 * The number of offsets depends on the number of weights (3 or 4 weights
+	 * are required):
+	 * <ul>
+	 * <li>the first weight corresponds to a step in the orthogonal directions
+	 * (three offsets).</li>
+	 * <li>the second weight corresponds to a step in a diagonal direction
+	 * within a plane (six offsets).</li>
+	 * <li>the third weight corresponds to a step in a cube-diagonal direction
+	 * (four offsets).</li>
+	 * <li>the (optional) fourth weight corresponds to a step in a permutation
+	 * of the (2,1,1) vector (twelve offsets).</li>
+	 * </ul>
+	 * 
+	 * @see #getForwardOffsets(short[])
+	 * 
+	 * @param weights
+	 *            an array of (short) weights, corresponding to orthogonal,
+	 *            diagonal, and optionally more neighbors.
+	 * @return a collection of offset encapsulating the shift in x, y and z
+	 *         directions, and the associated weight.
+	 */
+	public static Collection<FloatOffset> getBackwardOffsets(float[] weights)
+	{
+		int nWeights = weights.length;
+		if (nWeights < 3 || nWeights > 4)
+		{
+			throw new RuntimeException("Can not compute offset when number of weights equal " + nWeights);
+		}
+		
+		// create array of backward shifts
+		ArrayList<FloatOffset> offsets = new ArrayList<FloatOffset>();
+
+		if (nWeights == 4)
+		{
+			// offsets in the z+2 plane
+			offsets.add(new FloatOffset(-1, -1, +2, weights[3]));
+			offsets.add(new FloatOffset(+1, -1, +2, weights[3]));
+			offsets.add(new FloatOffset(-1, +1, +2, weights[3]));
+			offsets.add(new FloatOffset(+1, +1, +2, weights[3]));
+		}
+
+		// offsets in the z+1 plane
+		offsets.add(new FloatOffset(-1, -1, +1, weights[2]));
+		offsets.add(new FloatOffset( 0, -1, +1, weights[1]));
+		offsets.add(new FloatOffset(+1, -1, +1, weights[2]));
+		offsets.add(new FloatOffset(-1,  0, +1, weights[1]));
+		offsets.add(new FloatOffset( 0,  0, +1, weights[0]));
+		offsets.add(new FloatOffset(+1,  0, +1, weights[1]));
+		offsets.add(new FloatOffset(-1, +1, +1, weights[2]));
+		offsets.add(new FloatOffset( 0, +1, +1, weights[1]));
+		offsets.add(new FloatOffset(+1, +1, +1, weights[2]));
+
+		if (nWeights == 4)
+		{
+			offsets.add(new FloatOffset(-1, -2, +1, weights[3]));
+			offsets.add(new FloatOffset(+1, -2, +1, weights[3]));
+			offsets.add(new FloatOffset(-2, -1, +1, weights[3]));
+			offsets.add(new FloatOffset(+2, -1, +1, weights[3]));
+			offsets.add(new FloatOffset(-2, +1, +1, weights[3]));
+			offsets.add(new FloatOffset(+2, +1, +1, weights[3]));
+			offsets.add(new FloatOffset(-1, +2, +1, weights[3]));
+			offsets.add(new FloatOffset(+1, +2, +1, weights[3]));
+		}
+
+		// offsets in the current plane
+		offsets.add(new FloatOffset(-1, +1, 0, weights[1]));
+		offsets.add(new FloatOffset( 0, +1, 0, weights[0]));
+		offsets.add(new FloatOffset(+1, +1, 0, weights[1]));
+		offsets.add(new FloatOffset(+1,  0, 0, weights[0]));
+
+		return offsets;
+	}
+
+	public static class ShortOffset
+	{
+		public final int dx;
+		public final int dy;
+		public final int dz;
+		public final short weight;
+
+		public ShortOffset(int dx, int dy, int dz, short weight)
+		{
+			this.dx = dx;
+			this.dy = dy;
+			this.dz = dz;
+			this.weight = weight;
+		}
+	}
+
+	public static class FloatOffset
+	{
+		public final int dx;
+		public final int dy;
+		public final int dz;
+		public final float weight;
+
+		public FloatOffset(int dx, int dy, int dz, float weight)
+		{
+			this.dx = dx;
+			this.dy = dy;
+			this.dz = dz;
+			this.weight = weight;
+		}
+	}
 }

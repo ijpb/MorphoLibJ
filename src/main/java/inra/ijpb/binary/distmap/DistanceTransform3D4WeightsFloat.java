@@ -23,11 +23,12 @@ package inra.ijpb.binary.distmap;
 
 import static java.lang.Math.min;
 
-import java.util.ArrayList;
+import java.util.Collection;
 
 import ij.ImageStack;
 import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.binary.ChamferWeights3D;
+import inra.ijpb.binary.ChamferWeights3D.FloatOffset;
 import inra.ijpb.data.image.Images3D;
 
 /**
@@ -204,40 +205,8 @@ public class DistanceTransform3D4WeightsFloat extends AlgoStub implements Distan
 		fireStatusChanged(this, "Forward scan...");
 		
 		// create array of forward shifts
-		ArrayList<WeightedOffset> offsets = new ArrayList<WeightedOffset>();
+		Collection<FloatOffset> offsets = ChamferWeights3D.getForwardOffsets(weights);
 		
-		// offsets in the z-2 plane
-		offsets.add(new WeightedOffset(-1, -1, -2, weights[3]));
-		offsets.add(new WeightedOffset(+1, -1, -2, weights[3]));
-		offsets.add(new WeightedOffset(-1, +1, -2, weights[3]));
-		offsets.add(new WeightedOffset(+1, +1, -2, weights[3]));
-
-		// offsets in the z-1 plane
-		offsets.add(new WeightedOffset(-1, -1, -1, weights[2]));
-		offsets.add(new WeightedOffset( 0, -1, -1, weights[1]));
-		offsets.add(new WeightedOffset(+1, -1, -1, weights[2]));
-		offsets.add(new WeightedOffset(-1,  0, -1, weights[1]));
-		offsets.add(new WeightedOffset( 0,  0, -1, weights[0]));
-		offsets.add(new WeightedOffset(+1,  0, -1, weights[1]));
-		offsets.add(new WeightedOffset(-1, +1, -1, weights[2]));
-		offsets.add(new WeightedOffset( 0, +1, -1, weights[1]));
-		offsets.add(new WeightedOffset(+1, +1, -1, weights[2]));
-		
-		offsets.add(new WeightedOffset(-1, -2, -1, weights[3]));
-		offsets.add(new WeightedOffset(+1, -2, -1, weights[3]));
-		offsets.add(new WeightedOffset(-2, -1, -1, weights[3]));
-		offsets.add(new WeightedOffset(+2, -1, -1, weights[3]));
-		offsets.add(new WeightedOffset(-2, +1, -1, weights[3]));
-		offsets.add(new WeightedOffset(+2, +1, -1, weights[3]));
-		offsets.add(new WeightedOffset(-1, +2, -1, weights[3]));
-		offsets.add(new WeightedOffset(+1, +2, -1, weights[3]));
-		
-		// offsets in the current plane
-		offsets.add(new WeightedOffset(-1, -1, 0, weights[1]));
-		offsets.add(new WeightedOffset( 0, -1, 0, weights[0]));
-		offsets.add(new WeightedOffset(+1, -1, 0, weights[1]));
-		offsets.add(new WeightedOffset(-1,  0, 0, weights[0]));
-
 		// iterate on image voxels
 		for (int z = 0; z < sizeZ; z++)
 		{
@@ -259,7 +228,7 @@ public class DistanceTransform3D4WeightsFloat extends AlgoStub implements Distan
 					double value = currentSlice[index];
 					
 					double newVal = Float.MAX_VALUE;
-					for (WeightedOffset offset : offsets)
+					for (FloatOffset offset : offsets)
 					{
 						int x2 = x + offset.dx;
 						int y2 = y + offset.dy;
@@ -287,39 +256,7 @@ public class DistanceTransform3D4WeightsFloat extends AlgoStub implements Distan
 		fireStatusChanged(this, "Backward scan..."); 
 		
 		// create array of backward shifts
-		ArrayList<WeightedOffset> offsets = new ArrayList<WeightedOffset>();
-		
-		// offsets in the z+2 plane
-		offsets.add(new WeightedOffset(-1, -1, +2, weights[3]));
-		offsets.add(new WeightedOffset(+1, -1, +2, weights[3]));
-		offsets.add(new WeightedOffset(-1, +1, +2, weights[3]));
-		offsets.add(new WeightedOffset(+1, +1, +2, weights[3]));
-
-		// offsets in the z+1 plane
-		offsets.add(new WeightedOffset(-1, -1, +1, weights[2]));
-		offsets.add(new WeightedOffset( 0, -1, +1, weights[1]));
-		offsets.add(new WeightedOffset(+1, -1, +1, weights[2]));
-		offsets.add(new WeightedOffset(-1,  0, +1, weights[1]));
-		offsets.add(new WeightedOffset( 0,  0, +1, weights[0]));
-		offsets.add(new WeightedOffset(+1,  0, +1, weights[1]));
-		offsets.add(new WeightedOffset(-1, +1, +1, weights[2]));
-		offsets.add(new WeightedOffset( 0, +1, +1, weights[1]));
-		offsets.add(new WeightedOffset(+1, +1, +1, weights[2]));
-		
-		offsets.add(new WeightedOffset(-1, -2, +1, weights[3]));
-		offsets.add(new WeightedOffset(+1, -2, +1, weights[3]));
-		offsets.add(new WeightedOffset(-2, -1, +1, weights[3]));
-		offsets.add(new WeightedOffset(+2, -1, +1, weights[3]));
-		offsets.add(new WeightedOffset(-2, +1, +1, weights[3]));
-		offsets.add(new WeightedOffset(+2, +1, +1, weights[3]));
-		offsets.add(new WeightedOffset(-1, +2, +1, weights[3]));
-		offsets.add(new WeightedOffset(+1, +2, +1, weights[3]));
-		
-		// offsets in the current plane
-		offsets.add(new WeightedOffset(-1, +1, 0, weights[1]));
-		offsets.add(new WeightedOffset( 0, +1, 0, weights[0]));
-		offsets.add(new WeightedOffset(+1, +1, 0, weights[1]));
-		offsets.add(new WeightedOffset(+1,  0, 0, weights[0]));
+		Collection<FloatOffset> offsets = ChamferWeights3D.getBackwardOffsets(weights);
 
 		// iterate on image voxels in backward order
 		for (int z = sizeZ - 1; z >= 0; z--)
@@ -342,7 +279,7 @@ public class DistanceTransform3D4WeightsFloat extends AlgoStub implements Distan
 					double value = currentSlice[index];
 					
 					double newVal = Float.MAX_VALUE;
-					for (WeightedOffset offset : offsets)
+					for (FloatOffset offset : offsets)
 					{
 						int x2 = x + offset.dx;
 						int y2 = y + offset.dy;
@@ -389,21 +326,5 @@ public class DistanceTransform3D4WeightsFloat extends AlgoStub implements Distan
 			}
 		}
 		fireProgressChanged(this, 1, 1); 
-	}
-
-	private class WeightedOffset
-	{
-		int dx;
-		int dy;
-		int dz;
-		float weight;
-		
-		public WeightedOffset(int dx, int dy, int dz, float weight)
-		{
-			this.dx = dx;
-			this.dy = dy;
-			this.dz = dz;
-			this.weight = weight;
-		}
 	}
 }

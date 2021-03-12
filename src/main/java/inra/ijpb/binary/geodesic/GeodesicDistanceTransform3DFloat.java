@@ -21,9 +21,12 @@
  */
 package inra.ijpb.binary.geodesic;
 
+import java.util.Collection;
+
 import ij.ImageStack;
 import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.binary.ChamferWeights3D;
+import inra.ijpb.binary.ChamferWeights3D.FloatOffset;
 import inra.ijpb.data.image.Image3D;
 import inra.ijpb.data.image.Images3D;
 
@@ -157,62 +160,16 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 				}
 			}
 		}
-
-//		// Compute max value within the mask
-//		fireStatusChanged(this, "Normalize display"); 
-//		float maxVal = 0;
-//		for (int z = 0; z < sizeZ; z++) 
-//		{
-//			for (int y = 0; y < sizeY; y++) 
-//			{
-//				for (int x = 0; x < sizeX; x++)
-//				{
-//					float val = (float) result.getValue(x, y, z);
-//					if (Float.isFinite(val))
-//					{
-//						maxVal = Math.max(maxVal, val);
-//					}
-//				}
-//			}
-//		}
 		
-//		// update and return resulting Image processor
-//		result.setFloatArray(array);
-//		result.setMinAndMax(0, maxVal);
-//		// Forces the display to non-inverted LUT
-//		if (result.isInvertedLut())
-//			result.invertLut();
-//		return result;
-
 		return resultStack;
 	}
 
 	private void forwardIteration()
 	{
-		int[][] shifts = new int[][]{
-				{-1, -1, -1},
-				{ 0, -1, -1},
-				{+1, -1, -1},
-				{-1,  0, -1},
-				{ 0,  0, -1},
-				{+1,  0, -1},
-				{-1, +1, -1},
-				{ 0, +1, -1},
-				{+1, +1, -1},
-				{-1, -1,  0},
-				{ 0, -1,  0},
-				{+1, -1,  0},
-				{-1,  0,  0},
-		};
+		// compute offsets of the neighborhood in forward direction
+		Collection<FloatOffset> offsets = ChamferWeights3D.getForwardOffsets(weights);
 		
-		double[] shiftWeights = new double[]{
-				weights[2], weights[1], weights[2], 
-				weights[1], weights[0], weights[1], 
-				weights[2], weights[1], weights[2], 
-				weights[1], weights[0], weights[1], 
-				weights[0]
-		};
-		
+		// iterate over voxels
 		for (int z = 0; z < sizeZ; z++)
 		{
 			fireProgressChanged(this, z, sizeZ);
@@ -229,13 +186,12 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 					double value = result.getValue(x, y, z);
 					double ref = value;
 					
-					// find minimal value in forward neighborhood
-					for (int i = 0; i < shifts.length; i++)
+					// iterate over voxels in forward neighborhood to find minimum value
+					for (FloatOffset offset : offsets)
 					{
-						int[] shift = shifts[i];
-						int x2 = x + shift[0];
-						int y2 = y + shift[1];
-						int z2 = z + shift[2];
+						int x2 = x + offset.dx;
+						int y2 = y + offset.dy;
+						int z2 = z + offset.dz;
 						
 						if (x2 < 0 || x2 >= sizeX)
 							continue;
@@ -244,7 +200,7 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 						if (z2 < 0 || z2 >= sizeZ)
 							continue;
 						
-						double newVal = result.getValue(x2, y2, z2) + shiftWeights[i];
+						double newVal = result.getValue(x2, y2, z2) + offset.weight;
 						value = Math.min(value, newVal);
 					}
 					
@@ -262,30 +218,10 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 
 	private void backwardIteration()
 	{
-		int[][] shifts = new int[][]{
-				{+1, +1, +1},
-				{ 0, +1, +1},
-				{-1, +1, +1},
-				{+1,  0, +1},
-				{ 0,  0, +1},
-				{-1,  0, +1},
-				{+1, -1, +1},
-				{ 0, -1, +1},
-				{-1, -1, +1},
-				{+1, +1,  0},
-				{ 0, +1,  0},
-				{-1, +1,  0},
-				{+1,  0,  0},
-		};
+		// compute offsets of the neighborhood in backward direction
+		Collection<FloatOffset> offsets = ChamferWeights3D.getBackwardOffsets(weights);
 		
-		double[] shiftWeights = new double[]{
-				weights[2], weights[1], weights[2], 
-				weights[1], weights[0], weights[1], 
-				weights[2], weights[1], weights[2], 
-				weights[1], weights[0], weights[1], 
-				weights[0]
-		};
-		
+		// iterate over voxels
 		for (int z = sizeZ-1; z >= 0; z--)
 		{
 			fireProgressChanged(this, sizeZ-1-z, sizeZ);
@@ -302,13 +238,12 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 					double value = result.getValue(x, y, z);
 					double ref = value;
 					
-					// find minimal value in backward neighborhood
-					for (int i = 0; i < shifts.length; i++)
+					// iterate over voxels in backward neighborhood to find minimum value
+					for (FloatOffset offset : offsets)
 					{
-						int[] shift = shifts[i];
-						int x2 = x + shift[0];
-						int y2 = y + shift[1];
-						int z2 = z + shift[2];
+						int x2 = x + offset.dx;
+						int y2 = y + offset.dy;
+						int z2 = z + offset.dz;
 						
 						if (x2 < 0 || x2 >= sizeX)
 							continue;
@@ -317,7 +252,7 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 						if (z2 < 0 || z2 >= sizeZ)
 							continue;
 						
-						double newVal = result.getValue(x2, y2, z2) + shiftWeights[i];
+						double newVal = result.getValue(x2, y2, z2) + offset.weight;
 						value = Math.min(value, newVal);
 					}
 					
