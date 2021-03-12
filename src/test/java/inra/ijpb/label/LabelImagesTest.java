@@ -298,4 +298,50 @@ public class LabelImagesTest
         assertEquals(0, image.getVoxel(0, 4, 0), .01);
     }
 
+	@Test
+	public final void testDilateLabels_FourSquares()
+	{
+		ImageProcessor labelMap = new ByteProcessor(8, 8);
+		labelMap.set(3, 3, 3);
+		labelMap.set(4, 3, 4);
+		labelMap.set(3, 4, 7);
+		labelMap.set(4, 4, 8);
+		
+		ImageProcessor res = LabelImages.dilateLabels(labelMap, 10);
+		
+		assertEquals(8, res.getWidth());
+		assertEquals(8, res.getHeight());
+		assertEquals(3, res.get(0, 0));
+		assertEquals(4, res.get(7, 0));
+		assertEquals(7, res.get(0, 7));
+		assertEquals(8, res.get(7, 7));
+	}
+
+	@Test
+	public final void testDilateLabels_SeparatedLabels()
+	{
+		ImageProcessor labelMap = new ByteProcessor(20, 20);
+		labelMap.set( 8,  8, 3);
+		labelMap.set(12,  8, 4);
+		labelMap.set( 8, 12, 7);
+		labelMap.set(12, 12, 8);
+		
+		ImageProcessor res = LabelImages.dilateLabels(labelMap, 5);
+		
+		// check result size
+		assertEquals(20, res.getWidth());
+		assertEquals(20, res.getHeight());
+		
+		// check propagation of labels
+		assertEquals(3, res.get( 5,  5));
+		assertEquals(4, res.get(15,  5));
+		assertEquals(7, res.get( 5, 15));
+		assertEquals(8, res.get(15, 15));
+		
+		// corners should have value 0 due to limitation in distance
+		assertEquals(0, res.get( 0,  0));
+		assertEquals(0, res.get(19,  0));
+		assertEquals(0, res.get( 0, 19));
+		assertEquals(0, res.get(19, 19));
+	}
 }

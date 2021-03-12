@@ -48,11 +48,15 @@ import ij.process.FloatPolygon;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
+import inra.ijpb.binary.ChamferWeights;
+import inra.ijpb.binary.ChamferWeights3D;
 import inra.ijpb.data.Cursor2D;
 import inra.ijpb.data.Cursor3D;
 import inra.ijpb.label.distmap.DistanceTransform3D;
 import inra.ijpb.label.distmap.DistanceTransform3DFloat;
 import inra.ijpb.label.distmap.DistanceTransform3DShort;
+import inra.ijpb.label.distmap.LabelDilation3D4WShort;
+import inra.ijpb.label.distmap.LabelDilationShort5x5;
 
 /**
  * Utility methods for label images (stored as 8-, 16- or 32-bits).
@@ -279,6 +283,17 @@ public class LabelImages
 		return result;
 	}
 
+	/**
+	 * Returns the binary image with value equals to
+	 * <code>true</true> only when the corresponding value in the input image equals <code> label</code>.
+	 * 
+	 * @param image
+	 *            the input label map
+	 * @param label
+	 *            the label of the region to binarize. Using a value equal to
+	 *            zero binarizes the background.
+	 * @return a binary image of the selected label.
+	 */
 	public static final ImageProcessor binarize(ImageProcessor image, int label)
 	{
 		int sizeX = image.getWidth();
@@ -2239,6 +2254,88 @@ public class LabelImages
 	{
 		DistanceTransform3D algo = new DistanceTransform3DFloat(weights, normalize);
 		return algo.distanceMap(image);
+	}
+	
+	/**
+	 * Applies a constrained dilation to each region in the 3D label map:
+	 * <ul>
+	 * <li>The dilation of each region is constrained by the other regions;</li>
+	 * <li>The dilation extent is limited by the specified distance (in voxel
+	 * unit)</li>
+	 * </ul>
+	 * 
+	 * @param labelMap
+	 *            the image of regions to process
+	 * @param distMax
+	 *            the maximum distance used for dilation
+	 * @return a new label map of regions, where regions are dilated only over
+	 *         the background.
+	 */
+	public static final ImagePlus dilateLabels(ImagePlus imagePlus, double distMax)
+	{
+		ImagePlus resultPlus;
+		String newName = imagePlus.getShortTitle() + "-dilated";
+		
+		// Dispatch to appropriate function depending on dimension
+		if (imagePlus.getStackSize() == 1) 
+		{
+			// process planar image
+			ImageProcessor image = imagePlus.getProcessor();
+			ImageProcessor result = dilateLabels(image, distMax);
+			resultPlus = new ImagePlus(newName, result);
+		} 
+		else 
+		{
+			// process image stack
+			ImageStack image = imagePlus.getStack();
+			ImageStack result = dilateLabels(image, distMax);
+			resultPlus = new ImagePlus(newName, result);
+		}
+		
+		resultPlus.copyScale(imagePlus);
+		return resultPlus;
+	}
+	
+	/**
+	 * Applies a constrained dilation to each region in the label map:
+	 * <ul>
+	 * <li>The dilation of each region is constrained by the other regions;</li>
+	 * <li>The dilation extent is limited by the specified distance (in pixel
+	 * unit)</li>
+	 * </ul>
+	 * 
+	 * @param labelMap
+	 *            the image of regions to process
+	 * @param distMax
+	 *            the maximum distance used for dilation
+	 * @return a new label map of regions, where regions are dilated only over
+	 *         the background.
+	 */
+	public static final ImageProcessor dilateLabels(ImageProcessor labelMap, double distMax)
+	{
+		LabelDilationShort5x5 algo = new LabelDilationShort5x5(ChamferWeights.CHESSKNIGHT);
+		return algo.process(labelMap, distMax);
+	}
+	
+	/**
+	 * Applies a constrained dilation to each region in the 3D label map:
+	 * <ul>
+	 * <li>The dilation of each region is constrained by the other regions;</li>
+	 * <li>The dilation extent is limited by the specified distance (in voxel
+	 * unit)</li>
+	 * </ul>
+	 * 
+	 * @param labelMap
+	 *            the image of regions to process
+	 * @param distMax
+	 *            the maximum distance used for dilation
+	 * @return a new label map of regions, where regions are dilated only over
+	 *         the background.
+	 */
+	public static final ImageStack dilateLabels(ImageStack labelMap, double distMax)
+	{
+		LabelDilation3D4WShort algo = new LabelDilation3D4WShort(ChamferWeights3D.WEIGHTS_3_4_5_7);
+		return algo.process(labelMap, distMax);
 	}
 	
 	/**
