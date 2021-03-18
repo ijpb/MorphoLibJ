@@ -34,6 +34,7 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
+import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.color.ColorMaps.CommonLabelMaps;
 
@@ -344,4 +345,93 @@ public class LabelImagesTest
 		assertEquals(0, res.get( 0, 19));
 		assertEquals(0, res.get(19, 19));
 	}
+	
+	@Test
+	public final void testReplaceLabels_2D_int()
+	{
+		ImageProcessor labelMap = new ByteProcessor(20, 20);
+		labelMap.set( 8,  8, 3);
+		labelMap.set(12,  8, 4);
+		labelMap.set( 8, 12, 7);
+		labelMap.set(12, 12, 8);
+		
+		LabelImages.replaceLabels(labelMap, new int[] {3, 7}, 4);
+		
+		// check propagation of labels
+		assertEquals(4, labelMap.get( 8,  8));
+		assertEquals(4, labelMap.get(12,  8));
+		assertEquals(4, labelMap.get( 8, 12));
+		assertEquals(8, labelMap.get(12, 12));
+	}
+	
+	@Test
+	public final void testReplaceLabels_2D_float()
+	{
+		ImageProcessor labelMap = new FloatProcessor(20, 20);
+		labelMap.setf( 8,  8, 3);
+		labelMap.setf(12,  8, 4);
+		labelMap.setf( 8, 12, 7);
+		labelMap.setf(12, 12, 8);
+		
+		LabelImages.replaceLabels(labelMap, new float[] {3f, 7f}, 4f);
+		
+		// check propagation of labels
+		assertEquals(4, labelMap.getf( 8,  8), 0.01);
+		assertEquals(4, labelMap.getf(12,  8), 0.01);
+		assertEquals(4, labelMap.getf( 8, 12), 0.01);
+		assertEquals(8, labelMap.getf(12, 12), 0.01);
+	}
+	
+	@Test
+	public final void testReplaceLabels_3D_int()
+	{
+		ImageStack labelMap = ImageStack.create(10, 10, 10, 8);
+		labelMap.setVoxel( 4, 4, 4,  3);
+		labelMap.setVoxel( 6, 4, 4,  4);
+		labelMap.setVoxel( 4, 6, 4,  7);
+		labelMap.setVoxel( 6, 6, 4,  8);
+		labelMap.setVoxel( 4, 4, 6, 10);
+		labelMap.setVoxel( 6, 4, 6, 11);
+		labelMap.setVoxel( 4, 6, 6, 15);
+		labelMap.setVoxel( 6, 6, 6, 16);
+		
+		LabelImages.replaceLabels(labelMap, new int[] {3, 7, 11}, 4);
+		
+		// check propagation of labels
+		assertEquals( 4, labelMap.getVoxel( 4, 4, 4), 0.01);
+		assertEquals( 4, labelMap.getVoxel( 6, 4, 4), 0.01);
+		assertEquals( 4, labelMap.getVoxel( 4, 6, 4), 0.01);
+		assertEquals( 8, labelMap.getVoxel( 6, 6, 4), 0.01);
+		assertEquals(10, labelMap.getVoxel( 4, 4, 6), 0.01);
+		assertEquals( 4, labelMap.getVoxel( 6, 4, 6), 0.01);
+		assertEquals(15, labelMap.getVoxel( 4, 6, 6), 0.01);
+		assertEquals(16, labelMap.getVoxel( 6, 6, 6), 0.01);
+	}
+	
+	@Test
+	public final void testReplaceLabels_3D_float()
+	{
+		ImageStack labelMap = ImageStack.create(10, 10, 10, 8);
+		labelMap.setVoxel( 4, 4, 4,  3);
+		labelMap.setVoxel( 6, 4, 4,  4);
+		labelMap.setVoxel( 4, 6, 4,  7);
+		labelMap.setVoxel( 6, 6, 4,  8);
+		labelMap.setVoxel( 4, 4, 6, 10);
+		labelMap.setVoxel( 6, 4, 6, 11);
+		labelMap.setVoxel( 4, 6, 6, 15);
+		labelMap.setVoxel( 6, 6, 6, 16);
+		
+		LabelImages.replaceLabels(labelMap, new float[] {3f, 7f, 11f}, 4f);
+		
+		// check propagation of labels
+		assertEquals( 4, labelMap.getVoxel( 4, 4, 4), 0.01);
+		assertEquals( 4, labelMap.getVoxel( 6, 4, 4), 0.01);
+		assertEquals( 4, labelMap.getVoxel( 4, 6, 4), 0.01);
+		assertEquals( 8, labelMap.getVoxel( 6, 6, 4), 0.01);
+		assertEquals(10, labelMap.getVoxel( 4, 4, 6), 0.01);
+		assertEquals( 4, labelMap.getVoxel( 6, 4, 6), 0.01);
+		assertEquals(15, labelMap.getVoxel( 4, 6, 6), 0.01);
+		assertEquals(16, labelMap.getVoxel( 6, 6, 6), 0.01);
+	}
+	
 }

@@ -25,7 +25,8 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
-import inra.ijpb.label.LabelImages;
+import inra.ijpb.algo.DefaultAlgoListener;
+import inra.ijpb.label.edit.ReplaceLabelValues;
 
 /**
  * Replaces the value of selected label(s) by a given value, 
@@ -37,42 +38,44 @@ import inra.ijpb.label.LabelImages;
  */
 public class ReplaceLabelValuesPlugin implements PlugIn 
 {
-
 	@Override
 	public void run(String arg0) 
 	{
 		ImagePlus imagePlus = IJ.getImage();
-		
+
 		GenericDialog gd = new GenericDialog("Remove/Replace Label(s)");
 		gd.addStringField("Label(s)", "1", 12);
 		gd.addMessage("Separate label values by \",\"");
 		gd.addNumericField("Final Value", 0, 0);
 		gd.addMessage("Replacing by value 0\n will remove labels");
 		gd.showDialog();
-		
+
 		if (gd.wasCanceled())
 			return;
-		
-		String labelListString = gd.getNextString();
-		double finalValue = gd.getNextNumber();
 
+		String labelListString = gd.getNextString();
 		float[] labelArray = parseLabels(labelListString);
-		
-		// replace values in original image
-		LabelImages.replaceLabels(imagePlus, labelArray, (float) finalValue);
+		float finalValue = (float) gd.getNextNumber();
+
+		// create algo for replacing values in original image
+		ReplaceLabelValues algo = new ReplaceLabelValues();
+		DefaultAlgoListener.monitor(algo);
+		algo.process(imagePlus, labelArray, finalValue);
+
+		// update display
 		imagePlus.updateAndDraw();
 	}
-	
-	   private static final float[] parseLabels(String string) 
-	    {
-	    	String[] tokens = string.split("[, ]+");
-	    	int n = tokens.length;
-	    	
-	    	float[] labels = new float[n];
-	    	for (int i = 0; i < n; i++)
-	    	{
-	    		labels[i] = (float) Double.parseDouble(tokens[i]);
-	    	}
-	    	return labels;
-	    }
+
+	private static final float[] parseLabels(String string) 
+	{
+		String[] tokens = string.split("[, ]+");
+		int n = tokens.length;
+
+		float[] labels = new float[n];
+		for (int i = 0; i < n; i++)
+		{
+			labels[i] = (float) Double.parseDouble(tokens[i]);
+		}
+		return labels;
+	}
 }

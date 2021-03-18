@@ -57,6 +57,7 @@ import inra.ijpb.label.distmap.DistanceTransform3DFloat;
 import inra.ijpb.label.distmap.DistanceTransform3DShort;
 import inra.ijpb.label.distmap.LabelDilation3D4WShort;
 import inra.ijpb.label.distmap.LabelDilationShort5x5;
+import inra.ijpb.label.edit.ReplaceLabelValues;
 
 /**
  * Utility methods for label images (stored as 8-, 16- or 32-bits).
@@ -1383,26 +1384,7 @@ public class LabelImages
 	 */
 	public static final void replaceLabels(ImageProcessor image, int[] labels, int newLabel)
 	{
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-		
-		TreeSet<Integer> labelSet = new TreeSet<Integer>();
-		for (int i = 0; i < labels.length; i++)
-		{
-			labelSet.add(labels[i]);
-		}
-		
-		for (int y = 0; y < sizeY; y++)
-		{
-			for (int x = 0; x < sizeX; x++)
-			{
-				int value = (int) image.getf(x, y);
-				if (value == newLabel)
-					continue;
-				if (labelSet.contains(value)) 
-					image.setf( x, y, newLabel );
-			}
-		}
+		new ReplaceLabelValues().process(image, labels, newLabel);
 	}
 
 	/**
@@ -1414,26 +1396,7 @@ public class LabelImages
 	 */
 	public static final void replaceLabels(ImageProcessor image, float[] labels, float newLabel)
 	{
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-		
-		TreeSet<Float> labelSet = new TreeSet<Float>();
-		for (int i = 0; i < labels.length; i++)
-		{
-			labelSet.add(labels[i]);
-		}
-		
-		for (int y = 0; y < sizeY; y++)
-		{
-			for (int x = 0; x < sizeX; x++)
-			{
-				float value = image.getf(x, y); 
-				if (value == newLabel)
-					continue;
-				if (labelSet.contains(value)) 
-					image.setf(x, y, newLabel);
-			}
-		}
+		new ReplaceLabelValues().process(image, labels, newLabel);
 	}
 
 	/**
@@ -1445,30 +1408,7 @@ public class LabelImages
 	 */
 	public static final void replaceLabels(ImageStack image, int[] labels, int newLabel)
 	{
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-		int sizeZ = image.getSize();
-		
-		TreeSet<Integer> labelSet = new TreeSet<Integer>();
-		for (int i = 0; i < labels.length; i++) 
-		{
-			labelSet.add(labels[i]);
-		}
-		
-		for (int z = 0; z < sizeZ; z++) 
-		{
-			for (int y = 0; y < sizeY; y++)
-			{
-				for (int x = 0; x < sizeX; x++) 
-				{
-					int value = (int) image.getVoxel(x, y, z); 
-					if (value == newLabel)
-						continue;
-					if (labelSet.contains(value)) 
-						image.setVoxel(x, y, z, newLabel);
-				}
-			}
-		}
+		new ReplaceLabelValues().process(image, labels, newLabel);
 	}
 
 	/**
@@ -1483,30 +1423,7 @@ public class LabelImages
 	 */
 	public static final void replaceLabels(ImageStack image, float[] labels, float newLabel)
 	{
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-		int sizeZ = image.getSize();
-		
-		TreeSet<Float> labelSet = new TreeSet<Float>();
-		for (int i = 0; i < labels.length; i++) 
-		{
-			labelSet.add(labels[i]);
-		}
-		
-		for (int z = 0; z < sizeZ; z++) 
-		{
-			for (int y = 0; y < sizeY; y++)
-			{
-				for (int x = 0; x < sizeX; x++) 
-				{
-					float value = (float) image.getVoxel(x, y, z); 
-					if (value == newLabel)
-						continue;
-					if (labelSet.contains(value)) 
-						image.setVoxel(x, y, z, newLabel);
-				}
-			}
-		}
+		new ReplaceLabelValues().process(image, labels, newLabel);
 	}
 
  
