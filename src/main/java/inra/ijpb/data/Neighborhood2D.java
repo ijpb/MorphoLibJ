@@ -21,6 +21,11 @@
  */
 package inra.ijpb.data;
 
+/**
+ * Defines a neighborhood around a pixel in a 2D image.
+ *
+ * @see Neighborhood3D
+ */
 public abstract class Neighborhood2D {
 	
 	Cursor2D cursor;

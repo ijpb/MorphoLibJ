@@ -23,6 +23,14 @@ package inra.ijpb.data;
 
 import java.util.ArrayList;
 
+/**
+ * Defines the eight-neighborhood for pixels in a 2D image.
+ * 
+ * The eight neighbors correspond to the four orthogonal neighbors plus the four
+ * diagonal.
+ *
+ * @see Neighborhood2DC4
+ */
 public class Neighborhood2DC8 extends Neighborhood2D {
 
 	ArrayList<Cursor2D> neighbors = new ArrayList<Cursor2D>();

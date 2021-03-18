@@ -21,6 +21,11 @@
  */
 package inra.ijpb.data;
 
+/**
+ * Defines a neighborhood around a voxel in a 3D image.
+ *
+ * @see Neighborhood2D
+ */
 public abstract class Neighborhood3D {
 	
 	Cursor3D cursor;

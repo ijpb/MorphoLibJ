@@ -21,7 +21,13 @@
  */
 package inra.ijpb.data;
 
-public class Cursor2D {
+/**
+ * A simple class to record the coordinates a pixel in a 2D image.
+ * 
+ * @see Cursor3D
+ */
+public class Cursor2D 
+{
 	private int x = 0;
 	private int y = 0;	
 		

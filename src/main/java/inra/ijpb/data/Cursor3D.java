@@ -24,6 +24,7 @@ package inra.ijpb.data;
 /**
  * Identifies the position of a voxel in a 3D image by using 3 integer coordinates. 
  *
+ * @see Cursor2D
  */
 public class Cursor3D 
 {

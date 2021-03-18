@@ -23,6 +23,14 @@ package inra.ijpb.data;
 
 import java.util.ArrayList;
 
+/**
+ * Defines the 6-neighborhood around a voxel in a 3D image.
+ * 
+ * The six neighbors correspond to the neighbors in the three orthogonal
+ * directions.
+ *
+ * @see Neighborhood3DC26
+ */
 public class Neighborhood3DC6 extends Neighborhood3D {
 	
 	ArrayList<Cursor3D> neighbors = new ArrayList<Cursor3D>();

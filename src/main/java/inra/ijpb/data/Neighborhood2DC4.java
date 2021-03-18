@@ -23,6 +23,12 @@ package inra.ijpb.data;
 
 import java.util.ArrayList;
 
+/**
+ * Defines the four-neighborhood for pixels in a 2D image.
+ * The four neighbors correspond to the orthogonal directions.
+ *
+ * @see Neighborhood2DC8
+ */
 public class Neighborhood2DC4 extends Neighborhood2D {
 
 	ArrayList<Cursor2D> neighbors = new ArrayList<Cursor2D>();

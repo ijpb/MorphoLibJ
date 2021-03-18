@@ -303,6 +303,9 @@ public class EquivalentEllipsoid extends RegionAnalyzer3D<Ellipsoid>
         return moments;
 	}
 
+	/**
+	 * Encapsulates the results of 3D Moments computations. 
+	 */
 	public class Moments3D
 	{
 	    // the number of voxels 
@@ -321,6 +324,12 @@ public class EquivalentEllipsoid extends RegionAnalyzer3D<Ellipsoid>
         double Iyz = 0;
         double Izz = 0;
         
+        /**
+		 * Converts the 3D moments stored in this instance into a 3D ellipsoid.
+		 * 
+		 * @return the 3D ellipsoid with same inertia moments as the regions
+		 *         described by these moments.
+		 */
         public Ellipsoid equivalentEllipsoid()
         {
             // Extract singular values
