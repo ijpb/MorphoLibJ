@@ -45,7 +45,7 @@ public class DilateLabelsPlugin implements PlugIn
 		ImagePlus imagePlus = IJ.getImage();
 		
 		// open a dialog to choose options
-		GenericDialog gd = new GenericDialog("Diate Labels");
+		GenericDialog gd = new GenericDialog("Dilate Labels");
 		gd.addNumericField("Radius", 2.0, 1);
         
         // If cancel was clicked, do nothing

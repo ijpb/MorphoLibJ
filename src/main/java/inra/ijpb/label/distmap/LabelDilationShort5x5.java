@@ -30,6 +30,9 @@ import inra.ijpb.binary.ChamferWeights;
  * Apply a dilation by a specified radius to each label of a label map by
  * constraining the dilation. Labels can not dilate over existing labels.
  * 
+ * Can be applied to label map encoded with 8 or 16 bits integers, or 32 bit
+ * floats.
+ * 
  * 
  * @author dlegland
  * 
@@ -123,7 +126,7 @@ public class LabelDilationShort5x5 extends AlgoStub
 		{
 			for (int x = 0; x < sizeX; x++) 
 			{
-				int val = marker.get(x, y) & 0x00ff;
+				int val = (int) marker.getf(x, y);
 				distMap.set(x, y, val == 0 ? Short.MAX_VALUE : 0);
 			}
 		}
@@ -182,7 +185,7 @@ public class LabelDilationShort5x5 extends AlgoStub
 					if (dist < minDist)
 					{
 						minDist = dist;
-						closestLabel = res.get(x2, y2);
+						closestLabel = (int) res.getf(x2, y2);
 					}
 				}
 				
@@ -190,7 +193,7 @@ public class LabelDilationShort5x5 extends AlgoStub
 				if (minDist < currentDist && minDist < distMax)
 				{
 					distMap.set(x, y, minDist);
-					res.set(x, y, closestLabel);
+					res.setf(x, y, closestLabel);
 				}
 			}
 		}
@@ -249,7 +252,7 @@ public class LabelDilationShort5x5 extends AlgoStub
 					if (dist < minDist)
 					{
 						minDist = dist;
-						closestLabel = res.get(x2, y2);
+						closestLabel = (int) res.getf(x2, y2);
 					}
 				}
 				
@@ -257,7 +260,7 @@ public class LabelDilationShort5x5 extends AlgoStub
 				if (minDist < currentDist && minDist < distMax)
 				{
 					distMap.set(x, y, minDist);
-					res.set(x, y, closestLabel);
+					res.setf(x, y, closestLabel);
 				}
 			}
 		}
