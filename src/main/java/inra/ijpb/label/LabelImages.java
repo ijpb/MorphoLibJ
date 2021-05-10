@@ -2209,7 +2209,13 @@ public class LabelImages
 			resultPlus = new ImagePlus(newName, result);
 		}
 		
-		resultPlus.copyScale(imagePlus);
+        // update display range
+    	double min = imagePlus.getDisplayRangeMin();
+    	double max = imagePlus.getDisplayRangeMax();
+    	resultPlus.setDisplayRange(min, max);
+    	
+        // propagate spatial calibration
+    	resultPlus.copyScale(imagePlus);
 		return resultPlus;
 	}
 	
@@ -2231,7 +2237,9 @@ public class LabelImages
 	public static final ImageProcessor dilateLabels(ImageProcessor labelMap, double distMax)
 	{
 		LabelDilationShort5x5 algo = new LabelDilationShort5x5(ChamferWeights.CHESSKNIGHT);
-		return algo.process(labelMap, distMax);
+		ImageProcessor result = algo.process(labelMap, distMax);
+		result.setLut(labelMap.getLut());
+		return result;
 	}
 	
 	/**
@@ -2252,7 +2260,9 @@ public class LabelImages
 	public static final ImageStack dilateLabels(ImageStack labelMap, double distMax)
 	{
 		LabelDilation3D4WShort algo = new LabelDilation3D4WShort(ChamferWeights3D.WEIGHTS_3_4_5_7);
-		return algo.process(labelMap, distMax);
+		ImageStack result = algo.process(labelMap, distMax);
+		result.setColorModel(labelMap.getColorModel());
+		return result;
 	}
 	
 	/**

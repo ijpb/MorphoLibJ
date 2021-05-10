@@ -26,6 +26,7 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
+import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.binary.ChamferWeights;
@@ -55,8 +56,8 @@ public class DilateLabelsPlugin implements PlugIn
 
         // parse user options
         double distMax = gd.getNextNumber();
-
-        String newName = imagePlus.getShortTitle() + "dilated";
+        
+        String newName = imagePlus.getShortTitle() + "-dilated";
 		ImagePlus resultPlus;
 
 		// apply operator on current image
@@ -66,21 +67,33 @@ public class DilateLabelsPlugin implements PlugIn
 			// Process 2D image
 			LabelDilationShort5x5 algo = new LabelDilationShort5x5(ChamferWeights.CHESSKNIGHT);
 			DefaultAlgoListener.monitor(algo);
-			ImageProcessor result = algo.process(imagePlus.getProcessor(), distMax);
+			ImageProcessor image = imagePlus.getProcessor();
+			ImageProcessor result = algo.process(image, distMax);
+            if (!(result instanceof ColorProcessor))
+    			result.setLut(image.getLut());
 			resultPlus = new ImagePlus(newName, result);
 		} 
 		else 
 		{
 			// Process 3D image
+			ImageStack image = imagePlus.getStack();
 			LabelDilation3D4WShort algo = new LabelDilation3D4WShort(ChamferWeights3D.WEIGHTS_3_4_5_7);
 			DefaultAlgoListener.monitor(algo);
 			ImageStack result = algo.process(imagePlus.getStack(), distMax);
+			result.setColorModel(image.getColorModel());
 			resultPlus = new ImagePlus(newName, result);
 		}
 		long elapsedTime = System.currentTimeMillis() - t0;
 		
-		// display result
+        // update display range
+    	double min = imagePlus.getDisplayRangeMin();
+    	double max = imagePlus.getDisplayRangeMax();
+    	resultPlus.setDisplayRange(min, max);
+
+    	// display result
 		resultPlus.show();
+		resultPlus.copyScale(imagePlus);
+		
 		if (imagePlus.getStackSize() > 1) 
 		{
 			resultPlus.setSlice(imagePlus.getCurrentSlice());
