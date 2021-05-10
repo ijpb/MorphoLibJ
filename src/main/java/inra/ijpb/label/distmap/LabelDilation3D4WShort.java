@@ -32,6 +32,8 @@ import inra.ijpb.binary.ChamferWeights3D.ShortOffset;
  * Apply a dilation by a specified radius to each label of a label map by
  * constraining the dilation. Labels can not dilate over existing labels.
  * 
+ * @see inra.ijpb.binary.ChamferWeights3D
+ * @see inra.ijpb.label.distmap.LabelDilationShort5x5
  * 
  * @author dlegland
  * 
@@ -47,11 +49,25 @@ public class LabelDilation3D4WShort extends AlgoStub
 	// ==================================================
 	// Constructors 
 	
+	/**
+	 * Creates a new image processor for dilating labels using chamfer weight
+	 * stored using shorts.
+	 * 
+	 * @param weights
+	 *            the Chamfer weights to use.
+	 */
 	public LabelDilation3D4WShort(ChamferWeights3D weights) 
 	{
 		this(weights.getShortWeights());
 	}
 
+	/**
+	 * Creates a new image processor for dilating labels using chamfer weight
+	 * stored using shorts.
+	 * 
+	 * @param weights
+	 *            the Chamfer weights to use, as an array of shorts with four elements. 
+	 */
 	public LabelDilation3D4WShort(short[] weights) 
 	{
 		this.weights = weights;
@@ -67,25 +83,23 @@ public class LabelDilation3D4WShort extends AlgoStub
 	// Methods 
 	
 	/**
-	 * Computes the geodesic distance function for each pixel in mask label
-	 * image, using the given binary marker image. Mask and marker should be
-	 * ImageProcessor the same size and containing integer values.
+	 * Computes dilation of labels within label image by a specified radius.
+	 * Labels can not dilate over existing labels.
 	 * 
-	 * The function returns a new ShortProcessor the same size as the input,
-	 * with values greater or equal to zero.
+	 * The function returns a new ImageStack the same size and the same type as
+	 * the input, with values greater than or equal to zero.
 	 *
-	 * @param marker
-	 *            the binary marker image
-	 * @param mask
-	 *            the label image used as mask
-	 * @return the geodesic distance map from the marker image within each label
-	 *         of the mask
-	 * @see inra.ijpb.binary.geodesic.GeodesicDistanceTransform#geodesicDistanceMap(ij.process.ImageProcessor,
-	 *      ij.process.ImageProcessor)
+	 * @param labelImage
+	 *            the original label map
+	 * @param distMax
+	 *            the dilation radius, in pixels. In practice, dilation is
+	 *            computed with a radius +0.5.
+	 * @return a new label image where each label is dilated over background
+	 *         pixels.
 	 */
 	public ImageStack process(ImageStack labelImage, double distMax)
 	{
-		// update inner data
+		// use max distance relative to chamfer weights
 		double maxDist = distMax * this.weights[0];
 		
 		fireStatusChanged(this, "Initialization..."); 

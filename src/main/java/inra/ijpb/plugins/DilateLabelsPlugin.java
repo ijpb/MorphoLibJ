@@ -26,7 +26,6 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
-import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.binary.ChamferWeights;
@@ -55,7 +54,7 @@ public class DilateLabelsPlugin implements PlugIn
             return;
 
         // parse user options
-        double distMax = gd.getNextNumber();
+        double distMax = gd.getNextNumber() + 0.5;
         
         String newName = imagePlus.getShortTitle() + "-dilated";
 		ImagePlus resultPlus;
@@ -69,8 +68,8 @@ public class DilateLabelsPlugin implements PlugIn
 			DefaultAlgoListener.monitor(algo);
 			ImageProcessor image = imagePlus.getProcessor();
 			ImageProcessor result = algo.process(image, distMax);
-            if (!(result instanceof ColorProcessor))
-    			result.setLut(image.getLut());
+			result.setMinAndMax(image.getMin(), image.getMax());
+            result.setColorModel(image.getColorModel());
 			resultPlus = new ImagePlus(newName, result);
 		} 
 		else 
@@ -82,14 +81,14 @@ public class DilateLabelsPlugin implements PlugIn
 			ImageStack result = algo.process(imagePlus.getStack(), distMax);
 			result.setColorModel(image.getColorModel());
 			resultPlus = new ImagePlus(newName, result);
+			
+	        // update display range
+	    	double min = imagePlus.getDisplayRangeMin();
+	    	double max = imagePlus.getDisplayRangeMax();
+	    	resultPlus.setDisplayRange(min, max);
 		}
 		long elapsedTime = System.currentTimeMillis() - t0;
 		
-        // update display range
-    	double min = imagePlus.getDisplayRangeMin();
-    	double max = imagePlus.getDisplayRangeMax();
-    	resultPlus.setDisplayRange(min, max);
-
     	// display result
 		resultPlus.show();
 		resultPlus.copyScale(imagePlus);

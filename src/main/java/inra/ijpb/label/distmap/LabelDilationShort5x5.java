@@ -33,6 +33,8 @@ import inra.ijpb.binary.ChamferWeights;
  * Can be applied to label map encoded with 8 or 16 bits integers, or 32 bit
  * floats.
  * 
+ * @see inra.ijpb.binary.ChamferWeights3D
+ * @see inra.ijpb.label.distmap.LabelDilation3D4WShort
  * 
  * @author dlegland
  * 
@@ -72,25 +74,23 @@ public class LabelDilationShort5x5 extends AlgoStub
 	// Methods 
 	
 	/**
-	 * Computes the geodesic distance function for each pixel in mask label
-	 * image, using the given binary marker image. Mask and marker should be
-	 * ImageProcessor the same size and containing integer values.
+	 * Computes dilation of labels within label image by a specified radius.
+	 * Labels can not dilate over existing labels.
 	 * 
-	 * The function returns a new ShortProcessor the same size as the input,
-	 * with values greater or equal to zero.
+	 * The function returns a new ImageProcessor the same size and the same type
+	 * as the input, with values greater than or equal to zero.
 	 *
-	 * @param marker
-	 *            the binary marker image
-	 * @param mask
-	 *            the label image used as mask
-	 * @return the geodesic distance map from the marker image within each label
-	 *         of the mask
-	 * @see inra.ijpb.binary.geodesic.GeodesicDistanceTransform#geodesicDistanceMap(ij.process.ImageProcessor,
-	 *      ij.process.ImageProcessor)
+	 * @param labelImage
+	 *            the original label map
+	 * @param distMax
+	 *            the dilation radius, in pixels. In practice, dilation is
+	 *            computed with a radius +0.5.
+	 * @return a new label image where each label is dilated over background
+	 *         pixels.
 	 */
 	public ImageProcessor process(ImageProcessor labelImage, double distMax)
 	{
-		// update inner data
+		// use max distance relative to chamfer weights
 		double maxDist = distMax * this.weights[0];
 		
 		fireStatusChanged(this, "Initialization..."); 
@@ -98,7 +98,6 @@ public class LabelDilationShort5x5 extends AlgoStub
 		ImageProcessor res = labelImage.duplicate();
 		// the distance map to the closest label
 		ImageProcessor distMap = initialize(labelImage);
-
 
 		// forward iteration
 		fireStatusChanged(this, "Forward iteration");
