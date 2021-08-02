@@ -28,7 +28,7 @@ import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import inra.ijpb.data.image.Images3D;
 import inra.ijpb.morphology.AttributeFiltering;
-import inra.ijpb.morphology.Connectivity2D;
+import inra.ijpb.morphology.Connectivity3D;
 
 /**
  * Plugin to perform between attribute opening, closing, and black or white
@@ -42,14 +42,14 @@ import inra.ijpb.morphology.Connectivity2D;
 public class GrayscaleAttributeFiltering3D implements PlugIn
 {
 	/**
-	 * Morphological operations that can be done using this plugin
+	 * Morphological operations that can be done using this plugin.
 	 */
 	enum Operation
 	{
-		CLOSING( "Closing" ),
-		OPENING( "Opening" ),
-		TOP_HAT( "Top Hat" ),
-		BOTTOM_HAT( "Bottom Hat" );
+		CLOSING("Closing"), 
+		OPENING("Opening"), 
+		TOP_HAT("Top Hat"), 
+		BOTTOM_HAT("Bottom Hat");
 
 		String label;
 
@@ -65,8 +65,9 @@ public class GrayscaleAttributeFiltering3D implements PlugIn
 
 			int i = 0;
 			for (Operation op : Operation.values())
+			{
 				result[i++] = op.label;
-
+			}
 			return result;
 		}
 
@@ -93,8 +94,9 @@ public class GrayscaleAttributeFiltering3D implements PlugIn
 					+ "label: " + opLabel);
 		}
 	};
+	
 	/**
-	 * Attributes that can be used as filtering criterion in the plugin
+	 * Attributes that can be used as filtering criterion in the plugin.
 	 */
 	enum Attribute
 	{
@@ -114,7 +116,9 @@ public class GrayscaleAttributeFiltering3D implements PlugIn
 
 			int i = 0;
 			for (Attribute att : Attribute.values())
+			{
 				result[i++] = att.label;
+			}
 			return result;
 		}
 
@@ -145,7 +149,7 @@ public class GrayscaleAttributeFiltering3D implements PlugIn
 	static Operation operation = Operation.OPENING;
 	static Attribute attribute = Attribute.VOLUME;
     static int nPixelMin = 100;
-    static int connectivityChoice = 0; // 0 -> 6 connectivity
+    static Connectivity3D connectivity = Connectivity3D.C6;
 
 	/**
 	 * Plugin run method
@@ -165,14 +169,11 @@ public class GrayscaleAttributeFiltering3D implements PlugIn
         // create the dialog, with operator options
 		String title = "Gray Scale Attribute Filtering 3D";
         GenericDialog gd = new GenericDialog( title );
-        gd.addChoice( "Operation", Operation.getAllLabels(),
-        					operation.label );
-        gd.addChoice( "Attribute", Attribute.getAllLabels(),
-				attribute.label );
+		gd.addChoice("Operation", Operation.getAllLabels(), operation.label);
+		gd.addChoice("Attribute", Attribute.getAllLabels(), attribute.label);
         String label = "Min Voxel Number:";
-        gd.addNumericField( label, nPixelMin, 0 );
-        gd.addChoice( "Connectivity", Connectivity2D.getAllLabels(),
-        		Connectivity2D.C4.name());
+        gd.addNumericField(label, nPixelMin, 0);
+        gd.addChoice("Connectivity", Connectivity3D.getAllLabels(), connectivity.name());
         gd.showDialog();
 
         // If cancel was clicked, do nothing
@@ -183,50 +184,48 @@ public class GrayscaleAttributeFiltering3D implements PlugIn
         operation = Operation.fromLabel( gd.getNextChoice() );
         attribute = Attribute.fromLabel( gd.getNextChoice() );
         nPixelMin = (int) gd.getNextNumber();
-        Connectivity2D connectivity = Connectivity2D.fromLabel(gd.getNextChoice());
+        connectivity = Connectivity3D.fromLabel(gd.getNextChoice());
 
         ImagePlus resultPlus;
         String newName = imagePlus.getShortTitle() + "-attrFilt";
 
         // Identify image to process (original, or inverted)
         ImagePlus image2 = imagePlus.duplicate();
-        if( operation == Operation.CLOSING ||
-        		operation == Operation.BOTTOM_HAT )        	
+        if( operation == Operation.CLOSING || operation == Operation.BOTTOM_HAT )        	
         {        	
         	IJ.run( image2, "Invert", "stack" );
         }
 
         // apply volume opening
         final ImageStack image = image2.getStack();
-        final ImageStack result =
-        		AttributeFiltering.volumeOpening(
-        				image, nPixelMin, connectivity.getValue() );
-        resultPlus = new ImagePlus( newName, result );
+		final ImageStack result = AttributeFiltering.volumeOpening(image,
+				nPixelMin, connectivity.getValue());
+		resultPlus = new ImagePlus(newName, result);
 
         // For top-hat and bottom-hat, we consider the difference with the
         // original image
-        if( operation == Operation.TOP_HAT ||
-        	operation == Operation.BOTTOM_HAT )
+		if (operation == Operation.TOP_HAT || operation == Operation.BOTTOM_HAT)
         {
         	for( int x = 0; x < image.getWidth(); x++ )
         		for( int y = 0; y < image.getHeight(); y++ )
         			for( int z = 0; z < image.getSize(); z++ )
         	{
-        		double diff = Math.abs( result.getVoxel( x, y, z ) -
-        							   image.getVoxel( x, y, z ) );
-        		result.setVoxel( x, y, z, diff );
+				double diff = Math.abs(result.getVoxel(x, y, z) - image.getVoxel(x, y, z));
+				result.setVoxel(x, y, z, diff);
         	}
         }
 
         // For closing, invert back the result
-        else if( operation == Operation.CLOSING )
-        	IJ.run( resultPlus, "Invert", "stack" );
-
+		else if (operation == Operation.CLOSING)
+        {
+        	IJ.run(resultPlus, "Invert", "stack");
+        }
+        
         // show result
-        resultPlus.copyScale( imagePlus );
-		Images3D.optimizeDisplayRange( resultPlus );
+		resultPlus.copyScale(imagePlus);
+		Images3D.optimizeDisplayRange(resultPlus);
 		resultPlus.updateAndDraw();
-        resultPlus.show();
-        resultPlus.setSlice( imagePlus.getCurrentSlice() );
-	}// end run method
-} // end class
+		resultPlus.show();
+		resultPlus.setSlice(imagePlus.getCurrentSlice());
+	}
+}
