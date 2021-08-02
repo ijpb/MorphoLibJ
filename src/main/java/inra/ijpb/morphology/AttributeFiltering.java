@@ -67,7 +67,6 @@ public class AttributeFiltering
 			String newName = imagePlus.getShortTitle() + "-sizeOpen";
 			resultPlus = new ImagePlus(newName, result);
 		}
-		
 
 		if (imagePlus.getStackSize() > 1)
 		{

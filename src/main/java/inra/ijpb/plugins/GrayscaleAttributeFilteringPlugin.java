@@ -30,8 +30,9 @@ import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.morphology.Connectivity2D;
-import inra.ijpb.morphology.attrfilt.AreaOpeningQueue;
-import inra.ijpb.morphology.attrfilt.BoxDiagonalOpeningQueue;
+import inra.ijpb.morphology.attrfilt.Attribute2D;
+import inra.ijpb.morphology.attrfilt.AttributeFilterType;
+import inra.ijpb.morphology.attrfilt.GrayscaleAttributeFiltering;
 
 import java.awt.AWTEvent;
 
@@ -41,107 +42,10 @@ import java.awt.AWTEvent;
  * 
  * @see AreaOpeningPlugin
  * 
- * @author David Legland
+ * @author dlegland
  */
 public class GrayscaleAttributeFilteringPlugin implements ExtendedPlugInFilter, DialogListener 
 {
-	enum Operation
-	{
-		CLOSING("Closing"), 
-		OPENING("Opening"),
-		TOP_HAT("Top Hat"),
-		BOTTOM_HAT("Bottom Hat");
-		
-		String label;
-		
-		Operation(String label)
-		{
-			this.label = label;
-		}
-		
-		public static String[] getAllLabels()
-		{
-			int n = Operation.values().length;
-			String[] result = new String[n];
-			
-			int i = 0;
-			for (Operation op : Operation.values())
-				result[i++] = op.label;
-			
-			return result;
-		}
-		
-		/**
-		 * Determines the operation type from its label.
-		 * 
-		 * @param opLabel
-		 *            the label of the operation
-		 * @return the parsed Operation
-		 * @throws IllegalArgumentException
-		 *             if label is not recognized.
-		 */
-		public static Operation fromLabel(String opLabel)
-		{
-			if (opLabel != null)
-				opLabel = opLabel.toLowerCase();
-			for (Operation op : Operation.values()) 
-			{
-				String cmp = op.label.toLowerCase();
-				if (cmp.equals(opLabel))
-					return op;
-			}
-			throw new IllegalArgumentException("Unable to parse Operation with label: " + opLabel);
-		}
-	};
-
-	enum Attribute
-	{
-		AREA("Area"), 
-		BOX_DIAGONAL("Box Diagonal");
-		
-		String label;
-		
-		Attribute(String label)
-		{
-			this.label = label;
-		}
-		
-		public static String[] getAllLabels()
-		{
-			int n = Attribute.values().length;
-			String[] result = new String[n];
-			
-			int i = 0;
-			for (Attribute att : Attribute.values())
-				result[i++] = att.label;
-			
-			return result;
-		}
-		
-		/**
-		 * Determines the Attribute type from its label.
-		 * 
-		 * @param opLabel
-		 *            the label of the Attribute
-		 * @return the parsed Attribute
-		 * @throws IllegalArgumentException
-		 *             if label is not recognized.
-		 */
-		public static Attribute fromLabel(String attrLabel)
-		{
-			if (attrLabel != null)
-				attrLabel = attrLabel.toLowerCase();
-			for (Attribute op : Attribute.values()) 
-			{
-				String cmp = op.label.toLowerCase();
-				if (cmp.equals(attrLabel))
-					return op;
-			}
-			throw new IllegalArgumentException("Unable to parse Attribute with label: " + attrLabel);
-		}
-	};
-
-
 	/** keep flags in plugin */
 	private int flags = DOES_ALL | KEEP_PREVIEW | FINAL_PROCESSING | NO_CHANGES;
 	
@@ -160,8 +64,8 @@ public class GrayscaleAttributeFilteringPlugin implements ExtendedPlugInFilter, 
 	private ImageProcessor result;
 
 	
-	Operation operation = Operation.OPENING;
-	Attribute attribute = Attribute.AREA; 
+	AttributeFilterType operation = AttributeFilterType.OPENING;
+	Attribute2D attribute = Attribute2D.AREA; 
 	int minimumValue = 100;
 	Connectivity2D connectivity = Connectivity2D.C4;
 	
@@ -200,8 +104,8 @@ public class GrayscaleAttributeFilteringPlugin implements ExtendedPlugInFilter, 
 		// Create the configuration dialog
 		GenericDialog gd = new GenericDialog("Gray Scale Attribute Filtering");
 
-		gd.addChoice("Operation", Operation.getAllLabels(), Operation.OPENING.label);
-		gd.addChoice("Attribute", Attribute.getAllLabels(), Attribute.AREA.label);
+		gd.addChoice("Operation", AttributeFilterType.getAllLabels(), AttributeFilterType.OPENING.getLabel());
+		gd.addChoice("Attribute", Attribute2D.getAllLabels(), Attribute2D.AREA.getLabel());
 		gd.addNumericField("Minimum Value", 100, 0, 10, "pixels");
 		gd.addChoice("Connectivity", Connectivity2D.getAllLabels(), Connectivity2D.C4.name());
 		
@@ -226,51 +130,20 @@ public class GrayscaleAttributeFilteringPlugin implements ExtendedPlugInFilter, 
 	@Override
 	public void run(ImageProcessor image)
 	{
-		// Identify image to process (original, or inverted)
-		ImageProcessor image2 = baseImage;
-		if (this.operation == Operation.CLOSING || this.operation == Operation.BOTTOM_HAT)
-		{
-			image2 = image2.duplicate();
-			image2.invert();
-		}
+		// create and configure the operator
+		GrayscaleAttributeFiltering op = new GrayscaleAttributeFiltering();
+		op.setFilterType(operation);
+		op.setAttribute(attribute);
+		op.setMinimumValue(minimumValue);
+		op.setConnectivity(connectivity);
 		
-		// switch depending on attribute to use
-		if (attribute == Attribute.AREA)
-		{
-			AreaOpeningQueue algo = new AreaOpeningQueue();
-			algo.setConnectivity(this.connectivity.getValue());
-			DefaultAlgoListener.monitor(algo);
-			this.result = algo.process(image2, this.minimumValue);
-		}
-		else
-		{
-			BoxDiagonalOpeningQueue algo = new BoxDiagonalOpeningQueue();
-			algo.setConnectivity(this.connectivity.getValue());
-			DefaultAlgoListener.monitor(algo);
-			this.result = algo.process(image2, this.minimumValue);
-		}
+		// add algorithm monitoring
+		DefaultAlgoListener.monitor(op);
 		
-		// For top-hat and bottom-hat, we consider difference with original image
-		if (this.operation == Operation.TOP_HAT ||
-				this.operation == Operation.BOTTOM_HAT)
-		{
-			double maxDiff = 0;
-			for (int i = 0; i < image.getPixelCount(); i++)
-			{
-				float diff = Math.abs(this.result.getf(i) - image2.getf(i));
-				this.result.setf(i, diff);
-				maxDiff = Math.max(diff, maxDiff);
-			}
-			
-			this.result.setMinAndMax(0, maxDiff);
-		}
+		// run the operator
+		this.result = op.process(this.baseImage);
 		
-		// For closing, invert back the result
-		else if (this.operation == Operation.CLOSING)
-		{
-			this.result.invert();
-		}
-
+		// update preview if required
 		if (previewing)
 		{
 			// Iterate over pixels to change value of reference image
@@ -319,8 +192,8 @@ public class GrayscaleAttributeFilteringPlugin implements ExtendedPlugInFilter, 
 	 */
     private void parseDialogParameters(GenericDialog gd) 
     {
-		this.operation 		= Operation.fromLabel(gd.getNextChoice());
-		this.attribute 		= Attribute.fromLabel(gd.getNextChoice());
+		this.operation 		= AttributeFilterType.fromLabel(gd.getNextChoice());
+		this.attribute 		= Attribute2D.fromLabel(gd.getNextChoice());
 		this.minimumValue	= (int) gd.getNextNumber();
 		this.connectivity 	= Connectivity2D.fromLabel(gd.getNextChoice());
 		this.previewing 	= gd.getPreviewCheckbox().getState();
