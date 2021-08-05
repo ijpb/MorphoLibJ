@@ -37,7 +37,6 @@ import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 import inra.ijpb.data.image.Images3D;
-import inra.ijpb.morphology.Connectivity3D;
 import inra.ijpb.morphology.Reconstruction3D;
 import inra.ijpb.util.IJUtils;
 

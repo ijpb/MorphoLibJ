@@ -26,8 +26,6 @@ import ij.ImagePlus;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import inra.ijpb.binary.BinaryImages;
-import inra.ijpb.morphology.Connectivity2D;
-import inra.ijpb.morphology.Connectivity3D;
 
 /**
  * Computes label image of connected components in a binary planar image or 3D

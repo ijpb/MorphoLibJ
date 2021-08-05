@@ -28,7 +28,6 @@ import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import inra.ijpb.data.image.Images3D;
-import inra.ijpb.morphology.Connectivity3D;
 import inra.ijpb.morphology.Reconstruction3D;
 import inra.ijpb.util.IJUtils;
 

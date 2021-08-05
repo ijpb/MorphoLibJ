@@ -29,7 +29,6 @@ import ij.gui.GenericDialog;
 import ij.plugin.filter.ExtendedPlugInFilter;
 import ij.plugin.filter.PlugInFilterRunner;
 import ij.process.ImageProcessor;
-import inra.ijpb.morphology.Connectivity2D;
 import inra.ijpb.morphology.MinimaAndMaxima;
 
 import java.awt.AWTEvent;

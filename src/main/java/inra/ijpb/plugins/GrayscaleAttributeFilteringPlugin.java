@@ -29,7 +29,6 @@ import ij.plugin.filter.PlugInFilterRunner;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.algo.DefaultAlgoListener;
-import inra.ijpb.morphology.Connectivity2D;
 import inra.ijpb.morphology.attrfilt.AreaOpeningQueue;
 import inra.ijpb.morphology.attrfilt.BoxDiagonalOpeningQueue;
 

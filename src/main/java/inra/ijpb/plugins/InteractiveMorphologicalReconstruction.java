@@ -40,7 +40,6 @@ import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
-import inra.ijpb.morphology.Connectivity2D;
 import inra.ijpb.morphology.Reconstruction;
 import inra.ijpb.util.IJUtils;
 

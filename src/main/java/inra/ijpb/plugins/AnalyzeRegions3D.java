@@ -41,7 +41,6 @@ import inra.ijpb.measure.region3d.Centroid3D;
 import inra.ijpb.measure.region3d.EquivalentEllipsoid;
 import inra.ijpb.measure.region3d.IntrinsicVolumesAnalyzer3D;
 import inra.ijpb.measure.region3d.LargestInscribedBall;
-import inra.ijpb.morphology.Connectivity3D;
 
 /**
  * Plugin for measuring geometric quantities such as volume, surface area,

@@ -27,7 +27,6 @@ import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import ij.ImageStack;
-import inra.ijpb.morphology.Connectivity3D;
 import inra.ijpb.morphology.MinimaAndMaxima3D;
 import inra.ijpb.util.IJUtils;
 

@@ -14,8 +14,6 @@ import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.measure.IntrinsicVolumes3D;
 import inra.ijpb.measure.region3d.BinaryConfigurationsHistogram3D;
 import inra.ijpb.measure.region3d.IntrinsicVolumes3DUtils;
-import inra.ijpb.morphology.Connectivity2D;
-import inra.ijpb.morphology.Connectivity3D;
 import inra.ijpb.util.IJUtils;
 
 /**
