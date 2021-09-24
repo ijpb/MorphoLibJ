@@ -50,6 +50,26 @@ public class IJUtils
 	 * Display elapsed time, converted into seconds, and computes number of
 	 * processed elements per second. Also returns the created message.
 	 * 
+	 * <p>
+	 * Example of use:
+	 * <pre><code>
+	 * // initialize processing 
+	 * ImageStack image = IJ.getImage().getStack();
+	 * Strel3D strel = CubeStrel.fromDiameter(5);
+	 * 
+	 * // initialize timing 
+	 * long t0 = System.currentTimeMillis();
+	 * 
+	 * // start processing 
+	 * ImageStack res = Morphology.dilation(image, strel);
+	 * ImagePlus resPlus = new ImagePlus("Dilation Result", res);
+	 * resPlus.show();
+	 * 
+	 * // Display elapsed time
+	 * long t1 = System.currentTimeMillis();
+	 * IJUtils.showElapsedTime("dilation", t1 - t0, resPlus);
+	 * </code></pre>
+	 *
 	 * @param opName
 	 *            the name of the operation (algorithm, plugin...)
 	 * @param timeInMillis
@@ -60,16 +80,15 @@ public class IJUtils
 	 */
 	public final static String showElapsedTime(String opName, double timeInMillis, ImagePlus refImage) 
 	{
-		double nElements;
+		double nElements = ((double) refImage.getWidth())  * refImage.getHeight();
 		String elementName;
 		if (refImage.getImageStackSize() == 1) 
 		{
-			nElements = refImage.getWidth() * refImage.getHeight();
 			elementName = "pixels";
 		}
 		else 
 		{
-			nElements = ((double) refImage.getWidth()) * refImage.getHeight() * refImage.getStackSize();
+			nElements *= refImage.getStackSize();
 			elementName = "voxels";
 		}
 		
