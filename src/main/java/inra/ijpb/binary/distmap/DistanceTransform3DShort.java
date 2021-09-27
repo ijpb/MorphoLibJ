@@ -426,6 +426,9 @@ public class DistanceTransform3DShort extends AlgoStub implements DistanceTransf
 	private void normalizeResultSlices()
 	{
 		fireStatusChanged(this, "Normalize map..."); 
+		
+		double w0 = weights[0];
+		
 		for (int z = 0; z < sizeZ; z++) 
 		{
 			fireProgressChanged(this, z, sizeZ);
@@ -440,7 +443,8 @@ public class DistanceTransform3DShort extends AlgoStub implements DistanceTransf
 					int index = sizeX * y + x;
 					if (maskSlice[index] != 0)
 					{
-						resultSlice[index] = (short) ((resultSlice[index] & 0x00FFFF) / weights[0]);
+						double value = resultSlice[index] & 0x00FFFF;
+						resultSlice[index] = (short) Math.round(value / w0);
 					}
 				}
 			}
