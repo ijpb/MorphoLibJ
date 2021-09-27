@@ -328,7 +328,7 @@ public class DistanceTransform3x3Short extends AlgoStub implements DistanceTrans
 			{
 				if ((int) labelImage.getf(x, y) > 0)
 				{
-					distMap.set(x, y, distMap.get(x, y) / w0);
+					distMap.set(x, y, (int) Math.round( ((double) distMap.get(x, y)) / w0));
 				}
 			}
 		}

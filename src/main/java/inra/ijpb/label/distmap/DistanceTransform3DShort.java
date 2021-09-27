@@ -369,7 +369,7 @@ public class DistanceTransform3DShort extends AlgoStub implements DistanceTransf
 				{
 					if (labels.get(x,  y,  z) != 0)
 					{
-						distmap.set(x, y, z, distmap.get(x, y, z) / weights[0]);
+						distmap.set(x, y, z, (int) Math.round(distmap.getValue(x, y, z) / weights[0]));
 					}
 				}
 			}

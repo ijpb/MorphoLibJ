@@ -360,7 +360,7 @@ public class DistanceTransform5x5Short extends AlgoStub implements DistanceTrans
 		int sizeY = labelImage.getHeight();
 
 		// normalization weight
-		int w0 = weights[0];
+		double w0 = weights[0];
 		
 		for (int y = 0; y < sizeY; y++)
 		{
@@ -368,7 +368,7 @@ public class DistanceTransform5x5Short extends AlgoStub implements DistanceTrans
 			{
 				if ((int) labelImage.getf(x, y) > 0)
 				{
-					distMap.set(x, y, distMap.get(x, y) / w0);
+					distMap.set(x, y, (int) Math.round( ((double) distMap.get(x, y)) / w0));
 				}
 			}
 		}
