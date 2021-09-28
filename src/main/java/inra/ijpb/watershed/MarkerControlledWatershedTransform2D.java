@@ -715,7 +715,7 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 						tabLabels[ i ][ j ] = INIT;
 		}
 
-		// Make list of pixels and sort it in ascending order
+		// Create initial priority queue with the neighbors of seeds
 		IJ.showStatus( "Extracting pixel values..." );
 		if( verbose ) IJ.log("  Extracting pixel values..." );
 		final long t0 = System.currentTimeMillis();
@@ -916,7 +916,7 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 		
 		final int[][] tabLabels = new int[ size1 ][ size2 ]; 
 		
-		// Make list of pixels and sort it in ascending order
+		// Create initial priority queue with the neighbors of seeds
 		IJ.showStatus( "Extracting pixel values..." );
 		if( verbose ) IJ.log("  Extracting pixel values..." );
 		final long t0 = System.currentTimeMillis();
@@ -1129,7 +1129,7 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 	    for( int i=0; i<size1; i++ )	    	
 	    	Arrays.fill( tabLabels[i], INIT );
 		
-		// Make list of pixels and sort it in ascending order
+		// Create initial priority queue with the neighbors of seeds
 		IJ.showStatus( "Extracting pixel values..." );
 		if( verbose ) IJ.log("  Extracting pixel values..." );
 		final long t0 = System.currentTimeMillis();
@@ -1387,7 +1387,7 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 	    for( int i=0; i<size1; i++ )	    	
 	    	Arrays.fill( tabLabels[i], INIT );
 		
-		// Make list of pixels and sort it in ascending order
+		// Create initial priority queue with the neighbors of seeds
 		IJ.showStatus( "Extracting pixel values..." );
 		if( verbose ) IJ.log("  Extracting pixel values..." );
 		final long t0 = System.currentTimeMillis();
