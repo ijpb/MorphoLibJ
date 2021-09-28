@@ -1582,8 +1582,8 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 	/**
 	 * Extract pixel values from input and seed images
 	 * 
-	 * @param inputImage input stack
-	 * @param seedImage seed stack
+	 * @param inputImage input image (2D)
+	 * @param seedImage seed image (2D)
 	 * @param tabLabels output label array
 	 * @return priority queue of pixels neighboring the seeds
 	 */
@@ -1681,8 +1681,8 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 	 * input grayscale values will be return in a list of PixelRecord 
 	 * and the markers will be stored in <code>tabLabels</code>.
 	 * 
-	 * @param inputImage input grayscale stack (usually a gradient image)
-	 * @param markerImage labeled marker stack
+	 * @param inputImage input grayscale image (usually a gradient image)
+	 * @param markerImage labeled marker image
 	 * @param tabLabels output label array
 	 * @return list of input pixel values
 	 */
