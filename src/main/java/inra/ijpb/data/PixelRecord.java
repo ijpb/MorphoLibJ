@@ -110,5 +110,13 @@ public class PixelRecord implements Comparable<PixelRecord>{
 		
 		return res;
 	}
-
+	/**
+	 * Calculate Euclidean distance to another pixel record
+	 * @param pr pixel record to calculate distance to
+	 * @return Euclidean distance between this pixel record and the input one
+	 */
+	public double euclideanDistance( PixelRecord pr )
+	{
+		return this.cursor.euclideanDistance( pr.getCursor() );
+	}
 }
