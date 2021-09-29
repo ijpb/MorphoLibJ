@@ -41,8 +41,12 @@ import inra.ijpb.data.PixelRecord;
 /**
  * Marker-controlled version of the watershed transform in 2D.
  * 
- * Reference: Fernand Meyer and Serge Beucher. "Morphological segmentation." 
- * Journal of visual communication and image representation 1.1 (1990): 21-46.
+ * References:
+ * [1] Fernand Meyer and Serge Beucher. "Morphological segmentation."
+ *     Journal of visual communication and image representation 1.1 (1990): 21-46.
+ * [2] Peer Neubert and Peter Protzel. "Compact Watershed and Preemptive SLIC:
+ *     On improving trade-offs of superpixel segmentation algorithms."
+ *     22nd international conference on pattern recognition. IEEE, 2014.
  * 
  * @author Ignacio Arganda-Carreras
  *
@@ -51,6 +55,8 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 {
 	/** image containing the labeled markers to start the watershed */
 	ImageProcessor markerImage = null;
+	/** compactness constraint, parameter c in Compact Watershed algorithm [2] */
+	double compactness = 0.0;
 
 	/**
 	 * Initialize a marker-controlled watershed transform
@@ -85,7 +91,44 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 		super( input, mask, connectivity );
 		this.markerImage = marker;		
 	}
+	/**
+	 * Initialize a marker-controlled watershed transform
+	 *
+	 * @param input grayscale image (usually a gradient image)
+	 * @param marker image containing the labeled markers to start the watershed
+	 * @param mask binary mask to restrict the region of interest (null to use whole input image)
+	 */
+	public MarkerControlledWatershedTransform2D(
+			ImageProcessor input,
+			ImageProcessor marker,
+			ImageProcessor mask,
+			double compactness )
+	{
+		super( input, mask );
+		this.markerImage = marker;
+		this.compactness = compactness;
+	}
 	
+	/**
+	 * Initialize a marker-controlled watershed transform
+	 *
+	 * @param input grayscale image (usually a gradient image)
+	 * @param marker image containing the labeled markers to start the watershed
+	 * @param mask binary mask to restrict the region of interest (null to use whole input image)
+	 * @param connectivity pixel connectivity (4 or 8)
+	 */
+	public MarkerControlledWatershedTransform2D(
+			ImageProcessor input,
+			ImageProcessor marker,
+			ImageProcessor mask,
+			int connectivity,
+			double compactness )
+	{
+		super( input, mask, connectivity );
+		this.markerImage = marker;
+		this.compactness = compactness;
+	}
+
 	/**
 	 * Apply watershed transform on inputImage, using the labeled 
 	 * markers from markerImage and restricted to the white areas 
