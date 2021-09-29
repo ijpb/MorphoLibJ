@@ -95,9 +95,9 @@ public class PixelRecord implements Comparable<PixelRecord>{
 	/**
 	 * Compare with a pixel record based on its value and
 	 * timestamp
-	 * @param v2 voxel record to compare with
-	 * @return a value smaller than 0 if the v2 voxel value is 
-	 * 			larger this record voxel value, a value larger
+	 * @param v2 pixel record to compare with
+	 * @return a value smaller than 0 if the v2 pixel value is
+	 * 			larger this pixel record value, a value larger
 	 * 			than 0 if it is lower. If equal, the records
 	 * 			created before are set as smaller.  
 	 */
