@@ -83,13 +83,13 @@ public class DistanceTransform3DShortTest
 		ImageStack result = algo.distanceMap(image);
 		assertEquals(16, result.getBitDepth());
 		
-		assertEquals(1, result.getVoxel( 4, 5, 5), .1);
-		assertEquals(1, result.getVoxel(6, 5, 5), .1);
-		assertEquals(4/3, result.getVoxel( 4,  4, 5), .1);
-		assertEquals(Math.floor(5./3.), result.getVoxel( 4,  4,  4), .1);
+		assertEquals(1, result.getVoxel(4, 5, 5), 0.1);
+		assertEquals(1, result.getVoxel(6, 5, 5), 0.1);
+		assertEquals(1, result.getVoxel(4, 4, 5), 0.1);
+		assertEquals(Math.round(5.0 / 3.0), result.getVoxel(4, 4, 4), 0.1);
 		
 		// Test some voxels at the cube corners
-		int exp = (int) Math.floor(5.0 * 5.0 / 3.0);
+		int exp = (int) Math.round(5.0 * 5.0 / 3.0);
 		assertEquals(exp, result.getVoxel( 0,  0,  0), .01);
 		assertEquals(exp, result.getVoxel(10,  0,  0), .01);
 		assertEquals(exp, result.getVoxel( 0, 10,  0), .01);
