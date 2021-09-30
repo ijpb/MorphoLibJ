@@ -1350,7 +1350,7 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 		inputStackCopy = inputImage.getImageStack().duplicate();
 		displayImage = new ImagePlus( inputImage.getTitle(),
 				inputStackCopy );
-		displayImage.setTitle("Marker-controlled Watershed");
+		displayImage.setTitle("Interactive Marker-controlled Watershed");
 		displayImage.setSlice( inputImage.getCurrentSlice() );
 		displayImage.setRoi( inputImage.getRoi() );
 
