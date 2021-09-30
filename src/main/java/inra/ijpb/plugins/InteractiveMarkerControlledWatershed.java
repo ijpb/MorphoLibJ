@@ -75,6 +75,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 /**
@@ -120,6 +121,7 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 	//
 	//	 __ Watershed Segmentation___
 	//	|  x - Use dams             |
+	//	|  Compactness: [0]         |
 	//	|  Connectivity: [6/26]     |
 	//	|          -----            |
 	//	|         | Run |	    	|
@@ -135,6 +137,13 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 	JCheckBox damsCheckBox;
 	/** flag to select/deselect the calculation of watershed dams */
 	private boolean calculateDams = true;
+
+	/** compactness parameter panel */
+	JPanel compactnessPanel = new JPanel();
+	/** compactness parameter label */
+	JLabel compactnessLabel;
+	/** compactness parameter text field */
+	JTextField compactnessText;
 
 	/** connectivity choice */
 	JPanel connectivityPanel = new JPanel();
@@ -374,6 +383,15 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 			damsCheckBox.setToolTipText( "Calculate watershed dams" );
 			damsPanel.add( damsCheckBox );
 
+			// compactness parameter
+			compactnessLabel = new JLabel( "Compactness" );
+			compactnessLabel.setToolTipText( "Compactness constraint parameter (values larger than 0 activate compact watershed)" );
+			compactnessText = new JTextField( "0", 5 );
+			compactnessText.setToolTipText( "Compactness constraint parameter (values larger than 0 activate compact watershed)" );
+			compactnessPanel.add( compactnessLabel );
+			compactnessPanel.add( compactnessText );
+			compactnessPanel.setToolTipText( "Compactness constraint parameter (values larger than 0 activate compact watershed)" );
+
 			// connectivity
 			if( inputIs2D )
 				connectivityOptions = new String[]{ "4", "8" };
@@ -403,6 +421,8 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 			segmentationPanel.setLayout( segmentationLayout );
 
 			segmentationPanel.add( damsPanel, segmentationConstraints );
+			segmentationConstraints.gridy++;
+			segmentationPanel.add( compactnessPanel, segmentationConstraints );
 			segmentationConstraints.gridy++;
 			segmentationPanel.add( connectivityPanel, segmentationConstraints );
 
@@ -735,10 +755,28 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 
 				// convert connectivity to 3D if needed (2D images are processed as 3D)
 				final int connectivity;
-				if( inputIs2D )
+				if( !inputIs2D )
 					connectivity = readConn == 4 ? 6 : 26;
 				else
 					connectivity = readConn;
+
+				// read dynamic
+				final double compactness;
+				try{
+					compactness = Double.parseDouble( compactnessText.getText() );
+				}
+				catch( NullPointerException ex )
+				{
+					IJ.error( "Interactive Marker-controlled Segmentation",
+							"ERROR: missing compactness value" );
+					return;
+				}
+				catch( NumberFormatException ex )
+				{
+					IJ.error( "Interactive Marker-controlled Segmentation",
+							"ERROR: compactness value must be a number" );
+					return;
+				}
 
 				// Set button text to "STOP"
 				segmentButton.setText( stopText );
@@ -886,14 +924,23 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 						{
 							markerStack.addSlice( markerSlice[n] );
 						}
-
-						markerStack = BinaryImages.componentsLabeling(
+						final ImagePlus marker;
+						if( !inputIs2D )
+						{
+							markerStack = BinaryImages.componentsLabeling(
 								markerStack, connectivity, 32 );
-						ImagePlus marker = new ImagePlus( "marker", markerStack );
+							marker = new ImagePlus( "marker", markerStack );
+						}
+						else
+						{
+							final ImageProcessor m = BinaryImages.componentsLabeling(
+									markerSlice[0], connectivity, 32 );
+							marker = new ImagePlus( "marker", m );
+						}
 
 						try{
 							resultImage = Watershed.computeWatershed( inputImage, marker, null,
-									connectivity, calculateDams, false );
+									connectivity, calculateDams, compactness, false );
 						}
 						catch( Exception ex )
 						{
