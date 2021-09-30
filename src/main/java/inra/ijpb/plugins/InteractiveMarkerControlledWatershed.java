@@ -730,8 +730,15 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 					|| ( inputImage.getImageStackSize() == 1 && (connectivity == 4  || connectivity == 8 ) ) )
 				connectivityList.setSelectedItem( Integer.toString(connectivity) );
 		}
-
-
+		/**
+		 * Set compactness value in the GUI
+		 *
+		 * @param compactness compactness constrain parameter (values larger than 0 imply using compact watershed)
+		 */
+		void setCompactness( double compactness )
+		{
+			compactnessText.setText( Double.toString(compactness) );
+		}
 		/**
 		 * Get segmentation command (text on the segment button)
 		 * @return text on the segment button when segmentation is not running
@@ -996,6 +1003,7 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 						// Record
 						String[] arg = new String[] {
 								"calculateDams=" + calculateDams,
+								"compactness=" + Double.toString( compactness ),
 								"connectivity=" + Integer.toString( readConn ) };
 						record( RUN_SEGMENTATION, arg );
 					}
@@ -1397,10 +1405,12 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 	 * Segment current image (GUI needs to be running)
 	 *
 	 * @param calculateDams string containing boolean flag to create dams (format: "calculateDams=[boolean])
+	 * @param compactness compactness constrain parameter (values larger than 0 imply using compact watershed)
 	 * @param connectivity string containing connectivity value (format: "connectivity=[4 or 8 / 6 or 26])
 	 */
 	public static void segment(
 			String calculateDams,
+			String compactness,
 			String connectivity )
 	{
 		final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
@@ -1408,6 +1418,7 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 		{
 			final CustomWindow win = (CustomWindow) iw;
 			win.setCalculateDams( calculateDams.contains( "true" ) );
+			win.setCompactness( Double.parseDouble( compactness.replace( "compactness=", "" ) ) );
 			win.setConnectivity( Integer.parseInt( connectivity.replace( "connectivity=", "" ) ) );
 			win.runSegmentation( win.getSegmentText() );
 		}
