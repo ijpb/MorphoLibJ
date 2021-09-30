@@ -997,7 +997,7 @@ public class MorphologicalSegmentation implements PlugIn {
 
 				// convert connectivity to 3D if needed (2D images are processed as 3D)
 				final int connectivity;
-				if( inputIs2D )
+				if( !inputIs2D )
 					connectivity = readConn == 4 ? 6 : 26;
 				else
 					connectivity = readConn;
