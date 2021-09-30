@@ -92,11 +92,17 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 		this.markerImage = marker;		
 	}
 	/**
-	 * Initialize a marker-controlled watershed transform
+	 * Initialize a marker-controlled watershed transform. If the compactness
+	 * constraint is larger than 0, the Compact Watershed algorithm
+	 * will be executed (Peer Neubert and Peter Protzel. "Compact
+	 * Watershed and Preemptive SLIC: On improving trade-offs of
+	 * superpixel segmentation algorithms." 22nd international
+	 * conference on pattern recognition. IEEE, 2014).
 	 *
 	 * @param input grayscale image (usually a gradient image)
 	 * @param marker image containing the labeled markers to start the watershed
 	 * @param mask binary mask to restrict the region of interest (null to use whole input image)
+	 * @param compactness compactness constrain parameter (values larger than 0 imply using compact watershed)
 	 */
 	public MarkerControlledWatershedTransform2D(
 			ImageProcessor input,
@@ -110,12 +116,18 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 	}
 	
 	/**
-	 * Initialize a marker-controlled watershed transform
+	 * Initialize a marker-controlled watershed transform. If the compactness
+	 * constraint is larger than 0, the Compact Watershed algorithm
+	 * will be executed (Peer Neubert and Peter Protzel. "Compact
+	 * Watershed and Preemptive SLIC: On improving trade-offs of
+	 * superpixel segmentation algorithms." 22nd international
+	 * conference on pattern recognition. IEEE, 2014).
 	 *
 	 * @param input grayscale image (usually a gradient image)
 	 * @param marker image containing the labeled markers to start the watershed
 	 * @param mask binary mask to restrict the region of interest (null to use whole input image)
 	 * @param connectivity pixel connectivity (4 or 8)
+	 * @param compactness compactness constrain parameter (values larger than 0 imply using compact watershed)
 	 */
 	public MarkerControlledWatershedTransform2D(
 			ImageProcessor input,
@@ -788,6 +800,9 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 
 		final ArrayList <PixelRecord> neighborPixels = new ArrayList<PixelRecord>();
 
+		// Compactness parameter
+		final double c = this.compactness;
+
 		// with mask
 		if ( null != maskImage )
 		{
@@ -813,12 +828,12 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 				// reset list of neighbor pixels
 				neighborPixels.clear();
 
-				for( Cursor2D c : neigh.getNeighbors() )
+				for( Cursor2D cur : neigh.getNeighbors() )
 				{
 					// Look in neighborhood for labeled pixels with
 					// smaller or equal original value
-					int u = c.getX();
-					int v = c.getY();
+					int u = cur.getX();
+					int v = cur.getY();
 
 					if ( u >= 0 && u < size1 && v >= 0 && v <  size2 )
 					{
@@ -827,9 +842,22 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 						if ( tabLabels[ u ][ v ] == INIT &&
 								maskImage.getf( u, v ) > 0 )
 						{
-							neighborPixels.add(
+							if( c == 0 ) // regular watershed
+								neighborPixels.add(
 									new PixelRecord(
-											c, inputImage.getf( u, v ) ) );
+											cur, inputImage.getf( u, v ) ) );
+							else // compact watershed
+							{
+								// update distance from seed
+								final double cDist2p = pixelRecord.getValue() - inputImage.getf( i, j );
+								final double cDist2cur = cDist2p + c * p.euclideanDistance( cur );
+
+								neighborPixels.add(
+										new PixelRecord(
+												cur,
+												inputImage.getf( u, v ) +
+												cDist2cur) );
+							}
 						}
 						else if ( tabLabels[ u ][ v ] > 0 &&
 								! neighborLabels.contains(tabLabels[ u ][ v ]) )
@@ -877,12 +905,12 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 				// reset list of neighbor pixels
 				neighborPixels.clear();
 
-				for( Cursor2D c : neigh.getNeighbors() )
+				for( Cursor2D cur : neigh.getNeighbors() )
 				{
 					// Look in neighborhood for labeled pixels with
 					// smaller or equal original value
-					int u = c.getX();
-					int v = c.getY();
+					int u = cur.getX();
+					int v = cur.getY();
 
 					if ( u >= 0 && u < size1 && v >= 0 && v <  size2 )
 					{
@@ -890,9 +918,22 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 						// there yet
 						if ( tabLabels[ u ][ v ] == INIT )
 						{
-							neighborPixels.add(
+							if( c == 0 ) // regular watershed
+								neighborPixels.add(
 									new PixelRecord(
-											c, inputImage.getf( u, v ) ) );
+											cur, inputImage.getf( u, v ) ) );
+							else // compact watershed
+							{
+								// update distance from seed
+								final double cDist2p = pixelRecord.getValue() - inputImage.getf( i, j );
+								final double cDist2cur = cDist2p + c * p.euclideanDistance( cur );
+
+								neighborPixels.add(
+										new PixelRecord(
+												cur,
+												inputImage.getf( u, v ) +
+												cDist2cur) );
+							}
 						}
 						else if ( tabLabels[ u ][ v ] > 0 &&
 								! neighborLabels.contains(tabLabels[ u ][ v ]) )
@@ -1462,7 +1503,10 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
       	final ArrayList <Integer> neighborLabels = new ArrayList<Integer>();
       	
       	final ArrayList <PixelRecord> neighborPixels = new ArrayList<PixelRecord>();
-      	
+
+      	// set compactness constraint value (if 0, regular watershed will be executed)
+      	final double c = this.compactness;
+
       	// with mask
       	if ( null != maskImage )
       	{
@@ -1497,19 +1541,34 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 		       	// reset list of neighbor pixels
 		       	neighborPixels.clear();
 		       	
-		       	for( Cursor2D c : neigh.getNeighbors() )			       		
+		       	for( Cursor2D cur : neigh.getNeighbors() )
 		       	{
 		       		// Look in neighborhood for labeled pixels with
 		       		// smaller or equal original value
-		       		int u = c.getX();
-		       		int v = c.getY();
+		       		int u = cur.getX();
+		       		int v = cur.getY();
 		       		
 		       		if ( u >= 0 && u < size1 && v >= 0 && v <  size2 )
 		       		{
 		       			// Unlabeled neighbors go into the queue if they are not there yet 
 		       			if ( tabLabels[ u ][ v ] == INIT && maskImage.getf( u, v ) > 0 )
 		       			{
-		       				neighborPixels.add( new PixelRecord( c, inputImage.getf( u, v ) ) );
+		       				if( c == 0 ) // regular watershed
+								neighborPixels.add(
+									new PixelRecord(
+											cur, inputImage.getf( u, v ) ) );
+							else // compact watershed
+							{
+								// update distance from seed
+								final double cDist2p = pixelRecord.getValue() - inputImage.getf( i, j );
+								final double cDist2cur = cDist2p + c * p.euclideanDistance( cur );
+
+								neighborPixels.add(
+										new PixelRecord(
+												cur,
+												inputImage.getf( u, v ) +
+												cDist2cur) );
+							}
       					}
       					else if ( tabLabels[ u ][ v ] > 0 
       							&& neighborLabels.contains(tabLabels[ u ][ v ]) == false)
@@ -1563,18 +1622,33 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 		       	neighborPixels.clear();
       			
 		       	// Read neighbor coordinates
-      			for( Cursor2D c : neigh.getNeighbors() )			       		
+		       	for( Cursor2D cur : neigh.getNeighbors() )
       			{      				      				
       				// Look in neighborhood for labeled pixels with
       				// smaller or equal original value
-      				int u = c.getX();
-      				int v = c.getY();
+		       		int u = cur.getX();
+		       		int v = cur.getY();
       				if ( u >= 0 && u < size1 && v >= 0 && v <  size2 )
       				{
       					// Unlabeled neighbors go into the queue if they are not there yet 
       					if ( tabLabels[ u ][ v ] == INIT )
       					{
- 		       				neighborPixels.add( new PixelRecord( c, inputImage.getf( u, v ) ) );
+      						if( c == 0 ) // regular watershed
+								neighborPixels.add(
+									new PixelRecord(
+											cur, inputImage.getf( u, v ) ) );
+							else // compact watershed
+							{
+								// update distance from seed
+								final double cDist2p = pixelRecord.getValue() - inputImage.getf( i, j );
+								final double cDist2cur = cDist2p + c * p.euclideanDistance( cur );
+
+								neighborPixels.add(
+										new PixelRecord(
+												cur,
+												inputImage.getf( u, v ) +
+												cDist2cur) );
+							}
       					}
       					else if ( tabLabels[ u ][ v ] > 0 
       							&& neighborLabels.contains(tabLabels[ u ][ v ]) == false)
@@ -1652,7 +1726,9 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
       	// Check connectivity
        	final Neighborhood2D neigh = connectivity == 8 ? 
        			new Neighborhood2DC8() : new Neighborhood2DC4();
-	    
+
+       	final double c = this.compactness;
+
 		if( null != maskImage ) // apply mask
 		{
 			for( int x = 0; x < size1; ++x )
@@ -1666,17 +1742,22 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 							neigh.setCursor( cursor );
 
 							// add unlabeled neighbors to priority queue
-							for( Cursor2D c : neigh.getNeighbors() )			       		
+							for( Cursor2D cur : neigh.getNeighbors() )
 							{
-								int u = c.getX();
-								int v = c.getY();
+								int u = cur.getX();
+								int v = cur.getY();
 
 								if ( u >= 0 && u < size1 && 
 										v >= 0 && v < size2 && 
 										(int) seedImage.getf( u, v ) == 0 &&
 										tabLabels[ u ][ v ] != INQUEUE )															 
 								{
-									pixelList.add( new PixelRecord( u, v, inputImage.getf( u, v ) ) );
+									if( c == 0 )
+										pixelList.add( new PixelRecord( u, v, inputImage.getf( u, v ) ) );
+									else
+										pixelList.add( new PixelRecord( u, v,
+												inputImage.getf( u, v )
+												+ c * cursor.euclideanDistance(cur) ) );
 									tabLabels[ u ][ v ] = INQUEUE;
 								}
 
@@ -1697,16 +1778,21 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 						neigh.setCursor( cursor );
 
 						// add unlabeled neighbors to priority queue
-						for( Cursor2D c : neigh.getNeighbors() )			       		
+						for( Cursor2D cur : neigh.getNeighbors() )
 						{
-							int u = c.getX();
-							int v = c.getY();
+							int u = cur.getX();
+							int v = cur.getY();
 							if ( u >= 0 && u < size1 && 
 									v >= 0 && v < size2 && 
 									(int) seedImage.getf( u, v ) == 0 &&
 									tabLabels[ u ][ v ] != INQUEUE )															 
 							{
-								pixelList.add( new PixelRecord( u, v, inputImage.getf( u, v ) ) );
+								if( c == 0 )
+									pixelList.add( new PixelRecord( u, v, inputImage.getf( u, v ) ) );
+								else
+									pixelList.add( new PixelRecord( u, v,
+											inputImage.getf( u, v )
+											+ c * cursor.euclideanDistance(cur) ) );
 								tabLabels[ u ][ v ] = INQUEUE;
 							}
 
