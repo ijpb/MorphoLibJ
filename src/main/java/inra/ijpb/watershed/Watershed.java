@@ -311,7 +311,80 @@ public class Watershed
 		else
 			return null;
 	}
+	/**
+	 * Compute watershed with markers with an optional binary mask
+	 * to restrict the regions of application. If the compactness
+	 * constraint is larger than 0, the Compact Watershed algorithm
+	 * will be executed (Peer Neubert and Peter Protzel. "Compact
+	 * Watershed and Preemptive SLIC: On improving trade-offs of
+	 * superpixel segmentation algorithms." 22nd international
+	 * conference on pattern recognition. IEEE, 2014).
+	 *
+	 * @param input original grayscale image (usually a gradient image)
+	 * @param marker image with labeled markers
+	 * @param binaryMask binary mask to restrict the regions of interest
+	 * @param connectivity voxel connectivity to define neighborhoods (4 or 8 for 2D, 6 or 26 for 3D)
+	 * @param getDams select/deselect the calculation of dams
+	 * @param compactness compactness constrain parameter (values larger than 0 involve using compact watershed)
+	 * @param verbose flag to display messages in the log window
+	 * @return image of labeled catchment basins (labels are 1, 2, ...)
+	 */
+	public static ImagePlus computeWatershed(
+			ImagePlus input,
+			ImagePlus marker,
+			ImagePlus binaryMask,
+			int connectivity,
+			boolean getDams,
+			double compactness,
+			boolean verbose )
+	{
+		if( connectivity == 6 || connectivity == 26 )
+		{
+			MarkerControlledWatershedTransform3D wt =
+					new MarkerControlledWatershedTransform3D( input, marker,
+							binaryMask, connectivity );
+			wt.setVerbose( verbose );
+			if( getDams )
+				return wt.applyWithPriorityQueueAndDams();
+			else
+				return wt.applyWithPriorityQueue();
+		}
+		else if( connectivity == 4 || connectivity == 8 )
+		{
+			MarkerControlledWatershedTransform2D wt =
+					new MarkerControlledWatershedTransform2D(
+							input.getProcessor(), marker.getProcessor(),
+							null != binaryMask ? binaryMask.getProcessor() :
+								null, connectivity, compactness );
+			wt.setVerbose( verbose );
+			ImageProcessor ip;
 
+			if( getDams )
+				ip = wt.applyWithPriorityQueueAndDams();
+			else
+				ip = wt.applyWithPriorityQueue();
+
+			if( null != ip )
+			{
+				String title = input.getTitle();
+				String ext = "";
+				int index = title.lastIndexOf( "." );
+				if( index != -1 )
+				{
+					ext = title.substring( index );
+					title = title.substring( 0, index );
+				}
+
+				final ImagePlus ws = new ImagePlus( title + "-watershed" + ext, ip );
+				ws.setCalibration( input.getCalibration() );
+				return ws;
+			}
+			else
+				return null;
+		}
+		else
+			return null;
+	}
 	/**
 	 * Compute watershed with markers with an optional binary mask
 	 * to restrict the regions of application.
