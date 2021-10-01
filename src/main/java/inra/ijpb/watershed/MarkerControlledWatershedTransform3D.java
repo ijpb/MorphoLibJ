@@ -480,203 +480,203 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 		final Neighborhood3D neigh = connectivity == 26 ?
 				new Neighborhood3DC26() : new Neighborhood3DC6();
 
-				final int count = voxelList.size();
-				if( verbose ) IJ.log( "  Flooding from " + count + " voxels..." );
-				IJ.showStatus("Flooding from " + count + " voxels...");
+		final int count = voxelList.size();
+		if( verbose ) IJ.log( "  Flooding from " + count + " voxels..." );
+		IJ.showStatus("Flooding from " + count + " voxels...");
 
-				final double[] extent = Images3D.findMinAndMax(inputImage);
-				double maxValue = extent[ 1 ];
+		final double[] extent = Images3D.findMinAndMax(inputImage);
+		double maxValue = extent[ 1 ];
 
-				// list to store neighbor labels
-				final ArrayList <Integer> neighborLabels = new ArrayList<Integer>();
-				// list to store neighbor voxels
-				final ArrayList <VoxelRecord> neighborVoxels =
-						new ArrayList<VoxelRecord>();
+		// list to store neighbor labels
+		final ArrayList <Integer> neighborLabels = new ArrayList<Integer>();
+		// list to store neighbor voxels
+		final ArrayList <VoxelRecord> neighborVoxels =
+				new ArrayList<VoxelRecord>();
 
-				// Compactness parameter
-				final double c = this.compactness;
+		// Compactness parameter
+		final double c = this.compactness;
 
-				// with mask
-				if ( null != maskImage )
+		// with mask
+		if ( null != maskImage )
+		{
+			final ImageStack maskStack = maskImage.getStack();
+
+			while ( voxelList.isEmpty() == false )
+			{
+				if ( Thread.currentThread().isInterrupted() )
+					return null;
+
+				final VoxelRecord voxelRecord = voxelList.poll();
+				// show progression along voxel values
+				IJ.showProgress( (voxelRecord.getValue() + 1) / (maxValue + 1));
+
+				final Cursor3D p = voxelRecord.getCursor();
+				final int i = p.getX();
+				final int j = p.getY();
+				final int k = p.getZ();
+
+				// Set cursor of neighborhood in voxel of interest
+				neigh.setCursor( p );
+
+				// reset list of neighbor labels
+				neighborLabels.clear();
+
+				// reset list of neighbor voxels
+				neighborVoxels.clear();
+
+				// Read neighbor coordinates
+				for( Cursor3D cur : neigh.getNeighbors() )
 				{
-					final ImageStack maskStack = maskImage.getStack();
+					// Look in neighborhood
+					int u = cur.getX();
+					int v = cur.getY();
+					int w = cur.getZ();
 
-					while ( voxelList.isEmpty() == false )
+					if ( u >= 0 && u < size1 && v >= 0 && v < size2 && w >= 0 && w < size3 )
 					{
-						if ( Thread.currentThread().isInterrupted() )
-							return null;
-
-						final VoxelRecord voxelRecord = voxelList.poll();
-						// show progression along voxel values
-						IJ.showProgress( (voxelRecord.getValue() + 1) / (maxValue + 1));
-
-						final Cursor3D p = voxelRecord.getCursor();
-						final int i = p.getX();
-						final int j = p.getY();
-						final int k = p.getZ();
-
-						// Set cursor of neighborhood in voxel of interest
-						neigh.setCursor( p );
-
-						// reset list of neighbor labels
-						neighborLabels.clear();
-
-						// reset list of neighbor voxels
-						neighborVoxels.clear();
-
-						// Read neighbor coordinates
-						for( Cursor3D cur : neigh.getNeighbors() )
+						// Unlabeled neighbors go into the queue if they are not
+						// there yet
+						if ( tabLabels[u][v][w] == INIT &&
+								maskStack.getVoxel( u, v, w ) > 0 )
 						{
-							// Look in neighborhood
-							int u = cur.getX();
-							int v = cur.getY();
-							int w = cur.getZ();
-
-							if ( u >= 0 && u < size1 && v >= 0 && v < size2 && w >= 0 && w < size3 )
+							if( c == 0 ) // regular watershed
+								neighborVoxels.add( new VoxelRecord( cur, inputStack.getVoxel( u, v, w ) ) );
+							else // compact watershed
 							{
-								// Unlabeled neighbors go into the queue if they are not
-								// there yet
-								if ( tabLabels[u][v][w] == INIT &&
-										maskStack.getVoxel( u, v, w ) > 0 )
-								{
-									if( c == 0 ) // regular watershed
-		      							neighborVoxels.add( new VoxelRecord( cur, inputStack.getVoxel( u, v, w ) ) );
-		      						else // compact watershed
-		      						{
-		      							// update distance from seed
-										final double cDist2p = voxelRecord.getValue() - inputStack.getVoxel( i, j, k );
-										final double cDist2cur = cDist2p + c * p.euclideanDistance( cur );
-										neighborVoxels.add(
-												new VoxelRecord(
-														cur,
-														inputStack.getVoxel( u, v, w )
-														+ cDist2cur ) );
-		      						}
-								}
-								else if ( tabLabels[u][v][w] > 0 &&
-										! neighborLabels.contains(
-												tabLabels[ u ][ v ][ w ] ) )
-								{
-									// store labels of neighbors in a list
-									neighborLabels.add( tabLabels[ u ][ v ][ w ] );
-								}
+								// update distance from seed
+								final double cDist2p = voxelRecord.getValue() - inputStack.getVoxel( i, j, k );
+								final double cDist2cur = cDist2p + c * p.euclideanDistance( cur );
+								neighborVoxels.add(
+										new VoxelRecord(
+												cur,
+												inputStack.getVoxel( u, v, w )
+												+ cDist2cur ) );
 							}
 						}
-						if( neighborLabels.size() > 0 )
+						else if ( tabLabels[u][v][w] > 0 &&
+								! neighborLabels.contains(
+										tabLabels[ u ][ v ][ w ] ) )
 						{
-							tabLabels[ i ][ j ][ k ] = neighborLabels.get( 0 );
-							// now that we know the voxel is labeled, add neighbors to list
-							for( VoxelRecord v : neighborVoxels )
-							{
-								tabLabels[ v.getCursor().getX() ][ v.getCursor().getY() ][ v.getCursor().getZ() ] = INQUEUE;
-								voxelList.add( v );
-							}
+							// store labels of neighbors in a list
+							neighborLabels.add( tabLabels[ u ][ v ][ w ] );
 						}
 					}
 				}
-				else // without mask
+				if( neighborLabels.size() > 0 )
 				{
-					while ( voxelList.isEmpty() == false )
+					tabLabels[ i ][ j ][ k ] = neighborLabels.get( 0 );
+					// now that we know the voxel is labeled, add neighbors to list
+					for( VoxelRecord v : neighborVoxels )
 					{
-						if ( Thread.currentThread().isInterrupted() )
-							return null;
+						tabLabels[ v.getCursor().getX() ][ v.getCursor().getY() ][ v.getCursor().getZ() ] = INQUEUE;
+						voxelList.add( v );
+					}
+				}
+			}
+		}
+		else // without mask
+		{
+			while ( voxelList.isEmpty() == false )
+			{
+				if ( Thread.currentThread().isInterrupted() )
+					return null;
 
-						final VoxelRecord voxelRecord = voxelList.poll();
-						// show progression along voxel values
-						IJ.showProgress( (voxelRecord.getValue() + 1) / (maxValue + 1));
+				final VoxelRecord voxelRecord = voxelList.poll();
+				// show progression along voxel values
+				IJ.showProgress( (voxelRecord.getValue() + 1) / (maxValue + 1));
 
-						final Cursor3D p = voxelRecord.getCursor();
-						final int i = p.getX();
-						final int j = p.getY();
-						final int k = p.getZ();
+				final Cursor3D p = voxelRecord.getCursor();
+				final int i = p.getX();
+				final int j = p.getY();
+				final int k = p.getZ();
 
-						// Set cursor of neighborhood in voxel of interest
-						neigh.setCursor( p );
+				// Set cursor of neighborhood in voxel of interest
+				neigh.setCursor( p );
 
-						// reset list of neighbor labels
-						neighborLabels.clear();
+				// reset list of neighbor labels
+				neighborLabels.clear();
 
-						// reset list of neighbor voxels
-						neighborVoxels.clear();
+				// reset list of neighbor voxels
+				neighborVoxels.clear();
 
-						// Read neighbor coordinates
-						for( Cursor3D cur : neigh.getNeighbors() )
+				// Read neighbor coordinates
+				for( Cursor3D cur : neigh.getNeighbors() )
+				{
+					// Look in neighborhood for labeled voxels with
+					// smaller or equal original value
+					int u = cur.getX();
+					int v = cur.getY();
+					int w = cur.getZ();
+					if ( u >= 0 && u < size1 && v >= 0 && v < size2 && w >= 0 && w < size3 )
+					{
+						// Unlabeled neighbors go into the queue if they are not there yet
+						if (tabLabels[ u ][ v ][ w ] == INIT )
 						{
-							// Look in neighborhood for labeled voxels with
-							// smaller or equal original value
-							int u = cur.getX();
-							int v = cur.getY();
-							int w = cur.getZ();
-							if ( u >= 0 && u < size1 && v >= 0 && v < size2 && w >= 0 && w < size3 )
+							if( c == 0 ) // regular watershed
+								neighborVoxels.add( new VoxelRecord( cur, inputStack.getVoxel( u, v, w ) ) );
+							else // compact watershed
 							{
-								// Unlabeled neighbors go into the queue if they are not there yet
-								if (tabLabels[ u ][ v ][ w ] == INIT )
-								{
-									if( c == 0 ) // regular watershed
-		      							neighborVoxels.add( new VoxelRecord( cur, inputStack.getVoxel( u, v, w ) ) );
-		      						else // compact watershed
-		      						{
-		      							// update distance from seed
-										final double cDist2p = voxelRecord.getValue() - inputStack.getVoxel( i, j, k );
-										final double cDist2cur = cDist2p + c * p.euclideanDistance( cur );
-										neighborVoxels.add(
-												new VoxelRecord(
-														cur,
-														inputStack.getVoxel( u, v, w )
-														+ cDist2cur ) );
-		      						}
-								}
-								else if (  tabLabels[ u ][ v ][ w ] > 0 &&
-										! neighborLabels.contains(tabLabels[ u ][ v ][ w ]) )
-								{
-									// store labels of neighbors in a list without
-									// repetitions
-									neighborLabels.add( tabLabels[ u ][ v ][ w ] );
-								}
+								// update distance from seed
+								final double cDist2p = voxelRecord.getValue() - inputStack.getVoxel( i, j, k );
+								final double cDist2cur = cDist2p + c * p.euclideanDistance( cur );
+								neighborVoxels.add(
+										new VoxelRecord(
+												cur,
+												inputStack.getVoxel( u, v, w )
+												+ cDist2cur ) );
 							}
 						}
-
-						if( neighborLabels.size() > 0 )
+						else if (  tabLabels[ u ][ v ][ w ] > 0 &&
+								! neighborLabels.contains(tabLabels[ u ][ v ][ w ]) )
 						{
-							tabLabels[ i ][ j ][ k ] = neighborLabels.get( 0 );
-							// now that we know the voxel is labeled, add neighbors to
-							// list
-							for( VoxelRecord v : neighborVoxels )
-							{
-								tabLabels[ v.getCursor().getX() ][ v.getCursor().getY() ][ v.getCursor().getZ() ] = INQUEUE;
-								voxelList.add( v );
-							}
+							// store labels of neighbors in a list without
+							// repetitions
+							neighborLabels.add( tabLabels[ u ][ v ][ w ] );
 						}
 					}
 				}
 
-				final long end = System.currentTimeMillis();
-				if( verbose ) IJ.log("  Flooding took: " + (end-start) + " ms");
-				IJ.showProgress( 1.0 );
-
-				// Create result label image
-				ImageStack labelStack = markerImage.duplicate().getStack();
-
-				for (int i = 0; i < size1; ++i)
-					for (int j = 0; j < size2; ++j)
-						for (int k = 0; k < size3; ++k)
-							if( tabLabels[ i ][ j ][ k ] == INIT ) // set unlabeled voxels to WSHED
-								labelStack.setVoxel( i, j, k, 0 );
-							else
-								labelStack.setVoxel( i, j, k, tabLabels[ i ][ j ][ k ] );
-
-				String title = inputImage.getTitle();
-				String ext = "";
-				int index = title.lastIndexOf( "." );
-				if( index != -1 )
+				if( neighborLabels.size() > 0 )
 				{
-					ext = title.substring( index );
-					title = title.substring( 0, index );
+					tabLabels[ i ][ j ][ k ] = neighborLabels.get( 0 );
+					// now that we know the voxel is labeled, add neighbors to
+					// list
+					for( VoxelRecord v : neighborVoxels )
+					{
+						tabLabels[ v.getCursor().getX() ][ v.getCursor().getY() ][ v.getCursor().getZ() ] = INQUEUE;
+						voxelList.add( v );
+					}
 				}
+			}
+		}
 
-				final ImagePlus ws = new ImagePlus( title + "-watershed" + ext, labelStack );
-				ws.setCalibration( inputImage.getCalibration() );
-				return ws;
+		final long end = System.currentTimeMillis();
+		if( verbose ) IJ.log("  Flooding took: " + (end-start) + " ms");
+		IJ.showProgress( 1.0 );
+
+		// Create result label image
+		ImageStack labelStack = markerImage.duplicate().getStack();
+
+		for (int i = 0; i < size1; ++i)
+			for (int j = 0; j < size2; ++j)
+				for (int k = 0; k < size3; ++k)
+					if( tabLabels[ i ][ j ][ k ] == INIT ) // set unlabeled voxels to WSHED
+						labelStack.setVoxel( i, j, k, 0 );
+					else
+						labelStack.setVoxel( i, j, k, tabLabels[ i ][ j ][ k ] );
+
+		String title = inputImage.getTitle();
+		String ext = "";
+		int index = title.lastIndexOf( "." );
+		if( index != -1 )
+		{
+			ext = title.substring( index );
+			title = title.substring( 0, index );
+		}
+
+		final ImagePlus ws = new ImagePlus( title + "-watershed" + ext, labelStack );
+		ws.setCalibration( inputImage.getCalibration() );
+		return ws;
 	}
 
 	/**
