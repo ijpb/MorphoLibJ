@@ -342,7 +342,7 @@ public class Watershed
 		{
 			MarkerControlledWatershedTransform3D wt =
 					new MarkerControlledWatershedTransform3D( input, marker,
-							binaryMask, connectivity );
+							binaryMask, connectivity, compactness );
 			wt.setVerbose( verbose );
 			if( getDams )
 				return wt.applyWithPriorityQueueAndDams();
