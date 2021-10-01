@@ -95,18 +95,18 @@ public class PixelRecord implements Comparable<PixelRecord>{
 	/**
 	 * Compare with a pixel record based on its value and
 	 * timestamp
-	 * @param v2 pixel record to compare with
-	 * @return a value smaller than 0 if the v2 pixel value is
+	 * @param p2 pixel record to compare with
+	 * @return a value smaller than 0 if the p2 pixel value is
 	 * 			larger this pixel record value, a value larger
 	 * 			than 0 if it is lower. If equal, the records
 	 * 			created before are set as smaller.  
 	 */
 	@Override
-	public int compareTo( PixelRecord v2 ) 
+	public int compareTo( PixelRecord p2 )
 	{
-		int res = Double.compare( value, v2.value );
+		int res = Double.compare( value, p2.value );
 		if( res == 0 )
-			res = (seqNum < v2.seqNum ? -1 : 1);
+			res = (seqNum < p2.seqNum ? -1 : 1);
 		
 		return res;
 	}
