@@ -44,8 +44,12 @@ import inra.ijpb.data.image.Images3D;
 /**
  * Marker-controlled version of the watershed transform (works for 2D and 3D images).
  * 
- * Reference: Fernand Meyer and Serge Beucher. "Morphological segmentation." 
- * Journal of visual communication and image representation 1.1 (1990): 21-46.
+ * References:
+ * [1] Fernand Meyer and Serge Beucher. "Morphological segmentation."
+ *     Journal of visual communication and image representation 1.1 (1990): 21-46.
+ * [2] Peer Neubert and Peter Protzel. "Compact Watershed and Preemptive SLIC:
+ *     On improving trade-offs of superpixel segmentation algorithms."
+ *     22nd international conference on pattern recognition. IEEE, 2014.
  * 
  * @author Ignacio Arganda-Carreras
  *
@@ -54,6 +58,8 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 {
 	/** image containing the labeled markers to start the watershed */
 	ImagePlus markerImage = null;
+	/** compactness constraint, parameter c in Compact Watershed algorithm [2] */
+	double compactness = 0.0;
 
 	/**
 	 * Initialize a marker-controlled watershed transform
@@ -88,7 +94,26 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 		super( input, mask, connectivity );
 		this.markerImage = marker;		
 	}
-	
+	/**
+	 * Initialize a marker-controlled watershed transform
+	 *
+	 * @param input grayscale image (usually a gradient image)
+	 * @param marker image containing the labeled markers to start the watershed
+	 * @param mask binary mask to restrict the region of interest (null to use whole input image)
+	 * @param connectivity voxel connectivity (6 or 26)
+	 * @param compactness compactness constrain parameter (values larger than 0 imply using compact watershed)
+	 */
+	public MarkerControlledWatershedTransform3D(
+			ImagePlus input,
+			ImagePlus marker,
+			ImagePlus mask,
+			int connectivity,
+			double compactness )
+	{
+		super( input, mask, connectivity );
+		this.markerImage = marker;
+		this.compactness = compactness;
+	}
 	/**
 	 * Apply watershed transform on inputImage, using the labeled 
 	 * markers from markerImage and restricted to the white areas 
@@ -468,6 +493,9 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 				final ArrayList <VoxelRecord> neighborVoxels =
 						new ArrayList<VoxelRecord>();
 
+				// Compactness parameter
+				final double c = this.compactness;
+
 				// with mask
 				if ( null != maskImage )
 				{
@@ -497,12 +525,12 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 						neighborVoxels.clear();
 
 						// Read neighbor coordinates
-						for( Cursor3D c : neigh.getNeighbors() )
+						for( Cursor3D cur : neigh.getNeighbors() )
 						{
 							// Look in neighborhood
-							int u = c.getX();
-							int v = c.getY();
-							int w = c.getZ();
+							int u = cur.getX();
+							int v = cur.getY();
+							int w = cur.getZ();
 
 							if ( u >= 0 && u < size1 && v >= 0 && v < size2 && w >= 0 && w < size3 )
 							{
@@ -511,9 +539,19 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 								if ( tabLabels[u][v][w] == INIT &&
 										maskStack.getVoxel( u, v, w ) > 0 )
 								{
-									neighborVoxels.add(
-											new VoxelRecord(
-													c, inputStack.getVoxel( u, v, w ) ) );
+									if( c == 0 ) // regular watershed
+		      							neighborVoxels.add( new VoxelRecord( cur, inputStack.getVoxel( u, v, w ) ) );
+		      						else // compact watershed
+		      						{
+		      							// update distance from seed
+										final double cDist2p = voxelRecord.getValue() - inputStack.getVoxel( i, j, k );
+										final double cDist2cur = cDist2p + c * p.euclideanDistance( cur );
+										neighborVoxels.add(
+												new VoxelRecord(
+														cur,
+														inputStack.getVoxel( u, v, w )
+														+ cDist2cur ) );
+		      						}
 								}
 								else if ( tabLabels[u][v][w] > 0 &&
 										! neighborLabels.contains(
@@ -562,21 +600,31 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 						neighborVoxels.clear();
 
 						// Read neighbor coordinates
-						for( Cursor3D c : neigh.getNeighbors() )
+						for( Cursor3D cur : neigh.getNeighbors() )
 						{
 							// Look in neighborhood for labeled voxels with
 							// smaller or equal original value
-							int u = c.getX();
-							int v = c.getY();
-							int w = c.getZ();
+							int u = cur.getX();
+							int v = cur.getY();
+							int w = cur.getZ();
 							if ( u >= 0 && u < size1 && v >= 0 && v < size2 && w >= 0 && w < size3 )
 							{
 								// Unlabeled neighbors go into the queue if they are not there yet
 								if (tabLabels[ u ][ v ][ w ] == INIT )
 								{
-									neighborVoxels.add(
-											new VoxelRecord(
-													c, inputStack.getVoxel( u, v, w ) ) );
+									if( c == 0 ) // regular watershed
+		      							neighborVoxels.add( new VoxelRecord( cur, inputStack.getVoxel( u, v, w ) ) );
+		      						else // compact watershed
+		      						{
+		      							// update distance from seed
+										final double cDist2p = voxelRecord.getValue() - inputStack.getVoxel( i, j, k );
+										final double cDist2cur = cDist2p + c * p.euclideanDistance( cur );
+										neighborVoxels.add(
+												new VoxelRecord(
+														cur,
+														inputStack.getVoxel( u, v, w )
+														+ cDist2cur ) );
+		      						}
 								}
 								else if (  tabLabels[ u ][ v ][ w ] > 0 &&
 										! neighborLabels.contains(tabLabels[ u ][ v ][ w ]) )
@@ -723,7 +771,10 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
       	final ArrayList <Integer> neighborLabels = new ArrayList<Integer>();
       	
       	final ArrayList <VoxelRecord> neighborVoxels = new ArrayList<VoxelRecord>();
-      	
+
+      	// set compactness constraint value (if 0, regular watershed will be executed)
+      	final double c = this.compactness;
+
       	// with mask
       	if ( null != maskImage )
       	{
@@ -757,22 +808,32 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 		       	// reset list of neighbor voxels
 		       	neighborVoxels.clear();
 		       	
-		       	for( Cursor3D c : neigh.getNeighbors() )			       		
+		       	for( Cursor3D cur : neigh.getNeighbors() )
 		       	{
 		       		// Look in neighborhood for labeled voxels with
 		       		// smaller or equal original value
-		       		int u = c.getX();
-		       		int v = c.getY();
-		       		int w = c.getZ();
+		       		int u = cur.getX();
+		       		int v = cur.getY();
+		       		int w = cur.getZ();
 		       		
 		       		if ( u >= 0 && u < size1 && v >= 0 && v < size2 && w >= 0 && w < size3 )
 		       		{
 		       			// Unlabeled neighbors go into the queue if they are not there yet 
 		       			if ( tabLabels[u][v][w] == INIT && maskStack.getVoxel(u, v, w) > 0 )
 		       			{
-      						//voxelList.add( new VoxelRecord( c, inputStack.getVoxel( u, v, w ) ));
-      						//tabLabels[u][v][w] = INQUEUE;
-		       				neighborVoxels.add( new VoxelRecord( c, inputStack.getVoxel( u, v, w ) ) );
+      						if( c == 0 ) // regular watershed
+      							neighborVoxels.add( new VoxelRecord( cur, inputStack.getVoxel( u, v, w ) ) );
+      						else // compact watershed
+      						{
+      							// update distance from seed
+								final double cDist2p = voxelRecord.getValue() - inputStack.getVoxel( i, j, k );
+								final double cDist2cur = cDist2p + c * p.euclideanDistance( cur );
+								neighborVoxels.add(
+										new VoxelRecord(
+												cur,
+												inputStack.getVoxel( u, v, w )
+												+ cDist2cur ) );
+      						}
       					}
       					else if ( tabLabels[ u ][ v ][ w ] > 0 
       							&& neighborLabels.contains(tabLabels[ u ][ v ][ w ]) == false)
@@ -826,21 +887,31 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 		       	neighborVoxels.clear();
       			
 		       	// Read neighbor coordinates
-      			for( Cursor3D c : neigh.getNeighbors() )			       		
+      			for( Cursor3D cur : neigh.getNeighbors() )
       			{      				      				
       				// Look in neighborhood for labeled voxels with
       				// smaller or equal original value
-      				int u = c.getX();
-      				int v = c.getY();
-      				int w = c.getZ();
+      				int u = cur.getX();
+      				int v = cur.getY();
+      				int w = cur.getZ();
       				if ( u >= 0 && u < size1 && v >= 0 && v < size2 && w >= 0 && w < size3 )
       				{
       					// Unlabeled neighbors go into the queue if they are not there yet 
       					if ( tabLabels[ u ][ v ][ w ] == INIT )
       					{
-      						//voxelList.add( new VoxelRecord( c, inputStack.getVoxel( u, v, w ) ));
-      						//tabLabels[u][v][w] = INQUEUE;
-		       				neighborVoxels.add( new VoxelRecord( c, inputStack.getVoxel( u, v, w ) ) );
+      						if( c == 0 ) // regular watershed
+      							neighborVoxels.add( new VoxelRecord( cur, inputStack.getVoxel( u, v, w ) ) );
+      						else // compact watershed
+      						{
+      							// update distance from seed
+								final double cDist2p = voxelRecord.getValue() - inputStack.getVoxel( i, j, k );
+								final double cDist2cur = cDist2p + c * p.euclideanDistance( cur );
+								neighborVoxels.add(
+										new VoxelRecord(
+												cur,
+												inputStack.getVoxel( u, v, w )
+												+ cDist2cur ) );
+      						}
       					}
       					else if ( tabLabels[ u ][ v ][ w ] > 0 
       							&& neighborLabels.contains(tabLabels[ u ][ v ][ w ]) == false)
@@ -937,7 +1008,9 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
       	// Check connectivity
        	final Neighborhood3D neigh = connectivity == 26 ? 
        			new Neighborhood3DC26() : new Neighborhood3DC6();
-	    
+
+       	final double c = this.compactness;
+
 		if( null != maskImage ) // apply mask
 		{
 			final ImageStack mask = maskImage.getImageStack();
@@ -966,18 +1039,22 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 								neigh.setCursor( cursor );
 
 								// add unlabeled neighbors to priority queue
-								for( Cursor3D c : neigh.getNeighbors() )			       		
+								for( Cursor3D cur : neigh.getNeighbors() )
 								{
-									int u = c.getX();
-									int v = c.getY();
-									int w = c.getZ();
+									int u = cur.getX();
+									int v = cur.getY();
+									int w = cur.getZ();
 									if ( u >= 0 && u < size1 && 
 											v >= 0 && v < size2 && 
 											w >= 0 && w < size3 &&
 											(int) seedStack.getVoxel( u, v, w ) == 0 &&
 											tabLabels[ u ][ v ][ w ] != INQUEUE )															 
 									{
-										voxelList.add( new VoxelRecord( u, v, w, inputStack.getVoxel( u, v, w ) ) );
+										if( c == 0 )
+											voxelList.add( new VoxelRecord( u, v, w, inputStack.getVoxel( u, v, w ) ) );
+										else
+											voxelList.add( new VoxelRecord( u, v, w,
+													inputStack.getVoxel( u, v, w ) + c * cursor.euclideanDistance(cur)) );
 										tabLabels[ u ][ v ][ w ] = INQUEUE;
 									}
 
@@ -1011,18 +1088,22 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 							neigh.setCursor( cursor );
 
 							// add unlabeled neighbors to priority queue
-							for( Cursor3D c : neigh.getNeighbors() )			       		
+							for( Cursor3D cur : neigh.getNeighbors() )
 							{
-								int u = c.getX();
-								int v = c.getY();
-								int w = c.getZ();
+								int u = cur.getX();
+								int v = cur.getY();
+								int w = cur.getZ();
 								if ( u >= 0 && u < size1 && 
 										v >= 0 && v < size2 && 
 										w >= 0 && w < size3 &&
 										(int) seedStack.getVoxel( u, v, w ) == 0 &&
 										tabLabels[ u ][ v ][ w ] != INQUEUE )															 
 								{
-									voxelList.add( new VoxelRecord( u, v, w, inputStack.getVoxel( u, v, w ) ) );
+									if( c == 0 )
+										voxelList.add( new VoxelRecord( u, v, w, inputStack.getVoxel( u, v, w ) ) );
+									else
+										voxelList.add( new VoxelRecord( u, v, w,
+												inputStack.getVoxel( u, v, w ) + c * cursor.euclideanDistance(cur)) );
 									tabLabels[ u ][ v ][ w ] = INQUEUE;
 								}
 
