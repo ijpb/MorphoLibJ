@@ -1262,8 +1262,12 @@ public class MorphologicalSegmentation implements PlugIn {
 						// Adjust min and max values to display
 						Images3D.optimizeDisplayRange( resultImage );
 
-						byte[][] colorMap = CommonLabelMaps.fromLabel( CommonLabelMaps.GOLDEN_ANGLE.getLabel() ).computeLut( 255, false );
-						ColorModel cm = ColorMaps.createColorModel(colorMap, Color.BLACK);
+						byte[][] colorMap = CommonLabelMaps.fromLabel(
+								CommonLabelMaps.GOLDEN_ANGLE.getLabel() ).computeLut(
+										calculateDams ? 255 : 256, false );
+						ColorModel cm = calculateDams ?
+								ColorMaps.createColorModel(colorMap, Color.BLACK)
+								: ColorMaps.createColorModel(colorMap);
 						resultImage.getProcessor().setColorModel(cm);
 						resultImage.getImageStack().setColorModel(cm);
 						resultImage.updateAndDraw();
@@ -1420,8 +1424,9 @@ public class MorphologicalSegmentation implements PlugIn {
 				long seed = (long) (new Random()).nextInt();
 				colorMap = ColorMaps.shuffleLut( colorMap, seed );
 
-				ColorModel cm = ColorMaps.createColorModel(
-						colorMap, Color.BLACK );
+				ColorModel cm = calculateDams ?
+						ColorMaps.createColorModel(colorMap, Color.BLACK)
+						: ColorMaps.createColorModel(colorMap);
 				resultImage.getProcessor().setColorModel( cm );
 				resultImage.getImageStack().setColorModel( cm );
 				resultImage.updateAndDraw();
