@@ -106,4 +106,13 @@ public class VoxelRecord implements Comparable<VoxelRecord>{
 			
 			return res;
 		}
+		/**
+		 * Calculate Euclidean distance to another voxel record
+		 * @param vr voxel record to calculate distance to
+		 * @return Euclidean distance between this voxel record and the input one
+		 */
+		public double euclideanDistance( VoxelRecord vr )
+		{
+			return this.cursor.euclideanDistance( vr.getCursor() );
+		}
 }
