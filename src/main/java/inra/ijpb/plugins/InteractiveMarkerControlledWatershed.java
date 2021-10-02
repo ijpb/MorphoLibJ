@@ -763,7 +763,14 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 				// convert connectivity to 3D if needed (2D images are processed as 3D)
 				final int connectivity;
 				if( !inputIs2D )
-					connectivity = readConn == 4 ? 6 : 26;
+				{
+					if( readConn == 4 )
+						connectivity = 6;
+					else if( readConn == 8 )
+						connectivity = 26;
+					else
+						connectivity = readConn;
+				}
 				else
 					connectivity = readConn;
 
