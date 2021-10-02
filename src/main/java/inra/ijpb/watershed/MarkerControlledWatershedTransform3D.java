@@ -767,9 +767,7 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 	    final int count = voxelList.size();
 	    if( verbose ) IJ.log( "  Flooding from " + count + " voxels..." );
       	IJ.showStatus("Flooding from " + count + " voxels...");
-	    
-//      	final int numVoxels = size1 * size2 * size3;
-      	
+
       	final double[] extent = Images3D.findMinAndMax(inputImage);
       	double maxValue = extent[1];
       	
@@ -791,9 +789,7 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
       		while ( voxelList.isEmpty() == false )
       		{
       			if ( Thread.currentThread().isInterrupted() )
-    				return null;	
-      			
-//      			IJ.showProgress( numVoxels-voxelList.size(), numVoxels );
+    				return null;
 
       			final VoxelRecord voxelRecord = voxelList.poll();
       			// show progression along voxel values
@@ -873,8 +869,6 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
       		{
       			if ( Thread.currentThread().isInterrupted() )
     				return null;	
-      			
-//      			IJ.showProgress( numVoxels-voxelList.size(), numVoxels );
 
       			final VoxelRecord voxelRecord = voxelList.poll();
       			// show progression along voxel values
