@@ -959,7 +959,7 @@ public class MarkerControlledWatershedTransform3D extends WatershedTransform3D
 				for (int j = 0; j < size2; ++j)	
 				{					
 					if( tabLabels[ i ][ j ][ k ] == INIT ) // set unlabeled voxels to WSHED
-						labelProcessor.setf( i,  j, 0 );
+						labelProcessor.setf( i,  j, WSHED );
 					else
 						labelProcessor.setf( i,  j, tabLabels[ i ][ j ][ k ] );
 				}
