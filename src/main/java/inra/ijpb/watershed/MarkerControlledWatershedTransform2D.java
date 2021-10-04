@@ -943,9 +943,10 @@ public class MarkerControlledWatershedTransform2D extends WatershedTransform2D
 						}
 					}
 				}
-
+				// if it has any labeled neighbor
 				if( neighborLabels.size() > 0 )
 				{
+					// assign the first neighbor's label to this pixel
 					tabLabels[ i ][ j ] = neighborLabels.get( 0 );
 					// now that we know the pixel is labeled, add unlabeled
 					// neighbors to list
