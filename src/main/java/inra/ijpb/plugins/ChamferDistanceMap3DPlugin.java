@@ -28,12 +28,11 @@ import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import inra.ijpb.algo.DefaultAlgoListener;
-import inra.ijpb.binary.ChamferWeights3D;
+import inra.ijpb.binary.distmap.ChamferDistanceTransform3DFloat;
+import inra.ijpb.binary.distmap.ChamferDistanceTransform3DShort;
+import inra.ijpb.binary.distmap.ChamferWeights3D;
+import inra.ijpb.binary.distmap.CommonChamferWeights3D;
 import inra.ijpb.binary.distmap.DistanceTransform3D;
-import inra.ijpb.binary.distmap.DistanceTransform3D4WeightsFloat;
-import inra.ijpb.binary.distmap.DistanceTransform3D4WeightsShort;
-import inra.ijpb.binary.distmap.DistanceTransform3DFloat;
-import inra.ijpb.binary.distmap.DistanceTransform3DShort;
 import inra.ijpb.data.image.Images3D;
 import inra.ijpb.util.IJUtils;
 
@@ -61,8 +60,8 @@ public class ChamferDistanceMap3DPlugin implements PlugIn
 		
 		// Create a new generic dialog with appropriate options
     	GenericDialog gd = new GenericDialog("Chamfer Distance Map 3D");
-    	gd.addChoice("Distances", ChamferWeights3D.getAllLabels(), 
-    			ChamferWeights3D.WEIGHTS_3_4_5_7.toString());			
+    	gd.addChoice("Distances", CommonChamferWeights3D.getAllLabels(), 
+    			CommonChamferWeights3D.WEIGHTS_3_4_5_7.toString());			
     	String[] outputTypes = new String[]{"32 bits", "16 bits"};
     	gd.addChoice("Output Type", outputTypes, outputTypes[0]);
     	gd.addCheckbox("Normalize weights", true);	
@@ -78,7 +77,8 @@ public class ChamferDistanceMap3DPlugin implements PlugIn
     	boolean normalize = gd.getNextBoolean();
 
     	// identify which weights should be used
-    	ChamferWeights3D chamferWeights = ChamferWeights3D.fromLabel(weightLabel);
+    	CommonChamferWeights3D weightsOption = CommonChamferWeights3D.fromLabel(weightLabel);
+		ChamferWeights3D weights = weightsOption.getChamferWeights();
 
     	long t0 = System.currentTimeMillis();
 
@@ -87,27 +87,11 @@ public class ChamferDistanceMap3DPlugin implements PlugIn
     	DistanceTransform3D algo;
     	if (floatProcessing)
     	{
-    		float[] weights = chamferWeights.getFloatWeights();
-    		if (weights.length == 4)
-    		{
-        		algo = new DistanceTransform3D4WeightsFloat(weights, normalize);    			
-    		}
-    		else
-    		{
-        		algo = new DistanceTransform3DFloat(weights, normalize);    			
-    		}
+    		algo = new ChamferDistanceTransform3DFloat(weights, normalize);
     	} 
     	else
     	{
-    		short[] weights = chamferWeights.getShortWeights();
-    		if (weights.length == 4)
-    		{
-        		algo = new DistanceTransform3D4WeightsShort(weights, normalize);    			
-    		}
-    		else
-    		{
-        		algo = new DistanceTransform3DShort(weights, normalize);
-    		}
+    		algo = new ChamferDistanceTransform3DShort(weights, normalize);
         }
 		DefaultAlgoListener.monitor(algo);
     	
