@@ -35,8 +35,12 @@ import inra.ijpb.watershed.Watershed;
  * 
  * A plugin to perform marker-controlled watershed on a 2D or 3D image.
  * 
- * Reference: Fernand Meyer and Serge Beucher. "Morphological segmentation." 
- * Journal of visual communication and image representation 1.1 (1990): 21-46.
+ * References:
+ * [1] Fernand Meyer and Serge Beucher. "Morphological segmentation."
+ *     Journal of visual communication and image representation 1.1 (1990): 21-46.
+ * [2] Peer Neubert and Peter Protzel. "Compact Watershed and Preemptive SLIC:
+ *     On improving trade-offs of superpixel segmentation algorithms."
+ *     22nd international conference on pattern recognition. IEEE, 2014.
  *
  * @author Ignacio Arganda-Carreras
  */
@@ -50,7 +54,10 @@ public class MarkerControlledWatershed3DPlugin implements PlugIn
 	
 	/** flag to use 26-connectivity */
 	public static boolean use26neighbors = true;
-		
+
+	/** compactness constraint, c parameter in compact watershed algorithm [2] */
+	public static double compactness = 0;
+
 	/**
 	 * Apply marker-controlled watershed to a grayscale 2D or 3D image.
 	 *	 
@@ -83,7 +90,41 @@ public class MarkerControlledWatershed3DPlugin implements PlugIn
 						
 		return resultImage;				
 	}
-	
+	/**
+	 * Apply marker-controlled watershed to a grayscale 2D or 3D image.
+	 *
+	 * @param input grayscale 2D or 3D image (in principle a "gradient" image)
+	 * @param marker the labeled marker image
+	 * @param mask binary mask to restrict region of interest
+	 * @param connectivity 6 or 26 voxel connectivity
+	 * @param compactness compactness constraint for compact watershed (set to 0 for classical watershed)
+	 * @return the resulting watershed
+	 */
+	public ImagePlus process(
+			ImagePlus input,
+			ImagePlus marker,
+			ImagePlus mask,
+			int connectivity,
+			double compactness )
+	{
+		final long start = System.currentTimeMillis();
+
+		if (binaryMarkers)
+		{
+			IJ.log("-> Compute marker labels");
+			marker = BinaryImages.componentsLabeling(marker, connectivity, 32);
+		}
+
+		IJ.log("-> Running watershed...");
+
+		ImagePlus resultImage = Watershed.computeWatershed(
+				input, marker, mask, connectivity, getDams, compactness, false );
+
+		final long end = System.currentTimeMillis();
+		IJ.log( "Watershed 3d took " + (end-start) + " ms.");
+
+		return resultImage;
+	}
 
 	/**
 	 * Plugin run method to be called from ImageJ
@@ -119,6 +160,7 @@ public class MarkerControlledWatershed3DPlugin implements PlugIn
         gd.addChoice( "Input", names, names[ inputIndex ] );
         gd.addChoice( "Marker", names, names[ markerIndex ] );
         gd.addChoice( "Mask", namesMask, namesMask[ 0 ] );
+        gd.addNumericField( "Compactness", compactness, 2 );
         gd.addCheckbox("Binary markers", true);
         gd.addCheckbox( "Calculate dams", getDams );
         gd.addCheckbox( "Use diagonal connectivity", use26neighbors );
@@ -130,6 +172,7 @@ public class MarkerControlledWatershed3DPlugin implements PlugIn
             inputIndex = gd.getNextChoiceIndex();
             markerIndex = gd.getNextChoiceIndex();
             int maskIndex = gd.getNextChoiceIndex();
+            compactness = gd.getNextNumber();
             binaryMarkers = gd.getNextBoolean();
             getDams = gd.getNextBoolean();
             use26neighbors = gd.getNextBoolean();
@@ -144,7 +187,7 @@ public class MarkerControlledWatershed3DPlugin implements PlugIn
             if( inputImage.getImageStackSize() == 1 )
             	connectivity = use26neighbors ? 8 : 4;
 
-            ImagePlus result = process( inputImage, markerImage, maskImage, connectivity );
+            ImagePlus result = process( inputImage, markerImage, maskImage, connectivity, compactness );
                                     
     		// Set result slice to the current slice in the input image
             result.setSlice( inputImage.getCurrentSlice() );
