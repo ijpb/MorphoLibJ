@@ -7,15 +7,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Implementation of Chamfer Weights that manages three type offset types,
- * corresponding to orthogonal, square-diagonal and cube-diagonal neighbors.
+ * Implementation of Chamfer Weights for 3D images that manages three type
+ * offset types, corresponding to orthogonal, square-diagonal and cube-diagonal
+ * neighbors.
+ * 
  * By default, computation is performed using integers.
  * 
- * @see ChamferWeights3DW4
+ * @see ChamferMask3DW3Float
+ * @see ChamferMask3DW4
  * 
  * @author dlegland
  */
-public class ChamferWeights3DW3 extends ChamferWeights3D
+public class ChamferMask3DW3 extends ChamferMask3D
 {
 	short[] weights;
 	
@@ -31,12 +34,12 @@ public class ChamferWeights3DW3 extends ChamferWeights3D
 	 * @param w2
 	 *            the weight associated to cube-diagonal neighbors
 	 */
-	public ChamferWeights3DW3(int w0, int w1, int w2)
+	public ChamferMask3DW3(int w0, int w1, int w2)
 	{
 		this.weights = new short[] {(short) w0, (short) w1, (short) w2};
 	}
 
-	public ChamferWeights3DW3(short[] weights)
+	public ChamferMask3DW3(short[] weights)
 	{
 		if (weights.length != 3)
 		{

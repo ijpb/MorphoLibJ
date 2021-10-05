@@ -48,7 +48,7 @@ import inra.ijpb.binary.BinaryImages;
  * @see BinaryImages#distanceMap(ij.ImageStack)
  * @see inra.ijpb.binary.distmap.ChamferDistanceTransform3DShort
  */
-public enum CommonChamferWeights3D
+public enum CommonChamferMasks3D
 {
 	/** Use weight equal to 1 for all neighbors */
 	CHESSBOARD("Chessboard (1,1,1)", new short[] { 1, 1, 1 }), 
@@ -80,18 +80,18 @@ public enum CommonChamferWeights3D
 	WEIGHTS_3_4_5_7("Svensson <3,4,5,7>", new short[] { 3, 4, 5, 7 });
 
 	private final String label;
-	private final ChamferWeights3D chamferWeights;
+	private final ChamferMask3D chamferWeights;
 
-	private CommonChamferWeights3D(String label, short[] shortWeights)
+	private CommonChamferMasks3D(String label, short[] shortWeights)
 	{
 		this.label = label;
 		if (shortWeights.length == 3)
 		{
-			this.chamferWeights = new ChamferWeights3DW3(shortWeights);
+			this.chamferWeights = new ChamferMask3DW3(shortWeights);
 		}
 		else if (shortWeights.length == 4)
 		{
-			this.chamferWeights = new ChamferWeights3DW4(shortWeights);
+			this.chamferWeights = new ChamferMask3DW4(shortWeights);
 		}
 		else
 		{
@@ -99,13 +99,13 @@ public enum CommonChamferWeights3D
 		}
 	}
 
-	private CommonChamferWeights3D(String label, short[] shortWeights,
+	private CommonChamferMasks3D(String label, short[] shortWeights,
 			float[] floatWeights)
 	{
 		this.label = label;
 		if (shortWeights.length == 3 && floatWeights.length == 3)
 		{
-			this.chamferWeights = new ChamferWeights3DW3Float(shortWeights, floatWeights);
+			this.chamferWeights = new ChamferMask3DW3Float(shortWeights, floatWeights);
 		}
 		else
 		{
@@ -113,7 +113,7 @@ public enum CommonChamferWeights3D
 		}
 	}
 
-	public ChamferWeights3D getChamferWeights()
+	public ChamferMask3D getChamferWeights()
 	{
 		return this.chamferWeights;
 	}
@@ -125,11 +125,11 @@ public enum CommonChamferWeights3D
 
 	public static String[] getAllLabels()
 	{
-		int n = CommonChamferWeights3D.values().length;
+		int n = CommonChamferMasks3D.values().length;
 		String[] result = new String[n];
 
 		int i = 0;
-		for (CommonChamferWeights3D weight : CommonChamferWeights3D.values())
+		for (CommonChamferMasks3D weight : CommonChamferMasks3D.values())
 			result[i++] = weight.label;
 
 		return result;
@@ -144,11 +144,11 @@ public enum CommonChamferWeights3D
 	 * @throws IllegalArgumentException
 	 *             if label name is not recognized.
 	 */
-	public static CommonChamferWeights3D fromLabel(String label)
+	public static CommonChamferMasks3D fromLabel(String label)
 	{
 		if (label != null)
 			label = label.toLowerCase();
-		for (CommonChamferWeights3D weight : CommonChamferWeights3D.values())
+		for (CommonChamferMasks3D weight : CommonChamferMasks3D.values())
 		{
 			String cmp = weight.label.toLowerCase();
 			if (cmp.equals(label))

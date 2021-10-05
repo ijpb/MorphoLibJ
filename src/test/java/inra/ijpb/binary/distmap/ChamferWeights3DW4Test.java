@@ -31,7 +31,7 @@ public class ChamferWeights3DW4Test
 			}
 		}
 
-		ChamferWeights3D weights = new ChamferWeights3DW4(3, 4, 5, 7);
+		ChamferMask3D weights = new ChamferMask3DW4(3, 4, 5, 7);
 		DistanceTransform3D algo = new ChamferDistanceTransform3DShort(weights, true);
 		
 		ImageStack result = algo.distanceMap(image);
@@ -63,7 +63,7 @@ public class ChamferWeights3DW4Test
 		}
 		image.setVoxel(5, 5, 5, 0);
 
-		ChamferWeights3D weights = new ChamferWeights3DW4(3, 4, 5, 7);
+		ChamferMask3D weights = new ChamferMask3DW4(3, 4, 5, 7);
 		DistanceTransform3D algo = new ChamferDistanceTransform3DShort(weights, true);
 		
 		ImageStack result = algo.distanceMap(image);

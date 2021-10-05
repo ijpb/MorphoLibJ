@@ -9,7 +9,7 @@ import java.util.Collection;
 
 import ij.ImageStack;
 import inra.ijpb.algo.AlgoStub;
-import inra.ijpb.binary.distmap.ChamferWeights3D.FloatOffset;
+import inra.ijpb.binary.distmap.ChamferMask3D.FloatOffset;
 import inra.ijpb.data.image.Images3D;
 
 /**
@@ -27,7 +27,7 @@ public class ChamferDistanceTransform3DFloat extends AlgoStub implements Distanc
 	/**
 	 * The chamfer weights used to propagate distances to neighbor voxels.
 	 */
-	ChamferWeights3D chamferWeights;
+	ChamferMask3D chamferWeights;
 	
 	/**
 	 * Flag for dividing final distance map by the value first weight. 
@@ -40,12 +40,12 @@ public class ChamferDistanceTransform3DFloat extends AlgoStub implements Distanc
 	// ==================================================
 	// Constructors 
 	
-	public ChamferDistanceTransform3DFloat(ChamferWeights3D chamferWeights)
+	public ChamferDistanceTransform3DFloat(ChamferMask3D chamferWeights)
 	{
 		this.chamferWeights = chamferWeights;
 	}
 	
-	public ChamferDistanceTransform3DFloat(ChamferWeights3D chamferWeights, boolean normalize)
+	public ChamferDistanceTransform3DFloat(ChamferMask3D chamferWeights, boolean normalize)
 	{
 		this.chamferWeights = chamferWeights;
 		this.normalize = normalize;

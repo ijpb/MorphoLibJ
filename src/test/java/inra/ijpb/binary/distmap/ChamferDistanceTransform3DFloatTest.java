@@ -35,7 +35,7 @@ public class ChamferDistanceTransform3DFloatTest
 			}
 		}
 		
-		ChamferWeights3D weights = ChamferWeights3D.BORGEFORS;
+		ChamferMask3D weights = ChamferMask3D.BORGEFORS;
 		DistanceTransform3D algo = new ChamferDistanceTransform3DFloat(weights, true);
 		
 		ImageStack result = algo.distanceMap(image);
@@ -67,7 +67,7 @@ public class ChamferDistanceTransform3DFloatTest
 		}
 		image.setVoxel(5, 5, 5, 0);
 
-		ChamferWeights3D weights = ChamferWeights3D.BORGEFORS;
+		ChamferMask3D weights = ChamferMask3D.BORGEFORS;
 		DistanceTransform3D algo = new ChamferDistanceTransform3DFloat(weights, true);
 		
 		ImageStack result = algo.distanceMap(image);

@@ -7,34 +7,51 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * A collection of weights offsets for computing  distance maps within 3D binary images.
+ * A collection of weighted offsets for computing distance maps from 3D binary
+ * images.
  * 
- * Each offset is defined by a (x,y,z) triplet and by a weight. 
- * The weights can be defined as integers (making it possible to store result in ShortProcessors) 
- * or as floating point values (could be more precise).
+ * Each offset is defined by a (x,y,z) triplet and by a weight. The weights can
+ * be defined as integers (making it possible to store result in
+ * ShortProcessors) or as floating point values (could be more precise).
  * 
  * @author dlegland
  *
  */
-public abstract class ChamferWeights3D
+public abstract class ChamferMask3D
 {
 	// ==================================================
 	// Public constants
 	
-	/** Use weight equal to 1 for all neighbors. */
-	public final static ChamferWeights3D CHESSBOARD = new ChamferWeights3DW3(new short[] {1, 1, 1});
+	/** Use weights equal to 1 for all neighbors. */
+	public final static ChamferMask3D CHESSBOARD = new ChamferMask3DW3(new short[] {1, 1, 1});
 	
 	/**
 	 * Use weights 1 for orthogonal neighbors and 2 for diagonal neighbors,
 	 * and 3 for cube-diagonals.
 	 */
-	public final static ChamferWeights3D CITY_BLOCK = new ChamferWeights3DW3(new short[] {1, 2, 3});
+	public final static ChamferMask3D CITY_BLOCK = new ChamferMask3DW3(new short[] {1, 2, 3});
 	
 	/**
 	 * Use weights 3 for orthogonal neighbors and 4 for diagonal neighbors,
 	 * and 5 for cube-diagonals (best approximation for 3-by-3-by-3 masks).
 	 */
-	public final static ChamferWeights3D BORGEFORS = new ChamferWeights3DW3(new short[] {3, 4, 5});
+	public final static ChamferMask3D BORGEFORS = new ChamferMask3DW3(new short[] {3, 4, 5});
+	
+	/**
+	 * Use weights 1 for orthogonal neighbors and sqrt(2) for diagonal
+	 * neighbors, and sqrt(3) for cube-diagonals. 
+	 * Use 10, 14 and 17 for short version.
+	 */
+	public final static ChamferMask3D QUASI_EUCLIDEAN = new ChamferMask3DW3Float(
+			new short[] { 10, 14, 17 },
+			new float[] { 1, (float) Math.sqrt(2), (float) Math.sqrt(3) });
+
+	/**
+	 * Use weights 3 for orthogonal neighbors and 4 for diagonal neighbors, and
+	 * 5 for cube-diagonals, and 7 for (2,1,1) shifts. Good approximation using
+	 * only four weights, and keeping low value of orthogonal weight.
+	 */
+	public final static ChamferMask3D CHAMFER_3_4_5_7 = new ChamferMask3DW4(3, 4, 5, 7);
 	
 	
 	// ==================================================
@@ -112,6 +129,10 @@ public abstract class ChamferWeights3D
 	// ==================================================
 	// Inner classes declaration
 	
+	/**
+	 * The shift to a neighbor of a reference voxel, as a triplet (dx,dy,dz),
+	 * and the associated weights given as a short.
+	 */
 	public static class ShortOffset
 	{
 		public final int dx;
@@ -128,6 +149,10 @@ public abstract class ChamferWeights3D
 		}
 	}
 
+	/**
+	 * The shift to a neighbor of a reference voxel, as a triplet (dx,dy,dz),
+	 * and the associated weights given as a float.
+	 */
 	public static class FloatOffset
 	{
 		public final int dx;

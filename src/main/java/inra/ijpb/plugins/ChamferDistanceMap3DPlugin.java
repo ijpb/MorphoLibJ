@@ -30,8 +30,8 @@ import ij.plugin.PlugIn;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.binary.distmap.ChamferDistanceTransform3DFloat;
 import inra.ijpb.binary.distmap.ChamferDistanceTransform3DShort;
-import inra.ijpb.binary.distmap.ChamferWeights3D;
-import inra.ijpb.binary.distmap.CommonChamferWeights3D;
+import inra.ijpb.binary.distmap.ChamferMask3D;
+import inra.ijpb.binary.distmap.CommonChamferMasks3D;
 import inra.ijpb.binary.distmap.DistanceTransform3D;
 import inra.ijpb.data.image.Images3D;
 import inra.ijpb.util.IJUtils;
@@ -60,8 +60,8 @@ public class ChamferDistanceMap3DPlugin implements PlugIn
 		
 		// Create a new generic dialog with appropriate options
     	GenericDialog gd = new GenericDialog("Chamfer Distance Map 3D");
-    	gd.addChoice("Distances", CommonChamferWeights3D.getAllLabels(), 
-    			CommonChamferWeights3D.WEIGHTS_3_4_5_7.toString());			
+    	gd.addChoice("Distances", CommonChamferMasks3D.getAllLabels(), 
+    			CommonChamferMasks3D.WEIGHTS_3_4_5_7.toString());			
     	String[] outputTypes = new String[]{"32 bits", "16 bits"};
     	gd.addChoice("Output Type", outputTypes, outputTypes[0]);
     	gd.addCheckbox("Normalize weights", true);	
@@ -77,8 +77,8 @@ public class ChamferDistanceMap3DPlugin implements PlugIn
     	boolean normalize = gd.getNextBoolean();
 
     	// identify which weights should be used
-    	CommonChamferWeights3D weightsOption = CommonChamferWeights3D.fromLabel(weightLabel);
-		ChamferWeights3D weights = weightsOption.getChamferWeights();
+    	CommonChamferMasks3D weightsOption = CommonChamferMasks3D.fromLabel(weightLabel);
+		ChamferMask3D weights = weightsOption.getChamferWeights();
 
     	long t0 = System.currentTimeMillis();
 
