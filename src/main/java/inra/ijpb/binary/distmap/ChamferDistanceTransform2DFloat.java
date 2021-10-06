@@ -4,6 +4,9 @@
 package inra.ijpb.binary.distmap;
 
 import ij.process.ImageProcessor;
+
+import java.util.Collection;
+
 import ij.process.FloatProcessor;
 import inra.ijpb.algo.AlgoEvent;
 import inra.ijpb.algo.AlgoStub;
@@ -25,7 +28,7 @@ public class ChamferDistanceTransform2DFloat extends AlgoStub implements Distanc
 	/**
 	 * The chamfer weights used to propagate distances to neighbor pixels.
 	 */
-	ChamferMask2D chamferWeights;
+	ChamferMask2D mask;
 	
 	/**
 	 * Flag for dividing final distance map by the value first weight. 
@@ -38,14 +41,14 @@ public class ChamferDistanceTransform2DFloat extends AlgoStub implements Distanc
 	// ==================================================
 	// Constructors 
 	
-	public ChamferDistanceTransform2DFloat(ChamferMask2D chamferWeights)
+	public ChamferDistanceTransform2DFloat(ChamferMask2D mask)
 	{
-		this.chamferWeights = chamferWeights;
+		this.mask = mask;
 	}
 	
-	public ChamferDistanceTransform2DFloat(ChamferMask2D chamferWeights, boolean normalize)
+	public ChamferDistanceTransform2DFloat(ChamferMask2D mask, boolean normalize)
 	{
-		this.chamferWeights = chamferWeights;
+		this.mask = mask;
 		this.normalize = normalize;
 	}
 	
@@ -137,6 +140,7 @@ public class ChamferDistanceTransform2DFloat extends AlgoStub implements Distanc
 		// size of image
 		int sizeX = labelImage.getWidth();
 		int sizeY = labelImage.getHeight();
+		Collection<FloatOffset> offsets =  mask.getForwardFloatOffsets();
 
 		// Iterate over pixels
 		for (int y = 0; y < sizeY; y++)
@@ -156,7 +160,7 @@ public class ChamferDistanceTransform2DFloat extends AlgoStub implements Distanc
 				float newDist = currentDist;
 				
 				// iterate over neighbors
-				for (FloatOffset offset : chamferWeights.getForwardFloatOffsets())
+				for (FloatOffset offset : offsets)
 				{
 					// compute neighbor coordinates
 					int x2 = x + offset.dx;
@@ -197,6 +201,7 @@ public class ChamferDistanceTransform2DFloat extends AlgoStub implements Distanc
 		// size of image
 		int sizeX = labelImage.getWidth();
 		int sizeY = labelImage.getHeight();
+		Collection<FloatOffset> offsets =  mask.getBackwardFloatOffsets();
 
 		// Iterate over pixels
 		for (int y = sizeY-1; y >= 0; y--)
@@ -216,7 +221,7 @@ public class ChamferDistanceTransform2DFloat extends AlgoStub implements Distanc
 				float newDist = currentDist;
 				
 				// iterate over neighbors
-				for (FloatOffset offset : chamferWeights.getBackwardFloatOffsets())
+				for (FloatOffset offset : offsets)
 				{
 					// compute neighbor coordinates
 					int x2 = x + offset.dx;
@@ -260,7 +265,7 @@ public class ChamferDistanceTransform2DFloat extends AlgoStub implements Distanc
 
 		// retrieve the minimum weight
 		float w0 = Float.POSITIVE_INFINITY;
-		for (FloatOffset offset : this.chamferWeights.getFloatOffsets())
+		for (FloatOffset offset : this.mask.getFloatOffsets())
 		{
 			w0 = Math.min(w0, offset.weight);
 		}

@@ -39,9 +39,12 @@ import inra.ijpb.data.image.Images3D;
  * In practice, computations are done with integers, but result is stored in a
  * 3D short image, thus requiring less memory than floating point.
  * 
+ * @deprecated replaced by ChamferDistanceTransform3DShort (since 1.4.4)
+ *  
  * @author David Legland
  * 
  */
+@Deprecated
 public class DistanceTransform3D4WeightsShort extends AlgoStub implements DistanceTransform3D 
 {
 	// ==================================================

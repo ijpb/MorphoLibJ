@@ -27,15 +27,14 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	// generic classes
-		DistanceTransform3x3FloatTest.class,
-		DistanceTransform3x3ShortTest.class,
-		DistanceTransform5x5FloatTest.class,
-		DistanceTransform5x5ShortTest.class, 
-		DistanceTransform3DShortTest.class,
-		DistanceTransform3D4WeightsShortTest.class,
-		DistanceTransform3DFloatTest.class,
-		DistanceTransform3D4WeightsFloatTest.class, })
-public class AllTests {
-  //nothing
+		// generic classes
+		ChamferDistanceTransform2DFloatTest.class,
+		ChamferDistanceTransform2DShortTest.class,
+		ChamferDistanceTransform3DFloatTest.class,
+		ChamferDistanceTransform3DShortTest.class,
+		ChamferWeights3DW3FloatTest.class, 
+		ChamferWeights3DW4Test.class, })
+public class AllTests
+{
+	  //nothing
 }

@@ -45,10 +45,12 @@ import java.util.Collection;
  * ImageStack result = dt.distanceMap(inputStack);
  * </code></pre>
  *
+ * @deprecated replaced by inra.ijpb.binary.distmap.ChamferMask2D (since 1.4.4)
  * 
  * @see BinaryImages#distanceMap(ij.ImageStack)
  * @see inra.ijpb.binary.distmap.DistanceTransform3D
  */
+@Deprecated
 public enum ChamferWeights3D
 {
 	/** Use weight equal to 1 for all neighbors */

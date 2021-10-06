@@ -43,10 +43,13 @@ package inra.ijpb.binary;
  *	ImagePlus resultPlus = BinaryImages.distanceMap(imagePlus, shortWeights, normalize);
  * </code></pre>
  * 
+ * @deprecated replaced by inra.ijpb.binary.distmap.ChamferMask2D (since 1.4.4)
+ * 
  * @see inra.ijpb.binary.BinaryImages#distanceMap(ij.process.ImageProcessor, short[], boolean)
  * @see inra.ijpb.binary.BinaryImages#distanceMap(ij.process.ImageProcessor, float[], boolean)
  * @see inra.ijpb.binary.distmap.DistanceTransform
  */
+@Deprecated
 public enum ChamferWeights
 {
 	/** Use weight equal to 1 for all neighbors */

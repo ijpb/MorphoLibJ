@@ -32,14 +32,14 @@ import inra.ijpb.binary.conncomp.ConnectedComponentsLabeling;
 import inra.ijpb.binary.conncomp.ConnectedComponentsLabeling3D;
 import inra.ijpb.binary.conncomp.FloodFillComponentsLabeling;
 import inra.ijpb.binary.conncomp.FloodFillComponentsLabeling3D;
+import inra.ijpb.binary.distmap.ChamferDistanceTransform2DFloat;
+import inra.ijpb.binary.distmap.ChamferDistanceTransform2DShort;
+import inra.ijpb.binary.distmap.ChamferDistanceTransform3DFloat;
+import inra.ijpb.binary.distmap.ChamferDistanceTransform3DShort;
+import inra.ijpb.binary.distmap.ChamferMask2D;
+import inra.ijpb.binary.distmap.ChamferMask3D;
 import inra.ijpb.binary.distmap.DistanceTransform;
 import inra.ijpb.binary.distmap.DistanceTransform3D;
-import inra.ijpb.binary.distmap.DistanceTransform3DFloat;
-import inra.ijpb.binary.distmap.DistanceTransform3DShort;
-import inra.ijpb.binary.distmap.DistanceTransform3x3Float;
-import inra.ijpb.binary.distmap.DistanceTransform3x3Short;
-import inra.ijpb.binary.distmap.DistanceTransform5x5Float;
-import inra.ijpb.binary.distmap.DistanceTransform5x5Short;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransform;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat5x5;
@@ -404,19 +404,8 @@ public class BinaryImages
 	public static final ShortProcessor distanceMap(ImageProcessor image,
 			short[] weights, boolean normalize)
 	{
-		DistanceTransform algo;
-		switch (weights.length) {
-		case 2:
-			algo = new DistanceTransform3x3Short(weights, normalize);
-			break;
-		case 3:
-			algo = new DistanceTransform5x5Short(weights, normalize);
-			break;
-		default:
-			throw new IllegalArgumentException(
-					"Requires weight array with 2 or 3 elements");
-		}
-
+		ChamferMask2D mask = ChamferMask2D.fromWeights(weights);
+		DistanceTransform algo = new ChamferDistanceTransform2DShort(mask, normalize);
 		return (ShortProcessor) algo.distanceMap(image);
 	}
 
@@ -444,20 +433,8 @@ public class BinaryImages
 	public static final FloatProcessor distanceMap(ImageProcessor image,
 			float[] weights, boolean normalize) 
 	{
-		DistanceTransform algo;
-		switch (weights.length) 
-		{
-		case 2:
-			algo = new DistanceTransform3x3Float(weights, normalize);
-			break;
-		case 3:
-			algo = new DistanceTransform5x5Float(weights, normalize);
-			break;
-		default:
-			throw new IllegalArgumentException(
-					"Requires weight array with 2 or 3 elements");
-		}
-		
+		ChamferMask2D mask = ChamferMask2D.fromWeights(weights);
+		DistanceTransform algo = new ChamferDistanceTransform2DFloat(mask, normalize);
 		return (FloatProcessor) algo.distanceMap(image);
 	}
 
@@ -472,8 +449,8 @@ public class BinaryImages
 	 */
 	public static final ImageStack distanceMap(ImageStack image)
 	{
-		float[] weights = new float[]{3.0f, 4.0f, 5.0f};
-		DistanceTransform3D algo = new DistanceTransform3DFloat(weights);
+		ChamferMask3D mask = ChamferMask3D.BORGEFORS;
+		DistanceTransform3D	algo = new ChamferDistanceTransform3DFloat(mask);
 		return algo.distanceMap(image);
 	}
 	
@@ -494,7 +471,8 @@ public class BinaryImages
 	public static final ImageStack distanceMap(ImageStack image,
 			short[] weights, boolean normalize)
 	{
-		DistanceTransform3D	algo = new DistanceTransform3DShort(weights, normalize);
+		ChamferMask3D mask = ChamferMask3D.fromWeights(weights);
+		DistanceTransform3D	algo = new ChamferDistanceTransform3DShort(mask, normalize);
 			
 		return algo.distanceMap(image);
 	}
@@ -516,7 +494,8 @@ public class BinaryImages
 	public static final ImageStack distanceMap(ImageStack image, 
 			float[] weights, boolean normalize)
 	{
-		DistanceTransform3D algo = new DistanceTransform3DFloat(weights, normalize);
+		ChamferMask3D mask = ChamferMask3D.fromWeights(weights);
+		DistanceTransform3D	algo = new ChamferDistanceTransform3DFloat(mask, normalize);
 		return algo.distanceMap(image);
 	}
 	

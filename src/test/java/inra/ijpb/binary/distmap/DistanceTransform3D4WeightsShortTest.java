@@ -27,6 +27,7 @@ import inra.ijpb.binary.ChamferWeights3D;
 
 import org.junit.Test;
 
+@Deprecated
 public class DistanceTransform3D4WeightsShortTest
 {
 

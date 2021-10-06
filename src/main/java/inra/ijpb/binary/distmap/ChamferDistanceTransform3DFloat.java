@@ -14,7 +14,7 @@ import inra.ijpb.data.image.Images3D;
 
 /**
  * Computes 3D distance transform using the chamfer weights provided by a
- * ChamferWeights3D object, and using 32-bits floating-point computation.
+ * ChamferMask3D object, and using 32-bits floating-point computation.
  * 
  * @author David Legland
  * 
@@ -27,7 +27,7 @@ public class ChamferDistanceTransform3DFloat extends AlgoStub implements Distanc
 	/**
 	 * The chamfer weights used to propagate distances to neighbor voxels.
 	 */
-	ChamferMask3D chamferWeights;
+	ChamferMask3D mask;
 	
 	/**
 	 * Flag for dividing final distance map by the value first weight. 
@@ -40,14 +40,14 @@ public class ChamferDistanceTransform3DFloat extends AlgoStub implements Distanc
 	// ==================================================
 	// Constructors 
 	
-	public ChamferDistanceTransform3DFloat(ChamferMask3D chamferWeights)
+	public ChamferDistanceTransform3DFloat(ChamferMask3D mask)
 	{
-		this.chamferWeights = chamferWeights;
+		this.mask = mask;
 	}
 	
-	public ChamferDistanceTransform3DFloat(ChamferMask3D chamferWeights, boolean normalize)
+	public ChamferDistanceTransform3DFloat(ChamferMask3D mask, boolean normalize)
 	{
-		this.chamferWeights = chamferWeights;
+		this.mask = mask;
 		this.normalize = normalize;
 	}
 	
@@ -138,7 +138,7 @@ public class ChamferDistanceTransform3DFloat extends AlgoStub implements Distanc
 		int sizeZ = dims[2];
 		
 		// create array of forward shifts
-		Collection<FloatOffset> offsets = this.chamferWeights.getForwardFloatOffsets();
+		Collection<FloatOffset> offsets = this.mask.getForwardFloatOffsets();
 
 		// iterate on image voxels
 		for (int z = 0; z < sizeZ; z++)
@@ -195,7 +195,7 @@ public class ChamferDistanceTransform3DFloat extends AlgoStub implements Distanc
 		int sizeZ = dims[2];
 		
 		// create array of backward shifts
-		Collection<FloatOffset> offsets = this.chamferWeights.getBackwardFloatOffsets();
+		Collection<FloatOffset> offsets = this.mask.getBackwardFloatOffsets();
 		
 		// iterate on image voxels in backward order
 		for (int z = sizeZ - 1; z >= 0; z--)
@@ -249,7 +249,7 @@ public class ChamferDistanceTransform3DFloat extends AlgoStub implements Distanc
 		
 		// retrieve the minimum weight
 		float w0 = Float.POSITIVE_INFINITY;
-		for (FloatOffset offset : this.chamferWeights.getFloatOffsets())
+		for (FloatOffset offset : this.mask.getFloatOffsets())
 		{
 			w0 = Math.min(w0, offset.weight);
 		}

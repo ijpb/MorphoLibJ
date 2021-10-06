@@ -55,6 +55,98 @@ public abstract class ChamferMask3D
 	
 	
 	// ==================================================
+	// Static factories
+	
+	public static final ChamferMask3D fromWeights(int[] weights)
+	{
+		if (weights.length == 1)
+		{
+			int a = weights[0];
+			return new ChamferMask3DW3(a, 2 * a, 3 * a);
+		}
+		else if (weights.length == 2)
+		{
+			int a = weights[0];
+			int b = weights[1];
+			return new ChamferMask3DW3(a, b, a + b);
+		}
+		else if (weights.length == 3)
+		{
+			int a = weights[0];
+			int b = weights[1];
+			int c = weights[2];
+			return new ChamferMask3DW3(a, b, c);
+		}
+		else if (weights.length == 4)
+		{
+			int a = weights[0];
+			int b = weights[1];
+			int c = weights[2];
+			int e = weights[3];
+			return new ChamferMask3DW4(a, b, c, e);
+		}
+		else
+		{
+			throw new RuntimeException("Can not create chamfer mask with the given number of weights: " + weights.length);
+		}
+	}
+	
+	public static final ChamferMask3D fromWeights(short[] weights)
+	{
+		if (weights.length == 1)
+		{
+			int a = weights[0];
+			return new ChamferMask3DW3(a, 2 * a, 3 * a);
+		}
+		else if (weights.length == 2)
+		{
+			int a = weights[0];
+			int b = weights[1];
+			return new ChamferMask3DW3(a, b, a + b);
+		}
+		else if (weights.length == 3)
+		{
+			int a = weights[0];
+			int b = weights[1];
+			int c = weights[2];
+			return new ChamferMask3DW3(a, b, c);
+		}
+		else if (weights.length == 4)
+		{
+			int a = weights[0];
+			int b = weights[1];
+			int c = weights[2];
+			int e = weights[3];
+			return new ChamferMask3DW4(a, b, c, e);
+		}
+		else
+		{
+			throw new RuntimeException("Can not create chamfer mask with the given number of weights: " + weights.length);
+		}
+	}
+
+	public static final ChamferMask3D fromWeights(float[] weights)
+	{
+		// compute integer version of floating point weights
+		// (multiply by 10 to reduce rounding effect)
+		short[] intWeights = new short[weights.length];
+		for (int i = 0; i < weights.length; i++)
+		{
+			intWeights[i] = (short) Math.round(weights[i] + 10.0);
+		}
+		
+		if (weights.length == 3)
+		{
+			return new ChamferMask3DW3Float(intWeights, weights);
+		}
+		else
+		{
+			throw new RuntimeException("Can not create chamfer mask with the given number of weights: " + weights.length);
+		}
+	}
+	
+	
+	// ==================================================
 	// Global methods
 	
 	/**

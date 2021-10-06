@@ -29,6 +29,7 @@ import inra.ijpb.binary.ChamferWeights;
 
 import org.junit.Test;
 
+@Deprecated
 public class DistanceTransform3x3FloatTest {
 
 	@Test

@@ -35,9 +35,12 @@ import inra.ijpb.data.image.Images3D;
  * Computes 3D distance transform in a 5x5x5 neighborhood using four chamfer
  * weights and floating point calculation.
  * 
+ * @deprecated replaced by ChamferDistanceTransform3DFloat (since 1.4.4)
+ *  
  * @author David Legland
  * 
  */
+@Deprecated
 public class DistanceTransform3D4WeightsFloat extends AlgoStub implements DistanceTransform3D 
 {
 	// ==================================================

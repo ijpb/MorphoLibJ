@@ -52,8 +52,11 @@ import inra.ijpb.label.LabelValues;
  * @see inra.ijpb.binary.distmap.DistanceTransform5x5Float
  * @see inra.ijpb.binary.distmap.DistanceTransform
  * 
+ * @deprecated replaced by ChamferDistanceTransform2DShort (since 1.4.4)
+ * 
  * @author David Legland
  */
+@Deprecated
 public class DistanceTransform5x5Short extends AlgoStub implements DistanceTransform 
 {
 	// ==================================================

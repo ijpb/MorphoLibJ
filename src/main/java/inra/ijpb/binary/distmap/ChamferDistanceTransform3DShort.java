@@ -14,7 +14,7 @@ import inra.ijpb.data.image.Images3D;
 
 /**
  * Computes 3D distance transform using the chamfer weights provided by a
- * ChamferWeights3D object, and using 16-bits integer computation.
+ * ChamferMask3D object, and using 16-bits integer computation.
  * 
  * @author David Legland
  * 
@@ -27,7 +27,7 @@ public class ChamferDistanceTransform3DShort extends AlgoStub implements Distanc
 	/**
 	 * The chamfer weights used to propagate distances to neighbor voxels.
 	 */
-	ChamferMask3D chamferWeights;
+	ChamferMask3D mask;
 	
 	/**
 	 * Flag for dividing final distance map by the value first weight. 
@@ -40,14 +40,14 @@ public class ChamferDistanceTransform3DShort extends AlgoStub implements Distanc
 	// ==================================================
 	// Constructors 
 	
-	public ChamferDistanceTransform3DShort(ChamferMask3D chamferWeights)
+	public ChamferDistanceTransform3DShort(ChamferMask3D mask)
 	{
-		this.chamferWeights = chamferWeights;
+		this.mask = mask;
 	}
 	
-	public ChamferDistanceTransform3DShort(ChamferMask3D chamferWeights, boolean normalize)
+	public ChamferDistanceTransform3DShort(ChamferMask3D mask, boolean normalize)
 	{
-		this.chamferWeights = chamferWeights;
+		this.mask = mask;
 		this.normalize = normalize;
 	}
 	
@@ -138,7 +138,7 @@ public class ChamferDistanceTransform3DShort extends AlgoStub implements Distanc
 		int sizeZ = dims[2];
 		
 		// create array of forward shifts
-		Collection<ShortOffset> offsets = this.chamferWeights.getForwardOffsets();
+		Collection<ShortOffset> offsets = this.mask.getForwardOffsets();
 
 		// iterate on image voxels
 		for (int z = 0; z < sizeZ; z++)
@@ -195,7 +195,7 @@ public class ChamferDistanceTransform3DShort extends AlgoStub implements Distanc
 		int sizeZ = dims[2];
 		
 		// create array of backward shifts
-		Collection<ShortOffset> offsets = this.chamferWeights.getBackwardOffsets();
+		Collection<ShortOffset> offsets = this.mask.getBackwardOffsets();
 		
 		// iterate on image voxels in backward order
 		for (int z = sizeZ - 1; z >= 0; z--)
@@ -249,7 +249,7 @@ public class ChamferDistanceTransform3DShort extends AlgoStub implements Distanc
 		
 		// retrieve the minimum weight
 		double w0 = Double.POSITIVE_INFINITY;
-		for (ShortOffset offset : this.chamferWeights.getOffsets())
+		for (ShortOffset offset : this.mask.getOffsets())
 		{
 			w0 = Math.min(w0, offset.weight);
 		}

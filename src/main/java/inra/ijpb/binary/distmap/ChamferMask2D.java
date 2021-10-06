@@ -50,8 +50,84 @@ public abstract class ChamferMask2D
 	 * for chess-knight moves (recommended approximation for 5-by-5 masks).
 	 */
 	public final static ChamferMask2D CHESSKNIGHT = new ChamferMask2DW3(5, 7, 11);
-
 	
+	
+	// ==================================================
+	// Static factories
+	
+	public static final ChamferMask2D fromWeights(int[] weights)
+	{
+		if (weights.length == 1)
+		{
+			int a = weights[0];
+			return new ChamferMask2DW2(a, 2 * a);
+		}
+		else if (weights.length == 2)
+		{
+			int a = weights[0];
+			int b = weights[1];
+			return new ChamferMask2DW2(a, b);
+		}
+		else if (weights.length == 3)
+		{
+			int a = weights[0];
+			int b = weights[1];
+			int c = weights[2];
+			return new ChamferMask2DW3(a, b, c);
+		}
+		else
+		{
+			throw new RuntimeException("Can not create chamfer mask with the given number of weights: " + weights.length);
+		}
+	}
+	
+	public static final ChamferMask2D fromWeights(short[] weights)
+	{
+		if (weights.length == 1)
+		{
+			int a = weights[0];
+			return new ChamferMask2DW2(a, 2 * a);
+		}
+		else if (weights.length == 2)
+		{
+			int a = weights[0];
+			int b = weights[1];
+			return new ChamferMask2DW2(a, b);
+		}
+		else if (weights.length == 3)
+		{
+			int a = weights[0];
+			int b = weights[1];
+			int c = weights[2];
+			return new ChamferMask2DW3(a, b, c);
+		}
+		else
+		{
+			throw new RuntimeException("Can not create chamfer mask with the given number of weights: " + weights.length);
+		}
+	}
+	
+	public static final ChamferMask2D fromWeights(float[] weights)
+	{
+		// compute integer version of floating point weights
+		// (multiply by 10 to reduce rounding effect)
+		short[] intWeights = new short[weights.length];
+		for (int i = 0; i < weights.length; i++)
+		{
+			intWeights[i] = (short) Math.round(weights[i] + 10.0);
+		}
+		
+		if (weights.length == 2)
+		{
+			return new ChamferMask2DW2Float(intWeights, weights);
+		}
+		else
+		{
+			throw new RuntimeException("Can not create chamfer mask with the given number of weights: " + weights.length);
+		}
+	}
+	
+
 	// ==================================================
 	// Global methods
 	

@@ -3,6 +3,8 @@
  */
 package inra.ijpb.binary.distmap;
 
+import java.util.Collection;
+
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 import inra.ijpb.algo.AlgoEvent;
@@ -25,7 +27,7 @@ public class ChamferDistanceTransform2DShort extends AlgoStub implements Distanc
 	/**
 	 * The chamfer weights used to propagate distances to neighbor pixels.
 	 */
-	ChamferMask2D chamferWeights;
+	ChamferMask2D mask;
 	
 	/**
 	 * Flag for dividing final distance map by the value first weight. 
@@ -38,14 +40,14 @@ public class ChamferDistanceTransform2DShort extends AlgoStub implements Distanc
 	// ==================================================
 	// Constructors 
 	
-	public ChamferDistanceTransform2DShort(ChamferMask2D chamferWeights)
+	public ChamferDistanceTransform2DShort(ChamferMask2D mask)
 	{
-		this.chamferWeights = chamferWeights;
+		this.mask = mask;
 	}
 	
-	public ChamferDistanceTransform2DShort(ChamferMask2D chamferWeights, boolean normalize)
+	public ChamferDistanceTransform2DShort(ChamferMask2D mask, boolean normalize)
 	{
-		this.chamferWeights = chamferWeights;
+		this.mask = mask;
 		this.normalize = normalize;
 	}
 	
@@ -137,7 +139,8 @@ public class ChamferDistanceTransform2DShort extends AlgoStub implements Distanc
 		// size of image
 		int sizeX = labelImage.getWidth();
 		int sizeY = labelImage.getHeight();
-
+		Collection<ShortOffset> offsets = mask.getForwardOffsets();
+		
 		// Iterate over pixels
 		for (int y = 0; y < sizeY; y++)
 		{
@@ -156,7 +159,7 @@ public class ChamferDistanceTransform2DShort extends AlgoStub implements Distanc
 				int newDist = currentDist;
 				
 				// iterate over neighbors
-				for (ShortOffset offset : chamferWeights.getForwardOffsets())
+				for (ShortOffset offset : offsets)
 				{
 					// compute neighbor coordinates
 					int x2 = x + offset.dx;
@@ -197,7 +200,8 @@ public class ChamferDistanceTransform2DShort extends AlgoStub implements Distanc
 		// size of image
 		int sizeX = labelImage.getWidth();
 		int sizeY = labelImage.getHeight();
-
+		Collection<ShortOffset> offsets = mask.getBackwardOffsets();
+		
 		// Iterate over pixels
 		for (int y = sizeY-1; y >= 0; y--)
 		{
@@ -216,7 +220,7 @@ public class ChamferDistanceTransform2DShort extends AlgoStub implements Distanc
 				int newDist = currentDist;
 				
 				// iterate over neighbors
-				for (ShortOffset offset : chamferWeights.getBackwardOffsets())
+				for (ShortOffset offset : offsets)
 				{
 					// compute neighbor coordinates
 					int x2 = x + offset.dx;
@@ -260,7 +264,7 @@ public class ChamferDistanceTransform2DShort extends AlgoStub implements Distanc
 
 		// retrieve the minimum weight
 		double w0 = Double.POSITIVE_INFINITY;
-		for (ShortOffset offset : this.chamferWeights.getOffsets())
+		for (ShortOffset offset : this.mask.getOffsets())
 		{
 			w0 = Math.min(w0, offset.weight);
 		}
