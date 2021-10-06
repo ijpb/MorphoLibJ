@@ -51,7 +51,7 @@ public abstract class ChamferMask3D
 	 * 5 for cube-diagonals, and 7 for (2,1,1) shifts. Good approximation using
 	 * only four weights, and keeping low value of orthogonal weight.
 	 */
-	public final static ChamferMask3D CHAMFER_3_4_5_7 = new ChamferMask3DW4(3, 4, 5, 7);
+	public final static ChamferMask3D SVENSSON_3_4_5_7 = new ChamferMask3DW4(3, 4, 5, 7);
 	
 	
 	// ==================================================

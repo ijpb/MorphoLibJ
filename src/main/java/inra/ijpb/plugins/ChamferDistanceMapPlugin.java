@@ -21,6 +21,8 @@
  */
 package inra.ijpb.plugins;
 
+import java.awt.AWTEvent;
+
 import ij.ImagePlus;
 import ij.gui.DialogListener;
 import ij.gui.GenericDialog;
@@ -28,14 +30,11 @@ import ij.plugin.filter.ExtendedPlugInFilter;
 import ij.plugin.filter.PlugInFilterRunner;
 import ij.process.ImageProcessor;
 import inra.ijpb.algo.DefaultAlgoListener;
-import inra.ijpb.binary.ChamferWeights;
+import inra.ijpb.binary.distmap.ChamferDistanceTransform2DFloat;
+import inra.ijpb.binary.distmap.ChamferDistanceTransform2DShort;
+import inra.ijpb.binary.distmap.ChamferMask2D;
+import inra.ijpb.binary.distmap.ChamferMasks2D;
 import inra.ijpb.binary.distmap.DistanceTransform;
-import inra.ijpb.binary.distmap.DistanceTransform3x3Float;
-import inra.ijpb.binary.distmap.DistanceTransform3x3Short;
-import inra.ijpb.binary.distmap.DistanceTransform5x5Float;
-import inra.ijpb.binary.distmap.DistanceTransform5x5Short;
-
-import java.awt.AWTEvent;
 
 /**
  * Compute distance map, with possibility to choose chamfer weights, result
@@ -47,30 +46,29 @@ import java.awt.AWTEvent;
  * @author dlegland
  *
  */
-public class ChamferDistanceMapPlugin implements ExtendedPlugInFilter,
-		DialogListener
-		{
-
+public class ChamferDistanceMapPlugin
+		implements ExtendedPlugInFilter, DialogListener
+{
 	/** Apparently, it's better to store flags in plugin */
 	private int flags = DOES_8G | DOES_16 | DOES_32 | KEEP_PREVIEW | FINAL_PROCESSING;
 	PlugInFilterRunner pfr;
 	int nPasses;
 	boolean previewing = false;
-	
-	/** need to keep the instance of ImagePlus */ 
+
+	/** need to keep the instance of ImagePlus */
 	private ImagePlus imagePlus;
-	
+
 	/** keep the original image, to restore it after the preview */
 	private ImageProcessor baseImage;
-	
+
 	/** the different weights */
-	private ChamferWeights weights; 
-	private boolean floatProcessing 	= false;
-	private boolean normalize 	= false;
-	
+	private ChamferMask2D mask;
+	private boolean floatProcessing = false;
+	private boolean normalize = false;
+
 	/** Keep instance of result image */
 	private ImageProcessor result;
-	
+
 	/**
 	 * Called at the beginning of the process to know if the plugin can be run
 	 * with current image, and at the end to finalize.
@@ -78,11 +76,12 @@ public class ChamferDistanceMapPlugin implements ExtendedPlugInFilter,
 	public int setup(String arg, ImagePlus imp)
 	{
 		// Special case of plugin called to finalize the process
-		if (arg.equals("final")) {
-			// replace the preview image by the original image 
+		if (arg.equals("final"))
+		{
+			// replace the preview image by the original image
 			imagePlus.setProcessor(baseImage);
 			imagePlus.draw();
-			
+
 			// Create a new ImagePlus with the filter result
 			String newName = createResultImageName(imagePlus);
 			ImagePlus resPlus = new ImagePlus(newName, result);
@@ -90,222 +89,111 @@ public class ChamferDistanceMapPlugin implements ExtendedPlugInFilter,
 			resPlus.show();
 			return DONE;
 		}
-		
+
 		return flags;
 	}
 
-    public int showDialog(ImagePlus imp, String command, PlugInFilterRunner pfr) 
-    {
-    	// Store user data
-    	this.imagePlus = imp;
-    	this.baseImage = imp.getProcessor().duplicate();
-    	this.pfr = pfr;
-
-    	// Create a new generic dialog with appropriate options
-    	GenericDialog gd = new GenericDialog("Chamfer Distance Map");
-    	gd.addChoice("Distances", ChamferWeights.getAllLabels(), 
-    			ChamferWeights.BORGEFORS.toString());			
-    	String[] outputTypes = new String[]{"32 bits", "16 bits"};
-    	gd.addChoice("Output Type", outputTypes, outputTypes[0]);
-    	gd.addCheckbox("Normalize weights", true);	
-    	gd.addPreviewCheckbox(pfr);
-    	gd.addDialogListener(this);
-        previewing = true;
-		gd.addHelp("https://imagej.net/MorphoLibJ");
-        gd.showDialog();
-        previewing = false;
-        
-    	// test cancel  
-    	if (gd.wasCanceled())
-    		return DONE;
-
-    	// set up current parameters
-    	String weightLabel = gd.getNextChoice();
-    	floatProcessing = gd.getNextChoiceIndex() == 0;
-    	normalize = gd.getNextBoolean();
-
-    	// identify which weights should be used
-    	weights = ChamferWeights.fromLabel(weightLabel);
-
-    	return flags;
-    }
-    
-    /**
-     * Called when a dialog widget has been modified: recomputes option values
-     * from dialog content. 
-     */
-    public boolean dialogItemChanged(GenericDialog gd, AWTEvent evt)
-    {
-    	// set up current parameters
-    	String weightLabel = gd.getNextChoice();
-    	floatProcessing = gd.getNextChoiceIndex() == 0;
-    	normalize = gd.getNextBoolean();
-
-    	// identify which weights should be used
-    	weights = ChamferWeights.fromLabel(weightLabel);
-        return true;
-    }
-
-    public void setNPasses (int nPasses)
-    {
-    	this.nPasses = nPasses;
-    }
-    
-    /**
-     * Apply the current filter settings to process the given image. 
-     */
-    public void run(ImageProcessor image) 
-    {
-    	if (floatProcessing)
-    	{
-    		result = processFloat(image, weights.getFloatWeights(), normalize);
-		} else 
-		{
-			result = processShort(image, weights.getShortWeights(), normalize);
-		}
-    	
-    	if (previewing)
-    	{
-    		// Fill up the values of original image with values of the result
-    		double valMax = result.getMax();
-    		for (int i = 0; i < image.getPixelCount(); i++)
-    		{
-    			image.set(i, (int) (255 * result.getf(i) / valMax));
-    		}
-    		image.resetMinAndMax();
-    		if (image.isInvertedLut())
-    			image.invertLut();
-        }
-    }
-    
-	private ImageProcessor processFloat(ImageProcessor image, float[] weights,
-			boolean normalize) 
+	public int showDialog(ImagePlus imp, String command, PlugInFilterRunner pfr)
 	{
-    	// Initialize calculator
-    	DistanceTransform algo;
-    	if (weights.length == 2) {
-    		algo = new DistanceTransform3x3Float(weights, normalize);
-    	} else {
-    		algo = new DistanceTransform5x5Float(weights, normalize);
-    	}
+		// Store user data
+		this.imagePlus = imp;
+		this.baseImage = imp.getProcessor().duplicate();
+		this.pfr = pfr;
 
-    	// add monitoring
-    	DefaultAlgoListener.monitor(algo);
-    	
-    	// Compute distance on specified images
-    	return algo.distanceMap(image);
-    }
+		// Create a new generic dialog with appropriate options
+		GenericDialog gd = new GenericDialog("Chamfer Distance Transform");
+		gd.addChoice("Distances", ChamferMasks2D.getAllLabels(),
+				ChamferMasks2D.BORGEFORS.toString());
+		String[] outputTypes = new String[] { "16 bits", "32 bits" };
+		gd.addChoice("Output Type", outputTypes, outputTypes[0]);
+		gd.addCheckbox("Normalize weights", true);
+		gd.addPreviewCheckbox(pfr);
+		gd.addDialogListener(this);
+		previewing = true;
+		gd.addHelp("https://imagej.net/MorphoLibJ");
+		gd.showDialog();
+		previewing = false;
 
-    private ImageProcessor processShort(ImageProcessor image, short[] weights, boolean normalize) {
-    	// Initialize calculator
-    	DistanceTransform algo;
-    	if (weights.length == 2) {
-    		algo = new DistanceTransform3x3Short(weights, normalize);
-    	} else {
-    		algo = new DistanceTransform5x5Short(weights, normalize);
-    	}
+		// test cancel
+		if (gd.wasCanceled())
+			return DONE;
 
-    	// add monitoring
-    	DefaultAlgoListener.monitor(algo);
+		// set up current parameters
+		String maskLabel = gd.getNextChoice();
+		floatProcessing = gd.getNextChoiceIndex() == 0;
+		normalize = gd.getNextBoolean();
 
-    	// Compute distance on specified images
-    	return algo.distanceMap(image);
-    }
-   
-		
-	/**
-	 * Computes the distance propagation from the boundary of the particles.
-	 * Background is assumed to be 0.
-	 * 
-	 * @param image
-	 *            the binary image to process
-	 * @param newName
-	 *            the name of the new image
-	 * @param weights
-	 *            the array of weights in orthogonal, diagonal and eventually
-	 *            chessknight moves directions
-	 * @param normalize
-	 *            boolean flag indicating whether resulting map should be
-	 *            normalized
-	 * @return an array of objects containing the new name, and the result image
-	 */
-    @Deprecated
-	public Object[] exec(ImagePlus image, String newName, float[] weights, boolean normalize) {
-		// Check validity of parameters
-		if (image == null) {
-			System.err.println("Mask image not specified");
-			return null;
-		}
-		
-		if (newName == null)
-			newName = createResultImageName(image);
-		if (weights == null) {
-			System.err.println("Weights not specified");
-			return null;
-		}
-	
-		// Initialize calculator
-		DistanceTransform calc;
-		if (weights.length == 2) {
-			calc = new DistanceTransform3x3Float(weights, normalize);
-		} else {
-			calc = new DistanceTransform5x5Float(weights, normalize);
-		}
-		// Compute distance on specified images
-		ImageProcessor result = calc.distanceMap(image.getProcessor());
-		ImagePlus resultPlus = new ImagePlus(newName, result);
-		
-		// create result array
-		return new Object[]{newName, resultPlus};
+		// identify which mask should be used
+		mask = ChamferMasks2D.fromLabel(maskLabel).getMask();
+
+		return flags;
 	}
-	
+
 	/**
-	 * Compute the distance propagation from the boundary of the white particles. 
-	 * 
-	 * @param image
-	 *            the binary image to process
-	 * @param newName
-	 *            the name of the new image
-	 * @param weights
-	 *            the array of weights in orthogonal, diagonal and eventually
-	 *            chessknight moves directions
-	 * @param normalize
-	 *            boolean flag indicating whether resulting map should be
-	 *            normalized
-	 * @return an array of objects containing the new name, and the result image
+	 * Called when a dialog widget has been modified: recomputes option values
+	 * from dialog content.
 	 */
-    @Deprecated
-	public Object[] exec(ImagePlus image, String newName, short[] weights, boolean normalize) {
-		// Check validity of parameters
-		if (image == null) {
-			System.err.println("Mask image not specified");
-			return null;
-		}
-		
-		if (newName == null)
-			newName = createResultImageName(image);
-		if (weights == null) {
-			System.err.println("Weights not specified");
-			return null;
-		}
-	
-		// Initialize calculator
-		DistanceTransform calc;
-		if (weights.length == 2) {
-			calc = new DistanceTransform3x3Short(weights, normalize);
-		} else {
-			calc = new DistanceTransform5x5Short(weights, normalize);
-		}
-		
-		// Compute distance on specified images
-		ImageProcessor result = calc.distanceMap(image.getProcessor());
-		ImagePlus resultPlus = new ImagePlus(newName, result);
-		
-		// create result array
-		return new Object[]{newName, resultPlus};
+	public boolean dialogItemChanged(GenericDialog gd, AWTEvent evt)
+	{
+		// set up current parameters
+		String maskLabel = gd.getNextChoice();
+		floatProcessing = gd.getNextChoiceIndex() == 0;
+		normalize = gd.getNextBoolean();
+
+		// identify which weights should be used
+		mask = ChamferMasks2D.fromLabel(maskLabel).getMask();
+		return true;
 	}
-	
-	private static String createResultImageName(ImagePlus baseImage) {
+
+	public void setNPasses(int nPasses)
+	{
+		this.nPasses = nPasses;
+	}
+
+	/**
+	 * Apply the current filter settings to process the given image.
+	 */
+	public void run(ImageProcessor image)
+	{
+		result = process(image, mask, floatProcessing, normalize);
+
+		if (previewing)
+		{
+			// Fill up the values of original image with values of the result
+			double valMax = result.getMax();
+			for (int i = 0; i < image.getPixelCount(); i++)
+			{
+				image.set(i, (int) (255 * result.getf(i) / valMax));
+			}
+			image.resetMinAndMax();
+			if (image.isInvertedLut())
+				image.invertLut();
+		}
+	}
+
+	private ImageProcessor process(ImageProcessor image, ChamferMask2D weights,
+			boolean processFloat, boolean normalize)
+	{
+		// Initialize calculator
+		DistanceTransform algo;
+		if (processFloat)
+		{
+			algo = new ChamferDistanceTransform2DFloat(weights, normalize);
+		}
+		else
+		{
+			algo = new ChamferDistanceTransform2DShort(weights, normalize);
+		}
+		
+		// add monitoring
+		DefaultAlgoListener.monitor(algo);
+
+		// Compute distance on specified images
+		return algo.distanceMap(image);
+	}
+
+	private static String createResultImageName(ImagePlus baseImage)
+	{
 		return baseImage.getShortTitle() + "-dist";
 	}
 }

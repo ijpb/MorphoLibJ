@@ -32,7 +32,7 @@ public class ChamferWeights3DW3FloatTest
 		}
 		image.setVoxel(5, 5, 5, 0);
 
-		ChamferMask3D weights = CommonChamferMasks3D.QUASI_EUCLIDEAN.getChamferWeights();
+		ChamferMask3D weights = ChamferMasks3D.QUASI_EUCLIDEAN.getMask();
 		DistanceTransform3D algo = new ChamferDistanceTransform3DFloat(weights, true);
 		
 		ImageStack result = algo.distanceMap(image);
@@ -90,7 +90,7 @@ public class ChamferWeights3DW3FloatTest
 		}
 		image.setVoxel(5, 5, 5, 0);
 
-		ChamferMask3D weights = CommonChamferMasks3D.QUASI_EUCLIDEAN.getChamferWeights();
+		ChamferMask3D weights = ChamferMasks3D.QUASI_EUCLIDEAN.getMask();
 		DistanceTransform3D algo = new ChamferDistanceTransform3DShort(weights, true);
 		
 		ImageStack result = algo.distanceMap(image);

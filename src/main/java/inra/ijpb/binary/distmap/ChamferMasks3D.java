@@ -48,50 +48,54 @@ import inra.ijpb.binary.BinaryImages;
  * @see BinaryImages#distanceMap(ij.ImageStack)
  * @see inra.ijpb.binary.distmap.ChamferDistanceTransform3DShort
  */
-public enum CommonChamferMasks3D
+public enum ChamferMasks3D
 {
 	/** Use weight equal to 1 for all neighbors */
-	CHESSBOARD("Chessboard (1,1,1)", new short[] { 1, 1, 1 }), 
+	CHESSBOARD("Chessboard (1,1,1)", ChamferMask3D.CHESSBOARD), 
 	/**
 	 * Use weights 1 for orthogonal neighbors and 2 for diagonal neighbors,
 	 * and 3 for cube-diagonals.
 	 */
-	CITY_BLOCK("City-Block (1,2,3)", new short[] { 1, 2, 3 }), 
+	CITY_BLOCK("City-Block (1,2,3)", ChamferMask3D.CITY_BLOCK),
 	/**
 	 * Use floating-point weights 1.0 for orthogonal neighbors and sqrt(2) for
 	 * diagonal neighbors, and sqrt(3) for cube-diagonals.
 	 * 
 	 * Use 10, 14 and 17 for the 16-bits integer version.
 	 */
-	QUASI_EUCLIDEAN("Quasi-Euclidean (1,1.41,1.73)", 
-			new short[] { 10, 14, 17 },
-			new float[] { 1, (float) Math.sqrt(2), (float) Math.sqrt(3) }),	
+	QUASI_EUCLIDEAN("Quasi-Euclidean (1,1.41,1.73)", ChamferMask3D.QUASI_EUCLIDEAN),
 	/**
 	 * Use weights 3 for orthogonal neighbors and 4 for diagonal neighbors,
 	 * and 5 for cube-diagonals (best approximation for 3-by-3-by-3 masks).
 	 */
-	BORGEFORS("Borgefors (3,4,5)", new short[] { 3, 4, 5 }),
+	BORGEFORS("Borgefors (3,4,5)", ChamferMask3D.BORGEFORS),
 
 	/**
 	 * Use weights 3 for orthogonal neighbors and 4 for diagonal neighbors, and
 	 * 5 for cube-diagonals, and 7 for (2,1,1) shifts. Good approximation using
 	 * only four weights, and keeping low value of orthogonal weight.
 	 */
-	WEIGHTS_3_4_5_7("Svensson <3,4,5,7>", new short[] { 3, 4, 5, 7 });
+	SVENSSON_3_4_5_7("Svensson <3,4,5,7>", ChamferMask3D.SVENSSON_3_4_5_7);
 
 	private final String label;
-	private final ChamferMask3D chamferWeights;
+	private final ChamferMask3D mask;
 
-	private CommonChamferMasks3D(String label, short[] shortWeights)
+	private ChamferMasks3D(String label, ChamferMask3D mask)
+	{
+		this.label = label;
+		this.mask = mask;		
+	}
+	
+	private ChamferMasks3D(String label, short[] shortWeights)
 	{
 		this.label = label;
 		if (shortWeights.length == 3)
 		{
-			this.chamferWeights = new ChamferMask3DW3(shortWeights);
+			this.mask = new ChamferMask3DW3(shortWeights);
 		}
 		else if (shortWeights.length == 4)
 		{
-			this.chamferWeights = new ChamferMask3DW4(shortWeights);
+			this.mask = new ChamferMask3DW4(shortWeights);
 		}
 		else
 		{
@@ -99,13 +103,13 @@ public enum CommonChamferMasks3D
 		}
 	}
 
-	private CommonChamferMasks3D(String label, short[] shortWeights,
+	private ChamferMasks3D(String label, short[] shortWeights,
 			float[] floatWeights)
 	{
 		this.label = label;
 		if (shortWeights.length == 3 && floatWeights.length == 3)
 		{
-			this.chamferWeights = new ChamferMask3DW3Float(shortWeights, floatWeights);
+			this.mask = new ChamferMask3DW3Float(shortWeights, floatWeights);
 		}
 		else
 		{
@@ -113,9 +117,9 @@ public enum CommonChamferMasks3D
 		}
 	}
 
-	public ChamferMask3D getChamferWeights()
+	public ChamferMask3D getMask()
 	{
-		return this.chamferWeights;
+		return this.mask;
 	}
 
 	public String toString()
@@ -125,11 +129,11 @@ public enum CommonChamferMasks3D
 
 	public static String[] getAllLabels()
 	{
-		int n = CommonChamferMasks3D.values().length;
+		int n = ChamferMasks3D.values().length;
 		String[] result = new String[n];
 
 		int i = 0;
-		for (CommonChamferMasks3D weight : CommonChamferMasks3D.values())
+		for (ChamferMasks3D weight : ChamferMasks3D.values())
 			result[i++] = weight.label;
 
 		return result;
@@ -144,11 +148,11 @@ public enum CommonChamferMasks3D
 	 * @throws IllegalArgumentException
 	 *             if label name is not recognized.
 	 */
-	public static CommonChamferMasks3D fromLabel(String label)
+	public static ChamferMasks3D fromLabel(String label)
 	{
 		if (label != null)
 			label = label.toLowerCase();
-		for (CommonChamferMasks3D weight : CommonChamferMasks3D.values())
+		for (ChamferMasks3D weight : ChamferMasks3D.values())
 		{
 			String cmp = weight.label.toLowerCase();
 			if (cmp.equals(label))
