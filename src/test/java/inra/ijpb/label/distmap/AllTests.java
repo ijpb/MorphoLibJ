@@ -27,8 +27,8 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	// generic classes
-	DistanceTransform3DShortTest.class,
-	DistanceTransform3DFloatTest.class,
+	ChamferDistanceTransform3DShortTest.class,
+	ChamferDistanceTransform3DFloatTest.class,
 	})
 public class AllTests {
   //nothing

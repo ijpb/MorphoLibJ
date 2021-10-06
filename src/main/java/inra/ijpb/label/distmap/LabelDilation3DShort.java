@@ -25,60 +25,43 @@ import java.util.Collection;
 
 import ij.ImageStack;
 import inra.ijpb.algo.AlgoStub;
-import inra.ijpb.binary.ChamferWeights3D;
-import inra.ijpb.binary.ChamferWeights3D.ShortOffset;
+import inra.ijpb.binary.distmap.ChamferMask3D;
+import inra.ijpb.binary.distmap.ChamferMask3D.ShortOffset;
 
 /**
  * Apply a dilation by a specified radius to each label of a label map by
  * constraining the dilation. Labels can not dilate over existing labels.
  * 
- * @see inra.ijpb.binary.ChamferWeights3D
- * @see inra.ijpb.label.distmap.LabelDilationShort5x5
+ * @see inra.ijpb.binary.ChamferMask3D
+ * @see inra.ijpb.label.distmap.LabelDilation2DShort
  * 
- * @deprecated replaced by  LabelDilation3DShort (since 1.4.4)
+ * @author dlegland
  * 
  */
-@Deprecated
-public class LabelDilation3D4WShort extends AlgoStub 
+public class LabelDilation3DShort extends AlgoStub 
 {
 	// ==================================================
 	// Class variables
 	
 	short[] weights = new short[]{5, 7, 11};
-
+	ChamferMask3D mask;
+	
 	
 	// ==================================================
 	// Constructors 
 	
 	/**
-	 * Creates a new image processor for dilating labels using chamfer weight
-	 * stored using shorts.
+	 * Creates a new 3D image for dilating labels using the specified chamfer
+	 * mask, using 16-bits integer computation.
 	 * 
-	 * @param weights
-	 *            the Chamfer weights to use.
+	 * @param mask
+	 *            the Chamfer mask to use.
 	 */
-	public LabelDilation3D4WShort(ChamferWeights3D weights) 
+	public LabelDilation3DShort(ChamferMask3D mask) 
 	{
-		this(weights.getShortWeights());
+		this.mask = mask;
 	}
 
-	/**
-	 * Creates a new image processor for dilating labels using chamfer weight
-	 * stored using shorts.
-	 * 
-	 * @param weights
-	 *            the Chamfer weights to use, as an array of shorts with four elements. 
-	 */
-	public LabelDilation3D4WShort(short[] weights) 
-	{
-		this.weights = weights;
-		
-		// ensure the number of weight is at least 4.
-		if (weights.length < 4)
-		{
-			throw new IllegalArgumentException("Weights array must have length equal to 4");
-		}
-	}
 
 	// ==================================================
 	// Methods 
@@ -154,7 +137,7 @@ public class LabelDilation3D4WShort extends AlgoStub
 		int sizeZ = res.getSize();
 
 		// compute offsets of the neighborhood in forward direction
-		Collection<ShortOffset> offsets = ChamferWeights3D.getForwardOffsets(weights);
+		Collection<ShortOffset> offsets = mask.getForwardOffsets();
 		
 		// Iterate over voxels
 		for (int z = 0; z < sizeZ; z++) 
@@ -219,7 +202,7 @@ public class LabelDilation3D4WShort extends AlgoStub
 		int sizeZ = res.getSize();
 
 		// compute offsets of the neighborhood in backward direction
-		Collection<ShortOffset> offsets = ChamferWeights3D.getBackwardOffsets(weights);
+		Collection<ShortOffset> offsets = mask.getBackwardOffsets();
 		
 		// Iterate over voxels
 		for (int z = 0; z < sizeZ; z++) 

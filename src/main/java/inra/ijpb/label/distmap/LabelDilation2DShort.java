@@ -21,10 +21,13 @@
  */
 package inra.ijpb.label.distmap;
 
+import java.util.Collection;
+
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 import inra.ijpb.algo.AlgoStub;
-import inra.ijpb.binary.ChamferWeights;
+import inra.ijpb.binary.distmap.ChamferMask2D;
+import inra.ijpb.binary.distmap.ChamferMask2D.ShortOffset;
 
 /**
  * Apply a dilation by a specified radius to each label of a label map by
@@ -33,44 +36,35 @@ import inra.ijpb.binary.ChamferWeights;
  * Can be applied to label map encoded with 8 or 16 bits integers, or 32 bit
  * floats.
  * 
- * @see LabelDilation2DShort
- * @see inra.ijpb.binary.ChamferWeights3D
- * @see inra.ijpb.label.distmap.LabelDilation3D4WShort
+ * @see inra.ijpb.binary.distmap.ChamferMask2D
+ * @see inra.ijpb.label.distmap.LabelDilation3DShort
  * 
- * @deprecated replaced by LabelDilation2DShort (since 1.4.4)
+ * @author dlegland
  * 
  */
-@Deprecated
-public class LabelDilationShort5x5 extends AlgoStub 
+public class LabelDilation2DShort extends AlgoStub 
 {
 	// ==================================================
 	// Class variables
 	
-	short[] weights = new short[]{5, 7, 11};
+	ChamferMask2D mask;
 
 	
 	// ==================================================
 	// Constructors 
 	
-	public LabelDilationShort5x5(ChamferWeights weights) 
+	/**
+	 * Creates a new image processor for dilating labels using the specified
+	 * chamfer mask, using 16-bits integer computation.
+	 * 
+	 * @param mask
+	 *            the Chamfer mask to use.
+	 */
+	public LabelDilation2DShort(ChamferMask2D mask) 
 	{
-		this(weights.getShortWeights());
+		this.mask = mask;
 	}
 
-	public LabelDilationShort5x5(short[] weights) 
-	{
-		this.weights = weights;
-		
-		// ensure the number of weight is at least 3.
-		if (weights.length < 3) 
-		{
-			short[] newWeights = new short[3];
-			newWeights[0] = weights[0];
-			newWeights[1] = weights[1];
-			newWeights[2] = (short) (weights[0] + weights[1]);
-			this.weights = newWeights;
-		}
-	}
 
 	// ==================================================
 	// Methods 
@@ -93,7 +87,12 @@ public class LabelDilationShort5x5 extends AlgoStub
 	public ImageProcessor process(ImageProcessor labelImage, double distMax)
 	{
 		// use max distance relative to chamfer weights
-		double maxDist = distMax * this.weights[0];
+		double w0 = Double.POSITIVE_INFINITY;
+		for (ShortOffset offset : mask.getOffsets())
+		{
+			w0 = Math.min(w0, offset.weight);
+		}
+		double maxDist = distMax * w0;
 		
 		fireStatusChanged(this, "Initialization..."); 
 		// the instance of ImageProcessor storing the result label map
@@ -140,16 +139,8 @@ public class LabelDilationShort5x5 extends AlgoStub
 		// size of image
 		int sizeX = res.getWidth();
 		int sizeY = res.getHeight();
+		Collection<ShortOffset> offsets = mask.getForwardOffsets();
 
-		// Initialize pairs of offset and weights
-		int[] dx = new int[]{-1, +1,  -2, -1,  0, +1, +2,  -1};
-		int[] dy = new int[]{-2, -2,  -1, -1, -1, -1, -1,   0};
-		
-		short[] dw = new short[] { 
-				weights[2], weights[2], 
-				weights[2], weights[1], weights[0], weights[1], weights[2], 
-				weights[0] };
-		
 		// Iterate over pixels
 		for (int y = 0; y < sizeY; y++)
 		{
@@ -168,11 +159,11 @@ public class LabelDilationShort5x5 extends AlgoStub
 				int closestLabel = 0;
 				
 				// iterate over neighbors
-				for (int i = 0; i < dx.length; i++)
+				for (ShortOffset offset : offsets)
 				{
 					// compute neighbor coordinates
-					int x2 = x + dx[i];
-					int y2 = y + dy[i];
+					int x2 = x + offset.dx;
+					int y2 = y + offset.dy;
 					
 					// check bounds
 					if (x2 < 0 || x2 >= sizeX)
@@ -181,7 +172,7 @@ public class LabelDilationShort5x5 extends AlgoStub
 						continue;
 					
 					// distance from neighbor
-					int dist = distMap.get(x2, y2) + dw[i];
+					int dist = distMap.get(x2, y2) + offset.weight;
 					
 					if (dist < minDist)
 					{
@@ -207,16 +198,8 @@ public class LabelDilationShort5x5 extends AlgoStub
 		// size of image
 		int sizeX = res.getWidth();
 		int sizeY = res.getHeight();
+		Collection<ShortOffset> offsets = mask.getBackwardOffsets();
 
-		// Initialize pairs of offset and weights
-		int[] dx = new int[]{+1, -1,  +2, +1,  0, -1, -2,  +1};
-		int[] dy = new int[]{+2, +2,  +1, +1, +1, +1, +1,   0};
-		
-		short[] dw = new short[] { 
-				weights[2], weights[2], 
-				weights[2], weights[1], weights[0], weights[1], weights[2], 
-				weights[0] };
-		
 		// Iterate over pixels
 		for (int y = sizeY-1; y >= 0; y--)
 		{
@@ -235,11 +218,11 @@ public class LabelDilationShort5x5 extends AlgoStub
 				int closestLabel = 0;
 				
 				// iterate over neighbors
-				for (int i = 0; i < dx.length; i++)
+				for (ShortOffset offset : offsets)
 				{
 					// compute neighbor coordinates
-					int x2 = x + dx[i];
-					int y2 = y + dy[i];
+					int x2 = x + offset.dx;
+					int y2 = y + offset.dy;
 					
 					// check bounds
 					if (x2 < 0 || x2 >= sizeX)
@@ -248,7 +231,7 @@ public class LabelDilationShort5x5 extends AlgoStub
 						continue;
 					
 					// distance from neighbor
-					int dist = distMap.get(x2, y2) + dw[i];
+					int dist = distMap.get(x2, y2) + offset.weight;
 					
 					if (dist < minDist)
 					{

@@ -48,15 +48,15 @@ import ij.process.FloatPolygon;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
-import inra.ijpb.binary.ChamferWeights;
-import inra.ijpb.binary.ChamferWeights3D;
+import inra.ijpb.binary.distmap.ChamferMask2D;
+import inra.ijpb.binary.distmap.ChamferMask3D;
 import inra.ijpb.data.Cursor2D;
 import inra.ijpb.data.Cursor3D;
+import inra.ijpb.label.distmap.ChamferDistanceTransform3DFloat;
+import inra.ijpb.label.distmap.ChamferDistanceTransform3DShort;
 import inra.ijpb.label.distmap.DistanceTransform3D;
-import inra.ijpb.label.distmap.DistanceTransform3DFloat;
-import inra.ijpb.label.distmap.DistanceTransform3DShort;
-import inra.ijpb.label.distmap.LabelDilation3D4WShort;
-import inra.ijpb.label.distmap.LabelDilationShort5x5;
+import inra.ijpb.label.distmap.LabelDilation2DShort;
+import inra.ijpb.label.distmap.LabelDilation3DShort;
 import inra.ijpb.label.edit.ReplaceLabelValues;
 
 /**
@@ -2123,8 +2123,7 @@ public class LabelImages
 	 */
 	public static final ImageStack distanceMap(ImageStack image)
 	{
-		float[] weights = new float[]{3.0f, 4.0f, 5.0f};
-		DistanceTransform3D algo = new DistanceTransform3DFloat(weights);
+		DistanceTransform3D algo = new ChamferDistanceTransform3DFloat(ChamferMask3D.BORGEFORS);
 		return algo.distanceMap(image);
 	}
 	
@@ -2135,7 +2134,7 @@ public class LabelImages
 	 * nearest voxel with a different value.
 	 * 
 	 * @param image
-	 *            the input 3D label image
+	 *            the input 3D image of labels
 	 * @param weights
 	 *            an array of chamfer weights, with at least three values
 	 * @param normalize
@@ -2146,7 +2145,8 @@ public class LabelImages
 	public static final ImageStack distanceMap(ImageStack image,
 			short[] weights, boolean normalize)
 	{
-		DistanceTransform3D	algo = new DistanceTransform3DShort(weights, normalize);
+		ChamferMask3D mask = ChamferMask3D.fromWeights(weights);
+		DistanceTransform3D	algo = new ChamferDistanceTransform3DShort(mask, normalize);
 			
 		return algo.distanceMap(image);
 	}
@@ -2158,7 +2158,7 @@ public class LabelImages
 	 * nearest voxel with a different value.
 	 * 
 	 * @param image
-	 *            the input 3D label image
+	 *            the input 3D image of labels
 	 * @param weights
 	 *            an array of chamfer weights, with at least three values
 	 * @param normalize
@@ -2169,7 +2169,8 @@ public class LabelImages
 	public static final ImageStack distanceMap(ImageStack image, 
 			float[] weights, boolean normalize)
 	{
-		DistanceTransform3D algo = new DistanceTransform3DFloat(weights, normalize);
+		ChamferMask3D mask = ChamferMask3D.fromWeights(weights);
+		DistanceTransform3D	algo = new ChamferDistanceTransform3DFloat(mask, normalize);
 		return algo.distanceMap(image);
 	}
 	
@@ -2236,7 +2237,7 @@ public class LabelImages
 	 */
 	public static final ImageProcessor dilateLabels(ImageProcessor labelMap, double distMax)
 	{
-		LabelDilationShort5x5 algo = new LabelDilationShort5x5(ChamferWeights.CHESSKNIGHT);
+		LabelDilation2DShort algo = new LabelDilation2DShort(ChamferMask2D.CHESSKNIGHT);
 		ImageProcessor result = algo.process(labelMap, distMax);
 		result.setLut(labelMap.getLut());
 		return result;
@@ -2259,7 +2260,7 @@ public class LabelImages
 	 */
 	public static final ImageStack dilateLabels(ImageStack labelMap, double distMax)
 	{
-		LabelDilation3D4WShort algo = new LabelDilation3D4WShort(ChamferWeights3D.WEIGHTS_3_4_5_7);
+		LabelDilation3DShort algo = new LabelDilation3DShort(ChamferMask3D.SVENSSON_3_4_5_7);
 		ImageStack result = algo.process(labelMap, distMax);
 		result.setColorModel(labelMap.getColorModel());
 		return result;

@@ -28,10 +28,10 @@ import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
 import inra.ijpb.algo.DefaultAlgoListener;
-import inra.ijpb.binary.ChamferWeights;
-import inra.ijpb.binary.ChamferWeights3D;
-import inra.ijpb.label.distmap.LabelDilation3D4WShort;
-import inra.ijpb.label.distmap.LabelDilationShort5x5;
+import inra.ijpb.binary.distmap.ChamferMask2D;
+import inra.ijpb.binary.distmap.ChamferMask3D;
+import inra.ijpb.label.distmap.LabelDilation2DShort;
+import inra.ijpb.label.distmap.LabelDilation3DShort;
 import inra.ijpb.util.IJUtils;
 
 /**
@@ -64,7 +64,7 @@ public class DilateLabelsPlugin implements PlugIn
 		if (imagePlus.getStackSize() == 1)
 		{
 			// Process 2D image
-			LabelDilationShort5x5 algo = new LabelDilationShort5x5(ChamferWeights.CHESSKNIGHT);
+			LabelDilation2DShort algo = new LabelDilation2DShort(ChamferMask2D.CHESSKNIGHT);
 			DefaultAlgoListener.monitor(algo);
 			ImageProcessor image = imagePlus.getProcessor();
 			ImageProcessor result = algo.process(image, distMax);
@@ -76,7 +76,7 @@ public class DilateLabelsPlugin implements PlugIn
 		{
 			// Process 3D image
 			ImageStack image = imagePlus.getStack();
-			LabelDilation3D4WShort algo = new LabelDilation3D4WShort(ChamferWeights3D.WEIGHTS_3_4_5_7);
+			LabelDilation3DShort algo = new LabelDilation3DShort(ChamferMask3D.SVENSSON_3_4_5_7);
 			DefaultAlgoListener.monitor(algo);
 			ImageStack result = algo.process(imagePlus.getStack(), distMax);
 			result.setColorModel(image.getColorModel());
