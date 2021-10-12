@@ -39,7 +39,8 @@ import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
 import ij.plugin.frame.RoiManager;
 import inra.ijpb.algo.DefaultAlgoListener;
-import inra.ijpb.binary.ChamferWeights;
+import inra.ijpb.binary.distmap.ChamferMask2D;
+import inra.ijpb.binary.distmap.ChamferMasks2D;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.region2d.GeodesicDiameter;
 import inra.ijpb.util.IJUtils;
@@ -85,8 +86,8 @@ public class GeodesicDiameterPlugin implements PlugIn
 		GenericDialog gd = new GenericDialog("Geodesic Diameter");
 		gd.addChoice("Label Image:", imageNames, selectedImageName);
 		// Set Chessknight weights as default
-		gd.addChoice("Distances", ChamferWeights.getAllLabels(), 
-				ChamferWeights.CHESSKNIGHT.toString());
+		gd.addChoice("Distances", ChamferMasks2D.getAllLabels(), 
+				ChamferMasks2D.CHESSKNIGHT.toString());
 		gd.addCheckbox("Show Overlay Result", true);
 		gd.addChoice("Image to overlay:", imageNames, selectedImageName);
 		gd.addCheckbox("Export to ROI Manager", true);
@@ -98,7 +99,7 @@ public class GeodesicDiameterPlugin implements PlugIn
 		// set up current parameters
 		int labelImageIndex = gd.getNextChoiceIndex();
 		ImagePlus labelPlus = WindowManager.getImage(labelImageIndex + 1);
-		ChamferWeights weights = ChamferWeights.fromLabel(gd.getNextChoice());
+		ChamferMask2D chamferMask = ChamferMasks2D.fromLabel(gd.getNextChoice()).getMask();
         boolean overlayPaths = gd.getNextBoolean();
 		int resultImageIndex = gd.getNextChoiceIndex();
 		boolean createPathRois = gd.getNextBoolean();
@@ -111,7 +112,7 @@ public class GeodesicDiameterPlugin implements PlugIn
 		}
 		
 		// Create and configure the class for computing geodesic diameter
-		GeodesicDiameter algo = new GeodesicDiameter(weights);
+		GeodesicDiameter algo = new GeodesicDiameter(chamferMask);
 		algo.setComputePaths(overlayPaths || createPathRois);
 		DefaultAlgoListener.monitor(algo);
 		

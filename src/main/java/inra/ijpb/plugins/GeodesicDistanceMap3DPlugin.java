@@ -21,6 +21,8 @@
  */
 package inra.ijpb.plugins;
 
+import java.awt.image.IndexColorModel;
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
@@ -29,13 +31,12 @@ import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import ij.process.LUT;
 import inra.ijpb.algo.DefaultAlgoListener;
-import inra.ijpb.binary.ChamferWeights3D;
+import inra.ijpb.binary.distmap.ChamferMask3D;
+import inra.ijpb.binary.distmap.ChamferMasks3D;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransform3D;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransform3DFloat;
 import inra.ijpb.color.ColorMaps;
 import inra.ijpb.data.image.Images3D;
-
-import java.awt.image.IndexColorModel;
 
 /**
  * Plugin for computing geodesic distance map from binary 3D images using
@@ -78,8 +79,8 @@ public class GeodesicDistanceMap3DPlugin implements PlugIn
 		gd.addChoice("Marker Image", imageNames, IJ.getImage().getTitle());
 		gd.addChoice("Mask Image", imageNames, IJ.getImage().getTitle());
 		// Set default weights
-		gd.addChoice("Distances", ChamferWeights3D.getAllLabels(),
-				ChamferWeights3D.WEIGHTS_3_4_5_7.toString());
+		gd.addChoice("Distances", ChamferMasks3D.getAllLabels(),
+				ChamferMasks3D.SVENSSON_3_4_5_7.toString());
 //		String[] outputTypes = new String[] { "32 bits", "16 bits" };
 //		gd.addChoice("Output Type", outputTypes, outputTypes[0]);
 		gd.addCheckbox("Normalize weights", true);
@@ -97,7 +98,7 @@ public class GeodesicDistanceMap3DPlugin implements PlugIn
 		String weightLabel = gd.getNextChoice();
 		
 		// identify which weights should be used
-		ChamferWeights3D weights = ChamferWeights3D.fromLabel(weightLabel);
+		ChamferMask3D chamferMask = ChamferMasks3D.fromLabel(weightLabel).getMask();
 //		boolean resultAsFloat = gd.getNextChoiceIndex() == 0;
 		boolean normalizeWeights = gd.getNextBoolean();
 
@@ -119,7 +120,7 @@ public class GeodesicDistanceMap3DPlugin implements PlugIn
 //		if (resultAsFloat)
 //		{
 			res = process(markerImage, maskImage, newName,
-					weights.getFloatWeights(), normalizeWeights);
+					chamferMask, normalizeWeights);
 //		} else
 //		{
 //			res = process(markerImage, maskImage, newName,
@@ -127,6 +128,57 @@ public class GeodesicDistanceMap3DPlugin implements PlugIn
 //		}
 
 		res.show();
+	}
+
+	/**
+	 * Computes the distance propagated from the boundary of the white
+	 * particles, within the white phase.
+	 * 
+	 * @param markerPlus
+	 *            the binary marker image from which distances will be
+	 *            propagated
+	 * @param maskPlus
+	 *            the binary mask image that will constrain the propagation
+	 * @param newName
+	 *            the name of the result image
+	 * @param chamferMask
+	 *            the set of chamfer weights for computing distances
+	 * @param normalize
+	 *            specifies whether the resulting distance map should be
+	 *            normalized
+	 * @return an array of object, containing the name of the new image, and the
+	 *         new ImagePlus instance
+	 */
+	public ImagePlus process(ImagePlus markerPlus, ImagePlus maskPlus,
+			String newName, ChamferMask3D chamferMask, boolean normalize)
+	{
+		// Check validity of parameters
+		if (markerPlus == null)
+		{
+			throw new IllegalArgumentException("Marker image not specified");
+		}
+		if (maskPlus == null)
+		{
+			throw new IllegalArgumentException("Mask image not specified");
+		}
+		if (newName == null)
+			newName = createResultImageName(maskPlus);
+
+		ImageStack result = process(markerPlus.getStack(), maskPlus.getStack(), chamferMask, normalize);
+		ImagePlus resultPlus = new ImagePlus(newName, result);
+
+		// copy calibration settings
+		resultPlus.copyScale(maskPlus);
+		resultPlus.setSlice(markerPlus.getCurrentSlice());
+
+		// setup display options
+		double maxVal = findMaxWithinMask(resultPlus, maskPlus);
+		resultPlus.setLut(createFireLUTBlackEnding(maxVal));
+		// keep some gap between max val and infinity
+		resultPlus.setDisplayRange(0, maxVal + 2);
+		
+		// return result image
+		return resultPlus;
 	}
 
 	/**
@@ -148,6 +200,7 @@ public class GeodesicDistanceMap3DPlugin implements PlugIn
 	 * @return an array of object, containing the name of the new image, and the
 	 *         new ImagePlus instance
 	 */
+	@Deprecated
 	public ImagePlus process(ImagePlus markerPlus, ImagePlus maskPlus,
 			String newName, float[] weights, boolean normalize)
 	{
@@ -184,6 +237,7 @@ public class GeodesicDistanceMap3DPlugin implements PlugIn
 		return resultPlus;
 	}
 
+	@Deprecated
 	public ImageStack process(ImageStack marker, ImageStack mask,
 			float[] weights, boolean normalize)
 	{
@@ -212,6 +266,29 @@ public class GeodesicDistanceMap3DPlugin implements PlugIn
 		return result;
 	}
 	
+	public ImageStack process(ImageStack marker, ImageStack mask,
+			ChamferMask3D chamferMask, boolean normalize)
+	{
+		// check input and mask have the same size
+		if (!Images3D.isSameSize(marker, mask))
+		{
+			IJ.showMessage("Error",
+					"Input and marker images\nshould have the same size");
+			return null;
+		}
+
+		// Initialize calculator
+		GeodesicDistanceTransform3D algo = new GeodesicDistanceTransform3DFloat(chamferMask, normalize);
+		DefaultAlgoListener.monitor(algo);
+    	
+
+		// Compute distance on specified images
+		ImageStack result = algo.geodesicDistanceMap(marker, mask);
+
+		// create result image
+		return result;
+	}
+
 	private double findMaxWithinMask(ImagePlus image, ImagePlus mask)
 	{
 		int width = image.getWidth();

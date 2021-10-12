@@ -27,11 +27,11 @@ import ij.ImagePlus;
 import ij.process.ImageProcessor;
 import inra.ijpb.morphology.Strel;
 
-import org.junit.Test;
+//import org.junit.Test;
 
 public class SquareStrelTiming {
 
-	@Test
+//	@Test
 	public void timingLeafImage_gray8() {
 		ImageProcessor image = getLeafImage();
 		assertNotNull(image);
@@ -77,7 +77,7 @@ public class SquareStrelTiming {
 	}
 
 	
-	@Test
+//	@Test
 	public void timingMaizeImage() {
 		ImageProcessor image = getMaizeImage();
 		assertNotNull(image);

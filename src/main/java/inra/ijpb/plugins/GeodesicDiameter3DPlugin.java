@@ -29,7 +29,8 @@ import ij.gui.GenericDialog;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
 import inra.ijpb.algo.DefaultAlgoListener;
-import inra.ijpb.binary.ChamferWeights3D;
+import inra.ijpb.binary.distmap.ChamferMask3D;
+import inra.ijpb.binary.distmap.ChamferMasks3D;
 import inra.ijpb.binary.geodesic.GeodesicDiameter3DFloat;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.util.IJUtils;
@@ -77,8 +78,8 @@ public class GeodesicDiameter3DPlugin implements PlugIn
 		GenericDialog gd = new GenericDialog("Geodesic Diameter 3D");
 		gd.addChoice("Label Image (3D):", imageNames, selectedImageName);
 		// Set Chessknight weights as default
-		gd.addChoice("Distances", ChamferWeights3D.getAllLabels(), 
-				ChamferWeights3D.WEIGHTS_3_4_5_7.toString());
+		gd.addChoice("Distances", ChamferMasks3D.getAllLabels(), 
+				ChamferMasks3D.SVENSSON_3_4_5_7.toString());
 		gd.showDialog();
 		
 		if (gd.wasCanceled())
@@ -87,7 +88,7 @@ public class GeodesicDiameter3DPlugin implements PlugIn
 		// set up current parameters
 		int labelImageIndex = gd.getNextChoiceIndex();
 		ImagePlus labelPlus = WindowManager.getImage(labelImageIndex+1);
-		ChamferWeights3D weights = ChamferWeights3D.fromLabel(gd.getNextChoice());
+		ChamferMask3D chamferMask = ChamferMasks3D.fromLabel(gd.getNextChoice()).getMask();
 		
 		// check if image is a label image
 		if (!LabelImages.isLabelImageType(labelPlus))
@@ -101,7 +102,7 @@ public class GeodesicDiameter3DPlugin implements PlugIn
 		
 		// Compute geodesic diameters, using floating-point calculations
 		long start = System.nanoTime();
-		ResultsTable table = process(labelImage, weights.getFloatWeights());
+		ResultsTable table = process(labelImage, chamferMask);
 		long finalTime = System.nanoTime();
 		
 		// Final time, displayed in milliseconds
@@ -140,14 +141,14 @@ public class GeodesicDiameter3DPlugin implements PlugIn
 	 * 
 	 * @param labels
 	 *            the label image of the particles
-	 * @param weights
+	 * @param chamferMask
 	 *            the weights to use
 	 * @return a new ResultsTable object containing the geodesic diameter of
 	 *         each label
 	 */
-	public ResultsTable process(ImageStack labels, float[] weights)
+	public ResultsTable process(ImageStack labels, ChamferMask3D chamferMask)
 	{
-		GeodesicDiameter3DFloat algo = new GeodesicDiameter3DFloat(weights);
+		GeodesicDiameter3DFloat algo = new GeodesicDiameter3DFloat(chamferMask);
 		DefaultAlgoListener.monitor(algo);
 		ResultsTable table = algo.process(labels);
 		return table;

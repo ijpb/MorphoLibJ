@@ -34,9 +34,9 @@ import ij.measure.ResultsTable;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.binary.BinaryImages;
-import inra.ijpb.binary.ChamferWeights;
+import inra.ijpb.binary.distmap.ChamferMask2D;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransform;
-import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat5x5;
+import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.label.LabelValues;
 import inra.ijpb.label.LabelValues.PositionValuePair;
@@ -139,19 +139,33 @@ public class GeodesicDiameter extends RegionAnalyzer2D<GeodesicDiameter.Result>
 	 */
 	public GeodesicDiameter()
 	{
-		this(new GeodesicDistanceTransformFloat5x5(ChamferWeights.CHESSKNIGHT.getFloatWeights(), true));
+		this(new GeodesicDistanceTransformFloat(ChamferMask2D.CHESSKNIGHT, true));
 	}
 	
 	/**
 	 * Creates a new geodesic diameter computation operator.
 	 * 
-	 * @param weights
-	 *            the array of weights for orthogonal, diagonal, and eventually
-	 *            chess-knight moves neighbors
+	 * @param mask
+	 *            the chamfer mask used for propagating distances
 	 */
-	public GeodesicDiameter(ChamferWeights weights) 
+	public GeodesicDiameter(ChamferMask2D mask) 
 	{
-		this(new GeodesicDistanceTransformFloat5x5(weights, true));
+		this(new GeodesicDistanceTransformFloat(mask, true));
+	}
+	
+	/**
+	 * Creates a new geodesic diameter computation operator.
+	 * 
+	 * @deprecated ChamferWeights is replaced by ChamferMask2D (since 1.4.4)
+	 *  
+	 * @param weights
+	 *            the array of weights for orthogonal, diagonal, and eventually
+	 *            chess-knight moves neighbors
+	 */
+	@Deprecated
+	public GeodesicDiameter(inra.ijpb.binary.ChamferWeights weights) 
+	{
+		this(new GeodesicDistanceTransformFloat(ChamferMask2D.fromWeights(weights.getFloatWeights()), true));
 	}
 	
 	/**
@@ -161,11 +175,13 @@ public class GeodesicDiameter extends RegionAnalyzer2D<GeodesicDiameter.Result>
 	 *            the array of weights for orthogonal, diagonal, and eventually
 	 *            chess-knight moves neighbors
 	 */
+	@Deprecated
 	public GeodesicDiameter(float[] weights) 
 	{
-		this(new GeodesicDistanceTransformFloat5x5(weights, true));
+		this(new GeodesicDistanceTransformFloat(weights, true));
 	}
 	
+
 	/**
 	 * Creates a new geodesic diameter computation operator.
 	 * 
@@ -219,9 +235,11 @@ public class GeodesicDiameter extends RegionAnalyzer2D<GeodesicDiameter.Result>
 		this.computePaths = bool;
 	}
 
+	@Deprecated
 	public void setChamferWeights(float[] weights)
 	{
-		this.geodesicDistanceTransform = new GeodesicDistanceTransformFloat5x5(weights, true);
+		ChamferMask2D mask = ChamferMask2D.fromWeights(weights);
+		this.geodesicDistanceTransform = new GeodesicDistanceTransformFloat(mask, true);
 	}
 
 	
@@ -302,8 +320,8 @@ public class GeodesicDiameter extends RegionAnalyzer2D<GeodesicDiameter.Result>
 		// Compute distance map from label borders to identify centers
 		// (The distance map correctly processes adjacent borders)
 		this.fireStatusChanged(this, "Initializing pseudo geodesic centers...");
-		float[] weights = ChamferWeights.CHESSKNIGHT.getFloatWeights();
-		ImageProcessor distanceMap = BinaryImages.distanceMap(labelImage, weights, true);
+		ChamferMask2D chamferMask = ChamferMask2D.CHESSKNIGHT; 
+		ImageProcessor distanceMap = BinaryImages.distanceMap(labelImage, chamferMask, true, true);
 	
 		// Extract position of maxima
 		PositionValuePair[] innerCircles = LabelValues.findMaxValues(distanceMap, labelImage, labels);

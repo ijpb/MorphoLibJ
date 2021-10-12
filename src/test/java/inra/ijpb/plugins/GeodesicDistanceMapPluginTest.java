@@ -25,6 +25,7 @@ import static org.junit.Assert.*;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
+import inra.ijpb.binary.distmap.ChamferMask2D;
 
 import org.junit.Test;
 
@@ -49,11 +50,11 @@ public class GeodesicDistanceMapPluginTest
 		ImagePlus markerPlus = new ImagePlus("marker", marker);
 		
 		GeodesicDistanceMapPlugin plugin = new GeodesicDistanceMapPlugin();
-		float[] weights = new float[]{3, 4};
-		ImagePlus mapPlus = plugin.process(markerPlus, maskPlus, "map", weights, true);
+		ChamferMask2D chamferMask = ChamferMask2D.BORGEFORS;
+		ImagePlus mapPlus = plugin.process(markerPlus, maskPlus, "map", chamferMask, true, true);
 		ImageProcessor map = mapPlus.getProcessor();
 	
-		assertEquals(259, map.getf(190, 213), .01);
+		assertEquals(259.66, map.getf(190, 213), .01);
 	}
 
 	/**
@@ -70,11 +71,11 @@ public class GeodesicDistanceMapPluginTest
 		ImagePlus markerPlus = new ImagePlus("marker", marker);
 		
 		GeodesicDistanceMapPlugin plugin = new GeodesicDistanceMapPlugin();
-		short[] weights = new short[]{3, 4};
-		ImagePlus mapPlus = plugin.process(markerPlus, maskPlus, "map", weights, true);
+		ChamferMask2D chamferMask = ChamferMask2D.BORGEFORS;
+		ImagePlus mapPlus = plugin.process(markerPlus, maskPlus, "map", chamferMask, false, true);
 		ImageProcessor map = mapPlus.getProcessor();
 				
-		assertEquals(259, map.get(190, 213));
+		assertEquals(260, map.get(190, 213));
 	}
 
 }

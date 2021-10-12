@@ -40,12 +40,11 @@ import ij.process.ImageProcessor;
 import ij.process.LUT;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.binary.BinaryImages;
-import inra.ijpb.binary.ChamferWeights;
+import inra.ijpb.binary.distmap.ChamferMask2D;
+import inra.ijpb.binary.distmap.ChamferMasks2D;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransform;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat;
-import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat5x5;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort;
-import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort5x5;
 import inra.ijpb.color.ColorMaps;
 import inra.ijpb.util.IJUtils;
 
@@ -78,7 +77,7 @@ DialogListener
 	private RoiListener listener;
 
 	/** the different weights */
-	private ChamferWeights weights = ChamferWeights.CHESSKNIGHT;
+	private ChamferMasks2D chamferChoice = ChamferMasks2D.CHESSKNIGHT;
 	/** flag to select float result */
 	private static boolean resultAsFloat = true;
 	/** flag to select to normalize the weights */
@@ -153,8 +152,8 @@ DialogListener
 		gd = new NonBlockingGenericDialog( "Interactive Geodesic "
 						+ "Distance Map" );
 		// Set Chessknight weights as default
-		gd.addChoice( "Distances", ChamferWeights.getAllLabels(),
-				weights.toString() );
+		gd.addChoice( "Distances", ChamferMasks2D.getAllLabels(),
+				chamferChoice.toString() );
 		String[] outputTypes = new String[] { "32 bits", "16 bits" };
 		gd.addChoice( "Output Type", outputTypes,
 				outputTypes[ resultAsFloat ? 0:1 ] );
@@ -170,8 +169,7 @@ DialogListener
 			return DONE;
 
 		// identify which weights should be used
-		weights = ChamferWeights.fromLabel(
-				gd.getNextChoice());
+		chamferChoice = ChamferMasks2D.fromLabel(gd.getNextChoice());
 		resultAsFloat = gd.getNextChoiceIndex() == 0;
 		normalize = gd.getNextBoolean();
 
@@ -185,7 +183,7 @@ DialogListener
 	public boolean dialogItemChanged(GenericDialog gd, AWTEvent evt)
 	{
 		// set up current parameters
-		weights = ChamferWeights.fromLabel( gd.getNextChoice() );
+		chamferChoice = ChamferMasks2D.fromLabel(gd.getNextChoice());
 		resultAsFloat = gd.getNextChoiceIndex() == 0;
 		normalize = gd.getNextBoolean();
 		return true;
@@ -206,12 +204,9 @@ DialogListener
 		long t0 = System.currentTimeMillis();
 
 		// Execute core of the plugin
-		if (resultAsFloat)
-			result = process( image, imagePlus.getRoi(),
-					weights.getFloatWeights(), normalize );
-		else
-			result = process( image, imagePlus.getRoi(),
-					weights.getShortWeights(), normalize );
+		Roi roi = imagePlus.getRoi();
+		ChamferMask2D chamferMask = chamferChoice.getMask();
+		result = process(image, roi, chamferMask, resultAsFloat, normalize);
 
 		if ( null == result )
 		{
@@ -244,7 +239,68 @@ DialogListener
 				t1 - t0, imagePlus );
 	}
 
+	/**
+	 * Computes the distance propagated from the boundary of the white
+	 * particles, within the white phase.
+	 *
+	 * @param mask
+	 *            the binary mask image that will constrain the propagation
+	 * @param roi
+	 * 			  the roi to define the marker image
+	 * @param chamferMask
+	 *            the chamfer mask used for computing distances
+	 * @param normalize
+	 *            specifies whether the resulting distance map should be
+	 *            normalized
+	 * @return geodesic distance map image
+	 */
+	public ImageProcessor process( ImageProcessor mask, Roi roi,
+			ChamferMask2D chamferMask, boolean floatProcess, boolean normalize)
+	{
+		if( mask == null || imagePlus == null || baseImage == null)
+		{
+			IJ.showMessage( "Please run the plugin with an image open." );
+			return null;
+		}
 
+		if( chamferMask == null )
+		{
+			IJ.showMessage( "Weights not specified" );
+			return null;
+		}
+
+		if( roi == null )
+		{
+			IJ.showMessage( "Please define the markers using for example "
+					+ "the point selection tool." );
+			return null;
+		}
+		// Create marker image from ROI
+		ByteProcessor marker = new ByteProcessor( mask.getWidth(),
+				mask.getHeight() );
+		marker.setColor( java.awt.Color.WHITE );
+		marker.draw( roi );
+
+		// Initialize calculator
+		GeodesicDistanceTransform algo;
+		if (floatProcess)
+			algo = new GeodesicDistanceTransformFloat(chamferMask, normalize);
+		else
+			algo = new GeodesicDistanceTransformShort(chamferMask, normalize);
+
+		DefaultAlgoListener.monitor( algo );
+
+		// Compute distance on specified images
+		ImageProcessor result = algo.geodesicDistanceMap( marker, mask );
+
+		// setup display options
+		double maxVal = result.getMax();
+		result.setLut( createFireLUT( maxVal ) );
+
+		// create result image
+		return result;
+	}
+	
 	/**
 	 * Computes the distance propagated from the boundary of the white
 	 * particles, within the white phase.
@@ -260,6 +316,7 @@ DialogListener
 	 *            normalized
 	 * @return geodesic distance map image
 	 */
+	@Deprecated
 	public ImageProcessor process( ImageProcessor mask, Roi roi,
 			float[] weights, boolean normalize)
 	{
@@ -289,10 +346,7 @@ DialogListener
 
 		// Initialize calculator
 		GeodesicDistanceTransform algo;
-		if( weights.length == 2 )
-			algo = new GeodesicDistanceTransformFloat( weights, normalize );
-		else
-			algo = new GeodesicDistanceTransformFloat5x5( weights, normalize );
+		algo = new GeodesicDistanceTransformFloat( ChamferMask2D.fromWeights(weights), normalize);
 
 		DefaultAlgoListener.monitor( algo );
 
@@ -322,6 +376,7 @@ DialogListener
 	 *            normalized
 	 * @return geodesic distance map image
 	 */
+	@Deprecated
 	public ImageProcessor process( ImageProcessor mask, Roi roi,
 			short[] weights, boolean normalize)
 	{
@@ -351,10 +406,7 @@ DialogListener
 
 		// Initialize calculator
 		GeodesicDistanceTransform algo;
-		if( weights.length == 2 )
-			algo = new GeodesicDistanceTransformShort( weights, normalize );
-		else
-			algo = new GeodesicDistanceTransformShort5x5( weights, normalize );
+		algo = new GeodesicDistanceTransformShort( ChamferMask2D.fromWeights(weights), normalize);
 
 		DefaultAlgoListener.monitor( algo );
 

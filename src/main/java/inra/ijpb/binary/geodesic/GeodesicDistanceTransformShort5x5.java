@@ -37,7 +37,9 @@ import inra.ijpb.binary.ChamferWeights;
  * 
  * @author David Legland
  * 
+ * @deprecated replaced by GeodesicDistanceTransformShort (since 1.4.4)
  */
+@Deprecated
 public class GeodesicDistanceTransformShort5x5 extends AlgoStub implements GeodesicDistanceTransform 
 {
 	// ==================================================

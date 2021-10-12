@@ -42,9 +42,7 @@ import inra.ijpb.binary.distmap.DistanceTransform;
 import inra.ijpb.binary.distmap.DistanceTransform3D;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransform;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat;
-import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat5x5;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort;
-import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort5x5;
 import inra.ijpb.binary.skeleton.ImageJSkeleton;
 import inra.ijpb.data.image.Image3D;
 import inra.ijpb.data.image.Images3D;
@@ -388,6 +386,45 @@ public class BinaryImages
 	 * 
 	 * <p>
 	 * Distance is computed for each foreground (white) pixel, as the chamfer
+	 * distance to the nearest background (black) pixel. Result is given in a
+	 * new instance of FloatProcessor.
+	 * </p>
+	 * 
+	 * @param image
+	 *            the input binary or label image
+	 * @param mask
+	 *            the chamfer mask used to propagate distances
+	 * @param floatingPoint
+	 *            indicates if the computation should be performed using
+	 *            floating point computation
+	 * @param normalize
+	 *            indicates whether the resulting distance map should be
+	 *            normalized (divide distances by the first chamfer weight)
+	 * @return the distance map obtained after applying the distance transform
+	 */
+	public static final ImageProcessor distanceMap(ImageProcessor image,
+			ChamferMask2D mask, boolean floatingPoint, boolean normalize) 
+	{
+		DistanceTransform algo; 
+		if (floatingPoint)
+		{
+			algo = new ChamferDistanceTransform2DFloat(mask, normalize);	
+		}
+		else
+		{
+			algo = new ChamferDistanceTransform2DShort(mask, normalize);
+		}
+		return algo.distanceMap(image);
+	}
+	
+	/**
+	 * <p>
+	 * Computes the distance map from a binary image processor, by specifying
+	 * weights and normalization.
+	 * </p>
+	 * 
+	 * <p>
+	 * Distance is computed for each foreground (white) pixel, as the chamfer
 	 * distance to the nearest background (black) pixel. Result is given as a
 	 * new instance of ShortProcessor.
 	 * </p>
@@ -451,6 +488,29 @@ public class BinaryImages
 	{
 		ChamferMask3D mask = ChamferMask3D.BORGEFORS;
 		DistanceTransform3D	algo = new ChamferDistanceTransform3DFloat(mask);
+		return algo.distanceMap(image);
+	}
+	
+	/**
+	 * Computes the distance map from a binary 3D image. 
+	 * Distance is computed for each foreground (white) pixel, as the 
+	 * chamfer distance to the nearest background (black) pixel.
+	 * 
+	 * @param image
+	 *            the input binary image
+	 * @param chamferMask
+	 *            the chamfer mask used for propagating distances
+	 * @param normalize
+	 *            indicates whether the resulting distance map should be
+	 *            normalized (divide distances by the first chamfer weight)
+	 * @return the distance map obtained after applying the distance transform
+	 */
+	public static final ImageStack distanceMap(ImageStack image,
+			ChamferMask3D chamferMask, boolean floatingPoint, boolean normalize)
+	{
+		DistanceTransform3D algo = floatingPoint
+				? new ChamferDistanceTransform3DFloat(chamferMask, normalize)
+				: new ChamferDistanceTransform3DShort(chamferMask, normalize);
 		return algo.distanceMap(image);
 	}
 	
@@ -551,20 +611,8 @@ public class BinaryImages
 	public static final ImageProcessor geodesicDistanceMap(ImageProcessor marker,
 			ImageProcessor mask, short[] weights, boolean normalize) 
 	{
-		GeodesicDistanceTransform algo;
-		switch (weights.length) 
-		{
-		case 2:
-			algo = new GeodesicDistanceTransformShort(weights, normalize);
-			break;
-		case 3:
-			algo = new GeodesicDistanceTransformShort5x5(weights, normalize);
-			break;
-		default:
-			throw new IllegalArgumentException(
-					"Requires weight array with 2 or 3 elements");
-		}
-		
+		ChamferMask2D chamferMask = ChamferMask2D.fromWeights(weights);
+		GeodesicDistanceTransform algo = new GeodesicDistanceTransformShort(chamferMask, normalize);
 		return algo.geodesicDistanceMap(marker, mask);
 	}
 	
@@ -587,20 +635,8 @@ public class BinaryImages
 	public static final ImageProcessor geodesicDistanceMap(ImageProcessor marker,
 			ImageProcessor mask, float[] weights, boolean normalize) 
 	{
-		GeodesicDistanceTransform algo;
-		switch (weights.length) 
-		{
-		case 2:
-			algo = new GeodesicDistanceTransformFloat(weights, normalize);
-			break;
-		case 3:
-			algo = new GeodesicDistanceTransformFloat5x5(weights, normalize);
-			break;
-		default:
-			throw new IllegalArgumentException(
-					"Requires weight array with 2 or 3 elements");
-		}
-		
+		ChamferMask2D chamferMask = ChamferMask2D.fromWeights(weights);
+		GeodesicDistanceTransform algo = new GeodesicDistanceTransformFloat(chamferMask, normalize);
 		return algo.geodesicDistanceMap(marker, mask);
 	}
 	

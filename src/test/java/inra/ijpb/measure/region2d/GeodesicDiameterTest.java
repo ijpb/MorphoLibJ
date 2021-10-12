@@ -13,7 +13,7 @@ import ij.ImagePlus;
 import ij.measure.Calibration;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
-import inra.ijpb.binary.ChamferWeights;
+import inra.ijpb.binary.distmap.ChamferMask2D;
 
 public class GeodesicDiameterTest
 {
@@ -33,7 +33,7 @@ public class GeodesicDiameterTest
 			}
 		}
 		
-		GeodesicDiameter algo = new GeodesicDiameter(ChamferWeights.BORGEFORS);
+		GeodesicDiameter algo = new GeodesicDiameter(ChamferMask2D.BORGEFORS);
 		int[] labels = new int[]{1, 2, 3, 4, 5};
 		GeodesicDiameter.Result[] geodDiams = algo.analyzeRegions(labelImage, labels, new Calibration());
 		
@@ -52,7 +52,7 @@ public class GeodesicDiameterTest
 		ImagePlus imagePlus = IJ.openImage(getClass().getResource("/files/circles.tif").getFile());
 		ImageProcessor image = imagePlus.getProcessor();
 	
-		GeodesicDiameter algo = new GeodesicDiameter(ChamferWeights.CHESSKNIGHT);
+		GeodesicDiameter algo = new GeodesicDiameter(ChamferMask2D.CHESSKNIGHT);
 		Map<Integer, GeodesicDiameter.Result> geodDiams = algo.analyzeRegions(image);
 
 		assertEquals(1, geodDiams.size());
@@ -68,7 +68,7 @@ public class GeodesicDiameterTest
 		ImageProcessor image = imagePlus.getProcessor();
 	
 		// Need to use weights in 3-by-3 neighborhood, to avoid propagating distances to another grain 
-		GeodesicDiameter algo = new GeodesicDiameter(ChamferWeights.CHESSKNIGHT);
+		GeodesicDiameter algo = new GeodesicDiameter(ChamferMask2D.CHESSKNIGHT);
 		Map<Integer, GeodesicDiameter.Result> geodDiams = algo.analyzeRegions(image);
 
 		assertEquals(71, geodDiams.size());
@@ -86,7 +86,7 @@ public class GeodesicDiameterTest
 			image.set(x, 1, 255);
 		}
 
-		GeodesicDiameter algo = new GeodesicDiameter(ChamferWeights.BORGEFORS);
+		GeodesicDiameter algo = new GeodesicDiameter(ChamferMask2D.BORGEFORS);
 		algo.setComputePaths(true);
 		
 		Map<Integer, GeodesicDiameter.Result> geodDiams = algo.analyzeRegions(image);
@@ -106,7 +106,7 @@ public class GeodesicDiameterTest
 		ImagePlus imagePlus = IJ.openImage(getClass().getResource("/files/circles.tif").getFile());
 		ImageProcessor image = imagePlus.getProcessor();
 	
-		GeodesicDiameter algo = new GeodesicDiameter(ChamferWeights.BORGEFORS);
+		GeodesicDiameter algo = new GeodesicDiameter(ChamferMask2D.BORGEFORS);
 		algo.setComputePaths(true);
 		
 		Map<Integer, GeodesicDiameter.Result> geodDiams = algo.analyzeRegions(image);
@@ -123,7 +123,7 @@ public class GeodesicDiameterTest
         ImagePlus imagePlus = IJ.openImage(getClass().getResource("/files/grains-WTH-areaOpen-lbl2.tif").getFile());
         ImageProcessor image = imagePlus.getProcessor();
     
-		GeodesicDiameter algo = new GeodesicDiameter(ChamferWeights.BORGEFORS);
+		GeodesicDiameter algo = new GeodesicDiameter(ChamferMask2D.BORGEFORS);
 		algo.setComputePaths(true);
 		
 		Map<Integer, GeodesicDiameter.Result> geodDiams = algo.analyzeRegions(image);
@@ -140,7 +140,7 @@ public class GeodesicDiameterTest
         ImagePlus imagePlus = IJ.openImage(getClass().getResource("/files/particles_largeLabels.tif").getFile());
         ImageProcessor image = imagePlus.getProcessor();
     
-		GeodesicDiameter algo = new GeodesicDiameter(ChamferWeights.BORGEFORS);
+		GeodesicDiameter algo = new GeodesicDiameter(ChamferMask2D.BORGEFORS);
 		algo.setComputePaths(true);
 		
 		Map<Integer, GeodesicDiameter.Result> geodDiams = algo.analyzeRegions(image);
@@ -214,7 +214,7 @@ public class GeodesicDiameterTest
 		// 0 0 0 0 0 5 5 5 5 5
 		// 0 0 0 0 0 5 5 5 5 5
 		
-		GeodesicDiameter algo = new GeodesicDiameter(ChamferWeights.BORGEFORS);
+		GeodesicDiameter algo = new GeodesicDiameter(ChamferMask2D.BORGEFORS);
 		algo.setComputePaths(true);
 		
 		GeodesicDiameter.Result[] geodDiams = algo.analyzeRegions(labelImage, new int[]{1, 2, 3, 5}, new Calibration());

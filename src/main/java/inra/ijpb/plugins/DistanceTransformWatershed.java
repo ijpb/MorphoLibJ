@@ -29,7 +29,8 @@ import ij.plugin.filter.ExtendedPlugInFilter;
 import ij.plugin.filter.PlugInFilterRunner;
 import ij.process.ImageProcessor;
 import inra.ijpb.binary.BinaryImages;
-import inra.ijpb.binary.ChamferWeights;
+import inra.ijpb.binary.distmap.ChamferMask2D;
+import inra.ijpb.binary.distmap.ChamferMasks2D;
 import inra.ijpb.watershed.ExtendedMinimaWatershed;
 
 import java.awt.AWTEvent;
@@ -60,13 +61,13 @@ DialogListener
 	private ImageProcessor baseImage;
 
 	/** the different weights */
-	private ChamferWeights weights;
+	private ChamferMask2D chamferMask;
 	private static boolean floatProcessing	= true;
 	private static boolean normalize = true;
 
 	private static int dynamic = 1;
 	private static String connLabel = Conn2D.C4.label;
-	private static String weightLabel = ChamferWeights.BORGEFORS.toString();
+	private static String maskLabel = ChamferMask2D.BORGEFORS.toString();
 
 	private int connectivity = 4;
 
@@ -167,7 +168,7 @@ DialogListener
 		gd.setInsets( 0, 0, 0 );
 		gd.addMessage( "Distance map options:",
 				new Font( "SansSerif", Font.BOLD, 12 ) );
-		gd.addChoice( "Distances", ChamferWeights.getAllLabels(), weightLabel );
+		gd.addChoice( "Distances", ChamferMasks2D.getAllLabels(), maskLabel );
 		String[] outputTypes = new String[]{"32 bits", "16 bits"};
 		gd.addChoice( "Output Type", outputTypes, outputTypes[ floatProcessing ? 0:1 ]);
 		gd.setInsets( 0, 0, 0 );
@@ -190,15 +191,15 @@ DialogListener
 			return DONE;
 
 		// set up current parameters
-		weightLabel = gd.getNextChoice();
+		maskLabel = gd.getNextChoice();
 		floatProcessing = gd.getNextChoiceIndex() == 0;
 		normalize = gd.getNextBoolean();
 		dynamic = (int) gd.getNextNumber();
 		connLabel = gd.getNextChoice();
 		connectivity = Conn2D.fromLabel( connLabel ).getValue();
 
-		// identify which weights should be used
-		weights = ChamferWeights.fromLabel( weightLabel );
+		// identify which chamfer mask should be used
+		chamferMask = ChamferMasks2D.fromLabel(maskLabel).getMask();
 
 		return flags;
 	}
@@ -211,15 +212,15 @@ DialogListener
 	{
 		synchronized (this){
 			// set up current parameters
-			weightLabel = gd.getNextChoice();
+			maskLabel = gd.getNextChoice();
 			floatProcessing = gd.getNextChoiceIndex() == 0;
 			normalize = gd.getNextBoolean();
 			dynamic = (int) gd.getNextNumber();
 			connLabel = gd.getNextChoice();
 			connectivity = Conn2D.fromLabel( connLabel ).getValue();
 
-			// identify which weights should be used
-			weights = ChamferWeights.fromLabel( weightLabel );
+			// identify which chamfer mask should be used
+			chamferMask = ChamferMasks2D.fromLabel(maskLabel).getMask();
 		}
 		return true;
 	}
@@ -236,9 +237,9 @@ DialogListener
 	{
 		synchronized (this){
 			if (floatProcessing)
-				result = processFloat(image, weights.getFloatWeights(), normalize );
+				result = processFloat(image, chamferMask, normalize );
 			else
-				result = processShort(image, weights.getShortWeights(), normalize);
+				result = processShort(image, chamferMask, normalize);
 		}
 		if (previewing)
 		{
@@ -256,11 +257,11 @@ DialogListener
 
 	private ImageProcessor processFloat(
 			ImageProcessor image,
-			float[] weights,
+			ChamferMask2D chamferMask,
 			boolean normalize )
 	{
 		final ImageProcessor dist =
-				BinaryImages.distanceMap( image, weights, normalize );
+				BinaryImages.distanceMap( image, chamferMask, true, normalize );
 		dist.invert();
 
 		return ExtendedMinimaWatershed.extendedMinimaWatershed(
@@ -269,12 +270,12 @@ DialogListener
 
 	private ImageProcessor processShort(
 			ImageProcessor image,
-			short[] weights,
+			ChamferMask2D chamferMask,
 			boolean normalize )
 	{
 		// Compute distance on specified image
 		final ImageProcessor dist =
-				BinaryImages.distanceMap( image, weights, normalize );
+				BinaryImages.distanceMap( image, chamferMask, false, normalize );
 		dist.invert();
 
 		return ExtendedMinimaWatershed.extendedMinimaWatershed(

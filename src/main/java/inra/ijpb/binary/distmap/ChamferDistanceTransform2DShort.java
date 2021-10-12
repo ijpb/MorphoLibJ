@@ -25,7 +25,7 @@ public class ChamferDistanceTransform2DShort extends AlgoStub implements Distanc
 	// Class variables
 
 	/**
-	 * The chamfer weights used to propagate distances to neighbor pixels.
+	 * The chamfer mask used to propagate distances to neighbor pixels.
 	 */
 	ChamferMask2D mask;
 	

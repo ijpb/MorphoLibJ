@@ -21,9 +21,13 @@
  */
 package inra.ijpb.binary.geodesic;
 
+import java.util.Collection;
+
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.algo.AlgoStub;
+import inra.ijpb.binary.distmap.ChamferMask2D;
+import inra.ijpb.binary.distmap.ChamferMask2D.FloatOffset;
 
 /**
  * Computation of Chamfer geodesic distances using floating point array for
@@ -39,8 +43,12 @@ public class GeodesicDistanceTransformFloat extends AlgoStub implements
 	// Class variables
 	
 	public static final float MAX_DIST = Float.POSITIVE_INFINITY;
+	public static final float BACKGROUND = Float.NaN;
 	
-	float[] weights = new float[]{5, 7, 11};
+	/**
+	 * The chamfer mask used for propagating distances from the marker.
+	 */
+	ChamferMask2D mask;
 
 	/**
 	 * Flag for dividing final distance map by the value first weight. 
@@ -48,30 +56,31 @@ public class GeodesicDistanceTransformFloat extends AlgoStub implements
 	 */
 	boolean normalizeMap = true;
 
-	int sizeX;
-	int sizeY;
-
-	/** The label image used as mask */
-	ImageProcessor labelImage;
-	
-	/** the instance of ImageProcessor storing the result */
-	ImageProcessor distMap;
-
-	/** the flag indicating whether the image has been modified or not */
-	boolean modif;
-
 	
 	// ==================================================
 	// Constructors 
 	
-	public GeodesicDistanceTransformFloat(float[] weights)
+	public GeodesicDistanceTransformFloat(ChamferMask2D mask)
 	{
-		this.weights = weights;
+		this.mask = mask;
 	}
 
+	@Deprecated
+	public GeodesicDistanceTransformFloat(float[] weights)
+	{
+		this.mask = ChamferMask2D.fromWeights(weights);
+	}
+
+	public GeodesicDistanceTransformFloat(ChamferMask2D mask, boolean normalizeMap)
+	{
+		this.mask = mask;
+		this.normalizeMap = normalizeMap;
+	}
+
+	@Deprecated
 	public GeodesicDistanceTransformFloat(float[] weights, boolean normalizeMap)
 	{
-		this.weights = weights;
+		this.mask = ChamferMask2D.fromWeights(weights);
 		this.normalizeMap = normalizeMap;
 	}
 
@@ -88,7 +97,7 @@ public class GeodesicDistanceTransformFloat extends AlgoStub implements
 	 *
 	 * @param marker
 	 *            the binary marker image
-	 * @param mask
+	 * @param labelImage
 	 *            the label image used as mask
 	 * @return the geodesic distance map from the marker image within each label
 	 *         of the mask
@@ -96,32 +105,27 @@ public class GeodesicDistanceTransformFloat extends AlgoStub implements
 	 *      ij.process.ImageProcessor)
 	 */
 	@Override
-	public ImageProcessor geodesicDistanceMap(ImageProcessor marker, ImageProcessor mask)
+	public ImageProcessor geodesicDistanceMap(ImageProcessor marker, ImageProcessor labelImage)
 	{
 		// size of image
-		sizeX = mask.getWidth();
-		sizeY = mask.getHeight();
+		int sizeX = labelImage.getWidth();
+		int sizeY = labelImage.getHeight();
 		
-		// update mask
-		this.labelImage = mask;
-
 		// create new empty image, and fill it with black
 		fireStatusChanged(this, "Initialization..."); 
-		this.distMap = initialize(marker);
+		FloatProcessor distMap = initialize(marker, labelImage);
 
 		int iter = 0;
-		modif = true;
+		boolean modif = true;
 		while(modif)
 		{
-			modif = false;
-
 			// forward iteration
 			fireStatusChanged(this, "Forward iteration " + iter);
-			forwardIteration();
+			modif = forwardIteration(distMap, labelImage);
 
 			// backward iteration
 			fireStatusChanged(this, "Backward iteration " + iter); 
-			backwardIteration();
+			modif = modif || backwardIteration(distMap, labelImage);
 
 			// Iterate while pixels have been modified
 			iter++;
@@ -131,30 +135,24 @@ public class GeodesicDistanceTransformFloat extends AlgoStub implements
 		if (this.normalizeMap) 
 		{
 			fireStatusChanged(this, "Normalize map"); 
-			for (int j = 0; j < sizeY; j++)
-			{
-				for (int i = 0; i < sizeX; i++) 
-				{
-					float val = distMap.getf(i, j);
-					if (val != MAX_DIST)
-					{
-						distMap.setf(i, j, val / this.weights[0]);
-					}
-				}
-			}
+			normalizeMap(distMap, labelImage);
 		}
 		
 		// Compute max value within the mask
 		fireStatusChanged(this, "Normalize display"); 
 		float maxVal = 0;
-		for (int i = 0; i < sizeX; i++)
+		for (int x = 0; x < sizeX; x++)
 		{
-			for (int j = 0; j < sizeY; j++)
+			for (int y = 0; y < sizeY; y++)
 			{
-				float val = distMap.getf(i, j);
-				if (val != MAX_DIST)
+				int label = (int) labelImage.getf(x, y);
+				if (label > 0)
 				{
-					maxVal = Math.max(maxVal, val);
+					float val = distMap.getf(x, y);
+					if (val != MAX_DIST)
+					{
+						maxVal = Math.max(maxVal, val);
+					}
 				}
 			}
 		}
@@ -171,11 +169,11 @@ public class GeodesicDistanceTransformFloat extends AlgoStub implements
 		return distMap;
 	}
 
-	private FloatProcessor initialize(ImageProcessor marker)
+	private FloatProcessor initialize(ImageProcessor marker, ImageProcessor labelImage)
 	{
 		// size of image
-		sizeX = marker.getWidth();
-		sizeY = marker.getHeight();
+		int sizeX = labelImage.getWidth();
+		int sizeY = labelImage.getHeight();
 		
 		FloatProcessor distMap = new FloatProcessor(sizeX, sizeY);
 		distMap.setValue(0);
@@ -186,25 +184,30 @@ public class GeodesicDistanceTransformFloat extends AlgoStub implements
 		{
 			for (int x = 0; x < sizeX; x++) 
 			{
-				int val = marker.get(x, y) & 0x00ff;
-				distMap.setf(x, y, val == 0 ? Float.POSITIVE_INFINITY : 0);
+				int label = (int) labelImage.getf(x, y);
+				if (label == 0)
+				{
+					distMap.setf(x, y, BACKGROUND);
+				}
+				else
+				{
+					distMap.setf(x, y, marker.get(x, y) == 0 ? MAX_DIST : 0);
+				}
 			}
 		}
 
 		return distMap;
 	}
 	
-	private void forwardIteration() 
+	private boolean forwardIteration(FloatProcessor distMap, ImageProcessor labelImage) 
 	{
-		// Initialize pairs of offset and weights
-		int[] dx = new int[]{-1,  0, +1,  -1};
-		int[] dy = new int[]{-1, -1, -1,   0};
-		
-		float[] dw = new float[] { 
-				weights[1], weights[0], weights[1], 
-				weights[0] };
+		// size of image
+		int sizeX = labelImage.getWidth();
+		int sizeY = labelImage.getHeight();
+		Collection<FloatOffset> offsets = mask.getForwardFloatOffsets();
 		
 		// Iterate over pixels
+		boolean modif = false;
 		for (int y = 0; y < sizeY; y++)
 		{
 			this.fireProgressChanged(this, y, sizeY);
@@ -222,11 +225,11 @@ public class GeodesicDistanceTransformFloat extends AlgoStub implements
 				double newDist = currentDist;
 				
 				// iterate over neighbors
-				for (int i = 0; i < dx.length; i++)
+				for (FloatOffset offset : offsets)
 				{
 					// compute neighbor coordinates
-					int x2 = x + dx[i];
-					int y2 = y + dy[i];
+					int x2 = x + offset.dx;
+					int y2 = y + offset.dy;
 					
 					// check bounds
 					if (x2 < 0 || x2 >= sizeX)
@@ -237,7 +240,7 @@ public class GeodesicDistanceTransformFloat extends AlgoStub implements
 					if (((int) labelImage.getf(x2, y2)) == label)
 					{
 						// Increment distance
-						newDist = Math.min(newDist, distMap.getf(x2, y2) + dw[i]);
+						newDist = Math.min(newDist, distMap.getf(x2, y2) + offset.weight);
 					}
 				}
 				
@@ -250,19 +253,18 @@ public class GeodesicDistanceTransformFloat extends AlgoStub implements
 		}
 		
 		this.fireProgressChanged(this, sizeY, sizeY);
+		return modif;
 	}
 
-	private void backwardIteration()
+	private boolean backwardIteration(FloatProcessor distMap, ImageProcessor labelImage)
 	{
-		// Initialize pairs of offset and weights
-		int[] dx = new int[]{+1,  0, -1, +1};
-		int[] dy = new int[]{+1, +1, +1,  0};
-		
-		float[] dw = new float[] { 
-				weights[1], weights[0], weights[1],  
-				weights[0] };
+		// size of image
+		int sizeX = labelImage.getWidth();
+		int sizeY = labelImage.getHeight();
+		Collection<FloatOffset> offsets =  mask.getBackwardFloatOffsets();
 		
 		// Iterate over pixels
+		boolean modif = false;
 		for (int y = sizeY-1; y >= 0; y--)
 		{
 			this.fireProgressChanged(this, sizeY-1-y, sizeY);
@@ -280,11 +282,11 @@ public class GeodesicDistanceTransformFloat extends AlgoStub implements
 				double newDist = currentDist;
 				
 				// iterate over neighbors
-				for (int i = 0; i < dx.length; i++)
+				for (FloatOffset offset : offsets)
 				{
 					// compute neighbor coordinates
-					int x2 = x + dx[i];
-					int y2 = y + dy[i];
+					int x2 = x + offset.dx;
+					int y2 = y + offset.dy;
 					
 					// check bounds
 					if (x2 < 0 || x2 >= sizeX)
@@ -295,7 +297,7 @@ public class GeodesicDistanceTransformFloat extends AlgoStub implements
 					if (((int) labelImage.getf(x2, y2)) == label)
 					{
 						// Increment distance
-						newDist = Math.min(newDist, distMap.getf(x2, y2) + dw[i]);
+						newDist = Math.min(newDist, distMap.getf(x2, y2) + offset.weight);
 					}
 				}
 				
@@ -308,5 +310,37 @@ public class GeodesicDistanceTransformFloat extends AlgoStub implements
 		}
 		
 		this.fireProgressChanged(this, sizeY, sizeY);
+		return modif;
+	}
+	
+	private void normalizeMap(FloatProcessor distMap, ImageProcessor labelImage)
+	{
+		// size of image
+		int sizeX = distMap.getWidth();
+		int sizeY = distMap.getHeight();
+
+		// retrieve the minimum weight
+		double w0 = Double.POSITIVE_INFINITY;
+		for (FloatOffset offset : this.mask.getFloatOffsets())
+		{
+			w0 = Math.min(w0, offset.weight);
+		}
+		
+		for (int y = 0; y < sizeY; y++)
+		{
+			for (int x = 0; x < sizeX; x++)
+			{
+				if (((int) labelImage.getf(x, y)) == 0)
+				{
+					continue;
+				}
+
+				float val = distMap.getf(x, y);
+				if (val != MAX_DIST)
+				{
+					distMap.setf(x, y, (float) (val / w0));
+				}
+			}
+		}
 	}
 }

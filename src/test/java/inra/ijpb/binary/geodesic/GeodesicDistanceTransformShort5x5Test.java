@@ -25,9 +25,11 @@ import static org.junit.Assert.assertEquals;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
+import inra.ijpb.binary.distmap.ChamferMask2D;
 
 import org.junit.Test;
 
+@Deprecated
 public class GeodesicDistanceTransformShort5x5Test
 {
 
@@ -40,12 +42,12 @@ public class GeodesicDistanceTransformShort5x5Test
 		marker.fill();
 		marker.set(30, 30, 255);
 
-		short[] weights = new short[] { 5, 7, 11 };
-		GeodesicDistanceTransform algo = new GeodesicDistanceTransformShort5x5(
-				weights, true);
+		ChamferMask2D chamferMask = ChamferMask2D.CHESSKNIGHT;
+		GeodesicDistanceTransform algo = new GeodesicDistanceTransformShort(chamferMask, true);
 		ImageProcessor map = algo.geodesicDistanceMap(marker, mask);
 
-		assertEquals(250, map.get(190, 210));
+		// expect 250.8, rounded to 251
+		assertEquals(251, map.get(190, 210));
 	}
 
 }

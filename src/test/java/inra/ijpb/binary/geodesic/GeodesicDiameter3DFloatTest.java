@@ -31,7 +31,7 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.measure.ResultsTable;
-import inra.ijpb.binary.ChamferWeights3D;
+import inra.ijpb.binary.distmap.ChamferMask3D;
 
 /**
  * @author dlegland
@@ -54,7 +54,7 @@ public class GeodesicDiameter3DFloatTest
 	
 		ImageStack image = imagePlus.getStack();
 	
-		GeodesicDiameter3D algo = new GeodesicDiameter3DFloat(ChamferWeights3D.BORGEFORS);
+		GeodesicDiameter3D algo = new GeodesicDiameter3DFloat(ChamferMask3D.BORGEFORS);
 		ResultsTable table = algo.process(image);
 
 		assertEquals(1, table.getCounter());

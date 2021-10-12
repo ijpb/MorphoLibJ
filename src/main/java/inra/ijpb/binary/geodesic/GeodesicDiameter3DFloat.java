@@ -28,7 +28,8 @@ import inra.ijpb.algo.AlgoEvent;
 import inra.ijpb.algo.AlgoListener;
 import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.binary.BinaryImages;
-import inra.ijpb.binary.ChamferWeights3D;
+import inra.ijpb.binary.distmap.ChamferMask3D;
+import inra.ijpb.binary.distmap.ChamferMask3D.FloatOffset;
 import inra.ijpb.data.Cursor3D;
 import inra.ijpb.data.image.Images3D;
 import inra.ijpb.label.LabelImages;
@@ -58,9 +59,9 @@ public class GeodesicDiameter3DFloat extends AlgoStub implements GeodesicDiamete
 	// Class variables
 	
 	/**
-	 * The weights for orthogonal, diagonal, and cube-diagonal neighbors.
+	 * The chamfer mask used to propagate distances to neighbor pixels.
 	 */
-	float[] weights;
+	ChamferMask3D chamferMask;
 
 	/**
 	 * The string used for indicating the current step in algo events.
@@ -74,13 +75,28 @@ public class GeodesicDiameter3DFloat extends AlgoStub implements GeodesicDiamete
 	/**
 	 * Creates a new 3D geodesic diameter computation operator.
 	 * 
+	 * @param chamferMask
+	 *            an instance of ChamferMask3D, which provides the float values
+	 *            used for propagating distances
+	 */
+	public GeodesicDiameter3DFloat(ChamferMask3D chamferMask)
+	{
+		this.chamferMask = chamferMask;
+	}
+	
+	/**
+	 * Creates a new 3D geodesic diameter computation operator.
+	 * 
+	 * @deprecated new uses ChamferMask3D (since 1.4.4)
+	 * 
 	 * @param chamferWeights
 	 *            an instance of ChamferWeights, which provides the float values
 	 *            used for propagating distances
 	 */
-	public GeodesicDiameter3DFloat(ChamferWeights3D chamferWeights)
+	@Deprecated
+	public GeodesicDiameter3DFloat(inra.ijpb.binary.ChamferWeights3D chamferWeights)
 	{
-		this.weights = chamferWeights.getFloatWeights();
+		this.chamferMask = ChamferMask3D.fromWeights(chamferWeights.getFloatWeights());
 	}
 	
 	/**
@@ -96,7 +112,7 @@ public class GeodesicDiameter3DFloat extends AlgoStub implements GeodesicDiamete
 		{
 			throw new IllegalArgumentException("Requires an array with at least three elements");
 		}
-		this.weights = weights;
+		this.chamferMask = ChamferMask3D.fromWeights(weights);
 	}
 	
 	
@@ -124,7 +140,7 @@ public class GeodesicDiameter3DFloat extends AlgoStub implements GeodesicDiamete
 		
 		// Create calculator for propagating distances
 		GeodesicDistanceTransform3D geodDistMapAlgo;
-		geodDistMapAlgo = new GeodesicDistanceTransform3DFloat(weights, false);
+		geodDistMapAlgo = new GeodesicDistanceTransform3DFloat(this.chamferMask, false);
 		geodDistMapAlgo.addAlgoListener(this);
 
 		// The array that stores Chamfer distances 
@@ -197,6 +213,13 @@ public class GeodesicDiameter3DFloat extends AlgoStub implements GeodesicDiamete
 		Cursor3D[] pos2 = findPositionOfMaxValues(distanceMap, labelImage, labels);
 		
 		
+		// retrieve the minimum weight
+		double w0 = Double.POSITIVE_INFINITY;
+		for (FloatOffset offset : this.chamferMask.getFloatOffsets())
+		{
+			w0 = Math.min(w0, offset.weight);
+		}
+
 		// Initialize a new results table
 		ResultsTable table = new ResultsTable();
 
@@ -204,8 +227,8 @@ public class GeodesicDiameter3DFloat extends AlgoStub implements GeodesicDiamete
 		for (int i = 0; i < nbLabels; i++) 
 		{
 			// Small conversion to normalize to pixel distances
-			double radius = ((double) radii[i]) / weights[0];
-			double value = ((double) values[i]) / weights[0] + 1;
+			double radius = ((double) radii[i]) / w0;
+			double value = ((double) values[i]) / w0 + 1;
 			
 			// add an entry to the resulting data table
 			table.incrementCounter();

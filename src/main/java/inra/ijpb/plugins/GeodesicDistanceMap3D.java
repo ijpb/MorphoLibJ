@@ -29,7 +29,8 @@ import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import ij.process.LUT;
 import inra.ijpb.algo.DefaultAlgoListener;
-import inra.ijpb.binary.ChamferWeights3D;
+import inra.ijpb.binary.distmap.ChamferMask3D;
+import inra.ijpb.binary.distmap.ChamferMasks3D;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransform3D;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransform3DFloat;
 import inra.ijpb.color.ColorMaps;
@@ -78,8 +79,8 @@ public class GeodesicDistanceMap3D implements PlugIn
 		gd.addChoice("Marker Image", imageNames, IJ.getImage().getTitle());
 		gd.addChoice("Mask Image", imageNames, IJ.getImage().getTitle());
 		// Set Chessknight weights as default
-		gd.addChoice("Distances", ChamferWeights3D.getAllLabels(),
-				ChamferWeights3D.BORGEFORS.toString());
+		gd.addChoice("Distances", ChamferMasks3D.getAllLabels(),
+				ChamferMasks3D.BORGEFORS.toString());
 //		String[] outputTypes = new String[] { "32 bits", "16 bits" };
 //		gd.addChoice("Output Type", outputTypes, outputTypes[0]);
 		gd.addCheckbox("Normalize weights", true);
@@ -97,9 +98,8 @@ public class GeodesicDistanceMap3D implements PlugIn
 		String weightLabel = gd.getNextChoice();
 		
 		// identify which weights should be used
-		ChamferWeights3D weights = ChamferWeights3D.fromLabel(weightLabel);
-//		boolean resultAsFloat = gd.getNextChoiceIndex() == 0;
-		boolean normalizeWeights = gd.getNextBoolean();
+		ChamferMask3D chamferMask = ChamferMasks3D.fromLabel(weightLabel).getMask();
+		boolean normalize = gd.getNextBoolean();
 
 		// check image types
 		if (markerImage.getType() != ImagePlus.GRAY8)
@@ -115,16 +115,7 @@ public class GeodesicDistanceMap3D implements PlugIn
 
 		// Execute core of the plugin
 		String newName = maskImage.getShortTitle() + "-geodDist";
-		ImagePlus res;
-//		if (resultAsFloat)
-//		{
-			res = process(markerImage, maskImage, newName,
-					weights.getFloatWeights(), normalizeWeights);
-//		} else
-//		{
-//			res = process(markerImage, maskImage, newName,
-//					weights.getShortWeights(), normalizeWeights);
-//		}
+		ImagePlus res = process(markerImage, maskImage, newName, chamferMask, normalize);
 
 		res.show();
 	}
@@ -149,7 +140,7 @@ public class GeodesicDistanceMap3D implements PlugIn
 	 *         new ImagePlus instance
 	 */
 	public ImagePlus process(ImagePlus marker, ImagePlus mask, String newName,
-			float[] weights, boolean normalize)
+			ChamferMask3D chamferMask, boolean normalize)
 	{
 		// Check validity of parameters
 		if (marker == null)
@@ -160,32 +151,18 @@ public class GeodesicDistanceMap3D implements PlugIn
 		{
 			throw new IllegalArgumentException("Mask image not specified");
 		}
-		if (weights == null)
+		
+		// check input and mask have the same size
+		if (marker.getWidth() != mask.getWidth() || marker.getHeight() != mask.getHeight())
 		{
-			throw new IllegalArgumentException("Weights not specified");
+			IJ.showMessage("Error",
+					"Input and marker images\nshould have the same size");
+			return null;
 		}
-
-//		// size of image
-//		int width = mask.getWidth();
-//		int height = mask.getHeight();
-//
-//		// check input and mask have the same size
-//		if (marker.getWidth() != width || marker.getHeight() != height)
-//		{
-//			IJ.showMessage("Error",
-//					"Input and marker images\nshould have the same size");
-//			return null;
-//		}
 
 		// Initialize calculator
 		GeodesicDistanceTransform3D algo;
-//		if (weights.length == 2)
-//		{
-			algo = new GeodesicDistanceTransform3DFloat(weights, normalize);
-//		} else
-//		{
-//			algo = new GeodesicDistanceTransformShort5x5(weights, normalize);
-//		}
+		algo = new GeodesicDistanceTransform3DFloat(chamferMask, normalize);
 		DefaultAlgoListener.monitor(algo);
 
 		// Compute distance on specified images

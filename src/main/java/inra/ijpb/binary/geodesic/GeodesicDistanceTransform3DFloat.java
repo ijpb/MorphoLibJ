@@ -25,8 +25,8 @@ import java.util.Collection;
 
 import ij.ImageStack;
 import inra.ijpb.algo.AlgoStub;
-import inra.ijpb.binary.ChamferWeights3D;
-import inra.ijpb.binary.ChamferWeights3D.FloatOffset;
+import inra.ijpb.binary.distmap.ChamferMask3D;
+import inra.ijpb.binary.distmap.ChamferMask3D.FloatOffset;
 import inra.ijpb.data.image.Image3D;
 import inra.ijpb.data.image.Images3D;
 
@@ -43,7 +43,10 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 	// ==================================================
 	// Class variables
 	
-	float[] weights;
+	/**
+	 * The chamfer mask used for propagating distances from the marker.
+	 */
+	ChamferMask3D chamferMask;
 	
 	/**
 	 * Flag for dividing final distance map by the value first weight. 
@@ -59,33 +62,33 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 	
 	int maskLabel = DEFAULT_MASK_LABEL;
 
-	ImageStack maskProc;
-	Image3D result;
-	
-	int sizeX;
-	int sizeY;
-	int sizeZ;
-
-	boolean modif;
-
 	
 	// ==================================================
 	// Constructors
 	
+	@Deprecated
 	public GeodesicDistanceTransform3DFloat(float[] weights)
 	{
-		this.weights = weights;
+		this.chamferMask = ChamferMask3D.fromWeights(weights);
 	}
 
+	@Deprecated
 	public GeodesicDistanceTransform3DFloat(float[] weights, boolean normalizeMap)
 	{
-		this.weights = weights;
+		this.chamferMask = ChamferMask3D.fromWeights(weights);
 		this.normalizeMap = normalizeMap;
 	}
 
-	public GeodesicDistanceTransform3DFloat(ChamferWeights3D weights, boolean normalizeMap)
+	public GeodesicDistanceTransform3DFloat(ChamferMask3D chamferMask, boolean normalizeMap)
 	{
-		this.weights = weights.getFloatWeights();
+		this.chamferMask = chamferMask;
+		this.normalizeMap = normalizeMap;
+	}
+
+	@Deprecated
+	public GeodesicDistanceTransform3DFloat(inra.ijpb.binary.ChamferWeights3D weights, boolean normalizeMap)
+	{
+		this.chamferMask = ChamferMask3D.fromWeights(weights.getFloatWeights());
 		this.normalizeMap = normalizeMap;
 	}
 
@@ -99,17 +102,17 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 	@Override
 	public ImageStack geodesicDistanceMap(ImageStack marker, ImageStack mask)
 	{
-		this.maskProc = mask;
-		
-		this.sizeX = mask.getWidth();
-		this.sizeY = mask.getHeight();
-		this.sizeZ = mask.getSize();
+		int sizeX = marker.getWidth();
+		int sizeY = marker.getHeight();
+		int sizeZ = marker.getSize();
 		
 		fireStatusChanged(this, "Initialization..."); 
 		
+		Image3D labelImage = Images3D.createWrapper(mask);
+		
 		// create new empty image, and fill it with black
 		ImageStack resultStack = ImageStack.create(sizeX, sizeY, sizeZ, 32);
-		this.result = Images3D.createWrapper(resultStack);
+		Image3D distMap = Images3D.createWrapper(resultStack);
 		
 		// initialize empty image with either 0 (foreground) or Inf (background)
 		for (int z = 0; z < sizeZ; z++)
@@ -120,7 +123,7 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 				{
 					if (marker.getVoxel(x, y, z) == 0)
 					{
-						result.setValue(x, y, z, backgroundValue);
+						distMap.setValue(x, y, z, backgroundValue);
 					}
 				}
 			}
@@ -128,17 +131,16 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 		
 		// Iterate forward and backward passes until no more modification occur
 		int iter = 0;
+		boolean modif;
 		do 
 		{
-			modif = false;
-
 			// forward iteration
 			fireStatusChanged(this, "Forward iteration " + iter);
-			forwardIteration();
+			modif = forwardIteration(distMap, labelImage);
 
 			// backward iteration
 			fireStatusChanged(this, "Backward iteration " + iter); 
-			backwardIteration();
+			modif = modif || backwardIteration(distMap, labelImage);
 
 			// Iterate while pixels have been modified
 			iter++;
@@ -148,28 +150,24 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 		if (this.normalizeMap) 
 		{
 			fireStatusChanged(this, "Normalize map"); 
-			for (int z = 0; z < sizeZ; z++)
-			{
-				for (int y = 0; y < sizeY; y++)
-				{
-					for (int x = 0; x < sizeX; x++)
-					{
-						double val = result.getValue(x, y, z) / weights[0];
-						result.setValue(x, y, z, val);
-					}
-				}
-			}
+			normalizeMap(distMap, labelImage);
 		}
 		
 		return resultStack;
 	}
 
-	private void forwardIteration()
+	private boolean forwardIteration(Image3D distMap, Image3D labelImage)
 	{
+		// retrieve size of image
+		int sizeX = distMap.getSize(0);
+		int sizeY = distMap.getSize(1);
+		int sizeZ = distMap.getSize(2);
+
 		// compute offsets of the neighborhood in forward direction
-		Collection<FloatOffset> offsets = ChamferWeights3D.getForwardOffsets(weights);
+		Collection<FloatOffset> offsets = chamferMask.getForwardFloatOffsets();
 		
 		// iterate over voxels
+		boolean modif = false;
 		for (int z = 0; z < sizeZ; z++)
 		{
 			fireProgressChanged(this, z, sizeZ);
@@ -178,12 +176,12 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 				for (int x = 0; x < sizeX; x++)
 				{
 					// process only voxels within the mask
-					if (maskProc.getVoxel(x, y, z) != maskLabel)
+					if (labelImage.get(x, y, z) != maskLabel)
 					{
 						continue;
 					}
 					
-					double value = result.getValue(x, y, z);
+					double value = distMap.getValue(x, y, z);
 					double ref = value;
 					
 					// iterate over voxels in forward neighborhood to find minimum value
@@ -200,28 +198,35 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 						if (z2 < 0 || z2 >= sizeZ)
 							continue;
 						
-						double newVal = result.getValue(x2, y2, z2) + offset.weight;
+						double newVal = distMap.getValue(x2, y2, z2) + offset.weight;
 						value = Math.min(value, newVal);
 					}
 					
 					if (value < ref)
 					{
 						modif = true;
-						result.setValue(x, y, z, value);
+						distMap.setValue(x, y, z, value);
 					}
 				}
 			}
 		}
 		
 		fireProgressChanged(this, 1, 1);
+		return modif;
 	}
 
-	private void backwardIteration()
+	private boolean backwardIteration(Image3D distMap, Image3D labelImage)
 	{
+		// retrieve size of image
+		int sizeX = distMap.getSize(0);
+		int sizeY = distMap.getSize(1);
+		int sizeZ = distMap.getSize(2);
+
 		// compute offsets of the neighborhood in backward direction
-		Collection<FloatOffset> offsets = ChamferWeights3D.getBackwardOffsets(weights);
+		Collection<FloatOffset> offsets = chamferMask.getBackwardFloatOffsets();
 		
 		// iterate over voxels
+		boolean modif = false;
 		for (int z = sizeZ-1; z >= 0; z--)
 		{
 			fireProgressChanged(this, sizeZ-1-z, sizeZ);
@@ -230,12 +235,12 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 				for (int x = sizeX - 1; x >= 0; x--)
 				{
 					// process only voxels within the mask
-					if (maskProc.getVoxel(x, y, z) != maskLabel)
+					if (labelImage.get(x, y, z) != maskLabel)
 					{
 						continue;
 					}
 					
-					double value = result.getValue(x, y, z);
+					double value = distMap.getValue(x, y, z);
 					double ref = value;
 					
 					// iterate over voxels in backward neighborhood to find minimum value
@@ -252,19 +257,49 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 						if (z2 < 0 || z2 >= sizeZ)
 							continue;
 						
-						double newVal = result.getValue(x2, y2, z2) + offset.weight;
+						double newVal = distMap.getValue(x2, y2, z2) + offset.weight;
 						value = Math.min(value, newVal);
 					}
 					
 					if (value < ref)
 					{
 						modif = true;
-						result.setValue(x, y, z, value);
+						distMap.setValue(x, y, z, value);
 					}
 				}
 			}
 		}	
 		
 		fireProgressChanged(this, 1, 1);
+		return modif;
+	}
+
+	private void normalizeMap(Image3D distMap, Image3D labelImage)
+	{
+		// size of image
+		int sizeX = distMap.getSize(0);
+		int sizeY = distMap.getSize(1);
+		int sizeZ = distMap.getSize(2);
+
+		// retrieve the minimum weight
+		double w0 = Double.POSITIVE_INFINITY;
+		for (FloatOffset offset : this.chamferMask.getFloatOffsets())
+		{
+			w0 = Math.min(w0, offset.weight);
+		}
+		
+		for (int z = 0; z < sizeZ; z++)
+		{
+			for (int y = 0; y < sizeY; y++)
+			{
+				for (int x = 0; x < sizeX; x++)
+				{
+					if (labelImage.get(x, y, z) > 0)
+					{
+						distMap.setValue(x, y, z, distMap.getValue(x, y, z) / w0);
+					}
+				}
+			}
+		}
 	}
 }

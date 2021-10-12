@@ -30,10 +30,11 @@ import ij.process.ImageProcessor;
 import ij.process.LUT;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.binary.BinaryImages;
-import inra.ijpb.binary.ChamferWeights;
+import inra.ijpb.binary.distmap.ChamferMask2D;
+import inra.ijpb.binary.distmap.ChamferMasks2D;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransform;
-import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat5x5;
-import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort5x5;
+import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat;
+import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort;
 import inra.ijpb.color.ColorMaps;
 
 import java.awt.image.IndexColorModel;
@@ -79,8 +80,8 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 		gd.addChoice("Marker Image", imageNames, IJ.getImage().getTitle());
 		gd.addChoice("Mask Image", imageNames, IJ.getImage().getTitle());
 		// Set Chessknight weights as default
-		gd.addChoice("Distances", ChamferWeights.getAllLabels(),
-				ChamferWeights.CHESSKNIGHT.toString());
+		gd.addChoice("Distances", ChamferMasks2D.getAllLabels(),
+				ChamferMasks2D.CHESSKNIGHT.toString());
 		String[] outputTypes = new String[] { "32 bits", "16 bits" };
 		gd.addChoice("Output Type", outputTypes, outputTypes[0]);
 		gd.addCheckbox("Normalize weights", true);
@@ -98,7 +99,7 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 		String weightLabel = gd.getNextChoice();
 		
 		// identify which weights should be used
-		ChamferWeights weights = ChamferWeights.fromLabel(weightLabel);
+		ChamferMask2D weights = ChamferMasks2D.fromLabel(weightLabel).getMask();
 		boolean resultAsFloat = gd.getNextChoiceIndex() == 0;
 		boolean normalizeWeights = gd.getNextBoolean();
 
@@ -116,16 +117,8 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 
 		// Execute core of the plugin
 		String newName = createResultImageName(maskImage);
-		ImagePlus res;
-		if (resultAsFloat)
-		{
-			res = process(markerImage, maskImage, newName,
-					weights.getFloatWeights(), normalizeWeights);
-		} else
-		{
-			res = process(markerImage, maskImage, newName,
-					weights.getShortWeights(), normalizeWeights);
-		}
+		ImagePlus res = process(markerImage, maskImage, newName,
+				weights, resultAsFloat, normalizeWeights);
 
 		res.show();
 	}
@@ -275,6 +268,7 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 	 * @return an array of object, containing the name of the new image, and the
 	 *         new ImagePlus instance
 	 */
+	@Deprecated
 	public ImagePlus process(ImagePlus markerPlus, ImagePlus maskPlus,
 			String newName, float[] weights, boolean normalize)
 	{
@@ -307,7 +301,7 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 		}
 
 		// Initialize calculator
-		GeodesicDistanceTransform algo = new GeodesicDistanceTransformFloat5x5(weights, normalize);
+		GeodesicDistanceTransform algo = new GeodesicDistanceTransformFloat(ChamferMask2D.fromWeights(weights), normalize);
 		DefaultAlgoListener.monitor(algo);
     	
 
@@ -326,6 +320,7 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 		return resultPlus;
 	}
 
+	@Deprecated
 	public ImageProcessor process(ImageProcessor marker, ImageProcessor mask,
 			float[] weights, boolean normalize)
 	{
@@ -347,10 +342,8 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 		}
 
 		// Initialize calculator
-		GeodesicDistanceTransform algo = new GeodesicDistanceTransformFloat5x5(
-				weights, normalize);
+		GeodesicDistanceTransform algo = new GeodesicDistanceTransformFloat(ChamferMask2D.fromWeights(weights), normalize);
 		DefaultAlgoListener.monitor(algo);
-    	
 
 		// Compute distance on specified images
 		ImageProcessor result = algo.geodesicDistanceMap(marker, mask);
@@ -379,7 +372,7 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 	 *         new ImagePlus instance
 	 */
 	public ImagePlus process(ImagePlus marker, ImagePlus mask, String newName,
-			short[] weights, boolean normalize)
+			ChamferMask2D weights, boolean floatComputation, boolean normalize)
 	{
 		// Check validity of parameters
 		if (marker == null)
@@ -410,7 +403,15 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 		}
 
 		// Initialize calculator
-		GeodesicDistanceTransform algo = new GeodesicDistanceTransformShort5x5(weights, normalize);
+		GeodesicDistanceTransform algo;
+		if (floatComputation)
+		{
+			algo = new GeodesicDistanceTransformFloat(weights, normalize);
+		}
+		else
+		{
+			algo = new GeodesicDistanceTransformShort(weights, normalize);
+		}
 
 		DefaultAlgoListener.monitor(algo);
 

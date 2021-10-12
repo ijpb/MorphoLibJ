@@ -30,7 +30,8 @@ import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import inra.ijpb.binary.BinaryImages;
-import inra.ijpb.binary.ChamferWeights3D;
+import inra.ijpb.binary.distmap.ChamferMask3D;
+import inra.ijpb.binary.distmap.ChamferMasks3D;
 import inra.ijpb.data.image.Images3D;
 import inra.ijpb.util.IJUtils;
 import inra.ijpb.watershed.ExtendedMinimaWatershed;
@@ -46,12 +47,12 @@ import inra.ijpb.watershed.ExtendedMinimaWatershed;
 public class DistanceTransformWatershed3D implements PlugIn
 {
 	/** the different weights */
-	private ChamferWeights3D weights;
+	private ChamferMasks3D weights;
 	private static boolean floatProcessing	= false;
 	private static boolean normalize = true;
 
 	private static int dynamic = 2;
-	private static String weightLabel = ChamferWeights3D.BORGEFORS.toString();
+	private static String weightLabel = ChamferMasks3D.BORGEFORS.toString();
 
 	private static Conn3D connectivity = Conn3D.C6;
 
@@ -131,7 +132,7 @@ public class DistanceTransformWatershed3D implements PlugIn
 		gd.setInsets( 0, 0, 0 );
 		gd.addMessage( "Distance map options:",
 				new Font( "SansSerif", Font.BOLD, 12 ) );
-		gd.addChoice( "Distances", ChamferWeights3D.getAllLabels(), weightLabel );
+		gd.addChoice( "Distances", ChamferMasks3D.getAllLabels(), weightLabel );
 		String[] outputTypes = new String[]{"32 bits", "16 bits"};
 		gd.addChoice( "Output Type", outputTypes, outputTypes[ floatProcessing ? 0:1 ]);
 		gd.setInsets( 0, 0, 0 );
@@ -157,15 +158,11 @@ public class DistanceTransformWatershed3D implements PlugIn
 		connectivity = Conn3D.fromLabel( gd.getNextChoice() );
 
 		// identify which weights should be used
-		weights = ChamferWeights3D.fromLabel( weightLabel );
-
+		weights = ChamferMasks3D.fromLabel( weightLabel );
+		ChamferMask3D chamferMask = weights.getMask();
 		long t0 = System.currentTimeMillis();
 
-		final ImagePlus result;
-		if (floatProcessing)
-			result = processFloat( image, weights.getFloatWeights(), normalize );
-		else
-			result = processShort( image, weights.getShortWeights(), normalize );
+		final ImagePlus result = process(image, chamferMask, floatProcessing, normalize);
 
 		Images3D.optimizeDisplayRange( result );
 
@@ -179,39 +176,20 @@ public class DistanceTransformWatershed3D implements PlugIn
 				t1 - t0, image );
 	}
 
-	private ImagePlus processFloat(
+	private ImagePlus process(
 			ImagePlus image,
-			float[] weights,
+			ChamferMask3D chamferMask, 
+			boolean floatProcessing,
 			boolean normalize )
 	{
-		final ImageStack dist =
-				BinaryImages.distanceMap( image.getImageStack(), weights,
-						normalize );
+		final ImageStack dist = BinaryImages.distanceMap(image.getImageStack(),
+				chamferMask, floatProcessing, normalize);
+		
 		// invert distance map
 		Images3D.invert( dist );
 
 		ImageStack result = ExtendedMinimaWatershed.extendedMinimaWatershed(
 				dist, image.getImageStack(), dynamic, connectivity.value, 32, false );
-		ImagePlus ip = new ImagePlus( image.getShortTitle() + "dist-watershed",
-				result );
-		ip.setCalibration( image.getCalibration() );
-		return ip;
-	}
-
-	private ImagePlus processShort(
-			ImagePlus image,
-			short[] weights,
-			boolean normalize )
-	{
-		// Compute distance on specified image
-		final ImageStack dist =
-				BinaryImages.distanceMap( image.getImageStack(), weights,
-						normalize );
-		// invert distance map
-		Images3D.invert( dist );
-
-		ImageStack result = ExtendedMinimaWatershed.extendedMinimaWatershed(
-				dist, image.getImageStack(), dynamic, connectivity.value, 16, false );
 		ImagePlus ip = new ImagePlus( image.getShortTitle() + "dist-watershed",
 				result );
 		ip.setCalibration( image.getCalibration() );

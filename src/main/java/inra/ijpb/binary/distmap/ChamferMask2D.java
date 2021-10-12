@@ -114,7 +114,7 @@ public abstract class ChamferMask2D
 		short[] intWeights = new short[weights.length];
 		for (int i = 0; i < weights.length; i++)
 		{
-			intWeights[i] = (short) Math.round(weights[i] + 10.0);
+			intWeights[i] = (short) Math.round(weights[i] * 10.0);
 		}
 		
 		if (weights.length == 2)

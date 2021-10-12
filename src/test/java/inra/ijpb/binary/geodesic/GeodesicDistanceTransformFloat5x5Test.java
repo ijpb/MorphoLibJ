@@ -25,9 +25,11 @@ import static org.junit.Assert.assertEquals;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
+import inra.ijpb.binary.distmap.ChamferMask2D;
 
 import org.junit.Test;
 
+@Deprecated
 public class GeodesicDistanceTransformFloat5x5Test
 {
 
@@ -40,9 +42,8 @@ public class GeodesicDistanceTransformFloat5x5Test
 		marker.fill();
 		marker.set(30, 30, 255);
 
-		float[] weights = new float[] { 5, 7, 11 };
-		GeodesicDistanceTransform algo = new GeodesicDistanceTransformFloat5x5(
-				weights, true);
+		ChamferMask2D chamferMask = ChamferMask2D.CHESSKNIGHT;
+		GeodesicDistanceTransform algo = new GeodesicDistanceTransformFloat(chamferMask, true);
 		ImageProcessor map = algo.geodesicDistanceMap(marker, mask);
 
 		assertEquals(250.8, map.getf(190, 210), .01);

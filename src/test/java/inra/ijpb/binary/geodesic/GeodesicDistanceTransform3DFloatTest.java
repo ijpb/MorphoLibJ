@@ -24,7 +24,7 @@ package inra.ijpb.binary.geodesic;
 import static org.junit.Assert.*;
 import ij.ImageStack;
 import inra.ijpb.algo.DefaultAlgoListener;
-import inra.ijpb.binary.ChamferWeights3D;
+import inra.ijpb.binary.distmap.ChamferMask3D;
 
 import org.junit.Test;
 
@@ -41,8 +41,8 @@ public class GeodesicDistanceTransform3DFloatTest
 		ImageStack marker = ImageStack.create(12, 12, 12, 8);		
 		marker.setVoxel(1, 1, 1, 255);
 
-		ChamferWeights3D weights = ChamferWeights3D.CITY_BLOCK; 
-		GeodesicDistanceTransform3D gdt = new GeodesicDistanceTransform3DFloat(weights, false);
+		ChamferMask3D chamferMask = ChamferMask3D.CITY_BLOCK; 
+		GeodesicDistanceTransform3D gdt = new GeodesicDistanceTransform3DFloat(chamferMask, false);
 		DefaultAlgoListener.monitor(gdt);
 		
 		ImageStack distMap = gdt.geodesicDistanceMap(marker, mask);
@@ -62,8 +62,8 @@ public class GeodesicDistanceTransform3DFloatTest
 		ImageStack marker = ImageStack.create(12, 12, 12, 8);		
 		marker.setVoxel(1, 1, 1, 255);
 
-		ChamferWeights3D weights = ChamferWeights3D.CITY_BLOCK; 
-		GeodesicDistanceTransform3D gdt = new GeodesicDistanceTransform3DFloat(weights, false);
+		ChamferMask3D chamferMask = ChamferMask3D.CITY_BLOCK; 
+		GeodesicDistanceTransform3D gdt = new GeodesicDistanceTransform3DFloat(chamferMask, false);
 		DefaultAlgoListener.monitor(gdt);
 		
 		ImageStack distMap = gdt.geodesicDistanceMap(marker, mask);
@@ -83,8 +83,8 @@ public class GeodesicDistanceTransform3DFloatTest
 		ImageStack marker = ImageStack.create(12, 12, 12, 8);		
 		marker.setVoxel(1, 1, 1, 255);
 
-		ChamferWeights3D weights = ChamferWeights3D.CHESSBOARD; 
-		GeodesicDistanceTransform3D gdt = new GeodesicDistanceTransform3DFloat(weights, false);
+		ChamferMask3D chamferMask = ChamferMask3D.CHESSBOARD; 
+		GeodesicDistanceTransform3D gdt = new GeodesicDistanceTransform3DFloat(chamferMask, false);
 		DefaultAlgoListener.monitor(gdt);
 		
 		ImageStack distMap = gdt.geodesicDistanceMap(marker, mask);
