@@ -40,10 +40,10 @@ import inra.ijpb.binary.BinaryImages;
  * 
  * <pre>
  * <code>
- * float[] floatWeights = ChamferWeights3D2.BORGEFORS.getFloatWeights();
+ * ChamferMask2D chamferMask = ChamferMasks2D.BORGEFORS.getMask();
  * boolean normalize = true;
- * DistanceTransform3D dt = new DistanceTransform3DFloat(floatWeights, normalize);
- * ImageStack result = dt.distanceMap(inputStack);
+ * DistanceTransform dt = new ChamferDistanceTransform2DFloat(chamferMask, normalize);
+ * ImageProcessor result = dt.distanceMap(inputImage);
  * </code>
  * </pre>
  *
@@ -114,7 +114,7 @@ public enum ChamferMasks2D
 	 * Determines the operation type from its label.
 	 * 
 	 * @param label the name of a chamfer weight 
-	 * @return the ChamferWeights3D2 enum corresponding to the given name
+	 * @return the ChamferMasks2D enum corresponding to the given name
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if label name is not recognized.
@@ -130,6 +130,6 @@ public enum ChamferMasks2D
 				return weight;
 		}
 		throw new IllegalArgumentException(
-				"Unable to parse ChamferWeights3D2 with label: " + label);
+				"Unable to parse ChamferMasks2D with label: " + label);
 	}
 }

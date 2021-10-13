@@ -55,6 +55,7 @@ public enum ChamferMasks3D
 	/**
 	 * Use weights 1 for orthogonal neighbors and 2 for diagonal neighbors,
 	 * and 3 for cube-diagonals.
+	 * Results in a |Emax| error of around 0.2679.
 	 */
 	CITY_BLOCK("City-Block (1,2,3)", ChamferMask3D.CITY_BLOCK),
 	/**
@@ -67,6 +68,7 @@ public enum ChamferMasks3D
 	/**
 	 * Use weights 3 for orthogonal neighbors and 4 for diagonal neighbors,
 	 * and 5 for cube-diagonals (best approximation for 3-by-3-by-3 masks).
+	 * Results in a |Emax| error of around 0.1181.
 	 */
 	BORGEFORS("Borgefors (3,4,5)", ChamferMask3D.BORGEFORS),
 
@@ -74,18 +76,29 @@ public enum ChamferMasks3D
 	 * Use weights 3 for orthogonal neighbors and 4 for diagonal neighbors, and
 	 * 5 for cube-diagonals, and 7 for (2,1,1) shifts. Good approximation using
 	 * only four weights, and keeping low value of orthogonal weight.
+	 * Results in a |Emax| error of around 0.0809.
 	 */
 	SVENSSON_3_4_5_7("Svensson <3,4,5,7>", ChamferMask3D.SVENSSON_3_4_5_7),
 
 	/**
-	 * Use five types of weights.
+	 * Use five types of weights, with a |Emax| error of around 0.0653.
 	 */
 	WEIGHTS_8_11_14_18_20("<8,11,14,18,20>", new ChamferMask3DW5(8, 11, 14, 18, 20)),
 
 	/**
-	 * Use five types of weights.
+	 * Use five types of weights, with a |Emax| error of around 0.0397.
 	 */
-	WEIGHTS_13_18_22_29_31("<13,18,22,29,31>", new ChamferMask3DW5(13, 18, 22, 29, 31));
+	WEIGHTS_13_18_22_29_31("<13,18,22,29,31>", new ChamferMask3DW5(13, 18, 22, 29, 31)),
+
+	/**
+	 * Use six types of weights, with a |Emax| error of around 0.0524.
+	 */
+	WEIGHTS_7_10_12_16_17_21("<7,10,12,16,17,21>", new ChamferMask3DW6(7, 10, 12, 16, 17, 21)),
+
+	/**
+	 * Use six types of weights, with a |Emax| error of around 0.0408.
+	 */
+	WEIGHTS_10_14_17_22_34_30("<10,14,17,22,24,30>", new ChamferMask3DW6(10, 14, 17, 22, 24, 30));
 
 	private final String label;
 	private final ChamferMask3D mask;
@@ -96,37 +109,6 @@ public enum ChamferMasks3D
 		this.mask = mask;		
 	}
 	
-	private ChamferMasks3D(String label, short[] shortWeights)
-	{
-		this.label = label;
-		if (shortWeights.length == 3)
-		{
-			this.mask = new ChamferMask3DW3(shortWeights);
-		}
-		else if (shortWeights.length == 4)
-		{
-			this.mask = new ChamferMask3DW4(shortWeights);
-		}
-		else
-		{
-			throw new RuntimeException("The length of the weights must be either 3 or 4.");
-		}
-	}
-
-	private ChamferMasks3D(String label, short[] shortWeights,
-			float[] floatWeights)
-	{
-		this.label = label;
-		if (shortWeights.length == 3 && floatWeights.length == 3)
-		{
-			this.mask = new ChamferMask3DW3Float(shortWeights, floatWeights);
-		}
-		else
-		{
-			throw new RuntimeException("The length of both weight arrays must be 3.");
-		}
-	}
-
 	public ChamferMask3D getMask()
 	{
 		return this.mask;
