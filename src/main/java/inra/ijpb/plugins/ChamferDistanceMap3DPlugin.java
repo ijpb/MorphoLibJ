@@ -73,7 +73,7 @@ public class ChamferDistanceMap3DPlugin implements PlugIn
 
     	// set up current parameters
     	String weightLabel = gd.getNextChoice();
-    	boolean floatProcessing = gd.getNextChoiceIndex() == 0;
+    	boolean floatProcessing = gd.getNextChoiceIndex() == 1;
     	boolean normalize = gd.getNextBoolean();
 
     	// identify which weights should be used

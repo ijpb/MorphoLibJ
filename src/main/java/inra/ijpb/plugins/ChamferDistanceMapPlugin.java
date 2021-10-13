@@ -120,7 +120,7 @@ public class ChamferDistanceMapPlugin
 
 		// set up current parameters
 		String maskLabel = gd.getNextChoice();
-		floatProcessing = gd.getNextChoiceIndex() == 0;
+		floatProcessing = gd.getNextChoiceIndex() == 1;
 		normalize = gd.getNextBoolean();
 
 		// identify which mask should be used
@@ -137,7 +137,7 @@ public class ChamferDistanceMapPlugin
 	{
 		// set up current parameters
 		String maskLabel = gd.getNextChoice();
-		floatProcessing = gd.getNextChoiceIndex() == 0;
+		floatProcessing = gd.getNextChoiceIndex() == 1;
 		normalize = gd.getNextBoolean();
 
 		// identify which weights should be used
