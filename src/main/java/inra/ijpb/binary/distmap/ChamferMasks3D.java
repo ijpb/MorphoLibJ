@@ -75,7 +75,17 @@ public enum ChamferMasks3D
 	 * 5 for cube-diagonals, and 7 for (2,1,1) shifts. Good approximation using
 	 * only four weights, and keeping low value of orthogonal weight.
 	 */
-	SVENSSON_3_4_5_7("Svensson <3,4,5,7>", ChamferMask3D.SVENSSON_3_4_5_7);
+	SVENSSON_3_4_5_7("Svensson <3,4,5,7>", ChamferMask3D.SVENSSON_3_4_5_7),
+
+	/**
+	 * Use five types of weights.
+	 */
+	WEIGHTS_8_11_14_18_20("<8,11,14,18,20>", new ChamferMask3DW5(8, 11, 14, 18, 20)),
+
+	/**
+	 * Use five types of weights.
+	 */
+	WEIGHTS_13_18_22_29_31("<13,18,22,29,31>", new ChamferMask3DW5(13, 18, 22, 29, 31));
 
 	private final String label;
 	private final ChamferMask3D mask;
