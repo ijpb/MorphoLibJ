@@ -192,6 +192,7 @@ public class LabelEdition implements PlugIn
 						}
 						else if( e.getSource() == doneButton )
 						{
+							showResult();
 							win.windowClosing( null );
 						}
 					}
@@ -396,13 +397,6 @@ public class LabelEdition implements PlugIn
 		{							
 			super.windowClosing( e );
 
-			if( null != displayImage )
-			{
-				final ImagePlus result = displayImage.duplicate();
-				result.setTitle( inputImage.getShortTitle() + "-edited" );
-				result.setSlice( displayImage.getCurrentSlice() );
-				result.show();
-			}
 			// show original input image as well
 			inputImage.changes = false;
 			inputImage.getWindow().setVisible( true );
@@ -567,7 +561,20 @@ public class LabelEdition implements PlugIn
 			displayImage.setStack( inputImage.getImageStack().duplicate() );
 			displayImage.updateAndDraw();
 		}
-
+		/**
+		 * Show edited result in a new window
+		 */
+		void showResult()
+		{
+			if( null != displayImage )
+			{
+				final ImagePlus result = displayImage.duplicate();
+				result.setTitle( inputImage.getShortTitle() + "-edited" );
+				result.setSlice( displayImage.getCurrentSlice() );
+				result.setCalibration( inputImage.getCalibration() );
+				result.show();
+			}
+		}
 		/**
 		 * Enable/disable all buttons
 		 *
