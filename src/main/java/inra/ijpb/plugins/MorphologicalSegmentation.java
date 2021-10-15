@@ -42,6 +42,7 @@ import inra.ijpb.color.ColorMaps.CommonLabelMaps;
 import inra.ijpb.data.image.ColorImages;
 import inra.ijpb.data.image.Images3D;
 import inra.ijpb.label.LabelImages;
+import inra.ijpb.morphology.MinimaAndMaxima;
 import inra.ijpb.morphology.MinimaAndMaxima3D;
 import inra.ijpb.morphology.Morphology;
 import inra.ijpb.morphology.Strel;
@@ -997,8 +998,15 @@ public class MorphologicalSegmentation implements PlugIn {
 
 				// convert connectivity to 3D if needed (2D images are processed as 3D)
 				final int connectivity;
-				if( inputIs2D )
-					connectivity = readConn == 4 ? 6 : 26;
+				if( !inputIs2D )
+				{
+					if( readConn == 4 )
+						connectivity = 6;
+					else if( readConn == 8 )
+						connectivity = 26;
+					else
+						connectivity = readConn;
+				}
 				else
 					connectivity = readConn;
 				
@@ -1090,7 +1098,7 @@ public class MorphologicalSegmentation implements PlugIn {
 								extra = " external";
 							IJ.log( "Applying morphological"+ extra +" gradient to input image..." );
 
-							if ( image.getSize() > 1 )
+							if ( !inputIs2D ) // 3D processing
 							{
 								Strel3D strel = Strel3D.Shape.CUBE.fromRadius( gradientRadius );
 								if( gradientList.getSelectedItem().equals("Internal") )
@@ -1100,7 +1108,7 @@ public class MorphologicalSegmentation implements PlugIn {
 								else
 									image = Morphology.gradient( image, strel );
 							}
-							else
+							else // 2D processing
 							{
 								Strel strel = Strel.Shape.SQUARE.fromRadius( gradientRadius );
 								ImageProcessor gradient = null;
@@ -1111,7 +1119,7 @@ public class MorphologicalSegmentation implements PlugIn {
 								else
 									gradient = Morphology.gradient( image.getProcessor( 1 ), strel );
 								image = new ImageStack(image.getWidth(), image.getHeight());
-								image.addSlice(gradient);								
+								image.addSlice(gradient);
 							}
 
 							// store gradient image
@@ -1132,9 +1140,19 @@ public class MorphologicalSegmentation implements PlugIn {
 						final long step0 = System.currentTimeMillis();				
 
 						// Run extended minima
-						ImageStack regionalMinima = MinimaAndMaxima3D.extendedMinima( image, dynamic, connectivity );
+						final ImageStack regionalMinimaStack;
+						if( !inputIs2D ) // 3D processing
+							regionalMinimaStack = MinimaAndMaxima3D.extendedMinima( image, dynamic, connectivity );
+						else // 2D processing
+						{
+							ImageProcessor regionalMinimaProcessor =
+									MinimaAndMaxima.extendedMinima(
+											image.getProcessor(1), dynamic, connectivity );
+							regionalMinimaStack = new ImageStack(image.getWidth(), image.getHeight());
+							regionalMinimaStack.addSlice( regionalMinimaProcessor );
+						}
 
-						if( null == regionalMinima )
+						if( null == regionalMinimaStack )
 						{
 							IJ.log( "The segmentation was interrupted!" );
 							IJ.showStatus( "The segmentation was interrupted!" );
@@ -1148,9 +1166,22 @@ public class MorphologicalSegmentation implements PlugIn {
 						IJ.log( "Imposing regional minima on original image (connectivity = " + readConn + ")..." );
 
 						// Impose regional minima over the original image
-						ImageStack imposedMinima = MinimaAndMaxima3D.imposeMinima( image, regionalMinima, connectivity );
+						final ImageStack imposedMinimaStack;
+						if( !inputIs2D ) // 3D processing
+							imposedMinimaStack = MinimaAndMaxima3D.imposeMinima(
+									image, regionalMinimaStack, connectivity );
+						else // 2D processing
+						{
+							ImageProcessor imposedMinimaProcesor =
+									MinimaAndMaxima.imposeMinima(
+											image.getProcessor(1),
+											regionalMinimaStack.getProcessor(1),
+											connectivity );
+							imposedMinimaStack = new ImageStack(image.getWidth(), image.getHeight());
+							imposedMinimaStack.addSlice( imposedMinimaProcesor );
+						}
 
-						if( null == imposedMinima )
+						if( null == imposedMinimaStack )
 						{
 							IJ.log( "The segmentation was interrupted!" );
 							IJ.showStatus( "The segmentation was interrupted!" );
@@ -1164,8 +1195,18 @@ public class MorphologicalSegmentation implements PlugIn {
 						IJ.log( "Labeling regional minima..." );
 
 						// Label regional minima
-						ImageStack labeledMinima = BinaryImages.componentsLabeling( regionalMinima, connectivity, 32 );
-						if( null == labeledMinima )
+						final ImageStack labeledMinimaStack;
+						if( !inputIs2D ) // 3D processing
+							labeledMinimaStack = BinaryImages.componentsLabeling( regionalMinimaStack, connectivity, 32 );
+						else // 2D processing
+						{
+							ImageProcessor labeledMinimaProcessor =
+									BinaryImages.componentsLabeling(
+											regionalMinimaStack.getProcessor(1),connectivity, 32 );
+							labeledMinimaStack = new ImageStack( image.getWidth(), image.getHeight() );
+							labeledMinimaStack.addSlice( labeledMinimaProcessor );
+						}
+						if( null == labeledMinimaStack )
 						{
 							IJ.log( "The segmentation was interrupted!" );
 							IJ.showStatus( "The segmentation was interrupted!" );
@@ -1182,8 +1223,20 @@ public class MorphologicalSegmentation implements PlugIn {
 						ImageStack resultStack = null;
 						
 						try{
-							resultStack = Watershed.computeWatershed( imposedMinima, labeledMinima, 
-								connectivity, calculateDams );
+							if( !inputIs2D ) // 3D processing
+								resultStack = Watershed.computeWatershed(
+										imposedMinimaStack, labeledMinimaStack, 
+										connectivity, calculateDams );
+							else // 2D processing
+							{
+								ImageProcessor resultProcessor =
+										Watershed.computeWatershed(
+												imposedMinimaStack.getProcessor(1),
+												labeledMinimaStack.getProcessor(1), 
+												connectivity, calculateDams );
+								resultStack = new ImageStack( image.getWidth(), image.getHeight() );
+								resultStack.addSlice( resultProcessor );
+							}
 						}
 						catch( Exception ex )
 						{							
@@ -1216,8 +1269,12 @@ public class MorphologicalSegmentation implements PlugIn {
 						// Adjust min and max values to display
 						Images3D.optimizeDisplayRange( resultImage );
 
-						byte[][] colorMap = CommonLabelMaps.fromLabel( CommonLabelMaps.GOLDEN_ANGLE.getLabel() ).computeLut( 255, false );
-						ColorModel cm = ColorMaps.createColorModel(colorMap, Color.BLACK);
+						byte[][] colorMap = CommonLabelMaps.fromLabel(
+								CommonLabelMaps.GOLDEN_ANGLE.getLabel() ).computeLut(
+										calculateDams ? 255 : 256, false );
+						ColorModel cm = calculateDams ?
+								ColorMaps.createColorModel(colorMap, Color.BLACK)
+								: ColorMaps.createColorModel(colorMap);
 						resultImage.getProcessor().setColorModel(cm);
 						resultImage.getImageStack().setColorModel(cm);
 						resultImage.updateAndDraw();
@@ -1374,8 +1431,9 @@ public class MorphologicalSegmentation implements PlugIn {
 				long seed = (long) (new Random()).nextInt();
 				colorMap = ColorMaps.shuffleLut( colorMap, seed );
 
-				ColorModel cm = ColorMaps.createColorModel(
-						colorMap, Color.BLACK );
+				ColorModel cm = calculateDams ?
+						ColorMaps.createColorModel(colorMap, Color.BLACK)
+						: ColorMaps.createColorModel(colorMap);
 				resultImage.getProcessor().setColorModel( cm );
 				resultImage.getImageStack().setColorModel( cm );
 				resultImage.updateAndDraw();

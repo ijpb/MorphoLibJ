@@ -75,6 +75,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 /**
@@ -120,6 +121,7 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 	//
 	//	 __ Watershed Segmentation___
 	//	|  x - Use dams             |
+	//	|  Compactness: [0]         |
 	//	|  Connectivity: [6/26]     |
 	//	|          -----            |
 	//	|         | Run |	    	|
@@ -135,6 +137,13 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 	JCheckBox damsCheckBox;
 	/** flag to select/deselect the calculation of watershed dams */
 	private boolean calculateDams = true;
+
+	/** compactness parameter panel */
+	JPanel compactnessPanel = new JPanel();
+	/** compactness parameter label */
+	JLabel compactnessLabel;
+	/** compactness parameter text field */
+	JTextField compactnessText;
 
 	/** connectivity choice */
 	JPanel connectivityPanel = new JPanel();
@@ -374,6 +383,15 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 			damsCheckBox.setToolTipText( "Calculate watershed dams" );
 			damsPanel.add( damsCheckBox );
 
+			// compactness parameter
+			compactnessLabel = new JLabel( "Compactness" );
+			compactnessLabel.setToolTipText( "Compactness constraint parameter (values larger than 0 activate compact watershed)" );
+			compactnessText = new JTextField( "0", 5 );
+			compactnessText.setToolTipText( "Compactness constraint parameter (values larger than 0 activate compact watershed)" );
+			compactnessPanel.add( compactnessLabel );
+			compactnessPanel.add( compactnessText );
+			compactnessPanel.setToolTipText( "Compactness constraint parameter (values larger than 0 activate compact watershed)" );
+
 			// connectivity
 			if( inputIs2D )
 				connectivityOptions = new String[]{ "4", "8" };
@@ -403,6 +421,8 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 			segmentationPanel.setLayout( segmentationLayout );
 
 			segmentationPanel.add( damsPanel, segmentationConstraints );
+			segmentationConstraints.gridy++;
+			segmentationPanel.add( compactnessPanel, segmentationConstraints );
 			segmentationConstraints.gridy++;
 			segmentationPanel.add( connectivityPanel, segmentationConstraints );
 
@@ -710,8 +730,15 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 					|| ( inputImage.getImageStackSize() == 1 && (connectivity == 4  || connectivity == 8 ) ) )
 				connectivityList.setSelectedItem( Integer.toString(connectivity) );
 		}
-
-
+		/**
+		 * Set compactness value in the GUI
+		 *
+		 * @param compactness compactness constrain parameter (values larger than 0 imply using compact watershed)
+		 */
+		void setCompactness( double compactness )
+		{
+			compactnessText.setText( Double.toString(compactness) );
+		}
 		/**
 		 * Get segmentation command (text on the segment button)
 		 * @return text on the segment button when segmentation is not running
@@ -735,10 +762,35 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 
 				// convert connectivity to 3D if needed (2D images are processed as 3D)
 				final int connectivity;
-				if( inputIs2D )
-					connectivity = readConn == 4 ? 6 : 26;
+				if( !inputIs2D )
+				{
+					if( readConn == 4 )
+						connectivity = 6;
+					else if( readConn == 8 )
+						connectivity = 26;
+					else
+						connectivity = readConn;
+				}
 				else
 					connectivity = readConn;
+
+				// read dynamic
+				final double compactness;
+				try{
+					compactness = Double.parseDouble( compactnessText.getText() );
+				}
+				catch( NullPointerException ex )
+				{
+					IJ.error( "Interactive Marker-controlled Segmentation",
+							"ERROR: missing compactness value" );
+					return;
+				}
+				catch( NumberFormatException ex )
+				{
+					IJ.error( "Interactive Marker-controlled Segmentation",
+							"ERROR: compactness value must be a number" );
+					return;
+				}
 
 				// Set button text to "STOP"
 				segmentButton.setText( stopText );
@@ -886,14 +938,23 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 						{
 							markerStack.addSlice( markerSlice[n] );
 						}
-
-						markerStack = BinaryImages.componentsLabeling(
+						final ImagePlus marker;
+						if( !inputIs2D )
+						{
+							markerStack = BinaryImages.componentsLabeling(
 								markerStack, connectivity, 32 );
-						ImagePlus marker = new ImagePlus( "marker", markerStack );
+							marker = new ImagePlus( "marker", markerStack );
+						}
+						else
+						{
+							final ImageProcessor m = BinaryImages.componentsLabeling(
+									markerSlice[0], connectivity, 32 );
+							marker = new ImagePlus( "marker", m );
+						}
 
 						try{
 							resultImage = Watershed.computeWatershed( inputImage, marker, null,
-									connectivity, calculateDams, false );
+									connectivity, calculateDams, compactness, false );
 						}
 						catch( Exception ex )
 						{
@@ -925,8 +986,10 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 						// Adjust min and max values to display
 						Images3D.optimizeDisplayRange( resultImage );
 
-						byte[][] colorMap = CommonLabelMaps.fromLabel( CommonLabelMaps.GOLDEN_ANGLE.getLabel() ).computeLut( 255, false );
-						ColorModel cm = ColorMaps.createColorModel(colorMap, Color.BLACK);
+						byte[][] colorMap = CommonLabelMaps.fromLabel(
+								CommonLabelMaps.GOLDEN_ANGLE.getLabel() ).computeLut( calculateDams ? 255 : 256, false );
+						ColorModel cm = calculateDams ? ColorMaps.createColorModel(colorMap, Color.BLACK)
+								: ColorMaps.createColorModel(colorMap);
 						resultImage.getProcessor().setColorModel(cm);
 						resultImage.getImageStack().setColorModel(cm);
 						resultImage.updateAndDraw();
@@ -949,6 +1012,7 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 						// Record
 						String[] arg = new String[] {
 								"calculateDams=" + calculateDams,
+								"compactness=" + Double.toString( compactness ),
 								"connectivity=" + Integer.toString( readConn ) };
 						record( RUN_SEGMENTATION, arg );
 					}
@@ -1075,8 +1139,9 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 				long seed = (long) (new Random()).nextInt();
 				colorMap = ColorMaps.shuffleLut( colorMap, seed );
 
-				ColorModel cm = ColorMaps.createColorModel(
-						colorMap, Color.BLACK );
+				ColorModel cm = calculateDams ?
+						ColorMaps.createColorModel(colorMap, Color.BLACK)
+						: ColorMaps.createColorModel(colorMap);
 				resultImage.getProcessor().setColorModel( cm );
 				resultImage.getImageStack().setColorModel( cm );
 				resultImage.updateAndDraw();
@@ -1295,7 +1360,7 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 		inputStackCopy = inputImage.getImageStack().duplicate();
 		displayImage = new ImagePlus( inputImage.getTitle(),
 				inputStackCopy );
-		displayImage.setTitle("Marker-controlled Watershed");
+		displayImage.setTitle("Interactive Marker-controlled Watershed");
 		displayImage.setSlice( inputImage.getCurrentSlice() );
 		displayImage.setRoi( inputImage.getRoi() );
 
@@ -1350,10 +1415,12 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 	 * Segment current image (GUI needs to be running)
 	 *
 	 * @param calculateDams string containing boolean flag to create dams (format: "calculateDams=[boolean])
+	 * @param compactness compactness constrain parameter (values larger than 0 imply using compact watershed)
 	 * @param connectivity string containing connectivity value (format: "connectivity=[4 or 8 / 6 or 26])
 	 */
 	public static void segment(
 			String calculateDams,
+			String compactness,
 			String connectivity )
 	{
 		final ImageWindow iw = WindowManager.getCurrentImage().getWindow();
@@ -1361,6 +1428,7 @@ public class InteractiveMarkerControlledWatershed implements PlugIn {
 		{
 			final CustomWindow win = (CustomWindow) iw;
 			win.setCalculateDams( calculateDams.contains( "true" ) );
+			win.setCompactness( Double.parseDouble( compactness.replace( "compactness=", "" ) ) );
 			win.setConnectivity( Integer.parseInt( connectivity.replace( "connectivity=", "" ) ) );
 			win.runSegmentation( win.getSegmentText() );
 		}

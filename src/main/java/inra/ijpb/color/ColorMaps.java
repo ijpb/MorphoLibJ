@@ -57,7 +57,10 @@ public class ColorMaps {
 		CommonLabelMaps(String label) {
 			this.label = label;
 		}
-		
+		/**
+		 * Get label name associated to color map
+		 * @return label name of the color map
+		 */
 		public String getLabel() {
 			return label;
 		}
@@ -65,7 +68,12 @@ public class ColorMaps {
 		public String toString() {
 			return label;
 		}
-		
+		/**
+		 * Compute look-up table for current color map
+		 * @param nValues number of colors for the map
+		 * @param shuffle flag to shuffle table values after its construction
+		 * @return
+		 */
 		public byte[][] computeLut(int nValues, boolean shuffle) {
 			byte[][] lut;
 			// create a lut with as many colors as the number of labels
@@ -162,7 +170,16 @@ public class ColorMaps {
 	 */
 	public final static ColorModel createColorModel(byte[][] cmap) {
 		int n = cmap.length;
-		return new IndexColorModel(8, n, cmap[0], cmap[1], cmap[2]);
+		byte[] r = new byte[n];
+		byte[] g = new byte[n];
+		byte[] b = new byte[n];
+
+		for (int i = 0; i < n; i++) {
+			r[i] = cmap[i][0];
+			g[i] = cmap[i][1];
+			b[i] = cmap[i][2];
+		}
+		return new IndexColorModel(8, n, r, g, b);
 	}
 	
 	/**

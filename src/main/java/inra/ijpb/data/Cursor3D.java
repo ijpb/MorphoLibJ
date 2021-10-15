@@ -71,4 +71,16 @@ public class Cursor3D
 	    Cursor3D c = (Cursor3D) other;
 	    return c.x == this.x && c.y == this.y && c.z == this.z;
 	}
+	/**
+	 * Calculate Euclidean distance to another cursor
+	 * @param c cursor to calculate distance to
+	 * @return Euclidean distance between this cursor and the input one
+	 */
+	public double euclideanDistance( Cursor3D c )
+	{
+		final double x = this.x - c.x;
+		final double y = this.y - c.y;
+		final double z = this.z - c.z;
+		return Math.sqrt( x * x + y * y + z * z);
+	}
 }
