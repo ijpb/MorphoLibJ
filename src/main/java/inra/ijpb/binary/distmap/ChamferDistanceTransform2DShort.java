@@ -31,7 +31,7 @@ import inra.ijpb.label.LabelValues;
  * @author David Legland
  * 
  */
-public class ChamferDistanceTransform2DShort extends AlgoStub implements DistanceTransform
+public class ChamferDistanceTransform2DShort extends AlgoStub implements ChamferDistanceTransform2D
 {
 	// ==================================================
 	// Class variables
@@ -65,7 +65,17 @@ public class ChamferDistanceTransform2DShort extends AlgoStub implements Distanc
 	
 
 	// ==================================================
-	// Implementation of DistanceTransform3D interface 
+	// Implementation of the ChamferDistanceTransform2D interface
+	
+	@Override
+	public ChamferMask2D mask()
+	{
+		return this.mask;
+	}
+
+	
+	// ==================================================
+	// Implementation of the DistanceTransform interface 
 	
 	/**
 	 * Computes the distance map of the distance to the nearest pixel with a
@@ -275,12 +285,9 @@ public class ChamferDistanceTransform2DShort extends AlgoStub implements Distanc
 		int sizeY = labelImage.getHeight();
 
 		// retrieve the minimum weight
-		double w0 = Double.POSITIVE_INFINITY;
-		for (ShortOffset offset : this.mask.getOffsets())
-		{
-			w0 = Math.min(w0, offset.weight);
-		}
+		double w0 = mask.getShortNormalizationWeight();
 		
+		// normalize each pixel
 		for (int y = 0; y < sizeY; y++)
 		{
 			for (int x = 0; x < sizeX; x++)

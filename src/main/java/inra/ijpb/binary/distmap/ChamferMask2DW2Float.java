@@ -96,4 +96,16 @@ public class ChamferMask2DW2Float extends ChamferMask2D
 
 		return offsets;
 	}
+
+	@Override
+	public double getNormalizationWeight()
+	{
+		return floatWeights[0];
+	}
+
+	@Override
+	public short getShortNormalizationWeight()
+	{
+		return shortWeights[0];
+	}
 }

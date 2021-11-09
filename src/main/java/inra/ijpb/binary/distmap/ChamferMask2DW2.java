@@ -75,4 +75,10 @@ public class ChamferMask2DW2 extends ChamferMask2D
 
 		return offsets;
 	}
+
+	@Override
+	public short getShortNormalizationWeight()
+	{
+		return a;
+	}
 }

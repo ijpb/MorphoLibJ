@@ -13,7 +13,7 @@ import ij.ImageStack;
  * @author dlegland
  *
  */
-public class ChamferWeights3DW4Test
+public class ChamferWeights3DW6Test
 {
 	@Test
 	public void testDistanceMap()
@@ -31,7 +31,7 @@ public class ChamferWeights3DW4Test
 			}
 		}
 
-		ChamferMask3D mask = new ChamferMask3DW4(3, 4, 5, 7);
+		ChamferMask3D mask = new ChamferMask3DW6(7, 10, 12, 16, 17, 21);
 		DistanceTransform3D algo = new ChamferDistanceTransform3DShort(mask, true);
 		
 		ImageStack result = algo.distanceMap(image);
@@ -41,7 +41,7 @@ public class ChamferWeights3DW4Test
 //		for (int x = 0; x < 100; x++)
 //		{
 //			System.out.print(((int)result.getVoxel(x, 50, 50)) + " ");
-//		}
+//		}*
 		double middle = result.getVoxel(10, 10, 10);
 		assertEquals(9, middle, .1);
 	}
@@ -62,8 +62,8 @@ public class ChamferWeights3DW4Test
 			}
 		}
 		image.setVoxel(5, 5, 5, 0);
-
-		ChamferMask3D mask = new ChamferMask3DW4(3, 4, 5, 7);
+		
+		ChamferMask3D mask = new ChamferMask3DW6(7, 10, 12, 16, 17, 21);
 		DistanceTransform3D algo = new ChamferDistanceTransform3DShort(mask, true);
 		
 		ImageStack result = algo.distanceMap(image);
@@ -71,11 +71,11 @@ public class ChamferWeights3DW4Test
 		
 		assertEquals(1, result.getVoxel(4, 5, 5), 0.1);
 		assertEquals(1, result.getVoxel(6, 5, 5), 0.1);
-		assertEquals(1, result.getVoxel(4, 4, 5), 0.1); // rounding of 4/3
-		assertEquals(Math.round(5.0 / 3.0), result.getVoxel(4, 4, 4), 0.1);
+		assertEquals(1, result.getVoxel(4, 4, 5), 0.1); // rounding of 10/7
+		assertEquals(Math.round(12.0 / 7.0), result.getVoxel(4, 4, 4), 0.1);
 
 		// Test some voxels at the cube corners
-		int exp = (int) Math.round(5 * 5.0 / 3.0);
+		int exp = (int) Math.round(5 * 12.0 / 7.0);
 		assertEquals(exp, result.getVoxel( 0,  0,  0), .01);
 		assertEquals(exp, result.getVoxel(10,  0,  0), .01);
 		assertEquals(exp, result.getVoxel( 0, 10,  0), .01);

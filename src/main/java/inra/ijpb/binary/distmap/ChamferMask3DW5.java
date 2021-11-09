@@ -185,8 +185,14 @@ public class ChamferMask3DW5 extends ChamferMask3D
 		offsets.add(new ShortOffset(-1, +1,  0, b));
 		offsets.add(new ShortOffset( 0, +1,  0, a));
 		offsets.add(new ShortOffset(+1, +1,  0, b));
-		offsets.add(new ShortOffset(+1,  0, 0, a));
+		offsets.add(new ShortOffset(+1,  0,  0, a));
 
 		return offsets;
+	}
+
+	@Override
+	public short getShortNormalizationWeight()
+	{
+		return a;
 	}
 }

@@ -26,7 +26,10 @@ import java.util.Collection;
  */
 public class ChamferMask3DW4 extends ChamferMask3D
 {
-	short[] weights;
+	short a;
+	short b;
+	short c;
+	short e;
 	
 	/**
 	 * Creates a new ChamferWeights3D object by specifying the four weights
@@ -40,11 +43,14 @@ public class ChamferMask3DW4 extends ChamferMask3D
 	 * @param c
 	 *            the weight associated to cube-diagonal neighbors
 	 * @param e
-	 *            the weight associated to cube-diagonal neighbors
+	 *            the weight associated to (1,1,2) vectors and its permutations and symmetries
 	 */
 	public ChamferMask3DW4(int a, int b, int c, int e)
 	{
-		this.weights = new short[] {(short) a, (short) b, (short) c, (short) e};
+		this.a = (short) a;
+		this.b = (short) b;
+		this.c = (short) c;
+		this.e = (short) e;
 	}
 
 	public ChamferMask3DW4(short[] weights)
@@ -53,7 +59,10 @@ public class ChamferMask3DW4 extends ChamferMask3D
 		{
 			throw new RuntimeException("Number of weights must be 4, not " + weights.length);
 		}
-		this.weights = weights;
+		this.a = weights[0];
+		this.b = weights[1];
+		this.c = weights[2];
+		this.e = weights[3];
 	}
 
 	@Override
@@ -63,38 +72,38 @@ public class ChamferMask3DW4 extends ChamferMask3D
 		ArrayList<ShortOffset> offsets = new ArrayList<ShortOffset>();
 	
 		// offsets in the z-2 plane
-		offsets.add(new ShortOffset(-1, -1, -2, weights[3]));
-		offsets.add(new ShortOffset(+1, -1, -2, weights[3]));
-		offsets.add(new ShortOffset(-1, +1, -2, weights[3]));
-		offsets.add(new ShortOffset(+1, +1, -2, weights[3]));
+		offsets.add(new ShortOffset(-1, -1, -2, e));
+		offsets.add(new ShortOffset(+1, -1, -2, e));
+		offsets.add(new ShortOffset(-1, +1, -2, e));
+		offsets.add(new ShortOffset(+1, +1, -2, e));
 
 		// offsets in the z-1 plane
-		offsets.add(new ShortOffset(-1, -1, -1, weights[2]));
-		offsets.add(new ShortOffset( 0, -1, -1, weights[1]));
-		offsets.add(new ShortOffset(+1, -1, -1, weights[2]));
-		offsets.add(new ShortOffset(-1,  0, -1, weights[1]));
-		offsets.add(new ShortOffset( 0,  0, -1, weights[0]));
-		offsets.add(new ShortOffset(+1,  0, -1, weights[1]));
-		offsets.add(new ShortOffset(-1, +1, -1, weights[2]));
-		offsets.add(new ShortOffset( 0, +1, -1, weights[1]));
-		offsets.add(new ShortOffset(+1, +1, -1, weights[2]));
+		offsets.add(new ShortOffset(-1, -1, -1, c));
+		offsets.add(new ShortOffset( 0, -1, -1, b));
+		offsets.add(new ShortOffset(+1, -1, -1, c));
+		offsets.add(new ShortOffset(-1,  0, -1, b));
+		offsets.add(new ShortOffset( 0,  0, -1, a));
+		offsets.add(new ShortOffset(+1,  0, -1, b));
+		offsets.add(new ShortOffset(-1, +1, -1, c));
+		offsets.add(new ShortOffset( 0, +1, -1, b));
+		offsets.add(new ShortOffset(+1, +1, -1, c));
 		
 		// "type e" offsets in z-1 plane
-		offsets.add(new ShortOffset(-1, -2, -1, weights[3]));
-		offsets.add(new ShortOffset(+1, -2, -1, weights[3]));
-		offsets.add(new ShortOffset(-2, -1, -1, weights[3]));
-		offsets.add(new ShortOffset(+2, -1, -1, weights[3]));
-		offsets.add(new ShortOffset(-2, +1, -1, weights[3]));
-		offsets.add(new ShortOffset(+2, +1, -1, weights[3]));
-		offsets.add(new ShortOffset(-1, +2, -1, weights[3]));
-		offsets.add(new ShortOffset(+1, +2, -1, weights[3]));
+		offsets.add(new ShortOffset(-1, -2, -1, e));
+		offsets.add(new ShortOffset(+1, -2, -1, e));
+		offsets.add(new ShortOffset(-2, -1, -1, e));
+		offsets.add(new ShortOffset(+2, -1, -1, e));
+		offsets.add(new ShortOffset(-2, +1, -1, e));
+		offsets.add(new ShortOffset(+2, +1, -1, e));
+		offsets.add(new ShortOffset(-1, +2, -1, e));
+		offsets.add(new ShortOffset(+1, +2, -1, e));
 
 	
 		// offsets in the current plane
-		offsets.add(new ShortOffset(-1, -1, 0, weights[1]));
-		offsets.add(new ShortOffset( 0, -1, 0, weights[0]));
-		offsets.add(new ShortOffset(+1, -1, 0, weights[1]));
-		offsets.add(new ShortOffset(-1,  0, 0, weights[0]));
+		offsets.add(new ShortOffset(-1, -1,  0, b));
+		offsets.add(new ShortOffset( 0, -1,  0, a));
+		offsets.add(new ShortOffset(+1, -1,  0, b));
+		offsets.add(new ShortOffset(-1,  0,  0, a));
 	
 		return offsets;
 	}
@@ -106,38 +115,44 @@ public class ChamferMask3DW4 extends ChamferMask3D
 		ArrayList<ShortOffset> offsets = new ArrayList<ShortOffset>();
 
 		// offsets in the z+2 plane
-		offsets.add(new ShortOffset(-1, -1, +2, weights[3]));
-		offsets.add(new ShortOffset(+1, -1, +2, weights[3]));
-		offsets.add(new ShortOffset(-1, +1, +2, weights[3]));
-		offsets.add(new ShortOffset(+1, +1, +2, weights[3]));
+		offsets.add(new ShortOffset(-1, -1, +2, e));
+		offsets.add(new ShortOffset(+1, -1, +2, e));
+		offsets.add(new ShortOffset(-1, +1, +2, e));
+		offsets.add(new ShortOffset(+1, +1, +2, e));
 
 		// offsets in the z+1 plane
-		offsets.add(new ShortOffset(-1, -1, +1, weights[2]));
-		offsets.add(new ShortOffset( 0, -1, +1, weights[1]));
-		offsets.add(new ShortOffset(+1, -1, +1, weights[2]));
-		offsets.add(new ShortOffset(-1,  0, +1, weights[1]));
-		offsets.add(new ShortOffset( 0,  0, +1, weights[0]));
-		offsets.add(new ShortOffset(+1,  0, +1, weights[1]));
-		offsets.add(new ShortOffset(-1, +1, +1, weights[2]));
-		offsets.add(new ShortOffset( 0, +1, +1, weights[1]));
-		offsets.add(new ShortOffset(+1, +1, +1, weights[2]));
+		offsets.add(new ShortOffset(-1, -1, +1, c));
+		offsets.add(new ShortOffset( 0, -1, +1, b));
+		offsets.add(new ShortOffset(+1, -1, +1, c));
+		offsets.add(new ShortOffset(-1,  0, +1, b));
+		offsets.add(new ShortOffset( 0,  0, +1, a));
+		offsets.add(new ShortOffset(+1,  0, +1, b));
+		offsets.add(new ShortOffset(-1, +1, +1, c));
+		offsets.add(new ShortOffset( 0, +1, +1, b));
+		offsets.add(new ShortOffset(+1, +1, +1, c));
 		
 		// "type e" offsets in z+1 plane
-		offsets.add(new ShortOffset(-1, -2, +1, weights[3]));
-		offsets.add(new ShortOffset(+1, -2, +1, weights[3]));
-		offsets.add(new ShortOffset(-2, -1, +1, weights[3]));
-		offsets.add(new ShortOffset(+2, -1, +1, weights[3]));
-		offsets.add(new ShortOffset(-2, +1, +1, weights[3]));
-		offsets.add(new ShortOffset(+2, +1, +1, weights[3]));
-		offsets.add(new ShortOffset(-1, +2, +1, weights[3]));
-		offsets.add(new ShortOffset(+1, +2, +1, weights[3]));
+		offsets.add(new ShortOffset(-1, -2, +1, e));
+		offsets.add(new ShortOffset(+1, -2, +1, e));
+		offsets.add(new ShortOffset(-2, -1, +1, e));
+		offsets.add(new ShortOffset(+2, -1, +1, e));
+		offsets.add(new ShortOffset(-2, +1, +1, e));
+		offsets.add(new ShortOffset(+2, +1, +1, e));
+		offsets.add(new ShortOffset(-1, +2, +1, e));
+		offsets.add(new ShortOffset(+1, +2, +1, e));
 
 		// offsets in the current plane
-		offsets.add(new ShortOffset(-1, +1, 0, weights[1]));
-		offsets.add(new ShortOffset( 0, +1, 0, weights[0]));
-		offsets.add(new ShortOffset(+1, +1, 0, weights[1]));
-		offsets.add(new ShortOffset(+1,  0, 0, weights[0]));
+		offsets.add(new ShortOffset(-1, +1,  0, b));
+		offsets.add(new ShortOffset( 0, +1,  0, a));
+		offsets.add(new ShortOffset(+1, +1,  0, b));
+		offsets.add(new ShortOffset(+1,  0,  0, a));
 
 		return offsets;
+	}
+
+	@Override
+	public short getShortNormalizationWeight()
+	{
+		return a;
 	}
 }

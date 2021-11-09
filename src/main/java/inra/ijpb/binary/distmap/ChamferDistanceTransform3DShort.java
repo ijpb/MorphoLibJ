@@ -19,7 +19,7 @@ import inra.ijpb.data.image.Images3D;
  * @author David Legland
  * 
  */
-public class ChamferDistanceTransform3DShort extends AlgoStub implements DistanceTransform3D
+public class ChamferDistanceTransform3DShort extends AlgoStub implements ChamferDistanceTransform3D
 {
 	// ==================================================
 	// Class variables
@@ -53,7 +53,17 @@ public class ChamferDistanceTransform3DShort extends AlgoStub implements Distanc
 	
 
 	// ==================================================
-	// Implementation of DistanceTransform3D interface 
+	// Implementation of the ChamferDistanceTransform3D interface 
+	
+	@Override
+	public ChamferMask3D mask()
+	{
+		return this.mask;
+	}
+
+	
+	// ==================================================
+	// Implementation of the DistanceTransform3D interface 
 	
 	/**
 	 * Computes the distance map from a 3D binary image. 
@@ -248,12 +258,9 @@ public class ChamferDistanceTransform3DShort extends AlgoStub implements Distanc
 		fireStatusChanged(this, "Normalize map..."); 
 		
 		// retrieve the minimum weight
-		double w0 = Double.POSITIVE_INFINITY;
-		for (ShortOffset offset : this.mask.getOffsets())
-		{
-			w0 = Math.min(w0, offset.weight);
-		}
+		double w0 = mask.getShortNormalizationWeight();
 		
+		// normalize each voxel
 		int sizeZ = maskSlices.length;
 		for (int z = 0; z < sizeZ; z++) 
 		{

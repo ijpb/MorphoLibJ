@@ -218,6 +218,22 @@ public abstract class ChamferMask3D
 		
 	}
 
+	/**
+	 * @return the weight associated to orthogonal offsets, that can be used to
+	 *         normalize the distance map.
+	 */
+	public double getNormalizationWeight()
+	{
+		return getShortNormalizationWeight();
+	}
+
+	/**
+	 * @return the weight associated to orthogonal offsets, that can be used to
+	 *         normalize the distance map.
+	 */
+	public abstract short getShortNormalizationWeight();
+
+	
 	// ==================================================
 	// Inner classes declaration
 	

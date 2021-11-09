@@ -20,7 +20,9 @@ import java.util.Collection;
  */
 public class ChamferMask3DW3 extends ChamferMask3D
 {
-	short[] weights;
+	short a;
+	short b;
+	short c;
 	
 	/**
 	 * Creates a new ChamferWeights3D object by specifying the weights
@@ -36,7 +38,9 @@ public class ChamferMask3DW3 extends ChamferMask3D
 	 */
 	public ChamferMask3DW3(int w0, int w1, int w2)
 	{
-		this.weights = new short[] {(short) w0, (short) w1, (short) w2};
+		this.a = (short) w0;
+		this.b = (short) w1;
+		this.c = (short) w2;
 	}
 
 	public ChamferMask3DW3(short[] weights)
@@ -45,7 +49,9 @@ public class ChamferMask3DW3 extends ChamferMask3D
 		{
 			throw new RuntimeException("Number of weights must be 3, not " + weights.length);
 		}
-		this.weights = weights;
+		this.a = weights[0];
+		this.b = weights[1];
+		this.c = weights[2];
 	}
 
 	@Override
@@ -55,21 +61,21 @@ public class ChamferMask3DW3 extends ChamferMask3D
 		ArrayList<ShortOffset> offsets = new ArrayList<ShortOffset>();
 	
 		// offsets in the z-1 plane
-		offsets.add(new ShortOffset(-1, -1, -1, weights[2]));
-		offsets.add(new ShortOffset( 0, -1, -1, weights[1]));
-		offsets.add(new ShortOffset(+1, -1, -1, weights[2]));
-		offsets.add(new ShortOffset(-1,  0, -1, weights[1]));
-		offsets.add(new ShortOffset( 0,  0, -1, weights[0]));
-		offsets.add(new ShortOffset(+1,  0, -1, weights[1]));
-		offsets.add(new ShortOffset(-1, +1, -1, weights[2]));
-		offsets.add(new ShortOffset( 0, +1, -1, weights[1]));
-		offsets.add(new ShortOffset(+1, +1, -1, weights[2]));
+		offsets.add(new ShortOffset(-1, -1, -1, c));
+		offsets.add(new ShortOffset( 0, -1, -1, b));
+		offsets.add(new ShortOffset(+1, -1, -1, c));
+		offsets.add(new ShortOffset(-1,  0, -1, b));
+		offsets.add(new ShortOffset( 0,  0, -1, a));
+		offsets.add(new ShortOffset(+1,  0, -1, b));
+		offsets.add(new ShortOffset(-1, +1, -1, c));
+		offsets.add(new ShortOffset( 0, +1, -1, b));
+		offsets.add(new ShortOffset(+1, +1, -1, c));
 	
 		// offsets in the current plane
-		offsets.add(new ShortOffset(-1, -1, 0, weights[1]));
-		offsets.add(new ShortOffset( 0, -1, 0, weights[0]));
-		offsets.add(new ShortOffset(+1, -1, 0, weights[1]));
-		offsets.add(new ShortOffset(-1,  0, 0, weights[0]));
+		offsets.add(new ShortOffset(-1, -1, 0, b));
+		offsets.add(new ShortOffset( 0, -1, 0, a));
+		offsets.add(new ShortOffset(+1, -1, 0, b));
+		offsets.add(new ShortOffset(-1,  0, 0, a));
 	
 		return offsets;
 	}
@@ -81,22 +87,28 @@ public class ChamferMask3DW3 extends ChamferMask3D
 		ArrayList<ShortOffset> offsets = new ArrayList<ShortOffset>();
 
 		// offsets in the z+1 plane
-		offsets.add(new ShortOffset(-1, -1, +1, weights[2]));
-		offsets.add(new ShortOffset( 0, -1, +1, weights[1]));
-		offsets.add(new ShortOffset(+1, -1, +1, weights[2]));
-		offsets.add(new ShortOffset(-1,  0, +1, weights[1]));
-		offsets.add(new ShortOffset( 0,  0, +1, weights[0]));
-		offsets.add(new ShortOffset(+1,  0, +1, weights[1]));
-		offsets.add(new ShortOffset(-1, +1, +1, weights[2]));
-		offsets.add(new ShortOffset( 0, +1, +1, weights[1]));
-		offsets.add(new ShortOffset(+1, +1, +1, weights[2]));
+		offsets.add(new ShortOffset(-1, -1, +1, c));
+		offsets.add(new ShortOffset( 0, -1, +1, b));
+		offsets.add(new ShortOffset(+1, -1, +1, c));
+		offsets.add(new ShortOffset(-1,  0, +1, b));
+		offsets.add(new ShortOffset( 0,  0, +1, a));
+		offsets.add(new ShortOffset(+1,  0, +1, b));
+		offsets.add(new ShortOffset(-1, +1, +1, c));
+		offsets.add(new ShortOffset( 0, +1, +1, b));
+		offsets.add(new ShortOffset(+1, +1, +1, c));
 
 		// offsets in the current plane
-		offsets.add(new ShortOffset(-1, +1, 0, weights[1]));
-		offsets.add(new ShortOffset( 0, +1, 0, weights[0]));
-		offsets.add(new ShortOffset(+1, +1, 0, weights[1]));
-		offsets.add(new ShortOffset(+1,  0, 0, weights[0]));
+		offsets.add(new ShortOffset(-1, +1, 0, b));
+		offsets.add(new ShortOffset( 0, +1, 0, a));
+		offsets.add(new ShortOffset(+1, +1, 0, b));
+		offsets.add(new ShortOffset(+1,  0, 0, a));
 
 		return offsets;
+	}
+
+	@Override
+	public short getShortNormalizationWeight()
+	{
+		return a;
 	}
 }
