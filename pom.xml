@@ -35,7 +35,7 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 		<developer>
 			<id>iarganda</id>
 			<name>Ignacio Arganda-Carreras</name>
-			<url>https://imagej.net/User:Iarganda</url>
+			<url>https://imagej.net/people/iarganda</url>
 			<roles>
 				<!-- See https://imagej.net/Team -->
 				<role>founder</role>
@@ -50,6 +50,7 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 		<developer>
 			<id>dlegland</id>
 			<name>David Legland</name>
+			<url>https://imagej.net/people/dlegland</url>
 			<roles>
 				<!-- See https://imagej.net/Team -->
 				<role>founder</role>
@@ -64,13 +65,13 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<contributors>
 		<contributor>
 			<name>Curtis Rueden</name>
-			<url>https://imagej.net/User:Rueden</url>
+			<url>https://imagej.net/people/ctrueden</url>
 			<properties><id>ctrueden</id></properties>
 		</contributor>
 		<contributor>
 			<name>Olivier Burri</name>
-			<url>https://imagej.net/User:Oburri</url>
-			<properties><id>oburri</id></properties>
+			<url>https://imagej.net/people/lacan</url>
+			<properties><id>lacan</id></properties>
 		</contributor>
 	</contributors>
 
