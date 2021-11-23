@@ -82,7 +82,7 @@ public class ChamferDistanceTransform2DFloat extends AlgoStub implements Chamfer
 	 * different value. The function returns a new short processor the same size
 	 * as the input, with values greater or equal to zero.
 	 * 
-	 * @param image
+	 * @param labelImage
 	 *            a label image with black pixels (0) as foreground
 	 * @return a new instance of FloatProcessor containing:
 	 *         <ul>

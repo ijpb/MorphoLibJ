@@ -32,7 +32,7 @@ import inra.ijpb.binary.distmap.ChamferMask3D.ShortOffset;
  * Apply a dilation by a specified radius to each label of a label map by
  * constraining the dilation. Labels can not dilate over existing labels.
  * 
- * @see inra.ijpb.binary.ChamferMask3D
+ * @see inra.ijpb.binary.ChamferWeights3D
  * @see inra.ijpb.label.distmap.LabelDilation2DShort
  * 
  * @author dlegland

@@ -131,7 +131,7 @@ public class GeodesicDistanceMap3D implements PlugIn
 	 *            the binary mask image that will constrain the propagation
 	 * @param newName
 	 *            the name of the result image
-	 * @param weights
+	 * @param chamferMask
 	 *            the set of chamfer weights for computing distances
 	 * @param normalize
 	 *            specifies whether the resulting distance map should be

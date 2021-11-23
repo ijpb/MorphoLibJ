@@ -286,7 +286,7 @@ public class LabelImages
 
 	/**
 	 * Returns the binary image with value equals to
-	 * <code>true</true> only when the corresponding value in the input image equals <code> label</code>.
+	 * {@code true} only when the corresponding value in the input image equals {@code label}.
 	 * 
 	 * @param image
 	 *            the input label map
@@ -2182,7 +2182,7 @@ public class LabelImages
 	 * unit)</li>
 	 * </ul>
 	 * 
-	 * @param labelMap
+	 * @param imagePlus
 	 *            the image of regions to process
 	 * @param distMax
 	 *            the maximum distance used for dilation

@@ -18,7 +18,7 @@ import inra.ijpb.label.LabelImages;
  * 
  * The methods in this can are mostly used for computing convex hulls.
  * 
- * @see inra.ijpb.measures.region2d.Convexity
+ * @see inra.ijpb.measure.region2d.Convexity
  * 
  * @author dlegland
  *
@@ -132,7 +132,7 @@ public class RegionBoundaries
 	 * Returns a set of points located at the corners of each region.
 	 * Point coordinates are integer (ImageJ locates pixels in a [0 1]^2 area).
 	 * 
-     * @see #runLengthsCorners(ImageProcessor, int[])
+     * @see #runlengthsCorners(ImageProcessor, int[])
      * 
 	 * @param image
 	 *            a binary image representing the particle
@@ -223,10 +223,10 @@ public class RegionBoundaries
      * 
      * The boundaries extracted by this methods have following coordinates:
      * <ul>
-     * <li><it>(x+0.5, y)</it>: top boundary</li>
-     * <li><it>(x , y+0.5)</it>: left boundary</li>
-     * <li><it>(x+1 , y+0.5)</it>: right boundary</li>
-     * <li><it>(x+0.5, y+1)</it>: bottom boundary</li>
+     * <li><i>(x+0.5, y)</i>: top boundary</li>
+     * <li><i>(x , y+0.5)</i>: left boundary</li>
+     * <li><i>(x+1 , y+0.5)</i>: right boundary</li>
+     * <li><i>(x+0.5, y+1)</i>: bottom boundary</li>
      * </ul>
      * 
      * @param binaryImage
@@ -283,10 +283,10 @@ public class RegionBoundaries
      * 
      * The boundaries extracted by this methods have following coordinates:
      * <ul>
-     * <li><it>(x+0.5, y)</it>: top boundary</li>
-     * <li><it>(x , y+0.5)</it>: left boundary</li>
-     * <li><it>(x+1 , y+0.5)</it>: right boundary</li>
-     * <li><it>(x+0.5, y+1)</it>: bottom boundary</li>
+     * <li><i>(x+0.5, y)</i>: top boundary</li>
+     * <li><i>(x , y+0.5)</i>: left boundary</li>
+     * <li><i>(x+1 , y+0.5)</i>: right boundary</li>
+     * <li><i>(x+0.5, y+1)</i>: bottom boundary</li>
      * </ul>
      * 
      * @param labelImage
