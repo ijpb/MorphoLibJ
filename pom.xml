@@ -102,7 +102,7 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 		<license.copyrightOwners>INRA.</license.copyrightOwners>
 
 		<!-- NB: Deploy releases to the SciJava Maven repository. -->
-		<releaseProfiles>deploy-to-scijava</releaseProfiles>
+		<releaseProfiles>sign,deploy-to-scijava</releaseProfiles>
 	</properties>
 
 	<repositories>
