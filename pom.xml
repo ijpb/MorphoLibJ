@@ -83,7 +83,7 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	</mailingLists>
 
 	<scm>
-		<connection>scm:git:git://github.com/ijpb/MorphoLibJ</connection>
+		<connection>scm:git:https://github.com/ijpb/MorphoLibJ</connection>
 		<developerConnection>scm:git:git@github.com:ijpb/MorphoLibJ</developerConnection>
 		<tag>HEAD</tag>
 		<url>https://github.com/ijpb/MorphoLibJ</url>
