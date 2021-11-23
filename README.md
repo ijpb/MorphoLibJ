@@ -1,4 +1,4 @@
-[![](https://travis-ci.org/ijpb/MorphoLibJ.svg?branch=master)](https://travis-ci.org/ijpb/MorphoLibJ)
+[![](https://github.com/ijpb/MorphoLibJ/actions/workflows/build-main.yml/badge.svg)](https://github.com/ijpb/MorphoLibJ/actions/workflows/build-main.yml)
 [![DOI](https://zenodo.org/badge/21349/ijpb/MorphoLibJ.svg)](https://zenodo.org/badge/latestdoi/21349/ijpb/MorphoLibJ)
 
 MorphoLibJ
