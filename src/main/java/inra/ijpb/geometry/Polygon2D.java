@@ -189,6 +189,15 @@ public class Polygon2D implements Iterable <Point2D>
 		return new Point2D.Double(sumX / sumC, sumY / sumC);
 	}
 	
+	/**
+	 * Checks if this polygon contains the query point.
+	 * 
+	 * Uses winding number algorithm.
+	 * 
+	 * @param point
+	 *            the polygon
+	 * @return true if the polygon contains the query point
+	 */
 	public boolean contains(Point2D point)
 	{
 		// the winding number counter for the point

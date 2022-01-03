@@ -86,21 +86,33 @@ public class OrientedBox2D
 	// ==================================================
 	// accessors
 
+	/**
+	 * @return the center of the box
+	 */
 	public Point2D center()
 	{
 		return new Point2D.Double(xc, yc);
 	}
 	
+	/**
+	 * @return the length of the box
+	 */
 	public double length()
 	{
 		return this.length;
 	}
 	
+	/**
+	 * @return the width of the box
+	 */
 	public double width()
 	{
 		return this.width;
 	}
 	
+	/**
+	 * @return the orientation of the box, in degrees
+	 */
 	public double orientation()
 	{
 		return this.orientation;

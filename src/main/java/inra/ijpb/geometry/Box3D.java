@@ -103,31 +103,49 @@ public class Box3D
 	// ==================================================
 	// accessors
 	
+	/**
+	 * @return the minimum value along the X-axis.
+	 */
 	public double getXMin()
 	{
 		return xmin;
 	}
 	
+	/**
+	 * @return the maximum value along the X-axis.
+	 */
 	public double getXMax()
 	{
 		return xmax;
 	}
 	
+	/**
+	 * @return the minimum value along the Y-axis.
+	 */
 	public double getYMin()
 	{
 		return ymin;
 	}
 	
+	/**
+	 * @return the maximum value along the Y-axis.
+	 */
 	public double getYMax()
 	{
 		return ymax;
 	}
 	
+	/**
+	 * @return the minimum value along the Z-axis.
+	 */
 	public double getZMin()
 	{
 		return zmin;
 	}
 	
+	/**
+	 * @return the maximum value along the Z-axis.
+	 */
 	public double getZMax()
 	{
 		return zmax;

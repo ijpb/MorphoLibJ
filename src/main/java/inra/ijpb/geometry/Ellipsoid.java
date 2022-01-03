@@ -40,8 +40,8 @@ public class Ellipsoid
 	 * ImageStack labelImage = ...
 	 * int[] labels = LabelImages.findAllLabels(image);
 	 * Calibation calib = new Calibration();
-	 * Ellipsoid[] ellipsoids = new InertiaEllipsoid().analyzeRegions(labelImage, labels, calib);
-	 * double[][] elongations = GeometricMeasures3D.computeEllipsoidElongations(ellipsoids);
+	 * Ellipsoid[] ellipsoids = new EquivalentEllipsoid().analyzeRegions(labelImage, labels, calib);
+	 * double[][] elongations = Ellipsoid.elongations(ellipsoids);
 	 * </code></pre>
 	 * 
 	 * @param ellipsoids
@@ -210,36 +210,57 @@ public class Ellipsoid
 	// ==================================================
 	// Accesors
 	
+	/**
+	 * @return the center of the ellipsoid
+	 */
 	public Point3D center()
 	{
 		return new Point3D(centerX, centerY, centerZ);
 	}
 	
+	/**
+	 * @return the length of the largest semi-axis
+	 */
 	public double radius1()
 	{
 		return radius1;
 	}
 
+	/**
+	 * @return the length of the second largest semi-axis
+	 */
 	public double radius2()
 	{
 		return radius2;
 	}
 
+	/**
+	 * @return the length of the smallest semi-axis
+	 */
 	public double radius3()
 	{
 		return radius3;
 	}
-
+	
+	/**
+	 * @return the azimut of the main axis, in degrees
+	 */
 	public double phi()
 	{
 		return phi;
 	}
 
+	/**
+	 * @return the elevation of the main axis, in degrees
+	 */
 	public double theta()
 	{
 		return theta;
 	}
 
+	/**
+	 * @return the roll of the ellipsoid around the main axis, in degrees.
+	 */
 	public double psi()
 	{
 		return psi;

@@ -84,21 +84,33 @@ public class Box2D
 	// ==================================================
 	// accessors
 	
+	/**
+	 * @return the minimum value along the X-axis.
+	 */
 	public double getXMin()
 	{
 		return xmin;
 	}
 	
+	/**
+	 * @return the maximum value along the X-axis.
+	 */
 	public double getXMax()
 	{
 		return xmax;
 	}
 	
+	/**
+	 * @return the minimum value along the Y-axis.
+	 */
 	public double getYMin()
 	{
 		return ymin;
 	}
 	
+	/**
+	 * @return the maximum value along the Y-axis.
+	 */
 	public double getYMax()
 	{
 		return ymax;

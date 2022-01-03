@@ -60,6 +60,18 @@ public class Ellipse
 	// ==================================================
 	// Constructors
 	
+	/**
+	 * Creates a new ellipse.
+	 * 
+	 * @param center
+	 *            the center of the ellipse
+	 * @param radius1
+	 *            the length of the major semi-axis
+	 * @param radius2
+	 *            the length of the minor semi-axis
+	 * @param theta
+	 *            the orientation of the ellipse, in degrees
+	 */
 	public Ellipse(Point2D center, double radius1, double radius2, double theta)
 	{
 		this.center = center;
@@ -68,6 +80,20 @@ public class Ellipse
 		this.orientation = theta;
 	}
 	
+	/**
+	 * Creates a new ellipse.
+	 * 
+	 * @param xc
+	 *            the x-coordinate of the center of the ellipse
+	 * @param yc
+	 *            the y-coordinate of the center of the ellipse
+	 * @param radius1
+	 *            the length of the major semi-axis
+	 * @param radius2
+	 *            the length of the minor semi-axis
+	 * @param theta
+	 *            the orientation of the ellipse, in degrees
+	 */
 	public Ellipse(double xc, double yc, double radius1, double radius2, double theta)
 	{
 		this.center = new Point2D.Double(xc, yc);
@@ -79,6 +105,9 @@ public class Ellipse
 	// ==================================================
 	// Generic methods
 
+	/**
+	 * @return the area of the domain enclosed by this ellipse
+	 */
 	public double area()
 	{
 		return Math.PI * this.radius1 * this.radius2;
@@ -88,21 +117,33 @@ public class Ellipse
 	// ==================================================
 	// Accesors
 	
+	/**
+	 * @return the center of this ellipse
+	 */
 	public Point2D center()
 	{
 		return center;
 	}
 	
+	/**
+	 * @return the length of the major semi-axis
+	 */
 	public double radius1()
 	{
 		return radius1;
 	}
 
+	/**
+	 * @return the length of the minor semi-axis
+	 */
 	public double radius2()
 	{
 		return radius2;
 	}
 
+	/**
+	 * @return the orientation of the ellipse, in degrees
+	 */
 	public double orientation()
 	{
 		return orientation;
