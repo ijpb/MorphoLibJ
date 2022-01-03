@@ -60,8 +60,18 @@ public interface BorderManager3D
 	 */
 	public enum Type
 	{
-		REPLICATED("Replicate"), PERIODIC("Periodic"), MIRRORED("Mirrored"), BLACK(
-				"Black"), WHITE("White"), GRAY("Gray");
+		/** replicates nearest pixel to populate border */
+		REPLICATED("Replicate"),
+		/** uses periodic boundary to populate border */
+		PERIODIC("Periodic"),
+		/** uses mirrored image to populate border */
+		MIRRORED("Mirrored"),
+		/** uses black value (0) to fill border */
+		BLACK("Black"),
+		/** uses white value (255) to fill border */
+		WHITE("White"),
+		/** uses gray value (127) to fill border */
+		GRAY("Gray");
 
 		private Type(String label)
 		{
@@ -75,12 +85,22 @@ public interface BorderManager3D
 			return this.label;
 		}
 
+		/**
+		 * @return the label used to identify this border manager
+		 */
 		public String getLabel()
 		{
 			return this.label;
 		}
 
-	public BorderManager3D createBorderManager(ImageStack image)
+		/**
+		 * Creates a new Border Manager for the input image.
+		 * 
+		 * @param image
+		 *            the image to wrap
+		 * @return a new instance of BorderManager3D
+		 */
+		public BorderManager3D createBorderManager(ImageStack image)
 		{
 			switch ((Type) this)
 			{
@@ -105,7 +125,10 @@ public interface BorderManager3D
 			}
 		}
 
-		public static String[] getAllLabels()
+	/**
+	 * @return all the labels used for identifying this enumeration.
+	 */
+	public static String[] getAllLabels()
 		{
 			int n = Type.values().length;
 			String[] result = new String[n];

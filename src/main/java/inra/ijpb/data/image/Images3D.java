@@ -192,6 +192,16 @@ public class Images3D
 		return result;
 	}
 	
+	/**
+	 * Replaces the elements of an image with a given value by a new values.
+	 * 
+	 * @param image
+	 *            the image to process
+	 * @param initialValue
+	 *            the value of the elements to replace
+	 * @param finalValue
+	 *            the new value of the elements
+	 */
 	public static final void replaceValue(ImagePlus image, double initialValue, double finalValue) 
 	{ 
 		if (image.getStackSize() == 1) 
@@ -230,8 +240,10 @@ public class Images3D
 	/**
 	 * Fills the input 3D image with the given value.
 	 * 
-	 * @param image the 3D image to process
-	 * @param value the value used to fill input image
+	 * @param image
+	 *            the 3D image to process
+	 * @param value
+	 *            the value used to fill input image
 	 */ 
 	public static final void fill(ImageStack image, double value) 
 	{

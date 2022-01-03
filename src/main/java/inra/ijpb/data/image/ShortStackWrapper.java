@@ -52,6 +52,11 @@ public class ShortStackWrapper implements Image3D
 	int sizeY;
 	int sizeZ;
 	
+	/**
+	 * Creates a new wrapper to the ImageStack.
+	 * 
+	 * @param stack the stack to wrap (bit depth must equal 16)
+	 */
 	public ShortStackWrapper(ImageStack stack) 
 	{
 		// Check type

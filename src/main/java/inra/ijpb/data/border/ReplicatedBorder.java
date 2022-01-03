@@ -34,6 +34,12 @@ public class ReplicatedBorder implements BorderManager
 {
 	ImageProcessor image;
 
+	/**
+	 * Creates a new Replicating Border Manager
+	 * 
+	 * @param image
+	 *            the image to expand
+	 */
 	public ReplicatedBorder(ImageProcessor image)
 	{
 		this.image = image;

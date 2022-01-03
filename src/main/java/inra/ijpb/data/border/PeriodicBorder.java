@@ -34,6 +34,12 @@ public class PeriodicBorder implements BorderManager {
 
 	ImageProcessor image;
 	
+	/**
+	 * Creates a new Periodic Border Manager
+	 * 
+	 * @param image
+	 *            the image to expand
+	 */
 	public PeriodicBorder(ImageProcessor image) {
 		this.image = image;
 	}

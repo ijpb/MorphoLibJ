@@ -44,16 +44,27 @@ import java.awt.Color;
  */
 public enum CommonColors
 {
+	/** The white color (255,255,255). */
 	WHITE("White", 		Color.WHITE), 
+	/** The black color (0,0,0).*/
 	BLACK("Black", 		Color.BLACK), 
+	/** The red color */
 	RED("Red", 			Color.RED), 
+	/** The green color */
 	GREEN("Green", 		Color.GREEN), 
+	/** The blue color */
 	BLUE("Blue", 		Color.BLUE), 
+	/** The cyan (light blue) color */
 	CYAN("Cyan", 		Color.CYAN), 
+	/** The magenta color */
 	MAGENTA("Magenta", 	Color.MAGENTA), 
+	/** The yellow color */
 	YELLOW("Yellow", 	Color.YELLOW), 
+	/** The White color */
 	GRAY("Gray", 		Color.GRAY), 
+	/** The dark gray color */
 	DARK_GRAY("Dark Gray", 	 Color.DARK_GRAY), 
+	/** The light gray color */
 	LIGHT_GRAY("Light Gray", Color.LIGHT_GRAY);
 
 	/** The name of the color, as displayed in a widget */
@@ -97,6 +108,9 @@ public enum CommonColors
 		return label;
 	}
 	
+	/**
+	 * @return the array of labels for the colors within this enumeration
+	 */
 	public static String[] getAllLabels()
 	{
 		int n = CommonColors.values().length;

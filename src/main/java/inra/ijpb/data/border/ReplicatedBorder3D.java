@@ -35,6 +35,12 @@ public class ReplicatedBorder3D implements BorderManager3D
 
 	ImageStack image;
 
+	/**
+	 * Creates a new Replicating Border Manager
+	 * 
+	 * @param image
+	 *            the image to expand
+	 */
 	public ReplicatedBorder3D(ImageStack image)
 	{
 		this.image = image;

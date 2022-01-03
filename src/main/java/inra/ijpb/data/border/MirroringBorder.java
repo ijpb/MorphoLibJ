@@ -35,6 +35,12 @@ public class MirroringBorder implements BorderManager
 {
 	ImageProcessor image;
 
+	/**
+	 * Creates a new Mirroring Border Manager
+	 * 
+	 * @param image
+	 *            the image to expand
+	 */
 	public MirroringBorder(ImageProcessor image)
 	{
 		this.image = image;

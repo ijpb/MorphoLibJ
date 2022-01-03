@@ -32,6 +32,16 @@ public class Cursor3D
 	private int y = 0;
 	private int z = 0;
 	
+	/**
+	 * Creates a new cursor from two coordinates.
+	 * 
+	 * @param x
+	 *            the x-coordinate
+	 * @param y
+	 *            the y-coordinate
+	 * @param z
+	 *            the z-coordinate
+	 */
 	public Cursor3D(int x, int y, int z)
 	{
 		this.x = x;
@@ -39,6 +49,16 @@ public class Cursor3D
 		this.z = z;
 	}
 	
+	/**
+	 * Sets the position of this cursor.
+	 * 
+	 * @param x
+	 *            the new x-coordinate
+	 * @param y
+	 *            the new y-coordinate
+	 * @param z
+	 *            the new z-coordinate
+	 */
 	public void set(int x, int y, int z)
 	{
 		this.x = x;
@@ -46,16 +66,25 @@ public class Cursor3D
 		this.z = z;
 	}
 	
+	/**
+	 * @return the x-position of this cursor
+	 */
 	public int getX()
 	{
 		return x;
 	}
 	
+	/**
+	 * @return the y-position of this cursor
+	 */
 	public int getY()
 	{
 		return y;
 	}
 	
+	/**
+	 * @return the z-position of this cursor
+	 */
 	public int getZ()
 	{
 		return z;

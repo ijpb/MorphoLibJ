@@ -61,11 +61,17 @@ public interface BorderManager {
 	 *
 	 */
 	public enum Type {
+		/** replicates nearest pixel to populate border */
 		REPLICATED("Replicate"), 
+		/** uses periodic boundary to populate border */
 		PERIODIC("Periodic"), 
+		/** uses mirrored image to populate border */
 		MIRRORED("Mirrored"), 
+		/** uses black value (0) to fill border */
 		BLACK("Black"), 
+		/** uses white value (0) to fill border */
 		WHITE("White"), 
+		/** uses gray value (0) to fill border */
 		GRAY("Gray");
 		
 		private Type(String label) {
@@ -78,10 +84,20 @@ public interface BorderManager {
 			return this.label;
 		}
 		
+		/**
+		 * @return the label used to identify this border manager
+		 */
 		public String getLabel() {
 			return this.label;
 		}
 		
+		/**
+		 * Creates a new Border Manager for the input image.
+		 * 
+		 * @param image
+		 *            the image to wrap
+		 * @return a new instance of BorderManager
+		 */
 		public BorderManager createBorderManager(ImageProcessor image) {
 			switch((Type) this) {
 			case REPLICATED:
@@ -104,7 +120,10 @@ public interface BorderManager {
 				throw new RuntimeException("Unknown border manager for type "  + this);
 			}
 		}
-	
+		
+		/**
+		 * @return all the labels used for identifying this enumeration.
+		 */
 		public static String[] getAllLabels(){
 			int n = Type.values().length;
 			String[] result = new String[n];

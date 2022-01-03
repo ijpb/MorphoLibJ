@@ -30,13 +30,26 @@ public abstract class Neighborhood3D {
 	
 	Cursor3D cursor;
 	
+	/**
+	 * @return an Iterable over the neighbors of the voxel corresponding to the
+	 *         cursor referenced by this Neighborhood.
+	 */
 	public abstract Iterable<Cursor3D> getNeighbors(  );
 	
+	/**
+	 * Sets the position of the Neighborhood3D.
+	 * 
+	 * @param cursor
+	 *            the new position of the Neighborhood3D
+	 */
 	public void setCursor( Cursor3D cursor )
 	{
 		this.cursor = cursor;
 	}
 	
+	/**
+	 * @return the position of the Neighborhood3D.
+	 */
 	public Cursor3D getCursor()
 	{
 		return this.cursor;

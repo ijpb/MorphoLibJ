@@ -57,6 +57,14 @@ public class VoxelRecord implements Comparable<VoxelRecord>{
 		final static AtomicLong seq = new AtomicLong();
 		final long seqNum;
 		
+		/**
+		 * Creates a voxel record from a cursor and a double value.
+		 * 
+		 * @param cursor
+		 *            the position of the record
+		 * @param value
+		 *            voxel intensity value
+		 */
 		public VoxelRecord(
 				final Cursor3D cursor,
 				final double value)
@@ -66,6 +74,18 @@ public class VoxelRecord implements Comparable<VoxelRecord>{
 			seqNum = seq.getAndIncrement();
 		}
 		
+		/**
+		 * Creates a voxel record from a position and a double value.
+		 * 
+		 * @param x
+		 *            the x-position of the record
+		 * @param y
+		 *            the y-position of the record
+		 * @param z
+		 *            the z-position of the record
+		 * @param value
+		 *            voxel intensity value
+		 */
 		public VoxelRecord(
 				final int x,
 				final int y,
@@ -78,11 +98,17 @@ public class VoxelRecord implements Comparable<VoxelRecord>{
 		}
 		
 		
+		/**
+		 * @return the position of this VoxelRecord, as a Cursor3D.
+		 */
 		public Cursor3D getCursor()
 		{
 			return cursor;
 		}
 		
+		/**
+		 * @return the value stored by this VoxelRecord.
+		 */
 		public double getValue()
 		{
 			return value;

@@ -35,6 +35,12 @@ public class MirroringBorder3D implements BorderManager3D
 
 	ImageStack image;
 
+	/**
+	 * Creates a new Mirroring Border Manager
+	 * 
+	 * @param image
+	 *            the image to expand
+	 */
 	public MirroringBorder3D(ImageStack image)
 	{
 		this.image = image;

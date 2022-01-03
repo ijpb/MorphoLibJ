@@ -35,6 +35,12 @@ public class PeriodicBorder3D implements BorderManager3D
 
 	ImageStack image;
 
+	/**
+	 * Creates a new Periodic Border Manager
+	 * 
+	 * @param image
+	 *            the image to expand
+	 */
 	public PeriodicBorder3D(ImageStack image)
 	{
 		this.image = image;

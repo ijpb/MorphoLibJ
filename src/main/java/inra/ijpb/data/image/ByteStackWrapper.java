@@ -50,6 +50,11 @@ public class ByteStackWrapper implements Image3D
 	int sizeY;
 	int sizeZ;
 	
+	/**
+	 * Creates a new wrapper to the ImageStack.
+	 * 
+	 * @param stack the stack to wrap (bit depth must equal 8)
+	 */
 	public ByteStackWrapper(ImageStack stack) 
 	{
 		// Check type

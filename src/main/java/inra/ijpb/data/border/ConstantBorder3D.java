@@ -36,6 +36,14 @@ public class ConstantBorder3D implements BorderManager3D
 	ImageStack image;
 	int value;
 
+	/**
+	 * Creates a new Constant Border Manager
+	 * 
+	 * @param image
+	 *            the image to expand
+	 * @param value
+	 *            the value used to expand the borders.
+	 */
 	public ConstantBorder3D(ImageStack image, int value)
 	{
 		this.image = image;

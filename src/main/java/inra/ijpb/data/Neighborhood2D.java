@@ -30,13 +30,26 @@ public abstract class Neighborhood2D {
 	
 	Cursor2D cursor;
 	
+	/**
+	 * @return an Iterable over the neighbors of the pixel corresponding to the
+	 *         cursor referenced by this Neighborhood.
+	 */
 	public abstract Iterable<Cursor2D> getNeighbors(  );
-	
+
+	/**
+	 * Sets the position of the Neighborhood2D.
+	 * 
+	 * @param cursor
+	 *            the new position of the Neighborhood2D
+	 */
 	public void setCursor( Cursor2D cursor )
 	{
 		this.cursor = cursor;
 	}
 	
+	/**
+	 * @return the position of the Neighborhood2D.
+	 */
 	public Cursor2D getCursor()
 	{
 		return this.cursor;

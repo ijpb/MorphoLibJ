@@ -40,16 +40,27 @@ public class ColorMaps {
 	 * A collection of color maps useful for displaying label images.
 	 */
 	public enum CommonLabelMaps {
+		/** Colormap containing gray values*/
 		GRAYS("Grays"), 
+		/** Colormap containing the Fire colors*/
 		FIRE("Fire"),
+		/** Colormap containing Glasbey colors*/
 		GLASBEY("Glasbey"),
+		/** A colormap with contrasted adjacent colors, useful for label images*/
 		GOLDEN_ANGLE( "Golden angle" ),
+		/** Colormap containing blue-white values*/
 		ICE("Ice"), 
+		/** Colormap containing a whole range of colors*/
 		SPECTRUM("Spectrum"), 
+		/** Matlab's jet colormap*/
 		JET("Jet"), 
+		/** Colormap containing RGB332*/
 		RGB332("RGB 3-3-2"), 
+		/** Colormap containing only few main colors*/
 		MAIN_COLORS("Main Colors"), 
+		/** Colormap containing mixed colors*/
 		MIXED_COLORS("Mixed Colors"),
+		/** Colormap containing Red to green values*/
 		REDGREEN("Red-Green"); 
 		
 		private final String label;
@@ -68,11 +79,15 @@ public class ColorMaps {
 		public String toString() {
 			return label;
 		}
+		
 		/**
 		 * Compute look-up table for current color map
-		 * @param nValues number of colors for the map
-		 * @param shuffle flag to shuffle table values after its construction
-		 * @return
+		 * 
+		 * @param nValues
+		 *            number of colors for the map
+		 * @param shuffle
+		 *            flag to shuffle table values after its construction
+		 * @return the result of LUT computation
 		 */
 		public byte[][] computeLut(int nValues, boolean shuffle) {
 			byte[][] lut;
@@ -120,6 +135,9 @@ public class ColorMaps {
 			return lut;
 		}
 		
+		/**
+		 * @return all colormap labels.
+		 */
 		public static String[] getAllLabels(){
 			int n = CommonLabelMaps.values().length;
 			String[] result = new String[n];
@@ -209,6 +227,13 @@ public class ColorMaps {
 		return new IndexColorModel(8, n+1, r, g, b);
 	}
 	
+	/**
+	 * Creates a byte array representing the Fire LUT.
+	 * 
+	 * @param nColors
+	 *            number of colors
+	 * @return a nColors-by-3 array of color components.
+	 */
 	public final static byte[][] createFireLut(int nColors) {
 		byte[][] lut = createFireLut();
 		if (nColors != lut.length) 
@@ -216,6 +241,11 @@ public class ColorMaps {
 		return lut;
 	}
 
+	/**
+	 * Creates a byte array representing the Fire LUT.
+	 * 
+	 * @return an array of color components.
+	 */
 	public final static byte[][] createFireLut() {
 		// initial values
 		int[] r = { 0, 0, 1, 25, 49, 73, 98, 122, 146, 162, 173, 184, 195, 207,
@@ -370,6 +400,11 @@ public class ColorMaps {
 		return map;
 	}
 	
+	/**
+	 * Creates a byte array representing the gray LUT.
+	 * 
+	 * @return a nColors-by-3 array of color components.
+	 */
 	public final static byte[][] createGrayLut() {
 		// create map
 		byte[][] map = new byte[256][3];
@@ -384,6 +419,13 @@ public class ColorMaps {
 		return map;
 	}
 
+	/**
+	 * Creates a byte array representing the Jet LUT.
+	 * 
+	 * @param nColors
+	 *            number of colors
+	 * @return a nColors-by-3 array of color components.
+	 */
 	public final static byte[][] createJetLut(int nColors) {
 		byte[][] lut = createJetLut();
 		if (nColors != lut.length) 
@@ -391,6 +433,11 @@ public class ColorMaps {
 		return lut;
 	}
 
+	/**
+	 * Creates a byte array representing the Jet LUT.
+	 * 
+	 * @return a 256-by-3 array of color components.
+	 */
 	public final static byte[][] createJetLut()	{
 		// create map
 		byte[][] map = new byte[256][3];
@@ -418,6 +465,13 @@ public class ColorMaps {
 		return map;
 	}
 	
+	/**
+	 * Creates a byte array representing the Ice LUT.
+	 * 
+	 * @param nColors
+	 *            number of colors
+	 * @return a nColors-by-3 array of color components.
+	 */
 	public final static byte[][] createIceLut(int nColors) {
 		byte[][] lut = createIceLut();
 		if (nColors != lut.length) 
@@ -425,6 +479,11 @@ public class ColorMaps {
 		return lut;
 	}
 
+	/**
+	 * Creates a byte array representing the Ice LUT.
+	 * 
+	 * @return a nColors-by-3 array of color components.
+	 */
 	public final static byte[][] createIceLut() {
 		// initial values
 		int[] r = { 0, 0, 0, 0, 0, 0, 19, 29, 50, 48, 79, 112, 134, 158, 186,
@@ -450,6 +509,11 @@ public class ColorMaps {
 		return  map;
 	}
 
+	/**
+	 * Creates a byte array representing the Spectrum LUT.
+	 * 
+	 * @return a 256-by-3 array of color components.
+	 */
 	public final static byte[][] createSpectrumLut() {
 		// create map
 		byte[][] map = new byte[256][3];
@@ -465,6 +529,11 @@ public class ColorMaps {
 		return  map;
 	}
 
+	/**
+	 * Creates a byte array representing the RGB332 LUT.
+	 * 
+	 * @return a nColors-by-3 array of color components.
+	 */
 	public final static byte[][] createRGB332Lut() {
 		// create map
 		byte[][] map = new byte[256][3];
@@ -479,6 +548,11 @@ public class ColorMaps {
 		return  map;
 	}
 
+	/**
+	 * Creates a byte array representing a color gradient from red to green.
+	 * 
+	 * @return a 256-by-3 array of color components.
+	 */
 	public final static byte[][] createRedGreenLut() {
 		// create map
 		byte[][] map = new byte[256][3];
@@ -553,6 +627,16 @@ public class ColorMaps {
 		};
 	}
 
+	/**
+	 * Interpolates between LUT values such that the result array has the
+	 * specified number of colors.
+	 * 
+	 * @param baseLut
+	 *            the LUT to interpolated
+	 * @param nColors
+	 *            the number of colors of the new LUT
+	 * @return a nColors-by-3 array of color components
+	 */
 	public final static byte[][] interpolateLut(byte[][] baseLut, int nColors) {
 		
 		int n0 = baseLut.length;
@@ -581,6 +665,16 @@ public class ColorMaps {
 		return lut;
 	}
 
+	/**
+	 * Creates a cyclic LUT from base LUT values such that the result array has
+	 * the specified number of colors.
+	 * 
+	 * @param baseLut
+	 *            the LUT to sample colors from
+	 * @param nColors
+	 *            the number of colors of the new LUT
+	 * @return a nColors-by-3 array of color components
+	 */
 	public final static byte[][] circularLut(byte[][] baseLut, int nColors) {
 		int n0 = baseLut.length;
 		// allocate memory for new lut
@@ -593,6 +687,13 @@ public class ColorMaps {
 		return lut;
 	}
 
+	/**
+	 * Creates a new LUT by applying a random permutation to the colors within the original LUT.
+	 * 
+	 * @param lut
+	 *            the LUT to sample colors from
+	 * @return the new LUT
+	 */
 	public final static byte[][] shuffleLut(byte[][] lut) {
 		// initialize an array of random values
 		int n = lut.length;

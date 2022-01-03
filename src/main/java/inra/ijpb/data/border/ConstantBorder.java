@@ -35,6 +35,14 @@ public class ConstantBorder implements BorderManager
 	ImageProcessor image;
 	float value;
 
+	/**
+	 * Creates a new Constant Border Manager
+	 * 
+	 * @param image
+	 *            the image to expand
+	 * @param value
+	 *            the value used to expand the borders.
+	 */
 	public ConstantBorder(ImageProcessor image, float value)
 	{
 		this.image = image;

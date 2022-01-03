@@ -50,6 +50,11 @@ public class FloatStackWrapper implements Image3D
 	int sizeY;
 	int sizeZ;
 	
+	/**
+	 * Creates a new wrapper to the ImageStack.
+	 * 
+	 * @param stack the stack to wrap (bit depth must equal 32)
+	 */
 	public FloatStackWrapper(ImageStack stack) 
 	{
 		// Check type
