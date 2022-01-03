@@ -29,7 +29,13 @@ package inra.ijpb.algo;
  */
 public interface Algo
 {
+	/**
+	 * @param listener the algorithm listener that will catch algorithm events.
+	 */
 	public void addAlgoListener(AlgoListener listener);
 
+	/**
+	 * @param listener an algorithm listener stored within this algorithm.
+	 */
 	public void removeAlgoListener(AlgoListener listener);
 }

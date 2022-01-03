@@ -30,7 +30,21 @@ package inra.ijpb.algo;
  */
 public interface AlgoListener
 {
+	/**
+	 * The method devoted to manage the change in the progression of the
+	 * algorithm.
+	 * 
+	 * @param evt
+	 *            the AlgoEvent instance containing info about the algorithm.
+	 */
 	public void algoProgressChanged(AlgoEvent evt);
 
+	/**
+	 * The method devoted to manage the change in the status of the
+	 * algorithm.
+	 * 
+	 * @param evt
+	 *            the AlgoEvent instance containing info about the algorithm.
+	 */
 	public void algoStatusChanged(AlgoEvent evt);
 }
