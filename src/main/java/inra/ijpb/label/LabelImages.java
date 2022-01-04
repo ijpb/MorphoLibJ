@@ -52,6 +52,8 @@ import inra.ijpb.binary.distmap.ChamferMask2D;
 import inra.ijpb.binary.distmap.ChamferMask3D;
 import inra.ijpb.data.Cursor2D;
 import inra.ijpb.data.Cursor3D;
+import inra.ijpb.data.IntBounds2D;
+import inra.ijpb.data.IntBounds3D;
 import inra.ijpb.label.distmap.ChamferDistanceTransform3DFloat;
 import inra.ijpb.label.distmap.ChamferDistanceTransform3DShort;
 import inra.ijpb.label.distmap.DistanceTransform3D;
@@ -412,6 +414,40 @@ public class LabelImages
 		return result;
 	}
 	
+	public static final IntBounds2D labelBounds(ImageProcessor image, int label) 
+	{
+		// image size
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		
+		// Initialize label bounds
+		int xmin = Integer.MAX_VALUE;
+		int xmax = Integer.MIN_VALUE;
+		int ymin = Integer.MAX_VALUE;
+		int ymax = Integer.MIN_VALUE;
+		
+		// update bounds by iterating on voxels 
+		for (int y = 0; y < sizeY; y++)
+		{
+			for (int x = 0; x < sizeX; x++)
+			{
+				// process only specified label
+				int val = (int) image.getf(x, y);
+				if (val != label)
+				{
+					continue;
+				}
+
+				// update bounds of current label
+				xmin = min(xmin, x);
+				xmax = max(xmax, x);
+				ymin = min(ymin, y);
+				ymax = max(ymax, y);
+			}
+		}
+		
+		return new IntBounds2D(xmin, xmax, ymin, ymax);
+	}
 
 	/**
 	 * Returns a binary image that contains only the selected particle or
@@ -488,6 +524,49 @@ public class LabelImages
 		
 		return result;
 
+	}
+	
+	public static final IntBounds3D labelBounds(ImageStack image, int label) 
+	{
+		// image size
+		int sizeX = image.getWidth();
+		int sizeY = image.getHeight();
+		int sizeZ = image.getSize();
+		
+		// Initialize label bounds
+		int xmin = Integer.MAX_VALUE;
+		int xmax = Integer.MIN_VALUE;
+		int ymin = Integer.MAX_VALUE;
+		int ymax = Integer.MIN_VALUE;
+		int zmin = Integer.MAX_VALUE;
+		int zmax = Integer.MIN_VALUE;
+		
+		// update bounds by iterating on voxels 
+		for (int z = 0; z < sizeZ; z++)
+		{
+			for (int y = 0; y < sizeY; y++)
+			{
+				for (int x = 0; x < sizeX; x++)
+				{
+					// process only specified label
+					int val = (int) image.getVoxel(x, y, z);
+					if (val != label)
+					{
+						continue;
+					}
+					
+					// update bounds of current label
+					xmin = min(xmin, x);
+					xmax = max(xmax, x);
+					ymin = min(ymin, y);
+					ymax = max(ymax, y);
+					zmin = min(zmin, z);
+					zmax = max(zmax, z);
+				}
+			}
+		}
+		
+		return new IntBounds3D(xmin, xmax, ymin, ymax, zmin, zmax);
 	}
 	
 	/**
