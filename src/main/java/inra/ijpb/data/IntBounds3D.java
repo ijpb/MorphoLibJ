@@ -15,12 +15,12 @@ public class IntBounds3D
 	// ==================================================
 	// Class variables
 	
-	int xmin;
-	int xmax;
-	int ymin;
-	int ymax;
-	int zmin;
-	int zmax;
+	public final int xmin;
+	public final int xmax;
+	public final int ymin;
+	public final int ymax;
+	public final int zmin;
+	public final int zmax;
 	
 	
 	// ==================================================
@@ -94,7 +94,7 @@ public class IntBounds3D
 	 * 
 	 * @return the width of the bounding box, in pixels.
 	 */
-	public int width()
+	public int getWidth()
 	{
 		return xmax - xmin + 1;
 	}
@@ -106,7 +106,7 @@ public class IntBounds3D
 	 * 
 	 * @return the height of the bounding box, in pixels.
 	 */
-	public int height()
+	public int getHeight()
 	{
 		return ymax - ymin + 1;
 	}
@@ -118,7 +118,7 @@ public class IntBounds3D
 	 * 
 	 * @return the height of the bounding box, in pixels.
 	 */
-	public int depth()
+	public int getDepth()
 	{
 		return zmax - zmin + 1;
 	}

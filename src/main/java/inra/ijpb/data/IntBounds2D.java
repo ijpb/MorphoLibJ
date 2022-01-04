@@ -15,10 +15,10 @@ public class IntBounds2D
 	// ==================================================
 	// Class variables
 	
-	int xmin;
-	int xmax;
-	int ymin;
-	int ymax;
+	public final int xmin;
+	public final int xmax;
+	public final int ymin;
+	public final int ymax;
 	
 	// ==================================================
 	// Constructors
@@ -83,7 +83,7 @@ public class IntBounds2D
 	 * 
 	 * @return the width of the bounding box, in pixels.
 	 */
-	public int width()
+	public int getWidth()
 	{
 		return xmax - xmin + 1;
 	}
@@ -95,7 +95,7 @@ public class IntBounds2D
 	 * 
 	 * @return the height of the bounding box, in pixels.
 	 */
-	public int height()
+	public int getHeight()
 	{
 		return ymax - ymin + 1;
 	}
