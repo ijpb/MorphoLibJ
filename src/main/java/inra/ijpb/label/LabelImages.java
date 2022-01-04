@@ -366,7 +366,7 @@ public class LabelImages
 				croppedPlus = new ImagePlus(newName, cropped);
 			} else {
 				ImageProcessor image = imagePlus.getProcessor();
-				croppedPlus = LabelImages.cropLabel(image, label, border, imagePlus.getCalibration(), newName);
+				croppedPlus = LabelImages.cropLabel(image, label, border, cal, newName);
 			}
 		}
 		else
@@ -378,7 +378,7 @@ public class LabelImages
 				croppedPlus = new ImagePlus(newName, cropped);
 			} else {
 				ImageStack image = imagePlus.getStack();
-				croppedPlus = LabelImages.cropLabel(image, label, border, imagePlus.getCalibration(), newName);
+				croppedPlus = LabelImages.cropLabel(image, label, border, cal, newName);
 			}
 		}
 
@@ -446,8 +446,8 @@ public class LabelImages
 			}
 		}
 		ImagePlus croppedPlus = new ImagePlus(newName, result);
-		cal.xOrigin = xmin - border;
-		cal.yOrigin = ymin - border;
+		cal.xOrigin += ( xmin - border ) * cal.pixelWidth;
+		cal.yOrigin += ( ymin - border ) * cal.pixelHeight;
 		croppedPlus.setCalibration( cal );
 		return croppedPlus;
 	}
@@ -591,9 +591,9 @@ public class LabelImages
 		}
 
 		ImagePlus croppedPlus = new ImagePlus(newName, result);
-		cal.xOrigin = xmin - border;
-		cal.yOrigin = ymin - border;
-		cal.zOrigin = zmin - border;
+		cal.xOrigin += ( xmin - border ) * cal.pixelWidth;
+		cal.yOrigin += ( ymin - border ) * cal.pixelHeight;
+		cal.zOrigin += ( zmin - border ) * cal.pixelDepth;
 		croppedPlus.setCalibration( cal );
 		return croppedPlus;
 
