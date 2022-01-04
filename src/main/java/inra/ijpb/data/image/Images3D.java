@@ -24,6 +24,7 @@ package inra.ijpb.data.image;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ImageProcessor;
+import inra.ijpb.data.IntBounds3D;
 
 /**
  * A collection of static methods for working on 3D images. 
@@ -257,6 +258,35 @@ public class Images3D
 				}
 			}
 		}
+	}
+	
+	public static final ImageStack crop(ImageStack image, IntBounds3D bounds)
+	{
+		// Compute size of result, taking into account border
+		int sizeX2 = bounds.width();
+		int sizeY2 = bounds.height();
+		int sizeZ2 = bounds.depth();
+
+		// allocate memory for result image
+		ImageStack result = ImageStack.create(sizeX2, sizeY2, sizeZ2, image.getBitDepth());
+		
+		int xmin = bounds.getXMin();
+		int ymin = bounds.getYMin();
+		int zmin = bounds.getZMin();
+		
+		// fill result with binary label
+		for (int z = zmin, z2 = 0; z2 <= sizeZ2; z++, z2++) 
+		{
+			for (int y = ymin, y2 = 0; y2 <= sizeY2; y++, y2++) 
+			{
+				for (int x = xmin, x2 = 0; x2 <= sizeY2; x++, x2++) 
+				{
+					result.setVoxel(x2, y2, z2, image.getVoxel(x, y, z));
+				}
+			}
+		}
+		
+		return result;
 	}
 	
 	/**
