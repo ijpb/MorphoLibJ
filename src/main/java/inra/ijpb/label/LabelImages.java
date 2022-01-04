@@ -354,7 +354,7 @@ public class LabelImages
 	{
 		String newName = imagePlus.getShortTitle() + "-crop";
 		ImagePlus croppedPlus;
-		Calibration cal = imagePlus.getCalibration();
+		Calibration cal = (Calibration) imagePlus.getCalibration().clone();
 
 		// Compute the cropped image
 		if (imagePlus.getStackSize() == 1)
@@ -446,8 +446,8 @@ public class LabelImages
 			}
 		}
 		ImagePlus croppedPlus = new ImagePlus(newName, result);
-		cal.xOrigin = xmin;
-		cal.yOrigin = ymin;
+		cal.xOrigin = xmin - border;
+		cal.yOrigin = ymin - border;
 		croppedPlus.setCalibration( cal );
 		return croppedPlus;
 	}
@@ -591,9 +591,9 @@ public class LabelImages
 		}
 
 		ImagePlus croppedPlus = new ImagePlus(newName, result);
-		cal.xOrigin = xmin;
-		cal.yOrigin = ymin;
-		cal.zOrigin = zmin;
+		cal.xOrigin = xmin - border;
+		cal.yOrigin = ymin - border;
+		cal.zOrigin = zmin - border;
 		croppedPlus.setCalibration( cal );
 		return croppedPlus;
 
