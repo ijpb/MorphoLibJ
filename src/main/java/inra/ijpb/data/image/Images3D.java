@@ -29,6 +29,8 @@ import inra.ijpb.data.IntBounds3D;
 /**
  * A collection of static methods for working on 3D images. 
  * 
+ * @see Images2D
+ * 
  * @author David Legland
  *
  */
@@ -263,25 +265,33 @@ public class Images3D
 	public static final ImageStack crop(ImageStack image, IntBounds3D bounds)
 	{
 		// Compute size of result, taking into account border
-		int sizeX2 = bounds.width();
-		int sizeY2 = bounds.height();
-		int sizeZ2 = bounds.depth();
+		int sizeX2 = bounds.getWidth();
+		int sizeY2 = bounds.getHeight();
+		int sizeZ2 = bounds.getDepth();
 
 		// allocate memory for result image
 		ImageStack result = ImageStack.create(sizeX2, sizeY2, sizeZ2, image.getBitDepth());
 		
-		int xmin = bounds.getXMin();
-		int ymin = bounds.getYMin();
-		int zmin = bounds.getZMin();
+		int dx = bounds.getXMin();
+		int dy = bounds.getYMin();
+		int dz = bounds.getZMin();
 		
 		// fill result with binary label
-		for (int z = zmin, z2 = 0; z2 <= sizeZ2; z++, z2++) 
+		for (int z = 0; z <= sizeZ2; z++)
 		{
-			for (int y = ymin, y2 = 0; y2 <= sizeY2; y++, y2++) 
+			int z2 = z + dz;
+			if (z2 < 0 || z2 > sizeZ2) continue;
+	
+			for (int y = 0; y <= sizeY2; y++)
 			{
-				for (int x = xmin, x2 = 0; x2 <= sizeY2; x++, x2++) 
+				int y2 = y + dy;
+				if (y2 < 0 || y2 > sizeY2) continue;
+				
+				for (int x = 0; x <= sizeX2; x++)
 				{
-					result.setVoxel(x2, y2, z2, image.getVoxel(x, y, z));
+					int x2 = x + dx;
+					if (x2 < 0 || x2 > sizeX2) continue;
+					result.setVoxel(x, y, z, image.getVoxel(x2, y2, z2));
 				}
 			}
 		}

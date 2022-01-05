@@ -40,6 +40,7 @@ import ij.gui.PointRoi;
 import ij.gui.ProfilePlot;
 import ij.gui.Roi;
 import ij.gui.ShapeRoi;
+import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.plugin.Selection;
 import ij.process.ByteProcessor;
@@ -337,14 +338,27 @@ public class LabelImages
         if (imagePlus.getStackSize() == 1) 
         {
             ImageProcessor image = imagePlus.getProcessor();
-            ImageProcessor cropped = LabelImages.cropLabel(image, label, border);
+            IntBounds2D bounds = labelBounds(image, label);
+            ImageProcessor cropped = LabelImages.cropLabel(image, label, bounds, border);
             croppedPlus = new ImagePlus(newName, cropped);
+            
+			Calibration calib = croppedPlus.getCalibration();
+			calib.xOrigin += (bounds.xmin - border) * calib.pixelWidth;
+			calib.yOrigin += (bounds.ymin - border) * calib.pixelHeight;
+			croppedPlus.setCalibration(calib);
         }
         else
         {
             ImageStack image = imagePlus.getStack();
-            ImageStack cropped = LabelImages.cropLabel(image, label, border);
+            IntBounds3D bounds = labelBounds(image, label);
+            ImageStack cropped = LabelImages.cropLabel(image, label, bounds, border);
             croppedPlus = new ImagePlus(newName, cropped);
+            
+			Calibration calib = croppedPlus.getCalibration();
+			calib.xOrigin += (bounds.xmin - border) * calib.pixelWidth;
+			calib.yOrigin += (bounds.ymin - border) * calib.pixelHeight;
+			calib.zOrigin += (bounds.zmin - border) * calib.pixelDepth;
+			croppedPlus.setCalibration(calib);
         }
 
         return croppedPlus;
@@ -362,56 +376,8 @@ public class LabelImages
 	 */
 	public static final ImageProcessor cropLabel(ImageProcessor image, int label, int border) 
 	{
-		// image size
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-		
-		// Initialize label bounds
-		int xmin = Integer.MAX_VALUE;
-		int xmax = Integer.MIN_VALUE;
-		int ymin = Integer.MAX_VALUE;
-		int ymax = Integer.MIN_VALUE;
-		
-		// update bounds by iterating on voxels 
-		for (int y = 0; y < sizeY; y++)
-		{
-			for (int x = 0; x < sizeX; x++)
-			{
-				// process only specified label
-				int val = image.get(x, y);
-				if (val != label)
-				{
-					continue;
-				}
-
-				// update bounds of current label
-				xmin = min(xmin, x);
-				xmax = max(xmax, x);
-				ymin = min(ymin, y);
-				ymax = max(ymax, y);
-			}
-		}
-
-		// Compute size of result, taking into account border
-		int sizeX2 = (xmax - xmin + 1 + 2 * border);
-		int sizeY2 = (ymax - ymin + 1 + 2 * border);
-
-		// allocate memory for result image
-		ImageProcessor result = new ByteProcessor(sizeX2, sizeY2);
-		
-		// fill result with binary label
-		for (int y = ymin, y2 = border; y <= ymax; y++, y2++) 
-		{
-			for (int x = xmin, x2 = border; x <= xmax; x++, x2++) 
-			{
-				if ((image.get(x, y)) == label)
-				{
-					result.set(x2, y2, 255);
-				}
-			}
-		}
-
-		return result;
+		IntBounds2D bounds = labelBounds(image, label);
+		return cropLabel(image, label, bounds, border);
 	}
 	
 	public static final IntBounds2D labelBounds(ImageProcessor image, int label) 
@@ -449,6 +415,31 @@ public class LabelImages
 		return new IntBounds2D(xmin, xmax, ymin, ymax);
 	}
 
+	public static final ImageProcessor cropLabel(ImageProcessor image, int label, IntBounds2D bounds, int border) 
+	{
+		// Compute size of result, taking into account border
+		int sizeX2 = bounds.getWidth() + 2 * border;
+		int sizeY2 = bounds.getHeight() + 2 * border;
+
+		// allocate memory for result image
+		ImageProcessor result = new ByteProcessor(sizeX2, sizeY2);
+		
+		// fill result with binary label
+		for (int y = border, yref = bounds.ymin; y < sizeY2 - border; y++, yref++)
+		{
+			for (int x = border, xref = bounds.xmin; x < sizeX2 - border; x++, xref++)
+			{
+				if (((int) image.getf(xref, yref)) == label)
+				{
+					result.set(x, y, 255);
+				}
+				
+			}
+		}
+		
+		return result;
+	}
+	
 	/**
 	 * Returns a binary image that contains only the selected particle or
 	 * region, by automatically cropping the image and eventually adding some
@@ -461,69 +452,8 @@ public class LabelImages
 	 */
 	public static final ImageStack cropLabel(ImageStack image, int label, int border) 
 	{
-		// image size
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-		int sizeZ = image.getSize();
-		
-		// Initialize label bounds
-		int xmin = Integer.MAX_VALUE;
-		int xmax = Integer.MIN_VALUE;
-		int ymin = Integer.MAX_VALUE;
-		int ymax = Integer.MIN_VALUE;
-		int zmin = Integer.MAX_VALUE;
-		int zmax = Integer.MIN_VALUE;
-		
-		// update bounds by iterating on voxels 
-		for (int z = 0; z < sizeZ; z++)
-		{
-			for (int y = 0; y < sizeY; y++)
-			{
-				for (int x = 0; x < sizeX; x++)
-				{
-					// process only specified label
-					int val = (int) image.getVoxel(x, y, z);
-					if (val != label)
-					{
-						continue;
-					}
-					
-					// update bounds of current label
-					xmin = min(xmin, x);
-					xmax = max(xmax, x);
-					ymin = min(ymin, y);
-					ymax = max(ymax, y);
-					zmin = min(zmin, z);
-					zmax = max(zmax, z);
-				}
-			}
-		}
-		
-		// Compute size of result, taking into account border
-		int sizeX2 = (xmax - xmin + 1 + 2 * border);
-		int sizeY2 = (ymax - ymin + 1 + 2 * border);
-		int sizeZ2 = (zmax - zmin + 1 + 2 * border);
-
-		// allocate memory for result image
-		ImageStack result = ImageStack.create(sizeX2, sizeY2, sizeZ2, 8);
-		
-		// fill result with binary label
-		for (int z = zmin, z2 = border; z <= zmax; z++, z2++) 
-		{
-			for (int y = ymin, y2 = border; y <= ymax; y++, y2++) 
-			{
-				for (int x = xmin, x2 = border; x <= xmax; x++, x2++) 
-				{
-					if (((int) image.getVoxel(x, y, z)) == label)
-					{
-						result.setVoxel(x2, y2, z2, 255);
-					}
-				}
-			}
-		}
-		
-		return result;
-
+		IntBounds3D bounds = labelBounds(image, label);
+		return cropLabel(image, label, bounds, border);
 	}
 	
 	public static final IntBounds3D labelBounds(ImageStack image, int label) 
@@ -567,6 +497,34 @@ public class LabelImages
 		}
 		
 		return new IntBounds3D(xmin, xmax, ymin, ymax, zmin, zmax);
+	}
+	
+	public static final ImageStack cropLabel(ImageStack image, int label, IntBounds3D bounds, int border) 
+	{
+		// Compute size of result, taking into account border
+		int sizeX2 = bounds.getWidth() + 2 * border;
+		int sizeY2 = bounds.getHeight() + 2 * border;
+		int sizeZ2 = bounds.getDepth() + 2 * border;
+
+		// allocate memory for result image
+		ImageStack result = ImageStack.create(sizeX2, sizeY2, sizeZ2, 8);
+		
+		// fill result with binary label
+		for (int z = border, zref = bounds.zmin; z < sizeZ2 - border; z++, zref++)
+		{
+			for (int y = border, yref = bounds.ymin; y < sizeY2 - border; y++, yref++)
+			{
+				for (int x = border, xref = bounds.xmin; x < sizeX2 - border; x++, xref++)
+				{
+					if (((int) image.getVoxel(xref, yref, zref)) == label)
+					{
+						result.setVoxel(x, y, z, 255);
+					}
+				}	
+			}
+		}
+		
+		return result;
 	}
 	
 	/**
