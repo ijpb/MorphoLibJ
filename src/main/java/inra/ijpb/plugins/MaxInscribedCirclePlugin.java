@@ -41,6 +41,9 @@ import inra.ijpb.geometry.Circle2D;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.region2d.LargestInscribedCircle;
 
+/**
+ * Plugin for max inscribed circle of regions from label images.
+ */
 public class MaxInscribedCirclePlugin implements PlugIn 
 {
     // ====================================================

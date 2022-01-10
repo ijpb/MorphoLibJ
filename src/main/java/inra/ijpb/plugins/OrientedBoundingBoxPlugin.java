@@ -40,6 +40,9 @@ import inra.ijpb.geometry.OrientedBox2D;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.region2d.OrientedBoundingBox2D;
 
+/**
+ * Plugin for computing oriented bounding box.
+ */
 public class OrientedBoundingBoxPlugin implements PlugIn
 {
     // ====================================================

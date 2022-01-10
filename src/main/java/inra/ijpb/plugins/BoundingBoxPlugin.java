@@ -38,6 +38,9 @@ import inra.ijpb.geometry.Box2D;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.region2d.BoundingBox;
 
+/**
+ * Plugin for computing (2D) bounding box of regions from label images.
+ */
 public class BoundingBoxPlugin implements PlugIn
 {
     // ====================================================

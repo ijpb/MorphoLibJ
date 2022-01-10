@@ -51,6 +51,9 @@ import inra.ijpb.measure.region2d.LargestInscribedCircle;
 import inra.ijpb.measure.region2d.MaxFeretDiameter;
 import inra.ijpb.measure.region2d.OrientedBoundingBox2D;
 
+/**
+ * Plugin for computing morphology of regions from label images.
+ */
 public class AnalyzeRegions implements PlugInFilter 
 {
     // ====================================================
@@ -176,6 +179,13 @@ public class AnalyzeRegions implements PlugInFilter
 		table.show(tableName);
     }
     
+    /**
+	 * Process the input image
+	 * 
+	 * @param imagePlus
+	 *            the image to process
+	 * @return the results of the analysis as a Results Table
+	 */
     public ResultsTable process(ImagePlus imagePlus)
     {
     	ImageProcessor image = imagePlus.getProcessor();

@@ -217,7 +217,15 @@ public class GeodesicDiameterPlugin implements PlugIn
 //		target.setOverlay(overlay);
 //	}
 
-	public void drawPaths(ImagePlus target, Map<Integer, GeodesicDiameter.Result> geodDiams)
+/**
+ * Displays the geodesic paths onto the given image.
+ * 
+ * @param target
+ *            target image
+ * @param geodDiams
+ *            the diameters to draw
+ */
+public void drawPaths(ImagePlus target, Map<Integer, GeodesicDiameter.Result> geodDiams)
 	{
 		Overlay overlay = new Overlay();
 		Calibration calib = target.getCalibration();

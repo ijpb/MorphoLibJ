@@ -45,7 +45,9 @@ public class RegionalMinAndMax3DPlugin implements PlugIn {
 	 * A customized enumeration to choose between regional minima or maxima.
 	 */
 	public enum Operation {
+		/** Regional maxima */
 		REGIONAL_MAXIMA("Regional Maxima", "rmax"),
+		/** Regional minima */
 		REGIONAL_MINIMA("Regional Minima", "rmin");
 		
 		private final String label;
@@ -56,6 +58,15 @@ public class RegionalMinAndMax3DPlugin implements PlugIn {
 			this.suffix = suffix;
 		}
 		
+		/**
+		 * Process to image given as argument.
+		 * 
+		 * @param image
+		 *            the image to process
+		 * @param connectivity
+		 *            the connectivity to use
+		 * @return the maxima or minima within input image
+		 */
 		public ImageStack apply(ImageStack image, int connectivity) {
 			if (this == REGIONAL_MAXIMA)
 				return MinimaAndMaxima3D.regionalMaxima(image, connectivity);
@@ -70,10 +81,20 @@ public class RegionalMinAndMax3DPlugin implements PlugIn {
 			return this.label;
 		}
 		
+		/**
+		 * Returns the suffix added to processed images.
+		 * 
+		 * @return the suffix added to processed images.
+		 */
 		public String getSuffix() {
 			return this.suffix;
 		}
 		
+		/**
+		 * Returns all the labels for this enumeration.
+		 * 
+		 * @return all the labels for this enumeration.
+		 */
 		public static String[] getAllLabels(){
 			int n = Operation.values().length;
 			String[] result = new String[n];

@@ -246,9 +246,12 @@ DialogListener
 	 * @param mask
 	 *            the binary mask image that will constrain the propagation
 	 * @param roi
-	 * 			  the roi to define the marker image
+	 *            the roi to define the marker image
 	 * @param chamferMask
 	 *            the chamfer mask used for computing distances
+	 * @param floatProcess
+	 *            specifies whether algorithm should use floating-point or
+	 *            integer computation
 	 * @param normalize
 	 *            specifies whether the resulting distance map should be
 	 *            normalized

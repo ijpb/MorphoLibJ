@@ -45,7 +45,9 @@ public class MorphologicalReconstructionPlugin implements PlugIn
 	 */
 	public enum Operation
 	{
+		/** reconstruction by dilation */
 		BY_DILATION("By Dilation"), 
+		/** reconstruction by erosion */
 		BY_EROSION("By Erosion");
 		
 		private final String label;
@@ -55,6 +57,17 @@ public class MorphologicalReconstructionPlugin implements PlugIn
 			this.label = label;
 		}
 		
+		/**
+		 * Process to image given as argument.
+		 * 
+		 * @param marker
+		 *            the marker image
+		 * @param mask
+		 *            the mask image
+		 * @param conn
+		 *            the connectivity to use
+		 * @return the reconstructed image
+		 */
 		public ImageProcessor applyTo(ImageProcessor marker, ImageProcessor mask, int conn) 
 		{
 			if (this == BY_DILATION)
@@ -66,6 +79,17 @@ public class MorphologicalReconstructionPlugin implements PlugIn
 					"Unable to process the " + this + " operation");
 		}
 		
+		/**
+		 * Process to image given as argument.
+		 * 
+		 * @param marker
+		 *            the marker image
+		 * @param mask
+		 *            the mask image
+		 * @param conn
+		 *            the connectivity to use
+		 * @return the reconstructed image
+		 */
 		public ImageProcessor applyTo(ImageProcessor marker, ImageProcessor mask, Connectivity2D conn) 
 		{
 			if (this == BY_DILATION)
@@ -82,6 +106,11 @@ public class MorphologicalReconstructionPlugin implements PlugIn
 			return this.label;
 		}
 		
+		/**
+		 * Returns all the labels for this enumeration.
+		 * 
+		 * @return all the labels for this enumeration.
+		 */
 		public static String[] getAllLabels()
 		{
 			int n = Operation.values().length;

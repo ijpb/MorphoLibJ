@@ -128,6 +128,17 @@ public class MorphologicalFilterCross3DPlugin implements PlugIn {
 		maskImage.show();
 	}
 
+	/**
+	 * Applies the given operation to the given image.
+	 * 
+	 * @param image
+	 *            the image to process
+	 * @param op
+	 *            the morphological operation to apply
+	 * @param strel
+	 *            the structuring element to use
+	 * @return the processed image
+	 */
 	public ImagePlus process(ImagePlus image, Operation op, Strel3D strel) {
 		// Check validity of parameters
 		if (image == null)

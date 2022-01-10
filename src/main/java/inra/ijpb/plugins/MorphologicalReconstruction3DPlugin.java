@@ -45,7 +45,9 @@ public class MorphologicalReconstruction3DPlugin implements PlugIn {
 	 * A pre-defined set of operations for geodesic reconstruction.
 	 */
 	public enum Operation {
+		/** reconstruction by dilation */
 		BY_DILATION("By Dilation"),
+		/** reconstruction by erosion */
 		BY_EROSION("By Erosion");
 		
 		private final String label;
@@ -54,6 +56,17 @@ public class MorphologicalReconstruction3DPlugin implements PlugIn {
 			this.label = label;
 		}
 		
+		/**
+		 * Process to image given as argument.
+		 * 
+		 * @param marker
+		 *            the marker image
+		 * @param mask
+		 *            the mask image
+		 * @param conn
+		 *            the connectivity to use
+		 * @return the reconstructed image
+		 */
 		public ImageStack applyTo(ImageStack marker, ImageStack mask, int conn) {
 			if (this == BY_DILATION)
 				return Reconstruction3D.reconstructByDilation(marker, mask, conn);
@@ -68,6 +81,11 @@ public class MorphologicalReconstruction3DPlugin implements PlugIn {
 			return this.label;
 		}
 		
+		/**
+		 * Returns all the labels for this enumeration.
+		 * 
+		 * @return all the labels for this enumeration.
+		 */
 		public static String[] getAllLabels(){
 			int n = Operation.values().length;
 			String[] result = new String[n];

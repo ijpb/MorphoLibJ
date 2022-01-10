@@ -46,7 +46,13 @@ public class Watershed3DPlugin implements PlugIn
 	/** flag to use 26-connectivity */
 	public static boolean use26neighbors = true;
 	
+	/**
+	 * the minimum value for dynamic
+	 */
 	public static double hMin = 0;
+	/**
+	 * the maximum value for dynamic
+	 */
 	public static double hMax = 255;
 	
 		

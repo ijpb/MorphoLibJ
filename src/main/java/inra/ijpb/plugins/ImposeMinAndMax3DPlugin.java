@@ -40,7 +40,9 @@ public class ImposeMinAndMax3DPlugin implements PlugIn {
 	 * A customized enumeration to choose between minima or maxima imposition.
 	 */
 	public enum Operation {
+		/** Imposition of minima */
 		IMPOSE_MINIMA("Impose Minima"),
+		/** Imposition of maxima */
 		IMPOSE_MAXIMA("Impose Maxima");
 		
 		private final String label;
@@ -49,6 +51,15 @@ public class ImposeMinAndMax3DPlugin implements PlugIn {
 			this.label = label;
 		}
 		
+		/**
+		 * Process to image given as argument.
+		 * 
+		 * @param image
+		 *            the image to process
+		 * @param markers
+		 *            the marker image of minima or maxima
+		 * @return an image with same extrema as the marker image
+		 */
 		public ImageStack applyTo(ImageStack image,
 				ImageStack markers) {
 			if (this == IMPOSE_MINIMA)
@@ -60,6 +71,17 @@ public class ImposeMinAndMax3DPlugin implements PlugIn {
 					"Unable to process the " + this + " operation");
 		}
 		
+		/**
+		 * Process to image given as argument.
+		 * 
+		 * @param image
+		 *            the image to process
+		 * @param markers
+		 *            the marker image of minima or maxima
+		 * @param conn
+		 *            the connectivity to use
+		 * @return an image with same extrema as the marker image
+		 */
 		public ImageStack applyTo(ImageStack image,
 				ImageStack markers, int conn) {
 			if (this == IMPOSE_MINIMA)
@@ -75,6 +97,11 @@ public class ImposeMinAndMax3DPlugin implements PlugIn {
 			return this.label;
 		}
 		
+		/**
+		 * Returns all the labels for this enumeration.
+		 * 
+		 * @return all the labels for this enumeration.
+		 */
 		public static String[] getAllLabels(){
 			int n = Operation.values().length;
 			String[] result = new String[n];

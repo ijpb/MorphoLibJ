@@ -237,6 +237,21 @@ public class GeodesicDistanceMap3DPlugin implements PlugIn
 		return resultPlus;
 	}
 
+	/**
+	 * Computes the distance within the mask, starting from the marker image.
+	 * 
+	 * @param marker
+	 *            the binary marker image from which distances will be
+	 *            propagated
+	 * @param mask
+	 *            the binary mask image that will constrain the propagation
+	 * @param weights
+	 *            the set of chamfer weights for computing distances
+	 * @param normalize
+	 *            specifies whether the resulting distance map should be
+	 *            normalized
+	 * @return the geodesic distance map
+	 */
 	@Deprecated
 	public ImageStack process(ImageStack marker, ImageStack mask,
 			float[] weights, boolean normalize)
@@ -266,6 +281,22 @@ public class GeodesicDistanceMap3DPlugin implements PlugIn
 		return result;
 	}
 	
+	/**
+	 * Computes the distance within the mask, starting from the marker image.
+	 * 
+	 * @param marker
+	 *            the binary marker image from which distances will be
+	 *            propagated
+	 * @param mask
+	 *            the binary mask image that will constrain the propagation
+	 * @param chamferMask
+	 *            the chamfer mask used for computing distances
+	 * @param normalize
+	 *            specifies whether the resulting distance map should be
+	 *            normalized
+	 * @return an array of object, containing the name of the new image, and the
+	 *         new ImagePlus instance
+	 */
 	public ImageStack process(ImageStack marker, ImageStack mask,
 			ChamferMask3D chamferMask, boolean normalize)
 	{

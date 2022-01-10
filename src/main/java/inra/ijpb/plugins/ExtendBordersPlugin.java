@@ -114,6 +114,24 @@ public class ExtendBordersPlugin implements PlugIn
 		resPlus.show();
 	}
 	
+	/**
+	 * run the plugin (deprecated).
+	 * 
+	 * @param image
+	 *            the input image
+	 * @param left
+	 *            the number of pixels to add to the left of the image
+	 * @param right
+	 *            the number of pixels to add to the right of the image
+	 * @param top
+	 *            the number of pixels to add on top of the image
+	 * @param bottom
+	 *            the number of pixels to add at the bottom of the image
+	 * @param border
+	 *            an instance of BorderManager that specifies the value of
+	 *            pixels to be added
+	 * @return a new image with extended borders
+	 */
 	@Deprecated
 	public ImagePlus exec(ImagePlus image, int left, int right, int top,
 			int bottom, BorderManager border)

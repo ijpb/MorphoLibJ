@@ -12,7 +12,9 @@ package inra.ijpb.plugins;
  */
 public enum Connectivity2D 
 {
+	/** The 4 connectivity (only orthogonal neighbors)*/
 	C4("4", 4),
+	/** The 8 connectivity (orthogonal and diagonal neighbors) */
 	C8("8", 8);
 
 	private final String label;
@@ -24,16 +26,21 @@ public enum Connectivity2D
 		this.value = value;
 	}
 
-	public String toString()
-	{
-		return this.label;
-	}
-
+	/**
+	 * Returns the integer value associated to this connectivity.
+	 * 
+	 * @return the integer value associated to this connectivity.
+	 */
 	public int getValue()
 	{
 		return this.value;
 	}
 
+	/**
+	 * Returns all the labels for this enumeration.
+	 * 
+	 * @return all the labels for this enumeration.
+	 */
 	public static String[] getAllLabels()
 	{
 		int n = Connectivity2D.values().length;
@@ -49,6 +56,9 @@ public enum Connectivity2D
 	/**
 	 * Determines the connectivity type from its label.
 	 * 
+	 * @param label
+	 *            the name of the connectivity
+	 * @return the connectivity associated to the label
 	 * @throws IllegalArgumentException
 	 *             if label is not recognized.
 	 */
@@ -61,5 +71,10 @@ public enum Connectivity2D
 		}
 		throw new IllegalArgumentException(
 				"Unable to parse Connectivity2D with label: " + label);
+	}
+
+	public String toString()
+	{
+		return this.label;
 	}
 }

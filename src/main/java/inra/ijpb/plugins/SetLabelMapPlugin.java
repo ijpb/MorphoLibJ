@@ -136,6 +136,11 @@ public class SetLabelMapPlugin implements PlugIn, DialogListener
 		}
 	}
 
+	/**
+	 * Displays the dialog.
+	 * 
+	 * @return the dialog
+	 */
 	public GenericDialog showDialog()
 	{
 

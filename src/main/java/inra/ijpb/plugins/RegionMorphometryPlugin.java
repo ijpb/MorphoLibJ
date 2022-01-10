@@ -31,6 +31,11 @@ import ij.process.ImageProcessor;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.GeometricMeasures2D;
 
+/**
+ * Plugin for computing morphology of regions.
+ * 
+ * @deprecated replaced by AnalyzeRegions
+ */
 @Deprecated
 public class RegionMorphometryPlugin implements PlugInFilter {
 
@@ -104,6 +109,15 @@ public class RegionMorphometryPlugin implements PlugInFilter {
 		table.show(tableName);
     }
     
+    /**
+	 * Process the input image.
+	 * 
+	 * @param inputImage
+	 *            the image to process
+	 * @param nDirs
+	 *            the number of directions to use
+	 * @return the results table containing morphometry features of regions
+	 */
     public ResultsTable process(ImagePlus inputImage, int nDirs) 
     {
         // Check validity of parameters
@@ -133,6 +147,15 @@ public class RegionMorphometryPlugin implements PlugInFilter {
 		return results;
     }
     
+    /**
+	 * Process the input image.
+	 * 
+	 * @param inputImage
+	 *            the image to process
+	 * @param nDirs
+	 *            the number of directions to use
+	 * @return the results table containing morphometry features of regions
+	 */
     @Deprecated
     public Object[] exec(ImagePlus inputImage, int nDirs) {
         // Check validity of parameters

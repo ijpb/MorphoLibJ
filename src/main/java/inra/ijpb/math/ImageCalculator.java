@@ -30,6 +30,27 @@ import ij.process.ImageProcessor;
  * Provides some methods for combining two images, in a more comprehensive way
  * than standard ImageJ, and providing the possibility of defining its own local
  * operation.
+ * 
+ * Example of use:
+ * <pre>{@code
+        int width = 255;
+        int height = 255;
+        ImageProcessor image1 = new ByteProcessor(width, height);
+        ImageProcessor image2 = new ByteProcessor(width, height);
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                image1.set(i, j, i);
+                image2.set(j, i, i);
+            }
+        }
+        
+        ImageCalculator.Operation op = ImageCalculator.Operation.MAX;
+        ImageProcessor result = ImageCalculator.combineImages(image1, image2, op);
+        
+        new ImagePlus("result", result).show();
+ * }</pre>
  */
 public class ImageCalculator
 {
@@ -44,6 +65,7 @@ public class ImageCalculator
      */
     public interface Operation
     {
+    	/** Plus operator, that adds values of the two images*/
         public static final Operation PLUS = new Operation()
         {
             @Override
@@ -59,6 +81,7 @@ public class ImageCalculator
             }
         };
         
+    	/** Minus operator, that subtracts values of the two images*/
         public static final Operation MINUS = new Operation()
         {
             @Override
@@ -74,6 +97,10 @@ public class ImageCalculator
             }
         };
         
+		/**
+		 * Abs_diff operator, that computes the absolute value of the difference
+		 * of values of the two images
+		 */
         public static final Operation ABS_DIFF = new Operation()
         {
             @Override
@@ -89,6 +116,7 @@ public class ImageCalculator
             }
         };
         
+    	/** Times operator, that multiples values of the two images*/
         public static final Operation TIMES = new Operation()
         {
             @Override
@@ -104,6 +132,7 @@ public class ImageCalculator
             }
         };
         
+        /** Divides operator, that divides the values of the two images*/
         public static final Operation DIVIDES = new Operation()
         {
             @Override
@@ -119,6 +148,7 @@ public class ImageCalculator
             }
         };
         
+    	/** Max operator, that computes the maximum of the values from the two images*/
         public static final Operation MAX = new Operation()
         {
             @Override
@@ -134,6 +164,7 @@ public class ImageCalculator
             }
         };
         
+    	/** Min operator, that computes the minimum of the values from the two images*/
         public static final Operation MIN = new Operation()
         {
             @Override
@@ -149,6 +180,7 @@ public class ImageCalculator
             }
         };
         
+    	/** Mean operator, that computes the average of the values from the two images*/
         public static final Operation MEAN = new Operation()
         {
             @Override
@@ -164,6 +196,7 @@ public class ImageCalculator
             }
         };
         
+    	/** And operator.*/
         public static final Operation AND = new Operation()
         {
             @Override
@@ -179,6 +212,7 @@ public class ImageCalculator
             }
         };
         
+    	/** Or operator.*/
         public static final Operation OR = new Operation()
         {
             @Override
@@ -194,6 +228,7 @@ public class ImageCalculator
             }
         };
         
+    	/** Exclusive or operator.*/
         public static final Operation XOR = new Operation()
         {
             @Override
@@ -233,6 +268,17 @@ public class ImageCalculator
         
     }
     
+    /**
+	 * Combines two images using the specified operation.
+	 * 
+	 * @param image1
+	 *            the first image
+	 * @param image2
+	 *            the second image
+	 * @param op
+	 *            the operation to apply
+	 * @return the result of the combination of the two images.
+	 */
     public static final ImagePlus combineImages(ImagePlus image1, ImagePlus image2, Operation op)
     {
         String newName = "result of " + image1.getShortTitle();
@@ -291,6 +337,17 @@ public class ImageCalculator
         return result;
     }
     
+    /**
+	 * Combines two images using the specified operation.
+	 * 
+	 * @param image1
+	 *            the first image
+	 * @param image2
+	 *            the second image
+	 * @param op
+	 *            the operation to apply
+	 * @return the result of the combination of the two images.
+	 */
     public static final ImageStack combineImages(ImageStack image1, ImageStack image2, Operation op)
     {
         int width = image1.getWidth();
@@ -316,6 +373,13 @@ public class ImageCalculator
         return result;
     }
     
+    /**
+	 * Computes the binary "not" operation on the input image.
+	 * 
+	 * @param image
+	 *            the input image
+	 * @return the result of the not operation
+	 */
     public static final ImagePlus not(ImagePlus image)
     {
         String newName = image.getShortTitle() + "-not";
@@ -331,6 +395,13 @@ public class ImageCalculator
         }
     }
     
+    /**
+	 * Computes the binary "not" operation on the input 2D image.
+	 * 
+	 * @param image
+	 *            the input image
+	 * @return the result of the not operation
+	 */
     public static final ImageProcessor not(ImageProcessor image)
     {
         int width = image.getWidth();
@@ -348,6 +419,13 @@ public class ImageCalculator
         return result;
     }
     
+    /**
+	 * Computes the binary "not" operation on the input 3D image.
+	 * 
+	 * @param image
+	 *            the input image
+	 * @return the result of the not operation
+	 */
     public static final ImageStack not(ImageStack image)
     {
         int sizeX = image.getWidth();
@@ -367,26 +445,5 @@ public class ImageCalculator
             }
         }
         return result;
-    }
-    
-    public static final void main(String[] args)
-    {
-        int width = 255;
-        int height = 255;
-        ImageProcessor image1 = new ByteProcessor(width, height);
-        ImageProcessor image2 = new ByteProcessor(width, height);
-        for (int i = 0; i < width; i++)
-        {
-            for (int j = 0; j < height; j++)
-            {
-                image1.set(i, j, i);
-                image2.set(j, i, i);
-            }
-        }
-        
-        ImageCalculator.Operation op = ImageCalculator.Operation.MAX;
-        ImageProcessor result = ImageCalculator.combineImages(image1, image2, op);
-        
-        new ImagePlus("result", result).show();
     }
 }

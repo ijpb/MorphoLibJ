@@ -137,7 +137,15 @@ public class MaxFeretDiameterPlugin implements PlugIn
 			drawDiameters(resultImage, maxDiamsMap);
 		}
     }
-    
+
+    /**
+	 * Draws the diameters on a target image.
+	 * 
+	 * @param target
+	 *            the image to draw the diameters on
+	 * @param geodDiams
+	 *            the diameters to draw
+	 */
 	public void drawDiameters(ImagePlus target, Map<Integer, PointPair2D> geodDiams)
 	{
 		Overlay overlay = new Overlay();

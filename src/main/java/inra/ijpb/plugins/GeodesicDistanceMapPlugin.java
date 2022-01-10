@@ -123,6 +123,20 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 		res.show();
 	}
 
+	/**
+	 * Computes the distance within the mask, starting from the marker image.
+	 * 
+	 * @param marker
+	 *            the binary marker image from which distances will be
+	 *            propagated
+	 * @param mask
+	 *            the binary mask image that will constrain the propagation
+	 * @param newName
+	 *            the name of the result image
+	 * @param weights
+	 *            the set of chamfer weights for computing distances
+	 * @return the geodesic distance map
+	 */
 	@Deprecated
 	public Object[] exec(ImagePlus marker, ImagePlus mask, String newName,
 			float[] weights)
@@ -320,6 +334,21 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 		return resultPlus;
 	}
 
+	/**
+	 * Computes the distance within the mask, starting from the marker image.
+	 * 
+	 * @param marker
+	 *            the binary marker image from which distances will be
+	 *            propagated
+	 * @param mask
+	 *            the binary mask image that will constrain the propagation
+	 * @param weights
+	 *            the set of chamfer weights for computing distances
+	 * @param normalize
+	 *            specifies whether the resulting distance map should be
+	 *            normalized
+	 * @return the geodesic distance map
+	 */
 	@Deprecated
 	public ImageProcessor process(ImageProcessor marker, ImageProcessor mask,
 			float[] weights, boolean normalize)
@@ -365,6 +394,8 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 	 *            the name of the result image
 	 * @param weights
 	 *            the set of chamfer weights for computing distances
+	 * @param floatComputation
+	 *            specifies whether floating point computation should be used
 	 * @param normalize
 	 *            specifies whether the resulting distance map should be
 	 *            normalized

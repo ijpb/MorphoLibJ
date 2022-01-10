@@ -40,7 +40,9 @@ public class ImposeMinAndMaxPlugin implements PlugIn {
 	 * A customized enumeration to choose between minima or maxima imposition.
 	 */
 	public enum Operation {
+		/** Imposition of minima */
 		IMPOSE_MINIMA("Impose Minima"),
+		/** Imposition of maxima */
 		IMPOSE_MAXIMA("Impose Maxima");
 		
 		private final String label;
@@ -49,6 +51,15 @@ public class ImposeMinAndMaxPlugin implements PlugIn {
 			this.label = label;
 		}
 		
+		/**
+		 * Process to image given as argument.
+		 * 
+		 * @param image
+		 *            the image to process
+		 * @param markers
+		 *            the marker image of minima or maxima
+		 * @return an image with same extrema as the marker image
+		 */
 		public ImageProcessor applyTo(ImageProcessor image,
 				ImageProcessor markers) {
 			if (this == IMPOSE_MINIMA)
@@ -60,6 +71,17 @@ public class ImposeMinAndMaxPlugin implements PlugIn {
 					"Unable to process the " + this + " operation");
 		}
 		
+		/**
+		 * Process to image given as argument.
+		 * 
+		 * @param image
+		 *            the image to process
+		 * @param markers
+		 *            the marker image of minima or maxima
+		 * @param conn
+		 *            the connectivity to use
+		 * @return an image with same extrema as the marker image
+		 */
 		public ImageProcessor applyTo(ImageProcessor image,
 				ImageProcessor markers, int conn) {
 			if (this == IMPOSE_MINIMA)
@@ -71,6 +93,17 @@ public class ImposeMinAndMaxPlugin implements PlugIn {
 					"Unable to process the " + this + " operation");
 		}
 		
+		/**
+		 * Process to image given as argument.
+		 * 
+		 * @param image
+		 *            the image to process
+		 * @param markers
+		 *            the marker image of minima or maxima
+		 * @param conn
+		 *            the connectivity to use
+		 * @return an image with same extrema as the marker image
+		 */
 		public ImageProcessor applyTo(ImageProcessor image,
 				ImageProcessor markers, Connectivity2D conn) {
 			if (this == IMPOSE_MINIMA)
@@ -86,6 +119,11 @@ public class ImposeMinAndMaxPlugin implements PlugIn {
 			return this.label;
 		}
 		
+		/**
+		 * Returns all the labels for this enumeration.
+		 * 
+		 * @return all the labels for this enumeration.
+		 */
 		public static String[] getAllLabels(){
 			int n = Operation.values().length;
 			String[] result = new String[n];

@@ -261,6 +261,12 @@ public class DrawTableValuesPlugin implements PlugIn, DialogListener
         choice.select(defaultString);
 	}
 	
+	/**
+	 * Draw the values onto the target image.
+	 * 
+	 * @param target
+	 *            the target image.
+	 */
 	public void drawValues(ImagePlus target)
 	{
 	    Overlay overlay = new Overlay();

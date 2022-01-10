@@ -35,6 +35,12 @@ import inra.ijpb.morphology.directional.DirectionalFilter.Type;
 
 import java.awt.AWTEvent;
 
+/**
+ * Plugin for computing directional filtering.
+ * 
+ * @author dlegland
+ *
+ */
 public class DirectionalFilteringPlugin implements ExtendedPlugInFilter, DialogListener 
 {
 	/** store flags to indicating which images can be processed */

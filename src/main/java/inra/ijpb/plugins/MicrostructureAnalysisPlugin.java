@@ -31,6 +31,9 @@ import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
 import inra.ijpb.measure.IntrinsicVolumes2D;
 
+/**
+ * Plugin for quantifying microstructures from binary or label images. 
+ */
 public class MicrostructureAnalysisPlugin implements PlugInFilter {
 
     // ====================================================

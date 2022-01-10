@@ -41,11 +41,17 @@ public class LabelSizeFilteringPlugin implements PlugIn
      */
     public enum Operation
     {
+    	/** The operator for "greater than" */
         GT("Greater_Than", RelationalOperator.GT),
+    	/** The operator for "lower than" */
         LT("Lower_Than", RelationalOperator.LT),
+    	/** The operator for "greater than or equal" */
         GE("Greater_Than_Or_Equal", RelationalOperator.GE),
+    	/** The operator for "greater than or equal" */
         LE("Lower_Than_Or_Equal", RelationalOperator.LE),
+    	/** The operator for "equal" */
         EQ("Equal", RelationalOperator.EQ),
+        /** The operator for "not equal" */
         NE("Not_Equal", RelationalOperator.NE);
         
         /** The label to display in plugin. */
@@ -60,6 +66,16 @@ public class LabelSizeFilteringPlugin implements PlugIn
             this.operator = operator;
         }
         
+        /**
+		 * Applies the operator wrapped by this enumeration item to the input
+		 * image.
+		 * 
+		 * @param image
+		 *            the image to process
+		 * @param sizeLimit
+		 *            the scalar value used for filtering
+		 * @return the result of the binary operator applied on image
+		 */
         public ImagePlus applyTo(ImagePlus image, int sizeLimit) 
         {
             LabelSizeFiltering algo = new LabelSizeFiltering(this.operator, sizeLimit);
@@ -71,7 +87,12 @@ public class LabelSizeFilteringPlugin implements PlugIn
             return this.label;
         }
         
-        public static String[] getAllLabels()
+        /**
+    	 * Returns all the labels for this enumeration.
+    	 * 
+    	 * @return all the labels for this enumeration.
+    	 */
+    	public static String[] getAllLabels()
         {
             int n = Operation.values().length;
             String[] result = new String[n];

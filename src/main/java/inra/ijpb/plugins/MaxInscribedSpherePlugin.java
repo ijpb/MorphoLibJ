@@ -32,6 +32,9 @@ import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.region3d.LargestInscribedBall;
 
+/**
+ * Plugin for computing largest inscribed balls within 3D regions.
+ */
 public class MaxInscribedSpherePlugin implements PlugIn 
 {
     // ====================================================

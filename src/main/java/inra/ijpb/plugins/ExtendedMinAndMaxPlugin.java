@@ -48,7 +48,9 @@ public class ExtendedMinAndMaxPlugin implements ExtendedPlugInFilter, DialogList
 	 * A customized enumeration to choose between extended minima or maxima.
 	 */
 	public enum Operation {
+		/** Extended maxima operation */
 		EXTENDED_MAXIMA("Extended Maxima", "emax"),
+		/** Extended minima operation */
 		EXTENDED_MINIMA("Extended Minima", "emin");
 		
 		private final String label;
@@ -59,6 +61,15 @@ public class ExtendedMinAndMaxPlugin implements ExtendedPlugInFilter, DialogList
 			this.suffix = suffix;
 		}
 		
+		/**
+		 * Applies this operation to the specified image.
+		 * 
+		 * @param image
+		 *            the image to process
+		 * @param dynamic
+		 *            the dynamic to use
+		 * @return the extended extrema within image, as a binary image.
+		 */
 		public ImageProcessor apply(ImageProcessor image, int dynamic) {
 			if (this == EXTENDED_MAXIMA)
 				return MinimaAndMaxima.extendedMaxima(image, dynamic);
@@ -69,6 +80,17 @@ public class ExtendedMinAndMaxPlugin implements ExtendedPlugInFilter, DialogList
 					"Unable to process the " + this + " morphological operation");
 		}
 		
+		/**
+		 * Applies this operation to the specified image.
+		 * 
+		 * @param image
+		 *            the image to process
+		 * @param dynamic
+		 *            the dynamic to use
+		 * @param connectivity
+		 *            the connectivity to use
+		 * @return the extended extrema within image, as a binary image.
+		 */
 		public ImageProcessor apply(ImageProcessor image, int dynamic, Connectivity2D connectivity) {
 			if (this == EXTENDED_MAXIMA)
 				return MinimaAndMaxima.extendedMaxima(image, dynamic, connectivity.getValue());
@@ -79,6 +101,17 @@ public class ExtendedMinAndMaxPlugin implements ExtendedPlugInFilter, DialogList
 					"Unable to process the " + this + " morphological operation");
 		}
 		
+		/**
+		 * Applies this operation to the specified image.
+		 * 
+		 * @param image
+		 *            the image to process
+		 * @param dynamic
+		 *            the dynamic to use
+		 * @param connectivity
+		 *            the connectivity to use
+		 * @return the extended extrema within image, as a binary image.
+		 */
 		public ImageProcessor apply(ImageProcessor image, int dynamic, int connectivity) {
 			if (this == EXTENDED_MAXIMA)
 				return MinimaAndMaxima.extendedMaxima(image, dynamic, connectivity);
@@ -93,10 +126,22 @@ public class ExtendedMinAndMaxPlugin implements ExtendedPlugInFilter, DialogList
 			return this.label;
 		}
 		
+		/**
+		 * Returns the suffix to add to new ImagePlus created with thin
+		 * operation.
+		 * 
+		 * @return the suffix to add to new ImagePlus created with thin
+		 *         operation.
+		 */
 		public String getSuffix() {
 			return this.suffix;
 		}
 		
+		/**
+		 * Returns all the labels of this enum.
+		 * 
+		 * @return all the labels of this enum.
+		 */
 		public static String[] getAllLabels(){
 			int n = Operation.values().length;
 			String[] result = new String[n];
