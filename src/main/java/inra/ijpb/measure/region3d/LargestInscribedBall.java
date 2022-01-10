@@ -18,7 +18,9 @@ import inra.ijpb.label.LabelValues;
  * Computes the largest inscribed ball for each region of a label or binary
  * image.
  * 
- * @author dlegland
+  * @see inra.ijpb.measure.region2d.LargestInscribedCircle
+ * 
+* @author dlegland
  *
  */
 public class LargestInscribedBall extends RegionAnalyzer3D<Sphere>
@@ -48,7 +50,10 @@ public class LargestInscribedBall extends RegionAnalyzer3D<Sphere>
 	// ==================================================
 	// Constructors
 	
-	public LargestInscribedBall()
+    /**
+     * Empty constructor.
+     */
+    public LargestInscribedBall()
 	{
 	}
 	

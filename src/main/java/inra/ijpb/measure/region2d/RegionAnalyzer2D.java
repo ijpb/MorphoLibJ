@@ -18,9 +18,12 @@ import inra.ijpb.measure.RegionAnalyzer;
  * Base implementation of RegionAnalyzer interface for planar binary/label
  * images.
  *
- * @param T
+ * @param <T>
  *            the type of the data computed for each region. May be a class
  *            instance, or a single Numeric type.
+ *
+ * @see inra.ijpb.measure.region3d.RegionAnalyzer3D
+ * 
  * @author dlegland
  *
  */

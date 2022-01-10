@@ -124,6 +124,9 @@ public class IntrinsicVolumesAnalyzer3D extends RegionAnalyzer3D<IntrinsicVolume
     // ==================================================
     // Constructors
 
+    /**
+     * Default empty constructor.
+     */
     public IntrinsicVolumesAnalyzer3D()
     {
     }
@@ -285,17 +288,39 @@ public class IntrinsicVolumesAnalyzer3D extends RegionAnalyzer3D<IntrinsicVolume
     // ==================================================
     // Inner class for storing results
     
+    /**
+     * Inner class for storing results.
+     */
     public class Result
     {
+    	/** The volume of the region */
         public double volume = Double.NaN;
+    	/** The surface area of the region */
         public double surfaceArea = Double.NaN;
+    	/** The mean breadth of the region (proportional to the integral of average curvature)*/
         public double meanBreadth = Double.NaN;
+    	/** The Euler Number of the region */
         public double eulerNumber = Double.NaN;
         
+        /**
+         * Empty constructor.
+         */
         public Result()
         {
         }
         
+        /**
+		 * Creates a new data class for storing intrinsic volume measurements.
+		 * 
+		 * @param volume
+		 *            the volume of the region.
+		 * @param surf
+		 *            the surface area of the region.
+		 * @param breadth
+		 *            the mean breadth of the region
+		 * @param euler
+		 *            the Euler number of the region
+		 */
         public Result(double volume, double surf, double breadth, double euler)
         {
             this.volume = volume;

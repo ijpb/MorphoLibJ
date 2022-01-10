@@ -12,7 +12,7 @@ import ij.measure.ResultsTable;
  * Common interface for classes devoted to the extraction of information from
  * each region of label or binary image.
  *
- * @param T
+ * @param <T>
  *            the type of the data computed for each region. May be a class
  *            instance, or a single Numeric type.
  *            

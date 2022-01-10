@@ -18,6 +18,8 @@ import inra.ijpb.geometry.Polygons2D;
 /**
  * Computes maximum Feret Diameter for each region of a binary or label image.
  * 
+ * @see inra.ijpb.measure.region3d.MaxFeretDiameter3D
+ * 
  * @author dlegland
  *
  */
@@ -26,6 +28,18 @@ public class MaxFeretDiameter extends RegionAnalyzer2D<PointPair2D>
 	// ==================================================
 	// Static methods 
 	
+	/**
+	 * Computes Feret diameters as a PointPair2D for each of the specified
+	 * regions within a label map.
+	 * 
+	 * @param image
+	 *            the label map corresponding to the label image
+	 * @param labels
+	 *            the array of region labels to process
+	 * @param calib
+	 *            the spatial calibration of the image
+	 * @return the array of Feret diameter results
+	 */
 	public final static PointPair2D[] maxFeretDiameters(ImageProcessor image, int[] labels, Calibration calib)
 	{
 		return new MaxFeretDiameter().analyzeRegions(image, labels, calib);

@@ -56,6 +56,14 @@ public class IntrinsicVolumesAnalyzer2D extends RegionAnalyzer2D<IntrinsicVolume
     }
 
     
+	/**
+	 * Utility method that computes circularities as a numeric array from the
+	 * result array
+	 * 
+	 * @param morphos
+	 *            the array of results
+	 * @return the numeric array of circularities
+	 */
     @Deprecated
     public static final double[] computeCircularities(Result[] morphos)
     {
@@ -126,6 +134,9 @@ public class IntrinsicVolumesAnalyzer2D extends RegionAnalyzer2D<IntrinsicVolume
     // ==================================================
     // Constructors
 
+    /**
+     * Default empty constructor.
+     */
     public IntrinsicVolumesAnalyzer2D()
     {
     }
@@ -273,16 +284,37 @@ public class IntrinsicVolumesAnalyzer2D extends RegionAnalyzer2D<IntrinsicVolume
     // ==================================================
     // Inner class for storing results
     
+    /**
+     * Inner class for storing results.
+     */
     public class Result
     {
-        public double area = Double.NaN;
-        public double perimeter = Double.NaN;
-        public double eulerNumber = Double.NaN;
+		/** the area of the region. */
+		public double area = Double.NaN;
+		
+		/** the perimeter of the region. */
+		public double perimeter = Double.NaN;
+		
+		/** the Euler Number of the region. */
+		public double eulerNumber = Double.NaN;
         
+        /**
+         * Default empty constructor.
+         */
         public Result()
         {
         }
         
+        /**
+		 * Creates a new data class for storing intrinsic volume measurements.
+		 * 
+		 * @param area
+		 *            the area of the region.
+		 * @param perim
+		 *            the perimeter of the region
+		 * @param euler
+		 *            the Euler number of the region
+		 */
         public Result(double area, double perim, double euler)
         {
             this.area = area;

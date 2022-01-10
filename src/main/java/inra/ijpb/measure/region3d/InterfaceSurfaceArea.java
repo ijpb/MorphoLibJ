@@ -106,15 +106,28 @@ public class InterfaceSurfaceArea
     // ==================================================
     // Constructors
 
+    /**
+     * Default empty constructor.
+     */
     public InterfaceSurfaceArea()
     {
     }
 
+    /**
+     * Constructor that specifies the number of directions to use.
+     * 
+     * @param nDirs the number of directions to use (either 3 or 13).
+     */
     public InterfaceSurfaceArea(int nDirs)
     {
         setDirectionNumber(nDirs);
     }
 
+    /**
+     * Specifies the number of directions to use.
+     * 
+     * @param nDirs the number of directions to use (either 3 or 13).
+     */
     public void setDirectionNumber(int nDirs)
     {
         if (nDirs == 3 || nDirs == 13)
@@ -127,6 +140,19 @@ public class InterfaceSurfaceArea
         }
     }
     
+    /**
+	 * Computes the interface surface area between two regions.
+	 * 
+	 * @param stack
+	 *            the 3D input image
+	 * @param label1
+	 *            the label of the first region
+	 * @param label2
+	 *            the label of the second region
+	 * @param calib
+	 *            the spatial calibration of image
+	 * @return the surface area of the interface between the two regions
+	 */
     public double process(ImageStack stack, int label1, int label2, Calibration calib)
     {
         // coordinates of voxels within tile

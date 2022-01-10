@@ -169,6 +169,15 @@ public class Convexity extends RegionAnalyzer2D<Convexity.Result>
          */
         public double convexity;
 		
+        /**
+		 * Creates a new result for storing convexity, based on the area and the
+		 * convex area measures for the region.
+		 * 
+		 * @param area
+		 *            the area of the region
+		 * @param convexArea
+		 *            the convex area of the region
+		 */
 		public Result(double area, double convexArea)
 		{
 			this.area = area;

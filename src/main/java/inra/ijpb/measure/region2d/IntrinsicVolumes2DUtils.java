@@ -15,6 +15,17 @@ import inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D.Result;
  */
 public class IntrinsicVolumes2DUtils
 {
+    /**
+	 * Computes the Look-up table that is used for computing area. The result is
+	 * an array with 16 entries, each entry corresponding to a binary 2-by-2
+	 * configuration of pixels.
+	 * 
+	 * @param calib
+	 *            the calibration of the image
+	 * @return an array containing for each 2-by-2 configuration index, the
+	 *         corresponding contribution to the calibrated area fraction within
+	 *         configuration
+	 */
     public static final double[] areaLut(Calibration calib)
     {
         // base LUT
@@ -31,17 +42,17 @@ public class IntrinsicVolumes2DUtils
     }
     
     /**
-     * Computes the Look-up table that is used to compute perimeter. The result
-     * is an array with 16 entries, each entry corresponding to a binary 2-by-2
-     * configuration of pixels.
-     * 
-     * @param calib
-     *            the calibration of the image
-     * @param nDirs
-     *            the number of directions to use (2 or 4)
-     * @return an array containing for each 2-by-2 configuration index, the
-     *         corresponding contribution to perimeter estimate
-     */
+	 * Computes the Look-up table that is used for computing perimeter. The
+	 * result is an array with 16 entries, each entry corresponding to a binary
+	 * 2-by-2 configuration of pixels.
+	 * 
+	 * @param calib
+	 *            the calibration of the image
+	 * @param nDirs
+	 *            the number of directions to use (2 or 4)
+	 * @return an array containing for each 2-by-2 configuration index, the
+	 *         corresponding contribution to the calibrated perimeter estimate
+	 */
     public static final double[] perimeterLut(Calibration calib, int nDirs)
     {
         // distances between a pixel and its neighbors.
@@ -149,6 +160,14 @@ public class IntrinsicVolumes2DUtils
         return new double[] { alpha1, alpha2, alpha34, alpha34 };
     }
     
+	/**
+	 * Utility method that computes circularities as a numeric array from the
+	 * result array
+	 * 
+	 * @param morphos
+	 *            the array of results
+	 * @return the numeric array of circularities
+	 */
     public static final double[] computeCircularities(Result[] morphos)
     {
         int n = morphos.length;

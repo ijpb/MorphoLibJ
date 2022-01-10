@@ -38,6 +38,16 @@ public class GeometryUtils
 	{
 	}
 
+	/**
+	 * Computes area of a spherical Voronoi domain, based on a germ and several
+	 * neighbors.
+	 * 
+	 * @param germ
+	 *            the germ of the region
+	 * @param neighbors
+	 *            the neighbor germs
+	 * @return the area of the spherical Voronoi domain
+	 */
 	public static final double sphericalVoronoiDomainArea(Vector3D germ, Vector3D[] neighbors)
 	{
 		// ensure unit vector 
@@ -92,6 +102,18 @@ public class GeometryUtils
 		return area;
 	}
 	
+	/**
+	 * Computes the spherical angle of three points on the unit sphere, based on
+	 * the vectors.
+	 * 
+	 * @param v1
+	 *            the first vector
+	 * @param v2
+	 *            the second vector
+	 * @param v3
+	 *            the third vector
+	 * @return the spherical angle
+	 */
 	public static final double sphericalAngle(Vector3D v1, Vector3D v2, Vector3D v3)
 	{
 		// compute normal vectors of planes containing couple of vectors

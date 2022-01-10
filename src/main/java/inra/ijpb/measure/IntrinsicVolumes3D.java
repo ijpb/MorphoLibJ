@@ -441,6 +441,18 @@ public class IntrinsicVolumes3D
         return euler / vol;
     }
     
+    /**
+	 * Returns the "inner volume" of the 3D image, i.e. the calibrated volume of
+	 * the image without taking into account the voxels at the border of the
+	 * image.
+	 * 
+	 * @param image
+	 *            the input 3D image
+	 * @param calib
+	 *            the spatial calibration of the image
+	 * @return the calibrated volume of the portion of image witout border
+	 *         voxels
+	 */
     public static final double samplingVolume(ImageStack image, Calibration calib)
     {
         // size of image

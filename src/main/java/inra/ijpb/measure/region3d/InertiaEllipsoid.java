@@ -165,6 +165,18 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 		return ellipsoids;
 	}
 	
+	/**
+	 * Computes the matrix of moments for each region within the 3D label map.
+	 * 
+	 * @param image
+	 *            the 3D image of labels (label map)
+	 * @param labels
+	 *            the array of region labels to process
+	 * @param calib
+	 *            the spatial calibration of the image
+	 * @return an array the same size as <code>labels</code>, containing for
+	 *         each processed region result of 3D Moments computations
+	 */
 	public InertiaMoments3D[] computeMoments(ImageStack image, int[] labels, Calibration calib)
 	{
 	    // size of image
@@ -303,6 +315,9 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
         return moments;
 	}
 
+	/**
+	 * Inner class for storing result if moments computation.
+	 */
 	public class InertiaMoments3D
 	{
 	    // the number of voxels 
@@ -321,6 +336,11 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
         double Iyz = 0;
         double Izz = 0;
         
+        /**
+		 * Computes ellipsoid with same moments as those stored in this class.
+		 * 
+		 * @return the equivalent ellipsoid with same moments.
+		 */
         public Ellipsoid equivalentEllipsoid()
         {
             // Extract singular values
@@ -357,6 +377,10 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
             return new Ellipsoid(this.cx, this.cy, this.cz, r1, r2, r3, toDegrees(phi), toDegrees(theta), toDegrees(psi));
         }
 
+		/**
+		 * @return The eigen vectors of the moment matrix, as an ArrayList of
+		 *         Vector3D with three elements.
+		 */
         public ArrayList<Vector3D> eigenVectors()
         {
             // Extract singular values

@@ -16,6 +16,8 @@ import inra.ijpb.geometry.PointPair3D;
  * Computes maximum Feret Diameter for each region of a 3D binary or label
  * image.
  * 
+ * @see inra.ijpb.measure.region2d.MaxFeretDiameter
+ * 
  * @author dlegland
  *
  */
@@ -24,6 +26,18 @@ public class MaxFeretDiameter3D extends RegionAnalyzer3D<PointPair3D>
 	// ==================================================
 	// Static methods 
 	
+	/**
+	 * Computes Feret diameters as a PointPair3D for each of the specified
+	 * regions within a label map.
+	 * 
+	 * @param image
+	 *            the 3D label map corresponding to the label image
+	 * @param labels
+	 *            the array of region labels to process
+	 * @param calib
+	 *            the spatial calibration of the image
+	 * @return the array of 3D Feret diameter results
+	 */
 	public final static PointPair3D[] maxFeretDiameters(ImageStack image, int[] labels, Calibration calib)
 	{
 		return new MaxFeretDiameter3D().analyzeRegions(image, labels, calib);

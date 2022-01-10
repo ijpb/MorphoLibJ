@@ -225,16 +225,33 @@ public class GeodesicDiameter extends RegionAnalyzer2D<GeodesicDiameter.Result>
 	// ==================================================
 	// Setters/Getters
 	
+	/**
+	 * Returns the value of the computePaths option.
+	 * 
+	 * @return the value of the computePaths option.
+	 */
 	public boolean getComputePaths()
 	{
 		return this.computePaths;
 	}
 	
+	/**
+	 * Updates the value of the computePahs option.
+	 * 
+	 * @param bool
+	 *            the new value of the computePahs option.
+	 */
 	public void setComputePaths(boolean bool)
 	{
 		this.computePaths = bool;
 	}
 
+	/**
+	 * Updates the value of weights.
+	 * 
+	 * @param weights
+	 *            the new value of the weights.
+	 */
 	@Deprecated
 	public void setChamferWeights(float[] weights)
 	{

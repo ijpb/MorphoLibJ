@@ -23,6 +23,17 @@ public class BinaryConfigurationsHistogram3D extends AlgoStub
     // ==================================================
     // Static methods
 
+	/**
+	 * Applies look-up-table of values for each configuration, based on the
+	 * array of count for each binary configuration.
+	 * 
+	 * @param histogram
+	 *            the count of each type of 2-by-2-by-2 binary configurations,
+	 *            as a 256 array
+	 * @param lut
+	 *            the value to associate to each configuration
+	 * @return the sum of the products of counts by the associated value
+	 */
     public static final double applyLut(int[] histogram, double[] lut)
     {
         double sum = 0;
@@ -33,6 +44,17 @@ public class BinaryConfigurationsHistogram3D extends AlgoStub
         return sum;
     }
 
+	/**
+	 * Applies look-up-table of values for each configuration of each region,
+	 * based on the array of count for each binary configuration.
+	 * 
+	 * @param histograms
+	 *            the count of each type of 2-by-2-by-2 binary configurations,
+	 *            as a 256 array
+	 * @param lut
+	 *            the value to associate to each configuration
+	 * @return the sum of the products of counts by the associated value
+	 */
     public static final double[] applyLut(int[][] histograms, double[] lut)
     {
         double[] sums = new double[histograms.length];
@@ -145,11 +167,13 @@ public class BinaryConfigurationsHistogram3D extends AlgoStub
 
     /**
      * Applies a look-up-table for each of the 2x2x2 voxel configurations
-     * containing at least one voxel of the input binary image, and returns the
+     * with all voxels within the input binary image, and returns the
      * sum of contributions for each label.
      * 
      * This method is used for computing densities of Euler number, surface area
      * and mean breadth from binary images.
+     * 
+     * @see #process(ImageStack)
      * 
      * @param image
      *            the input 3D binary image
@@ -242,12 +266,12 @@ public class BinaryConfigurationsHistogram3D extends AlgoStub
      * 
      * This method is used for computing Euler number and surface area.
      * 
+     * @see #processInnerFrame(ImageStack)
+     * 
      * @param image
      *            the input 3D image of labels
      * @param labels
      *            the set of labels to process
-     * @param image
-     *            the input 3D binary image
      * @return an array of nLabels-by-256 integers containing the number of
      *         binary configurations for each label
      */

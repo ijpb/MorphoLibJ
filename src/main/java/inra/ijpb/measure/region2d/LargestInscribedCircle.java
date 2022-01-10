@@ -17,6 +17,8 @@ import inra.ijpb.geometry.Circle2D;
  * Computes the largest inscribed circle for each region of a label or binary
  * image.
  * 
+ * @see inra.ijpb.measure.region3d.LargestInscribedBall
+ * 
  * @author dlegland
  *
  */
@@ -46,7 +48,10 @@ public class LargestInscribedCircle extends RegionAnalyzer2D<Circle2D>
 	// ==================================================
 	// Constructors
 	
-	public LargestInscribedCircle()
+	/**
+     * Default empty constructor.
+     */
+    public LargestInscribedCircle()
 	{
 	}
 

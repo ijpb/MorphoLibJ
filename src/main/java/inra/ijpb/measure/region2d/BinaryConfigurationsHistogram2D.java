@@ -24,6 +24,17 @@ public class BinaryConfigurationsHistogram2D extends AlgoStub
     // ==================================================
     // Static methods
 
+	/**
+	 * Applies look-up-table of values for each configuration, based on the
+	 * array of count for each binary configuration.
+	 * 
+	 * @param histogram
+	 *            the count of each type of 2-by-2 binary configurations, as an
+	 *            array
+	 * @param lut
+	 *            the value to associate to each configuration
+	 * @return the sum of the products of counts by the associated value
+	 */
     public static final double applyLut(int[] histogram, double[] lut)
     {
         double sum = 0;
@@ -34,6 +45,17 @@ public class BinaryConfigurationsHistogram2D extends AlgoStub
         return sum;
     }
 
+	/**
+	 * Applies look-up-table of values for each configuration, based on the
+	 * array of count for each binary configuration.
+	 * 
+	 * @param histogram
+	 *            the count of each type of 2-by-2 binary configurations, as an
+	 *            array
+	 * @param lut
+	 *            the value to associate to each configuration
+	 * @return the sum of the products of counts by the associated value
+	 */
     public static final int applyLut(int[] histogram, int[] lut)
     {
         int sum = 0;
@@ -44,6 +66,18 @@ public class BinaryConfigurationsHistogram2D extends AlgoStub
         return sum;
     }
 
+	/**
+	 * Applies look-up-table of values for each configuration for each label,
+	 * based on the 16-array of count for each binary configuration.
+	 * 
+	 * @param histograms
+	 *            the count of each type of 2-by-2 binary configuration of each
+	 *            label, as a nLabels-by-16 array
+	 * @param lut
+	 *            the value to associate to each configuration
+	 * @return the sum of the products of counts by the associated value for
+	 *         each label
+	 */
     public static final double[] applyLut(int[][] histograms, double[] lut)
     {
         double[] sums = new double[histograms.length];
@@ -54,6 +88,18 @@ public class BinaryConfigurationsHistogram2D extends AlgoStub
         return sums;
     }
 
+	/**
+	 * Applies look-up-table of values for each configuration for each label,
+	 * based on the 16-array of count for each binary configuration.
+	 * 
+	 * @param histograms
+	 *            the count of each type of 2-by-2 binary configuration of each
+	 *            label, as a nLabels-by-16 array
+	 * @param lut
+	 *            the value to associate to each configuration
+	 * @return the sum of the products of counts by the associated value for
+	 *         each label
+	 */
     public static final int[] applyLut(int[][] histograms, int[] lut)
     {
         int[] sums = new int[histograms.length];
@@ -69,7 +115,7 @@ public class BinaryConfigurationsHistogram2D extends AlgoStub
     // Constructors
 
     /**
-     * Empty constructor.
+     * Default empty constructor.
      */
     public BinaryConfigurationsHistogram2D()
     {
@@ -86,6 +132,8 @@ public class BinaryConfigurationsHistogram2D extends AlgoStub
      * Takes into account the border of the image: histogram considers all the
      * 2-by-2 configurations that contain at least one pixel of the image.
      * 
+	 * @see #processInnerFrame(ImageProcessor)
+	 * 
      * @param binaryImage
      *            the input image containing the region the analyze
      * @return an array of integers containing the 16-elements histogram of
@@ -137,6 +185,21 @@ public class BinaryConfigurationsHistogram2D extends AlgoStub
         return histogram;
     }
 
+	/**
+	 * Applies a look-up-table for each of the 2x2 pixel configurations
+	 * with all pixels within the input binary image, and returns the
+	 * sum of contributions for each label.
+	 * 
+	 * This method is used for computing densities of Euler number, perimeter
+	 * and area from binary images.
+	 * 
+	 * @see #process(ImageProcessor)
+	 * 
+	 * @param binaryImage
+	 *            the input 2D binary image
+	 * @return an array of 16 integers containing the number of each binary
+	 *         configurations
+	 */
     public int[] processInnerFrame(ImageProcessor binaryImage)
     {
         // initialize result
