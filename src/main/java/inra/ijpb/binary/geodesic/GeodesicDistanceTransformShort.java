@@ -45,8 +45,14 @@ public class GeodesicDistanceTransformShort extends AlgoStub implements Geodesic
 	// ==================================================
 	// Class variables
 	
+	/**
+	 * The value used to initialize the distance map.
+	 */
 	public static final short MAX_DIST = Short.MAX_VALUE;
 	
+	/**
+	 * The value associated to the background in the result image.
+	 */
 	public static final short BACKGROUND = 0;
 	
 	/**
@@ -64,23 +70,55 @@ public class GeodesicDistanceTransformShort extends AlgoStub implements Geodesic
 	// ==================================================
 	// Constructors 
 	
+	/**
+	 * Creates a new algorithm for propagating geodesic distances.
+	 * 
+	 * @param mask
+	 *            the chamfer mask to use for propagating distances
+	 */
 	public GeodesicDistanceTransformShort(ChamferMask2D mask) 
 	{
 		this.mask = mask;
 	}
 	
-	@Deprecated
-	public GeodesicDistanceTransformShort(short[] weights) 
-	{
-		this.mask = ChamferMask2D.fromWeights(weights);
-	}
-
+	/**
+	 * Creates a new algorithm for propagating geodesic distances.
+	 * 
+	 * @param mask
+	 *            the chamfer mask to use for propagating distances
+	 * @param normalizeMap
+	 *            the flag for normalization
+	 */
 	public GeodesicDistanceTransformShort(ChamferMask2D mask, boolean normalizeMap) 
 	{
 		this.mask = mask;
 		this.normalizeMap = normalizeMap;
 	}
 
+	/**
+	 * Creates a new algorithm for propagating geodesic distances.
+	 * 
+	 * @param weights
+	 *            the weights to use for propagating distances
+	 *            
+	 * @deprecated should use an instance of ChamferMask2D at construction
+	 */
+	@Deprecated
+	public GeodesicDistanceTransformShort(short[] weights) 
+	{
+		this.mask = ChamferMask2D.fromWeights(weights);
+	}
+
+	/**
+	 * Creates a new algorithm for propagating geodesic distances.
+	 * 
+	 * @param weights
+	 *            the weights to use for propagating distances
+	 * @param normalizeMap
+	 *            the flag for normalization
+	 *            
+	 * @deprecated should use an instance of ChamferMask2D at construction
+	 */
 	@Deprecated
 	public GeodesicDistanceTransformShort(short[] weights, boolean normalizeMap) 
 	{

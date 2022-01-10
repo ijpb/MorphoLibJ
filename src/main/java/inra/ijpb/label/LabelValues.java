@@ -741,44 +741,88 @@ public class LabelValues
 		return posMax;
 	}
 
+	/**
+	 * Inner class for storing a value associated to a 2D position.
+	 */
 	public static class PositionValuePair
 	{
 		Point position;
 		double value;
 		
+		/**
+		 * Creates a new PositionValuePair instance based on a position and a
+		 * value.
+		 * 
+		 * @param position
+		 *            the position of the pixel
+		 * @param value
+		 *            the value of the pixel
+		 */
 		public PositionValuePair(Point position, double value)
 		{
 			this.position = position;
 			this.value = value;
 		}
 		
+		/**
+		 * Returns the position of the pixel.
+		 * 
+		 * @return the position of the pixel.
+		 */
 		public Point getPosition()
 		{
 			return position;
 		}
 		
+		/**
+		 * Returns the value of the pixel.
+		 * 
+		 * @return the value of the pixel.
+		 */
 		public double getValue()
 		{
 			return value;
 		}
 	}
 
+	/**
+	 * Inner class for storing a value associated to a 3D position.
+	 */
 	public static class Position3DValuePair
 	{
 		Cursor3D position;
 		double value;
 		
+		/**
+		 * Creates a new Position3DValuePair instance based on a position and a
+		 * value.
+		 * 
+		 * @param position
+		 *            the 3D position of the voxel
+		 * @param value
+		 *            the value of the voxel
+		 */
 		public Position3DValuePair(Cursor3D position, double value)
 		{
 			this.position = position;
 			this.value = value;
 		}
 		
+		/**
+		 * Returns the position of the voxel.
+		 * 
+		 * @return the position of the voxel.
+		 */
 		public Cursor3D getPosition()
 		{
 			return position;
 		}
 		
+		/**
+		 * Returns the value of the voxel.
+		 * 
+		 * @return the value of the voxel.
+		 */
 		public double getValue()
 		{
 			return value;

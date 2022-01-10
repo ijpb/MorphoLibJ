@@ -43,6 +43,12 @@ public class ChamferMask3DW3 extends ChamferMask3D
 		this.c = (short) w2;
 	}
 
+	/**
+	 * Creates a new ChamferMask3D object by specifying the weights
+	 * associated to orthogonal and diagonal neighbors.
+	 * 
+	 * @param weights the weights associated to the different types of offset
+	 */	
 	public ChamferMask3DW3(short[] weights)
 	{
 		if (weights.length != 3)

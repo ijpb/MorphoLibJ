@@ -63,7 +63,15 @@ public class ImageJSkeleton extends AlgoStub
     public ImageJSkeleton()
     {
     }
-
+    
+    /**
+	 * Computes the skeleton of the region within the binary image and returns
+	 * the result in a new ImageProcessor.
+	 * 
+	 * @param image
+	 *            the binary image to process
+	 * @return the result of skeleton computation
+	 */
     public ImageProcessor process(ImageProcessor image)
     {
        

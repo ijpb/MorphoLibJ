@@ -88,6 +88,9 @@ public enum ChamferMasks2D
 		this.mask = mask;
 	}
 
+	/**
+	 * @return the chamfer mask associated to this enumeration entry 
+	 */
 	public ChamferMask2D getMask()
 	{
 		return this.mask;
@@ -98,6 +101,9 @@ public enum ChamferMasks2D
 		return this.label;
 	}
 
+	/**
+	 * @return the array of labels for this enumeration
+	 */
 	public static String[] getAllLabels()
 	{
 		int n = ChamferMasks2D.values().length;

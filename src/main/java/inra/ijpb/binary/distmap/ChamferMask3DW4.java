@@ -53,6 +53,14 @@ public class ChamferMask3DW4 extends ChamferMask3D
 		this.e = (short) e;
 	}
 
+	/**
+	 * Creates a new ChamferWeights3D object by specifying the four weights
+	 * associated to the four different kind of offsets. 
+	 * Notations are from Svensson and Borgefors.
+	 * 
+	 * @param weights
+	 *            the weight associated to the four different kind of offsets.
+	 */
 	public ChamferMask3DW4(short[] weights)
 	{
 		if (weights.length != 4)

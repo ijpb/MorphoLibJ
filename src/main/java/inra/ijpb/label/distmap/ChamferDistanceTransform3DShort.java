@@ -13,12 +13,14 @@ import inra.ijpb.data.image.Image3D;
 import inra.ijpb.data.image.Images3D;
 
 /**
- * Computes 3D distance transform using the chamfer weights provided by a
- * ChamferWeights3D object, and using 16-bits integer computation.
+ * Computes 3D distance transform on binary images using the chamfer weights
+ * provided by a ChamferWeights3D object, and using 16-bits integer computation.
  * 
  * This version works also for label images. The implementation is a little bit
  * different compared to the version for binary images, in particular, it makes
  * use of the "Image3D" interface.
+ * 
+ * @see inra.ijpb.binary.distmap.ChamferDistanceTransform3DShort
  * 
  * @author David Legland
  * 
@@ -44,14 +46,31 @@ public class ChamferDistanceTransform3DShort extends AlgoStub implements Distanc
 	// ==================================================
 	// Constructors 
 	
-	public ChamferDistanceTransform3DShort(ChamferMask3D chamferMask)
+	/**
+	 * Creates a new algorithm for computing 3D distance maps on label images
+	 * based on a chamfer mask. Use normalization of resulting distance map.
+	 * 
+	 * @param mask
+	 *            the chamfer mask used for propagating distances
+	 */
+	public ChamferDistanceTransform3DShort(ChamferMask3D mask)
 	{
-		this.chamferWeights = chamferMask;
+		this.chamferWeights = mask;
 	}
 	
-	public ChamferDistanceTransform3DShort(ChamferMask3D chamferMask, boolean normalize)
+	/**
+	 * Creates a new algorithm for computing 3D distance maps on label images
+	 * based on a chamfer mask.
+	 * 
+	 * @param mask
+	 *            the chamfer mask to use for propagating distances
+	 * @param normalize
+	 *            whether distance map should be normalized by the weight
+	 *            associated to orthogonal shifts
+	 */
+	public ChamferDistanceTransform3DShort(ChamferMask3D mask, boolean normalize)
 	{
-		this.chamferWeights = chamferMask;
+		this.chamferWeights = mask;
 		this.normalize = normalize;
 	}
 	

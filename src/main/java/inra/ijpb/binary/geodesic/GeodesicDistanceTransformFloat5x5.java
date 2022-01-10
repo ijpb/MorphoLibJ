@@ -41,6 +41,10 @@ public class GeodesicDistanceTransformFloat5x5 extends AlgoStub implements
 	// ==================================================
 	// Class variables
 	
+	/**
+	 * The value used to initialize the distance map, corresponding to positive
+	 * infinity.
+	 */
 	public static final float MAX_DIST = Float.POSITIVE_INFINITY;
 	
 	float[] weights = new float[]{5, 7, 11};
@@ -67,20 +71,45 @@ public class GeodesicDistanceTransformFloat5x5 extends AlgoStub implements
 	// ==================================================
 	// Constructors 
 	
+	/**
+	 * Creates a new algorithm for propagating geodesic distances.
+	 */
 	public GeodesicDistanceTransformFloat5x5()
 	{
 	}
 	
+	/**
+	 * Creates a new algorithm for propagating geodesic distances.
+	 * 
+	 * @param weights
+	 *            the weights to use for propagating distances
+	 */
 	public GeodesicDistanceTransformFloat5x5(float[] weights)
 	{
 		this(weights, true);
 	}
 
+	/**
+	 * Creates a new algorithm for propagating geodesic distances.
+	 * 
+	 * @param weights
+	 *            the weights to use for propagating distances
+	 * @param normalizeMap
+	 *            the flag for normalization
+	 */
 	public GeodesicDistanceTransformFloat5x5(ChamferWeights weights, boolean normalizeMap) 
 	{
 		this(weights.getFloatWeights(), normalizeMap);
 	}
 
+	/**
+	 * Creates a new algorithm for propagating geodesic distances.
+	 * 
+	 * @param weights
+	 *            the weights to use for propagating distances
+	 * @param normalizeMap
+	 *            the flag for normalization
+	 */
 	public GeodesicDistanceTransformFloat5x5(float[] weights, boolean normalizeMap) 
 	{
 		this.weights = weights;

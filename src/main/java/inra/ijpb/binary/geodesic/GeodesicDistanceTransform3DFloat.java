@@ -66,12 +66,40 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 	// ==================================================
 	// Constructors
 	
+	/**
+	 * Creates a new algorithm for propagating geodesic distances.
+	 * 
+	 * @param mask
+	 *            the chamfer mask to use for propagating distances
+	 * @param normalizeMap
+	 *            the flag for normalization
+	 */
+	public GeodesicDistanceTransform3DFloat(ChamferMask3D mask, boolean normalizeMap)
+	{
+		this.chamferMask = mask;
+		this.normalizeMap = normalizeMap;
+	}
+
+	/**
+	 * Creates a new algorithm.
+	 * 
+	 * @param weights
+	 *            the weights to use for propagating distances
+	 */
 	@Deprecated
 	public GeodesicDistanceTransform3DFloat(float[] weights)
 	{
 		this.chamferMask = ChamferMask3D.fromWeights(weights);
 	}
 
+	/**
+	 * Creates a new algorithm.
+	 * 
+	 * @param weights
+	 *            the weights to use for propagating distances
+	 * @param normalizeMap
+	 *            the flag for normalization
+	 */
 	@Deprecated
 	public GeodesicDistanceTransform3DFloat(float[] weights, boolean normalizeMap)
 	{
@@ -79,12 +107,14 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 		this.normalizeMap = normalizeMap;
 	}
 
-	public GeodesicDistanceTransform3DFloat(ChamferMask3D chamferMask, boolean normalizeMap)
-	{
-		this.chamferMask = chamferMask;
-		this.normalizeMap = normalizeMap;
-	}
-
+	/**
+	 * Creates a new algorithm for propagating geodesic distances.
+	 * 
+	 * @param weights
+	 *            the chamfer mask to use for propagating distances
+	 * @param normalizeMap
+	 *            the flag for normalization
+	 */
 	@Deprecated
 	public GeodesicDistanceTransform3DFloat(inra.ijpb.binary.ChamferWeights3D weights, boolean normalizeMap)
 	{

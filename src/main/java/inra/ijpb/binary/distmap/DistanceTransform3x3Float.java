@@ -47,7 +47,7 @@ import inra.ijpb.label.LabelValues;
  * @see inra.ijpb.binary.distmap.DistanceTransform
  * @see inra.ijpb.binary.distmap.DistanceTransform3x3Short
  * 
- * @deprecated replaced by ChamferDistanceTransform2DFloat (since 1.4.4)
+ * @deprecated replaced by ChamferDistanceTransform2DFloat (since 1.5.0)
  *  
  * @author David Legland
  */

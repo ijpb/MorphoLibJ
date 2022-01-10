@@ -45,7 +45,7 @@ import java.util.Collection;
  * ImageStack result = dt.distanceMap(inputStack);
  * </code></pre>
  *
- * @deprecated replaced by inra.ijpb.binary.distmap.ChamferMask2D (since 1.4.4)
+ * @deprecated replaced by inra.ijpb.binary.distmap.ChamferMask2D (since 1.5.0)
  * 
  * @see BinaryImages#distanceMap(ij.ImageStack)
  * @see inra.ijpb.binary.distmap.DistanceTransform3D
@@ -102,21 +102,33 @@ public enum ChamferWeights3D
 		this.floatWeights = floatWeights;
 	}
 
+	/**
+	 * @return the weights as shorts
+	 */
 	public short[] getShortWeights()
 	{
 		return this.shortWeights;
 	}
 
+	/**
+	 * @return the weights as floats
+	 */
 	public float[] getFloatWeights()
 	{
 		return this.floatWeights;
 	}
 
+	/**
+	 * @return the label associated to this chamfer weight
+	 */
 	public String toString()
 	{
 		return this.label;
 	}
 
+	/**
+	 * @return all the chamfer weights labels
+	 */
 	public static String[] getAllLabels()
 	{
 		int n = ChamferWeights3D.values().length;
@@ -462,13 +474,33 @@ public enum ChamferWeights3D
 		return offsets;
 	}
 
+	/**
+	 * The class for storing Chamfer offsets using integer weights.
+	 */
+	@Deprecated
 	public static class ShortOffset
 	{
+		/** the offset along the X-axis */
 		public final int dx;
+		/** the offset along the Y-axis */
 		public final int dy;
+		/** the offset along the Z-axis */
 		public final int dz;
+		/** the weight associated to this offset */
 		public final short weight;
 
+		/**
+		 * Creates a new offset for integer computations.
+		 * 
+		 * @param dx
+		 *            the offset along the X-axis
+		 * @param dy
+		 *            the offset along the Y-axis
+		 * @param dz
+		 *            the offset along the Z-axis
+		 * @param weight
+		 *            the weight associated to this offset
+		 */
 		public ShortOffset(int dx, int dy, int dz, short weight)
 		{
 			this.dx = dx;
@@ -478,13 +510,33 @@ public enum ChamferWeights3D
 		}
 	}
 
+	/**
+	 * The class for storing Chamfer offsets using floating-point weights.
+	 */
+	@Deprecated
 	public static class FloatOffset
 	{
+		/** the offset along the X-axis */
 		public final int dx;
+		/** the offset along the Y-axis */
 		public final int dy;
+		/** the offset along the Z-axis */
 		public final int dz;
+		/** the weight associated to this offset */
 		public final float weight;
 
+		/**
+		 * Creates a new offset for floating point computations.
+		 * 
+		 * @param dx
+		 *            the offset along the X-axis
+		 * @param dy
+		 *            the offset along the Y-axis
+		 * @param dz
+		 *            the offset along the Z-axis
+		 * @param weight
+		 *            the weight associated to this offset
+		 */
 		public FloatOffset(int dx, int dy, int dz, float weight)
 		{
 			this.dx = dx;

@@ -43,7 +43,7 @@ package inra.ijpb.binary;
  *	ImagePlus resultPlus = BinaryImages.distanceMap(imagePlus, shortWeights, normalize);
  * </code></pre>
  * 
- * @deprecated replaced by inra.ijpb.binary.distmap.ChamferMask2D (since 1.4.4)
+ * @deprecated replaced by inra.ijpb.binary.distmap.ChamferMask2D (since 1.5.0)
  * 
  * @see inra.ijpb.binary.BinaryImages#distanceMap(ij.process.ImageProcessor, short[], boolean)
  * @see inra.ijpb.binary.BinaryImages#distanceMap(ij.process.ImageProcessor, float[], boolean)
@@ -99,21 +99,33 @@ public enum ChamferWeights
 		this.floatWeights = floatWeights;
 	}
 
+	/**
+	 * @return the weights as shorts
+	 */
 	public short[] getShortWeights()
 	{
 		return this.shortWeights;
 	}
 
+	/**
+	 * @return the weights as floats
+	 */
 	public float[] getFloatWeights()
 	{
 		return this.floatWeights;
 	}
 
+	/**
+	 * @return the label associated to this chamfer weight
+	 */
 	public String toString()
 	{
 		return this.label;
 	}
 
+	/**
+	 * @return all the chamfer weights labels
+	 */
 	public static String[] getAllLabels()
 	{
 		int n = ChamferWeights.values().length;

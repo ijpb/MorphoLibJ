@@ -37,7 +37,7 @@ import inra.ijpb.binary.ChamferWeights;
  * @see inra.ijpb.binary.ChamferWeights3D
  * @see inra.ijpb.label.distmap.LabelDilation3D4WShort
  * 
- * @deprecated replaced by LabelDilation2DShort (since 1.4.4)
+ * @deprecated replaced by LabelDilation2DShort (since 1.5.0)
  * 
  */
 @Deprecated
@@ -52,11 +52,21 @@ public class LabelDilationShort5x5 extends AlgoStub
 	// ==================================================
 	// Constructors 
 	
+	/**
+	 * Creates a new LabelDilation operator.
+	 * 
+	 * @param weights the weights to use for dilation
+	 */
 	public LabelDilationShort5x5(ChamferWeights weights) 
 	{
 		this(weights.getShortWeights());
 	}
 
+	/**
+	 * Creates a new LabelDilation operator.
+	 * 
+	 * @param weights the weights to use for dilation
+	 */
 	public LabelDilationShort5x5(short[] weights) 
 	{
 		this.weights = weights;

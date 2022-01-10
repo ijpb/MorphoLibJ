@@ -42,7 +42,15 @@ public class GeodesicDistanceTransformFloat extends AlgoStub implements
 	// ==================================================
 	// Class variables
 	
+	/**
+	 * The value used to initialize the distance map, corresponding to positive
+	 * infinity.
+	 */
 	public static final float MAX_DIST = Float.POSITIVE_INFINITY;
+	
+	/**
+	 * The value associated to the background in the result image.
+	 */
 	public static final float BACKGROUND = Float.NaN;
 	
 	/**
@@ -60,23 +68,51 @@ public class GeodesicDistanceTransformFloat extends AlgoStub implements
 	// ==================================================
 	// Constructors 
 	
+	/**
+	 * Creates a new algorithm for propagating geodesic distances.
+	 * 
+	 * @param mask
+	 *            the chamfer mask to use for propagating distances
+	 */
 	public GeodesicDistanceTransformFloat(ChamferMask2D mask)
 	{
 		this.mask = mask;
 	}
 
-	@Deprecated
-	public GeodesicDistanceTransformFloat(float[] weights)
-	{
-		this.mask = ChamferMask2D.fromWeights(weights);
-	}
-
+	/**
+	 * Creates a new algorithm for propagating geodesic distances.
+	 * 
+	 * @param mask
+	 *            the chamfer mask to use for propagating distances
+	 * @param normalizeMap
+	 *            the flag for normalization
+	 */
 	public GeodesicDistanceTransformFloat(ChamferMask2D mask, boolean normalizeMap)
 	{
 		this.mask = mask;
 		this.normalizeMap = normalizeMap;
 	}
 
+	/**
+	 * Creates a new algorithm.
+	 * 
+	 * @param weights
+	 *            the weights to use for propagating distances
+	 */
+	@Deprecated
+	public GeodesicDistanceTransformFloat(float[] weights)
+	{
+		this.mask = ChamferMask2D.fromWeights(weights);
+	}
+
+	/**
+	 * Creates a new algorithm.
+	 * 
+	 * @param weights
+	 *            the weights to use for propagating distances
+	 * @param normalizeMap
+	 *            the flag for normalization
+	 */
 	@Deprecated
 	public GeodesicDistanceTransformFloat(float[] weights, boolean normalizeMap)
 	{

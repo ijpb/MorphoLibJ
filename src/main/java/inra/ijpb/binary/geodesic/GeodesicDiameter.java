@@ -50,5 +50,12 @@ import inra.ijpb.algo.Algo;
 @Deprecated
 public interface GeodesicDiameter extends Algo
 {
+	/**
+	 * computes geodesic diameter for each region of the input image.
+	 * 
+	 * @param labelImage
+	 *            the label image containing regions.
+	 * @return a ResultsTable containing the geodesic diameter of each region.
+	 */
 	public abstract ResultsTable analyzeImage(ImageProcessor labelImage);
 }

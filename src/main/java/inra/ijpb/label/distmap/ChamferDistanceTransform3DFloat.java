@@ -21,6 +21,8 @@ import inra.ijpb.data.image.Images3D;
  * different compared to the version for binary images, in particular, it makes
  * use of the "Image3D" interface.
  * 
+ * @see inra.ijpb.binary.distmap.ChamferDistanceTransform3DFloat
+ * 
  * @author David Legland
  * 
  */
@@ -30,7 +32,7 @@ public class ChamferDistanceTransform3DFloat extends AlgoStub implements Distanc
 	// Class variables
 
 	/**
-	 * The chamfer weights used to propagate distances to neighbor voxels.
+	 * The chamfer mask used to propagate distances to neighbor voxels.
 	 */
 	ChamferMask3D chamferMask;
 	
@@ -45,14 +47,31 @@ public class ChamferDistanceTransform3DFloat extends AlgoStub implements Distanc
 	// ==================================================
 	// Constructors 
 	
-	public ChamferDistanceTransform3DFloat(ChamferMask3D chamferMask)
+	/**
+	 * Creates a new algorithm for computing 3D distance maps on label images
+	 * based on a chamfer mask. Use normalization of resulting distance map.
+	 * 
+	 * @param mask
+	 *            the chamfer mask used for propagating distances
+	 */
+	public ChamferDistanceTransform3DFloat(ChamferMask3D mask)
 	{
-		this.chamferMask = chamferMask;
+		this.chamferMask = mask;
 	}
 	
-	public ChamferDistanceTransform3DFloat(ChamferMask3D chamferMask, boolean normalize)
+	/**
+	 * Creates a new algorithm for computing 3D distance maps on label images
+	 * based on a chamfer mask.
+	 * 
+	 * @param mask
+	 *            the chamfer mask to use for propagating distances
+	 * @param normalize
+	 *            whether distance map should be normalized by the weight
+	 *            associated to orthogonal shifts
+	 */
+	public ChamferDistanceTransform3DFloat(ChamferMask3D mask, boolean normalize)
 	{
-		this.chamferMask = chamferMask;
+		this.chamferMask = mask;
 		this.normalize = normalize;
 	}
 	

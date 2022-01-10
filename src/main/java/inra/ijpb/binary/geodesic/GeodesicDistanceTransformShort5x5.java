@@ -37,7 +37,7 @@ import inra.ijpb.binary.ChamferWeights;
  * 
  * @author David Legland
  * 
- * @deprecated replaced by GeodesicDistanceTransformShort (since 1.4.4)
+ * @deprecated replaced by GeodesicDistanceTransformShort (since 1.5.0)
  */
 @Deprecated
 public class GeodesicDistanceTransformShort5x5 extends AlgoStub implements GeodesicDistanceTransform 
@@ -45,6 +45,9 @@ public class GeodesicDistanceTransformShort5x5 extends AlgoStub implements Geode
 	// ==================================================
 	// Class variables
 	
+	/**
+	 * The value used to initialize the distance map.
+	 */
 	public static final short MAX_DIST = Short.MAX_VALUE;
 	
 	short[] weights = new short[]{5, 7, 11};
@@ -71,16 +74,38 @@ public class GeodesicDistanceTransformShort5x5 extends AlgoStub implements Geode
 	// ==================================================
 	// Constructors 
 	
+	/**
+	 * Creates a new algorithm for propagating geodesic distances.
+	 * 
+	 * @param weights
+	 *            the weights to use for propagating distances
+	 */
 	public GeodesicDistanceTransformShort5x5(short[] weights)
 	{
 		this(weights, true);
 	}
 
+	/**
+	 * Creates a new algorithm for propagating geodesic distances.
+	 * 
+	 * @param weights
+	 *            the weights to use for propagating distances
+	 * @param normalizeMap
+	 *            the flag for normalization
+	 */
 	public GeodesicDistanceTransformShort5x5(ChamferWeights weights, boolean normalizeMap) 
 	{
 		this(weights.getShortWeights(), normalizeMap);
 	}
 
+	/**
+	 * Creates a new algorithm for propagating geodesic distances.
+	 * 
+	 * @param weights
+	 *            the weights to use for propagating distances
+	 * @param normalizeMap
+	 *            the flag for normalization
+	 */
 	public GeodesicDistanceTransformShort5x5(short[] weights, boolean normalizeMap) 
 	{
 		this.weights = weights;

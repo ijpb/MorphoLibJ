@@ -52,11 +52,28 @@ public class ChamferDistanceTransform2DShort extends AlgoStub implements Chamfer
 	// ==================================================
 	// Constructors 
 	
+	/**
+	 * Creates a new algorithm for computing distance maps based on a chamfer
+	 * mask.
+	 * 
+	 * @param mask
+	 *            the chamfer mask to use for propagating distances
+	 */
 	public ChamferDistanceTransform2DShort(ChamferMask2D mask)
 	{
 		this.mask = mask;
 	}
 	
+	/**
+	 * Creates a new algorithm for computing distance maps based on a chamfer
+	 * mask.
+	 * 
+	 * @param mask
+	 *            the chamfer mask to use for propagating distances
+	 * @param normalize
+	 *            whether distance map should be normalized by the weight
+	 *            associated to orthogonal shifts
+	 */
 	public ChamferDistanceTransform2DShort(ChamferMask2D mask, boolean normalize)
 	{
 		this.mask = mask;

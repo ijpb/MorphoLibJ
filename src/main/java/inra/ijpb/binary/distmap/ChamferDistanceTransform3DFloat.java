@@ -13,8 +13,9 @@ import inra.ijpb.binary.distmap.ChamferMask3D.FloatOffset;
 import inra.ijpb.data.image.Images3D;
 
 /**
- * Computes 3D distance transform using the chamfer weights provided by a
- * ChamferMask3D object, and using 32-bits floating-point computation.
+ * Computes 3D distance transform on binary images using the chamfer weights
+ * provided by a ChamferMask3D object, and using 32-bits floating-point
+ * computation.
  * 
  * @author David Legland
  * 
@@ -40,11 +41,28 @@ public class ChamferDistanceTransform3DFloat extends AlgoStub implements Chamfer
 	// ==================================================
 	// Constructors 
 	
+	/**
+	 * Creates a new algorithm for computing 3D distance maps on binary images
+	 * based on a chamfer mask.
+	 * 
+	 * @param mask
+	 *            the chamfer mask to use for propagating distances
+	 */
 	public ChamferDistanceTransform3DFloat(ChamferMask3D mask)
 	{
 		this.mask = mask;
 	}
 	
+	/**
+	 * Creates a new algorithm for computing 3D distance maps on binary images
+	 * based on a chamfer mask.
+	 * 
+	 * @param mask
+	 *            the chamfer mask to use for propagating distances
+	 * @param normalize
+	 *            whether distance map should be normalized by the weight
+	 *            associated to orthogonal shifts
+	 */
 	public ChamferDistanceTransform3DFloat(ChamferMask3D mask, boolean normalize)
 	{
 		this.mask = mask;

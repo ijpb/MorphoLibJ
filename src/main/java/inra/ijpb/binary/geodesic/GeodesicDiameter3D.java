@@ -45,5 +45,12 @@ import inra.ijpb.algo.Algo;
  */
 public interface GeodesicDiameter3D extends Algo
 {
+	/**
+	 * computes geodesic diameter for each region of the input image.
+	 * 
+	 * @param labelImage
+	 *            the label image containing regions.
+	 * @return a ResultsTable containing the geodesic diameter of each region.
+	 */
 	public abstract ResultsTable process(ImageStack labelImage);
 }

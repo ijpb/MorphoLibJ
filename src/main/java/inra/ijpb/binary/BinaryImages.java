@@ -500,6 +500,8 @@ public class BinaryImages
 	 *            the input binary image
 	 * @param chamferMask
 	 *            the chamfer mask used for propagating distances
+	 * @param floatingPoint
+	 * 		      indicates if the distane propagation should use floating point computation 
 	 * @param normalize
 	 *            indicates whether the resulting distance map should be
 	 *            normalized (divide distances by the first chamfer weight)
@@ -559,6 +561,17 @@ public class BinaryImages
 		return algo.distanceMap(image);
 	}
 	
+	/**
+	 * Computes the geodesic distance transform (or geodesic distance map) of a
+	 * binary image of marker, constrained to a binary mask. Returns the result
+	 * in a new instance of ImagePlus.
+	 * 
+	 * @param markerPlus
+	 *            the image containing the marker
+	 * @param maskPlus
+	 *            the image containing the marker
+	 * @return the geodesic distance map in a new ImagePlus
+	 */
 	public static final ImagePlus geodesicDistanceMap(ImagePlus markerPlus,
 			ImagePlus maskPlus)
 	{

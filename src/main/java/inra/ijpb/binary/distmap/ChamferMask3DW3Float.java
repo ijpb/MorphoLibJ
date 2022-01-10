@@ -21,9 +21,24 @@ import java.util.Collection;
  */
 public class ChamferMask3DW3Float extends ChamferMask3D
 {
+	/**
+	 * The offset weights used for integer computations.
+	 */
 	short[] shortWeights;
+	
+	/**
+	 * The offset weights used for floating-point computations.
+	 */
 	float[] floatWeights;
 
+	/**
+	 * Creates a new chamfer mask
+	 * 
+	 * @param shortWeights
+	 *            the offset weights used for integer computations
+	 * @param floatWeights
+	 *            the offset weights used for floating-point computations
+	 */
 	public ChamferMask3DW3Float(short[] shortWeights, float[] floatWeights)
 	{
 		if (shortWeights.length != 3)

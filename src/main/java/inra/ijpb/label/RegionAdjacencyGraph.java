@@ -228,9 +228,24 @@ public class RegionAdjacencyGraph
 	 */
 	public static final class LabelPair implements Comparable <LabelPair>
 	{
-		public int label1;
-		public int label2;
+		/**
+		 * The first label.
+		 */
 		
+		public final int label1;
+		/**
+		 * The second label.
+		 */
+		public final int label2;
+		
+		/**
+		 * Creates a new Label Pair.
+		 * 
+		 * @param label1
+		 *            the first label.
+		 * @param label2
+		 *            the second label.
+		 */
 		public LabelPair(int label1, int label2)
 		{
 			if (label1 < label2) 
@@ -247,16 +262,40 @@ public class RegionAdjacencyGraph
 		}
 
 		@Override
-		public int compareTo(LabelPair pair) {
+		public int compareTo(LabelPair pair) 
+		{
+			// first check if label1 is different 
 			if (this.label1 < pair.label1)
 				return -1;
 			if (this.label1 > pair.label1)
 				return +1;
+			// then check if label2 is different 
 			if (this.label2 < pair.label2)
 				return -1;
 			if (this.label2 > pair.label2)
 				return +1;
+			// if both labels are the same, the two pairs are equal 
 			return 0;
+		}
+
+		@Override
+		public int hashCode()
+		{
+			int hash = 31;
+			hash = hash * 17 + this.label1;
+			hash = hash * 17 + this.label2;
+			return hash;
+		}
+		
+		@Override
+		public boolean equals(Object obj)
+		{
+			if (obj instanceof LabelPair)
+			{
+				return false;
+			}
+			LabelPair that = (LabelPair) obj;
+			return this.label1 == that.label1 && this.label2 == that.label2; 
 		}
 	}
 }

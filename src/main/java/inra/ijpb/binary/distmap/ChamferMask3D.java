@@ -57,6 +57,25 @@ public abstract class ChamferMask3D
 	// ==================================================
 	// Static factories
 	
+	/**
+	 * Creates a new Chamfer mask from a list of weights.
+	 * 
+	 * The size of the chamfer mask depends on the length of the array:
+	 * <ul>
+	 * <li>single element: chamfer mask is 3-by-3-by-3, the element value corresponds
+	 * to the weight of orthogonal offsets</li>
+	 * <li>two elements: chamfer mask is 3-by-3-by-3, the second element corresponds
+	 * to the weight of square-diagonal offsets</li>
+	 * <li>three elements: chamfer mask is 3-by-3-by-3, the third element corresponds
+	 * to the weight of cube-diagonal offsets</li>
+	 * <li>four elements: chamfer mask is 5-by-5-by-5, the fourth element corresponds
+	 * to the weight of (1,1,2) offset and its permutations and symmetries </li>
+	 * </ul>
+	 * 
+	 * @param weights
+	 *            the list of weights used for building the chamfer mask
+	 * @return the chamfer mask corresponding to the weights
+	 */
 	public static final ChamferMask3D fromWeights(int[] weights)
 	{
 		if (weights.length == 1)
@@ -91,6 +110,25 @@ public abstract class ChamferMask3D
 		}
 	}
 	
+	/**
+	 * Creates a new Chamfer mask from a list of weights.
+	 * 
+	 * The size of the chamfer mask depends on the length of the array:
+	 * <ul>
+	 * <li>single element: chamfer mask is 3-by-3-by-3, the element value corresponds
+	 * to the weight of orthogonal offsets</li>
+	 * <li>two elements: chamfer mask is 3-by-3-by-3, the second element corresponds
+	 * to the weight of square-diagonal offsets</li>
+	 * <li>three elements: chamfer mask is 3-by-3-by-3, the third element corresponds
+	 * to the weight of cube-diagonal offsets</li>
+	 * <li>four elements: chamfer mask is 5-by-5-by-5, the fourth element corresponds
+	 * to the weight of (1,1,2) offset and its permutations and symmetries </li>
+	 * </ul>
+	 * 
+	 * @param weights
+	 *            the list of weights used for building the chamfer mask
+	 * @return the chamfer mask corresponding to the weights
+	 */
 	public static final ChamferMask3D fromWeights(short[] weights)
 	{
 		if (weights.length == 1)
@@ -125,6 +163,25 @@ public abstract class ChamferMask3D
 		}
 	}
 
+	/**
+	 * Creates a new Chamfer mask from a list of weights.
+	 * 
+	 * The size of the chamfer mask depends on the length of the array:
+	 * <ul>
+	 * <li>single element: chamfer mask is 3-by-3-by-3, the element value corresponds
+	 * to the weight of orthogonal offsets</li>
+	 * <li>two elements: chamfer mask is 3-by-3-by-3, the second element corresponds
+	 * to the weight of square-diagonal offsets</li>
+	 * <li>three elements: chamfer mask is 3-by-3-by-3, the third element corresponds
+	 * to the weight of cube-diagonal offsets</li>
+	 * <li>four elements: chamfer mask is 5-by-5-by-5, the fourth element corresponds
+	 * to the weight of (1,1,2) offset and its permutations and symmetries </li>
+	 * </ul>
+	 * 
+	 * @param weights
+	 *            the list of weights used for building the chamfer mask
+	 * @return the chamfer mask corresponding to the weights
+	 */
 	public static final ChamferMask3D fromWeights(float[] weights)
 	{
 		// compute integer version of floating point weights
@@ -243,11 +300,27 @@ public abstract class ChamferMask3D
 	 */
 	public static class ShortOffset
 	{
+		/** the offset along the X-axis */
 		public final int dx;
+		/** the offset along the Y-axis */
 		public final int dy;
+		/** the offset along the Z-axis */
 		public final int dz;
+		/** the weight associated to this offset */
 		public final short weight;
 
+		/**
+		 * Creates a new Offset using a 16-bits integer weight.
+		 * 
+		 * @param dx
+		 *            the offset along the X-axis
+		 * @param dy
+		 *            the offset along the Y-axis
+		 * @param dz
+		 *            the offset along the Z-axis
+		 * @param weight
+		 *            the weight of the offset
+		 */
 		public ShortOffset(int dx, int dy, int dz, short weight)
 		{
 			this.dx = dx;
@@ -263,11 +336,27 @@ public abstract class ChamferMask3D
 	 */
 	public static class FloatOffset
 	{
+		/** the offset along the X-axis */
 		public final int dx;
+		/** the offset along the Y-axis */
 		public final int dy;
+		/** the offset along the Z-axis */
 		public final int dz;
+		/** the weight associated to this offset */
 		public final float weight;
 
+		/**
+		 * Creates a new Offset using a floating point weight.
+		 * 
+		 * @param dx
+		 *            the offset along the X-axis
+		 * @param dy
+		 *            the offset along the Y-axis
+		 * @param dz
+		 *            the offset along the Z-axis
+		 * @param weight
+		 *            the weight of the offset
+		 */
 		public FloatOffset(int dx, int dy, int dz, float weight)
 		{
 			this.dx = dx;

@@ -32,7 +32,7 @@ import inra.ijpb.data.image.Images3D;
  * Computes Chamfer distances in a 3x3x3 neighborhood using floating point 
  * calculation.
  * 
- * @deprecated replaced by ChamferDistanceTransform3DFloat (since 1.4.4)
+ * @deprecated replaced by ChamferDistanceTransform3DFloat (since 1.5.0)
  *  
  * @author David Legland
  * 

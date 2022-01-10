@@ -25,14 +25,26 @@ public class LabelSizeFiltering extends AlgoStub
     int sizeLimit;
     
     /**
-     * Default constructor, specifying the operator and the size limit.
-     */
+	 * Default constructor, specifying the operator and the size limit.
+	 * 
+	 * @param operator
+	 *            the relational operator to use for filtering
+	 * @param sizeLimit
+	 *            the argument for the relation operator
+	 */
     public LabelSizeFiltering(RelationalOperator operator, int sizeLimit)
     {
         this.operator = operator;
         this.sizeLimit = sizeLimit;
     }
 
+    /**
+	 * Applies size filtering on the input image.
+	 * 
+	 * @param imagePlus
+	 *            the image to process
+	 * @return the filtered image
+	 */
     public ImagePlus process(ImagePlus imagePlus)
     {
         // initializations
@@ -53,6 +65,13 @@ public class LabelSizeFiltering extends AlgoStub
         return resultPlus;
     }
     
+    /**
+	 * Applies size filtering on the input 2D label image.
+	 * 
+	 * @param labelImage
+	 *            the image to process
+	 * @return the filtered image
+	 */
     public ImageProcessor process(ImageProcessor labelImage)
     {
         // compute area of each label
@@ -84,6 +103,13 @@ public class LabelSizeFiltering extends AlgoStub
         return result;
     }
 
+    /**
+	 * Applies size filtering on the input 3D label image.
+	 * 
+	 * @param labelImage
+	 *            the image to process
+	 * @return the filtered image
+	 */
     public ImageStack process(ImageStack labelImage)
     {
         // compute area of each label
