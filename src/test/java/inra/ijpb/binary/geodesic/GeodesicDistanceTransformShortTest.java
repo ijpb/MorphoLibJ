@@ -182,4 +182,45 @@ public class GeodesicDistanceTransformShortTest
 		assertEquals(251, map.get(190, 210));
 	}
 
-}
+
+	@Test
+	public void testGeodesicDistanceMap_Labels_Borgefors()
+	{
+		ImageProcessor labels = new ByteProcessor(12, 12);
+		for (int y = 0; y < 5; y++)
+		{
+			for (int x = 0; x < 5; x++)
+			{
+				labels.set(x + 1, y + 1, 3);
+				labels.set(x + 6, y + 1, 4);
+				labels.set(x + 1, y + 6, 5);
+				labels.set(x + 6, y + 6, 6);
+			}
+		}
+		ImageProcessor markers = new ByteProcessor(12, 12);
+		markers.set(1, 1, 255);
+		markers.set(6, 1, 255);
+		markers.set(1, 6, 255);
+		markers.set(6, 6, 255);
+		
+		// Compute map
+		GeodesicDistanceTransform algo = new GeodesicDistanceTransformShort(
+				ChamferMask2D.BORGEFORS, true);
+		ImageProcessor map = algo.geodesicDistanceMap(markers, labels);
+
+		// expect 0.0 at marker position
+		assertEquals(0, map.get(1, 1));
+		assertEquals(0, map.get(6, 1));
+		assertEquals(0, map.get(1, 6));
+		assertEquals(0, map.get(6, 6));
+		// expect 4*4/3 ~= 5.33 at square corners
+		assertEquals(5, map.get( 5,  5));
+		assertEquals(5, map.get(10,  5));
+		assertEquals(5, map.get( 5, 10));
+		assertEquals(5, map.get(10, 10));
+		// expect 0 in background
+		assertEquals(0, map.get( 0,  0));
+		assertEquals(0, map.get(11,  0));
+		assertEquals(0, map.get( 0, 11));
+		assertEquals(0, map.get(11, 11));
+	}}

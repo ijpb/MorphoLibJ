@@ -30,7 +30,6 @@ import org.junit.runners.Suite;
 	// generic classes
 	GeodesicDistanceTransformFloatTest.class,
 	GeodesicDistanceTransformShortTest.class,
-	GeodesicDiameter3DFloatTest.class,
 })
 public class AllTests {
   //nothing

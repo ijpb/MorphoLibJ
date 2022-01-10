@@ -2112,7 +2112,7 @@ public class LabelImages
 	}
 
 	/**
-	 * Computes the distance map from a 3D image of labels
+	 * Computes the 3D distance map from an image of labels.
 	 * 
 	 * Distance is computed for each label voxel, as the chamfer distance to the
 	 * nearest voxel with a different value.
@@ -2124,6 +2124,39 @@ public class LabelImages
 	public static final ImageStack distanceMap(ImageStack image)
 	{
 		DistanceTransform3D algo = new ChamferDistanceTransform3DFloat(ChamferMask3D.BORGEFORS);
+		return algo.distanceMap(image);
+	}
+	
+	/**
+	 * <p>
+	 * Computes the 3D distance map from an image of labels, by specifying
+	 * the chamfer mask and the normalization.
+	 * </p>
+	 * 
+	 * <p>
+	 * Distance is computed for each foreground (white) pixel, as the chamfer
+	 * distance to the nearest background (black) pixel. Result is given in a
+	 * new instance of FloatProcessor.
+	 * </p>
+	 * 
+	 * @param image
+	 *            the input binary or label image
+	 * @param mask
+	 *            the chamfer mask used to propagate distances
+	 * @param floatingPoint
+	 *            indicates if the computation should be performed using
+	 *            floating point computation
+	 * @param normalize
+	 *            indicates whether the resulting distance map should be
+	 *            normalized (divide distances by the first chamfer weight)
+	 * @return the distance map obtained after applying the distance transform
+	 */
+	public static final ImageStack distanceMap(ImageStack image,
+			ChamferMask3D mask, boolean floatingPoint, boolean normalize) 
+	{
+		DistanceTransform3D algo = floatingPoint 
+				? new ChamferDistanceTransform3DFloat(mask, normalize)
+				: new ChamferDistanceTransform3DShort(mask, normalize);
 		return algo.distanceMap(image);
 	}
 	

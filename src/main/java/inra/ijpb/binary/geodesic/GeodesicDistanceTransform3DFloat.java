@@ -31,15 +31,16 @@ import inra.ijpb.data.image.Image3D;
 import inra.ijpb.data.image.Images3D;
 
 /**
- * Computation of geodesic distance transform for 3D images, using floating point computation.
+ * Computation of geodesic distance transform for 3D images, using floating
+ * point computation.
+ * 
+ * Adapted for the management of label images.
  * 
  * @author dlegland
  *
  */
 public class GeodesicDistanceTransform3DFloat extends AlgoStub implements GeodesicDistanceTransform3D
 {
-	private final static int DEFAULT_MASK_LABEL = 255;
-
 	// ==================================================
 	// Class variables
 	
@@ -55,13 +56,11 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 	boolean normalizeMap = true;
 	
 	/** 
-	 * The value assigned to result pixels that do not belong to the mask. 
-	 * Default is Float.MAX_VALUE.
+	 * The value assigned to the background in the result image.
+	 * Default is Float.NaN.
 	 */
-	float backgroundValue = Float.POSITIVE_INFINITY;
+	static final float BACKGROUND = Float.NaN;
 	
-	int maskLabel = DEFAULT_MASK_LABEL;
-
 	
 	// ==================================================
 	// Constructors
@@ -144,20 +143,10 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 		ImageStack resultStack = ImageStack.create(sizeX, sizeY, sizeZ, 32);
 		Image3D distMap = Images3D.createWrapper(resultStack);
 		
-		// initialize empty image with either 0 (foreground) or Inf (background)
-		for (int z = 0; z < sizeZ; z++)
-		{
-			for (int y = 0; y < sizeY; y++)
-			{
-				for (int x = 0; x < sizeX; x++)
-				{
-					if (marker.getVoxel(x, y, z) == 0)
-					{
-						distMap.setValue(x, y, z, backgroundValue);
-					}
-				}
-			}
-		}
+		
+		// initialize empty image with either 0 (within marker), Inf (within
+		// label, but outside marker), or NaN (background).
+		initialize(Images3D.createWrapper(marker), labelImage, distMap);
 		
 		// Iterate forward and backward passes until no more modification occur
 		int iter = 0;
@@ -186,6 +175,44 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 		return resultStack;
 	}
 
+	/**
+	 * initialize empty image with either 0 (within marker), Inf (within label,
+	 * but outside marker), or NaN (background).
+	 */
+	private void initialize(Image3D marker, Image3D labels, Image3D distMap)
+	{
+		fireStatusChanged(this, "Initialization...");
+		
+		// retrieve image dimensions
+		int sizeX = labels.getSize(0);
+		int sizeY = labels.getSize(1);
+		int sizeZ = labels.getSize(2);
+
+		// iterate over slices
+		for (int z = 0; z < sizeZ; z++) 
+		{
+			fireProgressChanged(this, z, sizeZ);
+			
+			for (int y = 0; y < sizeY; y++) 
+			{
+				for (int x = 0; x < sizeX; x++) 
+				{
+					int label = (int) labels.getValue(x, y, z);
+					if (label == 0)
+					{
+						distMap.setValue(x, y, z, BACKGROUND);
+					}
+					else
+					{
+						distMap.setValue(x, y, z, marker.getValue(x, y, z) == 0 ? Float.MAX_VALUE : 0);
+					}
+				}
+			}
+		}
+		fireProgressChanged(this, 1, 1); 
+	}
+
+
 	private boolean forwardIteration(Image3D distMap, Image3D labelImage)
 	{
 		// retrieve size of image
@@ -205,14 +232,16 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 			{
 				for (int x = 0; x < sizeX; x++)
 				{
-					// process only voxels within the mask
-					if (labelImage.get(x, y, z) != maskLabel)
-					{
-						continue;
-					}
+					// get current label
+					int label = (int) labelImage.getValue(x, y, z);
 					
-					double value = distMap.getValue(x, y, z);
-					double ref = value;
+					// do not process background pixels
+					if (label == 0)
+						continue;
+					
+					// current distance value
+					double currentDist = distMap.getValue(x, y, z);
+					double newDist = currentDist;
 					
 					// iterate over voxels in forward neighborhood to find minimum value
 					for (FloatOffset offset : offsets)
@@ -228,14 +257,17 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 						if (z2 < 0 || z2 >= sizeZ)
 							continue;
 						
-						double newVal = distMap.getValue(x2, y2, z2) + offset.weight;
-						value = Math.min(value, newVal);
+						if (((int) labelImage.getValue(x2, y2, z2)) == label)
+						{
+							// Increment distance
+							newDist = Math.min(newDist, distMap.getValue(x2, y2, z2) + offset.weight);
+						}
 					}
 					
-					if (value < ref)
+					if (newDist < currentDist)
 					{
+						distMap.setValue(x, y, z, newDist);
 						modif = true;
-						distMap.setValue(x, y, z, value);
 					}
 				}
 			}
@@ -264,14 +296,16 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 			{
 				for (int x = sizeX - 1; x >= 0; x--)
 				{
-					// process only voxels within the mask
-					if (labelImage.get(x, y, z) != maskLabel)
-					{
-						continue;
-					}
+					// get current label
+					int label = (int) labelImage.getValue(x, y, z);
 					
-					double value = distMap.getValue(x, y, z);
-					double ref = value;
+					// do not process background pixels
+					if (label == 0)
+						continue;
+					
+					// current distance value
+					double currentDist = distMap.getValue(x, y, z);
+					double newDist = currentDist;
 					
 					// iterate over voxels in backward neighborhood to find minimum value
 					for (FloatOffset offset : offsets)
@@ -287,14 +321,17 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 						if (z2 < 0 || z2 >= sizeZ)
 							continue;
 						
-						double newVal = distMap.getValue(x2, y2, z2) + offset.weight;
-						value = Math.min(value, newVal);
+						if (((int) labelImage.getValue(x2, y2, z2)) == label)
+						{
+							// Increment distance
+							newDist = Math.min(newDist, distMap.getValue(x2, y2, z2) + offset.weight);
+						}
 					}
 					
-					if (value < ref)
+					if (newDist < currentDist)
 					{
+						distMap.setValue(x, y, z, newDist);
 						modif = true;
-						distMap.setValue(x, y, z, value);
 					}
 				}
 			}
@@ -312,14 +349,12 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 		int sizeZ = distMap.getSize(2);
 
 		// retrieve the minimum weight
-		double w0 = Double.POSITIVE_INFINITY;
-		for (FloatOffset offset : this.chamferMask.getFloatOffsets())
-		{
-			w0 = Math.min(w0, offset.weight);
-		}
+		double w0 = this.chamferMask.getNormalizationWeight();
 		
 		for (int z = 0; z < sizeZ; z++)
 		{
+			fireProgressChanged(this, z, sizeZ);
+			
 			for (int y = 0; y < sizeY; y++)
 			{
 				for (int x = 0; x < sizeX; x++)
@@ -330,6 +365,7 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 					}
 				}
 			}
+			fireProgressChanged(this, 1, 1);
 		}
 	}
 }
