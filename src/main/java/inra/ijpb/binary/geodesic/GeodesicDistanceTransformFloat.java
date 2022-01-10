@@ -280,7 +280,7 @@ public class GeodesicDistanceTransformFloat extends AlgoStub implements
 					}
 				}
 				
-				if (newDist < currentDist) 
+				if (newDist < currentDist)
 				{
 					distMap.setf(x, y, (float) newDist);
 					modif = true;
@@ -356,14 +356,11 @@ public class GeodesicDistanceTransformFloat extends AlgoStub implements
 		int sizeY = distMap.getHeight();
 
 		// retrieve the minimum weight
-		double w0 = Double.POSITIVE_INFINITY;
-		for (FloatOffset offset : this.mask.getFloatOffsets())
-		{
-			w0 = Math.min(w0, offset.weight);
-		}
+		double w0 = this.mask.getNormalizationWeight();
 		
 		for (int y = 0; y < sizeY; y++)
 		{
+			this.fireProgressChanged(this, y, sizeY);
 			for (int x = 0; x < sizeX; x++)
 			{
 				if (((int) labelImage.getf(x, y)) == 0)
@@ -378,5 +375,6 @@ public class GeodesicDistanceTransformFloat extends AlgoStub implements
 				}
 			}
 		}
+		this.fireProgressChanged(this, 1, 1);
 	}
 }
