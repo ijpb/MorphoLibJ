@@ -31,8 +31,8 @@ import ij.plugin.PlugIn;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.binary.distmap.ChamferMask3D;
 import inra.ijpb.binary.distmap.ChamferMasks3D;
-import inra.ijpb.binary.geodesic.GeodesicDiameter3DFloat;
 import inra.ijpb.label.LabelImages;
+import inra.ijpb.measure.region3d.GeodesicDiameter3D;
 import inra.ijpb.util.IJUtils;
 
 
@@ -116,7 +116,7 @@ public class GeodesicDiameter3DPlugin implements PlugIn
 		
 		
 		// extract column corresponding to geodesic diameter
-		int gdIndex = table.getColumnIndex("Geod. Diam.");
+		int gdIndex = table.getColumnIndex("GeodesicDiameter");
 		double[] geodDiamArray = table.getColumnAsDoubles(gdIndex);
 		
 		// Check validity of resulting geodesic diameters
@@ -148,7 +148,7 @@ public class GeodesicDiameter3DPlugin implements PlugIn
 	 */
 	public ResultsTable process(ImageStack labels, ChamferMask3D chamferMask)
 	{
-		GeodesicDiameter3DFloat algo = new GeodesicDiameter3DFloat(chamferMask);
+		GeodesicDiameter3D algo = new GeodesicDiameter3D(chamferMask);
 		DefaultAlgoListener.monitor(algo);
 		ResultsTable table = algo.process(labels);
 		return table;

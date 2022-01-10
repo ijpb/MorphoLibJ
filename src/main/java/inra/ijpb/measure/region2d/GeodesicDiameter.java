@@ -320,7 +320,7 @@ public class GeodesicDiameter extends RegionAnalyzer2D<GeodesicDiameter.Result>
 	 */
 	public Result[] analyzeRegions(ImageProcessor labelImage, int[] labels, Calibration calib)
 	{
-		// Intitial check-up
+		// Initial check-up
 		if (calib.pixelWidth != calib.pixelHeight)
 		{
 			throw new RuntimeException("Requires image with square pixels");
