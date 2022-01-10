@@ -28,11 +28,11 @@ import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import inra.ijpb.algo.DefaultAlgoListener;
-import inra.ijpb.binary.distmap.ChamferDistanceTransform3DFloat;
-import inra.ijpb.binary.distmap.ChamferDistanceTransform3DShort;
 import inra.ijpb.binary.distmap.ChamferMask3D;
 import inra.ijpb.binary.distmap.ChamferMasks3D;
-import inra.ijpb.binary.distmap.DistanceTransform3D;
+import inra.ijpb.label.distmap.DistanceTransform3D;
+import inra.ijpb.label.distmap.ChamferDistanceTransform3DFloat;
+import inra.ijpb.label.distmap.ChamferDistanceTransform3DShort;
 import inra.ijpb.data.image.Images3D;
 import inra.ijpb.util.IJUtils;
 
