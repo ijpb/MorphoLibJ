@@ -86,31 +86,61 @@ public abstract class RegionalExtrema3DAlgo extends AlgoStub
 	// ==============================================================
 	// getter and setters
 	
+	/**
+	 * Returns the type of extrema.
+	 * 
+	 * @return the type of extrema.
+	 */
 	public ExtremaType getExtremaType() 
 	{
 		return extremaType;
 	}
 
+	/**
+	 * Sets the type of extrema.
+	 * 
+	 * @param extremaType the type of extrema.
+	 */
 	public void setExtremaType(ExtremaType extremaType)
 	{
 		this.extremaType = extremaType;
 	}
 
+	/**
+	 * Returns the connectivity value.
+	 * 
+	 * @return the connectivity value.
+	 */
 	public int getConnectivity() 
 	{
 		return this.connectivity;
 	}
 	
+	/**
+	 * Sets the connectivity value.
+	 * 
+	 * @param conn the connectivity value (either 6 or 26).
+	 */
 	public void setConnectivity(int conn) 
 	{
 		this.connectivity = conn;
 	}
 	
+	/**
+	 * Returns the value of progress visibility option.
+	 * 
+	 * @return the value of progress visibility option.
+	 */
 	public boolean isProgressVisible() 
 	{
 		return progressVisible;
 	}
 
+	/**
+	 * Sets the value of progress visibility option.
+	 * 
+	 * @param progressVisible the new value of progress visibility option.
+	 */
 	public void setProgressVisible(boolean progressVisible)
 	{
 		this.progressVisible = progressVisible;

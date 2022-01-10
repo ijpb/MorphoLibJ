@@ -40,10 +40,26 @@ public class DiamondStrel extends AbstractSeparableStrel {
 	// ==================================================
 	// Static methods 
 	
+	/**
+	 * Creates a new diamond-shape structuring element with the specified
+	 * diameter.
+	 * 
+	 * @param diam
+	 *            the diameter of the diamond
+	 * @return a new DiamondStrel instance
+	 */
 	public final static DiamondStrel fromDiameter(int diam) {
 		return new DiamondStrel(diam);
 	}
 	
+	/**
+	 * Creates a new diamond-shape structuring element with the specified radius
+	 * (such that diameter equals 2 * radius + 1).
+	 * 
+	 * @param radius
+	 *            the radius of the diamond
+	 * @return a new DiamondStrel instance
+	 */
 	public final static DiamondStrel fromRadius(int radius) {
 		return new DiamondStrel(2 * radius + 1, radius);
 	}

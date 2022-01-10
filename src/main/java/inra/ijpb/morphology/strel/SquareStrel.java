@@ -39,10 +39,25 @@ public class SquareStrel extends AbstractSeparableStrel {
 	// ==================================================
 	// Static methods 
 	
+	/**
+	 * Creates a new square-shape structuring element with the specified diameter
+	 * (equal to square side length).
+	 * 
+	 * @param diam
+	 *            the side length of the square
+	 * @return a new SquareStrel instance
+	 */
 	public final static SquareStrel fromDiameter(int diam) {
 		return new SquareStrel(diam);
 	}
 	
+	/**
+	 * Creates a new square-shape structuring element with the specified radius.
+	 * 
+	 * @param radius
+	 *            the radius of the square
+	 * @return a new SquareStrel instance
+	 */
 	public final static SquareStrel fromRadius(int radius) {
 		return new SquareStrel(2 * radius + 1, radius);
 	}

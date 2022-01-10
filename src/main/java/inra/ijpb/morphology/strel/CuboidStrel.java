@@ -25,10 +25,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * A cubic structuring element, obtained by decomposition into linear
- * structuring elements with the same size along each dimension.
+ * A cuboid structuring element, obtained by decomposition into linear
+ * structuring elements (that can have different sizes) along each dimension.
  * 
- * @see BallStrel
+ * @see CubeStrel
+ * @see EllipsoidStrel
  * @see LinearHorizontalStrel
  * @see LinearVerticalStrel
  * @see LinearDepthStrel3D
@@ -41,11 +42,29 @@ public class CuboidStrel extends AbstractSeparableStrel3D
 	// ==================================================
 	// Static methods 
 	
+	/**
+	 * Creates a new cube-shape structuring element with the specified diameter
+	 * (equal to cube side length). All the dimensions of the resulting Cuboid
+	 * are equal.
+	 * 
+	 * @param diam
+	 *            the side length of the cube
+	 * @return a new 3D cuboid structuring element
+	 */
 	public final static CuboidStrel fromDiameter(int diam) 
 	{
 		return new CuboidStrel(diam, diam, diam);
 	}
 	
+	/**
+	 * Creates a new cube-shape structuring element with the specified radius
+	 * (such that cube side length equals 2 * radius + 1). All the dimensions of
+	 * the resulting Cuboid are equal.
+	 * 
+	 * @param radius
+	 *            the "radius" of the cube
+	 * @return a new 3D cuboid structuring element
+	 */
 	public final static CuboidStrel fromRadius(int radius)
 	{
 		int diam = 2 * radius + 1;

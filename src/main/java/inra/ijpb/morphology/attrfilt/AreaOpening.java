@@ -32,5 +32,14 @@ import inra.ijpb.algo.Algo;
  */
 public interface AreaOpening extends Algo
 {
+	/**
+	 * Applies area opening on the input grayscale image and returns the result.
+	 * 
+	 * @param image
+	 *            the image to process.
+	 * @param minArea
+	 *            the minimal number of pixels the regions need to keep.
+	 * @return the result of area opening.
+	 */
 	public ImageProcessor process(ImageProcessor image, int minArea);
 }

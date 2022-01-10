@@ -24,7 +24,10 @@ package inra.ijpb.morphology.extrema;
 /**
  * One of the two types of extrema.
  */
-public enum ExtremaType {
+public enum ExtremaType 
+{
+	/** The type for minima */
 	MINIMA, 
+	/** The type for maxima */
 	MAXIMA;
 }

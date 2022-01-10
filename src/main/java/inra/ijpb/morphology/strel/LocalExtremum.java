@@ -29,9 +29,14 @@ package inra.ijpb.morphology.strel;
  */
 public interface LocalExtremum
 {
+	/**
+	 * An enumeration of the types of possible extremum.
+	 */
 	public enum Type
 	{
+		/** Type for Minimum */
 		MINIMUM,
+		/** Type for Maximum */
 		MAXIMUM
 	};
 

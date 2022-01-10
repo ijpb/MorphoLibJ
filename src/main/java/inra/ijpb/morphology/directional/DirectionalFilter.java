@@ -74,6 +74,11 @@ public class DirectionalFilter extends AlgoStub
 			return this.label;
 		}
 		
+		/**
+		 * Returns all the labels for this enumeration.
+		 * 
+		 * @return all the labels for this enumeration.
+		 */
 		public static String[] getAllLabels()
 		{
 			int n = Type.values().length;
@@ -111,11 +116,17 @@ public class DirectionalFilter extends AlgoStub
 	 */
 	public enum Operation
 	{
+		/** The morphological erosion operation */
 		EROSION("Erosion"), 
+		/** The morphological dilation operation */
 		DILATION("Dilation"), 
+		/** The morphological opening operation */
 		OPENING("Opening"), 
+		/** The morphological closing operation */
 		CLOSING("Closing"), 
+		/** The neighborhood mean (average) operation */
 		MEAN("Mean"), 
+		/** The neighborhood median operation */
 		MEDIAN("Median");
 
 		private final String label;
@@ -125,6 +136,15 @@ public class DirectionalFilter extends AlgoStub
 			this.label = label;
 		}
 
+		/**
+		 * Applies this operation to the input image.
+		 * 
+		 * @param image
+		 *            theimage to process
+		 * @param strel
+		 *            the structuring element to use
+		 * @return the filtered image
+		 */
 		public ImageProcessor apply(ImageProcessor image, Strel strel)
 		{
 			if (this == DILATION)
@@ -149,6 +169,11 @@ public class DirectionalFilter extends AlgoStub
 			return this.label;
 		}
 
+		/**
+		 * Returns the labels for all operations within this enumeration.
+		 * 
+		 * @return the labels for all operations within this enumeration.
+		 */
 		public static String[] getAllLabels()
 		{
 			int n = Operation.values().length;

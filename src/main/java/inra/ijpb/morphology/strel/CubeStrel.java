@@ -41,15 +41,32 @@ public class CubeStrel extends AbstractSeparableStrel3D
 	// ==================================================
 	// Static methods 
 	
+	/**
+	 * Creates a new cube-shape structuring element with the specified diameter
+	 * (equal to cube side length).
+	 * 
+	 * @param diam
+	 *            the side length of the cube
+	 * @return a new CubeStrel instance
+	 */
 	public final static CubeStrel fromDiameter(int diam) 
 	{
 		return new CubeStrel(diam);
 	}
 	
+	/**
+	 * Creates a new cube-shape structuring element with the specified radius
+	 * (such that cube side length equals 2 * radius + 1).
+	 * 
+	 * @param radius
+	 *            the "radius" of the cube
+	 * @return a new CubeStrel instance
+	 */
 	public final static CubeStrel fromRadius(int radius)
 	{
 		return new CubeStrel(2 * radius + 1, radius);
 	}
+	
 	
 	// ==================================================
 	// Class variables

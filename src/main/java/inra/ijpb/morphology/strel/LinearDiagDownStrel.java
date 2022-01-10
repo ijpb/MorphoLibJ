@@ -42,10 +42,26 @@ public class LinearDiagDownStrel extends AbstractInPlaceStrel {
 	// ==================================================
 	// Static methods 
 	
+	/**
+	 * Creates a new line-shape structuring element with the specified diameter
+	 * (equal to the orthogonal length of the line).
+	 * 
+	 * @param diam
+	 *            the orthogonal diameter of the line
+	 * @return a new linear structuring element
+	 */
 	public final static LinearDiagDownStrel fromDiameter(int diam) {
 		return new LinearDiagDownStrel(diam);
 	}
 	
+	/**
+	 * Creates a new line-shape structuring element with the specified radius
+	 * (such that orthogonal diameter equals 2*radius+1).
+	 * 
+	 * @param radius
+	 *            the radius of the line, such that line length equals 2*radius+1
+	 * @return a new linear structuring element
+	 */
 	public final static LinearDiagDownStrel fromRadius(int radius) {
 		return new LinearDiagDownStrel(2 * radius + 1, radius);
 	}

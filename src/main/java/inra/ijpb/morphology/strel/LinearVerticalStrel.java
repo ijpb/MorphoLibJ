@@ -40,10 +40,26 @@ public class LinearVerticalStrel extends AbstractInPlaceStrel {
 	// ==================================================
 	// Static methods 
 	
+	/**
+	 * Creates a new line-shape structuring element with the specified diameter
+	 * (equal to the length of the line).
+	 * 
+	 * @param diam
+	 *            the length of the line along the Y direction
+	 * @return a new linear structuring element
+	 */
 	public final static LinearVerticalStrel fromDiameter(int diam) {
 		return new LinearVerticalStrel(diam);
 	}
 	
+	/**
+	 * Creates a new line-shape structuring element with the specified radius
+	 * (such that orthogonal diameter equals 2*radius+1).
+	 * 
+	 * @param radius
+	 *            the radius of the line, such that line length equals 2*radius+1
+	 * @return a new linear structuring element
+	 */
 	public final static LinearVerticalStrel fromRadius(int radius) {
 		return new LinearVerticalStrel(2 * radius + 1, radius);
 	}

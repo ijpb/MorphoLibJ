@@ -188,6 +188,11 @@ public class Morphology
 			return this.label;
 		}
 		
+		/**
+		 * Returns the list of labels for this enumeration.
+		 * 
+		 * @return the list of labels for this enumeration.
+		 */
 		public static String[] getAllLabels()
 		{
 			int n = Operation.values().length;

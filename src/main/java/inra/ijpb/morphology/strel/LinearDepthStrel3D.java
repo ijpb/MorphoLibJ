@@ -39,10 +39,26 @@ public class LinearDepthStrel3D extends AbstractInPlaceStrel3D  {
 	// ==================================================
 	// Static methods 
 	
+	/**
+	 * Creates a new line-shape structuring element with the specified diameter
+	 * (equal to the length of the line).
+	 * 
+	 * @param diam
+	 *            the length of the line along the Z direction
+	 * @return a new linear structuring element
+	 */
 	public final static LinearDepthStrel3D fromDiameter(int diam) {
 		return new LinearDepthStrel3D(diam);
 	}
 	
+	/**
+	 * Creates a new line-shape structuring element with the specified radius
+	 * (such that orthogonal diameter equals 2*radius+1).
+	 * 
+	 * @param radius
+	 *            the radius of the line, such that line length equals 2*radius+1
+	 * @return a new linear structuring element
+	 */
 	public final static LinearDepthStrel3D fromRadius(int radius) {
 		return new LinearDepthStrel3D(2 * radius + 1, radius);
 	}

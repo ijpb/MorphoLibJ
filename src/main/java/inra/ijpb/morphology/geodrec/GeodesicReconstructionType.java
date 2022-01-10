@@ -28,7 +28,9 @@ package inra.ijpb.morphology.geodrec;
  */
 public enum GeodesicReconstructionType 
 {
+	/** morphological reconstruction by dilation */
 	BY_DILATION,
+	/** morphological reconstruction by erosion */
 	BY_EROSION;
 	
 	private GeodesicReconstructionType()

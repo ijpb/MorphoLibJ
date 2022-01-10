@@ -37,10 +37,24 @@ public class OctagonStrel extends AbstractSeparableStrel {
 	// ==================================================
 	// Static methods 
 	
+	/**
+	 * Creates an octagon-shape structuring element with specified diameter.
+	 * 
+	 * @param diam
+	 *            the orthogonal diameter of the octagon
+	 * @return a new octagon-shape structuring element
+	 */
 	public final static OctagonStrel fromDiameter(int diam) {
 		return new OctagonStrel(diam);
 	}
 	
+	/**
+	 * Creates an octagon-shape structuring element with specified radius.
+	 * 
+	 * @param radius
+	 *            the radius of the octagon
+	 * @return a new octagon-shape structuring element
+	 */
 	public final static OctagonStrel fromRadius(int radius) {
 		return new OctagonStrel(2 * radius + 1, radius);
 	}
