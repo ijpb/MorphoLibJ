@@ -15,6 +15,9 @@ import java.util.Collection;
  * 
  * The weights may be defined either as integers or as floating point values.
  * 
+ * @see ChamferMask3D
+ * @see ChamferDistanceTransform2D
+ * 
  * @author dlegland
  */
 public abstract class ChamferMask2D
@@ -32,16 +35,16 @@ public abstract class ChamferMask2D
 	public final static ChamferMask2D CITY_BLOCK = new ChamferMask2DW2(1, 2);
 	
 	/**
-	 * Use weights 3 for orthogonal neighbors and 4 for diagonal neighbors,
-	 * and 5 for cube-diagonals (best approximation for 3-by-3-by-3 masks).
+	 * Use weights 1 for orthogonal neighbors and sqrt(2) for diagonal neighbors.
+	 * Integer weights are 10 and 14.
 	 */
 	public final static ChamferMask2D QUASI_EUCLIDEAN = new ChamferMask2DW2Float( 
 			new short[] { 10, 14 }, 
 			new float[] {1, (float) Math.sqrt(2) });
 
 	/**
-	 * Use weights 3 for orthogonal neighbors and 4 for diagonal neighbors,
-	 * and 5 for cube-diagonals (best approximation for 3-by-3-by-3 masks).
+	 * Use weights 3 for orthogonal neighbors and 4 for diagonal neighbors
+	 * (best approximation for 3-by-3 masks).
 	 */
 	public final static ChamferMask2D BORGEFORS = new ChamferMask2DW2(3, 4);
 	

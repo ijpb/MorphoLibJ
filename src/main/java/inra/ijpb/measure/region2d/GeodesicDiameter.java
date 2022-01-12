@@ -75,8 +75,10 @@ import inra.ijpb.label.LabelValues.PositionValuePair;
  *}
  * </pre>
  *
+ * @see inra.ijpb.measure.region3d.GeodesicDiameter3D
  * @see inra.ijpb.binary.geodesic.GeodesicDistanceTransform
  * @see inra.ijpb.measure.region2d.GeodesicDiameter.Result
+ * @see inra.ijpb.binary.distmap.ChamferMask2D
  * 
  * @since 1.3.5
  * 

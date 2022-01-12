@@ -10,7 +10,7 @@ import java.util.Collection;
  * Implementation of Chamfer Weights that manages two types of offsets,
  * corresponding to orthogonal and diagonal neighbors.
  * 
- * By default, computation is performed using integers.
+ * Weights are stored internally as short values.
  * 
  * @author dlegland
  */

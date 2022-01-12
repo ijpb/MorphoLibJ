@@ -37,6 +37,7 @@ import inra.ijpb.binary.distmap.ChamferMask3D;
  * @author dlegland
  *
  */
+@Deprecated
 public class GeodesicDiameter3DFloatTest
 {
 	/**

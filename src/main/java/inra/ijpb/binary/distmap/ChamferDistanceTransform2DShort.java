@@ -21,13 +21,14 @@ import inra.ijpb.label.LabelValues;
  * 
  * <pre>
  * <code>
- * ChamferMask2D chamferMask = ChamferMasks2D.BORGEFORS.getMask();
+ * ChamferMask2D mask = ChamferMask2D.BORGEFORS();
  * boolean normalize = true;
- * DistanceTransform dt = new ChamferDistanceTransform2DShort(chamferMask, normalize);
+ * DistanceTransform dt = new ChamferDistanceTransform2DShort(mask, normalize);
  * ImageProcessor result = dt.distanceMap(inputImage);
  * </code>
  * </pre>
  * 
+ * @see ChamferDistanceTransform2DFloat
  * @author David Legland
  * 
  */

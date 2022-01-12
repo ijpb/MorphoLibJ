@@ -14,6 +14,9 @@ import java.util.Collection;
  * be defined as integers (making it possible to store result in
  * ShortProcessors) or as floating point values (could be more precise).
  * 
+ * @see ChamferMask2D
+ * @see ChamferDistanceTransform3D
+ *
  * @author dlegland
  *
  */
@@ -26,19 +29,19 @@ public abstract class ChamferMask3D
 	public final static ChamferMask3D CHESSBOARD = new ChamferMask3DW3(new short[] {1, 1, 1});
 	
 	/**
-	 * Use weights 1 for orthogonal neighbors and 2 for diagonal neighbors,
+	 * Use weights 1 for orthogonal neighbors, 2 for square-diagonal neighbors,
 	 * and 3 for cube-diagonals.
 	 */
 	public final static ChamferMask3D CITY_BLOCK = new ChamferMask3DW3(new short[] {1, 2, 3});
 	
 	/**
-	 * Use weights 3 for orthogonal neighbors and 4 for diagonal neighbors,
+	 * Use weights 3 for orthogonal neighbors, 4 for square-diagonal neighbors,
 	 * and 5 for cube-diagonals (best approximation for 3-by-3-by-3 masks).
 	 */
 	public final static ChamferMask3D BORGEFORS = new ChamferMask3DW3(new short[] {3, 4, 5});
 	
 	/**
-	 * Use weights 1 for orthogonal neighbors and sqrt(2) for diagonal
+	 * Use weights 1 for orthogonal neighbors, sqrt(2) for square-diagonal
 	 * neighbors, and sqrt(3) for cube-diagonals. 
 	 * Use 10, 14 and 17 for short version.
 	 */
@@ -47,9 +50,9 @@ public abstract class ChamferMask3D
 			new float[] { 1, (float) Math.sqrt(2), (float) Math.sqrt(3) });
 
 	/**
-	 * Use weights 3 for orthogonal neighbors and 4 for diagonal neighbors, and
+	 * Use weights 3 for orthogonal neighbors, 4 for square-diagonal neighbors,
 	 * 5 for cube-diagonals, and 7 for (2,1,1) shifts. Good approximation using
-	 * only four weights, and keeping low value of orthogonal weight.
+	 * only four weights, and keeping low value for orthogonal weight.
 	 */
 	public final static ChamferMask3D SVENSSON_3_4_5_7 = new ChamferMask3DW4(3, 4, 5, 7);
 	

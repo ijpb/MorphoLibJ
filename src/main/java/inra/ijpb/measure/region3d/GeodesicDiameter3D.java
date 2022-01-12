@@ -55,6 +55,7 @@ import inra.ijpb.label.LabelValues.Position3DValuePair;
  * </pre>
  *
  * @see inra.ijpb.measure.region2d.GeodesicDiameter
+ * @see inra.ijpb.binary.geodesic.GeodesicDistanceTransform3D
  * @see inra.ijpb.binary.distmap.ChamferMask3D
  * 
  * @author dlegland
