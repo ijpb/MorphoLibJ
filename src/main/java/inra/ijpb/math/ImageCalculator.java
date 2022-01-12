@@ -23,7 +23,6 @@ package inra.ijpb.math;
 
 import ij.ImagePlus;
 import ij.ImageStack;
-import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 
 /**
@@ -53,8 +52,7 @@ import ij.process.ImageProcessor;
  * }</pre>
  */
 public class ImageCalculator
-{
-    
+{   
     /**
      * General interface for defining an operation that combines the values of
      * two pixels to create a new one. Contains also static instances

@@ -47,12 +47,15 @@ import inra.ijpb.label.LabelImages;
  *	table.show("Geodesic Diameter 3D");
  *}</pre>
  *
- * @see GeodesicDiameterFloat
+ * @deprecated replaced by inra.ijpb.measure.region3d.GeodesicDiameter3D
+ * 
+ * @see inra.ijpb.measure.region3d.GeodesicDiameter3D
  * @see inra.ijpb.binary.ChamferWeights3D
  * 
  * @author dlegland
  *
  */
+@Deprecated
 public class GeodesicDiameter3DFloat extends AlgoStub implements GeodesicDiameter3D, AlgoListener
 {
 	// ==================================================

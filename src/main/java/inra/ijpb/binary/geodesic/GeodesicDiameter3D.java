@@ -39,7 +39,8 @@ import inra.ijpb.algo.Algo;
  *}</pre>
  *
  *
- * @see inra.ijpb.binary.geodesic.GeodesicDiameter3DFloat
+ * @deprecated since 1.3.5, use inra.ijpb.measure.region3d.GeodesicDiameter3D instead 
+ * @see inra.ijpb.measure.region3d.GeodesicDiameter3D
  * 
  * @author dlegland
  */
