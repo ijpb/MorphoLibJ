@@ -1860,7 +1860,7 @@ name "fig:White-TopHat-Grains"
 \end_inset
 
 Top-hat filtering.
- (a) Original image graysclae image, showing inhomogeneous background.
+ (a) Original grayscale image, showing inhomogeneous background.
  (b) Result of the White Top-Hat operator using square with radius 20 as
  structuring element.
  (c) Profile plots along line region of interest for each image.
@@ -9845,8 +9845,8 @@ The
 \series bold
 mean breadth
 \series default
-, also known as the mean width or the mean diameter, is a quantity that
- computes the size of a set as an average diameter.
+, also known as the mean width or the mean diameter, is a feature that quantifie
+s the size of a set as an average diameter.
  In the case of a convex set, the average breadth corresponds to the average
  of the caliper diameter (or Feret diameter) measured over all directions
  (Fig.
@@ -9994,8 +9994,16 @@ noprefix "false"
 
 -b).
  For 3D sets, the measurements of total projected diameter consists in measuring
- the Euler number of the intersection of the set with planes orthogonal
- to the direction.
+ the (2D) Euler number of the intersection of the set with planes orthogonal
+ to the direction 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Serra_1982"
+literal "false"
+
+\end_inset
+
+.
  The average of total projected diameter over 
 \begin_inset Formula $\Omega$
 \end_inset
@@ -10004,7 +10012,7 @@ noprefix "false"
 \begin_inset Formula $\bar{b}$
 \end_inset
 
-.
+:
 \end_layout
 
 \begin_layout Standard
@@ -10077,16 +10085,15 @@ In practice, the mean breadth may be computed from digital binary images
 
  voxels, identifying the contribution of this configuration to the total
  mean breadth, and combining with the histogram of binary configuration
- within the image.
- See 
+ within the image 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Ohser2009,Legland2007"
 literal "false"
 
 \end_inset
 
- for details.
+.
 \end_layout
 
 \begin_layout Subsubsection
@@ -12275,6 +12282,8 @@ reference "fig:Chamfer-Weights-3D"
 \end_inset
 
 -d).
+ Starting from version 1.5, MorphoLibJ allows using up to six weights (correspond
+ing to the complete 5–by–5-by–5 neighborhood).
 \end_layout
 
 \begin_layout Subsubsection
@@ -12909,8 +12918,20 @@ reference "sec:Connected-Components-Labeling"
 \end_inset
 
 ).
- Segmentation algorithms such as the watershed may also return their result
- as a label image.
+ Segmentation algorithms such as the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[sec:Morphological-Segmentation-Plugin]{Watershed}
+\end_layout
+
+\end_inset
+
+ may also return their result as a label image.
 \end_layout
 
 \begin_layout Standard
