@@ -41,7 +41,7 @@ We have as well a [User Manual](https://github.com/ijpb/MorphoLibJ/releases/down
 
 The main source code directory is [src/main/java/inra/ijpb](http://github.com/ijpb/MorphoLibJ/tree/master/src/main/java/inra/ijpb).
 
-You can browse the [javadoc](http://ijpb.github.io/MorphoLibJ/javadoc/index.html) for more information about its API.
+You can browse the [javadoc](https://ijpb.github.io/MorphoLibJ/javadoc/index.html) for more information about its API.
 
 Citation
 --------
