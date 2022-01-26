@@ -32,6 +32,15 @@ Installation
 
 > 4. Click _Apply changes_ and restart Fiji.
 
+* If you develop plugins / applications based on MorphoLibJ, you can use add the following dependency in the maven project configuration file:
+```
+  <dependency>
+    <groupId>fr.inra.ijpb</groupId>
+    <artifactId>MorphoLibJ_</artifactId>
+    <version>1.5.0</version>
+  </dependency>
+```
+
 Documentation
 -------------
 
