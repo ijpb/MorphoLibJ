@@ -4,7 +4,8 @@
 MorphoLibJ
 ============
 
-Collection of mathematical morphology methods and plugins for [ImageJ](http://imagej.net/Welcome), created at the [INRA-IJPB Modeling and Digital Imaging lab](http://www-ijpb.versailles.inra.fr/en/bc/equipes/modelisation-imagerie/).
+MorphoLibJ is a collection of mathematical morphology methods and plugins for [ImageJ](http://imagej.net/Welcome), 
+created at the [INRA-IJPB Modeling and Digital Imaging lab](http://www-ijpb.versailles.inra.fr/en/bc/equipes/modelisation-imagerie/).
 
 The library implements several functionalities that were missing in the ImageJ software, and that were not or only partially covered by other plugins. Namely:
 
@@ -32,13 +33,25 @@ Installation
 
 > 4. Click _Apply changes_ and restart Fiji.
 
-* If you develop plugins / applications based on MorphoLibJ, you can use add the following dependency in the maven project configuration file:
+
+Develop upon MorphoLibJ
+------------
+
+If you develop plugins / applications based on MorphoLibJ, you can use add the following dependency in the maven project configuration file:
 ```
   <dependency>
     <groupId>fr.inra.ijpb</groupId>
     <artifactId>MorphoLibJ_</artifactId>
     <version>1.5.0</version>
   </dependency>
+```
+
+In case the last version of MorphoLibJ is not included in the maven repository,
+one workaround is to download the jar file of the last version, 
+and to add it to the local maven repository. 
+The following command may help (adapt version number as necessary):
+```
+mvn install:install-file -Dfile=MorphoLibJ_-1.5.0.jar -DgroupId=fr.inra.ijpb -DartifactId=MorphoLibJ_ -Dversion=1.5.0 -Dpackaging=jar -DgeneratePom=true
 ```
 
 Documentation
