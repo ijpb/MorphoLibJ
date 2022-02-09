@@ -67,7 +67,7 @@ DialogListener
 
 	private static int dynamic = 1;
 	private static String connLabel = Conn2D.C4.label;
-	private static String maskLabel = ChamferMask2D.BORGEFORS.toString();
+	private static String maskLabel = ChamferMask2D.CHESSKNIGHT.toString();
 
 	private int connectivity = 4;
 

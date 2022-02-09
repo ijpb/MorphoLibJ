@@ -103,7 +103,7 @@ public class ChamferDistanceMapPlugin
 		// Create a new generic dialog with appropriate options
 		GenericDialog gd = new GenericDialog("Chamfer Distance Transform");
 		gd.addChoice("Distances", ChamferMasks2D.getAllLabels(),
-				ChamferMasks2D.BORGEFORS.toString());
+				ChamferMasks2D.CHESSKNIGHT.toString());
 		String[] outputTypes = new String[] { "16 bits", "32 bits" };
 		gd.addChoice("Output Type", outputTypes, outputTypes[0]);
 		gd.addCheckbox("Normalize weights", true);
