@@ -53,6 +53,13 @@ public abstract class ChamferMask2D
 	 * for chess-knight moves (recommended approximation for 5-by-5 masks).
 	 */
 	public final static ChamferMask2D CHESSKNIGHT = new ChamferMask2DW3(5, 7, 11);
+
+	/**
+	 * Chamfer mask in the 7-by-7 neighborhood defined using four weights.
+	 * Weights are 12, 17, 27, and 38. The "sixth" is approximated by 17+27=44,
+	 * very close from the value proposed by Borgefors (1986).
+	 */
+	public final static ChamferMask2D VERWER = new ChamferMask2DW4(12, 17, 27, 38);
 	
 	
 	// ==================================================

@@ -76,7 +76,12 @@ public enum ChamferMasks2D
 	 * Use weights 5 for orthogonal neighbors and 7 for diagonal neighbors, and
 	 * 11 for chess-knight moves (best approximation for 5-by-5 masks).
 	 */
-	CHESSKNIGHT("Chessknight (5,7,11)", ChamferMask2D.CHESSKNIGHT);
+	CHESSKNIGHT("Chessknight (5,7,11)", ChamferMask2D.CHESSKNIGHT),
+	/**
+	 * Chamfer mask in the 7-by-7 neighborhood defined using the four weights
+	 * 12, 17, 27, and 38.
+	 */
+	VERWER("Verwer (12,17,27,38)", ChamferMask2D.VERWER);
 
 
 	private final String label;
