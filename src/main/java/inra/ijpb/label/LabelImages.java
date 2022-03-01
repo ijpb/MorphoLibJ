@@ -57,6 +57,7 @@ import inra.ijpb.label.distmap.ChamferDistanceTransform3DShort;
 import inra.ijpb.label.distmap.DistanceTransform3D;
 import inra.ijpb.label.distmap.LabelDilation2DShort;
 import inra.ijpb.label.distmap.LabelDilation3DShort;
+import inra.ijpb.label.edit.FindAllLabels;
 import inra.ijpb.label.edit.ReplaceLabelValues;
 
 /**
@@ -1226,103 +1227,45 @@ public class LabelImages
 	 * Returns the set of unique labels existing in the given image, excluding
 	 * the value zero (used for background).
 	 * 
+	 * #see inra.ijpb.label.edit.FindAllLabels
+	 * 
 	 * @param image
 	 *            an instance of ImagePlus containing a label image
 	 * @return the list of unique labels present in image (without background)
 	 */
     public final static int[] findAllLabels(ImagePlus image) 
     {
-		return image.getStackSize() == 1 ? findAllLabels(image.getProcessor())
-				: findAllLabels(image.getStack());
+        return new FindAllLabels().process(image);
     }
 
     /**
      * Returns the set of unique labels existing in the given stack, excluding 
      * the value zero (used for background).
 	 * 
+     * #see inra.ijpb.label.edit.FindAllLabels
+     * 
 	 * @param image
 	 *            a 3D label image
 	 * @return the list of unique labels present in image (without background)
      */
     public final static int[] findAllLabels(ImageStack image) 
     {
-        int sizeX = image.getWidth();
-        int sizeY = image.getHeight();
-        int sizeZ = image.getSize();
-        
-        TreeSet<Integer> labels = new TreeSet<Integer> ();
-        
-        // iterate on image pixels
-        for (int z = 0; z < sizeZ; z++) 
-        {
-        	for (int y = 0; y < sizeY; y++)  
-        	{
-        		for (int x = 0; x < sizeX; x++)
-        		{
-        			labels.add((int) image.getVoxel(x, y, z));
-        		}
-        	}
-        }
-        
-        // remove 0 if it exists
-        if (labels.contains(0))
-            labels.remove(0);
-        
-        // convert to array of integers
-        int[] array = new int[labels.size()];
-        Iterator<Integer> iterator = labels.iterator();
-        for (int i = 0; i < labels.size(); i++) 
-            array[i] = iterator.next();
-        
-        return array;
+        return new FindAllLabels().process(image);
     }
 
     /**
      * Returns the set of unique labels existing in the given image, excluding 
      * the value zero (used for background).
 	 * 
+     * #see inra.ijpb.label.edit.FindAllLabels
+     * 
 	 * @param image
 	 *            a label image
 	 * @return the list of unique labels present in image (without background)
      */
     public final static int[] findAllLabels(ImageProcessor image)
     {
-        int sizeX = image.getWidth();
-        int sizeY = image.getHeight();
-        
-        TreeSet<Integer> labels = new TreeSet<Integer> ();
-        
-        // iterate on image pixels
-        if (image instanceof FloatProcessor) 
-        {
-        	// For float processor, use explicit case to int from float value  
-        	for (int y = 0; y < sizeY; y++) 
-        	{
-        		for (int x = 0; x < sizeX; x++) 
-        			labels.add((int) image.getf(x, y));
-        	}
-        } 
-        else
-        {
-        	// for integer-based images, simply use integer result
-        	for (int y = 0; y < sizeY; y++) 
-        	{
-        		for (int x = 0; x < sizeX; x++) 
-        			labels.add(image.get(x, y));
-        	}
-        }
-        
-        // remove 0 if it exists
-        if (labels.contains(0))
-            labels.remove(0);
-        
-        // convert to array of integers
-        int[] array = new int[labels.size()];
-        Iterator<Integer> iterator = labels.iterator();
-        for (int i = 0; i < labels.size(); i++) 
-            array[i] = iterator.next();
-        
-        return array;
+        return new FindAllLabels().process(image);
     }
 
 	/**
