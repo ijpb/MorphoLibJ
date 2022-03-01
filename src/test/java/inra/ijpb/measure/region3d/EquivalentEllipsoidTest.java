@@ -5,6 +5,7 @@ package inra.ijpb.measure.region3d;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -81,6 +82,90 @@ public class EquivalentEllipsoidTest
         assertEquals(30, elli.phi(), 1.0);
         assertEquals(20, elli.theta(), 1.0);
         assertEquals(10, elli.psi(), 1.0);
+    }
+
+    /**
+     * Test method for
+     * {@link inra.ijpb.measure.region3d.EquivalentEllipsoid#equivalentEllipsoids(ij.ImageStack, int[], ij.measure.Calibration)}.
+     */
+    @Test
+    public final void test_SingleVoxelRegion()
+    {
+        ImageStack image = ImageStack.create(5, 5, 5, 8);
+        image.setVoxel(2, 2, 0, 10);
+        Calibration calib = new Calibration();
+        Ellipsoid elli = EquivalentEllipsoid.equivalentEllipsoids(image, new int[] { 10 }, calib)[0];
+
+        double expectedRadius = Math.sqrt(5.0 / 12.0);
+        assertEquals(2.5, elli.center().getX(), 0.1);
+        assertEquals(2.5, elli.center().getY(), 0.1);
+        assertEquals(0.5, elli.center().getZ(), 0.1);
+        assertEquals(expectedRadius, elli.radius1(), 0.1);
+        assertEquals(expectedRadius, elli.radius2(), 0.1);
+        assertEquals(expectedRadius, elli.radius3(), 0.1);
+        assertEquals(0.0, elli.phi(), 1.0);
+        assertEquals(0.0, elli.theta(), 1.0);
+        assertEquals(0.0, elli.psi(), 1.0);
+    }
+
+    /**
+     * Test method for
+     * {@link inra.ijpb.measure.region3d.EquivalentEllipsoid#equivalentEllipsoids(ij.ImageStack, int[], ij.measure.Calibration)}.
+     */
+    @Test
+    public final void test_EmptyRegion()
+    {
+        // generate an 8-bits image with a single region with label 10 
+        ImageStack image = ImageStack.create(5, 5, 5, 8);
+        image.setVoxel(2, 2, 0, 10);
+        Calibration calib = new Calibration();
+        
+        // compute for another region not in the image
+        Ellipsoid elli = EquivalentEllipsoid.equivalentEllipsoids(image, new int[] { 20 }, calib)[0];
+
+        double expectedRadius = 0.0;
+        assertEquals(expectedRadius, elli.radius1(), 0.1);
+        assertEquals(expectedRadius, elli.radius2(), 0.1);
+        assertEquals(expectedRadius, elli.radius3(), 0.1);
+        assertEquals(0.0, elli.phi(), 1.0);
+        assertEquals(0.0, elli.theta(), 1.0);
+        assertEquals(0.0, elli.psi(), 1.0);
+    }
+
+    /**
+     * Test method for
+     * {@link inra.ijpb.measure.region3d.EquivalentEllipsoid#equivalentEllipsoids(ij.ImageStack, int[], ij.measure.Calibration)}.
+     */
+    @Test
+    public final void test_SmallRegionWithAzimutGreaterThan90Degrees()
+    {
+        // generate an 8-bits image with a single region with label 10 
+        ImageStack image = ImageStack.create(6, 8, 4, 8);
+        // encode the region as a series of (yi, xi0, xi1) triplets
+        int[][] ranges = new int[][]{{1, 3, 3}, {2, 2, 4}, {3, 1, 4}, {4, 3, 4}, {5, 2, 4}, {6, 4, 4}};
+        for (int[] range : ranges)
+        {
+            int y = range[0];
+            int x0 = range[1];
+            int x1 = range[2];
+            for (int x = x0; x <= x1; x++)
+            {
+                image.setVoxel(x, y, 0, 10);
+            }
+        }
+        Calibration calib = new Calibration();
+        
+        // compute for another region not in the image
+        Ellipsoid elli = EquivalentEllipsoid.equivalentEllipsoids(image, new int[] { 10 }, calib)[0];
+
+        assertTrue(elli.radius1() > 0.0);
+        assertTrue(elli.radius2() > 0.0);
+        assertTrue(elli.radius3() > 0.0);
+        assertTrue(elli.phi() > -90.0);
+        assertTrue(elli.phi() <  90.0);
+        assertTrue(elli.theta() > -90.0);
+        assertTrue(elli.theta() <  90.0);
+        assertEquals(0.0, elli.psi(), 1.0);
     }
 
     /**

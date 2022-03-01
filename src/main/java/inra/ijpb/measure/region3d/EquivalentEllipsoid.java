@@ -242,14 +242,17 @@ public class EquivalentEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 	        }
 	    }
 
-	    // normalize by number of pixels in each region
-	    for (int i = 0; i < nLabels; i++) 
-	    {
-	        moments[i].cx /= moments[i].count;
-	        moments[i].cy /= moments[i].count;
-	        moments[i].cz /= moments[i].count;
-	    }
-	    
+        // normalize by number of pixels in each region
+        for (int i = 0; i < nLabels; i++)
+        {
+            if (moments[i].count > 0)
+            {
+                moments[i].cx /= moments[i].count;
+                moments[i].cy /= moments[i].count;
+                moments[i].cz /= moments[i].count;
+            }
+        }
+
         // compute centered inertia matrix of each label
         fireStatusChanged(this, "Ellipsoid: compute matrices");
         for (int z = 0; z < sizeZ; z++) 
@@ -259,10 +262,14 @@ public class EquivalentEllipsoid extends RegionAnalyzer3D<Ellipsoid>
             {
                 for (int x = 0; x < sizeX; x++) 
                 {
-                    // do not process background voxels
+                    // get label of current label
                     int label = (int) image.getVoxel(x, y, z);
-                    if (label == 0)
+                    
+                    // do not process background voxels or regions not in the "labels" array
+                    if (label == 0 || !labelIndices.containsKey(label))
+                    {
                         continue;
+                    }
 
                     // convert label to its index
                     int index = labelIndices.get(label);
@@ -284,36 +291,36 @@ public class EquivalentEllipsoid extends RegionAnalyzer3D<Ellipsoid>
             }
         }
 
-        // normalize by number of voxels in each region
-        for (int i = 0; i < nLabels; i++) 
+        // Normalize moments
+        for (int i = 0; i < nLabels; i++)
         {
+            if (moments[i].count == 0)
+            {
+                continue;
+            }
+
+            // normalize by number of voxels in each region
             moments[i].Ixx /= moments[i].count;
             moments[i].Iyy /= moments[i].count;
             moments[i].Izz /= moments[i].count;
             moments[i].Ixy /= moments[i].count;
             moments[i].Ixz /= moments[i].count;
             moments[i].Iyz /= moments[i].count;
-        }
-        
-        // Also adds the contribution of the central voxel to avoid zero
-        // coefficients for labels with only one voxel
-        for (int i = 0; i < nLabels; i++) 
-        {
-            moments[i].Ixx += sx / 12;
-            moments[i].Iyy += sy / 12;
-            moments[i].Izz += sz / 12;
-        }
-        
-        // add coordinates of origin pixel (IJ coordinate system)
-        for (int i = 0; i < nLabels; i++) 
-        {
+
+            // Also adds the contribution of the central voxel to avoid zero
+            // coefficients for labels with only one voxel
+            moments[i].Ixx += sx * sx / 12;
+            moments[i].Iyy += sy * sy / 12;
+            moments[i].Izz += sz * sz / 12;
+
+            // add coordinates of origin pixel (IJ coordinate system)
             moments[i].cx += .5 * sx + ox;
             moments[i].cy += .5 * sy + oy;
             moments[i].cz += .5 * sz + oz;
         }
-  
+
         return moments;
-	}
+    }
 
 	/**
 	 * Encapsulates the results of 3D Moments computations. 
@@ -344,6 +351,16 @@ public class EquivalentEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 		 */
         public Ellipsoid equivalentEllipsoid()
         {
+            // special case of one-voxeL regions (and also empty regions)
+            if (count <= 1)
+            {
+                double r1 = Math.sqrt(5 * Ixx);
+                double r2 = Math.sqrt(5 * Iyy);
+                double r3 = Math.sqrt(5 * Izz);
+                // -> use default values (0,0,0) for angles
+                return new Ellipsoid(this.cx, this.cy, this.cz, r1, r2, r3, 0.0, 0.0, 0.0);
+            }
+
             // Extract singular values
             SingularValueDecomposition svd = computeSVD();
             Matrix values = svd.getS();
@@ -353,22 +370,36 @@ public class EquivalentEllipsoid extends RegionAnalyzer3D<Ellipsoid>
             double r2 = sqrt(5) * sqrt(values.get(1, 1));
             double r3 = sqrt(5) * sqrt(values.get(2, 2));
 
-            // extract |cos(theta)| 
+            // Perform singular-Value Decomposition
             Matrix mat = svd.getU();
+            
+            // Ensure (0,0) coefficient is positive, to enforce azimut angle (Phi) > 0
+            if (mat.get(0, 0) < 0)
+            {
+                for(int c = 0; c < 2; c++)
+                {
+                    for (int r = 0; r < 3; r++)
+                    {
+                        mat.set(r, c, -mat.get(r, c));
+                    }
+                }
+            }
+
+            // extract |cos(theta)|
             double tmp = hypot(mat.get(0, 0), mat.get(1, 0));
             double phi, theta, psi;
 
             // avoid dividing by 0
             if (tmp > 16 * Double.MIN_VALUE) 
             {
-                // normal case: theta <> 0
+                // normal case: cos(theta) <> 0
                 psi     = atan2( mat.get(2, 1), mat.get(2, 2));
                 theta   = atan2(-mat.get(2, 0), tmp);
                 phi     = atan2( mat.get(1, 0), mat.get(0, 0));
             }
             else 
             {
-                // theta is around 0 
+                // cos(theta) is around 0 
                 psi     = atan2(-mat.get(1, 2), mat.get(1,1));
                 theta   = atan2(-mat.get(2, 0), tmp);
                 phi     = 0;
