@@ -65,90 +65,109 @@ public class EquivalentEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 	}
 
 	
-	// ==================================================
-	// Implementation of RegionAnalyzer interface
+    // ==================================================
+    // Specific methods
 
-	/**
-	 * Utility method that transforms the mapping between labels and equivalent
-	 * ellipsoids instances into a ResultsTable that can be displayed with ImageJ.
-	 * 
-	 * @param map
-	 *            the mapping between labels and Equivalent Ellipsoids
-	 * @return a ResultsTable that can be displayed with ImageJ.
-	 */
-	public ResultsTable createTable(Map<Integer, Ellipsoid> map)
-	{
-		// Initialize a new result table
-		ResultsTable table = new ResultsTable();
-	
-		// Convert all results that were computed during execution of the
-		// "computeGeodesicDistanceMap()" method into rows of the results table
-		for (int label : map.keySet())
-		{
-			// current diameter
-			Ellipsoid ellipse = map.get(label);
-			
-			// add an entry to the resulting data table
-			table.incrementCounter();
-			table.addLabel(Integer.toString(label));
-			
-			// coordinates of centroid
-			Point3D center = ellipse.center();
-			table.addValue("Ellipsoid.Center.X", center.getX());
-			table.addValue("Ellipsoid.Center.Y", center.getY());
-			table.addValue("Ellipsoid.Center.Z", center.getZ());
-			
-			// ellipse size
-			table.addValue("Ellipsoid.Radius1", ellipse.radius1());
-			table.addValue("Ellipsoid.Radius2", ellipse.radius2());
-			table.addValue("Ellipsoid.Radius3", ellipse.radius3());
-	
-			// ellipse orientation (in degrees)
-			table.addValue("Ellipsoid.Phi", ellipse.phi());
-			table.addValue("Ellipsoid.Theta", ellipse.theta());
-			table.addValue("Ellipsoid.Psi", ellipse.psi());
-		}
-	
-		return table;
-	}
-
-	/**
-	 * Computes equivalent ellipsoid of each region in the input 3D label image.
-	 * 
-	 * @param image
-	 *            the input image containing label of particles
-	 * @param labels
-	 *            the array of labels within the image
-	 * @param calib
-	 *            the calibration of the image
-	 * @return an array of Ellipsoid instances representing the calibrated
-	 *         coordinates of the equivalent ellipsoid of each region
-	 */
-	public Ellipsoid[] analyzeRegions(ImageStack image, int[] labels, Calibration calib)
-	{
-        // check if JAMA package is present
-        try 
+    /**
+     * Utility method that transforms a pair of arrays for labels and equivalent
+     * ellipsoids instances into a ResultsTable that can be displayed with
+     * ImageJ.
+     * 
+     * @param labels
+     *            the array of region labels
+     * @param ellipsoids
+     *            the array of region ellipsoids (the same size as the array of
+     *            labels)
+     * @return a ResultsTable that can be displayed with ImageJ.
+     */
+    public ResultsTable createTable(int[] labels, Ellipsoid[] ellipsoids)
+    {
+        if (labels.length != ellipsoids.length)
         {
-            Class.forName("Jama.Matrix");
-        } 
-        catch(Exception e)
-        {
-        	throw new RuntimeException("Requires the JAMA package to work properly");
+            throw new RuntimeException("Requires the two input arrays to have the same size");
         }
         
-        // Compute 2D inertia moments for each label
-    	Moments3D[] moments = computeMoments(image, labels, calib);
+        // Initialize a new result table
+        ResultsTable table = new ResultsTable();
+    
+        // Convert all results that were computed during execution of the
+        // "computeGeodesicDistanceMap()" method into rows of the results table
+        for (int i = 0; i < labels.length; i++)
+        {
+            populateTable(table, labels[i], ellipsoids[i]);
+        }
+    
+        return table;
+    }
+    
+    /**
+     * Utility method that transforms a pair of arrays for labels and 3D moments
+     * instances into a ResultsTable that can be displayed with ImageJ.
+     * 
+     * @param labels
+     *            the array of region labels
+     * @param moments
+     *            the array of moments (the same size as the array of labels)
+     * @return a ResultsTable that can be displayed with ImageJ.
+     */
+    public ResultsTable createTable(int[] labels, Moments3D[] moments)
+    {
+        // Initialize a new result table
+        ResultsTable table = new ResultsTable();
+    
+        for (int i = 0; i < labels.length; i++)
+        {
+            // add an entry to the resulting data table
+            table.incrementCounter();
+            table.addLabel(Integer.toString(labels[i]));
 
-        // convert moment array to ellipsoid array 
-    	Ellipsoid[] ellipsoids = momentsToEllipsoids(moments);
+            ArrayList<Vector3D> vectors = moments[i].eigenVectors();
+            
+            Vector3D v1 = vectors.get(0);
+            table.addValue("EigenVector1.X", v1.getX());
+            table.addValue("EigenVector1.Y", v1.getY());
+            table.addValue("EigenVector1.Z", v1.getZ());
+            
+            Vector3D v2 = vectors.get(1);
+            table.addValue("EigenVector2.X", v2.getX());
+            table.addValue("EigenVector2.Y", v2.getY());
+            table.addValue("EigenVector2.Z", v2.getZ());
+            
+            Vector3D v3 = vectors.get(2);
+            table.addValue("EigenVector3.X", v3.getX());
+            table.addValue("EigenVector3.Y", v3.getY());
+            table.addValue("EigenVector3.Z", v3.getZ());
 
-    	// cleanup algorithm monitoring
-        fireStatusChanged(this, "");
+        }
+        
+        return table;
+    }
 
-        return ellipsoids;
+
+	private void populateTable(ResultsTable table, int label, Ellipsoid ellipsoid)
+	{
+        // add an entry to the resulting data table
+        table.incrementCounter();
+        table.addLabel(Integer.toString(label));
+        
+        // coordinates of centroid
+        Point3D center = ellipsoid.center();
+        table.addValue("Ellipsoid.Center.X", center.getX());
+        table.addValue("Ellipsoid.Center.Y", center.getY());
+        table.addValue("Ellipsoid.Center.Z", center.getZ());
+        
+        // ellipse size
+        table.addValue("Ellipsoid.Radius1", ellipsoid.radius1());
+        table.addValue("Ellipsoid.Radius2", ellipsoid.radius2());
+        table.addValue("Ellipsoid.Radius3", ellipsoid.radius3());
+
+        // ellipse orientation (in degrees)
+        table.addValue("Ellipsoid.Phi", ellipsoid.phi());
+        table.addValue("Ellipsoid.Theta", ellipsoid.theta());
+        table.addValue("Ellipsoid.Psi", ellipsoid.psi());
 	}
-	
-	private Ellipsoid[] momentsToEllipsoids(Moments3D[] moments)
+
+	public Ellipsoid[] momentsToEllipsoids(Moments3D[] moments)
 	{
 		int n = moments.length;
     	Ellipsoid[] ellipsoids = new Ellipsoid[n];
@@ -322,15 +341,82 @@ public class EquivalentEllipsoid extends RegionAnalyzer3D<Ellipsoid>
         return moments;
     }
 
-	/**
-	 * Encapsulates the results of 3D Moments computations. 
-	 */
-	public class Moments3D
-	{
-	    // the number of voxels 
-	    int count = 0;
-	    
-	    // The coordinates of the center
+	// ==================================================
+    // Implementation of RegionAnalyzer interface
+
+    /**
+     * Computes equivalent ellipsoid of each region in the input 3D label image.
+     * 
+     * @param image
+     *            the input image containing label of particles
+     * @param labels
+     *            the array of labels within the image
+     * @param calib
+     *            the calibration of the image
+     * @return an array of Ellipsoid instances representing the calibrated
+     *         coordinates of the equivalent ellipsoid of each region
+     */
+    public Ellipsoid[] analyzeRegions(ImageStack image, int[] labels, Calibration calib)
+    {
+        // check if JAMA package is present
+        try 
+        {
+            Class.forName("Jama.Matrix");
+        } 
+        catch(Exception e)
+        {
+        	throw new RuntimeException("Requires the JAMA package to work properly");
+        }
+        
+        // Compute 3D inertia moments for each label
+    	Moments3D[] moments = computeMoments(image, labels, calib);
+    
+        // convert moment array to ellipsoid array 
+    	Ellipsoid[] ellipsoids = momentsToEllipsoids(moments);
+    
+    	// cleanup algorithm monitoring
+        fireStatusChanged(this, "");
+    
+        return ellipsoids;
+    }
+
+
+    /**
+     * Utility method that transforms the mapping between labels and equivalent
+     * ellipsoids instances into a ResultsTable that can be displayed with ImageJ.
+     * 
+     * @param map
+     *            the mapping between labels and Equivalent Ellipsoids
+     * @return a ResultsTable that can be displayed with ImageJ.
+     */
+    public ResultsTable createTable(Map<Integer, Ellipsoid> map)
+    {
+    	// Initialize a new result table
+    	ResultsTable table = new ResultsTable();
+    
+    	// Convert all results that were computed during execution of the
+    	// "computeGeodesicDistanceMap()" method into rows of the results table
+    	for (int label : map.keySet())
+    	{
+    	    populateTable(table, label, map.get(label));
+    	}
+    
+    	return table;
+    }
+    
+    
+    // ==================================================
+    // Inner class for storing results
+    
+    /**
+     * Encapsulates the results of 3D Moments computations. 
+     */
+    public class Moments3D
+    {
+        // the number of voxels 
+        int count = 0;
+        
+        // The coordinates of the center
         double cx = 0;
         double cy = 0;
         double cz = 0;
@@ -344,11 +430,11 @@ public class EquivalentEllipsoid extends RegionAnalyzer3D<Ellipsoid>
         double Izz = 0;
         
         /**
-		 * Converts the 3D moments stored in this instance into a 3D ellipsoid.
-		 * 
-		 * @return the 3D ellipsoid with same inertia moments as the regions
-		 *         described by these moments.
-		 */
+    	 * Converts the 3D moments stored in this instance into a 3D ellipsoid.
+    	 * 
+    	 * @return the 3D ellipsoid with same inertia moments as the regions
+    	 *         described by these moments.
+    	 */
         public Ellipsoid equivalentEllipsoid()
         {
             // special case of one-voxeL regions (and also empty regions)
@@ -360,16 +446,16 @@ public class EquivalentEllipsoid extends RegionAnalyzer3D<Ellipsoid>
                 // -> use default values (0,0,0) for angles
                 return new Ellipsoid(this.cx, this.cy, this.cz, r1, r2, r3, 0.0, 0.0, 0.0);
             }
-
+    
             // Extract singular values
             SingularValueDecomposition svd = computeSVD();
             Matrix values = svd.getS();
-
+    
             // convert singular values to ellipsoid radii 
             double r1 = sqrt(5) * sqrt(values.get(0, 0));
             double r2 = sqrt(5) * sqrt(values.get(1, 1));
             double r3 = sqrt(5) * sqrt(values.get(2, 2));
-
+    
             // Perform singular-Value Decomposition
             Matrix mat = svd.getU();
             
@@ -384,11 +470,11 @@ public class EquivalentEllipsoid extends RegionAnalyzer3D<Ellipsoid>
                     }
                 }
             }
-
+    
             // extract |cos(theta)|
             double tmp = hypot(mat.get(0, 0), mat.get(1, 0));
             double phi, theta, psi;
-
+    
             // avoid dividing by 0
             if (tmp > 16 * Double.MIN_VALUE) 
             {
@@ -404,17 +490,17 @@ public class EquivalentEllipsoid extends RegionAnalyzer3D<Ellipsoid>
                 theta   = atan2(-mat.get(2, 0), tmp);
                 phi     = 0;
             }
-
+    
             // create the new ellipsoid
             return new Ellipsoid(this.cx, this.cy, this.cz, r1, r2, r3, toDegrees(phi), toDegrees(theta), toDegrees(psi));
         }
-
+    
         /**
-		 * Return the eigen vector of the moments. Uses a singular value
-		 * decomposition of the matrix of moments.
-		 * 
-		 * @return the eigen vector of the moments
-		 */
+    	 * Return the eigen vector of the moments. Uses a singular value
+    	 * decomposition of the matrix of moments.
+    	 * 
+    	 * @return the eigen vector of the moments
+    	 */
         public ArrayList<Vector3D> eigenVectors()
         {
             // Extract singular values
@@ -441,11 +527,10 @@ public class EquivalentEllipsoid extends RegionAnalyzer3D<Ellipsoid>
             matrix.set(2, 0, this.Ixz);
             matrix.set(2, 1, this.Iyz);
             matrix.set(2, 2, this.Izz);
-
+    
             // Extract singular values
             return new SingularValueDecomposition(matrix);
         }
-	}
-
+    }
 }
 

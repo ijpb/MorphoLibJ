@@ -10,8 +10,11 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.measure.Calibration;
 import ij.measure.ResultsTable;
+import inra.ijpb.algo.AlgoEvent;
+import inra.ijpb.algo.AlgoListener;
 import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.label.LabelImages;
+import inra.ijpb.label.edit.FindAllLabels;
 import inra.ijpb.measure.RegionAnalyzer;
 
 /**
@@ -27,7 +30,7 @@ import inra.ijpb.measure.RegionAnalyzer;
  * @author dlegland
  *
  */
-public abstract class RegionAnalyzer3D<T> extends AlgoStub implements RegionAnalyzer<T>
+public abstract class RegionAnalyzer3D<T> extends AlgoStub implements RegionAnalyzer<T>, AlgoListener
 {
 	/**
      * Utility method that convert an array of result into a map using labels as
@@ -116,7 +119,9 @@ public abstract class RegionAnalyzer3D<T> extends AlgoStub implements RegionAnal
 	{
 		// extract particle labels
 		fireStatusChanged(this, "Find Labels");
-		int[] labels = LabelImages.findAllLabels(labelPlus);
+		FindAllLabels findLabels = new FindAllLabels();
+		findLabels.addAlgoListener(this);
+		int[] labels = findLabels.process(labelPlus);
 		
 		// compute analysis result for each label
 		fireStatusChanged(this, "Analyze regions");
@@ -144,4 +149,17 @@ public abstract class RegionAnalyzer3D<T> extends AlgoStub implements RegionAnal
 	{
 		return createTable(analyzeRegions(labelPlus));
 	}
+
+    @Override
+    public void algoProgressChanged(AlgoEvent evt)
+    {
+        this.fireProgressChanged(evt);
+    }
+
+
+    @Override
+    public void algoStatusChanged(AlgoEvent evt)
+    {
+        this.fireProgressChanged(evt);
+    }
 }

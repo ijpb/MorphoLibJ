@@ -21,9 +21,6 @@
  */
 package inra.ijpb.plugins;
 
-
-import java.util.ArrayList;
-
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
@@ -31,10 +28,11 @@ import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
 import inra.ijpb.algo.DefaultAlgoListener;
-import inra.ijpb.geometry.Vector3D;
-import inra.ijpb.label.LabelImages;
+import inra.ijpb.geometry.Ellipsoid;
+import inra.ijpb.label.edit.FindAllLabels;
 import inra.ijpb.measure.region3d.EquivalentEllipsoid;
 import inra.ijpb.measure.region3d.EquivalentEllipsoid.Moments3D;
+import inra.ijpb.util.IJUtils;
 
 /**
  * Computes equivalent ellipsoid for each region with a binary or label 3D
@@ -70,23 +68,38 @@ public class EquivalentEllipsoidPlugin implements PlugIn
 
 		// Extract required information
 		ImageStack image = imagePlus.getStack();
-		int[] labels = LabelImages.findAllLabels(imagePlus);
 		Calibration calib= imagePlus.getCalibration();
+		long t0 = System.nanoTime();
 		
+		// identifies labels within image
+		IJ.showStatus("Find Labels");
+        FindAllLabels findLabels = new FindAllLabels();
+        DefaultAlgoListener.monitor(findLabels);
+        int[] labels = findLabels.process(image);
+
 		// Compute inertia moments
         ResultsTable table;
         ResultsTable vectorTable;
         try 
         {
+            // create algo instance
         	EquivalentEllipsoid algo = new EquivalentEllipsoid();
         	DefaultAlgoListener.monitor(algo);
-        	table = algo.computeTable(imagePlus);
-            // show table results
-            String title = imagePlus.getShortTitle() + "-ellipsoid";
+        	
+        	// compute results
+            IJ.showStatus("Compute 3D moments");
+            Moments3D[] moments = algo.computeMoments(image, labels, calib);
+            IJ.showStatus("Convert moments to ellipsoids");
+        	Ellipsoid[] ellipsoids = algo.momentsToEllipsoids(moments);
+            
+            // show results as ImageJ Table
+            IJ.showStatus("Create table");
+            table = algo.createTable(labels, ellipsoids);
+            String title = imagePlus.getShortTitle() + "-ellipsoids";
             table.show(title);
         	
-            Moments3D[] moments = algo.computeMoments(image, labels, calib);
-        	vectorTable = createVectorTable(labels, moments);
+            // also create a table for moments
+        	vectorTable = algo.createTable(labels, moments);
             title = imagePlus.getShortTitle() + "-eigenVectors";
             vectorTable.show(title);
         } 
@@ -98,39 +111,9 @@ public class EquivalentEllipsoidPlugin implements PlugIn
         	ex.printStackTrace(System.err);
         	return;
         }
-
-    }
-    
-    private ResultsTable createVectorTable(int[] labels, Moments3D[] moments)
-    {
-		// Initialize a new result table
-		ResultsTable table = new ResultsTable();
-	
-		for (int i = 0; i < labels.length; i++)
-		{
-			// add an entry to the resulting data table
-			table.incrementCounter();
-			table.addLabel(Integer.toString(labels[i]));
-
-			ArrayList<Vector3D> vectors = moments[i].eigenVectors();
-			
-			Vector3D v1 = vectors.get(0);
-			table.addValue("EigenVector1.X", v1.getX());
-			table.addValue("EigenVector1.Y", v1.getY());
-			table.addValue("EigenVector1.Z", v1.getZ());
-			
-			Vector3D v2 = vectors.get(1);
-			table.addValue("EigenVector2.X", v2.getX());
-			table.addValue("EigenVector2.Y", v2.getY());
-			table.addValue("EigenVector2.Z", v2.getZ());
-			
-			Vector3D v3 = vectors.get(2);
-			table.addValue("EigenVector3.X", v3.getX());
-			table.addValue("EigenVector3.Y", v3.getY());
-			table.addValue("EigenVector3.Z", v3.getZ());
-
-		}
-		
-    	return table;
+        
+        long t1 = System.nanoTime();
+        double dt = (t1 - t0) / 1_000_000;
+        IJUtils.showElapsedTime("Equivalent Ellipsoids", dt, imagePlus);
     }
 }
