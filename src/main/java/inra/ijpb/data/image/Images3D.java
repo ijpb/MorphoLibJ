@@ -282,7 +282,42 @@ public class Images3D
 		}
 	}
 	
-	/**
+    /**
+     * Computes the complements of the input image using the specified value as
+     * reference, and returns the complemented image.
+     *
+     * @param image
+     *            the image to complement
+     * @param base
+     *            the reference value for computing complement (ususally 255)
+     * @return the complemented image, with values equal to base value minus
+     *         values from original image.
+     */
+    public static final ImageStack complement(ImageStack image, double base)
+    {
+        int sizeX = image.getWidth();
+        int sizeY = image.getHeight();
+        int sizeZ = image.getSize();
+        ImageStack res = ImageStack.create(sizeX, sizeY, sizeZ, image.getBitDepth());
+
+        for (int z = 0; z < sizeZ; z++)
+        {
+            final ImageProcessor ip = image.getProcessor(z + 1);
+            final ImageProcessor ip2 = res.getProcessor(z + 1);
+            
+            for (int y = 0; y < sizeY; y++)
+            {
+                for (int x = 0; x < sizeX; x++)
+                {
+                    ip2.setf(x, y, (float) (base - ip.getf(x, y)));
+                }
+            }
+        }
+        
+        return res;
+    }
+
+    /**
 	 * Inverts the values of a 3D image
 	 *
 	 * @param image input image
