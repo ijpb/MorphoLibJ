@@ -37,43 +37,8 @@ import org.junit.Test;
 public class FloodFill3DTest {
 
 	@Test
-	public final void testFloodFill_BatCochlea_C26() {
-		String fileName = getClass().getResource("/files/bat-cochlea-volume.tif").getFile();
-		ImagePlus imagePlus = IJ.openImage(fileName);
-		assertNotNull(imagePlus);
-		assertTrue(imagePlus.getStackSize() > 0);
-
-		// load the reference image, and get its size
-		ImageStack image = imagePlus.getStack();
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-		int sizeZ = image.getSize();
-		
-		// flood fill from an arbitrary point
-		int value = 83;
-		ImageStack result = image.duplicate();
-		FloodFill3D.floodFill(result, 90, 30, 50, value, 26);
-		
-		int vRef = (int) image.getVoxel(81, 100, 0);
-		assertEquals(255, vRef);
-		
-		for (int z = 0; z < sizeZ; z++) {
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
-					int v0 = (int) image.getVoxel(x, y, z);
-					int v = (int) result.getVoxel(x, y, z);
-//					String msg = String.format("x=%d, y=%d, z=%d", x, y, z);
-					if (v0 == 255)
-						assertEquals(value, v);
-					else
-						assertEquals(0, v);
-				}
-			}
-		}
-	}
-
-	@Test
-	public final void testFloodFill_Cross3d_C6() {
+	public final void testFloodFill_Cross3d_C6()
+	{
 		// Create test image
 		int sizeX = 5;
 		int sizeY = 5;
@@ -101,7 +66,8 @@ public class FloodFill3DTest {
 	}
 
 	@Test
-	public final void testFloodFill_Cross3d_C6Float() {
+	public final void testFloodFill_Cross3d_C6Float()
+	{
 		// Create test image
 		int sizeX = 5;
 		int sizeY = 5;
@@ -129,7 +95,8 @@ public class FloodFill3DTest {
 	}
 
 	@Test
-	public final void testFloodFillPair_Cross3d_C6Float() {
+	public final void testFloodFillPair_Cross3d_C6Float()
+	{
 		// Create test image
 		int sizeX = 5;
 		int sizeY = 5;
@@ -159,7 +126,8 @@ public class FloodFill3DTest {
 	}
 
 	@Test
-	public final void testFloodFill_Cross3d_C26() {
+	public final void testFloodFill_Cross3d_C26() 
+	{
 		ImageStack image = createCornerCross();
 		int newVal = 37;
 		FloodFill3D.floodFill(image, 2, 4, 4, newVal, 26);
@@ -176,7 +144,8 @@ public class FloodFill3DTest {
 	}
 	
 	@Test
-	public final void testFloodFill_Cross3d_C26Float() {
+	public final void testFloodFill_Cross3d_C26Float()
+	{
 		ImageStack image = createCornerCross().convertToFloat();
 		double newVal = 37.2;
 		FloodFill3D.floodFill(image, 2, 4, 4, newVal, 26);
@@ -193,7 +162,8 @@ public class FloodFill3DTest {
 	}
 	
 	@Test
-	public final void testFloodFillPair_Cross3d_C26Float() {
+	public final void testFloodFillPair_Cross3d_C26Float()
+	{
 		ImageStack image = createCornerCross();
 //		System.out.println("input image:");
 //		printStack(image);
@@ -206,6 +176,7 @@ public class FloodFill3DTest {
 //		System.out.println("output image:");
 //		printStack(result);
 		
+		
 		// Test each of the branches
 		assertEquals(newVal, result.getVoxel(0, 4, 4), .01);
 		assertEquals(newVal, result.getVoxel(8, 4, 4), .01);
@@ -215,10 +186,85 @@ public class FloodFill3DTest {
 		assertEquals(newVal, result.getVoxel(4, 4, 8), .01);
 	}
 	
-	/**
+	@Test
+	public final void testFloodFill_BatCochlea_C26() 
+	{
+	    String fileName = getClass().getResource("/files/bat-cochlea_sub25.tif").getFile();
+	    ImagePlus imagePlus = IJ.openImage(fileName);
+	    assertNotNull(imagePlus);
+	    assertTrue(imagePlus.getStackSize() > 0);
+
+	    // load the reference image, and get its size
+	    ImageStack image = imagePlus.getStack();
+	    int sizeX = image.getWidth();
+	    int sizeY = image.getHeight();
+	    int sizeZ = image.getSize();
+
+	    // flood fill from an arbitrary point
+	    int value = 83;
+	    ImageStack result = image.duplicate();
+	    FloodFill3D.floodFill(result, 22, 7, 12, value, 26);
+
+	    int vRef = (int) image.getVoxel(20, 25, 1);
+	    assertEquals(255, vRef);
+
+	    for (int z = 0; z < sizeZ; z++)
+	    {
+	        for (int y = 0; y < sizeY; y++)
+	        {
+	            for (int x = 0; x < sizeX; x++)
+	            {
+	                int v0 = (int) image.getVoxel(x, y, z);
+	                int v = (int) result.getVoxel(x, y, z);
+	                //					String msg = String.format("x=%d, y=%d, z=%d", x, y, z);
+	                if (v0 == 255)
+	                    assertEquals(value, v);
+	                else
+	                    assertEquals(0, v);
+	            }
+	        }
+	    }
+	}
+
+    @Test
+    public final void testFloodFill_BatCochlea_C26Float() 
+    {
+    	String fileName = getClass().getResource("/files/bat-cochlea_sub25.tif").getFile();
+    	ImagePlus imagePlus = IJ.openImage(fileName);
+    	assertNotNull(imagePlus);
+    	assertTrue(imagePlus.getStackSize() > 0);
+    
+    	// load the reference image, and get its size
+    	ImageStack image = imagePlus.getStack();
+    	image = image.convertToFloat();
+    	int sizeX = image.getWidth();
+    	int sizeY = image.getHeight();
+    	int sizeZ = image.getSize();
+    	
+    	// flood fill from an arbitrary point
+    	double value = 312.5;
+    	ImageStack result = image.duplicate();
+        FloodFill3D.floodFill(result, 22, 7, 12, value, 26);
+    	
+    	for (int z = 0; z < sizeZ; z++) {
+    		for (int y = 0; y < sizeY; y++) {
+    			for (int x = 0; x < sizeX; x++) {
+    				double v0 = image.getVoxel(x, y, z);
+    				double v = result.getVoxel(x, y, z);
+    				if (v0 == 255)
+    					assertEquals(value, v, .01);
+    				else
+    					assertEquals(0, v, .01);
+    			}
+    		}
+    	}
+    }
+
+    /**
 	 * Creates a stack representing a cross with branches touching only by corners.
 	 */
-	public ImageStack createCornerCross() {
+	public ImageStack createCornerCross() 
+	{
 		// Create test image
 		int sizeX = 9;
 		int sizeY = 9;
@@ -249,40 +295,8 @@ public class FloodFill3DTest {
 		return image;
 	}
 	
-	@Test
-	public final void testFloodFill_BatCochlea_C26Float() {
-		String fileName = getClass().getResource("/files/bat-cochlea-volume.tif").getFile();
-		ImagePlus imagePlus = IJ.openImage(fileName);
-		assertNotNull(imagePlus);
-		assertTrue(imagePlus.getStackSize() > 0);
-
-		// load the reference image, and get its size
-		ImageStack image = imagePlus.getStack();
-		image = image.convertToFloat();
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-		int sizeZ = image.getSize();
-		
-		// flood fill from an arbitrary point
-		double value = 312.5;
-		ImageStack result = image.duplicate();
-		FloodFill3D.floodFill(result, 90, 30, 50, value, 26);
-		
-		for (int z = 0; z < sizeZ; z++) {
-			for (int y = 0; y < sizeY; y++) {
-				for (int x = 0; x < sizeX; x++) {
-					double v0 = image.getVoxel(x, y, z);
-					double v = result.getVoxel(x, y, z);
-					if (v0 == 255)
-						assertEquals(value, v, .01);
-					else
-						assertEquals(0, v, .01);
-				}
-			}
-		}
-	}
-
-	public void printStack(ImageStack stack) {
+	public void printStack(ImageStack stack) 
+	{
 		int width = stack.getWidth();
 		int height = stack.getHeight();
 		int depth = stack.getSize();

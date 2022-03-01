@@ -34,10 +34,9 @@ import ij.ImageStack;
 public class GeodesicReconstructionByDilation3DTest {
 
 	@Test
-	public final void testApplyTo() {
-		GeodesicReconstructionByDilation3D algo = new GeodesicReconstructionByDilation3D();
-
-		String fileName = getClass().getResource("/files/bat-cochlea-volume.tif").getFile();
+	public final void testApplyTo() 
+	{
+		String fileName = getClass().getResource("/files/bat-cochlea_sub25.tif").getFile();
 		ImagePlus imagePlus = IJ.openImage(fileName);
 		assertNotNull(imagePlus);
 
@@ -48,27 +47,25 @@ public class GeodesicReconstructionByDilation3DTest {
 		int height = mask.getHeight();
 		int depth = mask.getSize();
 		int bitDepth = mask.getBitDepth();
+		
 		ImageStack marker = ImageStack.create(width, height, depth, bitDepth);
+		marker.setVoxel(5, 21, 12, 255);
 
-		marker.setVoxel(20, 80, 50, 255);
-
-		algo.verbose = false;
-
-//		long t0 = System.currentTimeMillis();
+        GeodesicReconstructionByDilation3D algo = new GeodesicReconstructionByDilation3D();
+        algo.verbose = false;
 		ImageStack result = algo.applyTo(marker, mask);
-//		long t1 = System.currentTimeMillis();
-//		double dt = (t1 - t0) / 1000.0;
-//		System.out.println("Elapsed time: " + dt + " s");
-		
-		for(int z = 0; z < depth; z++) {
-			for(int y = 0; y < height; y++) {
-				for(int x = 0; x < width; x++) {
-					assertEquals(result.getVoxel(x, y, z),
-							mask.getVoxel(x, y, z), .01);
-				}
-			}
-		}
-		
-	}
+
+        for (int z = 0; z < depth; z++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    assertEquals(result.getVoxel(x, y, z), mask.getVoxel(x, y, z), .01);
+                }
+            }
+        }
+
+    }
 
 }

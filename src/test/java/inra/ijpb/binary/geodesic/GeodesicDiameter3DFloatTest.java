@@ -46,7 +46,7 @@ public class GeodesicDiameter3DFloatTest
 	@Test
 	public void testAnalyzeImage_BatCochlea()
 	{
-		String fileName = getClass().getResource("/files/bat-cochlea-volume.tif").getFile();
+		String fileName = getClass().getResource("/files/bat-cochlea_sub25.tif").getFile();
 		ImagePlus imagePlus = IJ.openImage(fileName);
 		
 		assertNotNull(imagePlus);
