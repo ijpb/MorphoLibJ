@@ -167,6 +167,7 @@ public class MorphologicalReconstruction3DPlugin implements PlugIn {
 		if (!Images3D.isSameSize(marker, mask))
 		{
 			IJ.error("Image Size Error", "Both marker and mask images must have same size");
+			return;
 		}
 		
 		long t0 = System.currentTimeMillis();

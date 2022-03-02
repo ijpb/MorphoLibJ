@@ -194,22 +194,27 @@ public class MorphologicalReconstructionPlugin implements PlugIn
 		Connectivity2D conn = Connectivity2D.fromLabel(gd.getNextChoice());
 		
 		// Extract image procesors
-		ImageProcessor markerProc = markerImage.getProcessor();
-		ImageProcessor maskProc = maskImage.getProcessor();
-		
+		ImageProcessor marker = markerImage.getProcessor();
+		ImageProcessor mask = maskImage.getProcessor();
+		if (marker.getWidth() != mask.getWidth() || marker.getHeight() != mask.getHeight())
+		{
+		    IJ.error("Image Size Error", "Both marker and mask images must have same size");
+		    return;
+		}
+
 		long t0 = System.currentTimeMillis();
 		
-		// Compute geodesic reconstruction
-		ImageProcessor recProc = op.applyTo(markerProc, maskProc, conn);
+		// Compute morphological reconstruction
+		ImageProcessor res = op.applyTo(marker, mask, conn);
 		
 		// Keep same color model
-		recProc.setColorModel(maskProc.getColorModel());
+		res.setColorModel(mask.getColorModel());
 
 		// create resulting image
 		String newName = createResultImageName(markerImage);
-		ImagePlus resultImage = new ImagePlus(newName, recProc);
-		resultImage.copyScale(maskImage);
-		resultImage.show();
+		ImagePlus resPlus = new ImagePlus(newName, res);
+		resPlus.copyScale(maskImage);
+		resPlus.show();
 		
 		long t1 = System.currentTimeMillis();
 		IJUtils.showElapsedTime(op.toString(), t1 - t0, markerImage);
