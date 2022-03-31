@@ -14,6 +14,11 @@ import ij.process.ImageProcessor;
  */
 public class ImageUtils
 {
+    public static final boolean isColorImage(ImagePlus imagePlus)
+    {
+        return imagePlus.getType() == ImagePlus.COLOR_256 || imagePlus.getType() == ImagePlus.COLOR_RGB;
+    }
+    
     /**
      * Checks if the two input images have the same size in each direction.
      * 
