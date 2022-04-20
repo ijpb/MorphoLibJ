@@ -153,8 +153,11 @@ public class IJUtils
      * Prints the content of the given ImageProcessor on the console. This can be used
      * for debugging (small) images.
      * 
-     * @param image the image to display on the console 
+     * @param image the image to display on the console
+     * 
+     * @deprecated use {@link inra.ijpb.data.image.ImageUtils#print(ImageProcessor)} instead
      */
+    @Deprecated
     public static final void printImage(ImageProcessor image) 
     {
         for (int y = 0; y < image.getHeight(); y++)

@@ -25,7 +25,7 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
-import inra.ijpb.data.image.Images3D;
+import inra.ijpb.data.image.ImageUtils;
 
 /**
  * Simple plugin to replace a value by another one, for 2D/3D images, for 
@@ -34,10 +34,11 @@ import inra.ijpb.data.image.Images3D;
  * @author David Legland
  *
  */
-public class ReplaceValuePlugin implements PlugIn {
-
+public class ReplaceValuePlugin implements PlugIn 
+{
 	@Override
-	public void run(String arg0) {
+	public void run(String arg0) 
+	{
 		ImagePlus imagePlus = IJ.getImage();
 		
 		GenericDialog gd = new GenericDialog("Replace Value");
@@ -51,7 +52,7 @@ public class ReplaceValuePlugin implements PlugIn {
 		double initialValue = gd.getNextNumber();
 		double finalValue = gd.getNextNumber();
 
-		Images3D.replaceValue(imagePlus, initialValue, finalValue);
+		ImageUtils.replaceValue(imagePlus, initialValue, finalValue);
 		imagePlus.updateAndDraw();
 	}
 }

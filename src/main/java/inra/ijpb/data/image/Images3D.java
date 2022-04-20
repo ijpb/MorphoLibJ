@@ -195,6 +195,8 @@ public class Images3D
 	/**
 	 * Replaces the elements of an image with a given value by a new values.
 	 * 
+	 * @deprecated replaced by {@link ImageUtils#replaceValue(ImagePlus, double, double)}
+	 * 
 	 * @param image
 	 *            the image to process
 	 * @param initialValue
@@ -264,6 +266,8 @@ public class Images3D
 	 * for debugging (small) images.
 	 * 
 	 * @param image the 3D image to display on the console 
+	 * 
+	 * @deprecated replaced by {@link inra.ijpb.data.image.ImageUtils#print(ImageStack)}
 	 */
 	public static final void print(ImageStack image) 
 	{
