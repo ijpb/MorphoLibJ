@@ -39,8 +39,10 @@ public class ChamferMask2DW4 extends ChamferMask2D
 	 *            the weight associated to orthogonal neighbors
 	 * @param b
 	 *            the weight associated to diagonal neighbors
-	 * @param c
-	 *            the weight associated to chess-knight move neighbors
+     * @param c
+     *            the weight associated to chess-knight move neighbors
+     * @param d
+     *            the weight associated to (3,1) shift and its permutations
 	 */
 	public ChamferMask2DW4(int a, int b, int c, int d)
 	{

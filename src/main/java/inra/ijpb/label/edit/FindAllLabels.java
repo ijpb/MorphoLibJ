@@ -21,6 +21,9 @@ import inra.ijpb.data.image.Images3D;
  */
 public class FindAllLabels extends AlgoStub
 {
+    /**
+     * Default empty constructor.
+     */
     public FindAllLabels()
     {
     }

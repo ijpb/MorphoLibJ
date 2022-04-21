@@ -167,6 +167,13 @@ public class EquivalentEllipsoid extends RegionAnalyzer3D<Ellipsoid>
         table.addValue("Ellipsoid.Psi", ellipsoid.psi());
 	}
 
+	/**
+     * Converts an array of 3D moments into equivalent ellipsoid representation.
+     * 
+     * @param moments
+     *            the moments to convert
+     * @return the array of ellipsoids corresponding to the moments
+     */
 	public Ellipsoid[] momentsToEllipsoids(Moments3D[] moments)
 	{
 		int n = moments.length;

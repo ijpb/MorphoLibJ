@@ -355,14 +355,14 @@ public class LabelToValuePlugin implements PlugIn, DialogListener
      * @return a new 32-bit float image containing the values associated to each
      *         label
      */
-    public static final ImagePlus process(ImagePlus labelImagePlus, ResultsTable table, String columnName)
+    public static final ImagePlus process(ImagePlus labelImage, ResultsTable table, String columnName)
     {
         // extract array of numerical values
         double[] values = getColumnValues(table, columnName);
         
         // Create result image
-        ImagePlus resultPlus = LabelImages.applyLut(labelImagePlus, values);
-        resultPlus.copyScale(labelImagePlus);
+        ImagePlus resultPlus = LabelImages.applyLut(labelImage, values);
+        resultPlus.copyScale(labelImage);
         
         return resultPlus;
     }
@@ -442,10 +442,10 @@ public class LabelToValuePlugin implements PlugIn, DialogListener
      * @param columnNameArg
      *            the name of the column (within the table) containing the
      *            values
-     * @param MinValueArg
+     * @param minValueArg
      *            the minimal value to display as black in result image
-     * @param MaxValueArg
-     *            the maximal value to display as black in result image
+     * @param maxValueArg
+     *            the maximal value to display as white in result image
      */
     public static final void process(
             String tableNameArg,
