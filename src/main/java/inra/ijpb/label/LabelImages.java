@@ -1560,15 +1560,52 @@ public class LabelImages
 		return result;
 	}
 	
+    /**
+     * Applies the given Look-up table to the input label image.
+     * 
+     * @param labelImage
+     *            a label image (2D or 3D)
+     * @param values
+     *            a set of values associated to each unique label
+     * @return a new ImagePlus containing for each pixel or voxel, either the value
+     *         associated to the corresponding label, or 0 if the pixel is
+     *         background
+     */
+	public static final ImagePlus applyLut(ImagePlus labelImage, double[] values)
+	{
+        ImagePlus resultPlus;
+        String newName = labelImage.getShortTitle() + "-applyLut";
+        
+        // Dispatch to appropriate function depending on dimension
+        if (labelImage.getStackSize() == 1) 
+        {
+            // process planar image
+            ImageProcessor image = labelImage.getProcessor();
+            ImageProcessor result = applyLut(image, values);
+            resultPlus = new ImagePlus(newName, result);
+        }
+        else 
+        {
+            // process image stack
+            ImageStack image = labelImage.getStack();
+            ImageStack result = applyLut(image, values);
+            resultPlus = new ImagePlus(newName, result);
+        }
+        
+        resultPlus.copyScale(labelImage);
+        
+        return resultPlus;
+	}
+	
 	/**
-	 * Applies the given Look-up table to the input label image.
+	 * Applies the given Look-up table to the input 2D label image.
 	 * 
 	 * @param labelImage
 	 *            a label image
 	 * @param values
 	 *            a set of values associated to each unique label
 	 * @return a new FloatProcessor containing for each pixel, either the value
-	 *         associated to the corresponding pixel, or 0 if the pixel is
+	 *         associated to the corresponding label, or 0 if the pixel is
 	 *         background
 	 */
 	public static final FloatProcessor applyLut(ImageProcessor labelImage, double[] values)
@@ -1611,14 +1648,14 @@ public class LabelImages
 	}
 	
 	/**
-	 * Applies the given Look-up table to the input label image.
+	 * Applies the given Look-up table to the input 3D label image.
 	 * 
 	 * @param labelImage
 	 *            a 3D label image
 	 * @param values
 	 *            a set of values associated to each unique label
 	 * @return a new 3D image containing for each pixel, either the value
-	 *         associated to the corresponding pixel, or 0 if the pixel is
+	 *         associated to the corresponding label, or 0 if the voxel is
 	 *         background
 	 */
 	public static final ImageStack applyLut(ImageStack labelImage, double[] values)

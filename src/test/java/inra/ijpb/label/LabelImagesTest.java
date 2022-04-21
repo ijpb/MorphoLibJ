@@ -37,6 +37,7 @@ import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.color.ColorMaps.CommonLabelMaps;
+import inra.ijpb.data.image.ImageUtils;
 
 public class LabelImagesTest
 {
@@ -318,6 +319,53 @@ public class LabelImagesTest
 		assertEquals(8, res.get(7, 7));
 	}
 
+    @Test
+    public final void testApplyLut_2D()
+    {
+        ImageProcessor labelMap = new ByteProcessor(12, 10);
+        ImageUtils.fillRect(labelMap, 1, 1, 4, 3, 2);
+        ImageUtils.fillRect(labelMap, 6, 1, 4, 3, 3);
+        ImageUtils.fillRect(labelMap, 1, 5, 4, 3, 6);
+        ImageUtils.fillRect(labelMap, 6, 5, 4, 3, 7);
+        double[] values = new double[] {2.3, 4.5, 6.7, 8.9};
+        
+        ImageProcessor res = LabelImages.applyLut(labelMap, values);
+        
+        // check result size
+        assertEquals(12, res.getWidth());
+        assertEquals(10, res.getHeight());
+        
+        // check propagation of labels
+        assertEquals(2.3, res.getf( 2, 2), 0.01);
+        assertEquals(4.5, res.getf( 7, 2), 0.01);
+        assertEquals(6.7, res.getf( 2, 6), 0.01);
+        assertEquals(8.9, res.getf( 7, 6), 0.01);
+    }
+    
+    @Test
+    public final void testApplyLut_3D()
+    {
+        ImageStack labelMap = ImageStack.create(12, 10, 8, 8);
+        ImageUtils.fillRect3d(labelMap, 1, 1, 2, 4, 3, 3, 2);
+        ImageUtils.fillRect3d(labelMap, 6, 1, 2, 4, 3, 3, 3);
+        ImageUtils.fillRect3d(labelMap, 1, 5, 2, 4, 3, 3, 6);
+        ImageUtils.fillRect3d(labelMap, 6, 5, 2, 4, 3, 3, 7);
+        double[] values = new double[] {2.3, 4.5, 6.7, 8.9};
+        
+        ImageStack res = LabelImages.applyLut(labelMap, values);
+        
+        // check result size
+        assertEquals(12, res.getWidth());
+        assertEquals(10, res.getHeight());
+        assertEquals(8, res.getSize());
+        
+        // check propagation of labels
+        assertEquals(2.3, res.getVoxel(2, 2, 2), 0.01);
+        assertEquals(4.5, res.getVoxel(7, 2, 2), 0.01);
+        assertEquals(6.7, res.getVoxel(2, 6, 2), 0.01);
+        assertEquals(8.9, res.getVoxel(7, 6, 2), 0.01);
+    }
+    
 	@Test
 	public final void testDilateLabels_SeparatedLabels()
 	{

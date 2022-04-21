@@ -23,23 +23,21 @@ package inra.ijpb.plugins;
 
 import ij.IJ;
 import ij.ImagePlus;
-import ij.ImageStack;
 import ij.WindowManager;
 import ij.gui.DialogListener;
 import ij.gui.GenericDialog;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
-import ij.process.FloatProcessor;
-import ij.process.ImageProcessor;
+import ij.plugin.frame.Recorder;
 import ij.text.TextPanel;
 import ij.text.TextWindow;
 import inra.ijpb.label.LabelImages;
+import inra.ijpb.util.IJUtils;
 
 import java.awt.AWTEvent;
 import java.awt.Choice;
 import java.awt.Frame;
 import java.awt.TextField;
-import java.util.ArrayList;
 import java.util.Vector;
 
 /**
@@ -52,21 +50,24 @@ import java.util.Vector;
  */
 public class LabelToValuePlugin implements PlugIn, DialogListener 
 {
-	ImagePlus labelImagePlus;
 	
-	ImagePlus resultPlus;
-	
+	/** The table containing the column to use */
 	ResultsTable table = null;
 	
+	/** The name of the column (header) containing values associated to labels. */
+	String columnName = null;
 	
-	GenericDialog gd = null;
-	
-	String selectedHeaderName = null;
-	
+	/** Min and max values used to scale the display */
 	double minValue;
 	double maxValue;
 
-	// number of digits after decimal mark to display min/max values
+	/**
+     * The instance of GenericDialog using the options. When table or column is
+     * changed, other widgets need to be updated.
+     */
+    GenericDialog gd = null;
+    
+	/** number of digits after decimal mark to display min/max values */
 	int nDigits = 3;
 		
 	/* (non-Javadoc)
@@ -75,22 +76,29 @@ public class LabelToValuePlugin implements PlugIn, DialogListener
 	@Override
 	public void run(String arg0) 
 	{
+	    // in case of macro, we expect to run the static method "process(...)". 
+	    if (IJ.isMacro())
+	    {
+	        return;
+	    }
+	    
 		// Work on current image, and exit if no one is open
-		this.labelImagePlus = IJ.getImage();
+	    /**
+	     * The label image, obtained as the current image when the plugin is run.
+	     */
+	    ImagePlus labelImagePlus;
+		labelImagePlus = IJ.getImage();
 	
 		// Check that a table window is open
-		TextWindow[] textWindows = getTableWindows();
+		TextWindow[] textWindows = IJUtils.getTableWindows();
         if (textWindows.length == 0)
         {
             IJ.error("Requires at least one Table window");
             return;
         }
         
-		// Create empty result image
-		initResultImage();
-		
 		// Opens dialog to choose options
-		createDialog();
+        this.gd = createDialog(textWindows);
 		this.gd.showDialog();
 		
 		// parse dialog
@@ -98,13 +106,26 @@ public class LabelToValuePlugin implements PlugIn, DialogListener
 			return;
 		parseDialogOptions();
 		
-		ImagePlus resultPlus = computeResultImage();
-		if( null == resultPlus )
+		// compute result image
+		ImagePlus resultPlus;
+        try 
+        {
+            resultPlus = process(labelImagePlus, table, this.columnName, this.minValue, this.maxValue);
+        }
+        catch (RuntimeException ex) 
+        {
+            IJ.error("Label to value error", 
+                    "ERROR: label image values do not \n" + "correspond with table values!");
+            return;
+        }
+		if (null == resultPlus)
+		{
 			return;
+		}
 		
-		this.resultPlus.copyScale(this.labelImagePlus);
+		resultPlus.copyScale(labelImagePlus);
 
-		String newName = this.labelImagePlus.getShortTitle() + "-" + selectedHeaderName;
+		String newName = labelImagePlus.getShortTitle() + "-" + columnName;
 		resultPlus.setTitle(newName);
 		resultPlus.show();
 		
@@ -113,47 +134,20 @@ public class LabelToValuePlugin implements PlugIn, DialogListener
 		{
 			resultPlus.setSlice(labelImagePlus.getCurrentSlice());
 		}
-	}
-
-	private void initResultImage() 
-	{
-		if (this.labelImagePlus.getStackSize() == 1) 
-		{
-			ImageProcessor labelImage = this.labelImagePlus.getProcessor();
-			int sizeX = labelImage.getWidth(); 
-			int sizeY = labelImage.getHeight(); 
-			
-			ImageProcessor resultImage = new FloatProcessor(sizeX, sizeY);
-			this.resultPlus = new ImagePlus("Result", resultImage);
-		} 
-		else 
-		{
-			ImageStack labelImage = this.labelImagePlus.getStack();
-			int sizeX = labelImage.getWidth(); 
-			int sizeY = labelImage.getHeight(); 
-			int sizeZ = labelImage.getSize(); 
-			
-			ImageStack resultImage = ImageStack.create(sizeX, sizeY, sizeZ, 32); 
-			this.resultPlus = new ImagePlus("Result", resultImage);
-		}
 		
-		this.resultPlus.copyScale(this.labelImagePlus);
+		// Write instructions for running the plugin from a macro
+		String[] recordArgs = new String[] {
+	            "Table=" + table.getTitle(), 
+                "Column=" + columnName, 
+                "Min=" + Double.toString(minValue), 
+                "Max=" + Double.toString(maxValue), 
+		};
+		record("process", recordArgs);
 	}
 	
-	private GenericDialog createDialog()
+	private GenericDialog createDialog(TextWindow[] textWindows)
 	{
-		// Get the list of windows containing tables
-		TextWindow[] textWindows = getTableWindows();
-		if (textWindows.length == 0)
-		{
-			IJ.error("Requires at least one Table window");
-			return null;
-		}
-		String[] tableNames = new String[textWindows.length];
-		for (int i = 0; i < textWindows.length; i++) {
-			tableNames[i] = textWindows[i].getTitle();
-//			IJ.log("Found table: " + tableNames[i]);
-		}
+	    String[] tableNames = retrieveTableNames(textWindows);
 		
 		// Choose current table
 		TextPanel tp = textWindows[0].getTextPanel();
@@ -171,7 +165,7 @@ public class LabelToValuePlugin implements PlugIn, DialogListener
 		double[] extent = computeColumnExtent(table, defaultHeading);
 
 		this.gd = new GenericDialog("Assign Measure to Label");
-		gd.addChoice("Results Table:", tableNames, tableNames[0]);
+		gd.addChoice("Table Name:", tableNames, tableNames[0]);
 		gd.addChoice("Column:", headings, defaultHeading);
 		gd.addNumericField("Min Value", extent[0], this.nDigits, 10, null);
 		gd.addNumericField("Max Value", extent[1], this.nDigits, 10, null);
@@ -180,33 +174,18 @@ public class LabelToValuePlugin implements PlugIn, DialogListener
 		return gd;
 	}
 	
-	/**
-	 * Iterates on the list of TextWindows, and keeps only the ones containing a
-	 * non-null ResultsTable
-	 */
-	private static final TextWindow[] getTableWindows() 
+	private static final String[] retrieveTableNames(TextWindow[] textWindows)
 	{
-		Frame[] frames = WindowManager.getNonImageWindows();
-		
-		ArrayList<TextWindow> windows = new ArrayList<TextWindow>(frames.length);
-		
-		for (Frame frame : frames) 
-		{
-			if (frame instanceof TextWindow) 
-			{
-				TextWindow tw = (TextWindow) frame;
-				if (tw.getTextPanel().getResultsTable() != null) 
-				{
-					windows.add(tw);
-				}
-			}
-		}
-		
-		return windows.toArray(new TextWindow[0]);
+        String[] tableNames = new String[textWindows.length];
+        for (int i = 0; i < textWindows.length; i++)
+        {
+            tableNames[i] = textWindows[i].getTitle();
+        }
+        return tableNames;
 	}
-
+	
 	/**
-	 * analyse dialog, and setup inner fields of the class.
+	 * Analyze current dialog, and setup inner fields of the class.
 	 */
 	private void parseDialogOptions() 
 	{
@@ -214,42 +193,10 @@ public class LabelToValuePlugin implements PlugIn, DialogListener
 		Frame tableFrame = WindowManager.getFrame(tableName);
 		this.table = ((TextWindow) tableFrame).getTextPanel().getResultsTable();
 		
-		this.selectedHeaderName = this.gd.getNextChoice();
+		this.columnName = this.gd.getNextChoice();
 		
 		this.minValue = this.gd.getNextNumber();
 		this.maxValue = this.gd.getNextNumber();
-	}
-	
-	private ImagePlus computeResultImage() 
-	{
-		// extract array of numerical values
-		double[] values = getColumnValues(table, this.selectedHeaderName);
-
-		// Different processing depending on image dimensionality
-		try 
-		{
-			if (this.resultPlus.getStackSize() == 1) 
-			{
-				ImageProcessor labelImage = this.labelImagePlus.getProcessor();
-				ImageProcessor resultImage = LabelImages.applyLut(labelImage, values);
-				this.resultPlus.setProcessor(resultImage);
-			}
-			else 
-			{
-				ImageStack labelImage = this.labelImagePlus.getStack();
-				ImageStack resultImage = LabelImages.applyLut(labelImage, values);
-				this.resultPlus.setStack(resultImage);
-			}
-		}
-		catch (RuntimeException ex) 
-		{
-			IJ.error("Label to value error", 
-					"ERROR: label image values do not \n" + "correspond with table values!");
-			return null;
-		}
-
-		this.resultPlus.setDisplayRange(this.minValue, this.maxValue);
-		return this.resultPlus;
 	}
 	
 	@Override
@@ -353,7 +300,7 @@ public class LabelToValuePlugin implements PlugIn, DialogListener
         return new double[]{minVal, maxVal};
     }
     
-    private double[] getColumnValues(ResultsTable table, String heading)
+    private static final double[] getColumnValues(ResultsTable table, String heading)
     {
         String[] allHeaders = table.getHeadings();
 
@@ -384,5 +331,159 @@ public class LabelToValuePlugin implements PlugIn, DialogListener
     private static final boolean hasRowLabelColumn(ResultsTable table)
     {
         return table.getLastColumn() == (table.getHeadings().length-2);
+    }
+    
+    
+    /* **********************************************************
+     * Processing methods
+     * *********************************************************/
+
+    /**
+     * Combines a label image and the values within a column of a ResultsTable
+     * to generate a parametric map of values that associates to each pixel /
+     * voxel the value of the row associated to the label it belongs to.
+     * Background pixels are associated to the value Float.NaN.
+     * 
+     * @param labelImage
+     *            the image containing the regions labels
+     * @param table
+     *            the ResultsTable containing the values to map
+     * @param columnName
+     *            the name of the column containing the values to map (one row
+     *            per label)
+     * 
+     * @return a new 32-bit float image containing the values associated to each
+     *         label
+     */
+    public static final ImagePlus process(ImagePlus labelImagePlus, ResultsTable table, String columnName)
+    {
+        // extract array of numerical values
+        double[] values = getColumnValues(table, columnName);
+        
+        // Create result image
+        ImagePlus resultPlus = LabelImages.applyLut(labelImagePlus, values);
+        resultPlus.copyScale(labelImagePlus);
+        
+        return resultPlus;
+    }
+    
+    /**
+     * Combines a label image and the values within a column of a ResultsTable
+     * to generate a parametric map of values that associates to each pixel /
+     * voxel the value of the row associated to the label it belongs to.
+     * Background pixels are associated to the value Float.NaN.
+     * 
+     * @param labelImage
+     *            the image containing the regions labels
+     * @param table
+     *            the ResultsTable containing the values to map
+     * @param columnName
+     *            the name of the column containing the values to map (one row
+     *            per label)
+     * @param minValue
+     *            the value that will be displayed in black
+     * @param maxValue
+     *            the value that will be displayed in white
+     * 
+     * @return a new 32-bit float image containing the values associated to each
+     *         label
+     */
+    public static final ImagePlus process(ImagePlus labelImage, ResultsTable table, String columnName, double minValue, double maxValue)
+    {
+        ImagePlus resultPlus = process(labelImage, table, columnName);
+        resultPlus.setDisplayRange(minValue, maxValue);
+
+        return resultPlus;
+    }
+    
+    
+    /* **********************************************************
+     * Macro recording related methods
+     * *********************************************************/
+
+    /**
+     * Macro-record a specific command. The command names match the static 
+     * methods that reproduce that part of the code.
+     * 
+     * @param command name of the command including package info
+     * @param args set of arguments for the command
+     */
+    public static final void record(String command, String... args) 
+    {
+        if (!Recorder.record)
+        {
+            return;
+        }
+
+        // build the command string
+        command = "call(\"inra.ijpb.plugins.LabelToValuePlugin." + command;
+        for(int i = 0; i < args.length; i++)
+        {
+            command += "\", \"" + args[i];
+        }
+        command += "\");\n";
+        
+        // record the command
+        Recorder.recordString(command);
+    }
+    
+    /**
+     * Process the current image as a label image using the provided string
+     * arguments.
+     * 
+     * This method is intended to be called from macro, using the command line
+     * generated by the "record" method.
+     *
+     * @see #record(String, String...)
+     * @see #process(ImagePlus, ResultsTable, String, double, double)
+     * 
+     * @param tableNameArg
+     *            the name of the result table to use
+     * @param columnNameArg
+     *            the name of the column (within the table) containing the
+     *            values
+     * @param MinValueArg
+     *            the minimal value to display as black in result image
+     * @param MaxValueArg
+     *            the maximal value to display as black in result image
+     */
+    public static final void process(
+            String tableNameArg,
+            String columnNameArg,
+            String minValueArg,
+            String maxValueArg)
+    {
+        // first retrieve the image containing labels
+        ImagePlus labelImagePlus = IJ.getImage();
+        
+        // convert options
+        String tableName = tableNameArg.replace( "Table=", "");
+        String columnName = columnNameArg.replace( "Column=", "");
+        double minValue = Double.parseDouble(minValueArg.replace("Min=", ""));
+        double maxValue = Double.parseDouble(maxValueArg.replace("Max=", ""));
+
+        // retrieve Results table
+        Frame tableFrame = WindowManager.getFrame(tableName);
+        ResultsTable table = ((TextWindow) tableFrame).getTextPanel().getResultsTable();
+        
+        // check column name is valid
+        if (table.getColumnIndex(columnName) == ResultsTable.COLUMN_NOT_FOUND)
+        {
+            String pattern = "Could not find column \"%s\" from table \"%s\"";
+            throw new RuntimeException(String.format(pattern, columnName, tableName));
+        }
+        
+        // Create result image
+        ImagePlus resultPlus = process(labelImagePlus, table, columnName, minValue, maxValue);
+
+        String newName = labelImagePlus.getShortTitle() + "-" + columnName;
+        resultPlus.setTitle(newName);
+        resultPlus.show();
+        
+        // set up display 
+        if (labelImagePlus.getStackSize() > 1) 
+        {
+            resultPlus.setSlice(labelImagePlus.getCurrentSlice());
+        }
     }
 }
