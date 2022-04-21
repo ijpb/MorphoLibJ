@@ -13318,7 +13318,7 @@ transforms the binary image into a label image by assigning a specific number
 \end_layout
 
 \begin_layout Subsection
-Label image representation
+Display label image
 \end_layout
 
 \begin_layout Standard
@@ -13421,6 +13421,32 @@ RGB converts a label image to a true RGB image.
  is large.
 \end_layout
 
+\begin_layout Subsection
+Visualization of region features
+\end_layout
+
+\begin_layout Standard
+When images contain many labels, it is may be difficult to interpret together
+ the localisation and the features describing the regions.
+ The 
+\begin_inset Quotes eld
+\end_inset
+
+Assign Measure To Label
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+Draw Label Values
+\begin_inset Quotes erd
+\end_inset
+
+ plugins provide some help to facilitate this exploration.
+\end_layout
+
 \begin_layout Description
 Assign
 \begin_inset space ~
@@ -13486,13 +13512,132 @@ noprefix "false"
 ).
 \end_layout
 
-\begin_layout Section
-Region and labels selection
+\begin_layout Description
+Draw
+\begin_inset space ~
+\end_inset
+
+Label
+\begin_inset space ~
+\end_inset
+
+Values 
+\begin_inset CommandInset label
+LatexCommand label
+name "op:Draw-Label-Values"
+
+\end_inset
+
+draws the value of a feature measured on each label of an image using two
+ coordinates (bounding box, centroid...) also stored in a ResultsTable.
+ An example is shown on Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Draw-Label-Values"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ See also the plugin Assign
+\begin_inset space ~
+\end_inset
+
+Measure
+\begin_inset space ~
+\end_inset
+
+To
+\begin_inset space ~
+\end_inset
+
+Label (page
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "op:Colorize-Labels"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Standard
-It is often convenient select regions in a binary or label image based on
- their size or their location (e.g.
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/grains/grains-WTH-areaOpen-lbl2-border-drawLabelValues.png
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Draw-Label-Values"
+
+\end_inset
+
+Example use of the 
+\begin_inset Quotes eld
+\end_inset
+
+Draw Label Values
+\begin_inset Quotes erd
+\end_inset
+
+ plugin.
+ The value of the elongation column are drawn as overlay on the image using
+ the position given by Bounding Box coordinates.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Region and label selection
+\end_layout
+
+\begin_layout Standard
+It is often convenient to select regions in a binary or label image based
+ on their size or their location (e.g.
  removing the regions touching the border).
  The MorphoLibJ library offers several utility tools for automatically selecting
  or removing specific regions, or to edit the label images.
@@ -13627,7 +13772,7 @@ Largest
 \end_inset
 
 Region identifies the largest connected component, and remove all other
- regions
+ regions.
 \end_layout
 
 \begin_layout Description
@@ -13639,7 +13784,7 @@ Largest
 \begin_inset space ~
 \end_inset
 
-Region identifies the largest connected component, and remove it from image
+Region identifies the largest connected component, and remove it from image.
 \end_layout
 
 \begin_layout Description
@@ -13664,13 +13809,6 @@ Algorithms work for both 2D or 3D images.
  Default connectivity 4 (resp.
  6) is used for 2D (resp.
  3D) images.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Newpage newpage
-\end_inset
-
-
 \end_layout
 
 \begin_layout Subsection
@@ -13879,9 +14017,6 @@ name "op:Label-Size-Filtering"
 
 filters the labels according to their size (area in 2D, volume in 3D), by
  specifying a comparison operator and a threshold value.
-\end_layout
-
-\begin_layout Standard
 \begin_inset Note Note
 status collapsed
 
@@ -13911,15 +14046,12 @@ computes the size (area in 2D, volume in 3D) of each region, and remove
 
 \end_layout
 
-\begin_layout Paragraph
+\begin_layout Description
 Remap
 \begin_inset space ~
 \end_inset
 
-Labels
-\end_layout
-
-\begin_layout Standard
+Labels 
 \begin_inset CommandInset label
 LatexCommand label
 name "op:Remap-Labels"
@@ -14351,132 +14483,6 @@ Label Edition plugin.
 \end_layout
 
 \begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Newpage newpage
-\end_inset
-
-
-\end_layout
-
-\begin_layout Section
-Utilities
-\end_layout
-
-\begin_layout Paragraph
-Draw
-\begin_inset space ~
-\end_inset
-
-Label
-\begin_inset space ~
-\end_inset
-
-Values
-\end_layout
-
-\begin_layout Standard
-\begin_inset CommandInset label
-LatexCommand label
-name "op:Draw-Label-Values"
-
-\end_inset
-
-draws the value of a feature measured on each label of an image using two
- coordinates (bounding box, centroid...) also stored in a ResultsTable.
- An example is shown on Figure
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Draw-Label-Values"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-.
- See also the plugin Assign
-\begin_inset space ~
-\end_inset
-
-Measure
-\begin_inset space ~
-\end_inset
-
-To
-\begin_inset space ~
-\end_inset
-
-Label (page
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand pageref
-reference "op:Colorize-Labels"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-).
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename images/grains/grains-WTH-areaOpen-lbl2-border-drawLabelValues.png
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:Draw-Label-Values"
-
-\end_inset
-
-Example use of the 
-\begin_inset Quotes eld
-\end_inset
-
-Draw Label Values
-\begin_inset Quotes erd
-\end_inset
-
- plugin.
- The value of the elongation column are drawn as overlay on the image using
- the position given by Bounding Box coordinates.
-\end_layout
-
-\end_inset
-
 
 \end_layout
 
