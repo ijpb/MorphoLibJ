@@ -40,6 +40,7 @@ import ij.plugin.PlugIn;
 import inra.ijpb.geometry.Ellipse;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.region2d.EquivalentEllipse;
+import inra.ijpb.util.IJUtils;
 
 /**
  * Computes equivalent ellipse of each region within a label image. The
@@ -68,32 +69,24 @@ public class EquivalentEllipsePlugin implements PlugIn
      */
 	public void run(String args)
 	{
-		// Open a dialog to choose:
-		// - a label image
-		// - a set of weights
-		int[] indices = WindowManager.getIDList();
-		if (indices==null)
-		{
-			IJ.error("No image", "Need at least one image to work");
-			return;
-		}
+        // create the list of image names
+        String[] imageNames = IJUtils.getOpenImageNames();
+        if (imageNames.length == 0)
+        {
+            IJ.error("No image", "Need at least one image to work");
+            return;
+        }
+
 		
-		// create the list of image names
-		String[] imageNames = new String[indices.length];
-		for (int i=0; i<indices.length; i++)
-		{
-			imageNames[i] = WindowManager.getImage(indices[i]).getTitle();
-		}
-		
-		// name of selected image
-		String selectedImageName = IJ.getImage().getTitle();
+		// name of current image
+		String currentImageName = IJ.getImage().getTitle();
 
 		// create the dialog
 		GenericDialog gd = new GenericDialog("Equivalent Ellipse");
-		gd.addChoice("Label Image:", imageNames, selectedImageName);
+		gd.addChoice("Label Image:", imageNames, currentImageName);
 		gd.addCheckbox("Overlay Ellipse", true);
 		gd.addCheckbox("Overlay Axes", true);
-		gd.addChoice("Image to overlay:", imageNames, selectedImageName);
+		gd.addChoice("Image to overlay:", imageNames, currentImageName);
 		gd.showDialog();
 		
 		if (gd.wasCanceled())

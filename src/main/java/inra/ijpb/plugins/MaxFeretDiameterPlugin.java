@@ -39,6 +39,7 @@ import ij.plugin.PlugIn;
 import inra.ijpb.geometry.PointPair2D;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.region2d.MaxFeretDiameter;
+import inra.ijpb.util.IJUtils;
 
 /**
  * Computes Maximum Feret Diameters of a binary or label image.
@@ -73,32 +74,25 @@ public class MaxFeretDiameterPlugin implements PlugIn
     @Override
 	public void run(String arg)
 	{
+        // create the list of image names
+        String[] imageNames = IJUtils.getOpenImageNames();
+        if (imageNames.length == 0)
+        {
+            IJ.error("No image", "Need at least one image to work");
+            return;
+        }
+        
+        // name of current image
+        String currentImageName = IJ.getImage().getTitle();
+
 		// Open a dialog to choose:
 		// - a label image
 		// - image to display results
-		int[] indices = WindowManager.getIDList();
-		if (indices==null)
-		{
-			IJ.error("No image", "Need at least one image to work");
-			return;
-		}
-		
-		// create the list of image names
-		String[] imageNames = new String[indices.length];
-		for (int i=0; i<indices.length; i++)
-		{
-			imageNames[i] = WindowManager.getImage(indices[i]).getTitle();
-		}
-		
-		// name of selected image
-		String selectedImageName = IJ.getImage().getTitle();
-
-		// create the dialog
 		GenericDialog gd = new GenericDialog("Max. Feret Diameter");
-		gd.addChoice("Label Image:", imageNames, selectedImageName);
+		gd.addChoice("Label Image:", imageNames, currentImageName);
 		// Set Chessknight weights as default
 		gd.addCheckbox("Show Overlay Result", true);
-		gd.addChoice("Image to overlay:", imageNames, selectedImageName);
+		gd.addChoice("Image to overlay:", imageNames, currentImageName);
 		gd.showDialog();
 		
 		if (gd.wasCanceled())

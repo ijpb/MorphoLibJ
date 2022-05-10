@@ -102,6 +102,32 @@ public class IJUtils
 		return status;
 	}
 	
+	/**
+     * Return an array of String containing the name of all the currently open
+     * images. If no image is open, returns an array with zero element.
+     * 
+     * @return an array of string containing the name of open images.
+     */
+    public static final String[] getOpenImageNames()
+    {
+        // retrieve list of image ID's
+        int[] indices = WindowManager.getIDList();
+        if (indices == null)
+        {
+            return new String[0];
+        }
+
+        // convert to a list of image names
+        String[] imageNames = new String[indices.length];
+        for (int i = 0; i < indices.length; i++)
+        {
+            imageNames[i] = WindowManager.getImage(indices[i]).getTitle();
+        }
+
+        // return image names
+        return imageNames;
+    }
+	
     /**
      * Iterates on the list of TextWindows, and keeps only the ones containing a
      * non-null ResultsTable

@@ -40,6 +40,7 @@ import ij.plugin.PlugIn;
 import inra.ijpb.geometry.Circle2D;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.region2d.LargestInscribedCircle;
+import inra.ijpb.util.IJUtils;
 
 /**
  * Plugin for max inscribed circle of regions from label images.
@@ -58,32 +59,22 @@ public class MaxInscribedCirclePlugin implements PlugIn
 	@Override
 	public void run(String arg0) 
 	{
-		// Open a dialog to choose:
-		// - a label image
-		// - a set of weights
-		int[] indices = WindowManager.getIDList();
-		if (indices==null)
-		{
-			IJ.error("No image", "Need at least one image to work");
-			return;
-		}
-		
-		// create the list of image names
-		String[] imageNames = new String[indices.length];
-		for (int i=0; i<indices.length; i++)
-		{
-			imageNames[i] = WindowManager.getImage(indices[i]).getTitle();
-		}
-		
+        // create the list of image names
+        String[] imageNames = IJUtils.getOpenImageNames();
+        if (imageNames.length == 0)
+        {
+            IJ.error("No image", "Need at least one image to work");
+            return;
+        }
+
 		// name of selected image
 		String selectedImageName = IJ.getImage().getTitle();
 
-		// create the dialog
+		// Open a dialog to choose:
+		// - a label image
+		// - the image to display result on
 		GenericDialog gd = new GenericDialog("Max. Inscribed Circle");
 		gd.addChoice("Label Image:", imageNames, selectedImageName);
-//		// Set Chessknight weights as default
-//		gd.addChoice("Distances", ChamferWeights.getAllLabels(), 
-//				ChamferWeights.CHESSKNIGHT.toString());
 		gd.addCheckbox("Show Overlay Result", true);
 		gd.addChoice("Image to overlay:", imageNames, selectedImageName);
 		gd.showDialog();

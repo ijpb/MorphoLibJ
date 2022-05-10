@@ -62,34 +62,27 @@ public class GeodesicDiameterPlugin implements PlugIn
 	@Override
 	public void run(String arg0) 
 	{
+        // create the list of image names
+        String[] imageNames = IJUtils.getOpenImageNames();
+        if (imageNames.length == 0)
+        {
+            IJ.error("No image", "Need at least one image to work");
+            return;
+        }
+
+		// name of current image
+		String currentImageName = IJ.getImage().getTitle();
+		
 		// Open a dialog to choose:
 		// - a label image
 		// - a set of weights
-		int[] indices = WindowManager.getIDList();
-		if (indices==null)
-		{
-			IJ.error("No image", "Need at least one image to work");
-			return;
-		}
-		
-		// create the list of image names
-		String[] imageNames = new String[indices.length];
-		for (int i=0; i<indices.length; i++)
-		{
-			imageNames[i] = WindowManager.getImage(indices[i]).getTitle();
-		}
-		
-		// name of selected image
-		String selectedImageName = IJ.getImage().getTitle();
-		
-		// create the dialog
 		GenericDialog gd = new GenericDialog("Geodesic Diameter");
-		gd.addChoice("Label Image:", imageNames, selectedImageName);
-		// Set Chessknight weights as default
+		gd.addChoice("Label Image:", imageNames, currentImageName);
+		// Set Chess Knight weights as default
 		gd.addChoice("Distances", ChamferMasks2D.getAllLabels(), 
 				ChamferMasks2D.CHESSKNIGHT.toString());
 		gd.addCheckbox("Show Overlay Result", true);
-		gd.addChoice("Image to overlay:", imageNames, selectedImageName);
+		gd.addChoice("Image to overlay:", imageNames, currentImageName);
 		gd.addCheckbox("Export to ROI Manager", true);
 		gd.showDialog();
 		

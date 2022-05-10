@@ -36,6 +36,7 @@ import inra.ijpb.binary.geodesic.GeodesicDistanceTransform;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort;
 import inra.ijpb.color.ColorMaps;
+import inra.ijpb.util.IJUtils;
 
 import java.awt.image.IndexColorModel;
 
@@ -56,29 +57,22 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 	@Override
 	public void run(String arg0)
 	{
+        // create the list of image names
+        String[] imageNames = IJUtils.getOpenImageNames();
+        if (imageNames.length == 0)
+        {
+            IJ.error("No image", "Need at least one image to work");
+            return;
+        }
+        String currentImageName = IJ.getImage().getTitle();
+
 		// Open a dialog to choose:
 		// - marker image
 		// - mask image
 		// - set of weights
-		int[] indices = WindowManager.getIDList();
-		if (indices == null)
-		{
-			IJ.error("No image", "Need at least one image to work");
-			return;
-		}
-
-		// create the list of image names
-		String[] imageNames = new String[indices.length];
-		for (int i = 0; i < indices.length; i++)
-		{
-			imageNames[i] = WindowManager.getImage(indices[i]).getTitle();
-		}
-
-		// create the dialog
 		GenericDialog gd = new GenericDialog("Geodesic Distance Map");
-
-		gd.addChoice("Marker Image", imageNames, IJ.getImage().getTitle());
-		gd.addChoice("Mask Image", imageNames, IJ.getImage().getTitle());
+		gd.addChoice("Marker Image", imageNames, currentImageName);
+		gd.addChoice("Mask Image", imageNames, currentImageName);
 		// Set Chessknight weights as default
 		gd.addChoice("Distances", ChamferMasks2D.getAllLabels(),
 				ChamferMasks2D.CHESSKNIGHT.toString());

@@ -28,6 +28,7 @@ import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import inra.ijpb.color.CommonColors;
 import inra.ijpb.data.image.ColorImages;
+import inra.ijpb.util.IJUtils;
 
 import java.awt.Color;
 
@@ -41,30 +42,23 @@ public class BinaryOverlayPlugin implements PlugIn {
 	// ====================================================
 	// Calling functions 
 	
-	public void run(String arg) {
-		// Open a dialog to choose:
-		// - a reference image (grayscale, binary, or color)
-		// - a binary image (coded as uint8)
-		// - a target color
-		int[] indices = WindowManager.getIDList();
-		if (indices==null) {
-			IJ.error("No image", "Need at least one image to work");
-			return;
-		}
-		
-		// create the list of image names
-		String[] imageNames = new String[indices.length];
-		for (int i = 0; i < indices.length; i++) {
-			imageNames[i] = WindowManager.getImage(indices[i]).getTitle();
-		}
-		
-		// name of selected image
-		String selectedImageName = IJ.getImage().getTitle();
+	public void run(String arg) 
+    {
+        // create the list of image names
+        String[] imageNames = IJUtils.getOpenImageNames();
+        if (imageNames.length == 0)
+        {
+            IJ.error("No image", "Need at least one image to work");
+            return;
+        }
+
+        // name of current image
+        String currentImageName = IJ.getImage().getTitle();
 		
 		// create the dialog
 		GenericDialog gd = new GenericDialog("Binary Overlay");
-		gd.addChoice("Reference Image:", imageNames, selectedImageName);
-		gd.addChoice("Binary Mask:", imageNames, selectedImageName);
+		gd.addChoice("Reference Image:", imageNames, currentImageName);
+		gd.addChoice("Binary Mask:", imageNames, currentImageName);
 		gd.addChoice("Overlay Color:", CommonColors.getAllLabels(), CommonColors.RED.getLabel());
 		
 		gd.showDialog();
