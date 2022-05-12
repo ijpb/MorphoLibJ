@@ -17,6 +17,15 @@ public class ImageUtils
     /**
      * Fills a rectangle within the image with the specified value.
      * 
+     * This will replace by the specified value all the pixels within image that
+     * are located:
+     * <ul>
+     * <li>between <code>x0</code> (inclusive) and <code>x0+width-1</code>
+     * (inclusive)</li>
+     * <li>between <code>y0</code> (inclusive) and <code>y0+height-1</code>
+     * (inclusive)</li>
+     * </ul>
+     * 
      * @param image
      *            the image to process.
      * @param x0
@@ -47,7 +56,18 @@ public class ImageUtils
     }
 
     /**
-     * Fills a rectangle within the image with the specified value.
+     * Fills a 3D rectangle within the image with the specified value.
+     * 
+     * This will replace by the specified value all the pixels within image that
+     * are located:
+     * <ul>
+     * <li>between <code>x0</code> (inclusive) and <code>x0+width-1</code>
+     * (inclusive)</li>
+     * <li>between <code>y0</code> (inclusive) and <code>y0+height-1</code>
+     * (inclusive)</li>
+     * <li>between <code>z0</code> (inclusive) and <code>z0+depth-1</code>
+     * (inclusive)</li>
+     * </ul>
      * 
      * @param image
      *            the image to process.
