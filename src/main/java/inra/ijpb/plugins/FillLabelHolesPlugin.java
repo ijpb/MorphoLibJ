@@ -23,19 +23,26 @@ import inra.ijpb.morphology.FloodFill3D;
  */
 public class FillLabelHolesPlugin implements PlugIn
 {
-    private final static int[][] shifts2d = new int[][] {
-        {0, -1}, {-1, 0}, {+1, 0}, {0, +1}
-    };
+    /**
+     * The shifts to identify the 2D neighbors of a pixel, using the 4-connectivity.
+     */
+    private final static int[][] shifts2d = new int[][] { { 0, -1 }, { -1, 0 },
+            { +1, 0 }, { 0, +1 } };
     
-    private final static int[][] shifts3d = new int[][] {
-        {0, 0, -1}, {0, -1, 0}, {-1, 0, 0}, {+1, 0, 0}, {0, +1, 0}, {0, 0, +1}
-    };
+    /**
+     * The shifts to identify the 3D neighbors of a voxel, using the 6-connectivity.
+     */
+    private final static int[][] shifts3d = new int[][] { { 0, 0, -1 },
+            { 0, -1, 0 }, { -1, 0, 0 }, { +1, 0, 0 }, { 0, +1, 0 },
+            { 0, 0, +1 } };
     
     @Override
     public void run(String arg)
     {
+        // retrieve current image
         ImagePlus imagePlus = IJ.getImage();
         
+        // dispatch processing according to image dimensionality
         if (imagePlus.getStackSize() == 1)
         {
             process2d(imagePlus.getProcessor());
@@ -45,7 +52,8 @@ public class FillLabelHolesPlugin implements PlugIn
             process3d(imagePlus.getStack());
         }
         
-        imagePlus.repaintWindow();
+        // refresh display
+        imagePlus.updateAndDraw();
     }
     
     private void process2d(ImageProcessor labelImage)
@@ -56,24 +64,33 @@ public class FillLabelHolesPlugin implements PlugIn
         // for each background region, find labels of regions within original image
         Map<Integer, BackgroundRegion2D> map = mapNeighbors(bgLabelMap, labelImage);
         
-        for (int bgLabel : map.keySet())
+        for (BackgroundRegion2D region : map.values())
         {
-            IJ.log("Process BG region with label " + bgLabel);
-            BackgroundRegion2D region = map.get(bgLabel);
-            
-            // if the background region is surrounded by only one region, then it can be replaced by this value
-            IJ.log("  number of neighbors: " + region.values.size());
+            // if the background region is surrounded by only one region, then
+            // the corresponding pixels in the original label map can be
+            // replaced by the value of the surrounding region
             if (region.values.size() == 1)
             {
-                IJ.log("  replace with value: " + region.values.get(0));
                 int value = region.values.get(0);
                 FloodFill.floodFill(bgLabelMap, region.x0, region.y0, labelImage, value, 4);
             }
         }
     }
     
-    private Map<Integer, BackgroundRegion2D> mapNeighbors(ImageProcessor keyLabelMap, ImageProcessor valueLabelMap)
+    /**
+     * Associates to each 2D region of the first input, the list of labels that
+     * correspond to the neighbors of the 2D region within the second input.
+     * 
+     * @param keyLabelMap
+     *            the label map of the region to process
+     * @param valueLabelMap
+     *            the label map of the regions used to identify neighbors
+     * @return the bipartite map of region labels
+     */
+    private Map<Integer, BackgroundRegion2D> mapNeighbors(
+            ImageProcessor keyLabelMap, ImageProcessor valueLabelMap)
     {
+        // retrieve image size
         int sizeX = keyLabelMap.getWidth();
         int sizeY = keyLabelMap.getHeight();
         
@@ -130,24 +147,34 @@ public class FillLabelHolesPlugin implements PlugIn
         // for each background region, find labels of regions within original image
         Map<Integer, BackgroundRegion3D> map = mapNeighbors(bgLabelMap, labelImage);
         
-        for (int bgLabel : map.keySet())
+        // iterate over background regions
+        for (BackgroundRegion3D region : map.values())
         {
-            IJ.log("Process BG region with label " + bgLabel);
-            BackgroundRegion3D region = map.get(bgLabel);
-            
-            // if the background region is surrounded by only one region, then it can be replaced by this value
-            IJ.log("  number of neighbors: " + region.values.size());
+            // if the background region is surrounded by only one region, then
+            // the corresponding voxels in the original label map can be
+            // replaced by the value of the surrounding region
             if (region.values.size() == 1)
             {
-                IJ.log("  replace with value: " + region.values.get(0));
                 int value = region.values.get(0);
                 FloodFill3D.floodFill(bgLabelMap, region.x0, region.y0, region.z0, labelImage, value, 6);
             }
         }
     }
     
-    private Map<Integer, BackgroundRegion3D> mapNeighbors(ImageStack keyLabelMap, ImageStack valueLabelMap)
+    /**
+     * Associates to each 3D region of the first input, the list of labels that
+     * correspond to the neighbors of the 3D region within the second input.
+     * 
+     * @param keyLabelMap
+     *            the label map of the region to process
+     * @param valueLabelMap
+     *            the label map of the regions used to identify neighbors
+     * @return the bipartite map of region labels
+     */
+    private Map<Integer, BackgroundRegion3D> mapNeighbors(
+            ImageStack keyLabelMap, ImageStack valueLabelMap)
     {
+        // retrieve image size
         int sizeX = keyLabelMap.getWidth();
         int sizeY = keyLabelMap.getHeight();
         int sizeZ = keyLabelMap.getSize();
