@@ -107,6 +107,73 @@ public class ImageUtils
     }
 
     /**
+     * Computes maximum value within the input image.
+     */
+    public final static double findMaxValue(ImagePlus imagePlus)
+    {
+        if (imagePlus.isStack())
+        {
+            return findMaxValue(imagePlus.getStack());
+        }
+        else
+        {
+            return findMaxValue(imagePlus.getProcessor());
+        }
+    }
+    
+    /**
+     * Computes maximum value within the input 2D image.
+     * 
+     * This method may be used to compute display range of result ImagePlus.
+     */
+    public final static double findMaxValue(ImageProcessor image) 
+    {
+        // get image size
+        int sizeX = image.getWidth();
+        int sizeY = image.getHeight();
+        
+        // find maximum value over pixels
+        double maxVal = 0;
+        for (int y = 0; y < sizeY; y++) 
+        {
+            for (int x = 0; x < sizeX; x++) 
+            {
+                maxVal = Math.max(maxVal, image.getf(x, y));
+            }
+        }
+        
+        return maxVal;
+    }
+
+    /**
+     * Computes maximum value in the input 3D image.
+     * 
+     * This method may be used to compute display range of result ImagePlus.
+     */
+    public final static double findMaxValue(ImageStack image) 
+    {
+        // get image size
+        int sizeX = image.getWidth();
+        int sizeY = image.getHeight();
+        int sizeZ = image.getSize();
+    
+        // find maximum value over voxels
+        double maxVal = 0;
+        for (int z = 0; z < sizeZ; z++) 
+        {
+            for (int y = 0; y < sizeY; y++) 
+            {
+                for (int x = 0; x < sizeX; x++) 
+                {
+                    maxVal = Math.max(maxVal, image.getVoxel(x, y, z));
+                }
+            }
+        }
+        
+        return maxVal;
+    }
+
+    /**
      * Replaces the elements of an image with a given value by a new value.
      * 
      * @param image

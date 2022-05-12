@@ -45,6 +45,7 @@ import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort;
 import inra.ijpb.binary.skeleton.ImageJSkeleton;
 import inra.ijpb.data.image.Image3D;
+import inra.ijpb.data.image.ImageUtils;
 import inra.ijpb.data.image.Images3D;
 import inra.ijpb.label.LabelImages;
 
@@ -188,7 +189,6 @@ public class BinaryImages
 			int conn, int bitDepth)
 	{
 		ImagePlus labelPlus;
-		double nLabels;
 	
 		// Dispatch processing depending on input image dimensionality
 		if (imagePlus.getStackSize() == 1)
@@ -196,71 +196,21 @@ public class BinaryImages
 			ImageProcessor labels = componentsLabeling(imagePlus.getProcessor(),
 					conn, bitDepth);
 			labelPlus = new ImagePlus("Labels", labels);
-			nLabels = findMax(labels);
+			
 		}
 		else 
 		{
 			ImageStack labels = componentsLabeling(imagePlus.getStack(), conn,
 					bitDepth);
 			labelPlus = new ImagePlus("Labels", labels);
-			nLabels = findMax(labels);
 		}
 
 		// setup display range to show largest label as white
+		double nLabels = ImageUtils.findMaxValue(labelPlus);
 		labelPlus.setDisplayRange(0, nLabels);
 		return labelPlus;
 	}
-
-	/**
-	 * Computes maximum value in the input 2D image.
-	 * This method is used to compute display range of result ImagePlus.
-	 */
-	private final static double findMax(ImageProcessor image) 
-	{
-		// get image size
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-		
-		// find maximum value over pixels
-		double maxVal = 0;
-		for (int y = 0; y < sizeY; y++) 
-		{
-			for (int x = 0; x < sizeX; x++) 
-			{
-				maxVal = Math.max(maxVal, image.getf(x, y));
-			}
-		}
-		
-		return maxVal;
-	}
-
-	/**
-	 * Computes maximum value in the input 3D image.
-	 * This method is used to compute display range of result ImagePlus.
-	 */
-	private final static double findMax(ImageStack image) 
-	{
-		// get image size
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-		int sizeZ = image.getSize();
 	
-		// find maximum value over voxels
-		double maxVal = 0;
-		for (int z = 0; z < sizeZ; z++) 
-		{
-			for (int y = 0; y < sizeY; y++) 
-			{
-				for (int x = 0; x < sizeX; x++) 
-				{
-					maxVal = Math.max(maxVal, image.getVoxel(x, y, z));
-				}
-			}
-		}
-		
-		return maxVal;
-	}
-
 	/**
 	 * Computes the labels of the connected components in the given planar
 	 * binary image. The type of result is controlled by the bitDepth option.

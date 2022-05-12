@@ -53,6 +53,7 @@ import inra.ijpb.binary.distmap.ChamferMask2D;
 import inra.ijpb.binary.distmap.ChamferMask3D;
 import inra.ijpb.data.Cursor2D;
 import inra.ijpb.data.Cursor3D;
+import inra.ijpb.data.image.ImageUtils;
 import inra.ijpb.label.conncomp.FloodFillRegionComponentsLabeling;
 import inra.ijpb.label.conncomp.FloodFillRegionComponentsLabeling3D;
 import inra.ijpb.label.distmap.ChamferDistanceTransform3DFloat;
@@ -1738,6 +1739,56 @@ public class LabelImages
 	}
 	
     /**
+     * Computes the labels in the binary 2D or 3D image contained in the given
+     * ImagePlus, and computes the maximum label to set up the display range of
+     * the resulting ImagePlus.
+     * 
+     * @param imagePlus
+     *            contains the 3D binary image stack
+     * @param regionLabel
+     *            the label of the region to process, that can be the background
+     *            (value 0)
+     * @param conn
+     *            the connectivity, either 4 or 8 for planar images, or 6 or 26
+     *            for 3D images
+     * @param bitDepth
+     *            the number of bits used to create the result image (8, 16 or
+     *            32)
+     * @return an ImagePlus containing the label of each connected component.
+     * @throws RuntimeException
+     *             if the number of labels reaches the maximum number that can
+     *             be represented with this bitDepth
+     * 
+     * @see inra.ijpb.label.conncomp.FloodFillRegionComponentsLabeling
+     * @see inra.ijpb.label.conncomp.FloodFillRegionComponentsLabeling3D
+     * @see inra.ijpb.morphology.FloodFill
+     */
+    public final static ImagePlus regionComponentsLabeling(ImagePlus imagePlus, 
+            int regionLabel, int conn, int bitDepth)
+    {
+        ImagePlus labelPlus;
+    
+        // Dispatch processing depending on input image dimensionality
+        if (imagePlus.getStackSize() == 1)
+        {
+            ImageProcessor labels = regionComponentsLabeling(imagePlus.getProcessor(),
+                    regionLabel, conn, bitDepth);
+            labelPlus = new ImagePlus("Labels", labels);
+        }
+        else 
+        {
+            ImageStack labels = regionComponentsLabeling(imagePlus.getStack(),
+                    regionLabel, conn, bitDepth);
+            labelPlus = new ImagePlus("Labels", labels);
+        }
+
+        // setup display range to show largest label as white
+        double nLabels = ImageUtils.findMaxValue(labelPlus);
+        labelPlus.setDisplayRange(0, nLabels);
+        return labelPlus;
+    }
+    
+    /**
      * Computes the labels of the connected components in the given planar
      * binary image. The type of result is controlled by the bitDepth option.
      * 
@@ -1746,10 +1797,10 @@ public class LabelImages
      * @param image
      *            contains the binary image (any type is accepted)
      * @param regionLabel
-     *            the connectivity, either 4 or 8
-     * @param conn
      *            the label of the region to process, that can be the background
      *            (value 0)
+     * @param conn
+     *            the connectivity, either 4 or 8
      * @param bitDepth
      *            the number of bits used to create the result image (8, 16 or
      *            32)
@@ -1778,7 +1829,7 @@ public class LabelImages
      * 
      * @param image
      *            contains the 3D binary image (any type is accepted)
-     * @param conn
+     * @param regionLabel
      *            the label of the region to process, that can be the background
      *            (value 0)
      * @param conn
