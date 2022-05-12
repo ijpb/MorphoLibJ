@@ -48,10 +48,13 @@ import ij.process.FloatPolygon;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
+import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.binary.distmap.ChamferMask2D;
 import inra.ijpb.binary.distmap.ChamferMask3D;
 import inra.ijpb.data.Cursor2D;
 import inra.ijpb.data.Cursor3D;
+import inra.ijpb.label.conncomp.FloodFillRegionComponentsLabeling;
+import inra.ijpb.label.conncomp.FloodFillRegionComponentsLabeling3D;
 import inra.ijpb.label.distmap.ChamferDistanceTransform3DFloat;
 import inra.ijpb.label.distmap.ChamferDistanceTransform3DShort;
 import inra.ijpb.label.distmap.DistanceTransform3D;
@@ -1734,6 +1737,72 @@ public class LabelImages
         return labelIndices;
 	}
 	
+    /**
+     * Computes the labels of the connected components in the given planar
+     * binary image. The type of result is controlled by the bitDepth option.
+     * 
+     * Uses a Flood-fill type algorithm.
+     * 
+     * @param image
+     *            contains the binary image (any type is accepted)
+     * @param regionLabel
+     *            the connectivity, either 4 or 8
+     * @param conn
+     *            the label of the region to process, that can be the background
+     *            (value 0)
+     * @param bitDepth
+     *            the number of bits used to create the result image (8, 16 or
+     *            32)
+     * @return a new instance of ImageProcessor containing the label of each
+     *         connected component.
+     * @throws RuntimeException
+     *             if the number of labels reaches the maximum number that can
+     *             be represented with this bitDepth
+     *             
+     * @see inra.ijpb.label.conncomp.FloodFillRegionComponentsLabeling     
+     * @see inra.ijpb.binary.conncomp.ConnectedComponentsLabeling
+     */
+    public final static ImageProcessor regionComponentsLabeling(ImageProcessor image,
+            int regionLabel, int conn, int bitDepth) 
+    {
+        FloodFillRegionComponentsLabeling algo = new FloodFillRegionComponentsLabeling(conn, bitDepth);
+        DefaultAlgoListener.monitor(algo);
+        return algo.computeLabels(image, regionLabel);
+    }
+
+    /**
+     * Computes the labels of the connected components in the given 3D binary
+     * image. The type of result is controlled by the bitDepth option.
+     * 
+     * Uses a Flood-fill type algorithm.
+     * 
+     * @param image
+     *            contains the 3D binary image (any type is accepted)
+     * @param conn
+     *            the label of the region to process, that can be the background
+     *            (value 0)
+     * @param conn
+     *            the connectivity, either 6 or 26
+     * @param bitDepth
+     *            the number of bits used to create the result stack (8, 16 or
+     *            32)
+     * @return a new instance of ImageStack containing the label of each
+     *         connected component.
+     * @throws RuntimeException
+     *             if the number of labels reaches the maximum number that can
+     *             be represented with this bitDepth
+     *             
+     * @see inra.ijpb.label.conncomp.FloodFillRegionComponentsLabeling3D     
+     * @see inra.ijpb.binary.conncomp.ConnectedComponentsLabeling3D     
+     */
+    public final static ImageStack regionComponentsLabeling(ImageStack image,
+            int regionLabel, int conn, int bitDepth)
+    {
+        FloodFillRegionComponentsLabeling3D algo = new FloodFillRegionComponentsLabeling3D(conn, bitDepth);
+        DefaultAlgoListener.monitor(algo);
+        return algo.computeLabels(image, regionLabel);
+    }
+
 	/**
 	 * Merge labels selected by freehand or point tool. Labels are merged
 	 * in place (i.e., the input image is modified). Zero-value label is never
@@ -2056,7 +2125,7 @@ public class LabelImages
 	 * @param roi  FreehandRoi or PointRoi with selected labels
 	 * @param verbose  flag to print deleted labels in log window
 	 */
-	public static void removeLabels(
+	public static final void removeLabels(
 			final ImagePlus labelImage,
 			final Roi roi,
 			final boolean verbose )
@@ -2288,7 +2357,7 @@ public class LabelImages
 	 * @param roi  FreehandRoi or PointRoi with selected labels
 	 * @return list of selected labels
 	 */
-	public static ArrayList<Float> getSelectedLabels(
+	public static final ArrayList<Float> getSelectedLabels(
 			final ImagePlus labelImage,
 			final Roi roi )
 	{

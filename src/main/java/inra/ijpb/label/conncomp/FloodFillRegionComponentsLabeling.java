@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/lgpl-3.0.html>.
  * #L%
  */
-package inra.ijpb.binary.conncomp;
+package inra.ijpb.label.conncomp;
 
 import ij.process.ByteProcessor;
 import ij.process.FloatProcessor;
@@ -29,20 +29,19 @@ import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.morphology.FloodFill;
 
 /**
- * Computes the labels of the connected components in a binary image. The type
- * of result is controlled by the bitDepth option.
+ * Computes the labels of the different connected components of a region within
+ * a label image. The type of result is controlled by the bitDepth option.
  * 
  * Uses a Flood-fill type algorithm. The image pixels are iterated, and each
  * time a foreground pixel not yet associated with a label is encountered, its
  * connected component is associated with a new label.
  *
+ * @see inra.ijpb.binary.conncomp.FloodFillComponentsLabeling
  * @see inra.ijpb.morphology.FloodFill
  * 
  * @author dlegland
- *
  */
-public class FloodFillComponentsLabeling extends AlgoStub implements
-		ConnectedComponentsLabeling
+public class FloodFillRegionComponentsLabeling extends AlgoStub
 {
 	/** 
 	 * The connectivity of the components, either 4 (default) or 8.
@@ -58,7 +57,7 @@ public class FloodFillComponentsLabeling extends AlgoStub implements
 	/**
 	 * Constructor with default connectivity 4 and default output bitdepth equal to 16.  
 	 */
-	public FloodFillComponentsLabeling()
+	public FloodFillRegionComponentsLabeling()
 	{
 	}
 	
@@ -68,7 +67,7 @@ public class FloodFillComponentsLabeling extends AlgoStub implements
 	 * @param connectivity
 	 *            the connectivity of connected components (4 or 8)
 	 */
-	public FloodFillComponentsLabeling(int connectivity)
+	public FloodFillRegionComponentsLabeling(int connectivity)
 	{
 		this.connectivity = connectivity;
 	}
@@ -82,7 +81,7 @@ public class FloodFillComponentsLabeling extends AlgoStub implements
 	 * @param bitDepth
 	 *            the bit depth of the result (8, 16, or 32)
 	 */
-	public FloodFillComponentsLabeling(int connectivity, int bitDepth)
+	public FloodFillRegionComponentsLabeling(int connectivity, int bitDepth)
 	{
 		this.connectivity = connectivity;
 		this.bitDepth = bitDepth;
@@ -91,8 +90,8 @@ public class FloodFillComponentsLabeling extends AlgoStub implements
 	/* (non-Javadoc)
 	 * @see inra.ijpb.binary.conncomp.ConnectedComponentsLabeling#computeLabels(ij.process.ImageProcessor)
 	 */
-	@Override
-	public ImageProcessor computeLabels(ImageProcessor image)
+//	@Override
+	public ImageProcessor computeLabels(ImageProcessor image, int regionLabel)
 	{
 		// get image size
 		int width = image.getWidth();
@@ -101,18 +100,18 @@ public class FloodFillComponentsLabeling extends AlgoStub implements
 
 		// Depending on bitDepth, create result image, and choose max label 
 		// number
-		ImageProcessor labels;
+		ImageProcessor labelMap;
 		switch (this.bitDepth) {
 		case 8: 
-			labels = new ByteProcessor(width, height);
+			labelMap = new ByteProcessor(width, height);
 			maxLabel = 255;
 			break; 
 		case 16: 
-			labels = new ShortProcessor(width, height);
+			labelMap = new ShortProcessor(width, height);
 			maxLabel = 65535;
 			break;
 		case 32:
-			labels = new FloatProcessor(width, height);
+			labelMap = new FloatProcessor(width, height);
 			maxLabel = 0x01 << 23 - 1;
 			break;
 		default:
@@ -126,12 +125,19 @@ public class FloodFillComponentsLabeling extends AlgoStub implements
 		// iterate on image pixels to find new regions
 		for (int y = 0; y < height; y++) 
 		{
+            if (Thread.currentThread().isInterrupted())
+            {
+                return null;
+            }
 			this.fireProgressChanged(this, y, height);
+			
 			for (int x = 0; x < width; x++) 
 			{
-				if (image.get(x, y) == 0)
+			    // process only pixels from the selected region
+				if (image.get(x, y) != regionLabel)
 					continue;
-				if (labels.get(x, y) > 0)
+				// do not process pixels that were already processed
+				if (labelMap.get(x, y) > 0)
 					continue;
 
 				// a new label is found: check current label number  
@@ -142,13 +148,13 @@ public class FloodFillComponentsLabeling extends AlgoStub implements
 				
 				// increment label index, and propagate
 				nLabels++;
-				FloodFill.floodFillFloat(image, x, y, labels, nLabels, this.connectivity);
+				FloodFill.floodFillFloat(image, x, y, labelMap, nLabels, this.connectivity);
 			}
 		}
 		this.fireProgressChanged(this, 1, 1);
 
-		labels.setMinAndMax(0, nLabels);
-		return labels;
+		labelMap.setMinAndMax(0, nLabels);
+		return labelMap;
 	}
 
 }
