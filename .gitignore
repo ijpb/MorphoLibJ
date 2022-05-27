@@ -1,2 +1,6 @@
 ﻿target
 /target/
+/.classpath
+/.gitignore_
+/.project
+/.settings
