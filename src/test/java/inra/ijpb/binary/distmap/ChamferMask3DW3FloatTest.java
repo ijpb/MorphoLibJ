@@ -13,7 +13,7 @@ import ij.ImageStack;
  * @author dlegland
  *
  */
-public class ChamferWeights3DW3FloatTest
+public class ChamferMask3DW3FloatTest
 {
 	@Test
 	public void testDistanceMap_FromCenter_Float()

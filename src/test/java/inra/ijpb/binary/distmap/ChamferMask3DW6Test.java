@@ -13,7 +13,7 @@ import ij.ImageStack;
  * @author dlegland
  *
  */
-public class ChamferWeights3DW6Test
+public class ChamferMask3DW6Test
 {
 	@Test
 	public void testDistanceMap()

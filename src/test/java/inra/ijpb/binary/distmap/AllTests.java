@@ -32,10 +32,10 @@ import org.junit.runners.Suite;
 		ChamferDistanceTransform2DShortTest.class,
 		ChamferDistanceTransform3DFloatTest.class,
 		ChamferDistanceTransform3DShortTest.class,
-		ChamferWeights3DW3FloatTest.class, 
-		ChamferWeights3DW4Test.class, 
-		ChamferWeights3DW5Test.class, 
-		ChamferWeights3DW6Test.class, })
+		ChamferMask3DW3FloatTest.class, 
+		ChamferMask3DW4Test.class, 
+		ChamferMask3DW5Test.class, 
+		ChamferMask3DW6Test.class, })
 public class AllTests
 {
 	  //nothing
