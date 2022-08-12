@@ -111,7 +111,7 @@ public class ImageUtils
      */
     public final static double findMaxValue(ImagePlus imagePlus)
     {
-        if (imagePlus.isStack())
+        if (imagePlus.getStackSize() > 1)
         {
             return findMaxValue(imagePlus.getStack());
         }
