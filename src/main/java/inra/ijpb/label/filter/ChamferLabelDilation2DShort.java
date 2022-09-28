@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/lgpl-3.0.html>.
  * #L%
  */
-package inra.ijpb.label.distmap;
+package inra.ijpb.label.filter;
 
 import java.util.Collection;
 
@@ -36,36 +36,46 @@ import inra.ijpb.binary.distmap.ChamferMask2D.ShortOffset;
  * Can be applied to label map encoded with 8 or 16 bits integers, or 32 bit
  * floats.
  * 
- * @deprecated replaced by inra.ijpb.label.filter.ChamferLabelDilation2DShort
- * 
  * @see inra.ijpb.binary.distmap.ChamferMask2D
- * @see inra.ijpb.label.distmap.LabelDilation3DShort
+ * @see inra.ijpb.label.filter.ChamferLabelDilation3DShort
  * 
  * @author dlegland
  * 
  */
-@Deprecated
-public class LabelDilation2DShort extends AlgoStub 
+public class ChamferLabelDilation2DShort extends AlgoStub 
 {
 	// ==================================================
 	// Class variables
 	
+    /**
+     * The chamfer mask used to propagate distances.
+     */
 	ChamferMask2D mask;
+    
+    /**
+     * The radius of dilation of labels. In practice, the distance is propagated
+     * up to radius + 0.5.
+     */
+	double radius;
 
 	
 	// ==================================================
 	// Constructors 
 	
 	/**
-	 * Creates a new image processor for dilating labels using the specified
-	 * chamfer mask, using 16-bits integer computation.
-	 * 
-	 * @param mask
-	 *            the Chamfer mask to use.
-	 */
-	public LabelDilation2DShort(ChamferMask2D mask) 
+     * Creates a new image processor for dilating labels using the specified
+     * chamfer mask, using 16-bits integer computation.
+     * 
+     * @param mask
+     *            the Chamfer mask to use.
+     * @param radius
+     *            the radius of dilation of labels. In practice, the distance is
+     *            propagated up to radius + 0.5.
+     */
+	public ChamferLabelDilation2DShort(ChamferMask2D mask, double radius)
 	{
 		this.mask = mask;
+		this.radius = radius;
 	}
 
 
@@ -81,21 +91,14 @@ public class LabelDilation2DShort extends AlgoStub
 	 *
 	 * @param labelImage
 	 *            the original label map
-	 * @param distMax
-	 *            the dilation radius, in pixels. In practice, dilation is
-	 *            computed with a radius +0.5.
 	 * @return a new label image where each label is dilated over background
 	 *         pixels.
 	 */
-	public ImageProcessor process(ImageProcessor labelImage, double distMax)
+	public ImageProcessor process(ImageProcessor labelImage)
 	{
 		// use max distance relative to chamfer weights
-		double w0 = Double.POSITIVE_INFINITY;
-		for (ShortOffset offset : mask.getOffsets())
-		{
-			w0 = Math.min(w0, offset.weight);
-		}
-		double maxDist = distMax * w0;
+		double w0 = mask.getNormalizationWeight();
+		double maxDist = (radius + 0.5) * w0;
 		
 		fireStatusChanged(this, "Initialization..."); 
 		// the instance of ImageProcessor storing the result label map

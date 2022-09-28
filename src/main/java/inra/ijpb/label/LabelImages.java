@@ -59,10 +59,10 @@ import inra.ijpb.label.conncomp.FloodFillRegionComponentsLabeling3D;
 import inra.ijpb.label.distmap.ChamferDistanceTransform3DFloat;
 import inra.ijpb.label.distmap.ChamferDistanceTransform3DShort;
 import inra.ijpb.label.distmap.DistanceTransform3D;
-import inra.ijpb.label.distmap.LabelDilation2DShort;
-import inra.ijpb.label.distmap.LabelDilation3DShort;
 import inra.ijpb.label.edit.FindAllLabels;
 import inra.ijpb.label.edit.ReplaceLabelValues;
+import inra.ijpb.label.filter.ChamferLabelDilation2DShort;
+import inra.ijpb.label.filter.ChamferLabelDilation3DShort;
 
 /**
  * Utility methods for label images (stored as 8-, 16- or 32-bits).
@@ -2354,47 +2354,47 @@ public class LabelImages
 	}
 	
 	/**
-	 * Applies a constrained dilation to each region in the label map:
-	 * <ul>
-	 * <li>The dilation of each region is constrained by the other regions;</li>
-	 * <li>The dilation extent is limited by the specified distance (in pixel
-	 * unit)</li>
-	 * </ul>
-	 * 
-	 * @param labelMap
-	 *            the image of regions to process
-	 * @param distMax
-	 *            the maximum distance used for dilation
-	 * @return a new label map of regions, where regions are dilated only over
-	 *         the background.
-	 */
-	public static final ImageProcessor dilateLabels(ImageProcessor labelMap, double distMax)
+     * Applies a constrained dilation to each region in the label map:
+     * <ul>
+     * <li>The dilation of each region is constrained by the other regions;</li>
+     * <li>The dilation extent is given by a radius value (in pixel unit). In
+     * practice, the distance to radius+0.5 is computed.</li>
+     * </ul>
+     * 
+     * @param labelMap
+     *            the image of regions to process
+     * @param radius
+     *            the radius of dilation of labels over the background
+     * @return a new label map of regions, where regions are dilated only over
+     *         the background.
+     */
+	public static final ImageProcessor dilateLabels(ImageProcessor labelMap, double radius)
 	{
-		LabelDilation2DShort algo = new LabelDilation2DShort(ChamferMask2D.CHESSKNIGHT);
-		ImageProcessor result = algo.process(labelMap, distMax);
+	    ChamferLabelDilation2DShort algo = new ChamferLabelDilation2DShort(ChamferMask2D.CHESSKNIGHT, radius);
+		ImageProcessor result = algo.process(labelMap);
 		result.setLut(labelMap.getLut());
 		return result;
 	}
 	
 	/**
-	 * Applies a constrained dilation to each region in the 3D label map:
-	 * <ul>
-	 * <li>The dilation of each region is constrained by the other regions;</li>
-	 * <li>The dilation extent is limited by the specified distance (in voxel
-	 * unit)</li>
-	 * </ul>
-	 * 
-	 * @param labelMap
-	 *            the image of regions to process
-	 * @param distMax
-	 *            the maximum distance used for dilation
-	 * @return a new label map of regions, where regions are dilated only over
-	 *         the background.
-	 */
-	public static final ImageStack dilateLabels(ImageStack labelMap, double distMax)
+     * Applies a constrained dilation to each region in the 3D label map:
+     * <ul>
+     * <li>The dilation of each region is constrained by the other regions;</li>
+     * <li>The dilation extent is limited by the the radius value (in voxel
+     * unit). In practice, the distance to radius+0.5 is computed.</li>
+     * </ul>
+     * 
+     * @param labelMap
+     *            the image of regions to process
+     * @param radius
+     *            the radius of dilation of labels over the background
+     * @return a new label map of regions, where regions are dilated only over
+     *         the background.
+     */
+	public static final ImageStack dilateLabels(ImageStack labelMap, double radius)
 	{
-		LabelDilation3DShort algo = new LabelDilation3DShort(ChamferMask3D.SVENSSON_3_4_5_7);
-		ImageStack result = algo.process(labelMap, distMax);
+	    ChamferLabelDilation3DShort algo = new ChamferLabelDilation3DShort(ChamferMask3D.SVENSSON_3_4_5_7, radius);
+		ImageStack result = algo.process(labelMap);
 		result.setColorModel(labelMap.getColorModel());
 		return result;
 	}

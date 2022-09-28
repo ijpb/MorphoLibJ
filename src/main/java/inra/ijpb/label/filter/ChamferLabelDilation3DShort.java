@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/lgpl-3.0.html>.
  * #L%
  */
-package inra.ijpb.label.distmap;
+package inra.ijpb.label.filter;
 
 import java.util.Collection;
 
@@ -32,37 +32,46 @@ import inra.ijpb.binary.distmap.ChamferMask3D.ShortOffset;
  * Apply a dilation by a specified radius to each label of a label map by
  * constraining the dilation. Labels can not dilate over existing labels.
  * 
- * @deprecated replaced by inra.ijpb.label.filter.ChamferLabelDilation3DShort
- * 
- * @see inra.ijpb.binary.ChamferWeights3D
- * @see inra.ijpb.label.distmap.LabelDilation2DShort
+ * @see inra.ijpb.binary.distmap.ChamferMask3D
+ * @see inra.ijpb.label.filter.ChamferLabelDilation2DShort
  * 
  * @author dlegland
  * 
  */
-@Deprecated
-public class LabelDilation3DShort extends AlgoStub 
+public class ChamferLabelDilation3DShort extends AlgoStub 
 {
 	// ==================================================
 	// Class variables
 	
-	short[] weights = new short[]{5, 7, 11};
+    /**
+     * The chamfer mask used to propagate distances.
+     */
 	ChamferMask3D mask;
+	
+    /**
+     * The radius of dilation of labels. In practice, the distance is propagated
+     * up to radius + 0.5.
+     */
+	double radius;
 	
 	
 	// ==================================================
 	// Constructors 
 	
 	/**
-	 * Creates a new 3D image for dilating labels using the specified chamfer
-	 * mask, using 16-bits integer computation.
-	 * 
-	 * @param mask
-	 *            the Chamfer mask to use.
-	 */
-	public LabelDilation3DShort(ChamferMask3D mask) 
+     * Creates a new 3D image for dilating labels using the specified chamfer
+     * mask, using 16-bits integer computation.
+     * 
+     * @param mask
+     *            the Chamfer mask to use.
+     * @param radius
+     *            the radius of dilation of labels. In practice, the distance is
+     *            propagated up to radius + 0.5.
+     */
+	public ChamferLabelDilation3DShort(ChamferMask3D mask, double radius) 
 	{
 		this.mask = mask;
+		this.radius = radius;
 	}
 
 
@@ -78,23 +87,20 @@ public class LabelDilation3DShort extends AlgoStub
 	 *
 	 * @param labelImage
 	 *            the original label map
-	 * @param distMax
-	 *            the dilation radius, in pixels. In practice, dilation is
-	 *            computed with a radius +0.5.
 	 * @return a new label image where each label is dilated over background
 	 *         pixels.
 	 */
-	public ImageStack process(ImageStack labelImage, double distMax)
+	public ImageStack process(ImageStack labelImage)
 	{
-		// use max distance relative to chamfer weights
-		double maxDist = distMax * this.weights[0];
+        // use max distance relative to chamfer weights
+        double w0 = mask.getNormalizationWeight();
+        double maxDist = (radius + 0.5) * w0;
 		
 		fireStatusChanged(this, "Initialization..."); 
-		// the instance of ImageProcessor storing the result label map
+		// the instance of ImageStack storing the result label map
 		ImageStack res = labelImage.duplicate();
 		// the distance map to the closest label
 		ImageStack distMap = initialize(labelImage);
-
 
 		// forward iteration
 		fireStatusChanged(this, "Forward iteration");

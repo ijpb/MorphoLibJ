@@ -15,6 +15,7 @@ import inra.ijpb.binary.distmap.ChamferMask2D;
  * @author dlegland
  *
  */
+@Deprecated
 public class LabelDilation2DShortTest
 {
 

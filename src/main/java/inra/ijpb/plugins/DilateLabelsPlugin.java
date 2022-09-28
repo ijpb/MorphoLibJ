@@ -30,8 +30,8 @@ import ij.process.ImageProcessor;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.binary.distmap.ChamferMask2D;
 import inra.ijpb.binary.distmap.ChamferMask3D;
-import inra.ijpb.label.distmap.LabelDilation2DShort;
-import inra.ijpb.label.distmap.LabelDilation3DShort;
+import inra.ijpb.label.filter.ChamferLabelDilation2DShort;
+import inra.ijpb.label.filter.ChamferLabelDilation3DShort;
 import inra.ijpb.util.IJUtils;
 
 /**
@@ -54,7 +54,7 @@ public class DilateLabelsPlugin implements PlugIn
             return;
 
         // parse user options
-        double distMax = gd.getNextNumber() + 0.5;
+        double radius = gd.getNextNumber();
         
         String newName = imagePlus.getShortTitle() + "-dilated";
 		ImagePlus resultPlus;
@@ -64,10 +64,12 @@ public class DilateLabelsPlugin implements PlugIn
 		if (imagePlus.getStackSize() == 1)
 		{
 			// Process 2D image
-			LabelDilation2DShort algo = new LabelDilation2DShort(ChamferMask2D.CHESSKNIGHT);
+			ChamferLabelDilation2DShort algo = new ChamferLabelDilation2DShort(ChamferMask2D.CHESSKNIGHT, radius);
 			DefaultAlgoListener.monitor(algo);
 			ImageProcessor image = imagePlus.getProcessor();
-			ImageProcessor result = algo.process(image, distMax);
+			ImageProcessor result = algo.process(image);
+			
+			// update display settings
 			result.setMinAndMax(image.getMin(), image.getMax());
             result.setColorModel(image.getColorModel());
 			resultPlus = new ImagePlus(newName, result);
@@ -76,9 +78,9 @@ public class DilateLabelsPlugin implements PlugIn
 		{
 			// Process 3D image
 			ImageStack image = imagePlus.getStack();
-			LabelDilation3DShort algo = new LabelDilation3DShort(ChamferMask3D.SVENSSON_3_4_5_7);
+			ChamferLabelDilation3DShort algo = new ChamferLabelDilation3DShort(ChamferMask3D.SVENSSON_3_4_5_7, radius);
 			DefaultAlgoListener.monitor(algo);
-			ImageStack result = algo.process(imagePlus.getStack(), distMax);
+			ImageStack result = algo.process(imagePlus.getStack());
 			result.setColorModel(image.getColorModel());
 			resultPlus = new ImagePlus(newName, result);
 			
