@@ -527,6 +527,15 @@ public class AnalyzeRegions implements PlugInFilter
         return features;
     }
 
+    /**
+     * Process the input image.
+     * 
+     * @deprecated replaced by static process(ImagePlus, Features) method
+     * 
+     * @param imagePlus
+     *            the image to process
+     * @return a ResultsTable summarizing the features
+     */
     @Deprecated
     public ResultsTable process(ImagePlus imagePlus)
     {
@@ -544,25 +553,49 @@ public class AnalyzeRegions implements PlugInFilter
      */
     public static final class Features
     {
+        /** The boolean flag for computing pixel count.*/
         public boolean pixelCount = false;
+        /** The boolean flag for computing area.*/
         public boolean area = true;
+        /** The boolean flag for computing perimeter.*/
         public boolean perimeter = true;
+        /** The boolean flag for computing circularity.*/
         public boolean circularity = true;
+        /** The boolean flag for computing Euler number.*/
         public boolean eulerNumber = true;
+        /** The boolean flag for computing bounding box.*/
         public boolean boundingBox = true;
+        /** The boolean flag for computing centroid.*/
         public boolean centroid = true;
+        /** The boolean flag for computing equivalent ellipse.*/
         public boolean equivalentEllipse = true;
+        /** The boolean flag for computing ellipse elongation.*/
         public boolean ellipseElongation = true;
+        /** The boolean flag for computing convexity.*/
         public boolean convexity = true;
+        /** The boolean flag for computing maximum Feret diameter.*/
         public boolean maxFeretDiameter = true;
+        /** The boolean flag for computing oriented box.*/
         public boolean orientedBox = true;
+        /** The boolean flag for computing elongation of oriented box.*/
         public boolean orientedBoxElongation = true;
+        /** The boolean flag for computing geodesic diameter.*/
         public boolean geodesicDiameter = true;
+        /** The boolean flag for computing tortuosity.*/
         public boolean tortuosity = true;
+        /** The boolean flag for computing largest inscribed disc.*/
         public boolean maxInscribedDisc = true;
+        /** The boolean flag for computing average thickness.*/
         public boolean averageThickness = true;
+        /** The boolean flag for computing geodesic elongation.*/
         public boolean geodesicElongation = true;
         
+        /**
+         * Set the state of all features.
+         * 
+         * @param state
+         *            the state to set.
+         */
         public void setAll(boolean state)
         {
             this.pixelCount = state;
