@@ -65,6 +65,8 @@ public class OctagonStrel extends AbstractSeparableStrel {
 	/**
 	 * The orthogonal diameter of the octagon. Computed from the square and
 	 * diagonal sizes.
+	 * 
+	 * totalSize = squareSize + 2 * (diagSize - 1)
 	 */
 	int size;
 
@@ -224,24 +226,33 @@ public class OctagonStrel extends AbstractSeparableStrel {
 		// Create array
 		int[][] mask = new int[this.size][this.size];
 		
-		// Process the center part: the whole line is set to 255
-		for (int y = this.diagSize; y < this.size - this.diagSize; y++) {
-			for (int x = 0; x < this.size; x++) {
-				mask[y][x] = 255;
-			}
-		}
-		
-		// Process the vertical center part: the whole column is set to 255
-		for (int x = this.diagSize; x < this.size - this.diagSize; x++) {
-			for (int y = 0; y < this.size; y++) {
-				mask[y][x] = 255;
-			}
-		}
-		
-		// Process the corners
-		for (int i = 0; i < this.diagSize; i++) {
-			
-		}
+		// process the top part: 
+		// a number of pixels grows from "squareSize", adding 2 at each row
+        for (int y = 0; y < this.diagSize - 1; y++)
+        {
+            for (int x = this.diagSize-1-y; x < this.diagSize-1+this.squareSize+y; x++)
+            {
+                mask[y][x] = 255;
+            }
+        }
+        
+        // process the middle part: full rows
+        for (int y = this.diagSize-1; y < this.diagSize + this.squareSize - 1; y++)
+        {
+            for (int x = 0; x < this.size; x++)
+            {
+                mask[y][x] = 255;
+            }
+        }
+        
+        // process the bottom part: 
+        for (int i = 0; i < this.diagSize - 1; i++)
+        {
+            for (int x = i+1; x < this.size-1-i; x++)
+            {
+                mask[i+diagSize+squareSize-1][x] = 255;
+            }
+        }
 		
 		return mask;
 	}
@@ -251,18 +262,7 @@ public class OctagonStrel extends AbstractSeparableStrel {
 	 */
 	@Override
 	public int[][] getShifts() {
-		int n = this.size * this.size;
-		int[][] shifts = new int[n][2];
-		int i = 0;
-		
-		for (int y = 0; y < this.size; y++) {
-			for (int x = 0; x < this.size; x++) {
-				shifts[i][0] = x - this.offset;
-				shifts[i][1] = x - this.offset;
-				i++;
-			}
-		}
-		return shifts;
+		return convertMaskToShifts(getMask());
 	}
 
 	/* (non-Javadoc)

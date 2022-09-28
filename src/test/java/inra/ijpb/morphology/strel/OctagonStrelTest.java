@@ -62,28 +62,82 @@ public class OctagonStrelTest {
 		assertEquals(2, offset[1]);
 	}
 
-	/**
-	 * Only tests the size of the mask
-	 */
-	@Test
-	public void testGetMask() {
-		Strel strel = new OctagonStrel(5);
-		int[][] mask = strel.getMask();
-		
-		assertEquals(mask.length, 5);
-		assertEquals(mask[1].length, 5);
-	}
+    /**
+     * Tests the size of the mask and few values within the mask.
+     */
+    @Test
+    public void testGetMask_radius2() {
+        Strel strel = OctagonStrel.fromRadius(2);
+        int[][] mask = strel.getMask();
+        
+        assertEquals(mask.length, 5);
+        assertEquals(mask[1].length, 5);
+        
+//        for (int y = 0; y < mask.length; y++)
+//        {
+//            for (int x = 0; x < mask[y].length; x++)
+//            {
+//                System.out.print(mask[y][x] > 0 ? "X" : ".");
+//            }
+//            System.out.println("");
+//        }
+        
+        assertTrue(mask[0][0] == 0);
+        assertTrue(mask[0][2] > 0);
+        assertTrue(mask[0][4] == 0);
+
+        assertTrue(mask[2][0] > 0);
+        assertTrue(mask[2][2] > 0);
+        assertTrue(mask[2][0] > 0);
+
+        assertTrue(mask[4][0] == 0);
+        assertTrue(mask[4][2] > 0);
+        assertTrue(mask[4][4] == 0);
+    }
+
+    /**
+     * Tests the size of the mask and few values within the mask.
+     */
+    @Test
+    public void testGetMask_radius3() {
+        Strel strel = OctagonStrel.fromRadius(3);
+        int[][] mask = strel.getMask();
+        
+        assertEquals(mask.length, 7);
+        assertEquals(mask[1].length, 7);
+        
+//        for (int y = 0; y < mask.length; y++)
+//        {
+//            for (int x = 0; x < mask[y].length; x++)
+//            {
+//                System.out.print(mask[y][x] > 0 ? "X" : ".");
+//            }
+//            System.out.println("");
+//        }
+        
+        assertTrue(mask[0][0] == 0);
+        assertTrue(mask[0][3] > 0);
+        assertTrue(mask[0][6] == 0);
+
+        assertTrue(mask[3][0] > 0);
+        assertTrue(mask[3][3] > 0);
+        assertTrue(mask[3][0] > 0);
+
+        assertTrue(mask[6][0] == 0);
+        assertTrue(mask[6][3] > 0);
+        assertTrue(mask[6][6] == 0);
+    }
 
 	/**
 	 * Only tests the size of the mask
 	 */
 	@Test
 	public void testGetShifts() {
-		Strel strel = new OctagonStrel(5);
+        Strel strel = OctagonStrel.fromRadius(3);
 		int[][] shifts = strel.getShifts();
 		
-		assertEquals(shifts.length, 5 * 5);
-		assertEquals(shifts[1].length, 2);
+		assertEquals(37, shifts.length);
+		assertEquals(2, shifts[1].length);
 	}
 
 	/**
