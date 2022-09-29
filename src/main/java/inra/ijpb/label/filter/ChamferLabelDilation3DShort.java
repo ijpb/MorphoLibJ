@@ -214,7 +214,7 @@ public class ChamferLabelDilation3DShort extends AlgoStub
 		Collection<ShortOffset> offsets = mask.getBackwardOffsets();
 		
 		// Iterate over voxels
-		for (int z = 0; z < sizeZ; z++) 
+		for (int z = sizeZ-1; z >= 0; z--) 
 		{
 			this.fireProgressChanged(this, z, sizeZ);
 			for (int y = sizeY-1; y >= 0; y--)

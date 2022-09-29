@@ -147,7 +147,7 @@ public abstract class AbstractStrel3D extends AlgoStub implements Strel3D
 	    int sizeZ = image.getSize();
 
 	    // allocate result
-	    ImageStack res = ImageStack.create(sizeX, sizeX, sizeZ, image.getBitDepth());
+	    ImageStack res = ImageStack.create(sizeX, sizeY, sizeZ, image.getBitDepth());
 
 	    // iterate over pixels
 	    int[][] shifts = getShifts3D();
@@ -201,7 +201,7 @@ public abstract class AbstractStrel3D extends AlgoStub implements Strel3D
 	    int sizeZ = image.getSize();
 
 	    // allocate result
-	    ImageStack res = ImageStack.create(sizeX, sizeX, sizeZ, image.getBitDepth());
+	    ImageStack res = ImageStack.create(sizeX, sizeY, sizeZ, image.getBitDepth());
 
 	    // iterate over pixels
 	    int[][] shifts = getShifts3D();
