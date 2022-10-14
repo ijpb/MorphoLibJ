@@ -10,6 +10,7 @@ import java.util.Map;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
+import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
 import inra.ijpb.label.LabelImages;
@@ -23,6 +24,10 @@ import inra.ijpb.morphology.FloodFill3D;
  */
 public class FillLabelHolesPlugin implements PlugIn
 {
+    // Widget labels and corresponding values of output type option
+    private final static String[] resultBitDepthLabels = {"8 bits", "16 bits", "float"};
+    private final static int[] resultBitDepthList = {8, 16, 32};
+    
     /**
      * The shifts to identify the 2D neighbors of a pixel, using the 4-connectivity.
      */
@@ -42,24 +47,43 @@ public class FillLabelHolesPlugin implements PlugIn
         // retrieve current image
         ImagePlus imagePlus = IJ.getImage();
         
+        boolean isPlanar = imagePlus.getStackSize() == 1;
+        
+        // Display dialog options
+        GenericDialog gd = new GenericDialog("Fill Label Holes");
+        String[] connLabels = isPlanar ? Connectivity2D.getAllLabels() : Connectivity3D.getAllLabels();
+        gd.addChoice("Background Connectivity", connLabels, connLabels[0]);
+        gd.addChoice("Labeling BitDepth", resultBitDepthLabels, resultBitDepthLabels[1]);
+        
+        // wait for user answer
+        gd.showDialog();
+        if (gd.wasCanceled()) 
+            return;
+
+        // parses dialog options
+        String str = gd.getNextChoice();
+        int bitDepth = resultBitDepthList[gd.getNextChoiceIndex()];
+        int conn = isPlanar ? Connectivity2D.fromLabel(str).getValue()
+                : Connectivity3D.fromLabel(str).getValue();
+
         // dispatch processing according to image dimensionality
         if (imagePlus.getStackSize() == 1)
         {
-            process2d(imagePlus.getProcessor());
+            process2d(imagePlus.getProcessor(), conn, bitDepth);
         }
         else
         {
-            process3d(imagePlus.getStack());
+            process3d(imagePlus.getStack(), conn, bitDepth);
         }
         
         // refresh display
         imagePlus.updateAndDraw();
     }
     
-    private void process2d(ImageProcessor labelImage)
+    private void process2d(ImageProcessor labelImage, int conn, int bitDepth)
     {
         // identified regions of the background
-        ImageProcessor bgLabelMap = LabelImages.regionComponentsLabeling(labelImage, 0, 4, 16);
+        ImageProcessor bgLabelMap = LabelImages.regionComponentsLabeling(labelImage, 0, conn, bitDepth);
         
         // for each background region, find labels of regions within original image
         Map<Integer, BackgroundRegion2D> map = mapNeighbors(bgLabelMap, labelImage);
@@ -72,7 +96,7 @@ public class FillLabelHolesPlugin implements PlugIn
             if (region.values.size() == 1)
             {
                 int value = region.values.get(0);
-                FloodFill.floodFill(bgLabelMap, region.x0, region.y0, labelImage, value, 4);
+                FloodFill.floodFill(bgLabelMap, region.x0, region.y0, labelImage, value, conn);
             }
         }
     }
@@ -139,10 +163,10 @@ public class FillLabelHolesPlugin implements PlugIn
         return map;
     }
     
-    private void process3d(ImageStack labelImage)
+    private void process3d(ImageStack labelImage, int conn, int bitDepth)
     {
         // identified regions of the background
-        ImageStack bgLabelMap = LabelImages.regionComponentsLabeling(labelImage, 0, 6, 16);
+        ImageStack bgLabelMap = LabelImages.regionComponentsLabeling(labelImage, 0, conn, bitDepth);
         
         // for each background region, find labels of regions within original image
         Map<Integer, BackgroundRegion3D> map = mapNeighbors(bgLabelMap, labelImage);
@@ -156,7 +180,7 @@ public class FillLabelHolesPlugin implements PlugIn
             if (region.values.size() == 1)
             {
                 int value = region.values.get(0);
-                FloodFill3D.floodFill(bgLabelMap, region.x0, region.y0, region.z0, labelImage, value, 6);
+                FloodFill3D.floodFill(bgLabelMap, region.x0, region.y0, region.z0, labelImage, value, conn);
             }
         }
     }
