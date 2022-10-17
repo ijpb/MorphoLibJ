@@ -25,7 +25,7 @@ import inra.ijpb.morphology.FloodFill3D;
 public class FillLabelHolesPlugin implements PlugIn
 {
     // Widget labels and corresponding values of output type option
-    private final static String[] resultBitDepthLabels = {"8 bits", "16 bits", "float"};
+    private final static String[] resultBitDepthLabels = {"8 bits", "16 bits", "32 bits (float)"};
     private final static int[] resultBitDepthList = {8, 16, 32};
     
     /**
@@ -37,10 +37,11 @@ public class FillLabelHolesPlugin implements PlugIn
     /**
      * The shifts to identify the 3D neighbors of a voxel, using the 6-connectivity.
      */
-    private final static int[][] shifts3d = new int[][] { { 0, 0, -1 },
-            { 0, -1, 0 }, { -1, 0, 0 }, { +1, 0, 0 }, { 0, +1, 0 },
-            { 0, 0, +1 } };
-    
+    private final static int[][] shifts3d = new int[][] { 
+        { 0, 0, -1 },
+        { 0, -1, 0 }, { -1, 0, 0 }, { +1, 0, 0 }, { 0, +1, 0 },
+        { 0, 0, +1 } };
+        
     @Override
     public void run(String arg)
     {
@@ -53,7 +54,7 @@ public class FillLabelHolesPlugin implements PlugIn
         GenericDialog gd = new GenericDialog("Fill Label Holes");
         String[] connLabels = isPlanar ? Connectivity2D.getAllLabels() : Connectivity3D.getAllLabels();
         gd.addChoice("Background Connectivity", connLabels, connLabels[0]);
-        gd.addChoice("Labeling BitDepth", resultBitDepthLabels, resultBitDepthLabels[1]);
+        gd.addChoice("Labeling Bit-Depth", resultBitDepthLabels, resultBitDepthLabels[1]);
         
         // wait for user answer
         gd.showDialog();
@@ -61,11 +62,9 @@ public class FillLabelHolesPlugin implements PlugIn
             return;
 
         // parses dialog options
-        String str = gd.getNextChoice();
+        int conn = parseConnectivityValue(isPlanar ? 2 : 3, gd.getNextChoice());
         int bitDepth = resultBitDepthList[gd.getNextChoiceIndex()];
-        int conn = isPlanar ? Connectivity2D.fromLabel(str).getValue()
-                : Connectivity3D.fromLabel(str).getValue();
-
+        
         // dispatch processing according to image dimensionality
         if (imagePlus.getStackSize() == 1)
         {
@@ -78,6 +77,13 @@ public class FillLabelHolesPlugin implements PlugIn
         
         // refresh display
         imagePlus.updateAndDraw();
+    }
+    
+    private static final int parseConnectivityValue(int nd, String string)
+    {
+        if (nd == 2) return Connectivity2D.fromLabel(string).getValue();
+        if (nd == 3) return Connectivity3D.fromLabel(string).getValue();
+        throw new RuntimeException("Requires dimensionality equal to 2 or 3, not " + nd);
     }
     
     private void process2d(ImageProcessor labelImage, int conn, int bitDepth)
