@@ -24,6 +24,7 @@ package inra.ijpb.morphology.geodrec;
 import ij.IJ;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
+import inra.ijpb.data.image.ImageUtils;
 
 /**
  * Geodesic reconstruction by erosion for integer images.
@@ -92,7 +93,7 @@ public class GeodesicReconstructionByErosion extends GeodesicReconstructionAlgoS
 		// Check sizes are consistent
 		int width = marker.getWidth();
 		int height = marker.getHeight();
-		if (width != mask.getWidth() || height != mask.getHeight())
+		if (!ImageUtils.isSameSize(marker, mask))
 		{
 			throw new IllegalArgumentException("Marker and Mask images must have the same size");
 		}

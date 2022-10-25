@@ -15,6 +15,76 @@ import ij.process.ImageProcessor;
 public class ImageUtils
 {
     /**
+     * Checks if the two input images have the same size in each direction.
+     * 
+     * @param image1
+     *            the first image
+     * @param image2
+     *            the second image
+     * @return true if both images have same width and height, and false
+     *         otherwise.
+     */
+    public static final boolean isSameSize(ImageProcessor image1, ImageProcessor image2)
+    {
+        if (image1.getWidth() != image2.getWidth())
+            return false;
+        if (image1.getHeight() != image2.getHeight())
+            return false;
+        return true;
+    }
+
+    /**
+     * Checks if the two input 3D images have the same size in each direction.
+     * 
+     * @param image1
+     *            the first image
+     * @param image2
+     *            the second image
+     * @return true if both images have same width, height and number of slices,
+     *         and false otherwise.
+     */
+    public static final boolean isSameSize(ImageStack image1, ImageStack image2)
+    {
+        if (image1.getWidth() != image2.getWidth())
+            return false;
+        if (image1.getHeight() != image2.getHeight())
+            return false;
+        if (image1.getSize() != image2.getSize())
+            return false;
+        return true;
+    }
+    
+    /**
+     * Checks if the two input images have the same data type.
+     * 
+     * @param image1
+     *            the first image
+     * @param image2
+     *            the second image
+     * @return true if both images have the same data type, given by the bit
+     *         depth.
+     */
+    public static final boolean isSameType(ImageProcessor image1, ImageProcessor image2)
+    {
+        return image1.getBitDepth() == image2.getBitDepth();
+    }
+
+    /**
+     * Checks if the two input 3D images have the same data type.
+     * 
+     * @param image1
+     *            the first image
+     * @param image2
+     *            the second image
+     * @return true if both images have the same data type, given by the bit
+     *         depth.
+     */
+    public static final boolean isSameType(ImageStack image1, ImageStack image2)
+    {
+        return image1.getBitDepth() == image2.getBitDepth();
+    }
+    
+    /**
      * Fills a rectangle within the image with the specified value.
      * 
      * This will replace by the specified value all the pixels within image that

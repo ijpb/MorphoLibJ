@@ -67,6 +67,8 @@ public class Images3D
 	/**
 	 * Checks if the two input 3D images have the same size in each direction.
 	 * 
+     * @deprecated replaced by ImageUtils.isSameSize(...)
+     * 
 	 * @param image1
 	 *            the first image
 	 * @param image2
@@ -74,6 +76,7 @@ public class Images3D
 	 * @return true if both images have same width, height and number of slices,
 	 *         and false otherwise.
 	 */
+	@Deprecated
 	public static final boolean isSameSize(ImageStack image1, ImageStack image2)
 	{
 		if (image1.getWidth() != image2.getWidth())
@@ -88,6 +91,8 @@ public class Images3D
 	/**
 	 * Checks if the two input 3D images have the same data type
 	 * 
+	 * @deprecated replaced by ImageUtils.isSameType(...)
+	 * 
 	 * @param image1
 	 *            the first image
 	 * @param image2
@@ -95,6 +100,7 @@ public class Images3D
 	 * @return true if both images have the same data type, given by the bit
 	 *         depth.
 	 */
+    @Deprecated
 	public static final boolean isSameType(ImageStack image1, ImageStack image2)
 	{
 		return image1.getBitDepth() == image2.getBitDepth();

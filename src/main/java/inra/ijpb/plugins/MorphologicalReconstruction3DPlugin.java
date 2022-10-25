@@ -27,7 +27,7 @@ import ij.ImageStack;
 import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
-import inra.ijpb.data.image.Images3D;
+import inra.ijpb.data.image.ImageUtils;
 import inra.ijpb.morphology.Reconstruction3D;
 import inra.ijpb.util.IJUtils;
 
@@ -164,7 +164,7 @@ public class MorphologicalReconstruction3DPlugin implements PlugIn {
 		// Extract image procesors
 		ImageStack marker = markerPlus.getStack();
 		ImageStack mask = maskPlus.getStack();
-		if (!Images3D.isSameSize(marker, mask))
+		if (!ImageUtils.isSameSize(marker, mask))
 		{
 			IJ.error("Image Size Error", "Both marker and mask images must have same size");
 			return;

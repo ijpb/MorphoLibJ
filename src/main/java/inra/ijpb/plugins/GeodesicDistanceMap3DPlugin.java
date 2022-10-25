@@ -36,6 +36,7 @@ import inra.ijpb.binary.distmap.ChamferMasks3D;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransform3D;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransform3DFloat;
 import inra.ijpb.color.ColorMaps;
+import inra.ijpb.data.image.ImageUtils;
 import inra.ijpb.data.image.Images3D;
 
 /**
@@ -301,7 +302,7 @@ public class GeodesicDistanceMap3DPlugin implements PlugIn
 			ChamferMask3D chamferMask, boolean normalize)
 	{
 		// check input and mask have the same size
-		if (!Images3D.isSameSize(marker, mask))
+	    if (!ImageUtils.isSameSize(marker, mask))
 		{
 			IJ.showMessage("Error",
 					"Input and marker images\nshould have the same size");
