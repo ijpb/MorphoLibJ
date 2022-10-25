@@ -21,11 +21,13 @@
  */
 package inra.ijpb.data.image;
 
+import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
+import ij.process.LUT;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.color.BinaryOverlay;
 
@@ -397,8 +399,7 @@ public class ColorImages
 					int r = redSlice.get(x, y);
 					int g = greenSlice.get(x, y);
 					int b = blueSlice.get(x, y);
-					int rgbCode = (r << 16) | (g << 8) | b;
-					rgbSlice.set(x, y, rgbCode);
+					rgbSlice.set(x, y, rgbCode(r, g, b));
 				}
 			}
 			
@@ -420,9 +421,8 @@ public class ColorImages
 	 *            the color used to display overlay
 	 * @return a new ImagePlus instance containing a 2D or 3D color image
 	 */
-	public final static ImagePlus binaryOverlay(ImagePlus imagePlus, 
-			ImagePlus maskPlus, Color color)
-	{
+    public final static ImagePlus binaryOverlay(ImagePlus imagePlus, ImagePlus maskPlus, Color color)
+    {
 	    BinaryOverlay algo = new BinaryOverlay();
 	    DefaultAlgoListener.monitor(algo);
 	    return algo.process(imagePlus, maskPlus, color);
@@ -438,11 +438,10 @@ public class ColorImages
 	 *            the binary mask image
 	 * @param color
 	 *            the color used to display overlay
-	 * @return a new ImagePlus instance containing a 2D color image
+	 * @return a new ImageProcessor instance containing a 2D color image
 	 */
-	public final static ImageProcessor binaryOverlay(ImageProcessor refImage, 
-			ImageProcessor mask, Color color)
-	{
+    public final static ImageProcessor binaryOverlay(ImageProcessor refImage, ImageProcessor mask, Color color)
+    {
         BinaryOverlay algo = new BinaryOverlay();
         DefaultAlgoListener.monitor(algo);
         return algo.process(refImage, mask, color);
@@ -453,18 +452,291 @@ public class ColorImages
 	 * image, using the specified color. Both images must have the same size.
 	 * 
 	 * @param refImage
-	 *            the original 2D or 3D image used as background
+	 *            the original 3D image used as background
 	 * @param mask
-	 *            the binary 2D or 3D mask image
+	 *            the binary 3D mask image
 	 * @param color
 	 *            the color used to display overlay
 	 * @return a new ImageStack containing a 3D color image
 	 */
-	public final static ImageStack binaryOverlay(ImageStack refImage, 
-			ImageStack mask, Color color) 
-	{
+    public final static ImageStack binaryOverlay(ImageStack refImage, ImageStack mask, Color color)
+    {
         BinaryOverlay algo = new BinaryOverlay();
         DefaultAlgoListener.monitor(algo);
         return algo.process(refImage, mask, color);
 	}
+	
+    /**
+     * Applies an overlay of a binary image mask onto a 2D or 3D  grayscale image, using
+     * the specified color and opacity. Both images must have the same size.
+     * 
+     * @param refImage
+     *            the original 2D or 3D image used as background
+     * @param binaryMask
+     *            the binary mask image
+     * @param overlayColor
+     *            the color used to display overlay
+     * @param overlayOpacity
+     *            the overlay opacity, between 0 and 1.
+     * @return a new ImageProcessor instance containing a 2D color image
+     */
+    public static final ImagePlus binaryOverlay(ImagePlus refImage, ImagePlus binaryMask, Color overlayColor, double overlayOpacity)
+    {
+        if (refImage.getBitDepth() != 8)
+        {
+            throw new RuntimeException("Reference image must be 8-bits grayscale");
+        }
+        
+        if (refImage.getStackSize() == 1)
+        {
+            ByteProcessor proc = (ByteProcessor) refImage.getProcessor();
+            ImageProcessor ovr = binaryOverlay(proc, binaryMask.getProcessor(), overlayColor, overlayOpacity);
+            return new ImagePlus(refImage.getShortTitle() + "-ovr", ovr);
+        }
+        else
+        {
+            ImageStack ovr = binaryOverlay(refImage.getImageStack(), binaryMask.getImageStack(), overlayColor, overlayOpacity);
+            return new ImagePlus(refImage.getShortTitle() + "-ovr", ovr);
+        }
+    }
+    
+	/**
+     * Applies an overlay of a binary image mask onto a grayscale image, using
+     * the specified color and opacity. Both images must have the same size.
+     * 
+     * @param refImage
+     *            the original 2D image used as background
+     * @param binaryMask
+     *            the binary mask image
+     * @param overlayColor
+     *            the color used to display overlay
+     * @param overlayOpacity
+     *            the overlay opacity, between 0 and 1.
+     * @return a new ImageProcessor instance containing a 2D color image
+     */
+    public static final ImageProcessor binaryOverlay(ByteProcessor refImage, ImageProcessor binaryMask, Color overlayColor, double overlayOpacity)
+    {
+        // check input validity
+        if (!ImageUtils.isSameSize(refImage, binaryMask))
+        {
+            throw new RuntimeException("Both input images must have same size");
+        }
+        if (refImage.getBitDepth() != 8)
+        {
+            throw new RuntimeException("Reference image must be 8-bits grayscale");
+        }
+        
+        // retrieve image size
+        final int sizeX = refImage.getWidth();
+        final int sizeY = refImage.getHeight();
+
+        // pre-compute opacity weights for gray and overlay
+        final double op0 = overlayOpacity;
+        final double op1 = 1.0 - op0;
+
+        int rOvr = overlayColor.getRed();
+        int gOvr = overlayColor.getGreen();
+        int bOvr = overlayColor.getBlue();
+
+        // the values for result pixel
+        int r, g, b;
+
+        ColorProcessor result = new ColorProcessor(sizeX, sizeY);
+        for (int y = 0; y < sizeY; y++)
+        {
+            for (int x = 0; x < sizeX; x++)
+            {
+                int gray = refImage.get(x, y); // assume 8-bit image
+                boolean ovr = binaryMask.get(x, y) > 0;
+                r = ovr ? (int) (gray * op1 + rOvr * op0) : gray;
+                g = ovr ? (int) (gray * op1 + gOvr * op0) : gray;
+                b = ovr ? (int) (gray * op1 + bOvr * op0) : gray;
+                result.set(x, y, rgbCode(r, g, b)); 
+            }
+        }
+        return result;
+    }
+    
+    public static final ImageStack binaryOverlay(ImageStack refImage, ImageStack binaryMask, Color overlayColor, double overlayOpacity)
+    {
+        // check input validity
+        if (!ImageUtils.isSameSize(refImage, binaryMask))
+        {
+            throw new RuntimeException("Both input images must have same size");
+        }
+        if (refImage.getBitDepth() != 8)
+        {
+            throw new RuntimeException("Reference image must be 8-bits grayscale");
+        }
+        
+        // allocate result
+        int nSlices = refImage.size();
+        ImageStack resStack = ImageStack.create(refImage.getWidth(), refImage.getHeight(), nSlices, 24);
+        
+        // iterate processing over slices
+        for (int z = 1; z <= nSlices; z++)
+        {
+            IJ.showProgress(z, nSlices);
+            ByteProcessor slice = (ByteProcessor) refImage.getProcessor(z);
+            ImageProcessor overlaySlice = binaryMask.getProcessor(z);
+            ImageProcessor result = binaryOverlay(slice, overlaySlice, overlayColor, overlayOpacity);
+            resStack.setProcessor(result, z);
+        }
+        
+        return resStack;
+    }
+
+    /**
+     * Applies an overlay of a label map onto a 2D/3D grayscale image, using
+     * the specified opacity. Both images must have the same size.
+     * 
+     * 
+     * @param refImage
+     *            the original 2D or 3D image used as background
+     * @param labelMap
+     *            the label map used as overlay
+     * @param overlayOpacity
+     *            the overlay opacity, between 0 and 1.
+     * @return a new ImageProcessor instance containing a 2D color image
+     */
+    public static final ImagePlus labelMapOverlay(ImagePlus refImage, ImagePlus labelMap, double overlayOpacity)
+    {
+        if (refImage.getBitDepth() != 8)
+        {
+            throw new RuntimeException("Reference image must be 8-bits grayscale");
+        }
+        
+        if (refImage.getStackSize() == 1)
+        {
+            ByteProcessor proc = (ByteProcessor) refImage.getProcessor();
+            ImageProcessor ovr = labelMapOverlay(proc, labelMap.getProcessor(), overlayOpacity);
+            return new ImagePlus(refImage.getShortTitle() + "-ovr", ovr);
+        }
+        else
+        {
+            ImageStack ovr = labelMapOverlay(refImage.getImageStack(), labelMap.getImageStack(), overlayOpacity);
+            return new ImagePlus(refImage.getShortTitle() + "-ovr", ovr);
+        }
+    }
+    
+    /**
+     * Applies an overlay of a label map onto a grayscale image, using
+     * the specified opacity. Both images must have the same size.
+     * 
+     * 
+     * @param refImage
+     *            the original 2D image used as background
+     * @param labelMap
+     *            the label map used as overlay
+     * @param overlayOpacity
+     *            the overlay opacity, between 0 and 1.
+     * @return a new ImageProcessor instance containing a 2D color image
+     */
+    public static final ImageProcessor labelMapOverlay(ImageProcessor refImage, ImageProcessor labelMap, double overlayOpacity)
+    {
+        // check input validity
+        if (!ImageUtils.isSameSize(refImage, labelMap))
+        {
+            throw new RuntimeException("Both input images must have same size");
+        }
+        if (refImage.getBitDepth() != 8)
+        {
+            throw new RuntimeException("Reference image must be 8-bits grayscale");
+        }
+        
+        // retrieve image size
+        final int sizeX = refImage.getWidth();
+        final int sizeY = refImage.getHeight();
+        LUT lut = labelMap.getLut();
+
+        // pre-compute opacity weights for gray and overlay
+        final double op0 = overlayOpacity;
+        final double op1 = 1.0 - op0;
+
+        // the values for result pixel
+        int r, g, b;
+        int rgbCode;
+
+        ColorProcessor result = new ColorProcessor(sizeX, sizeY);
+        for (int y = 0; y < sizeY; y++)
+        {
+            for (int x = 0; x < sizeX; x++)
+            {
+                int gray = refImage.get(x, y); // assume 8-bit image
+
+                int label = (int) labelMap.getf(x, y);
+                if (label == 0)
+                {
+                    // create RGB from gray value
+                    r = gray;
+                    g = gray;
+                    b = gray;
+                    rgbCode = grayToRGB(gray);
+                }
+                else
+                {
+                    // combine gray value with overlay color from LUT
+                    r = (int) (gray * op1 + lut.getRed(label) * op0);
+                    g = (int) (gray * op1 + lut.getGreen(label) * op0);
+                    b = (int) (gray * op1 + lut.getBlue(label) * op0);
+                    rgbCode = rgbCode(r, g, b);
+                }
+                result.set(x, y, rgbCode); 
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * Applies an overlay of a label map onto a 3D grayscale image, using
+     * the specified opacity. Both images must have the same size.
+     * 
+     * 
+     * @param refImage
+     *            the original 3D image used as background
+     * @param labelMap
+     *            the label map used as overlay
+     * @param overlayOpacity
+     *            the overlay opacity, between 0 and 1.
+     * @return a new ImageStack instance containing a 3D color image
+     */
+    public static final ImageStack labelMapOverlay(ImageStack refImage, ImageStack labelMap, double overlayOpacity)
+    {
+        // check input validity
+        if (!ImageUtils.isSameSize(refImage, labelMap))
+        {
+            throw new RuntimeException("Both input images must have same size");
+        }
+        if (refImage.getBitDepth() != 8)
+        {
+            throw new RuntimeException("Reference image must be 8-bits grayscale");
+        }
+        
+        // allocate (empty) result
+        int nSlices = refImage.size();
+        ImageStack resStack = new ImageStack(refImage.getWidth(), refImage.getHeight(), nSlices);
+        
+        // iterate processing over slices
+        for (int z = 1; z <= nSlices; z++)
+        {
+            IJ.showProgress(z, nSlices);
+            ByteProcessor slice = (ByteProcessor) refImage.getProcessor(z);
+            ImageProcessor overlaySlice = labelMap.getProcessor(z);
+            ImageProcessor result = labelMapOverlay(slice, overlaySlice, overlayOpacity);
+            resStack.setProcessor(result, z);
+        }
+        
+        return resStack;
+    }
+    
+    private static final int rgbCode(int r, int g, int b)
+    {
+        return r << 16 | g << 8 | b;
+    }
+
+    private static final int grayToRGB(int gray)
+    {
+        return gray << 16 | gray << 8 | gray;
+    }
+
 }
