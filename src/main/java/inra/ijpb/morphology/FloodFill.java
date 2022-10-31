@@ -114,8 +114,6 @@ public class FloodFill
 		ArrayList<Point> stack = new ArrayList<Point>();
 		stack.add(new Point(x, y));
 		
-		boolean inScanLine;
-		
 		// process all items in stack
 		while (!stack.isEmpty())
 		{
@@ -141,12 +139,15 @@ public class FloodFill
 				x2++;
 			
 			// fill current scan-line
-			fillLine(image, y, x1, x2, value);
+            for (int ix = x1; x <= x2; x++)
+            {
+                image.set(ix, y, value);
+            }
 
 			// find scan-lines above the current one
 			if (y > 0)
 			{
-				inScanLine = false;
+			    boolean inScanLine = false;
 				for (int i = x1; i <= x2; i++)
 				{
 					int val = image.get(i, y - 1);
@@ -165,7 +166,7 @@ public class FloodFill
 			// find scan-lines below the current one
 			if (y < height - 1)
 			{
-				inScanLine = false;
+			    boolean inScanLine = false;
 				for (int i = x1; i <= x2; i++)
 				{
 					int val = image.getPixel(i, y + 1);
@@ -214,8 +215,6 @@ public class FloodFill
 		ArrayList<Point> stack = new ArrayList<Point>();
 		stack.add(new Point(x, y));
 
-		boolean inScanLine;
-
 		// process all items in stack
 		while (!stack.isEmpty())
 		{
@@ -241,12 +240,15 @@ public class FloodFill
 				x2++;
 
 			// fill current scan-line
-			fillLine(image, y, x1, x2, value);
+			for (int ix = x1; x <= x2; x++)
+            {
+                image.set(ix, y, value);
+            }
 
 			// find scan-lines above the current one
 			if (y > 0)
 			{
-				inScanLine = false;
+			    boolean inScanLine = false;
 				for (int i = Math.max(x1 - 1, 0); i <= Math.min(x2 + 1, width - 1); i++)
 				{
 					int val = image.get(i, y - 1);
@@ -262,7 +264,7 @@ public class FloodFill
 			// find scan-lines below the current one
 			if (y < height - 1)
 			{
-				inScanLine = false;
+			    boolean inScanLine = false;
 				for (int i = Math.max(x1 - 1, 0); i <= Math.min(x2 + 1, width - 1); i++)
 				{
 					int val = image.getPixel(i, y + 1);
@@ -338,8 +340,6 @@ public class FloodFill
 		ArrayList<Point> stack = new ArrayList<Point>();
 		stack.add(new Point(x, y));
 		
-		boolean inScanLine;
-		
 		// process all items in stack
 		while (!stack.isEmpty())
 		{
@@ -365,12 +365,15 @@ public class FloodFill
 				x2++;
 
 			// fill current scan-line
-			fillLine(image, y, x1, x2, value);
+            for (int ix = x1; x <= x2; x++)
+            {
+                image.setf(ix, y, value);
+            }
 
 			// find scan-lines above the current one
 			if (y > 0)
 			{
-				inScanLine = false;
+			    boolean inScanLine = false;
 				for (int i = x1; i <= x2; i++)
 				{
 					float val = image.getf(i, y - 1);
@@ -389,7 +392,7 @@ public class FloodFill
 			// find scan-lines below the current one
 			if (y < height - 1)
 			{
-				inScanLine = false;
+			    boolean inScanLine = false;
 				for (int i = x1; i <= x2; i++)
 				{
 					float val = image.getf(i, y + 1);
@@ -440,8 +443,6 @@ public class FloodFill
 		ArrayList<Point> stack = new ArrayList<Point>();
 		stack.add(new Point(x, y));
 
-		boolean inScanLine;
-
 		// process all items in stack
 		while (!stack.isEmpty())
 		{
@@ -467,12 +468,15 @@ public class FloodFill
 				x2++;
 
 			// fill current scan-line
-			fillLine(image, y, x1, x2, value);
+			for (int ix = x1; x <= x2; x++)
+            {
+                image.setf(ix, y, value);
+            }
 
 			// find scan-lines above the current one
 			if (y > 0)
 			{
-				inScanLine = false;
+			    boolean inScanLine = false;
 				for (int i = Math.max(x1 - 1, 0); i <= Math.min(x2 + 1, width - 1); i++)
 				{
 					float val = image.getf(i, y - 1);
@@ -491,7 +495,7 @@ public class FloodFill
 			// find scan-lines below the current one
 			if (y < height - 1)
 			{
-				inScanLine = false;
+			    boolean inScanLine = false;
 				for (int i = Math.max(x1 - 1, 0); i <= Math.min(x2 + 1, width - 1); i++)
 				{
 					float val = image.getf(i, y + 1);
@@ -517,9 +521,9 @@ public class FloodFill
 	 * @param inputImage
 	 *            original image to read the pixel values from
 	 * @param x
-	 *            x- coordinate of the seed pixel
+	 *            the x-coordinate of the seed pixel
 	 * @param y
-	 *            y- coordinate of the seed pixel
+	 *            the y-coordinate of the seed pixel
 	 * @param outputImage
 	 *            the label image to fill in
 	 * @param value
@@ -551,8 +555,6 @@ public class FloodFill
 		ArrayList<Point> stack = new ArrayList<Point>();
 		stack.add(new Point(x, y));
 		
-		boolean inScanLine;
-		
 		// process all items in stack
 		while (!stack.isEmpty()) 
 		{
@@ -578,13 +580,15 @@ public class FloodFill
 				x2++;
 			
 			// fill current scan-line
-			fillLine(outputImage, y, x1, x2, value);
-			
+			for (int ix = x1; x <= x2; x++)
+			{
+			    outputImage.set(ix, y, value);
+			}
 			
 			// find scan-lines above the current one
 			if (y > 0)
 			{
-				inScanLine = false;
+			    boolean inScanLine = false;
 				for (int i = max(x1 + dx1, 0); i <= min(x2 + dx2, width - 1); i++)
 				{
 					int val = inputImage.get(i, y - 1);
@@ -604,7 +608,7 @@ public class FloodFill
 			// find scan-lines below the current one
 			if (y < height - 1)
 			{
-				inScanLine = false;
+			    boolean inScanLine = false;
 				for (int i = max(x1 + dx1, 0); i <= min(x2 + dx2, width - 1); i++)
 				{
 					int val = inputImage.getPixel(i, y + 1);
@@ -630,10 +634,10 @@ public class FloodFill
 	 * 
 	 * @param inputImage
 	 *            original image to read the pixel values from
-	 * @param x
-	 *            x- coordinate of the seed pixel
-	 * @param y
-	 *            y- coordinate of the seed pixel
+     * @param x
+     *            the x-coordinate of the seed pixel
+     * @param y
+     *            the y-coordinate of the seed pixel
 	 * @param outputImage
 	 *            the label image to fill in
 	 * @param value
@@ -664,9 +668,6 @@ public class FloodFill
 		ArrayList<Point> stack = new ArrayList<Point>();
 		stack.add(new Point(x, y));
 		
-		
-		boolean inScanLine;
-		
 		// process all items in stack
 		while (!stack.isEmpty()) 
 		{
@@ -692,12 +693,15 @@ public class FloodFill
 				x2++;
 			
 			// fill current scan-line
-			fillLine(outputImage, y, x1, x2, value);
-			
+			for (int ix = x1; x <= x2; x++)
+			{
+			    outputImage.setf(ix, y, value);
+			}
+		     
 			// find scan-lines above the current one
 			if (y > 0)
 			{
-				inScanLine = false;
+				boolean inScanLine = false;
 				for (int i = max(x1 + dx1, 0); i <= min(x2 + dx2, width - 1); i++)
 				{
 					float val = inputImage.getf(i, y - 1);
@@ -717,7 +721,7 @@ public class FloodFill
 			// find scan-lines below the current one
 			if (y < height - 1)
 			{
-				inScanLine = false;
+				boolean inScanLine = false;
 				for (int i = max(x1 + dx1, 0); i <= min(x2 + dx2, width - 1); i++)
 				{
 					float val = inputImage.getf(i, y + 1);
@@ -734,48 +738,6 @@ public class FloodFill
 				}
 			}
 		}
-	}
-
-	/**
-	 * In the input image, replaces all pixels in row <code>y</code> located
-	 * between <code>x1</code> and <code>x2</code> (inclusive) by the given
-	 * value.
-	 * 
-	 * @param ip
-	 *            the input image to modify
-	 * @param y
-	 *            the index of the row to modify
-	 * @param x1
-	 *            the column index of the first pixel to modify
-	 * @param x2
-	 *            the column index of the first pixel to modify
-	 * @param value
-	 *            the new value of the pixels
-	 */
-	private final static void fillLine(ImageProcessor ip, int y, int x1,
-			int x2, int value)
-	{
-		if (x1 > x2)
-		{
-			int t = x1;
-			x1 = x2;
-			x2 = t;
-		}
-		
-		for (int x = x1; x <= x2; x++)
-			ip.set(x, y, value);
-	}
-
-	/**
-	 * Fill in the horizontal line define by y-coordinate and the two x 
-	 * coordinate extremities (inclusive), with the specified integer value.
-	 * the value x1 must be lower than or equal the value x2. 
-	 */
-	private final static void fillLine(ImageProcessor ip, int y, int x1,
-			int x2, float value)
-	{
-		for (int x = x1; x <= x2; x++)
-			ip.setf(x, y, value);
 	}
 
 	/**
