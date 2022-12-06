@@ -157,6 +157,50 @@ public interface BorderManager {
 	}
 
 	/**
+     * Adds the specified number of pixels around the input image, and returns
+     * the resulting image. 
+     * 
+     * @param image
+     *            the input image
+     * @param left
+     *            the number of pixels to add to the left of the image
+     * @param right
+     *            the number of pixels to add to the right of the image
+     * @param top
+     *            the number of pixels to add on top of the image
+     * @param bottom
+     *            the number of pixels to add at the bottom of the image
+     * @param border
+     *            an instance of BorderManager that specifies the value of
+     *            pixels to be added
+     * @return a new image with extended borders
+     */
+    public default ImageProcessor addBorders(ImageProcessor image, 
+            int left, int right, int top, int bottom)
+    {
+        // get image dimensions
+        int width = image.getWidth(); 
+        int height = image.getHeight(); 
+        
+        // compute result dimensions
+        int width2 = width + left + right;
+        int height2 = height + top + bottom;
+        ImageProcessor result = image.createProcessor(width2, height2);
+        
+        // fill result image
+        for (int x = 0; x < width2; x++)
+        {
+            for (int y = 0; y < height2; y++)
+            {
+                result.set(x, y, this.get(x - left, y - top));
+            }
+        }
+        
+        return result;
+    }
+    
+    
+	/**
 	 * Returns the value corresponding to (x,y) position. Position can be
 	 * outside original image bounds.
 	 *   

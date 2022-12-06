@@ -164,6 +164,57 @@ public interface BorderManager3D
 		}
 	}
 
+    /**
+     * Adds the specified number of voxels around the input image, and returns
+     * the resulting image. 
+     * 
+     * @param image
+     *            the input image stack 
+     * @param left
+     *            the number of voxels to add to the left
+     * @param right
+     *            the number of voxels to add to the right
+     * @param top
+     *            the number of voxels to add on top of the stack
+     * @param bottom
+     *            the number of voxels to add at the bottom of the stack
+     * @param front
+     *            the number of slices to add in front of the stack
+     * @param back
+     *            the number of slices to add behind the stack
+     * @param border
+     *            an instance of BorderManager that specifies the value of
+     *            pixels to be added
+     * @return a new image with extended borders
+     */
+    public default ImageStack addBorders(ImageStack image, 
+            int left, int right, int top, int bottom, int front, int back)
+    {
+        // get image dimensions
+        int width = image.getWidth(); 
+        int height = image.getHeight(); 
+        int depth = image.getSize(); 
+        
+        // compute result dimensions
+        int width2 = width + left + right;
+        int height2 = height + top + bottom;
+        int depth2 = depth + front + back;
+        ImageStack result = ImageStack.create(width2, height2, depth2, image.getBitDepth());
+        
+        // fill result image
+        for (int z = 0; z < depth2; z++)
+        {
+            for (int y = 0; y < height2; y++)
+            {
+                for (int x = 0; x < width2; x++)
+                {
+                    result.setVoxel(x, y, z, this.get(x - left, y - top, z - front));
+                }
+            }
+        }
+        return result;
+    }
+    
 	/**
 	 * Returns the value corresponding to (x,y) position. Position can be
 	 * outside original image bounds.

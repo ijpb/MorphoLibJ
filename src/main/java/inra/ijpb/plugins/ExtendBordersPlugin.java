@@ -93,7 +93,7 @@ public class ExtendBordersPlugin implements PlugIn
 			BorderManager border = borderType.createBorderManager(image);
 
 			// Execute core of the plugin
-			ImageProcessor res = process(image, left, right, top, bottom, border);
+            ImageProcessor res = border.addBorders(image, left, right, top, bottom);
 			resPlus = new ImagePlus(imagePlus.getShortTitle()+"-ext", res);
 		}
 		else
@@ -105,7 +105,7 @@ public class ExtendBordersPlugin implements PlugIn
 			BorderManager3D border = borderType.createBorderManager(image);
 
 			// Execute core of the plugin
-			ImageStack res = process(image, left, right, top, bottom, front, back, border);
+            ImageStack res = border.addBorders(image, left, right, top, bottom, front, back);
 			resPlus = new ImagePlus(imagePlus.getShortTitle()+"-ext", res);			
 		}
 		
@@ -145,6 +145,10 @@ public class ExtendBordersPlugin implements PlugIn
 	 * Adds the specified number of pixels around the input image, and returns
 	 * the resulting image. 
 	 * 
+     * @deprecated replaced by inra.ijpb.data.border.BorderManager.addBorders(...) method
+     * 
+     * @see inra.ijpb.data.border.BorderManager.#addBorders(ImageProcessor, int, int, int, int)
+     * 
 	 * @param image
 	 *            the input image
 	 * @param left
@@ -160,6 +164,7 @@ public class ExtendBordersPlugin implements PlugIn
 	 *            pixels to be added
 	 * @return a new image with extended borders
 	 */
+	@Deprecated
 	public static final ImageProcessor process(ImageProcessor image, 
 			int left, int right, int top, int bottom, BorderManager border)
 	{
@@ -183,9 +188,14 @@ public class ExtendBordersPlugin implements PlugIn
 		
 		return result;
 	}
+	
 	/**
 	 * Adds the specified number of pixels around the input image, and returns
 	 * the resulting image. 
+	 * 
+	 * @deprecated replaced by inra.ijpb.data.border.BorderManager3D.addBorders(...) method
+	 * 
+	 * @see inra.ijpb.data.border.BorderManager3D.#addBorders(ImageStack, int, int, int, int, int, int)
 	 * 
 	 * @param image
 	 *            the input image stack 
@@ -206,6 +216,7 @@ public class ExtendBordersPlugin implements PlugIn
 	 *            pixels to be added
 	 * @return a new image with extended borders
 	 */
+    @Deprecated
 	public static final ImageStack process(ImageStack image, 
 			int left, int right, int top, int bottom, int front, int back, BorderManager3D border)
 	{
