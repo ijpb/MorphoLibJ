@@ -18,9 +18,27 @@ import java.util.TreeSet;
  */
 public class Boundary
 {
+    /**
+     * The (integer) label associated to this boundary. 
+     */
     int label;
+    
+    /**
+     * The list of integer labels corresponding to the regions this boundary is
+     * adjacent to.
+     */
     TreeSet<Integer> regionLabels;
     
+    /**
+     * Creates a new boundary by specifying its label, and the list of label of
+     * the adjacent regions.
+     * 
+     * @param label
+     *            the (integer) label associated to this boundary.
+     * @param regionLabels
+     *            the list of integer labels corresponding to the regions this
+     *            boundary is adjacent to.
+     */
     Boundary(int label, Collection<Integer> regionLabels)
     {
         this.label = label;
@@ -29,6 +47,12 @@ public class Boundary
         this.regionLabels.addAll(regionLabels);
     }
     
+    /**
+     * @param regionLabels
+     *            a list of integer labels
+     * @return true if the specified labels are the same (not necessarily in the
+     *         same order) than the labels of regions adjacent to this boundary.
+     */
     public boolean hasSameRegions(Collection<Integer> regionLabels)
     {
         if (this.regionLabels.size() != regionLabels.size()) 

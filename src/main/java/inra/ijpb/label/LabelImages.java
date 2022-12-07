@@ -67,6 +67,14 @@ import inra.ijpb.label.filter.ChamferLabelDilation3DShort;
 /**
  * Utility methods for label images (stored as 8-, 16- or 32-bits).
  * 
+ * Most methods within this class apply an operator on the input label map(s).
+ * Some of them may return a newly created label map.
+ * 
+ * The LabelUtils class provides additional utility methods, more dedicated to
+ * plugin creators.
+ * 
+ * @see LabelUtils
+ * 
  * @author David Legland
  *
  */

@@ -8,12 +8,13 @@ import java.util.ArrayList;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.algo.AlgoStub;
+import inra.ijpb.label.LabelUtils;
 
 /**
  * Computes a label map of the boundaries between regions from a label map.
  * 
  * The result is returned as a <code>Result</code> instance, that encloses the
- * boundary label map and the list of boundaries as a <cod>BoundarySet</code>.
+ * boundary label map and the list of boundaries as a <code>BoundarySet</code>.
  * Each <code>Boundary</code> in the boundary set is identified by an integer
  * index, and contains the list of regions it is adjacent to.
  * 
@@ -38,7 +39,7 @@ public class LabelBoundariesLabeling2D extends AlgoStub
      * 
      * @param labelMap
      *            the label map of the regions
-     * @return the result of labeling, enclosing the boudary label map and the
+     * @return the result of labeling, enclosing the boundary label map and the
      *         list of boundaries.
      */
     public Result process(ImageProcessor labelMap)
@@ -50,9 +51,12 @@ public class LabelBoundariesLabeling2D extends AlgoStub
         // allocate memory for boundary label map
         Result res = new Result(new FloatProcessor(sizeX, sizeY));
         
+        int maxLabelCount = LabelUtils.getLargestPossibleLabel(res.boundaryLabelMap);
+        
         // iterate over pixels
         for (int y = 0; y < sizeY; y++)
         {
+            this.fireProgressChanged(this, y, sizeY);
             for (int x = 0; x < sizeX; x++)
             {
                 // initialize current pixel
@@ -85,10 +89,25 @@ public class LabelBoundariesLabeling2D extends AlgoStub
                     continue;
                 }
                 
-                Boundary boundary = res.boundaries.findOrCreateBoundary(neighborLabels);
+                // try to find existing boundary
+                Boundary boundary = res.boundaries.findBoundary(neighborLabels);
+                
+                // if boundary does not exist, create a new one
+                if (boundary == null)
+                {
+                    if (res.boundaries.size() >= maxLabelCount)
+                    {
+                        throw new RuntimeException("Max number of label reached (" + maxLabelCount + ")");
+                    }
+                    boundary = res.boundaries.createBoundary(neighborLabels);
+                }
+                
                 res.boundaryLabelMap.setf(x, y, boundary.label);
             }
         }
+        
+        this.fireProgressChanged(this, 1, 1);
+        res.boundaryLabelMap.setMinAndMax(0, res.boundaries.size());
         
         // return result data structure
         return res;
@@ -115,6 +134,12 @@ public class LabelBoundariesLabeling2D extends AlgoStub
          */
         public final BoundarySet boundaries;
         
+        /**
+         * Initializes a new Result instance from a boundary label map.
+         * 
+         * @param labelMap
+         *            the label map of boundaries.
+         */
         public Result(ImageProcessor labelMap)
         {
             this.boundaryLabelMap = labelMap;

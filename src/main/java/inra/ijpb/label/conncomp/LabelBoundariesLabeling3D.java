@@ -7,12 +7,13 @@ import java.util.ArrayList;
 
 import ij.ImageStack;
 import inra.ijpb.algo.AlgoStub;
+import inra.ijpb.label.LabelUtils;
 
 /**
  * Computes a label map of the boundaries between regions from a label map.
  * 
  * The result is returned as a <code>Result</code> instance, that encloses the
- * boundary label map and the list of boundaries as a <cod>BoundarySet</code>.
+ * boundary label map and the list of boundaries as a <code>BoundarySet</code>.
  * Each <code>Boundary</code> in the boundary set is identified by an integer
  * index, and contains the list of regions it is adjacent to.
  * 
@@ -39,7 +40,7 @@ public class LabelBoundariesLabeling3D extends AlgoStub
      * 
      * @param labelMap
      *            the label map of the regions
-     * @return the result of labeling, enclosing the boudary label map and the
+     * @return the result of labeling, enclosing the boundary label map and the
      *         list of boundaries.
      */
     public Result process(ImageStack labelMap)
@@ -52,9 +53,13 @@ public class LabelBoundariesLabeling3D extends AlgoStub
         // allocate memory for boundary label map
         Result res = new Result(ImageStack.create(sizeX, sizeY, sizeZ, 32));
         
+        int maxLabelCount = LabelUtils.getLargestPossibleLabel(res.boundaryLabelMap);
+        
         // iterate over pixels
         for (int z = 0; z < sizeZ; z++)
         {
+            fireProgressChanged(this, z, sizeZ);
+            
             for (int y = 0; y < sizeY; y++)
             {
                 for (int x = 0; x < sizeX; x++)
@@ -90,12 +95,25 @@ public class LabelBoundariesLabeling3D extends AlgoStub
                         continue;
                     }
 
-                    Boundary boundary = res.boundaries.findOrCreateBoundary(neighborLabels);
+                    // try to find existing boundary
+                    Boundary boundary = res.boundaries.findBoundary(neighborLabels);
+                    
+                    // if boundary does not exist, create a new one
+                    if (boundary == null)
+                    {
+                        if (res.boundaries.size() >= maxLabelCount)
+                        {
+                            throw new RuntimeException("Max number of label reached (" + maxLabelCount + ")");
+                        }
+                        boundary = res.boundaries.createBoundary(neighborLabels);
+                    }
+                    
                     res.boundaryLabelMap.setVoxel(x, y, z, boundary.label);
                 }
             }
         }
-        
+        fireProgressChanged(this, 1, 1);
+
         // return result data structure
         return res;
     }
@@ -121,6 +139,12 @@ public class LabelBoundariesLabeling3D extends AlgoStub
          */
         public final BoundarySet boundaries;
         
+        /**
+         * Initializes a new Result instance from a boundary label map.
+         * 
+         * @param labelMap
+         *            the label map of boundaries.
+         */
         public Result(ImageStack labelMap)
         {
             this.boundaryLabelMap = labelMap;
