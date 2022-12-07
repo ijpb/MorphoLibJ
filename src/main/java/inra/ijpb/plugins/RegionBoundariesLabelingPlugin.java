@@ -27,6 +27,7 @@ import ij.ImageStack;
 import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
 import inra.ijpb.label.conncomp.LabelBoundariesLabeling2D;
+import inra.ijpb.label.conncomp.LabelBoundariesLabeling3D;
 
 /**
  * @author David Legland
@@ -41,33 +42,37 @@ public class RegionBoundariesLabelingPlugin implements PlugIn {
 	public void run(String arg0) {
 		ImagePlus imagePlus = IJ.getImage();
 		
+        String newName = imagePlus.getShortTitle() + "-bnd";
 		ImageStack stack = imagePlus.getStack();
 		
 		ImagePlus resultPlus;
 		if( stack.getSize() > 1 )
 		{
-		    throw new RuntimeException("Requires a 2D image as input");
-//			ImageStack boundaries = LabelImages.labelBoundaries(stack);
-//		
-//			String newName = imagePlus.getShortTitle() + "-bnd";
-//			resultPlus = new ImagePlus(newName, boundaries);
+            LabelBoundariesLabeling3D algo = new LabelBoundariesLabeling3D();
+            LabelBoundariesLabeling3D.Result res = algo.process(imagePlus.getStack());
+            ImageStack boundaries = res.boundaryLabelMap;
+			
+			resultPlus = new ImagePlus(newName, boundaries);
+			
+	        // setup display range to show largest label as white
+	        double nLabels = res.boundaries.size();
+	        resultPlus.setDisplayRange(0, nLabels);
 		}
 		else
 		{
-//			ImageProcessor boundaries = LabelImages.labelBoundaries(
-//					stack.getProcessor( 1 ) );
 			LabelBoundariesLabeling2D algo = new LabelBoundariesLabeling2D();
 			ImageProcessor boundaries = algo.process(imagePlus.getProcessor()).boundaryLabelMap;
 
-			String newName = imagePlus.getShortTitle() + "-bnd";
-			resultPlus = new ImagePlus( newName, boundaries );
+            resultPlus = new ImagePlus(newName, boundaries);
 		}
+		
 		// Update meta information of result image
 		resultPlus.copyScale(imagePlus);
 		
 		// Display with same settings as original image
 		resultPlus.show();
-		if (imagePlus.getStackSize() > 1) {
+		if (imagePlus.getStackSize() > 1)
+		{
 			resultPlus.setZ(imagePlus.getZ());
 			resultPlus.setSlice(imagePlus.getCurrentSlice());
 		}

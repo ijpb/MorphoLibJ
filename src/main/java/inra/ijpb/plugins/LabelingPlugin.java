@@ -84,7 +84,7 @@ public class LabelingPlugin implements PlugIn
 		// Display with same settings as original image
 		resultPlus.show();
 		
-		// For 2D images, select the same visible slice as original image
+		// For 3D images, select the same visible slice as original image
 		if (!isPlanar)
 		{
 			resultPlus.setZ(imagePlus.getZ());

@@ -27,6 +27,11 @@ public class BoundarySet
         this.boundaries = new TreeMap<Integer, Boundary>();
     }
     
+    public int size()
+    {
+        return this.boundaries.size();
+    }
+    
     public Boundary getBoundary(int index)
     {
         return this.boundaries.get(index);

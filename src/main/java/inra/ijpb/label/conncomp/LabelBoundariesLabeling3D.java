@@ -5,8 +5,7 @@ package inra.ijpb.label.conncomp;
 
 import java.util.ArrayList;
 
-import ij.process.FloatProcessor;
-import ij.process.ImageProcessor;
+import ij.ImageStack;
 import inra.ijpb.algo.AlgoStub;
 
 /**
@@ -19,17 +18,19 @@ import inra.ijpb.algo.AlgoStub;
  * 
  * @see Boundary
  * @see BoundarySet
- * @see LabelBoundariesLabeling3D
+ * @see LabelBoundariesLabeling2D
  * 
  * @author dlegland
  */
-public class LabelBoundariesLabeling2D extends AlgoStub
+public class LabelBoundariesLabeling3D extends AlgoStub
 {
     /**
      * Used to identify where to look for neighbors around a given pixel.
      */
-    private static int[][] shiftsC4 = new int[][] {
-        {0, -1}, {-1, 0}, {+1, 0}, {0, +1}
+    private static int[][] shiftsC6 = new int[][] {
+        {0, 0, -1}, 
+        {0, -1, 0}, {-1, 0, 0}, {+1, 0, 0}, {0, +1, 0},
+        {0, 0, +1}, 
     };
     
     /**
@@ -41,52 +42,57 @@ public class LabelBoundariesLabeling2D extends AlgoStub
      * @return the result of labeling, enclosing the boudary label map and the
      *         list of boundaries.
      */
-    public Result process(ImageProcessor labelMap)
+    public Result process(ImageStack labelMap)
     {
         // retrieve image size
         int sizeX = labelMap.getWidth();
         int sizeY = labelMap.getHeight();
+        int sizeZ = labelMap.getSize();
         
         // allocate memory for boundary label map
-        Result res = new Result(new FloatProcessor(sizeX, sizeY));
+        Result res = new Result(ImageStack.create(sizeX, sizeY, sizeZ, 32));
         
         // iterate over pixels
-        for (int y = 0; y < sizeY; y++)
+        for (int z = 0; z < sizeZ; z++)
         {
-            for (int x = 0; x < sizeX; x++)
+            for (int y = 0; y < sizeY; y++)
             {
-                // initialize current pixel
-                int currentLabel = (int) labelMap.getf(x, y);
-                ArrayList<Integer> neighborLabels = new ArrayList<Integer>();
-                neighborLabels.add(currentLabel);
-                
-                // iterate over neighbors
-                for (int[] shift : shiftsC4)
+                for (int x = 0; x < sizeX; x++)
                 {
-                    // compute neighbor coordinates
-                    int x2 = x + shift[0];
-                    int y2 = y + shift[1];
-                    
-                    // check bounds
-                    if (x2 < 0 || x2 >= sizeX || y2 < 0 || y2 >= sizeY)
+                    // initialize current pixel
+                    int currentLabel = (int) labelMap.getVoxel(x, y, z);
+                    ArrayList<Integer> neighborLabels = new ArrayList<Integer>();
+                    neighborLabels.add(currentLabel);
+
+                    // iterate over neighbors
+                    for (int[] shift : shiftsC6)
+                    {
+                        // compute neighbor coordinates
+                        int x2 = x + shift[0];
+                        int y2 = y + shift[1];
+                        int z2 = z + shift[2];
+
+                        // check bounds
+                        if (x2 < 0 || x2 >= sizeX || y2 < 0 || y2 >= sizeY || z2 < 0 || z2 >= sizeZ)
+                        {
+                            continue;
+                        }
+
+                        int neighLabel = (int) labelMap.getVoxel(x2, y2, z2);
+                        if (!neighborLabels.contains(neighLabel))
+                        {
+                            neighborLabels.add(neighLabel);
+                        }
+                    }
+
+                    if (neighborLabels.size() == 1)
                     {
                         continue;
                     }
-                    
-                    int neighLabel = (int) labelMap.getf(x2, y2);
-                    if (!neighborLabels.contains(neighLabel))
-                    {
-                        neighborLabels.add(neighLabel);
-                    }
+
+                    Boundary boundary = res.boundaries.findOrCreateBoundary(neighborLabels);
+                    res.boundaryLabelMap.setVoxel(x, y, z, boundary.label);
                 }
-                
-                if (neighborLabels.size() == 1)
-                {
-                    continue;
-                }
-                
-                Boundary boundary = res.boundaries.findOrCreateBoundary(neighborLabels);
-                res.boundaryLabelMap.setf(x, y, boundary.label);
             }
         }
         
@@ -107,7 +113,7 @@ public class LabelBoundariesLabeling2D extends AlgoStub
         /**
          * The label map containing boundary labels or zero for non-label pixels.
          */
-        public final ImageProcessor boundaryLabelMap;
+        public final ImageStack boundaryLabelMap;
         
         /**
          * The map between the label of a boundary and the Boundary instances
@@ -115,7 +121,7 @@ public class LabelBoundariesLabeling2D extends AlgoStub
          */
         public final BoundarySet boundaries;
         
-        public Result(ImageProcessor labelMap)
+        public Result(ImageStack labelMap)
         {
             this.boundaryLabelMap = labelMap;
             this.boundaries = new BoundarySet();

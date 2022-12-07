@@ -9,6 +9,10 @@ import java.util.TreeSet;
 /**
  * A boundary between several regions.
  * 
+ * The boundary is identified by an index (that can be used to populate a label
+ * map), and contains a list of integers corresponding to the label of the
+ * regions it is adjacent to. 
+ * 
  * @author dlegland
  *
  */
