@@ -514,7 +514,7 @@ public class ColorImages
      *            the overlay opacity, between 0 and 1.
      * @return a new ImageProcessor instance containing a 2D color image
      */
-    public static final ImageProcessor binaryOverlay(ByteProcessor refImage, ImageProcessor binaryMask, Color overlayColor, double overlayOpacity)
+    public static final ColorProcessor binaryOverlay(ByteProcessor refImage, ImageProcessor binaryMask, Color overlayColor, double overlayOpacity)
     {
         // check input validity
         if (!ImageUtils.isSameSize(refImage, binaryMask))
@@ -557,6 +557,22 @@ public class ColorImages
         return result;
     }
     
+    /**
+     * Computes the overlay of a binary image over a grayscale image, using an
+     * opacity for the binary layer. The result is returned as a Color Stack.
+     * 
+     * @param refImage
+     *            the grayscale image used as reference.
+     * @param binaryMask
+     *            the binary mask, with non zero values where a overlay must
+     *            occur
+     * @param overlayColor
+     *            the color used for painting overlay
+     * @param overlayOpacity
+     *            the opacity used for painting overlay, between 0 (totally
+     *            transparent) and 1 (totally opaque)
+     * @return the result of overlay, as a Color stack
+     */
     public static final ImageStack binaryOverlay(ImageStack refImage, ImageStack binaryMask, Color overlayColor, double overlayOpacity)
     {
         // check input validity

@@ -170,9 +170,6 @@ public interface BorderManager {
      *            the number of pixels to add on top of the image
      * @param bottom
      *            the number of pixels to add at the bottom of the image
-     * @param border
-     *            an instance of BorderManager that specifies the value of
-     *            pixels to be added
      * @return a new image with extended borders
      */
     public default ImageProcessor addBorders(ImageProcessor image, 
@@ -201,13 +198,15 @@ public interface BorderManager {
     
     
 	/**
-	 * Returns the value corresponding to (x,y) position. Position can be
-	 * outside original image bounds.
-	 *   
-	 * @param x column index of the position
-	 * @param y row index of the position
-	 * @return border corrected value
-	 */
+     * Returns the value corresponding to (x,y) position. Position can be
+     * outside original image bounds.
+     * 
+     * @param x
+     *            column index of the position
+     * @param y
+     *            row index of the position
+     * @return border corrected value
+     */
 	public int get(int x, int y);
 	
 	/**

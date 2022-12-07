@@ -147,7 +147,7 @@ public class ExtendBordersPlugin implements PlugIn
 	 * 
      * @deprecated replaced by inra.ijpb.data.border.BorderManager.addBorders(...) method
      * 
-     * @see inra.ijpb.data.border.BorderManager.#addBorders(ImageProcessor, int, int, int, int)
+     * @see inra.ijpb.data.border.BorderManager#addBorders(ImageProcessor, int, int, int, int)
      * 
 	 * @param image
 	 *            the input image
@@ -195,7 +195,7 @@ public class ExtendBordersPlugin implements PlugIn
 	 * 
 	 * @deprecated replaced by inra.ijpb.data.border.BorderManager3D.addBorders(...) method
 	 * 
-	 * @see inra.ijpb.data.border.BorderManager3D.#addBorders(ImageStack, int, int, int, int, int, int)
+	 * @see inra.ijpb.data.border.BorderManager3D#addBorders(ImageStack, int, int, int, int, int, int)
 	 * 
 	 * @param image
 	 *            the input image stack 

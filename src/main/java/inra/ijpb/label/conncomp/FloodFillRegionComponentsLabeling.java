@@ -87,13 +87,14 @@ public class FloodFillRegionComponentsLabeling extends AlgoStub
 		this.bitDepth = bitDepth;
 	}
 	
-	/**
-     * Compute connected components of the specified label.
+    /**
+     * Computes labels corresponding to connected components of a region within
+     * a label map.
      * 
      * @param image
-     *            the image to process.
+     *            the label map containing index of each region.
      * @param regionLabel
-     *            the label of the region to process.
+     *            the label of the region whose connected components have to be computed.
      * @return a new label map with the labels of the connected components of
      *         the specified region.
      */

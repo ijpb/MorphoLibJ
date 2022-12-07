@@ -37,6 +37,17 @@ public class ChamferLabelErosion3DShort extends AlgoStub
      */
     Strel3D strel;
     
+    /**
+     * Creates a new operator for erosion of label images based on Chamfer
+     * masks. The principle is to compute for each non-zero voxel (label), the
+     * distance to the nearest background voxel, and to apply a threshold on
+     * this distance map.
+     * 
+     * @param mask
+     *            the Chamfer mask use to propagate distances
+     * @param radius
+     *            the radius used to compute erosion from distance map.
+     */
     public ChamferLabelErosion3DShort(ChamferMask3D mask, double radius)
     {
         this.mask = mask;
@@ -45,6 +56,14 @@ public class ChamferLabelErosion3DShort extends AlgoStub
         this.strel = new ChamferStrel3D(mask, radius);
     }
     
+    /**
+     * Apply morphological erosion of the labels within the specified input
+     * image.
+     * 
+     * @param image
+     *            the label map to erode
+     * @return the result of erosion.
+     */
     public ImageStack process(ImageStack image)
     {
         // retrieve image size

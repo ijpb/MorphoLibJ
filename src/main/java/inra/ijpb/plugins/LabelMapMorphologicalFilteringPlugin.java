@@ -40,6 +40,21 @@ import inra.ijpb.util.IJUtils;
  */
 public class LabelMapMorphologicalFilteringPlugin implements PlugIn
 {
+    /**
+     * A pre-defined set of basis morphological operations, that can be easily 
+     * used with a GenericDialog. 
+     * Example:
+     * <pre><code>
+     * // Use a generic dialog to define an operator 
+     * GenericDialog gd = new GenericDialog();
+     * gd.addChoice("Operation", Operation.getAllLabels();
+     * gd.showDialog();
+     * Operation op = Operation.fromLabel(gd.getNextChoice());
+     * // Apply the operation on the current image
+     * ImageStack image = IJ.getImage().getStack();
+     * ImageStack res = op.process(image, ChamferMask3D.BORGEFORS, 2.0);
+     * </code></pre>
+     */
     public enum Operation 
     {
         /** Morphological erosion (local minima)*/

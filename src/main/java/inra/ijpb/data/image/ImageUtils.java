@@ -14,6 +14,13 @@ import ij.process.ImageProcessor;
  */
 public class ImageUtils
 {
+    /**
+     * Checks if the specified image is a color image.
+     * 
+     * @param imagePlus
+     *            the instance of ImagePlus to check
+     * @return true if the type is COLOR_256 or COLOR_RGB.
+     */
     public static final boolean isColorImage(ImagePlus imagePlus)
     {
         return imagePlus.getType() == ImagePlus.COLOR_256 || imagePlus.getType() == ImagePlus.COLOR_RGB;
@@ -183,6 +190,10 @@ public class ImageUtils
 
     /**
      * Computes maximum value within the input image.
+     * 
+     * @param imagePlus
+     *            the image the analyze
+     * @return the maximum value within the image, as a double.
      */
     public final static double findMaxValue(ImagePlus imagePlus)
     {
@@ -200,6 +211,10 @@ public class ImageUtils
      * Computes maximum value within the input 2D image.
      * 
      * This method may be used to compute display range of result ImagePlus.
+     * 
+     * @param image
+     *            the image the analyze
+     * @return the maximum value within the image, as a double.
      */
     public final static double findMaxValue(ImageProcessor image) 
     {
@@ -224,6 +239,10 @@ public class ImageUtils
      * Computes maximum value in the input 3D image.
      * 
      * This method may be used to compute display range of result ImagePlus.
+     * 
+     * @param image
+     *            the 3D image the analyze
+     * @return the maximum value within the image, as a double.
      */
     public final static double findMaxValue(ImageStack image) 
     {

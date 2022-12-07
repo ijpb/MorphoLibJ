@@ -85,9 +85,17 @@ public class FloodFillRegionComponentsLabeling3D extends AlgoStub
 	    this.bitDepth = bitDepth;
 	}
 
-	/* (non-Javadoc)
-	 * @see inra.ijpb.binary.conncomp.ConnectedComponentsLabeling3D#computeLabels(ij.ImageStack)
-	 */
+    /**
+     * Computes labels corresponding to connected components of a region within
+     * a label map.
+     * 
+     * @param image
+     *            the label map containing index of each region.
+     * @param regionLabel
+     *            the label of the region whose connected components have to be computed.
+     * @return a new label map with the labels of the connected components of
+     *         the specified region.
+     */
 	public ImageStack computeLabels(ImageStack image, int regionLabel)
 	{
 		// get image size

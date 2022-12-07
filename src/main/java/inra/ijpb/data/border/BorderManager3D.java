@@ -182,9 +182,6 @@ public interface BorderManager3D
      *            the number of slices to add in front of the stack
      * @param back
      *            the number of slices to add behind the stack
-     * @param border
-     *            an instance of BorderManager that specifies the value of
-     *            pixels to be added
      * @return a new image with extended borders
      */
     public default ImageStack addBorders(ImageStack image, 
@@ -216,13 +213,16 @@ public interface BorderManager3D
     }
     
 	/**
-	 * Returns the value corresponding to (x,y) position. Position can be
-	 * outside original image bounds.
-	 *   
-	 * @param x column index of the position
-	 * @param y row index of the position
-	 * @param z slice index of the position
-	 * @return border corrected value
-	 */
+     * Returns the value corresponding to (x,y) position. Position can be
+     * outside original image bounds.
+     * 
+     * @param x
+     *            column index of the position
+     * @param y
+     *            row index of the position
+     * @param z
+     *            slice index of the position
+     * @return border corrected value
+     */
 	public int get(int x, int y, int z);
 }
