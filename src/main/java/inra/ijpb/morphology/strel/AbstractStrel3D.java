@@ -22,9 +22,10 @@
 package inra.ijpb.morphology.strel;
 
 import ij.ImageStack;
-import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.algo.AlgoEvent;
+import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.morphology.Strel3D;
+import inra.ijpb.shape.ImageShape;
 
 
 /**
@@ -109,7 +110,74 @@ public abstract class AbstractStrel3D extends AlgoStub implements Strel3D
 	private boolean showProgress = true;
 
 	
-	// ===================================================================
+    // ===================================================================
+    // Utility methods
+    
+    /**
+     * Adds a border around the image, to avoid edge effects when performing
+     * morphological closing or opening. The size of the border is determined by
+     * Strel size and offset.
+     * 
+     * Replicated border strategy is used to expand image.
+     * 
+     * @see #cropBorder(ImageStack)
+     * 
+     * @param image
+     *            the image to pad
+     * @return the image with border extended.
+     */
+    public ImageStack addBorder(ImageStack image)
+    {
+        // compute padding for each border
+        int[] strelSize = this.getSize();
+        int[] strelOffset = this.getOffset();
+        int padX0 = strelOffset[0];
+        int padY0 = strelOffset[1];
+        int padZ0 = strelOffset[2];
+        int padX1 = strelSize[0] - strelOffset[0];
+        int padY1 = strelSize[1] - strelOffset[1];
+        int padZ1 = strelSize[2] - strelOffset[2];
+        
+        // pad image
+        return ImageShape.addBorders(image, padX0, padX1, padY0, padY1, padZ0, padZ1);
+    }
+    
+    /**
+     * Retrieve the portion of image that corresponds to the original image
+     * before adding border. The crop parameters are retrieved from strel size
+     * and offset.
+     * 
+     * This method works together with the addBorder method. In practice, we
+     * retrieve the input image if we perform the following:
+     * 
+     * <pre>{@code
+     * ImageStack result = strel3d.cropBorder(strel3d.addBorder(inputImage));
+     * }</pre>
+     * 
+     * @see #addBorder(ImageStack)
+     * 
+     * @param image
+     *            the image to crop
+     * @return the image with strel padding removed.
+     */
+    public ImageStack cropBorder(ImageStack image)
+    {
+        // retrieve crop params from strel size and offset
+        int[] strelSize = this.getSize();
+        int[] strelOffset = this.getOffset();
+        int padX0 = strelOffset[0];
+        int padY0 = strelOffset[1];
+        int padZ0 = strelOffset[2];
+        int sizeX = image.getWidth() - strelSize[0];
+        int sizeY = image.getHeight() - strelSize[1];
+        int sizeZ = image.getSize() - strelSize[2];
+        
+        // crop result
+        return ImageShape.cropRect(image, padX0, padY0, padZ0, sizeX, sizeY, sizeZ);
+    }
+    
+
+    // ===================================================================
 	// Setter and getters
 	
 	public boolean showProgress()
@@ -234,14 +302,86 @@ public abstract class AbstractStrel3D extends AlgoStub implements Strel3D
 	    return res;
 	}
 
-	public ImageStack closing(ImageStack stack)
+    /**
+     * Performs a morphological closing on the input stack, by applying first a
+     * dilation, then an erosion with the reversed structuring element.
+     * 
+     * @param image
+     *            the input image
+     * @return the result of closing with this structuring element
+     * @see #dilation(ImageStack)
+     * @see #erosion(ImageStack)
+     * @see #opening(ImageStack)
+     * @see #reverse()
+     */
+	public ImageStack closing(ImageStack image)
 	{
-		return this.reverse().erosion(this.dilation(stack));
+        // retrieve image size
+        int sizeX = image.getWidth();
+        int sizeY = image.getHeight();
+        int sizeZ = image.getSize();
+        
+        // compute padding for each border
+        int[] strelSize = this.getSize();
+        int[] strelOffset = this.getOffset();
+        int padX0 = strelOffset[0];
+        int padY0 = strelOffset[1];
+        int padZ0 = strelOffset[2];
+        int padX1 = strelSize[0] - strelOffset[0];
+        int padY1 = strelSize[1] - strelOffset[1];
+        int padZ1 = strelSize[2] - strelOffset[2];
+        
+        // pad image
+        image = ImageShape.addBorders(image, padX0, padX1, padY0, padY1, padZ0, padZ1);
+        
+        // compute morphological closing on padded image
+        image = this.reverse().erosion(this.dilation(image));
+        
+        // crop result
+        image = ImageShape.cropRect(image, padX0, padY0, padZ0, sizeX, sizeY, sizeZ);
+        
+        return image;
 	}
 
-	public ImageStack opening(ImageStack stack)
+    /**
+     * Performs a morphological opening on the input stack, by applying first an
+     * erosion, then a dilation with the reversed structuring element.
+     * 
+     * @param image
+     *            the input image
+     * @return the result of closing with this structuring element
+     * @see #dilation(ImageStack)
+     * @see #erosion(ImageStack)
+     * @see #closing(ImageStack)
+     * @see #reverse()
+     */
+	public ImageStack opening(ImageStack image)
 	{
-		return this.reverse().dilation(this.erosion(stack));
+        // retrieve image size
+        int sizeX = image.getWidth();
+        int sizeY = image.getHeight();
+        int sizeZ = image.getSize();
+        
+        // compute padding for each border
+        int[] strelSize = this.getSize();
+        int[] strelOffset = this.getOffset();
+        int padX0 = strelOffset[0];
+        int padY0 = strelOffset[1];
+        int padZ0 = strelOffset[2];
+        int padX1 = strelSize[0] - strelOffset[0];
+        int padY1 = strelSize[1] - strelOffset[1];
+        int padZ1 = strelSize[2] - strelOffset[2];
+        
+        // pad image
+        image = ImageShape.addBorders(image, padX0, padX1, padY0, padY1, padZ0, padZ1);
+        
+        // compute morphological closing on padded image
+        image = this.reverse().dilation(this.erosion(image));
+        
+        // crop result
+        image = ImageShape.cropRect(image, padX0, padY0, padZ0, sizeX, sizeY, sizeZ);
+        
+        return image;
 	}
 	
 	

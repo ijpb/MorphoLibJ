@@ -1,0 +1,214 @@
+/**
+ * 
+ */
+package inra.ijpb.shape;
+
+import ij.ImageStack;
+import ij.process.ImageProcessor;
+import inra.ijpb.data.border.BorderManager;
+import inra.ijpb.data.border.BorderManager3D;
+import inra.ijpb.data.border.ReplicatedBorder;
+import inra.ijpb.data.border.ReplicatedBorder3D;
+
+/**
+ * A collection of utility method for processing global shape of images: crop, add borders...
+ * 
+ * @author dlegland
+ *
+ */
+public class ImageShape
+{
+    /**
+     * Adds the specified number of pixels around the input image, and returns
+     * the resulting image. 
+     * 
+     * @param image
+     *            the input image
+     * @param left
+     *            the number of pixels to add to the left of the image
+     * @param right
+     *            the number of pixels to add to the right of the image
+     * @param top
+     *            the number of pixels to add on top of the image
+     * @param bottom
+     *            the number of pixels to add at the bottom of the image
+     * @return a new image with extended borders
+     */
+    public static final ImageProcessor addBorders(ImageProcessor image, 
+            int left, int right, int top, int bottom)
+    {
+        // get image dimensions
+        int sizeX = image.getWidth(); 
+        int sizeY = image.getHeight(); 
+        
+        // compute result dimensions
+        int sizeX2 = sizeX + left + right;
+        int sizeY2 = sizeY + top + bottom;
+        ImageProcessor result = image.createProcessor(sizeX2, sizeY2);
+        
+        // create border manager
+        BorderManager extended = new ReplicatedBorder(image);
+        
+        // fill result image
+        for (int y = 0; y < sizeY2; y++)
+        {
+            for (int x = 0; x < sizeX2; x++)
+            {
+                result.set(x, y, extended.get(x - left, y - top));
+            }
+        }
+        
+        return result;
+    }
+    
+    
+    /**
+     * Adds the specified number of voxels around the input image, and returns
+     * the resulting image. 
+     * 
+     * @param image
+     *            the input image
+     * @param left
+     *            the number of pixels to add to the left of the image
+     * @param right
+     *            the number of pixels to add to the right of the image
+     * @param top
+     *            the number of pixels to add on top of the image
+     * @param bottom
+     *            the number of pixels to add at the bottom of the image
+     * @param front
+     *            the number of pixels to add on the front of the image
+     * @param back
+     *            the number of pixels to add at the back of the image
+     * @return a new ImageStack with extended borders
+     */
+    public static final ImageStack addBorders(ImageStack image, 
+            int left, int right, int top, int bottom, int front, int back)
+    {
+        // get image dimensions
+        int sizeX = image.getWidth(); 
+        int sizeY = image.getHeight(); 
+        int sizeZ = image.getSize(); 
+        
+        // compute result dimensions
+        int sizeX2 = sizeX + left + right;
+        int sizeY2 = sizeY + top + bottom;
+        int sizeZ2 = sizeZ + front + back;
+        ImageStack result = ImageStack.create(sizeX2, sizeY2, sizeZ2, image.getBitDepth());
+        
+        // create border manager
+        BorderManager3D extended = new ReplicatedBorder3D(image);
+        
+        // fill result image
+        for (int z = 0; z < sizeZ2; z++)
+        {
+            for (int y = 0; y < sizeY2; y++)
+            {
+                for (int x = 0; x < sizeX2; x++)
+                {
+                    result.setVoxel(x, y, z, extended.get(x - left, y - top, z - front));
+                }
+            }
+        }
+        
+        return result;
+    }
+    
+    /**
+     * Crops a rectangular region from the input image.
+     * 
+     * @param image
+     *            the image to crop
+     * @param x0
+     *            the x-position of the upper-left corner of the region to crop
+     * @param y0
+     *            the y-position of the upper-left corner of the region to crop
+     * @param width
+     *            the width of the region to crop
+     * @param height
+     *            the height of the region to crop
+     * @return a new ImageProcessor corresponding to the cropped region.
+     */
+    public static final ImageProcessor cropRect(ImageProcessor image, int x0, int y0, int width, int height)
+    {
+        // retrieve image size
+        int sizeX = image.getWidth();
+        int sizeY = image.getHeight();
+        
+        // check crop bounds
+        if (x0 + width - 1 >= sizeX || y0 + height - 1 >= sizeY)
+        {
+            throw new IllegalArgumentException("Crop bounds exceed image bounds");
+        }
+        
+        // allocate
+        ImageProcessor res = image.createProcessor(width, height);
+        
+        // fill result image with crop region
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                res.setf(x, y, image.getf(x + x0, y + y0));
+            }
+        }
+        return res;
+    }
+
+    /**
+     * Crops a rectangular region from the input 3D image.
+     * 
+     * @param image
+     *            the image to crop
+     * @param x0
+     *            the x-position of the upper-left corner of the region to crop
+     * @param y0
+     *            the y-position of the upper-left corner of the region to crop
+     * @param z0
+     *            the z-position of the upper-left corner of the region to crop
+     * @param width
+     *            the width of the region to crop
+     * @param height
+     *            the height of the region to crop
+     * @param depth
+     *            the depth of the region to crop
+     * @return a new ImageStack corresponding to the cropped region.
+     */
+    public static final ImageStack cropRect(ImageStack image, int x0, int y0, int z0, int width, int height, int depth)
+    {
+        // retrieve image size
+        int sizeX = image.getWidth();
+        int sizeY = image.getHeight();
+        int sizeZ = image.getSize();
+        
+        // check crop bounds
+        if (x0 + width - 1 >= sizeX || y0 + height - 1 >= sizeY || z0 + depth - 1 >= sizeZ)
+        {
+            throw new IllegalArgumentException("Crop bounds exceed image bounds");
+        }
+        
+        // allocate
+        ImageStack res = ImageStack.create(width, height, depth, image.getBitDepth());
+        
+        // fill result image with crop region
+        for (int z = 0; z < depth; z++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    res.setVoxel(x, y, z, image.getVoxel(x + x0, y + y0, z + z0));
+                }
+            }
+        }
+        
+        return res;
+    }
+
+    /**
+     * Private constructor to prevent instantiation.
+     */
+    private ImageShape()
+    {
+    }
+}

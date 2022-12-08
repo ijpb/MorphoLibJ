@@ -24,6 +24,7 @@ package inra.ijpb.morphology.strel;
 import ij.ImageStack;
 import ij.process.ImageProcessor;
 import inra.ijpb.morphology.Strel;
+import inra.ijpb.shape.ImageShape;
 
 
 /**
@@ -107,6 +108,65 @@ public abstract class AbstractStrel extends AbstractStrel3D implements Strel
 	    return offsets;
 	}
 	
+    /**
+     * Adds a border around the image, to avoid edge effects when performing
+     * morphological closing or opening. The size of the border is determined by
+     * Strel size and offset.
+     * 
+     * Replicated border strategy is used to expand image.
+     * 
+     * @see #cropBorder(ImageProcessor)
+     * 
+     * @param image
+     *            the image to pad
+     * @return the image with border extended.
+     */
+	public ImageProcessor addBorder(ImageProcessor image)
+	{
+        // compute padding for each border
+        int[] strelSize = this.getSize();
+        int[] strelOffset = this.getOffset();
+        int padX0 = strelOffset[0];
+        int padY0 = strelOffset[1];
+        int padX1 = strelSize[0] - 1 - strelOffset[0];
+        int padY1 = strelSize[1] - 1 - strelOffset[1];
+        
+        // pad image
+        return ImageShape.addBorders(image, padX0, padX1, padY0, padY1);
+	}
+	
+	/**
+     * Retrieve the portion of image that corresponds to the original image
+     * before adding border. The crop parameters are retrieved from strel size
+     * and offset.
+     * 
+     * This method works together with the addBorder method. In practice, we
+     * retrieve the input image if we perform the following:
+     * 
+     * <pre>{@code
+     * ImageProcessor result = strel.cropBorder(strel.addBorder(inputImage));
+     * }</pre>
+     * 
+     * @see #addBorder(ImageProcessor)
+     * 
+     * @param image
+     *            the image to crop
+     * @return the image with strel padding removed.
+     */
+    public ImageProcessor cropBorder(ImageProcessor image)
+    {
+        // retrieve crop params from strel size and offset
+        int[] strelSize = this.getSize();
+        int[] strelOffset = this.getOffset();
+        int padX0 = strelOffset[0];
+        int padY0 = strelOffset[1];
+        int sizeX = image.getWidth() - strelSize[0] + 1;
+        int sizeY = image.getHeight() - strelSize[1] + 1;
+        
+        // crop result
+        return ImageShape.cropRect(image, padX0, padY0, sizeX, sizeY);
+    }
+    
 	
     // ==================================================
     // Default implementation of Strel methods
@@ -222,7 +282,28 @@ public abstract class AbstractStrel extends AbstractStrel3D implements Strel
     @Override
     public ImageProcessor closing(ImageProcessor image)
     {
-        return erosion(dilation(image));
+        // retrieve image size
+        int sizeX = image.getWidth();
+        int sizeY = image.getHeight();
+        
+        // compute padding for each border
+        int[] strelSize = this.getSize();
+        int[] strelOffset = this.getOffset();
+        int padX0 = strelOffset[0];
+        int padY0 = strelOffset[1];
+        int padX1 = strelSize[0] - strelOffset[0];
+        int padY1 = strelSize[1] - strelOffset[1];
+        
+        // pad image
+        image = ImageShape.addBorders(image, padX0, padX1, padY0, padY1);
+        
+        // compute morphological closing on padded image
+        image = this.reverse().erosion(this.dilation(image));
+        
+        // crop result
+        image = ImageShape.cropRect(image, padX0, padY0, sizeX, sizeY);
+        
+        return image;
     }
 
     /**
@@ -240,7 +321,28 @@ public abstract class AbstractStrel extends AbstractStrel3D implements Strel
     @Override
     public ImageProcessor opening(ImageProcessor image)
     {
-        return dilation(erosion(image));
+        // retrieve image size
+        int sizeX = image.getWidth();
+        int sizeY = image.getHeight();
+        
+        // compute padding for each border
+        int[] strelSize = this.getSize();
+        int[] strelOffset = this.getOffset();
+        int padX0 = strelOffset[0];
+        int padY0 = strelOffset[1];
+        int padX1 = strelSize[0] - strelOffset[0];
+        int padY1 = strelSize[1] - strelOffset[1];
+        
+        // pad image
+        image = ImageShape.addBorders(image, padX0, padX1, padY0, padY1);
+        
+        // compute morphological opening on padded image
+        image = this.reverse().dilation(this.erosion(image));
+        
+        // crop result
+        image = ImageShape.cropRect(image, padX0, padY0, sizeX, sizeY);
+        
+        return image;
     }
     
     

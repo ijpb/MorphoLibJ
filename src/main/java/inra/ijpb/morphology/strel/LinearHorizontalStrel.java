@@ -337,7 +337,7 @@ public class LinearHorizontalStrel extends AbstractInPlaceStrel  {
 	 */
 	@Override
 	public int[] getOffset() {
-		return new int[]{this.offset, this.offset};
+		return new int[]{this.offset, 0};
 	}
 
 	/* (non-Javadoc)

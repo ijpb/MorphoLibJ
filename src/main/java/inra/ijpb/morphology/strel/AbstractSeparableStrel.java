@@ -86,8 +86,8 @@ implements SeparableStrel, AlgoListener
 
 	public ImageProcessor closing(ImageProcessor image)
 	{
-		// Allocate memory for result
-		ImageProcessor result = image.duplicate();
+        // Allocate memory for result (padding borders to avoid edge effects)
+        ImageProcessor result = this.addBorder(image);
 		
 		// Extract structuring elements
 		Collection<InPlaceStrel> strels = this.decompose();
@@ -115,14 +115,14 @@ implements SeparableStrel, AlgoListener
 		// clear status bar
 		fireStatusChanged(this, "");
 		
-		return result;
+        return cropBorder(result);
 	}
 
 	public ImageProcessor opening(ImageProcessor image) 
 	{
-		// Allocate memory for result
-		ImageProcessor result = image.duplicate();
-		
+		// Allocate memory for result (padding borders to avoid edge effects)
+	    ImageProcessor result = this.addBorder(image);
+        
 		// Extract structuring elements
 		Collection<InPlaceStrel> strels = this.decompose();
 		int n = strels.size();
@@ -149,7 +149,7 @@ implements SeparableStrel, AlgoListener
 		// clear status bar
 		fireStatusChanged(this, "");
 
-		return result;
+        return cropBorder(result);
 	}
 	
 	private void runDilation(ImageProcessor image, InPlaceStrel strel)

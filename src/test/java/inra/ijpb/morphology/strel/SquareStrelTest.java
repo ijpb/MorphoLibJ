@@ -136,36 +136,42 @@ public class SquareStrelTest {
 	 * the result is completely white. 
 	 */
 	@Test
-	public void testClosing_EdgeEffect() {
-		ImageProcessor image = createImage_Square4x4();
-		Strel strel = new SquareStrel(15);
-		
-		ImageProcessor result = strel.closing(image);
-		
-		for (int y = 0; y < image.getHeight(); y++) {
-			for (int x = 0; x < image.getWidth(); x++) {
-				assertEquals(255, result.get(x, y));
-			}			
-		}
-	}
+    public void testClosing_EdgeEffect()
+    {
+        ImageProcessor image = createImage_Square4x4();
+        Strel strel = new SquareStrel(15);
+
+        ImageProcessor result = strel.closing(image);
+
+        for (int y = 0; y < image.getHeight(); y++)
+        {
+            for (int x = 0; x < image.getWidth(); x++)
+            {
+                assertEquals(image.get(x, y), result.get(x, y));
+            }
+        }
+    }
 
 	/**
 	 * Try to compute morphological closing with a strel larger than the 
 	 * original image.
 	 */
 	@Test
-	public void testClosing_VeryBigStrel() {
-		ImageProcessor image = createImage_Square4x4();
-		Strel strel = new SquareStrel(30);
-		
-		ImageProcessor result = strel.closing(image);
-		
-		for (int y = 0; y < image.getHeight(); y++) {
-			for (int x = 0; x < image.getWidth(); x++) {
-				assertEquals(255, result.get(x, y));
-			}			
-		}
-	}
+    public void testClosing_VeryBigStrel()
+    {
+        ImageProcessor image = createImage_Square4x4();
+        Strel strel = new SquareStrel(30);
+
+        ImageProcessor result = strel.closing(image);
+
+        for (int y = 0; y < image.getHeight(); y++)
+        {
+            for (int x = 0; x < image.getWidth(); x++)
+            {
+                assertEquals(image.get(x, y), result.get(x, y));
+            }
+        }
+    }
 
 	@Test
 	public void testOpening() {

@@ -339,7 +339,7 @@ public class LinearVerticalStrel extends AbstractInPlaceStrel {
 	 */
 	@Override
 	public int[] getOffset() {
-		return new int[]{this.offset, this.offset};
+		return new int[]{0, this.offset};
 	}
 
 	/* (non-Javadoc)

@@ -278,7 +278,7 @@ public class OctagonStrelTest {
 		
 		for (int y = 0; y < image.getHeight(); y++) {
 			for (int x = 0; x < image.getWidth(); x++) {
-				assertEquals(255, result.get(x, y));
+				assertEquals(image.get(x, y), result.get(x, y));
 			}			
 		}
 	}

@@ -85,7 +85,7 @@ public abstract class AbstractSeparableStrel3D extends AbstractStrel3D
 	public ImageStack closing(ImageStack stack) 
 	{
 		// Allocate memory for result
-		ImageStack result = stack.duplicate();
+		ImageStack result = this.addBorder(stack);
 		
 		// Extract structuring elements
 		Collection<InPlaceStrel3D> strels = this.decompose();
@@ -111,13 +111,13 @@ public abstract class AbstractSeparableStrel3D extends AbstractStrel3D
 		// clear status bar
 		fireStatusChanged(this, "");
 		
-		return result;
+		return cropBorder(result);
 	}
 
 	public ImageStack opening(ImageStack stack) 
 	{
 		// Allocate memory for result
-		ImageStack result = stack.duplicate();
+		ImageStack result = this.addBorder(stack);
 		
 		// Extract structuring elements
 		Collection<InPlaceStrel3D> strels = this.decompose();
@@ -143,7 +143,7 @@ public abstract class AbstractSeparableStrel3D extends AbstractStrel3D
 		// clear status bar
 		fireStatusChanged(this, "");
 
-		return result;
+		return cropBorder(result);
 	}
 	
 	private void runDilation(ImageStack image, InPlaceStrel3D strel) 
