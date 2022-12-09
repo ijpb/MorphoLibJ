@@ -17,32 +17,52 @@ import ij.measure.ResultsTable;
  */
 public class AnalyzeRegionsTest
 {
+//    /**
+//     * Test method for {@link inra.ijpb.plugins.AnalyzeRegions#process(ij.ImagePlus, inra.ijpb.plugins.AnalyzeRegions.FeatureSet)}.
+//     */
+//    @Test
+//    public final void testProcess_labeledBlobs()
+//    {
+//        // open test image
+//        ImagePlus imagePlus = IJ.openImage(AnalyzeRegionsTest.class.getResource("/files/blobs-lbl.tif").getFile());
+//        
+//        // creates a new Features instance to select the features to compute.  
+//        AnalyzeRegions.FeatureSet features = new AnalyzeRegions.FeatureSet();
+//        features.setAll(false);
+//        features.area = true;
+//        features.perimeter = true;
+//        features.centroid = true;
+//        
+//        // compute the features, and returns the corresponding table
+//        ResultsTable table = AnalyzeRegions.process(imagePlus, features);
+//        
+//        // expect 64 labels, and four columns (two for the centroid)
+//        assertEquals(64, table.getCounter());
+//        assertEquals(3, table.getLastColumn());
+//    }
+    
     /**
-     * Test method for {@link inra.ijpb.plugins.AnalyzeRegions#process(ij.ImagePlus, inra.ijpb.plugins.AnalyzeRegions.Features)}.
+     * Test method for {@link inra.ijpb.plugins.AnalyzeRegions#process(ij.ImagePlus, inra.ijpb.plugins.AnalyzeRegions.FeatureSet)}.
      */
     @Test
-    public final void testProcess_labeledBlobs()
+    public final void testProcess_labeledBlobs_useAnalyzer()
     {
         // open test image
         ImagePlus imagePlus = IJ.openImage(AnalyzeRegionsTest.class.getResource("/files/blobs-lbl.tif").getFile());
         
         // creates a new Features instance to select the features to compute.  
-        AnalyzeRegions.Features features = new AnalyzeRegions.Features();
-        features.setAll(false);
-        features.area = true;
-        features.perimeter = true;
-        features.centroid = true;
+        ResultsTable table = new AnalyzeRegions.Analyzer()
+                .useArea(true)
+                .usePerimeter(true)
+                .useCentroid(true)
+                .analyze(imagePlus);
         
-        // compute the features, and returns the corresponding table
-        ResultsTable table = AnalyzeRegions.process(imagePlus, features);
-        
-        // expect 64 labels, and four columns (two for the centroid)
+        // expect 64 labels, and many columns
         assertEquals(64, table.getCounter());
-        assertEquals(3, table.getLastColumn());
     }
-    
+
     /**
-     * Test method for {@link inra.ijpb.plugins.AnalyzeRegions#process(ij.ImagePlus, inra.ijpb.plugins.AnalyzeRegions.Features)}.
+     * Test method for {@link inra.ijpb.plugins.AnalyzeRegions#process(ij.ImagePlus, inra.ijpb.plugins.AnalyzeRegions.FeatureSet)}.
      */
     @Test
     public final void testProcess_labeledBlobs_allFeatures()
@@ -51,11 +71,9 @@ public class AnalyzeRegionsTest
         ImagePlus imagePlus = IJ.openImage(AnalyzeRegionsTest.class.getResource("/files/blobs-lbl.tif").getFile());
         
         // creates a new Features instance to select the features to compute.  
-        AnalyzeRegions.Features features = new AnalyzeRegions.Features();
-        features.setAll(true);
-        
-        // compute the features, and returns the corresponding table
-        ResultsTable table = AnalyzeRegions.process(imagePlus, features);
+        ResultsTable table = new AnalyzeRegions.Analyzer()
+                .useAll()
+                .analyze(imagePlus);
         
         // expect 64 labels, and many columns
         assertEquals(64, table.getCounter());
