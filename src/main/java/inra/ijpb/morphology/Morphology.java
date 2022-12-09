@@ -258,7 +258,7 @@ public class Morphology
      * 
      * @see #dilation(ImageProcessor, Strel)
      * @see #dilation(ImageStack, Strel3D)
-     * @see #erosion(imagePlus, Strel3D)
+     * @see #erosion(ImagePlus, Strel3D)
      */
 	public static ImagePlus dilation(ImagePlus imagePlus, Strel3D strel)
     {
@@ -383,7 +383,7 @@ public class Morphology
      * 
      * @see #erosion(ImageProcessor, Strel)
      * @see #erosion(ImageStack, Strel3D)
-     * @see #dilation(imagePlus, Strel3D)
+     * @see #dilation(ImagePlus, Strel3D)
      */
     public static ImagePlus erosion(ImagePlus imagePlus, Strel3D strel)
     {
@@ -506,7 +506,7 @@ public class Morphology
      * 
      * @see #opening(ImageProcessor, Strel)
      * @see #opening(ImageStack, Strel3D)
-     * @see #closing(imagePlus, Strel3D)
+     * @see #closing(ImagePlus, Strel3D)
      */
     public static ImagePlus opening(ImagePlus imagePlus, Strel3D strel)
     {
@@ -626,7 +626,7 @@ public class Morphology
      * 
      * @see #closing(ImageProcessor, Strel)
      * @see #closing(ImageStack, Strel3D)
-     * @see #opening(imagePlus, Strel3D)
+     * @see #opening(ImagePlus, Strel3D)
      */
     public static ImagePlus closing(ImagePlus imagePlus, Strel3D strel)
     {
@@ -745,7 +745,7 @@ public class Morphology
      * 
      * @see #whiteTopHat(ImageProcessor, Strel)
      * @see #whiteTopHat(ImageStack, Strel3D)
-     * @see #blackTopHat(imagePlus, Strel3D)
+     * @see #blackTopHat(ImagePlus, Strel3D)
      */
     public static ImagePlus whiteTopHat(ImagePlus imagePlus, Strel3D strel)
     {
@@ -917,7 +917,7 @@ public class Morphology
      * 
      * @see #blackTopHat(ImageProcessor, Strel)
      * @see #blackTopHat(ImageStack, Strel3D)
-     * @see #whiteTopHat(imagePlus, Strel3D)
+     * @see #whiteTopHat(ImagePlus, Strel3D)
      */
     public static ImagePlus blackTopHat(ImagePlus imagePlus, Strel3D strel)
     {
@@ -1078,8 +1078,8 @@ public class Morphology
      * 
      * @see #gradient(ImageProcessor, Strel)
      * @see #gradient(ImageStack, Strel3D)
-     * @see #internalGradient(imagePlus, Strel3D)
-     * @see #externalGradient(imagePlus, Strel3D)
+     * @see #internalGradient(ImagePlus, Strel3D)
+     * @see #externalGradient(ImagePlus, Strel3D)
      */
     public static ImagePlus gradient(ImagePlus imagePlus, Strel3D strel)
     {
@@ -1252,8 +1252,8 @@ public class Morphology
      * 
      * @see #laplacian(ImageProcessor, Strel)
      * @see #laplacian(ImageStack, Strel3D)
-     * @see #internalGradient(imagePlus, Strel3D)
-     * @see #externalGradient(imagePlus, Strel3D)
+     * @see #internalGradient(ImagePlus, Strel3D)
+     * @see #externalGradient(ImagePlus, Strel3D)
      */
     public static ImagePlus laplacian(ImagePlus imagePlus, Strel3D strel)
     {
@@ -1434,8 +1434,8 @@ public class Morphology
      * 
      * @see #internalGradient(ImageProcessor, Strel)
      * @see #internalGradient(ImageStack, Strel3D)
-     * @see #gradient(imagePlus, Strel3D)
-     * @see #externalGradient(imagePlus, Strel3D)
+     * @see #gradient(ImagePlus, Strel3D)
+     * @see #externalGradient(ImagePlus, Strel3D)
      */
     public static ImagePlus internalGradient(ImagePlus imagePlus, Strel3D strel)
     {
@@ -1597,8 +1597,8 @@ public class Morphology
      * 
      * @see #externalGradient(ImageProcessor, Strel)
      * @see #externalGradient(ImageStack, Strel3D)
-     * @see #gradient(imagePlus, Strel3D)
-     * @see #internalGradient(imagePlus, Strel3D)
+     * @see #gradient(ImagePlus, Strel3D)
+     * @see #internalGradient(ImagePlus, Strel3D)
      */
     public static ImagePlus externalGradient(ImagePlus imagePlus, Strel3D strel)
     {
