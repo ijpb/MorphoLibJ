@@ -23,6 +23,8 @@ package inra.ijpb.morphology;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+
+import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
@@ -239,7 +241,63 @@ public class Morphology
 	// =======================================================================
 	// Main morphological operations
 	
-	/**
+    /**
+     * Performs morphological dilation on the input image.
+     * 
+     * Dilation is obtained by extracting the maximum value among pixels/voxels
+     * in the neighborhood given by the structuring element.
+     * 
+     * This methods is called the equivalent static method for ImageProcessor or
+     * ImageStack, and creates a new ImagePlus instance with the result.
+     * 
+     * @param imagePlus
+     *            the input image to process
+     * @param strel
+     *            the structuring element used for dilation
+     * @return the result of the dilation
+     * 
+     * @see #dilation(ImageProcessor, Strel)
+     * @see #dilation(ImageStack, Strel3D)
+     * @see #erosion(imagePlus, Strel3D)
+     */
+	public static ImagePlus dilation(ImagePlus imagePlus, Strel3D strel)
+    {
+        ImagePlus resultPlus;
+        String newName = imagePlus.getShortTitle() + "-dilation";
+        
+        // Dispatch to appropriate function depending on dimension
+        if (imagePlus.getStackSize() == 1) 
+        {
+            // check-up strel dimensionality
+            if (!(strel instanceof Strel))
+            {
+                throw new RuntimeException("Processing 2D image requires a 2D strel");
+            }
+            
+            // process planar image
+            ImageProcessor image = imagePlus.getProcessor();
+            ImageProcessor result = dilation(image, (Strel) strel);
+            result.setColorModel(image.getColorModel());
+            resultPlus = new ImagePlus(newName, result);
+        } 
+        else
+        {
+            // process image stack
+            ImageStack image = imagePlus.getStack();
+            ImageStack result = dilation(image, strel);
+            result.setColorModel(image.getColorModel());
+            resultPlus = new ImagePlus(newName, result);
+        }
+        
+        // keep settings from original image
+        resultPlus.copyScale(imagePlus);
+        resultPlus.setDisplayRange(imagePlus.getDisplayRangeMin(), imagePlus.getDisplayRangeMax());
+        resultPlus.setLut(imagePlus.getProcessor().getLut());
+        return resultPlus;      
+    }
+    
+    
+    /**
 	 * Performs morphological dilation on the input image.
 	 * 
 	 * Dilation is obtained by extracting the maximum value among pixels in the
@@ -310,6 +368,61 @@ public class Morphology
 		return strel.dilation(image);
 	}
 	
+    /**
+     * Performs morphological erosion on the input image.
+     * 
+     * Dilation is obtained by extracting the minimum value among pixels/voxels
+     * in the neighborhood given by the structuring element.
+     * 
+     * This methods is called the equivalent static method for ImageProcessor or
+     * ImageStack, and creates a new ImagePlus instance with the result.
+     * 
+     * @param imagePlus
+     *            the input image to process
+     * @param strel
+     *            the structuring element used for erosion
+     * @return the result of the erosion
+     * 
+     * @see #erosion(ImageProcessor, Strel)
+     * @see #erosion(ImageStack, Strel3D)
+     * @see #dilation(imagePlus, Strel3D)
+     */
+    public static ImagePlus erosion(ImagePlus imagePlus, Strel3D strel)
+    {
+        ImagePlus resultPlus;
+        String newName = imagePlus.getShortTitle() + "-erosion";
+        
+        // Dispatch to appropriate function depending on dimension
+        if (imagePlus.getStackSize() == 1) 
+        {
+            // check-up strel dimensionality
+            if (!(strel instanceof Strel))
+            {
+                throw new RuntimeException("Processing 2D image requires a 2D strel");
+            }
+            
+            // process planar image
+            ImageProcessor image = imagePlus.getProcessor();
+            ImageProcessor result = erosion(image, (Strel) strel);
+            result.setColorModel(image.getColorModel());
+            resultPlus = new ImagePlus(newName, result);
+        } 
+        else
+        {
+            // process image stack
+            ImageStack image = imagePlus.getStack();
+            ImageStack result = erosion(image, strel);
+            result.setColorModel(image.getColorModel());
+            resultPlus = new ImagePlus(newName, result);
+        }
+        
+        // keep settings from original image
+        resultPlus.copyScale(imagePlus);
+        resultPlus.setDisplayRange(imagePlus.getDisplayRangeMin(), imagePlus.getDisplayRangeMax());
+        resultPlus.setLut(imagePlus.getProcessor().getLut());
+        return resultPlus;      
+    }
+    
 	/**
 	 * Performs morphological erosion on the input image. Erosion is obtained by
 	 * extracting the minimum value among pixels in the neighborhood given by
@@ -380,10 +493,65 @@ public class Morphology
 		return strel.erosion(image);
 	}
 
+    /**
+     * Performs morphological opening on the input image.
+     * 
+     * The opening is obtained by performing an erosion followed by a dilation
+     * with the reversed structuring element.
+     * 
+     * This methods is called the equivalent static method for ImageProcessor or
+     * ImageStack, and creates a new ImagePlus instance with the result.
+     * 
+     * @param imagePlus
+     *            the input image to process
+     * @param strel
+     *            the structuring element used for erosion
+     * @return the result of the erosion
+     * 
+     * @see #opening(ImageProcessor, Strel)
+     * @see #opening(ImageStack, Strel3D)
+     * @see #closing(imagePlus, Strel3D)
+     */
+    public static ImagePlus opening(ImagePlus imagePlus, Strel3D strel)
+    {
+        ImagePlus resultPlus;
+        String newName = imagePlus.getShortTitle() + "-opening";
+        
+        // Dispatch to appropriate function depending on dimension
+        if (imagePlus.getStackSize() == 1) 
+        {
+            // check-up strel dimensionality
+            if (!(strel instanceof Strel))
+            {
+                throw new RuntimeException("Processing 2D image requires a 2D strel");
+            }
+            
+            // process planar image
+            ImageProcessor image = imagePlus.getProcessor();
+            ImageProcessor result = opening(image, (Strel) strel);
+            result.setColorModel(image.getColorModel());
+            resultPlus = new ImagePlus(newName, result);
+        } 
+        else
+        {
+            // process image stack
+            ImageStack image = imagePlus.getStack();
+            ImageStack result = opening(image, strel);
+            result.setColorModel(image.getColorModel());
+            resultPlus = new ImagePlus(newName, result);
+        }
+        
+        // keep settings from original image
+        resultPlus.copyScale(imagePlus);
+        resultPlus.setDisplayRange(imagePlus.getDisplayRangeMin(), imagePlus.getDisplayRangeMax());
+        resultPlus.setLut(imagePlus.getProcessor().getLut());
+        return resultPlus;      
+    }
+    
 	/**
 	 * Performs morphological opening on the input image.
 	 * 
-	 * The opening is obtained by performing an erosion followed by an dilation
+	 * The opening is obtained by performing an erosion followed by a dilation
 	 * with the reversed structuring element.
 	 * 
 	 * This methods is mainly a wrapper to the opening method of the strel object.
@@ -447,7 +615,61 @@ public class Morphology
 		return strel.opening(image);
 	}
 
-
+    /**
+     * Performs morphological closing on the input image.
+     * 
+     * The opening is obtained by performing a dilation followed by an erosion
+     * with the reversed structuring element.
+     * 
+     * This methods is called the equivalent static method for ImageProcessor or
+     * ImageStack, and creates a new ImagePlus instance with the result.
+     * 
+     * @param imagePlus
+     *            the input image to process
+     * @param strel
+     *            the structuring element used for closing
+     * @return the result of the closing
+     * 
+     * @see #closing(ImageProcessor, Strel)
+     * @see #closing(ImageStack, Strel3D)
+     * @see #opening(imagePlus, Strel3D)
+     */
+    public static ImagePlus closing(ImagePlus imagePlus, Strel3D strel)
+    {
+        ImagePlus resultPlus;
+        String newName = imagePlus.getShortTitle() + "-closing";
+        
+        // Dispatch to appropriate function depending on dimension
+        if (imagePlus.getStackSize() == 1) 
+        {
+            // check-up strel dimensionality
+            if (!(strel instanceof Strel))
+            {
+                throw new RuntimeException("Processing 2D image requires a 2D strel");
+            }
+            
+            // process planar image
+            ImageProcessor image = imagePlus.getProcessor();
+            ImageProcessor result = closing(image, (Strel) strel);
+            result.setColorModel(image.getColorModel());
+            resultPlus = new ImagePlus(newName, result);
+        } 
+        else
+        {
+            // process image stack
+            ImageStack image = imagePlus.getStack();
+            ImageStack result = closing(image, strel);
+            result.setColorModel(image.getColorModel());
+            resultPlus = new ImagePlus(newName, result);
+        }
+        
+        // keep settings from original image
+        resultPlus.copyScale(imagePlus);
+        resultPlus.setDisplayRange(imagePlus.getDisplayRangeMin(), imagePlus.getDisplayRangeMax());
+        resultPlus.setLut(imagePlus.getProcessor().getLut());
+        return resultPlus;      
+    }
+    
 	/**
 	 * Performs closing on the input image.
 	 * The closing is obtained by performing a dilation followed by an erosion
@@ -513,6 +735,61 @@ public class Morphology
 		return strel.closing(image);
 	}
 
+    /**
+     * Computes white top hat of the original image.
+     * The white top hat is obtained by subtracting the result of an opening 
+     * from the original image.
+     *  
+     * The white top hat enhances light structures smaller than the structuring element.
+     * 
+     * This methods is called the equivalent static method for ImageProcessor or
+     * ImageStack, and creates a new ImagePlus instance with the result.
+     * 
+     * @param imagePlus
+     *            the input image to process
+     * @param strel
+     *            the structuring element used for closing
+     * @return the result of the closing
+     * 
+     * @see #whiteTopHat(ImageProcessor, Strel)
+     * @see #whiteTopHat(ImageStack, Strel3D)
+     * @see #blackTopHat(imagePlus, Strel3D)
+     */
+    public static ImagePlus whiteTopHat(ImagePlus imagePlus, Strel3D strel)
+    {
+        ImagePlus resultPlus;
+        String newName = imagePlus.getShortTitle() + "-whiteTopHat";
+        
+        // Dispatch to appropriate function depending on dimension
+        if (imagePlus.getStackSize() == 1) 
+        {
+            // check-up strel dimensionality
+            if (!(strel instanceof Strel))
+            {
+                throw new RuntimeException("Processing 2D image requires a 2D strel");
+            }
+            
+            // process planar image
+            ImageProcessor image = imagePlus.getProcessor();
+            ImageProcessor result = whiteTopHat(image, (Strel) strel);
+            result.setColorModel(image.getColorModel());
+            resultPlus = new ImagePlus(newName, result);
+        } 
+        else
+        {
+            // process image stack
+            ImageStack image = imagePlus.getStack();
+            ImageStack result = whiteTopHat(image, strel);
+            result.setColorModel(image.getColorModel());
+            resultPlus = new ImagePlus(newName, result);
+        }
+        
+        // keep settings from original image
+        resultPlus.copyScale(imagePlus);
+        resultPlus.setDisplayRange(imagePlus.getDisplayRangeMin(), imagePlus.getDisplayRangeMax());
+        resultPlus.setLut(imagePlus.getProcessor().getLut());
+        return resultPlus;      
+    }
 
 	/**
 	 * Computes white top hat of the original image.
@@ -633,8 +910,62 @@ public class Morphology
 		return result;
 	}
 
-
-
+    /**
+     * Computes black top hat (or "bottom hat") of the original image.
+     * The black top hat is obtained by subtracting the original image from
+     * the result of a closing.
+     *  
+     * The black top hat enhances dark structures smaller than the structuring element.
+     * 
+     * This methods is called the equivalent static method for ImageProcessor or
+     * ImageStack, and creates a new ImagePlus instance with the result.
+     * 
+     * @param imagePlus
+     *            the input image to process
+     * @param strel
+     *            the structuring element used for closing
+     * @return the result of the closing
+     * 
+     * @see #blackTopHat(ImageProcessor, Strel)
+     * @see #blackTopHat(ImageStack, Strel3D)
+     * @see #whiteTopHat(imagePlus, Strel3D)
+     */
+    public static ImagePlus blackTopHat(ImagePlus imagePlus, Strel3D strel)
+    {
+        ImagePlus resultPlus;
+        String newName = imagePlus.getShortTitle() + "-blackTopHat";
+        
+        // Dispatch to appropriate function depending on dimension
+        if (imagePlus.getStackSize() == 1) 
+        {
+            // check-up strel dimensionality
+            if (!(strel instanceof Strel))
+            {
+                throw new RuntimeException("Processing 2D image requires a 2D strel");
+            }
+            
+            // process planar image
+            ImageProcessor image = imagePlus.getProcessor();
+            ImageProcessor result = blackTopHat(image, (Strel) strel);
+            result.setColorModel(image.getColorModel());
+            resultPlus = new ImagePlus(newName, result);
+        } 
+        else
+        {
+            // process image stack
+            ImageStack image = imagePlus.getStack();
+            ImageStack result = blackTopHat(image, strel);
+            result.setColorModel(image.getColorModel());
+            resultPlus = new ImagePlus(newName, result);
+        }
+        
+        // keep settings from original image
+        resultPlus.copyScale(imagePlus);
+        resultPlus.setDisplayRange(imagePlus.getDisplayRangeMin(), imagePlus.getDisplayRangeMax());
+        resultPlus.setLut(imagePlus.getProcessor().getLut());
+        return resultPlus;      
+    }
+    
 	/**
 	 * Computes black top hat (or "bottom hat") of the original image.
 	 * The black top hat is obtained by subtracting the original image from
@@ -745,7 +1076,61 @@ public class Morphology
 		return result;
 	}
 
-	
+    /**
+     * Computes the morphological gradient of the input image.
+     * The morphological gradient is obtained by from the difference of image 
+     * dilation and image erosion computed with the same structuring element. 
+     * 
+     * This methods is called the equivalent static method for ImageProcessor or
+     * ImageStack, and creates a new ImagePlus instance with the result.
+     * 
+     * @param imagePlus
+     *            the input image to process
+     * @param strel
+     *            the structuring element used for closing
+     * @return the result of the closing
+     * 
+     * @see #gradient(ImageProcessor, Strel)
+     * @see #gradient(ImageStack, Strel3D)
+     * @see #internalGradient(imagePlus, Strel3D)
+     * @see #externalGradient(imagePlus, Strel3D)
+     */
+    public static ImagePlus gradient(ImagePlus imagePlus, Strel3D strel)
+    {
+        ImagePlus resultPlus;
+        String newName = imagePlus.getShortTitle() + "-gradient";
+        
+        // Dispatch to appropriate function depending on dimension
+        if (imagePlus.getStackSize() == 1) 
+        {
+            // check-up strel dimensionality
+            if (!(strel instanceof Strel))
+            {
+                throw new RuntimeException("Processing 2D image requires a 2D strel");
+            }
+            
+            // process planar image
+            ImageProcessor image = imagePlus.getProcessor();
+            ImageProcessor result = gradient(image, (Strel) strel);
+            result.setColorModel(image.getColorModel());
+            resultPlus = new ImagePlus(newName, result);
+        } 
+        else
+        {
+            // process image stack
+            ImageStack image = imagePlus.getStack();
+            ImageStack result = gradient(image, strel);
+            result.setColorModel(image.getColorModel());
+            resultPlus = new ImagePlus(newName, result);
+        }
+        
+        // keep settings from original image
+        resultPlus.copyScale(imagePlus);
+        resultPlus.setDisplayRange(imagePlus.getDisplayRangeMin(), imagePlus.getDisplayRangeMax());
+        resultPlus.setLut(imagePlus.getProcessor().getLut());
+        return resultPlus;      
+    }
+    	
 	/**
 	 * Computes the morphological gradient of the input image.
 	 * The morphological gradient is obtained by from the difference of image 
@@ -866,6 +1251,65 @@ public class Morphology
 
 
 	/**
+     * Computes the morphological Laplacian of the 3D input image. The
+     * morphological gradient is obtained from the difference of the external
+     * gradient with the internal gradient, both computed with the same
+     * structuring element.
+     * 
+     * Homogeneous regions appear as gray.
+     * 
+     * This methods is called the equivalent static method for ImageProcessor or
+     * ImageStack, and creates a new ImagePlus instance with the result.
+     * 
+     * @param imagePlus
+     *            the input image to process
+     * @param strel
+     *            the structuring element used for closing
+     * @return the result of the closing
+     * 
+     * @see #laplacian(ImageProcessor, Strel)
+     * @see #laplacian(ImageStack, Strel3D)
+     * @see #internalGradient(imagePlus, Strel3D)
+     * @see #externalGradient(imagePlus, Strel3D)
+     */
+    public static ImagePlus laplacian(ImagePlus imagePlus, Strel3D strel)
+    {
+        ImagePlus resultPlus;
+        String newName = imagePlus.getShortTitle() + "-laplacian";
+        
+        // Dispatch to appropriate function depending on dimension
+        if (imagePlus.getStackSize() == 1) 
+        {
+            // check-up strel dimensionality
+            if (!(strel instanceof Strel))
+            {
+                throw new RuntimeException("Processing 2D image requires a 2D strel");
+            }
+            
+            // process planar image
+            ImageProcessor image = imagePlus.getProcessor();
+            ImageProcessor result = laplacian(image, (Strel) strel);
+            result.setColorModel(image.getColorModel());
+            resultPlus = new ImagePlus(newName, result);
+        } 
+        else
+        {
+            // process image stack
+            ImageStack image = imagePlus.getStack();
+            ImageStack result = laplacian(image, strel);
+            result.setColorModel(image.getColorModel());
+            resultPlus = new ImagePlus(newName, result);
+        }
+        
+        // keep settings from original image
+        resultPlus.copyScale(imagePlus);
+        resultPlus.setDisplayRange(imagePlus.getDisplayRangeMin(), imagePlus.getDisplayRangeMax());
+        resultPlus.setLut(imagePlus.getProcessor().getLut());
+        return resultPlus;      
+    }
+
+
+    /**
 	 * Computes the morphological Laplacian of the input image. The
 	 * morphological gradient is obtained from the difference of the external
 	 * gradient with the internal gradient, both computed with the same
@@ -945,7 +1389,7 @@ public class Morphology
 		return ColorImages.mergeChannels(res);
 	}
 
-	/**
+    /**
 	 * Computes the morphological Laplacian of the 3D input image. The
 	 * morphological gradient is obtained from the difference of the external
 	 * gradient with the internal gradient, both computed with the same
@@ -994,6 +1438,61 @@ public class Morphology
 		return outer;
 	}
 
+    /**
+     * Computes the morphological internal gradient of the input image.
+     * The morphological internal gradient is obtained by from the difference 
+     * of original image with the result of an erosion.
+     * 
+     * This methods is called the equivalent static method for ImageProcessor or
+     * ImageStack, and creates a new ImagePlus instance with the result.
+     * 
+     * @param imagePlus
+     *            the input image to process
+     * @param strel
+     *            the structuring element used for closing
+     * @return the result of the closing
+     * 
+     * @see #internalGradient(ImageProcessor, Strel)
+     * @see #internalGradient(ImageStack, Strel3D)
+     * @see #gradient(imagePlus, Strel3D)
+     * @see #externalGradient(imagePlus, Strel3D)
+     */
+    public static ImagePlus internalGradient(ImagePlus imagePlus, Strel3D strel)
+    {
+        ImagePlus resultPlus;
+        String newName = imagePlus.getShortTitle() + "-internalGradient";
+        
+        // Dispatch to appropriate function depending on dimension
+        if (imagePlus.getStackSize() == 1) 
+        {
+            // check-up strel dimensionality
+            if (!(strel instanceof Strel))
+            {
+                throw new RuntimeException("Processing 2D image requires a 2D strel");
+            }
+            
+            // process planar image
+            ImageProcessor image = imagePlus.getProcessor();
+            ImageProcessor result = internalGradient(image, (Strel) strel);
+            result.setColorModel(image.getColorModel());
+            resultPlus = new ImagePlus(newName, result);
+        } 
+        else
+        {
+            // process image stack
+            ImageStack image = imagePlus.getStack();
+            ImageStack result = internalGradient(image, strel);
+            result.setColorModel(image.getColorModel());
+            resultPlus = new ImagePlus(newName, result);
+        }
+        
+        // keep settings from original image
+        resultPlus.copyScale(imagePlus);
+        resultPlus.setDisplayRange(imagePlus.getDisplayRangeMin(), imagePlus.getDisplayRangeMax());
+        resultPlus.setLut(imagePlus.getProcessor().getLut());
+        return resultPlus;      
+    }
+        
 	/** 
 	 * Computes the morphological internal gradient of the input image.
 	 * The morphological internal gradient is obtained by from the difference 
@@ -1105,6 +1604,61 @@ public class Morphology
 		return result;
 	}
 
+    /**
+     * Computes the morphological external gradient of the input image.
+     * The morphological external gradient is obtained by from the difference 
+     * of the result of a dilation and of the original image .
+     * 
+     * This methods is called the equivalent static method for ImageProcessor or
+     * ImageStack, and creates a new ImagePlus instance with the result.
+     * 
+     * @param imagePlus
+     *            the input image to process
+     * @param strel
+     *            the structuring element used for closing
+     * @return the result of the closing
+     * 
+     * @see #externalGradient(ImageProcessor, Strel)
+     * @see #externalGradient(ImageStack, Strel3D)
+     * @see #gradient(imagePlus, Strel3D)
+     * @see #internalGradient(imagePlus, Strel3D)
+     */
+    public static ImagePlus externalGradient(ImagePlus imagePlus, Strel3D strel)
+    {
+        ImagePlus resultPlus;
+        String newName = imagePlus.getShortTitle() + "-externalGradient";
+        
+        // Dispatch to appropriate function depending on dimension
+        if (imagePlus.getStackSize() == 1) 
+        {
+            // check-up strel dimensionality
+            if (!(strel instanceof Strel))
+            {
+                throw new RuntimeException("Processing 2D image requires a 2D strel");
+            }
+            
+            // process planar image
+            ImageProcessor image = imagePlus.getProcessor();
+            ImageProcessor result = externalGradient(image, (Strel) strel);
+            result.setColorModel(image.getColorModel());
+            resultPlus = new ImagePlus(newName, result);
+        } 
+        else
+        {
+            // process image stack
+            ImageStack image = imagePlus.getStack();
+            ImageStack result = externalGradient(image, strel);
+            result.setColorModel(image.getColorModel());
+            resultPlus = new ImagePlus(newName, result);
+        }
+        
+        // keep settings from original image
+        resultPlus.copyScale(imagePlus);
+        resultPlus.setDisplayRange(imagePlus.getDisplayRangeMin(), imagePlus.getDisplayRangeMax());
+        resultPlus.setLut(imagePlus.getProcessor().getLut());
+        return resultPlus;      
+    }
+        
 	/** 
 	 * Computes the morphological external gradient of the input image.
 	 * The morphological external gradient is obtained by from the difference 

@@ -24,6 +24,7 @@ package inra.ijpb.morphology;
 import static org.junit.Assert.*;
 import ij.IJ;
 import ij.ImagePlus;
+import ij.ImageStack;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
@@ -195,6 +196,67 @@ public class MorphologyTest {
 		
 		assertNotNull(Morphology.blackTopHat(image, strel));
 		assertNotNull(Morphology.whiteTopHat(image, strel));
-
 	}
+
+	/**
+     * Tests that most morphological operations can be run on a 2D ImagePlus.
+     */
+    @Test
+    public void testVariousOperations_ImagePlus2D_SquareDiam5() {
+        String fileName = getClass().getResource("/files/grains.tif").getFile();
+        ImagePlus imagePlus = IJ.openImage(fileName);
+        assertNotNull(imagePlus);
+        
+        Strel strel = SquareStrel.fromDiameter(5);
+
+        assertNotNull(Morphology.erosion(imagePlus, strel));
+        assertNotNull(Morphology.dilation(imagePlus, strel));
+
+        assertNotNull(Morphology.closing(imagePlus, strel));
+        assertNotNull(Morphology.opening(imagePlus, strel));
+
+        assertNotNull(Morphology.gradient(imagePlus, strel));
+        assertNotNull(Morphology.internalGradient(imagePlus, strel));
+        assertNotNull(Morphology.externalGradient(imagePlus, strel));
+        assertNotNull(Morphology.laplacian(imagePlus, strel));
+        
+        assertNotNull(Morphology.blackTopHat(imagePlus, strel));
+        assertNotNull(Morphology.whiteTopHat(imagePlus, strel));
+    }
+    
+
+    /**
+     * Tests that most morphological operations can be run on a 2D ImagePlus.
+     */
+    @Test
+    public void testVariousOperations_ImagePlus3D_CubeDiam3() {
+        ImageStack image = ImageStack.create(20, 20, 20, 8);
+        for (int z = 5; z < 15; z++)
+        {
+            for (int y = 5; y < 15; y++)
+            {
+                for (int x = 5; x < 15; x++)
+                {
+                    image.setVoxel(x, y, z, 255);
+                }
+            }
+        }
+        ImagePlus imagePlus = new ImagePlus("image", image);
+        
+        Strel strel = SquareStrel.fromDiameter(5);
+
+        assertNotNull(Morphology.erosion(imagePlus, strel));
+        assertNotNull(Morphology.dilation(imagePlus, strel));
+
+        assertNotNull(Morphology.closing(imagePlus, strel));
+        assertNotNull(Morphology.opening(imagePlus, strel));
+
+        assertNotNull(Morphology.gradient(imagePlus, strel));
+        assertNotNull(Morphology.internalGradient(imagePlus, strel));
+        assertNotNull(Morphology.externalGradient(imagePlus, strel));
+        assertNotNull(Morphology.laplacian(imagePlus, strel));
+        
+        assertNotNull(Morphology.blackTopHat(imagePlus, strel));
+        assertNotNull(Morphology.whiteTopHat(imagePlus, strel));
+    }
 }
