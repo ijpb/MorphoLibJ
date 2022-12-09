@@ -317,7 +317,6 @@ public class Morphology
 	 */
 	public static ImageProcessor dilation(ImageProcessor image, Strel strel)
 	{
-		checkImageType(image);
 		if (image instanceof ColorProcessor)
 			return dilationRGB(image, strel);
 		
@@ -364,7 +363,6 @@ public class Morphology
 	 */
 	public static ImageStack dilation(ImageStack image, Strel3D strel)
 	{
-		checkImageType(image);
 		return strel.dilation(image);
 	}
 	
@@ -442,7 +440,6 @@ public class Morphology
 	 */
 	public static ImageProcessor erosion(ImageProcessor image, Strel strel)
 	{
-		checkImageType(image);
 		if (image instanceof ColorProcessor)
 			return erosionRGB(image, strel);
 
@@ -489,7 +486,6 @@ public class Morphology
 	 */
 	public static ImageStack erosion(ImageStack image, Strel3D strel) 
 	{
-		checkImageType(image);
 		return strel.erosion(image);
 	}
 
@@ -567,7 +563,6 @@ public class Morphology
 	 */
 	public static ImageProcessor opening(ImageProcessor image, Strel strel)
 	{
-		checkImageType(image);
 		if (image instanceof ColorProcessor)
 			return openingRGB(image, strel);
 
@@ -611,7 +606,6 @@ public class Morphology
 	 */
 	public static ImageStack opening(ImageStack image, Strel3D strel) 
 	{
-		checkImageType(image);
 		return strel.opening(image);
 	}
 
@@ -687,7 +681,6 @@ public class Morphology
 	 */
 	public static ImageProcessor closing(ImageProcessor image, Strel strel) 
 	{
-		checkImageType(image);
 		if (image instanceof ColorProcessor)
 			return closingRGB(image, strel);
 
@@ -731,7 +724,6 @@ public class Morphology
 	 */
 	public static ImageStack closing(ImageStack image, Strel3D strel) 
 	{
-		checkImageType(image);
 		return strel.closing(image);
 	}
 
@@ -809,7 +801,6 @@ public class Morphology
 	 */
 	public static ImageProcessor whiteTopHat(ImageProcessor image, Strel strel) 
 	{
-		checkImageType(image);
 		if (image instanceof ColorProcessor)
 			return whiteTopHatRGB(image, strel);
 
@@ -882,8 +873,6 @@ public class Morphology
 	 */
 	public static ImageStack whiteTopHat(ImageStack image, Strel3D strel)
 	{
-		checkImageType(image);
-		
 		// First performs opening
 		ImageStack result = strel.opening(image);
 		
@@ -984,7 +973,6 @@ public class Morphology
 	 */
 	public static ImageProcessor blackTopHat(ImageProcessor image, Strel strel)
 	{
-		checkImageType(image);
 		if (image instanceof ColorProcessor)
 			return blackTopHatRGB(image, strel);
 
@@ -1054,8 +1042,6 @@ public class Morphology
 	 */
 	public static ImageStack blackTopHat(ImageStack image, Strel3D strel)
 	{
-		checkImageType(image);
-		
 		// First performs closing
 		ImageStack result = strel.closing(image);
 		
@@ -1147,7 +1133,6 @@ public class Morphology
 	 */
 	public static ImageProcessor gradient(ImageProcessor image, Strel strel)
 	{
-		checkImageType(image);
 		if (image instanceof ColorProcessor)
 			return gradientRGB(image, strel);
 
@@ -1220,8 +1205,6 @@ public class Morphology
 	 */
 	public static ImageStack gradient(ImageStack image, Strel3D strel)
 	{
-		checkImageType(image);
-		
 		// First performs dilation and erosion
 		ImageStack result = strel.dilation(image);
 		ImageStack eroded = strel.erosion(image);
@@ -1328,7 +1311,6 @@ public class Morphology
 	 */
 	public static ImageProcessor laplacian(ImageProcessor image, Strel strel) 
 	{
-		checkImageType(image);
 		if (image instanceof ColorProcessor)
 			return laplacianRGB(image, strel);
 
@@ -1408,8 +1390,6 @@ public class Morphology
 	 */
 	public static ImageStack laplacian(ImageStack image, Strel3D strel)
 	{
-		checkImageType(image);
-		
 		// First performs dilation and erosion
 		ImageStack outer = externalGradient(image, strel);
 		ImageStack inner = internalGradient(image, strel);
@@ -1510,7 +1490,6 @@ public class Morphology
 	 */
 	public static ImageProcessor internalGradient(ImageProcessor image, Strel strel) 
 	{
-		checkImageType(image);
 		if (image instanceof ColorProcessor)
 			return internalGradientRGB(image, strel);
 
@@ -1576,8 +1555,6 @@ public class Morphology
 	 */
 	public static ImageStack internalGradient(ImageStack image, Strel3D strel)
 	{
-		checkImageType(image);
-		
 		// First performs erosion
 		ImageStack result = strel.erosion(image);
 		
@@ -1674,7 +1651,6 @@ public class Morphology
 	 */
 	public static ImageProcessor externalGradient(ImageProcessor image, Strel strel) 
 	{
-		checkImageType(image);
 		if (image instanceof ColorProcessor)
 			return externalGradientRGB(image, strel);
 
@@ -1739,8 +1715,6 @@ public class Morphology
 	 */
 	public static ImageStack externalGradient(ImageStack image, Strel3D strel) 
 	{
-		checkImageType(image);
-		
 		// First performs dilation
 		ImageStack result = strel.dilation(image);
 		
@@ -1771,32 +1745,6 @@ public class Morphology
 	// =======================================================================
 	// Private utilitary functions
 	
-	/**
-	 * Check that input image can be processed for classical algorithms, and throw an
-	 * exception if not the case.
-	 * In the current version, accepts all image types.
-	 */
-	private final static void checkImageType(ImageProcessor image)
-	{
-//		if ((image instanceof FloatProcessor)
-//				|| (image instanceof ShortProcessor)) {
-//			throw new IllegalArgumentException(
-//					"Input image must be a ByteProcessor or a ColorProcessor");
-//		}
-	}
-
-	/**
-	 * Check that input image can be processed for classical algorithms, and throw an
-	 * exception if not the case.
-	 * In the current version, accepts all image types.
-	 */
-	private final static void checkImageType(ImageStack stack)
-	{
-//		ImageProcessor image = stack.getProcessor(1);
-//		if ((image instanceof FloatProcessor) || (image instanceof ShortProcessor)) {
-//			throw new IllegalArgumentException("Input image must be a ByteProcessor or a ColorProcessor");
-//		}
-	}
 
 	/**
 	 * Determine max possible value from bit depth.
