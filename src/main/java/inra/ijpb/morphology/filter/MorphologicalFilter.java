@@ -50,11 +50,15 @@ public abstract class MorphologicalFilter extends AlgoStub implements AlgoListen
     // =======================================================================
     // Constructors
     
-    protected MorphologicalFilter(Strel3D strel)
-    {
-        this.strel = strel;
-    }
-    
+    /**
+     * Creates a new MorphologicalFilter instance.
+     * 
+     * @param strel
+     *            the structuring element used to perform the operation.
+     * @param suffix
+     *            the string added at the end of image name to create the name
+     *            of the result image.
+     */
     protected MorphologicalFilter(Strel3D strel, String suffix)
     {
         this.strel = strel;
@@ -187,9 +191,13 @@ public abstract class MorphologicalFilter extends AlgoStub implements AlgoListen
     
     /**
      * Determines max possible value from bit depth.
-     *  8 bits -> 255
-     * 16 bits -> 65535
-     * 32 bits -> Float.MAX_VALUE
+     * <ol>
+     * <li> 8 bits: 255</li>
+     * <li>16 bits: 65535</li>
+     * <li>32 bits: Float.MAX_VALUE</li>
+     * </ol>
+     * 
+     * @return the largest possible integer for the input image. 
      */
     protected static final double getMaxPossibleValue(ImageStack stack)
     {
@@ -206,6 +214,19 @@ public abstract class MorphologicalFilter extends AlgoStub implements AlgoListen
         return maxVal;
     }
     
+    /**
+     * Clamps an integer value within an interval, by forcing the resulting
+     * value to lie within the input interval while being as close as possible
+     * from the input value.
+     * 
+     * @param value
+     *            the value to clamp.
+     * @param min
+     *            the minimum of the clamp range
+     * @param max
+     *            the maximum of the clamp range
+     * @return the clamped value
+     */
     protected final static int clamp(int value, int min, int max) 
     {
         return Math.min(Math.max(value, min), max);
