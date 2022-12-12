@@ -192,12 +192,14 @@ public abstract class MorphologicalFilter extends AlgoStub implements AlgoListen
     /**
      * Determines max possible value from bit depth.
      * <ol>
-     * <li> 8 bits: 255</li>
+     * <li>8 bits: 255</li>
      * <li>16 bits: 65535</li>
      * <li>32 bits: Float.MAX_VALUE</li>
      * </ol>
      * 
-     * @return the largest possible integer for the input image. 
+     * @param stack
+     *            the image
+     * @return the largest possible integer for the input image.
      */
     protected static final double getMaxPossibleValue(ImageStack stack)
     {
