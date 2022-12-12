@@ -224,7 +224,68 @@ public class MorphologyTest {
         assertNotNull(Morphology.whiteTopHat(imagePlus, strel));
     }
     
+    /**
+     * Tests that most morphological operations can be run on a 2D ImagePlus.
+     */
+    @Test
+    public void testVariousOperations_FloatProcessor_SquareDiam5() {
+        String fileName = getClass().getResource("/files/grains.tif").getFile();
+        ImagePlus imagePlus = IJ.openImage(fileName);
+        assertNotNull(imagePlus);
+        
+        ImageProcessor image = imagePlus.getProcessor().convertToFloat();
+        
+        Strel strel = SquareStrel.fromDiameter(5);
 
+        assertNotNull(Morphology.erosion(image, strel));
+        assertNotNull(Morphology.dilation(image, strel));
+
+        assertNotNull(Morphology.closing(image, strel));
+        assertNotNull(Morphology.opening(image, strel));
+
+        assertNotNull(Morphology.gradient(image, strel));
+        assertNotNull(Morphology.internalGradient(image, strel));
+        assertNotNull(Morphology.externalGradient(image, strel));
+        assertNotNull(Morphology.laplacian(image, strel));
+        
+        assertNotNull(Morphology.blackTopHat(image, strel));
+        assertNotNull(Morphology.whiteTopHat(image, strel));
+    }
+    
+    /**
+     * Tests that most morphological operations can be run on a 2D ImagePlus.
+     */
+    @Test
+    public void testVariousOperations_ImageStack_CubeDiam3() {
+        ImageStack image = ImageStack.create(20, 20, 20, 8);
+        for (int z = 5; z < 15; z++)
+        {
+            for (int y = 5; y < 15; y++)
+            {
+                for (int x = 5; x < 15; x++)
+                {
+                    image.setVoxel(x, y, z, 255);
+                }
+            }
+        }
+        
+        Strel strel = SquareStrel.fromDiameter(5);
+
+        assertNotNull(Morphology.erosion(image, strel));
+        assertNotNull(Morphology.dilation(image, strel));
+
+        assertNotNull(Morphology.closing(image, strel));
+        assertNotNull(Morphology.opening(image, strel));
+
+        assertNotNull(Morphology.gradient(image, strel));
+        assertNotNull(Morphology.internalGradient(image, strel));
+        assertNotNull(Morphology.externalGradient(image, strel));
+        assertNotNull(Morphology.laplacian(image, strel));
+        
+        assertNotNull(Morphology.blackTopHat(image, strel));
+        assertNotNull(Morphology.whiteTopHat(image, strel));
+    }
+    
     /**
      * Tests that most morphological operations can be run on a 2D ImagePlus.
      */

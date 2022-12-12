@@ -21,19 +21,19 @@
  */
 package inra.ijpb.morphology;
 
-import static java.lang.Math.max;
-import static java.lang.Math.min;
-
 import ij.ImagePlus;
 import ij.ImageStack;
-import ij.process.ByteProcessor;
-import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
-import inra.ijpb.data.image.ColorImages;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
+import inra.ijpb.morphology.filter.BlackTopHat;
+import inra.ijpb.morphology.filter.Closing;
+import inra.ijpb.morphology.filter.Dilation;
+import inra.ijpb.morphology.filter.Erosion;
+import inra.ijpb.morphology.filter.ExternalGradient;
+import inra.ijpb.morphology.filter.Gradient;
+import inra.ijpb.morphology.filter.InternalGradient;
+import inra.ijpb.morphology.filter.Laplacian;
+import inra.ijpb.morphology.filter.Opening;
+import inra.ijpb.morphology.filter.WhiteTopHat;
 
 /**
  * <p>
@@ -60,8 +60,16 @@ import java.util.Map;
  * ImagePlus res = new ImagePlus("Gradient3D", grad);
  * res.show(); 
  * </code></pre>
+ * <p>
+ * Or directly with an instance of ImagePlus:
+ * <pre><code>
+ * ImagePlus image = IJ.getImage();
+ * Strel se = SquareStrel.fromDiameter(5);
+ * ImagePlus res = Morphology.gradient(image, se);
+ * res.show(); 
+ * </code></pre>
+ * 
  * @author David Legland
- *
  */
 public class Morphology 
 {
@@ -262,38 +270,7 @@ public class Morphology
      */
 	public static ImagePlus dilation(ImagePlus imagePlus, Strel3D strel)
     {
-        ImagePlus resultPlus;
-        String newName = imagePlus.getShortTitle() + "-dilation";
-        
-        // Dispatch to appropriate function depending on dimension
-        if (imagePlus.getStackSize() == 1) 
-        {
-            // check-up strel dimensionality
-            if (!(strel instanceof Strel))
-            {
-                throw new RuntimeException("Processing 2D image requires a 2D strel");
-            }
-            
-            // process planar image
-            ImageProcessor image = imagePlus.getProcessor();
-            ImageProcessor result = dilation(image, (Strel) strel);
-            result.setColorModel(image.getColorModel());
-            resultPlus = new ImagePlus(newName, result);
-        } 
-        else
-        {
-            // process image stack
-            ImageStack image = imagePlus.getStack();
-            ImageStack result = dilation(image, strel);
-            result.setColorModel(image.getColorModel());
-            resultPlus = new ImagePlus(newName, result);
-        }
-        
-        // keep settings from original image
-        resultPlus.copyScale(imagePlus);
-        resultPlus.setDisplayRange(imagePlus.getDisplayRangeMin(), imagePlus.getDisplayRangeMax());
-        resultPlus.setLut(imagePlus.getProcessor().getLut());
-        return resultPlus;      
+        return new Dilation(strel).process(imagePlus);
     }
     
     
@@ -317,36 +294,7 @@ public class Morphology
 	 */
 	public static ImageProcessor dilation(ImageProcessor image, Strel strel)
 	{
-		if (image instanceof ColorProcessor)
-			return dilationRGB(image, strel);
-		
-		return strel.dilation(image);
-	}
-
-	/**
-	 * Performs morphological dilation on each channel, and reconstitutes the
-	 * resulting color image.
-	 * 
-	 * @param image
-	 *            the input RGB image
-	 * @param strel
-	 *            the structuring element used for dilation
-	 * @return the result of the dilation
-	 */
-	private static ImageProcessor dilationRGB(ImageProcessor image, Strel strel) 
-	{
-		// extract channels and allocate memory for result
-		Map<String, ByteProcessor> channels = ColorImages.mapChannels(image);
-		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
-		
-		// Process each channel individually
-		for (String name : new String[]{"red", "green", "blue"}) 
-		{
-			strel.setChannelName(name);
-			res.add(strel.dilation(channels.get(name)));
-		}
-		
-		return ColorImages.mergeChannels(res);
+	    return new Dilation(strel).process(image);
 	}
 
 	/**
@@ -363,13 +311,13 @@ public class Morphology
 	 */
 	public static ImageStack dilation(ImageStack image, Strel3D strel)
 	{
-		return strel.dilation(image);
+	    return new Dilation(strel).process(image);
 	}
 	
     /**
      * Performs morphological erosion on the input image.
      * 
-     * Dilation is obtained by extracting the minimum value among pixels/voxels
+     * Erosion is obtained by extracting the minimum value among pixels/voxels
      * in the neighborhood given by the structuring element.
      * 
      * This methods is called the equivalent static method for ImageProcessor or
@@ -387,38 +335,7 @@ public class Morphology
      */
     public static ImagePlus erosion(ImagePlus imagePlus, Strel3D strel)
     {
-        ImagePlus resultPlus;
-        String newName = imagePlus.getShortTitle() + "-erosion";
-        
-        // Dispatch to appropriate function depending on dimension
-        if (imagePlus.getStackSize() == 1) 
-        {
-            // check-up strel dimensionality
-            if (!(strel instanceof Strel))
-            {
-                throw new RuntimeException("Processing 2D image requires a 2D strel");
-            }
-            
-            // process planar image
-            ImageProcessor image = imagePlus.getProcessor();
-            ImageProcessor result = erosion(image, (Strel) strel);
-            result.setColorModel(image.getColorModel());
-            resultPlus = new ImagePlus(newName, result);
-        } 
-        else
-        {
-            // process image stack
-            ImageStack image = imagePlus.getStack();
-            ImageStack result = erosion(image, strel);
-            result.setColorModel(image.getColorModel());
-            resultPlus = new ImagePlus(newName, result);
-        }
-        
-        // keep settings from original image
-        resultPlus.copyScale(imagePlus);
-        resultPlus.setDisplayRange(imagePlus.getDisplayRangeMin(), imagePlus.getDisplayRangeMax());
-        resultPlus.setLut(imagePlus.getProcessor().getLut());
-        return resultPlus;      
+        return new Erosion(strel).process(imagePlus);
     }
     
 	/**
@@ -440,36 +357,7 @@ public class Morphology
 	 */
 	public static ImageProcessor erosion(ImageProcessor image, Strel strel)
 	{
-		if (image instanceof ColorProcessor)
-			return erosionRGB(image, strel);
-
-		return strel.erosion(image);
-	}
-
-	/**
-	 * Performs morphological erosion on each channel, and reconstitutes the
-	 * resulting color image.
-	 * 
-	 * @param image
-	 *            the input image to process (RGB)
-	 * @param strel
-	 *            the structuring element used for erosion
-	 * @return the result of the erosion
-	 */
-	private static ImageProcessor erosionRGB(ImageProcessor image, Strel strel)
-	{
-		// extract channels and allocate memory for result
-		Map<String, ByteProcessor> channels = ColorImages.mapChannels(image);
-		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
-		
-		// Process each channel individually
-		for (String name : new String[]{"red", "green", "blue"}) 
-		{
-			strel.setChannelName(name);
-			res.add(strel.erosion(channels.get(name)));
-		}
-		
-		return ColorImages.mergeChannels(res);
+        return new Erosion(strel).process(image);
 	}
 	
 	/**
@@ -486,7 +374,7 @@ public class Morphology
 	 */
 	public static ImageStack erosion(ImageStack image, Strel3D strel) 
 	{
-		return strel.erosion(image);
+		return new Erosion(strel).process(image);
 	}
 
     /**
@@ -510,38 +398,7 @@ public class Morphology
      */
     public static ImagePlus opening(ImagePlus imagePlus, Strel3D strel)
     {
-        ImagePlus resultPlus;
-        String newName = imagePlus.getShortTitle() + "-opening";
-        
-        // Dispatch to appropriate function depending on dimension
-        if (imagePlus.getStackSize() == 1) 
-        {
-            // check-up strel dimensionality
-            if (!(strel instanceof Strel))
-            {
-                throw new RuntimeException("Processing 2D image requires a 2D strel");
-            }
-            
-            // process planar image
-            ImageProcessor image = imagePlus.getProcessor();
-            ImageProcessor result = opening(image, (Strel) strel);
-            result.setColorModel(image.getColorModel());
-            resultPlus = new ImagePlus(newName, result);
-        } 
-        else
-        {
-            // process image stack
-            ImageStack image = imagePlus.getStack();
-            ImageStack result = opening(image, strel);
-            result.setColorModel(image.getColorModel());
-            resultPlus = new ImagePlus(newName, result);
-        }
-        
-        // keep settings from original image
-        resultPlus.copyScale(imagePlus);
-        resultPlus.setDisplayRange(imagePlus.getDisplayRangeMin(), imagePlus.getDisplayRangeMax());
-        resultPlus.setLut(imagePlus.getProcessor().getLut());
-        return resultPlus;      
+        return new Opening(strel).process(imagePlus);
     }
     
 	/**
@@ -563,32 +420,9 @@ public class Morphology
 	 */
 	public static ImageProcessor opening(ImageProcessor image, Strel strel)
 	{
-		if (image instanceof ColorProcessor)
-			return openingRGB(image, strel);
-
-		return strel.opening(image);
+        return new Opening(strel).process(image);
 	}
 
-	/**
-	 * Performs morphological opening on each channel, and reconstitutes the
-	 * resulting color image.
-	 */
-	private static ImageProcessor openingRGB(ImageProcessor image, Strel strel)
-	{
-		// extract channels and allocate memory for result
-		Map<String, ByteProcessor> channels = ColorImages.mapChannels(image);
-		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
-		
-		// Process each channel individually
-		for (String name : new String[]{"red", "green", "blue"}) 
-		{
-			strel.setChannelName(name);
-			res.add(strel.opening(channels.get(name)));
-		}
-		
-		return ColorImages.mergeChannels(res);
-	}
-	
 	/**
 	 * Performs morphological opening on the input 3D image.
 	 * 
@@ -606,7 +440,7 @@ public class Morphology
 	 */
 	public static ImageStack opening(ImageStack image, Strel3D strel) 
 	{
-		return strel.opening(image);
+        return new Opening(strel).process(image);
 	}
 
     /**
@@ -630,38 +464,7 @@ public class Morphology
      */
     public static ImagePlus closing(ImagePlus imagePlus, Strel3D strel)
     {
-        ImagePlus resultPlus;
-        String newName = imagePlus.getShortTitle() + "-closing";
-        
-        // Dispatch to appropriate function depending on dimension
-        if (imagePlus.getStackSize() == 1) 
-        {
-            // check-up strel dimensionality
-            if (!(strel instanceof Strel))
-            {
-                throw new RuntimeException("Processing 2D image requires a 2D strel");
-            }
-            
-            // process planar image
-            ImageProcessor image = imagePlus.getProcessor();
-            ImageProcessor result = closing(image, (Strel) strel);
-            result.setColorModel(image.getColorModel());
-            resultPlus = new ImagePlus(newName, result);
-        } 
-        else
-        {
-            // process image stack
-            ImageStack image = imagePlus.getStack();
-            ImageStack result = closing(image, strel);
-            result.setColorModel(image.getColorModel());
-            resultPlus = new ImagePlus(newName, result);
-        }
-        
-        // keep settings from original image
-        resultPlus.copyScale(imagePlus);
-        resultPlus.setDisplayRange(imagePlus.getDisplayRangeMin(), imagePlus.getDisplayRangeMax());
-        resultPlus.setLut(imagePlus.getProcessor().getLut());
-        return resultPlus;      
+        return new Closing(strel).process(imagePlus);
     }
     
 	/**
@@ -681,32 +484,9 @@ public class Morphology
 	 */
 	public static ImageProcessor closing(ImageProcessor image, Strel strel) 
 	{
-		if (image instanceof ColorProcessor)
-			return closingRGB(image, strel);
-
-		return strel.closing(image);
+        return new Closing(strel).process(image);
 	}
 
-	/**
-	 * Performs morphological closing on each channel, and reconstitutes the
-	 * resulting color image.
-	 */
-	private static ImageProcessor closingRGB(ImageProcessor image, Strel strel)
-	{
-		// extract channels and allocate memory for result
-		Map<String, ByteProcessor> channels = ColorImages.mapChannels(image);
-		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
-		
-		// Process each channel individually
-		for (String name : new String[]{"red", "green", "blue"})
-		{
-			strel.setChannelName(name);
-			res.add(strel.closing(channels.get(name)));
-		}
-		
-		return ColorImages.mergeChannels(res);
-	}
-	
 	/**
 	 * Performs morphological closing on the input 3D image.
 	 * 
@@ -724,7 +504,7 @@ public class Morphology
 	 */
 	public static ImageStack closing(ImageStack image, Strel3D strel) 
 	{
-		return strel.closing(image);
+        return new Closing(strel).process(image);
 	}
 
     /**
@@ -749,38 +529,7 @@ public class Morphology
      */
     public static ImagePlus whiteTopHat(ImagePlus imagePlus, Strel3D strel)
     {
-        ImagePlus resultPlus;
-        String newName = imagePlus.getShortTitle() + "-whiteTopHat";
-        
-        // Dispatch to appropriate function depending on dimension
-        if (imagePlus.getStackSize() == 1) 
-        {
-            // check-up strel dimensionality
-            if (!(strel instanceof Strel))
-            {
-                throw new RuntimeException("Processing 2D image requires a 2D strel");
-            }
-            
-            // process planar image
-            ImageProcessor image = imagePlus.getProcessor();
-            ImageProcessor result = whiteTopHat(image, (Strel) strel);
-            result.setColorModel(image.getColorModel());
-            resultPlus = new ImagePlus(newName, result);
-        } 
-        else
-        {
-            // process image stack
-            ImageStack image = imagePlus.getStack();
-            ImageStack result = whiteTopHat(image, strel);
-            result.setColorModel(image.getColorModel());
-            resultPlus = new ImagePlus(newName, result);
-        }
-        
-        // keep settings from original image
-        resultPlus.copyScale(imagePlus);
-        resultPlus.setDisplayRange(imagePlus.getDisplayRangeMin(), imagePlus.getDisplayRangeMax());
-        resultPlus.setLut(imagePlus.getProcessor().getLut());
-        return resultPlus;      
+        return new WhiteTopHat(strel).process(imagePlus);
     }
 
 	/**
@@ -801,57 +550,7 @@ public class Morphology
 	 */
 	public static ImageProcessor whiteTopHat(ImageProcessor image, Strel strel) 
 	{
-		if (image instanceof ColorProcessor)
-			return whiteTopHatRGB(image, strel);
-
-		// First performs closing
-		ImageProcessor result = strel.opening(image);
-		
-		// Compute subtraction of result from original image
-		int count = image.getPixelCount();
-		if (image instanceof ByteProcessor) 
-		{
-			for (int i = 0; i < count; i++) 
-			{
-				// Forces computation using integers, because opening with 
-				// octagons can greater than original image (bug)
-				int v1 = image.get(i);
-				int v2 = result.get(i);
-				result.set(i, clamp(v1 - v2, 0, 255));
-			}
-		} 
-		else 
-		{
-			for (int i = 0; i < count; i++) 
-			{
-				float v1 = image.getf(i);
-				float v2 = result.getf(i);
-				result.setf(i, v1 - v2);
-			}
-		}
-
-		return result;
-	}
-	
-	/**
-	 * Performs morphological closing on each channel, and reconstitutes the
-	 * resulting color image.
-	 */
-	private static ImageProcessor whiteTopHatRGB(ImageProcessor image, Strel strel) 
-	{
-		// extract channels and allocate memory for result
-		Map<String, ByteProcessor> channels = ColorImages.mapChannels(image);
-		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
-		
-		// Process each channel individually
-		for (String name : new String[]{"red", "green", "blue"}) 
-		{
-			strel.setChannelName(name);
-			res.add(whiteTopHat(channels.get(name), strel));
-		}
-
-		// create new color image
-		return ColorImages.mergeChannels(res);
+        return new WhiteTopHat(strel).process(image);
 	}
 	
 	/**
@@ -873,30 +572,7 @@ public class Morphology
 	 */
 	public static ImageStack whiteTopHat(ImageStack image, Strel3D strel)
 	{
-		// First performs opening
-		ImageStack result = strel.opening(image);
-		
-		// compute max possible value
-		double maxVal = getMaxPossibleValue(image);
-		
-		// Compute subtraction of result from original image
-		int nx = image.getWidth();
-		int ny = image.getHeight();
-		int nz = image.getSize();
-		for (int z = 0; z < nz; z++)
-		{
-			for (int y = 0; y < ny; y++)
-			{
-				for (int x = 0; x < nx; x++) 
-				{
-					double v1 = image.getVoxel(x, y, z);
-					double v2 = result.getVoxel(x, y, z);
-					result.setVoxel(x, y, z, min(max(v1 - v2, 0), maxVal));
-				}
-			}
-		}
-		
-		return result;
+        return new WhiteTopHat(strel).process(image);
 	}
 
     /**
@@ -921,38 +597,7 @@ public class Morphology
      */
     public static ImagePlus blackTopHat(ImagePlus imagePlus, Strel3D strel)
     {
-        ImagePlus resultPlus;
-        String newName = imagePlus.getShortTitle() + "-blackTopHat";
-        
-        // Dispatch to appropriate function depending on dimension
-        if (imagePlus.getStackSize() == 1) 
-        {
-            // check-up strel dimensionality
-            if (!(strel instanceof Strel))
-            {
-                throw new RuntimeException("Processing 2D image requires a 2D strel");
-            }
-            
-            // process planar image
-            ImageProcessor image = imagePlus.getProcessor();
-            ImageProcessor result = blackTopHat(image, (Strel) strel);
-            result.setColorModel(image.getColorModel());
-            resultPlus = new ImagePlus(newName, result);
-        } 
-        else
-        {
-            // process image stack
-            ImageStack image = imagePlus.getStack();
-            ImageStack result = blackTopHat(image, strel);
-            result.setColorModel(image.getColorModel());
-            resultPlus = new ImagePlus(newName, result);
-        }
-        
-        // keep settings from original image
-        resultPlus.copyScale(imagePlus);
-        resultPlus.setDisplayRange(imagePlus.getDisplayRangeMin(), imagePlus.getDisplayRangeMax());
-        resultPlus.setLut(imagePlus.getProcessor().getLut());
-        return resultPlus;      
+        return new BlackTopHat(strel).process(imagePlus);
     }
     
 	/**
@@ -973,55 +618,7 @@ public class Morphology
 	 */
 	public static ImageProcessor blackTopHat(ImageProcessor image, Strel strel)
 	{
-		if (image instanceof ColorProcessor)
-			return blackTopHatRGB(image, strel);
-
-		// First performs closing
-		ImageProcessor result = strel.closing(image);
-		
-		// Compute subtraction of result from original image
-		int count = image.getPixelCount();
-		if (image instanceof ByteProcessor) 
-		{
-			for (int i = 0; i < count; i++)
-			{
-				// Forces computation using integers, because closing with 
-				// octagons can lower than than original image (bug)
-				int v1 = result.get(i);
-				int v2 = image.get(i);
-				result.set(i, clamp(v1 - v2, 0, 255));
-			}
-		} 
-		else 
-		{
-			for (int i = 0; i < count; i++)
-			{
-				float v1 = result.getf(i);
-				float v2 = image.getf(i);
-				result.setf(i, v1 - v2);
-			}
-		}
-		return result;
-	}
-	
-	/**
-	 * Performs morphological black top hat on each channel, and reconstitutes
-	 * the resulting color image.
-	 */
-	private static ImageProcessor blackTopHatRGB(ImageProcessor image, Strel strel)
-	{
-		// extract channels and allocate memory for result
-		Map<String, ByteProcessor> channels = ColorImages.mapChannels(image);
-		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
-		
-		// Process each channel individually
-		for (String name : new String[]{"red", "green", "blue"})
-		{
-			strel.setChannelName(name);
-			res.add(blackTopHat(channels.get(name), strel));
-		}
-		
-		return ColorImages.mergeChannels(res);
+        return new BlackTopHat(strel).process(image);
 	}
 	
 	/**
@@ -1042,24 +639,7 @@ public class Morphology
 	 */
 	public static ImageStack blackTopHat(ImageStack image, Strel3D strel)
 	{
-		// First performs closing
-		ImageStack result = strel.closing(image);
-		
-		// Compute subtraction of result from original image
-		int nx = image.getWidth();
-		int ny = image.getHeight();
-		int nz = image.getSize();
-		for (int z = 0; z < nz; z++) {
-			for (int y = 0; y < ny; y++) {
-				for (int x = 0; x < nx; x++) {
-					double v1 = result.getVoxel(x, y, z);
-					double v2 = image.getVoxel(x, y, z);
-					result.setVoxel(x, y, z, min(max(v1 - v2, 0), 255));
-				}
-			}
-		}
-		
-		return result;
+        return new BlackTopHat(strel).process(image);
 	}
 
     /**
@@ -1083,38 +663,7 @@ public class Morphology
      */
     public static ImagePlus gradient(ImagePlus imagePlus, Strel3D strel)
     {
-        ImagePlus resultPlus;
-        String newName = imagePlus.getShortTitle() + "-gradient";
-        
-        // Dispatch to appropriate function depending on dimension
-        if (imagePlus.getStackSize() == 1) 
-        {
-            // check-up strel dimensionality
-            if (!(strel instanceof Strel))
-            {
-                throw new RuntimeException("Processing 2D image requires a 2D strel");
-            }
-            
-            // process planar image
-            ImageProcessor image = imagePlus.getProcessor();
-            ImageProcessor result = gradient(image, (Strel) strel);
-            result.setColorModel(image.getColorModel());
-            resultPlus = new ImagePlus(newName, result);
-        } 
-        else
-        {
-            // process image stack
-            ImageStack image = imagePlus.getStack();
-            ImageStack result = gradient(image, strel);
-            result.setColorModel(image.getColorModel());
-            resultPlus = new ImagePlus(newName, result);
-        }
-        
-        // keep settings from original image
-        resultPlus.copyScale(imagePlus);
-        resultPlus.setDisplayRange(imagePlus.getDisplayRangeMin(), imagePlus.getDisplayRangeMax());
-        resultPlus.setLut(imagePlus.getProcessor().getLut());
-        return resultPlus;      
+        return new Gradient(strel).process(imagePlus);
     }
     	
 	/**
@@ -1133,60 +682,7 @@ public class Morphology
 	 */
 	public static ImageProcessor gradient(ImageProcessor image, Strel strel)
 	{
-		if (image instanceof ColorProcessor)
-			return gradientRGB(image, strel);
-
-		// First performs dilation and erosion
-		ImageProcessor result = strel.dilation(image);
-		ImageProcessor eroded = strel.erosion(image);
-
-		// Subtract erosion from dilation
-		int count = image.getPixelCount();
-		if (image instanceof ByteProcessor)
-		{
-			for (int i = 0; i < count; i++) 
-			{
-				// Forces computation using integers, because opening with 
-				// octagons can greater than original image (bug)
-				int v1 = result.get(i);
-				int v2 = eroded.get(i);
-				result.set(i, clamp(v1 - v2, 0, 255));
-			}
-		} 
-		else 
-		{
-			for (int i = 0; i < count; i++)
-			{
-				float v1 = result.getf(i);
-				float v2 = eroded.getf(i);
-				result.setf(i, v1 - v2);
-			}
-		}
-		// free memory
-		eroded = null;
-		
-		// return gradient
-		return result;
-	}
-
-	/**
-	 * Performs morphological gradient on each channel, and reconstitutes
-	 * the resulting color image.
-	 */
-	private static ImageProcessor gradientRGB(ImageProcessor image, Strel strel)
-	{
-		// extract channels and allocate memory for result
-		Map<String, ByteProcessor> channels = ColorImages.mapChannels(image);
-		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
-		
-		// Process each channel individually
-		for (String name : new String[]{"red", "green", "blue"})
-		{
-			strel.setChannelName(name);
-			res.add(gradient(channels.get(name), strel));
-		}
-		
-		return ColorImages.mergeChannels(res);
+        return new Gradient(strel).process(image);
 	}
 
 	/**
@@ -1205,31 +701,7 @@ public class Morphology
 	 */
 	public static ImageStack gradient(ImageStack image, Strel3D strel)
 	{
-		// First performs dilation and erosion
-		ImageStack result = strel.dilation(image);
-		ImageStack eroded = strel.erosion(image);
-		
-		// Determine max possible value from bit depth
-		double maxVal = getMaxPossibleValue(image);
-
-		// Compute subtraction of result from original image
-		int nx = image.getWidth();
-		int ny = image.getHeight();
-		int nz = image.getSize();
-		for (int z = 0; z < nz; z++) 
-		{
-			for (int y = 0; y < ny; y++) 
-			{
-				for (int x = 0; x < nx; x++) 
-				{
-					double v1 = result.getVoxel(x, y, z);
-					double v2 = eroded.getVoxel(x, y, z);
-					result.setVoxel(x, y, z, min(max(v1 - v2, 0), maxVal));
-				}
-			}
-		}
-		
-		return result;
+        return new Gradient(strel).process(image);
 	}
 
 
@@ -1257,118 +729,30 @@ public class Morphology
      */
     public static ImagePlus laplacian(ImagePlus imagePlus, Strel3D strel)
     {
-        ImagePlus resultPlus;
-        String newName = imagePlus.getShortTitle() + "-laplacian";
-        
-        // Dispatch to appropriate function depending on dimension
-        if (imagePlus.getStackSize() == 1) 
-        {
-            // check-up strel dimensionality
-            if (!(strel instanceof Strel))
-            {
-                throw new RuntimeException("Processing 2D image requires a 2D strel");
-            }
-            
-            // process planar image
-            ImageProcessor image = imagePlus.getProcessor();
-            ImageProcessor result = laplacian(image, (Strel) strel);
-            result.setColorModel(image.getColorModel());
-            resultPlus = new ImagePlus(newName, result);
-        } 
-        else
-        {
-            // process image stack
-            ImageStack image = imagePlus.getStack();
-            ImageStack result = laplacian(image, strel);
-            result.setColorModel(image.getColorModel());
-            resultPlus = new ImagePlus(newName, result);
-        }
-        
-        // keep settings from original image
-        resultPlus.copyScale(imagePlus);
-        resultPlus.setDisplayRange(imagePlus.getDisplayRangeMin(), imagePlus.getDisplayRangeMax());
-        resultPlus.setLut(imagePlus.getProcessor().getLut());
-        return resultPlus;      
+        return new Laplacian(strel).process(imagePlus);
     }
 
 
     /**
-	 * Computes the morphological Laplacian of the input image. The
-	 * morphological gradient is obtained from the difference of the external
-	 * gradient with the internal gradient, both computed with the same
-	 * structuring element.
-	 * 
-	 * Homogeneous regions appear as gray.
-	 * 
-	 * @see #erosion(ImageProcessor, Strel)
-	 * @see #dilation(ImageProcessor, Strel)
-	 * 
-	 * @param image
-	 *            the input image to process (grayscale or RGB)
-	 * @param strel
-	 *            the structuring element used for morphological laplacian
-	 * @return the result of the morphological laplacian
-	 */
+     * Computes the morphological Laplacian of the input image. The
+     * morphological Laplacian is obtained from the difference of the external
+     * gradient with the internal gradient, both computed with the same
+     * structuring element.
+     * 
+     * Homogeneous regions appear as gray.
+     * 
+     * @see #erosion(ImageProcessor, Strel)
+     * @see #dilation(ImageProcessor, Strel)
+     * 
+     * @param image
+     *            the input image to process (grayscale or RGB)
+     * @param strel
+     *            the structuring element used for morphological laplacian
+     * @return the result of the morphological laplacian
+     */
 	public static ImageProcessor laplacian(ImageProcessor image, Strel strel) 
 	{
-		if (image instanceof ColorProcessor)
-			return laplacianRGB(image, strel);
-
-		// First performs dilation and erosion
-		ImageProcessor outer = externalGradient(image, strel);
-		ImageProcessor inner = internalGradient(image, strel);
-		
-		// Subtract inner gradient from outer gradient
-		ImageProcessor result = image.duplicate();
-		int count = image.getPixelCount();
-		if (image instanceof ByteProcessor) 
-		{
-			for (int i = 0; i < count; i++)
-			{
-				// Forces computation using integers, because opening with 
-				// octagons can be greater than original image (bug)
-				int v1 = outer.get(i);
-				int v2 = inner.get(i);
-				result.set(i, clamp(v1 - v2 + 128, 0, 255));
-			}
-		}
-		else
-		{
-			for (int i = 0; i < count; i++) 
-			{
-				float v1 = outer.getf(i);
-				float v2 = inner.getf(i);
-				result.setf(i, v1 - v2);
-			}
-		}
-		// free memory
-		outer = null;
-		inner = null;
-		
-		// return gradient
-		return result;
-	}
-
-	/**
-	 * Performs morphological Laplacian on each channel, and reconstitutes
-	 * the resulting color image.
-	 * 
-	 * Homogeneous regions appear as gray.
-	 */
-	private static ImageProcessor laplacianRGB(ImageProcessor image, Strel strel) 
-	{
-		// extract channels and allocate memory for result
-		Map<String, ByteProcessor> channels = ColorImages.mapChannels(image);
-		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
-		
-		// Process each channel individually
-		for (String name : new String[]{"red", "green", "blue"}) 
-		{
-			strel.setChannelName(name);
-			res.add(laplacian(channels.get(name), strel));
-		}
-		
-		return ColorImages.mergeChannels(res);
+        return new Laplacian(strel).process(image);
 	}
 
     /**
@@ -1390,32 +774,7 @@ public class Morphology
 	 */
 	public static ImageStack laplacian(ImageStack image, Strel3D strel)
 	{
-		// First performs dilation and erosion
-		ImageStack outer = externalGradient(image, strel);
-		ImageStack inner = internalGradient(image, strel);
-		
-		// Determine max possible value from bit depth
-		double maxVal = getMaxPossibleValue(image);
-		double midVal = maxVal / 2;
-		
-		// Compute subtraction of result from original image
-		int nx = image.getWidth();
-		int ny = image.getHeight();
-		int nz = image.getSize();
-		for (int z = 0; z < nz; z++) 
-		{
-			for (int y = 0; y < ny; y++)
-			{
-				for (int x = 0; x < nx; x++)
-				{
-					double v1 = outer.getVoxel(x, y, z);
-					double v2 = inner.getVoxel(x, y, z);
-					outer.setVoxel(x, y, z, min(max(v1 - v2 + midVal, 0), maxVal));
-				}
-			}
-		}
-		
-		return outer;
+        return new Laplacian(strel).process(image);
 	}
 
     /**
@@ -1439,38 +798,7 @@ public class Morphology
      */
     public static ImagePlus internalGradient(ImagePlus imagePlus, Strel3D strel)
     {
-        ImagePlus resultPlus;
-        String newName = imagePlus.getShortTitle() + "-internalGradient";
-        
-        // Dispatch to appropriate function depending on dimension
-        if (imagePlus.getStackSize() == 1) 
-        {
-            // check-up strel dimensionality
-            if (!(strel instanceof Strel))
-            {
-                throw new RuntimeException("Processing 2D image requires a 2D strel");
-            }
-            
-            // process planar image
-            ImageProcessor image = imagePlus.getProcessor();
-            ImageProcessor result = internalGradient(image, (Strel) strel);
-            result.setColorModel(image.getColorModel());
-            resultPlus = new ImagePlus(newName, result);
-        } 
-        else
-        {
-            // process image stack
-            ImageStack image = imagePlus.getStack();
-            ImageStack result = internalGradient(image, strel);
-            result.setColorModel(image.getColorModel());
-            resultPlus = new ImagePlus(newName, result);
-        }
-        
-        // keep settings from original image
-        resultPlus.copyScale(imagePlus);
-        resultPlus.setDisplayRange(imagePlus.getDisplayRangeMin(), imagePlus.getDisplayRangeMax());
-        resultPlus.setLut(imagePlus.getProcessor().getLut());
-        return resultPlus;      
+        return new InternalGradient(strel).process(imagePlus);
     }
         
 	/** 
@@ -1490,52 +818,7 @@ public class Morphology
 	 */
 	public static ImageProcessor internalGradient(ImageProcessor image, Strel strel) 
 	{
-		if (image instanceof ColorProcessor)
-			return internalGradientRGB(image, strel);
-
-		// First performs erosion
-		ImageProcessor result = strel.erosion(image);
-
-		// Subtract erosion result from original image
-		int count = image.getPixelCount();
-		if (image instanceof ByteProcessor)
-		{
-			for (int i = 0; i < count; i++)
-			{
-				// Forces computation using integers, because opening with 
-				// octagons can be greater than original image (bug)
-				int v1 = image.get(i);
-				int v2 = result.get(i);
-				result.set(i, clamp(v1 - v2, 0, 255));
-			}
-		} 
-		else 
-		{
-			for (int i = 0; i < count; i++)
-			{
-				float v1 = image.getf(i);
-				float v2 = result.getf(i);
-				result.setf(i, v1 - v2);
-			}
-		}
-		// return gradient
-		return result;
-	}
-
-	private static ImageProcessor internalGradientRGB(ImageProcessor image, Strel strel) 
-	{
-		// extract channels and allocate memory for result
-		Map<String, ByteProcessor> channels = ColorImages.mapChannels(image);
-		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
-		
-		// Process each channel individually
-		for (String name : new String[]{"red", "green", "blue"})
-		{
-			strel.setChannelName(name);
-			res.add(internalGradient(channels.get(name), strel));
-		}
-		
-		return ColorImages.mergeChannels(res);
+        return new InternalGradient(strel).process(image);
 	}
 
 	/** 
@@ -1555,30 +838,7 @@ public class Morphology
 	 */
 	public static ImageStack internalGradient(ImageStack image, Strel3D strel)
 	{
-		// First performs erosion
-		ImageStack result = strel.erosion(image);
-		
-		// Determine max possible value from bit depth
-		double maxVal = getMaxPossibleValue(image);
-
-		// Compute subtraction of result from original image
-		int nx = image.getWidth();
-		int ny = image.getHeight();
-		int nz = image.getSize();
-		for (int z = 0; z < nz; z++) 
-		{
-			for (int y = 0; y < ny; y++) 
-			{
-				for (int x = 0; x < nx; x++) 
-				{
-					double v1 = image.getVoxel(x, y, z);
-					double v2 = result.getVoxel(x, y, z);
-					result.setVoxel(x, y, z, min(max(v1 - v2, 0), maxVal));
-				}
-			}
-		}
-		
-		return result;
+        return new InternalGradient(strel).process(image);
 	}
 
     /**
@@ -1602,38 +862,7 @@ public class Morphology
      */
     public static ImagePlus externalGradient(ImagePlus imagePlus, Strel3D strel)
     {
-        ImagePlus resultPlus;
-        String newName = imagePlus.getShortTitle() + "-externalGradient";
-        
-        // Dispatch to appropriate function depending on dimension
-        if (imagePlus.getStackSize() == 1) 
-        {
-            // check-up strel dimensionality
-            if (!(strel instanceof Strel))
-            {
-                throw new RuntimeException("Processing 2D image requires a 2D strel");
-            }
-            
-            // process planar image
-            ImageProcessor image = imagePlus.getProcessor();
-            ImageProcessor result = externalGradient(image, (Strel) strel);
-            result.setColorModel(image.getColorModel());
-            resultPlus = new ImagePlus(newName, result);
-        } 
-        else
-        {
-            // process image stack
-            ImageStack image = imagePlus.getStack();
-            ImageStack result = externalGradient(image, strel);
-            result.setColorModel(image.getColorModel());
-            resultPlus = new ImagePlus(newName, result);
-        }
-        
-        // keep settings from original image
-        resultPlus.copyScale(imagePlus);
-        resultPlus.setDisplayRange(imagePlus.getDisplayRangeMin(), imagePlus.getDisplayRangeMax());
-        resultPlus.setLut(imagePlus.getProcessor().getLut());
-        return resultPlus;      
+        return new ExternalGradient(strel).process(imagePlus);
     }
         
 	/** 
@@ -1651,52 +880,7 @@ public class Morphology
 	 */
 	public static ImageProcessor externalGradient(ImageProcessor image, Strel strel) 
 	{
-		if (image instanceof ColorProcessor)
-			return externalGradientRGB(image, strel);
-
-		// First performs dilation
-		ImageProcessor result = strel.dilation(image);
-
-		// Subtract original image from dilation
-		int count = image.getPixelCount();
-		if (image instanceof ByteProcessor) 
-		{
-			for (int i = 0; i < count; i++) 
-			{
-				// Forces computation using integers, because opening with 
-				// octagons can greater than original image (bug)
-				int v1 = result.get(i);
-				int v2 = image.get(i);
-				result.set(i, clamp(v1 - v2, 0, 255));
-			}
-		} 
-		else 
-		{
-			for (int i = 0; i < count; i++) 
-			{
-				float v1 = result.getf(i);
-				float v2 = image.getf(i);
-				result.setf(i, v1 - v2);
-			}
-		}
-		// return gradient
-		return result;
-	}
-
-	private static ImageProcessor externalGradientRGB(ImageProcessor image, Strel strel)
-	{
-		// extract channels and allocate memory for result
-		Map<String, ByteProcessor> channels = ColorImages.mapChannels(image);
-		Collection<ImageProcessor> res = new ArrayList<ImageProcessor>(channels.size());
-		
-		// Process each channel individually
-		for (String name : new String[]{"red", "green", "blue"}) 
-		{
-			strel.setChannelName(name);
-			res.add(externalGradient(channels.get(name), strel));
-		}
-		
-		return ColorImages.mergeChannels(res);
+        return new ExternalGradient(strel).process(image);
 	}
 
 	/** 
@@ -1715,60 +899,6 @@ public class Morphology
 	 */
 	public static ImageStack externalGradient(ImageStack image, Strel3D strel) 
 	{
-		// First performs dilation
-		ImageStack result = strel.dilation(image);
-		
-		// Determine max possible value from bit depth
-		double maxVal = getMaxPossibleValue(image);
-		
-		// Compute subtraction of result from original image
-		int nx = image.getWidth();
-		int ny = image.getHeight();
-		int nz = image.getSize();
-		for (int z = 0; z < nz; z++)
-		{
-			for (int y = 0; y < ny; y++) 
-			{
-				for (int x = 0; x < nx; x++)
-				{
-					double v1 = result.getVoxel(x, y, z);
-					double v2 = image.getVoxel(x, y, z);
-					result.setVoxel(x, y, z, min(max(v1 - v2, 0), maxVal));
-				}
-			}
-		}
-		
-		return result;
-	}
-
-
-	// =======================================================================
-	// Private utilitary functions
-	
-
-	/**
-	 * Determine max possible value from bit depth.
-	 *  8 bits -> 255
-	 * 16 bits -> 65535
-	 * 32 bits -> Float.MAX_VALUE
-	 */
-	private static final double getMaxPossibleValue(ImageStack stack)
-	{
-		double maxVal = 255;
-		int bitDepth = stack.getBitDepth(); 
-		if (bitDepth == 16)
-		{
-			maxVal = 65535;
-		}
-		else if (bitDepth == 32)
-		{
-			maxVal = Float.MAX_VALUE;
-		}
-		return maxVal;
-	}
-	
-	private final static int clamp(int value, int min, int max) 
-	{
-		return Math.min(Math.max(value, min), max);
+        return new ExternalGradient(strel).process(image);
 	}
 }
