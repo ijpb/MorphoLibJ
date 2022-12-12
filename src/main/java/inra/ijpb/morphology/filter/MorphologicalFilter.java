@@ -140,8 +140,6 @@ public abstract class MorphologicalFilter extends AlgoStub implements AlgoListen
      * 
      * @param image
      *            the input RGB image
-     * @param strel
-     *            the structuring element used for dilation
      * @return the result of the dilation
      */
     protected ColorProcessor processColor(ColorProcessor image)
