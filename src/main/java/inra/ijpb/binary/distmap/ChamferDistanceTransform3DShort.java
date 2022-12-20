@@ -123,7 +123,6 @@ public class ChamferDistanceTransform3DShort extends AlgoStub implements Chamfer
 				
 		fireStatusChanged(this, "");
 		return buffer;
-
 	}
 	
 	// ==================================================

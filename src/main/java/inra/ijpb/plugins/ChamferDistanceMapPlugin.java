@@ -30,21 +30,25 @@ import ij.plugin.filter.ExtendedPlugInFilter;
 import ij.plugin.filter.PlugInFilterRunner;
 import ij.process.ImageProcessor;
 import inra.ijpb.algo.DefaultAlgoListener;
-import inra.ijpb.binary.distmap.ChamferDistanceTransform2DFloat;
-import inra.ijpb.binary.distmap.ChamferDistanceTransform2DShort;
 import inra.ijpb.binary.distmap.ChamferMask2D;
 import inra.ijpb.binary.distmap.ChamferMasks2D;
-import inra.ijpb.binary.distmap.DistanceTransform;
+import inra.ijpb.label.distmap.ChamferDistanceTransform2DFloat;
+import inra.ijpb.label.distmap.ChamferDistanceTransform2DShort;
+import inra.ijpb.label.distmap.DistanceTransform2D;
 
 /**
- * Compute distance map, with possibility to choose chamfer weights, result
- * type, and to normalize result or not.
+ * Compute distance map, with possibility to choose the chamfer mask, the result
+ * type (integer or floating point), and to normalize result or not.
  *
  * Can process either binary images, or label images (that can be coded with 8,
  * 16 or 32 bits).
  * 
+ * @see inra.ijpb.label.distmap.DistanceTransform2D
+ * @see inra.ijpb.binary.distmap.ChamferMask2D
+ * @see inra.ijpb.label.distmap.ChamferDistanceTransform2DShort
+ * @see inra.ijpb.label.distmap.ChamferDistanceTransform2DFloat
+ * 
  * @author dlegland
- *
  */
 public class ChamferDistanceMapPlugin
 		implements ExtendedPlugInFilter, DialogListener
@@ -171,18 +175,18 @@ public class ChamferDistanceMapPlugin
 		}
 	}
 
-	private ImageProcessor process(ImageProcessor image, ChamferMask2D weights,
+	private ImageProcessor process(ImageProcessor image, ChamferMask2D mask,
 			boolean processFloat, boolean normalize)
 	{
 		// Initialize calculator
-		DistanceTransform algo;
+		DistanceTransform2D algo;
 		if (processFloat)
 		{
-			algo = new ChamferDistanceTransform2DFloat(weights, normalize);
+			algo = new ChamferDistanceTransform2DFloat(mask, normalize);
 		}
 		else
 		{
-			algo = new ChamferDistanceTransform2DShort(weights, normalize);
+			algo = new ChamferDistanceTransform2DShort(mask, normalize);
 		}
 		
 		// add monitoring

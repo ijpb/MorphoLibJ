@@ -1,7 +1,9 @@
 /**
  * 
  */
-package inra.ijpb.binary.distmap;
+package inra.ijpb.label.distmap;
+
+import inra.ijpb.binary.distmap.ChamferMask3D;
 
 /**
  * Specialization of DistanceTransform based on the use of a chamfer mask.

@@ -21,30 +21,30 @@
  */
 package inra.ijpb.label.distmap;
 
-import ij.ImageStack;
+import ij.process.ImageProcessor;
 import inra.ijpb.algo.Algo;
 
 /**
- * Interface for computing distance maps for 3D label images. 
+ * Interface for computing distance maps for 2D label images.
+ * 
  */
-public interface DistanceTransform3D extends Algo
-{
-	/**
-     * Computes the distance map from a 3D label image.
+public interface DistanceTransform2D extends Algo {
+    /**
+     * Computes the distance map from a label image.
      * 
-     * Distance is computed for each label voxel (with value greater than 0), as
-     * the chamfer distance to the nearest voxel with a different value. The
+     * Distance is computed for each label pixel (with value greater than 0), as
+     * the chamfer distance to the nearest pixel with a different value. The
      * other value value can be 0 (the background) or another positive integer
      * value (corresponding to another region).
      * 
      * @param image
-     *            a 3D label map, where integer values correspond to region
-     *            labels, and 0 value to background.
-     * @return a new 3D image containing:
+     *            a label map, where integer values correspond to region labels,
+     *            and 0 value to background.
+     * @return a new intensity image containing:
      *         <ul>
-     *         <li>0 for each background voxel</li>
-     *         <li>the distance to the nearest voxel from another region</li>
+     *         <li>0 for each background pixel</li>
+     *         <li>the distance to the nearest pixel from another region</li>
      *         </ul>
      */
-	public ImageStack distanceMap(ImageStack image);
+	public ImageProcessor distanceMap(ImageProcessor image);
 }

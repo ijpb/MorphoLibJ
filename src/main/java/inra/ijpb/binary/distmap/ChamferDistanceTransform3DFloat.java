@@ -124,7 +124,6 @@ public class ChamferDistanceTransform3DFloat extends AlgoStub implements Chamfer
 				
 		fireStatusChanged(this, "");
 		return buffer;
-
 	}
 	
 	// ==================================================

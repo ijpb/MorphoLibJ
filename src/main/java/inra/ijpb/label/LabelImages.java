@@ -56,8 +56,11 @@ import inra.ijpb.data.Cursor3D;
 import inra.ijpb.data.image.ImageUtils;
 import inra.ijpb.label.conncomp.FloodFillRegionComponentsLabeling;
 import inra.ijpb.label.conncomp.FloodFillRegionComponentsLabeling3D;
+import inra.ijpb.label.distmap.ChamferDistanceTransform2DFloat;
+import inra.ijpb.label.distmap.ChamferDistanceTransform2DShort;
 import inra.ijpb.label.distmap.ChamferDistanceTransform3DFloat;
 import inra.ijpb.label.distmap.ChamferDistanceTransform3DShort;
+import inra.ijpb.label.distmap.DistanceTransform2D;
 import inra.ijpb.label.distmap.DistanceTransform3D;
 import inra.ijpb.label.edit.FindAllLabels;
 import inra.ijpb.label.edit.ReplaceLabelValues;
@@ -2220,62 +2223,64 @@ public class LabelImages
 	}
 
 	/**
-	 * Computes the 3D distance map from an image of labels.
+	 * Computes the distance map for each region within a label map.
 	 * 
-	 * Distance is computed for each label voxel, as the chamfer distance to the
-	 * nearest voxel with a different value.
+	 * Distance is computed for each label pixel, as the chamfer distance to the
+	 * nearest pixel with a different value.
 	 * 
 	 * @param image
-	 *            the input 3D label image
+	 *            the input label image
 	 * @return the distance map obtained after applying the distance transform
 	 */
-	public static final ImageStack distanceMap(ImageStack image)
+	public static final ImageProcessor distanceMap(ImageProcessor image)
 	{
-		DistanceTransform3D algo = new ChamferDistanceTransform3DFloat(ChamferMask3D.BORGEFORS);
+		DistanceTransform2D algo = new ChamferDistanceTransform2DFloat(ChamferMask2D.BORGEFORS);
 		return algo.distanceMap(image);
 	}
 	
 	/**
-	 * <p>
-	 * Computes the 3D distance map from an image of labels, by specifying
-	 * the chamfer mask and the normalization.
-	 * </p>
-	 * 
-	 * <p>
-	 * Distance is computed for each foreground (white) pixel, as the chamfer
-	 * distance to the nearest background (black) pixel. Result is given in a
-	 * new instance of FloatProcessor.
-	 * </p>
-	 * 
-	 * @param image
-	 *            the input binary or label image
-	 * @param mask
-	 *            the chamfer mask used to propagate distances
-	 * @param floatingPoint
-	 *            indicates if the computation should be performed using
-	 *            floating point computation
-	 * @param normalize
-	 *            indicates whether the resulting distance map should be
-	 *            normalized (divide distances by the first chamfer weight)
-	 * @return the distance map obtained after applying the distance transform
-	 */
-	public static final ImageStack distanceMap(ImageStack image,
-			ChamferMask3D mask, boolean floatingPoint, boolean normalize) 
+     * <p>
+     * Computes the distance map for each region within a label map, by
+     * specifying the chamfer mask and the normalization.
+     * </p>
+     * 
+     * <p>
+     * Distance is computed for each foreground (white) pixel, as the chamfer
+     * distance to the nearest background (black) pixel. Result is given in a
+     * new instance of <code>FloatProcessor</code> or
+     * <code>ShortProcessort</code>, depending on the <code>floatingPoint</code>
+     * flag.
+     * </p>
+     * 
+     * @param image
+     *            the input binary or label image
+     * @param mask
+     *            the chamfer mask used to propagate distances
+     * @param floatingPoint
+     *            indicates if the computation should be performed using
+     *            floating point computation
+     * @param normalize
+     *            indicates whether the resulting distance map should be
+     *            normalized (divide distances by the first chamfer weight)
+     * @return the distance map obtained after applying the distance transform
+     */
+	public static final ImageProcessor distanceMap(ImageProcessor image,
+			ChamferMask2D mask, boolean floatingPoint, boolean normalize) 
 	{
-		DistanceTransform3D algo = floatingPoint 
-				? new ChamferDistanceTransform3DFloat(mask, normalize)
-				: new ChamferDistanceTransform3DShort(mask, normalize);
+		DistanceTransform2D algo = floatingPoint 
+				? new ChamferDistanceTransform2DFloat(mask, normalize)
+				: new ChamferDistanceTransform2DShort(mask, normalize);
 		return algo.distanceMap(image);
 	}
 	
 	/**
-	 * Computes the distance map from a 3D image of labels
+     * Computes the distance map for each region within a label map.
 	 * 
-	 * Distance is computed for each label voxel, as the chamfer distance to the
-	 * nearest voxel with a different value.
+	 * Distance is computed for each label pixel, as the chamfer distance to the
+	 * nearest pixel with a different value.
 	 * 
 	 * @param image
-	 *            the input 3D image of labels
+	 *            the input image of labels
 	 * @param weights
 	 *            an array of chamfer weights, with at least three values
 	 * @param normalize
@@ -2283,11 +2288,11 @@ public class LabelImages
 	 *            normalized (divide distances by the first chamfer weight)
 	 * @return the distance map obtained after applying the distance transform
 	 */
-	public static final ImageStack distanceMap(ImageStack image,
+	public static final ImageProcessor distanceMap(ImageProcessor image,
 			short[] weights, boolean normalize)
 	{
-		ChamferMask3D mask = ChamferMask3D.fromWeights(weights);
-		DistanceTransform3D	algo = new ChamferDistanceTransform3DShort(mask, normalize);
+		ChamferMask2D mask = ChamferMask2D.fromWeights(weights);
+		DistanceTransform2D	algo = new ChamferDistanceTransform2DShort(mask, normalize);
 			
 		return algo.distanceMap(image);
 	}
@@ -2307,15 +2312,111 @@ public class LabelImages
 	 *            normalized (divide distances by the first chamfer weight)
 	 * @return the distance map obtained after applying the distance transform
 	 */
-	public static final ImageStack distanceMap(ImageStack image, 
+	public static final ImageProcessor distanceMap(ImageProcessor image, 
 			float[] weights, boolean normalize)
 	{
-		ChamferMask3D mask = ChamferMask3D.fromWeights(weights);
-		DistanceTransform3D	algo = new ChamferDistanceTransform3DFloat(mask, normalize);
+		ChamferMask2D mask = ChamferMask2D.fromWeights(weights);
+		DistanceTransform2D	algo = new ChamferDistanceTransform2DFloat(mask, normalize);
 		return algo.distanceMap(image);
 	}
 	
-	/**
+    /**
+     * Computes the 3D distance map from an image of labels.
+     * 
+     * Distance is computed for each label voxel, as the chamfer distance to the
+     * nearest voxel with a different value.
+     * 
+     * @param image
+     *            the input 3D label image
+     * @return the distance map obtained after applying the distance transform
+     */
+    public static final ImageStack distanceMap(ImageStack image)
+    {
+        DistanceTransform3D algo = new ChamferDistanceTransform3DFloat(ChamferMask3D.BORGEFORS);
+        return algo.distanceMap(image);
+    }
+    
+    /**
+     * <p>
+     * Computes the 3D distance map from an image of labels, by specifying
+     * the chamfer mask and the normalization.
+     * </p>
+     * 
+     * <p>
+     * Distance is computed for each foreground (white) pixel, as the chamfer
+     * distance to the nearest background (black) pixel. Result is given in a
+     * new instance of FloatProcessor.
+     * </p>
+     * 
+     * @param image
+     *            the input 3D binary or label image
+     * @param mask
+     *            the chamfer mask used to propagate distances
+     * @param floatingPoint
+     *            indicates if the computation should be performed using
+     *            floating point computation
+     * @param normalize
+     *            indicates whether the resulting distance map should be
+     *            normalized (divide distances by the first chamfer weight)
+     * @return the distance map obtained after applying the distance transform
+     */
+    public static final ImageStack distanceMap(ImageStack image,
+            ChamferMask3D mask, boolean floatingPoint, boolean normalize) 
+    {
+        DistanceTransform3D algo = floatingPoint 
+                ? new ChamferDistanceTransform3DFloat(mask, normalize)
+                : new ChamferDistanceTransform3DShort(mask, normalize);
+        return algo.distanceMap(image);
+    }
+    
+    /**
+     * Computes the distance map from a 3D image of labels
+     * 
+     * Distance is computed for each label voxel, as the chamfer distance to the
+     * nearest voxel with a different value.
+     * 
+     * @param image
+     *            the input 3D image of labels
+     * @param weights
+     *            an array of chamfer weights, with at least three values
+     * @param normalize
+     *            indicates whether the resulting distance map should be
+     *            normalized (divide distances by the first chamfer weight)
+     * @return the distance map obtained after applying the distance transform
+     */
+    public static final ImageStack distanceMap(ImageStack image,
+            short[] weights, boolean normalize)
+    {
+        ChamferMask3D mask = ChamferMask3D.fromWeights(weights);
+        DistanceTransform3D algo = new ChamferDistanceTransform3DShort(mask, normalize);
+            
+        return algo.distanceMap(image);
+    }
+    
+    /**
+     * Computes the distance map from a 3D image of labels
+     * 
+     * Distance is computed for each label voxel, as the chamfer distance to the
+     * nearest voxel with a different value.
+     * 
+     * @param image
+     *            the input 3D image of labels
+     * @param weights
+     *            an array of chamfer weights, with at least three values
+     * @param normalize
+     *            indicates whether the resulting distance map should be
+     *            normalized (divide distances by the first chamfer weight)
+     * @return the distance map obtained after applying the distance transform
+     */
+    public static final ImageStack distanceMap(ImageStack image, 
+            float[] weights, boolean normalize)
+    {
+        ChamferMask3D mask = ChamferMask3D.fromWeights(weights);
+        DistanceTransform3D algo = new ChamferDistanceTransform3DFloat(mask, normalize);
+        return algo.distanceMap(image);
+    }
+    
+    /**
 	 * Applies a constrained dilation to each region in the 3D label map:
 	 * <ul>
 	 * <li>The dilation of each region is constrained by the other regions;</li>

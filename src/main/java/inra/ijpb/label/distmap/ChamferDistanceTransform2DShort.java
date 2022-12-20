@@ -1,7 +1,7 @@
 /**
  * 
  */
-package inra.ijpb.binary.distmap;
+package inra.ijpb.label.distmap;
 
 import java.util.Collection;
 
@@ -9,6 +9,7 @@ import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 import inra.ijpb.algo.AlgoEvent;
 import inra.ijpb.algo.AlgoStub;
+import inra.ijpb.binary.distmap.ChamferMask2D;
 import inra.ijpb.binary.distmap.ChamferMask2D.ShortOffset;
 import inra.ijpb.label.LabelValues;
 
@@ -16,8 +17,8 @@ import inra.ijpb.label.LabelValues;
  * Computes distance transform by propagating distances using a ChamferMask2D,
  * and using 16-bits integer computation.
  * 
- * For label maps, an equivalent algorithm exists within the
- * inra.ijpb.label.distmap package.
+ * For binary images, an equivalent algorithm exists within the
+ * inra.ijpb.binary.distmap package.
  * 
  * <p>
  * Example of use:
@@ -32,8 +33,6 @@ import inra.ijpb.label.LabelValues;
  * </pre>
  * 
  * @see ChamferDistanceTransform2DFloat
- * @see inra.ijpb.label.distmap.ChamferDistanceTransform2DShort
- * 
  * @author David Legland
  * 
  */
@@ -101,36 +100,36 @@ public class ChamferDistanceTransform2DShort extends AlgoStub implements Chamfer
 	// Implementation of the DistanceTransform interface 
 	
 	/**
-     * Computes the distance map of the distance to the nearest background
-     * pixel. The function returns a new instance of <code>ShortProcessor</code>
-     * the same size as the input, with values greater or equal to zero.
-     * 
-     * @param binaryImage
-     *            a binary image with black pixels (0) as background
-     * @return a new instance of ShortProcessor containing:
-     *         <ul>
-     *         <li>0 for each background pixel</li>
-     *         <li>the (strictly positive) distance to the nearest background
-     *         pixel otherwise</li>
-     *         </ul>
-     */
+	 * Computes the distance map of the distance to the nearest pixel with a
+	 * different value. The function returns a new short processor the same size
+	 * as the input, with values greater or equal to zero.
+	 * 
+	 * @param labelImage
+	 *            a label image with black pixels (0) as foreground
+	 * @return a new instance of ShortProcessor containing:
+	 *         <ul>
+	 *         <li>0 for each background pixel</li>
+	 *         <li>the (strictly positive) distance to the nearest background
+	 *         pixel otherwise</li>
+	 *         </ul>
+	 */
 	@Override
-	public ShortProcessor distanceMap(ImageProcessor binaryImage) 
+	public ShortProcessor distanceMap(ImageProcessor labelImage) 
 	{
-		ShortProcessor distMap = initializeResult(binaryImage);
+		ShortProcessor distMap = initializeResult(labelImage);
 		
 		// Two iterations are enough to compute distance map to boundary
-		forwardScan(distMap, binaryImage);
-		backwardScan(distMap, binaryImage);
+		forwardScan(distMap, labelImage);
+		backwardScan(distMap, labelImage);
 
 		// Normalize values by the first weight
 		if (this.normalize)
 		{
-			normalizeResult(distMap, binaryImage);
+			normalizeResult(distMap, labelImage);
 		}
 
 		// Compute max value within the mask for setting min/max of ImageProcessor
-		double maxVal = LabelValues.maxValueWithinLabels(distMap, binaryImage);
+		double maxVal = LabelValues.maxValueWithinLabels(distMap, labelImage);
 		distMap.setMinAndMax(0, maxVal);
 
 		// Forces the display to non-inverted LUT
@@ -177,13 +176,13 @@ public class ChamferDistanceTransform2DShort extends AlgoStub implements Chamfer
 		return distMap;
 	}
 	
-	private void forwardScan(ShortProcessor distMap, ImageProcessor binaryImage) 
+	private void forwardScan(ShortProcessor distMap, ImageProcessor labelImage) 
 	{
 		this.fireStatusChanged(new AlgoEvent(this, "Forward Scan"));
 
 		// size of image
-		int sizeX = binaryImage.getWidth();
-		int sizeY = binaryImage.getHeight();
+		int sizeX = labelImage.getWidth();
+		int sizeY = labelImage.getHeight();
 		Collection<ShortOffset> offsets = mask.getForwardOffsets();
 		
 		// Iterate over pixels
@@ -192,8 +191,11 @@ public class ChamferDistanceTransform2DShort extends AlgoStub implements Chamfer
 			this.fireProgressChanged(this, y, sizeY);
 			for (int x = 0; x < sizeX; x++)
 			{
+				// get current label
+				int label = (int) labelImage.getf(x, y);
+				
 				// do not process background pixels
-				if (binaryImage.get(x, y) == 0)
+				if (label == 0)
 					continue;
 				
 				// current distance value
@@ -213,15 +215,14 @@ public class ChamferDistanceTransform2DShort extends AlgoStub implements Chamfer
 					if (y2 < 0 || y2 >= sizeY)
 						continue;
 					
-					// check if neighbor pixel is background or foreground
-					if (binaryImage.get(x2, y2) == 0)
+					if ((int) labelImage.getf(x2, y2) != label)
 					{
-						// background: use distance to background pixel
+						// Update with distance to nearest different label
 					    newDist = Math.min(newDist, offset.weight);
 					}
 					else
 					{
-						// foreground: increment distance
+						// Increment distance
 						newDist = Math.min(newDist, distMap.get(x2, y2) + offset.weight);
 					}
 				}
@@ -236,13 +237,13 @@ public class ChamferDistanceTransform2DShort extends AlgoStub implements Chamfer
 		this.fireProgressChanged(this, sizeY, sizeY);
 	}
 	
-	private void backwardScan(ShortProcessor distMap, ImageProcessor binaryImage) 
+	private void backwardScan(ShortProcessor distMap, ImageProcessor labelImage) 
 	{
 		this.fireStatusChanged(new AlgoEvent(this, "Backward Scan"));
 
 		// size of image
-		int sizeX = binaryImage.getWidth();
-		int sizeY = binaryImage.getHeight();
+		int sizeX = labelImage.getWidth();
+		int sizeY = labelImage.getHeight();
 		Collection<ShortOffset> offsets = mask.getBackwardOffsets();
 		
 		// Iterate over pixels
@@ -251,9 +252,12 @@ public class ChamferDistanceTransform2DShort extends AlgoStub implements Chamfer
 			this.fireProgressChanged(this, sizeY-1-y, sizeY);
 			for (int x = sizeX-1; x >= 0; x--)
 			{
-                // do not process background pixels
-                if (binaryImage.get(x, y) == 0)
-                    continue;
+				// get current label
+				int label = (int) labelImage.getf(x, y);
+				
+				// do not process background pixels
+				if (label == 0)
+					continue;
 				
 				// current distance value
 				int currentDist = distMap.get(x, y);
@@ -272,15 +276,14 @@ public class ChamferDistanceTransform2DShort extends AlgoStub implements Chamfer
 					if (y2 < 0 || y2 >= sizeY)
 						continue;
 					
-					// check if neighbor pixel is background or foreground
-                    if (binaryImage.get(x2, y2) == 0)
+					if ((int) labelImage.getf(x2, y2) != label)
 					{
-                        // background: use distance to background pixel
+						// Update with distance to nearest different label
 					    newDist = Math.min(newDist, offset.weight);
 					}
 					else
 					{
-					    // foreground: increment distance
+						// Increment distance
 						newDist = Math.min(newDist, distMap.get(x2, y2) + offset.weight);
 					}
 				}
@@ -295,13 +298,13 @@ public class ChamferDistanceTransform2DShort extends AlgoStub implements Chamfer
 		this.fireProgressChanged(this, sizeY, sizeY);
 	}
 	
-	private void normalizeResult(ShortProcessor distMap, ImageProcessor binaryImage)
+	private void normalizeResult(ShortProcessor distMap, ImageProcessor labelImage)
 	{
 		this.fireStatusChanged(new AlgoEvent(this, "Normalization"));
 		
 		// size of image
-		int sizeX = binaryImage.getWidth();
-		int sizeY = binaryImage.getHeight();
+		int sizeX = labelImage.getWidth();
+		int sizeY = labelImage.getHeight();
 
 		// retrieve the minimum weight
 		double w0 = mask.getShortNormalizationWeight();
@@ -311,7 +314,7 @@ public class ChamferDistanceTransform2DShort extends AlgoStub implements Chamfer
 		{
 			for (int x = 0; x < sizeX; x++)
 			{
-				if ((int) binaryImage.getf(x, y) > 0)
+				if ((int) labelImage.getf(x, y) > 0)
 				{
 					distMap.set(x, y, (int) Math.round( ((double) distMap.get(x, y)) / w0));
 				}

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package inra.ijpb.binary.distmap;
+package inra.ijpb.label.distmap;
 
 import static org.junit.Assert.*;
 
@@ -9,6 +9,8 @@ import org.junit.Test;
 
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
+import inra.ijpb.binary.distmap.ChamferMask2D;
+import inra.ijpb.binary.distmap.ChamferMask2DW2;
 
 /**
  * @author dlegland
@@ -35,7 +37,7 @@ public class ChamferDistanceTransform2DShortTest
 		}
 
 		ChamferMask2D weights = ChamferMask2D.CHESSBOARD;
-		DistanceTransform algo = new ChamferDistanceTransform2DShort(weights, true);
+		DistanceTransform2D algo = new ChamferDistanceTransform2DShort(weights, true);
 		ImageProcessor result = algo.distanceMap(image);
 
 		assertNotNull(result);
@@ -53,7 +55,7 @@ public class ChamferDistanceTransform2DShortTest
 		image.set(4, 4, 0);
 		
 		ChamferMask2D weights = ChamferMask2D.CITY_BLOCK;
-		DistanceTransform algo = new ChamferDistanceTransform2DShort(weights, false);
+		DistanceTransform2D algo = new ChamferDistanceTransform2DShort(weights, false);
 		ImageProcessor result = algo.distanceMap(image);
 		
 		assertNotNull(result);
@@ -74,7 +76,7 @@ public class ChamferDistanceTransform2DShortTest
 		image.set(4, 4, 0);
 		
 		ChamferMask2D weights = ChamferMask2D.CHESSBOARD;
-		DistanceTransform algo = new ChamferDistanceTransform2DShort(weights, false);
+		DistanceTransform2D algo = new ChamferDistanceTransform2DShort(weights, false);
 		ImageProcessor result = algo.distanceMap(image);
 		
 		assertNotNull(result);
@@ -96,7 +98,7 @@ public class ChamferDistanceTransform2DShortTest
 		
 		
 		ChamferMask2D weights = new ChamferMask2DW2(2, 3);
-		DistanceTransform algo = new ChamferDistanceTransform2DShort(weights, false);
+		DistanceTransform2D algo = new ChamferDistanceTransform2DShort(weights, false);
 		ImageProcessor result = algo.distanceMap(image);
 		
 		assertNotNull(result);
@@ -118,7 +120,7 @@ public class ChamferDistanceTransform2DShortTest
 		
 		
 		ChamferMask2D weights = ChamferMask2D.BORGEFORS;
-		DistanceTransform algo = new ChamferDistanceTransform2DShort(weights, false);
+		DistanceTransform2D algo = new ChamferDistanceTransform2DShort(weights, false);
 		ImageProcessor result = algo.distanceMap(image);
 		
 		assertNotNull(result);
@@ -139,7 +141,7 @@ public class ChamferDistanceTransform2DShortTest
 		image.set(4, 4, 0);
 
 		ChamferMask2D weights = ChamferMask2D.CHESSKNIGHT;
-		DistanceTransform algo = new ChamferDistanceTransform2DShort(weights, false);
+		DistanceTransform2D algo = new ChamferDistanceTransform2DShort(weights, false);
 		ImageProcessor result = algo.distanceMap(image);
 
 		assertNotNull(result);
@@ -150,5 +152,49 @@ public class ChamferDistanceTransform2DShortTest
 		assertEquals(28, result.get(0, 0), .01);
 		assertEquals(22, result.get(6, 0), .01);
 		assertEquals(22, result.get(0, 6), .01);
+	}
+	
+	/**
+	 * Test method for {@link inra.ijpb.label.distmap.LabelDistanceTransform3x3Short#distanceMap(ij.process.ImageProcessor)}.
+	 */
+	@Test
+	public final void testDistanceMap_TouchingLabels()
+	{
+		ByteProcessor image = new ByteProcessor(8, 8);
+		for (int y = 0; y < 3; y++)
+		{
+			for (int x = 0; x < 3; x++)
+			{
+				image.set(x+1, y+1, 1);
+				image.set(x+4, y+1, 2);
+				image.set(x+1, y+4, 3);
+				image.set(x+4, y+4, 4);
+			}
+		}
+		
+		ChamferMask2D weights = ChamferMask2D.BORGEFORS;
+		DistanceTransform2D dt = new ChamferDistanceTransform2DShort(weights, true);
+		ImageProcessor distMap = dt.distanceMap(image);
+
+		// value 0 in backgrounf
+		assertEquals(0, distMap.getf(0, 0), .1);
+		assertEquals(0, distMap.getf(5, 0), .1);
+		assertEquals(0, distMap.getf(7, 7), .1);
+
+		// value equal to 2 in the middle of the labels
+		assertEquals(2, distMap.getf(2, 2), .1);
+		assertEquals(2, distMap.getf(5, 2), .1);
+		assertEquals(2, distMap.getf(2, 5), .1);
+		assertEquals(2, distMap.getf(5, 5), .1);
+		
+		// value equal to 1 on the border of the labels
+		assertEquals(1, distMap.getf(1, 3), .1);
+		assertEquals(1, distMap.getf(3, 3), .1);
+		assertEquals(1, distMap.getf(4, 3), .1);
+		assertEquals(1, distMap.getf(6, 3), .1);
+		assertEquals(1, distMap.getf(1, 6), .1);
+		assertEquals(1, distMap.getf(3, 6), .1);
+		assertEquals(1, distMap.getf(4, 6), .1);
+		assertEquals(1, distMap.getf(6, 6), .1);
 	}
 }

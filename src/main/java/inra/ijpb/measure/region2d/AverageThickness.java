@@ -27,7 +27,7 @@ import inra.ijpb.label.LabelImages;
  * distance maps are used.
  * 
  * @see inra.ijpb.binary.skeleton.ImageJSkeleton
- * @see inra.ijpb.binary.distmap.DistanceTransform
+ * @see inra.ijpb.label.distmap.DistanceTransform2D
  * 
  * @author dlegland
  *
@@ -64,7 +64,7 @@ public class AverageThickness extends RegionAnalyzer2D<AverageThickness.Result>
         Map<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
 
         // first compute distance map of each label
-        ImageProcessor distanceMap = BinaryImages.distanceMap(image);
+        ImageProcessor distanceMap = LabelImages.distanceMap(image);
 
         // Compute skeleton of each region.
         ImageProcessor skeleton = BinaryImages.skeleton(image); 

@@ -8,6 +8,8 @@ package inra.ijpb.binary.distmap;
  * 
  * Provides methods for retrieving the mask, and the normalization weight.
  * 
+ * @see ChamferMask2D
+ * 
  * @author dlegland
  */
 public interface ChamferDistanceTransform2D extends DistanceTransform
