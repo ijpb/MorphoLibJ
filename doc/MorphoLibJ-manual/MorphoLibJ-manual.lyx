@@ -1094,7 +1094,7 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename images/grains/grains-Closing-Sq2.tif
+	filename images/grains/grains-Closing-Sq2.png
 	width 30text%
 
 \end_inset
@@ -1125,7 +1125,7 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename images/grains/grains-Opening-Sq2.tif
+	filename images/grains/grains-Opening-Sq2.png
 	width 30text%
 
 \end_inset
@@ -4339,7 +4339,7 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename images/leaf/leaf_crop400-areaOpen.tif
+	filename images/leaf/leaf_crop400-areaOpen.png
 	width 31text%
 
 \end_inset
@@ -4370,7 +4370,7 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename images/leaf/leaf_crop400-OpeningSq1.tif
+	filename images/leaf/leaf_crop400-OpeningSq1.png
 	width 31text%
 
 \end_inset
@@ -12187,6 +12187,73 @@ Borgefors (3,4,5)
 \end_inset
 
 
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Chamfer-Weights-3D"
+
+\end_inset
+
+Discrete 3D balls resulting from different chamfer distances.
+ The distance map is computed to the center voxel, then the result is thresholde
+d and represented in 3D.
+ Numbers in brackets correspond to the weights associated with orthogonal,
+ edge-diagonal, and corner-diagonal directions.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Larger neighborhood may be considered, resulting in a better approximation
+ (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Chamfer-Masks-3D-2"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+ Svensson and Borgefors found that adding a fourth weight for voxels shifted
+ by 
+\begin_inset Formula $(\pm1,\pm1,\pm2)$
+\end_inset
+
+ in any direction results in a substantial error reduction while preserving
+ a low complexity of the algorithm 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Svensson_Borgefors_2002_prl,Svensson_Borgefors_2002_cviu"
+literal "true"
+
+\end_inset
+
+.
+ Starting from version 1.5, MorphoLibJ allows using up to six weights (correspond
+ing to the complete 5–by–5-by–5 neighborhood).
+\end_layout
+
+\begin_layout Standard
 \begin_inset Float figure
 wide false
 sideways false
@@ -12194,8 +12261,15 @@ status open
 
 \begin_layout Plain Layout
 \align center
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
 \begin_inset Graphics
-	filename images/binary/ball3d_r20_d3457.png
+	filename images/binary/ball3d_r100_W4.png
 	lyxscale 50
 	width 23text%
 
@@ -12218,6 +12292,70 @@ Svensson (3,4,5,7)
 
 \end_inset
 
+ 
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/binary/ball3d_r100_W5.png
+	lyxscale 50
+	width 23text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Five weights
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/binary/ball3d_r100_W6.png
+	lyxscale 50
+	width 23text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Six weights
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
 
 \end_layout
 
@@ -12227,20 +12365,14 @@ Svensson (3,4,5,7)
 \begin_layout Plain Layout
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Chamfer-Weights-3D"
+name "fig:Chamfer-Masks-3D-2"
 
 \end_inset
 
-Discrete 3D balls resulting from different chamfer distances.
- The distance map is computed to the center voxel, then the result is thresholde
-d and represented in 3D.
- Numbers in brackets correspond to the weights associated with orthogonal,
- edge-diagonal, and corner-diagonal directions.
- For the Svensson weights, the weight 7 corresponds to a shift of 
-\begin_inset Formula $(\pm1,\pm1,\pm2)$
-\end_inset
-
- voxels in any direction.
+Enhancement of 3D distance maps when using larger chamfer masks.
+ Masks are based on (a) four, (b) five, or (c) six weights.
+ Using All images represent the threshold of the distance 100 from image
+ center.
  
 \end_layout
 
@@ -12252,38 +12384,6 @@ d and represented in 3D.
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
-Larger neighborhood may be considered, resulting in a better approximation.
- Svensson and Borgefors found that adding a fourth weight for voxels shifted
- by 
-\begin_inset Formula $(\pm1,\pm1,\pm2)$
-\end_inset
-
- in any direction results in a substantial error reduction while preserving
- a low complexity of the algorithm 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Svensson_Borgefors_2002_prl,Svensson_Borgefors_2002_cviu"
-literal "true"
-
-\end_inset
-
- (Fig.
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Chamfer-Weights-3D"
-
-\end_inset
-
--d).
- Starting from version 1.5, MorphoLibJ allows using up to six weights (correspond
-ing to the complete 5–by–5-by–5 neighborhood).
 \end_layout
 
 \begin_layout Subsubsection
@@ -17283,6 +17383,9 @@ Distance Transform Watershed
 \begin_inset CommandInset ref
 LatexCommand pageref
 reference "sec:Distance-Transform-Watershed"
+plural "false"
+caps "false"
+noprefix "false"
 
 \end_inset
 
