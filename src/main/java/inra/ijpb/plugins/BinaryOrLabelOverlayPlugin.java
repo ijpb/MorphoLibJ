@@ -32,7 +32,6 @@ import javax.swing.SwingUtilities;
 
 import ij.IJ;
 import ij.ImagePlus;
-import ij.ImageStack;
 import ij.WindowManager;
 import ij.gui.ImageCanvas;
 import ij.gui.ImageRoi;
@@ -43,6 +42,7 @@ import ij.process.ImageProcessor;
 import ij.process.LUT;
 import inra.ijpb.color.CommonColors;
 import inra.ijpb.data.image.ColorImages;
+import inra.ijpb.data.image.ImageUtils;
 
 /**
  * Display a label map or a binary image as overlay onto a grayscale image.
@@ -52,6 +52,12 @@ import inra.ijpb.data.image.ColorImages;
  */
 public class BinaryOrLabelOverlayPlugin implements PlugIn
 {
+    /** 
+     * The list of images currently open.
+     * Determined when plugin is run, and used during frame creation.
+     */
+    String[] imageNames;
+
     /**
      * The run method used to start the plugin from the GUI.
      * 
@@ -77,31 +83,14 @@ public class BinaryOrLabelOverlayPlugin implements PlugIn
             return;
         }
         
-        if (refImage.getBitDepth()!=8)
-        {
-            IJ.error("Label Map Overlay",
-                    "This plugin only works on 8-bits grayscale images.\nPlease convert it to 8-bit.");
-            return;
-        }
-        
+        // initialize image name list
+        this.imageNames = WindowManager.getImageTitles();
+                
+        // create new OverlayData initialized with current image (assuming this is the
+        // reference image)
         OverlayData data = new OverlayData(refImage);
-
-        // hide input image (to avoid accidental closing)
-        refImage.getWindow().setVisible(false);
-
-        // make a copy of the input stack and use it for display
-        ImageStack displayStack = refImage.getImageStack();
-        data.displayImage = new ImagePlus(refImage.getTitle(), displayStack);
-        data.displayImage.setTitle("Label Map Overlay");
-        data.displayImage.setSlice(refImage.getCurrentSlice());
-
-        // correct Fiji error when the slices are read as frames
-        if (data.is2DInput == false && data.displayImage.isHyperStack() == false
-                && data.displayImage.getNSlices() == 1)
-        {
-            // correct stack by setting number of frames as slices
-            data.displayImage.setDimensions(1, data.displayImage.getNFrames(), 1);
-        }
+        // update overlay image arbitrarily with first image 
+        data.updateOverlayImage(refImage);
         
         // Build GUI
         SwingUtilities.invokeLater(() ->
@@ -110,6 +99,10 @@ public class BinaryOrLabelOverlayPlugin implements PlugIn
         });
     }
     
+    
+    // ====================================================
+    // Inner class for gathering overlay data
+    
     /**
      * Contains the data for computing overlay, as well as some methods for
      * performing computation.
@@ -117,44 +110,92 @@ public class BinaryOrLabelOverlayPlugin implements PlugIn
     class OverlayData
     {
         /** The original input image */
-        ImagePlus refImage = null;
-
-        /** 
-         * The list of images currently open.
-         * Determined when plugin run, and used during frame creation.
-         */
-        String[] imageNames;
+        ImagePlus referenceImage = null;
 
         /** The image to overlay */
         ImagePlus overlayImage = null;
 
         /**
-         * The image to be displayed in the GUI, obtained as a combination of input
-         * and label images.
+         * The image to be displayed in the GUI, obtained as a combination of
+         * reference and overlay images.
          */
         ImagePlus displayImage = null;
 
         /** flag to indicate 2D input image */
         boolean is2DInput = false;
 
-        /** Boolean flag that indicates whether image to overlay is binary or label */
+        /**
+         * Boolean flag that indicates whether image to overlay is binary or
+         * label
+         */
         boolean binaryOverlay = true;
 
         /** The color to use to display binary overlays */ 
         Color overlayColor = Color.RED;
         
-        /** Opacity to display overlays, between 0 and 1.0. Default is 33% */
+        /** Opacity to display overlays, between 0 and 1.0. Default is 33%. */
         double overlayOpacity = 1.0 / 3.0;
         
         
         public OverlayData(ImagePlus refImage)
         {
-            this.refImage = refImage;
+            if (refImage == null)
+            {
+                IJ.log("ref image equals null");
+            }
+            updateReferenceImage(refImage);
+        }
+        
+        /**
+         * Combines the reference image and the overlay image (and the overlay
+         * color if the overlay image is binary) to update the image to display.
+         * 
+         * @param refImage
+         *            the new reference image
+         */
+        public void updateReferenceImage(ImagePlus refImage)
+        {
+            if (refImage == null)
+            {
+                IJ.log("Can not update reference image to null.");
+                return;
+            }
+            this.referenceImage = refImage;
+            
             // set the 2D flag
             this.is2DInput = refImage.getImageStackSize() == 1;
             
-            // initialize image name list
-            this.imageNames = WindowManager.getImageTitles();
+            // make a copy of the input image and use it for display
+            this.displayImage = refImage.duplicate();
+            this.displayImage.setTitle("Label Map Overlay");
+            this.displayImage.setSlice(refImage.getCurrentSlice());
+
+            // correct Fiji error when the slices are read as frames
+            if (this.is2DInput == false && this.displayImage.isHyperStack() == false
+                    && this.displayImage.getNSlices() == 1)
+            {
+                // correct stack by setting number of frames as slices
+                this.displayImage.setDimensions(1, this.displayImage.getNFrames(), 1);
+            }
+            
+            // 
+            if (this.overlayImage != null && ImageUtils.isSameSize(referenceImage, overlayImage))
+            {
+                updateDisplayImage();
+            }
+        }
+        
+        /**
+         * Combines the reference image and the overlay image (and the overlay
+         * color if the overlay image is binary) to update the image to display.
+         * 
+         * @param ovrImage
+         *            the new overlay image
+         */
+        public void updateOverlayImage(ImagePlus ovrImage)
+        {
+            this.overlayImage = ovrImage;
+            updateDisplayImage();
         }
         
         /**
@@ -163,74 +204,26 @@ public class BinaryOrLabelOverlayPlugin implements PlugIn
          */
         public void updateDisplayImage()
         {
-            int sliceIndex = displayImage.getCurrentSlice();
-
-            ImageRoi roi = null;
-
-            if (overlayImage != null)
+            if (referenceImage == null)
             {
+                IJ.log("ref image not initialized, do not update result.");
+                return;
+            }
+            
+            ImageRoi roi = null;
+            if (overlayImage != null && ImageUtils.isSameSize(referenceImage, overlayImage))
+            {
+                int sliceIndex = displayImage.getCurrentSlice();
                 ImageProcessor overlayProcessor = overlayImage.getImageStack().getProcessor(sliceIndex);
-
-                if (binaryOverlay)
-                {
-                    // assume overlay is binary
-                    overlayProcessor = convertBinaryToOverlayProcessor(overlayProcessor, overlayColor);
-                }
-                else
-                {
-                    // assumes label image 
-                    overlayProcessor = convertLabelToOverlayProcessor(overlayProcessor);
-                }
-
+                overlayProcessor = makeOverlayProcessor(overlayProcessor, binaryOverlay, overlayColor);
+                
                 // convert image processor to ROI
-                roi = new ImageRoi(0, 0, overlayProcessor);
-                roi.setZeroTransparent(true);
-                roi.setOpacity(overlayOpacity);
+                roi = createRoi(overlayProcessor, overlayOpacity);
             }
 
             displayImage.setOverlay(new Overlay(roi));
         }
-
-        private ImageProcessor convertBinaryToOverlayProcessor(ImageProcessor array, Color overlayColor)
-        {
-            ImageProcessor res = array.duplicate(); // to avoid side effect on original overlay image
-            res.setLut(LUT.createLutFromColor(overlayColor));
-            return res;
-        }
-
-        private ImageProcessor convertLabelToOverlayProcessor(ImageProcessor labelMap)
-        {
-            // duplicate label image, using new LUT as ColorModel
-            ImageProcessor res = labelMap.duplicate();
-            res.setLut(makeBlackBackGround(labelMap.getLut()));
-            return res;
-        }
-
-        /**
-         * Enforces black color for the first element of the LUT.
-         * 
-         * @param lut
-         *            the input LUT.
-         * @return a new LUT with same size and color list, excpet for the first
-         *         item which is black.
-         */
-        private LUT makeBlackBackGround(LUT lut)
-        {
-            byte[] red = new byte[256];
-            byte[] green = new byte[256];
-            byte[] blue = new byte[256];
-            lut.getReds(red);
-            lut.getGreens(green);
-            lut.getBlues(blue);
-
-            // forces background to 0
-            red[0] = 0;
-            green[0] = 0;
-            blue[0] = 0;
-
-            return new LUT(red, green, blue);
-        }
-
+        
         /**
          * Computes the result (RGB) image by combining the reference image with the
          * overlay image, and the other options.
@@ -239,17 +232,73 @@ public class BinaryOrLabelOverlayPlugin implements PlugIn
          */
         public ImagePlus computeResultImage()
         {
-            if (binaryOverlay)
-            {
-                return ColorImages.binaryOverlay(refImage, overlayImage, overlayColor, overlayOpacity);
-            }
-            else
-            {
-                return ColorImages.labelMapOverlay(refImage, overlayImage, overlayOpacity);
-            }
+            // switch to binary or label overlay depending on binaryOverlay option
+            return binaryOverlay 
+                    ? ColorImages.binaryOverlay(referenceImage, overlayImage, overlayColor, overlayOpacity)
+                    : ColorImages.labelMapOverlay(referenceImage, overlayImage, overlayOpacity);
         }
     }
+    
+    
+    // ====================================================
+    // Utility methods used by the OverlayData class 
+    
+    private static final ImageProcessor makeOverlayProcessor(ImageProcessor array, boolean binaryOverlay, Color overlayColor)
+    {
+        if (binaryOverlay)
+        {
+            // assume overlay is binary
+            ImageProcessor res = array.duplicate(); // to avoid side effect on original overlay image
+            res.setLut(LUT.createLutFromColor(overlayColor));
+            return res;
+        }
+        else
+        {
+            // duplicate label image, using new LUT as ColorModel
+            ImageProcessor res = array.duplicate();
+            res.setLut(makeBlackBackGround(array.getLut()));
+            return res;
+        }
+    }
+    
+    /**
+     * Enforces black color for the first element of the LUT.
+     * 
+     * @param lut
+     *            the input LUT.
+     * @return a new LUT with same size and color list, except for the first
+     *         item which is black.
+     */
+    private static final LUT makeBlackBackGround(LUT lut)
+    {
+        byte[] red = new byte[256];
+        byte[] green = new byte[256];
+        byte[] blue = new byte[256];
+        lut.getReds(red);
+        lut.getGreens(green);
+        lut.getBlues(blue);
 
+        // forces background to 0
+        red[0] = 0;
+        green[0] = 0;
+        blue[0] = 0;
+
+        return new LUT(red, green, blue);
+    }
+    
+    private static ImageRoi createRoi(ImageProcessor overlayProcessor, double opacity)
+    {
+        // convert image processor to ROI
+        ImageRoi roi = new ImageRoi(0, 0, overlayProcessor);
+        roi.setZeroTransparent(true);
+        roi.setOpacity(opacity);
+        return roi;
+    }
+    
+
+    // ====================================================
+    // Inner class for window
+    
     /**
      * Custom window to display together plugin option and result image.
      */
@@ -269,6 +318,8 @@ public class BinaryOrLabelOverlayPlugin implements PlugIn
         JPanel paramsPanel = new JPanel();
         
         // Widgets 
+        
+        JComboBox<String> referenceImageCombo;
         
         JComboBox<String> overlayImageCombo;
         
@@ -296,6 +347,7 @@ public class BinaryOrLabelOverlayPlugin implements PlugIn
         CustomWindow(OverlayData data)
         {
             super(data.displayImage, new ImageCanvas(data.displayImage));
+            
             this.data = data;
             
             adjustCurrentZoom();
@@ -348,8 +400,32 @@ public class BinaryOrLabelOverlayPlugin implements PlugIn
         
         private void setupWidgets()
         {        
-            // Combo box for choosing image
-            overlayImageCombo = new JComboBox<>(data.imageNames);
+            // Combo box for choosing reference image
+            referenceImageCombo = new JComboBox<>(imageNames);
+            referenceImageCombo.setSelectedItem(data.referenceImage.getTitle());
+            referenceImageCombo.setToolTipText("The reference / background image");
+            referenceImageCombo.addItemListener(evt -> 
+            {
+                // work only when items are selected (not when they are unselected)
+                if ((evt.getStateChange() & ItemEvent.SELECTED) == 0)
+                {
+                    return;
+                }
+                IJ.log("change reference image choice");
+                
+                threadPool.submit(() ->
+                {
+                    // retrieve reference image 
+                    ImagePlus refImage = retrieveImage(referenceImageCombo.getSelectedIndex());
+                    data.updateReferenceImage(refImage);
+                    CustomWindow.this.setImage(data.displayImage);
+                    adjustCurrentZoom();
+                    CustomWindow.this.updateImage(refImage);
+                });
+            });
+            
+            // Combo box for choosing overlay image
+            overlayImageCombo = new JComboBox<>(imageNames);
             overlayImageCombo.setToolTipText("The binary or label image to overlay");
             overlayImageCombo.addItemListener(evt -> 
             {
@@ -361,23 +437,9 @@ public class BinaryOrLabelOverlayPlugin implements PlugIn
                 
                 threadPool.submit(() ->
                 {
-                    // start by clearing current overlay image
-                    data.overlayImage = null;
-                    
                     // retrieve overlay image 
-                    int index = overlayImageCombo.getSelectedIndex();
-                    if (index < 0) return;
-                    String imageName = data.imageNames[index];
-                    ImagePlus image = WindowManager.getImage(imageName);
-                    
-                    // check size
-                    if (image.getWidth() == data.refImage.getWidth()
-                            && image.getHeight() == data.refImage.getHeight()
-                            && image.getStackSize() == data.refImage.getStackSize())
-                    {
-                        data.overlayImage = image;
-                        data.updateDisplayImage();
-                    }
+                    ImagePlus ovrImage = retrieveImage(overlayImageCombo.getSelectedIndex());
+                    data.updateOverlayImage(ovrImage);
                 });
             });
             
@@ -452,6 +514,7 @@ public class BinaryOrLabelOverlayPlugin implements PlugIn
                 data.updateDisplayImage();
             });
             
+            // create button for generating result image
             resultButton = new JButton("Create Image");
             resultButton.setToolTipText("Show Overlay result in new window");
             resultButton.addActionListener(evt -> threadPool.submit(() -> data.computeResultImage().show()));
@@ -464,7 +527,17 @@ public class BinaryOrLabelOverlayPlugin implements PlugIn
             // Create layout for input images panel
             JPanel inputImagesPanel = new JPanel();
             inputImagesPanel.setBorder(BorderFactory.createTitledBorder("Input Images"));
-            inputImagesPanel.add(overlayImageCombo);
+            GridBagLayout inputImagesPanelLayout = new GridBagLayout();
+            GridBagConstraints inputImagesPanelConstraints = newConstraints();
+            inputImagesPanel.setLayout(inputImagesPanelLayout);
+            
+            inputImagesPanel.add(new JLabel("Reference Image:"), inputImagesPanelConstraints);
+            inputImagesPanelConstraints.gridy++;
+            inputImagesPanel.add(referenceImageCombo, inputImagesPanelConstraints);
+            inputImagesPanelConstraints.gridy++;
+            inputImagesPanel.add(new JLabel("Overlay Image:"), inputImagesPanelConstraints);
+            inputImagesPanelConstraints.gridy++;
+            inputImagesPanel.add(overlayImageCombo, inputImagesPanelConstraints);
             
             // Create layout for overlay panel
             JPanel overlayPanel = new JPanel();
@@ -547,8 +620,8 @@ public class BinaryOrLabelOverlayPlugin implements PlugIn
             // slice selectors in place
             if (super.sliceSelector != null)
             {
-                sliceSelector.setValue(data.refImage.getCurrentSlice());
-                data.displayImage.setSlice(data.refImage.getCurrentSlice());
+                sliceSelector.setValue(data.referenceImage.getCurrentSlice());
+                data.displayImage.setSlice(data.referenceImage.getCurrentSlice());
                 
                 mainPanel.add(super.sliceSelector, allConstraints);
                 
@@ -652,27 +725,20 @@ public class BinaryOrLabelOverlayPlugin implements PlugIn
         public void windowClosing(WindowEvent e)
         {
             super.windowClosing(e);
-            
-            if (data.refImage != null)
-            {
-                if (data.displayImage != null)
-                {
-                    data.refImage.setSlice(data.displayImage.getCurrentSlice());
-                }
-                
-                // display input image
-                data.refImage.getWindow().setVisible(true);
-            }
-            
-            if (null != data.displayImage)
-            {
-                // displayImage.close();
-                data.displayImage = null;
-            }
             this.data = null;
             
             // shut down executor service
             threadPool.shutdownNow();
         }
+    }
+
+    private ImagePlus retrieveImage(int index)
+    {
+        if (index < 0) 
+        {
+            return null;
+        }
+        String imageName = this.imageNames[index];
+        return WindowManager.getImage(imageName);
     }
 }
