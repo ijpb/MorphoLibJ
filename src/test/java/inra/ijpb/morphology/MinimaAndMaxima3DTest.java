@@ -287,14 +287,10 @@ public class MinimaAndMaxima3DTest {
 	}
 
 	@Test
-	public final void testRegionalMaxima_BatCochlea() {
-		String fileName = getClass().getResource("/files/bat-cochlea-volume.tif").getFile();
-		ImagePlus imagePlus = IJ.openImage(fileName);
-		assertNotNull(imagePlus);
-		assertTrue(imagePlus.getStackSize() > 0);
-
+	public final void testRegionalMaxima_BatCochlea() 
+	{
 		// load the reference image, and get its size
-		ImageStack image = imagePlus.getStack();
+		ImageStack image = readBatCochleaStack();
 		int sizeX = image.getWidth();
 		int sizeY = image.getHeight();
 		int sizeZ = image.getSize();
@@ -435,4 +431,15 @@ public class MinimaAndMaxima3DTest {
 		return stack;
 	}
 	
+    private ImageStack readBatCochleaStack()
+    {
+        String fileName = getClass().getResource("/files/bat-cochlea_sub25.tif").getFile();
+        ImagePlus imagePlus = IJ.openImage(fileName);
+        
+        // some check-ups
+        assertNotNull(imagePlus);
+        assertTrue(imagePlus.getStackSize() > 0);
+
+        return imagePlus.getStack();
+    }
 }
