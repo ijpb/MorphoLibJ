@@ -27,6 +27,27 @@ public class ImageUtils
     }
     
     /**
+     * Checks if the two input images have the same dimensionality and the same
+     * size in each direction.
+     * 
+     * @param image1
+     *            the first image
+     * @param image2
+     *            the second image
+     * @return true if both images have same dimensionality and same size.
+     */
+    public static final boolean isSameSize(ImagePlus image1, ImagePlus image2)
+    {
+        if (image1.getWidth() != image2.getWidth())
+            return false;
+        if (image1.getHeight() != image2.getHeight())
+            return false;
+        if (image1.getStackSize() != image2.getStackSize())
+            return false;
+        return true;
+    }
+
+    /**
      * Checks if the two input images have the same size in each direction.
      * 
      * @param image1
@@ -66,6 +87,21 @@ public class ImageUtils
         return true;
     }
     
+    /**
+     * Checks if the two input images have the same data type.
+     * 
+     * @param image1
+     *            the first image
+     * @param image2
+     *            the second image
+     * @return true if both images have the same data type, given by the bit
+     *         depth.
+     */
+    public static final boolean isSameType(ImagePlus image1, ImagePlus image2)
+    {
+        return image1.getBitDepth() == image2.getBitDepth();
+    }
+
     /**
      * Checks if the two input images have the same data type.
      * 
