@@ -11668,14 +11668,14 @@ status open
 \align center
 \begin_inset Graphics
 	filename images/leaf/IJ-leaf-bin.tif
-	width 45text%
+	width 43text%
 
 \end_inset
 
  
 \begin_inset Graphics
 	filename images/leaf/IJ-leaf-bin-dist_FireRGB.png
-	width 45text%
+	width 43text%
 
 \end_inset
 
@@ -11705,28 +11705,42 @@ Binary image, and result of computation of the distance transform.
 
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 Chamfer distances
 \end_layout
 
 \begin_layout Standard
 Several methods exist for computing distance maps.
- The MorphoLibJ library implements distance transforms based on chamfer
- distances.
- Chamfer distances approximate Euclidean distances with integer weights,
- and are simpler to compute than exact Euclidean distance 
+ The MorphoLibJ library implements distance transforms based on 
+\series bold
+chamfer masks
+\series default
+, that are simpler to compute than exact Euclidean distance 
 \begin_inset CommandInset citation
 LatexCommand citep
-key "Borgefors1984,Borgefors1986"
+key "Rosenfeld1968,Borgefors1984,Borgefors1986"
 literal "true"
 
 \end_inset
 
 .
- As chamfer weights are only an approximation of the real Euclidean distance,
- some differences are expected compared to the actual Euclidean distance
- map.
- 
+ The principle is to update the distance associated to each pixel by considering
+ the distances within a small neighborhood, and adding a weight depending
+ on the relative location of the neighbor (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Chamfer-Mask-Neighborhoods"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Standard
@@ -11736,8 +11750,223 @@ sideways false
 status open
 
 \begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/binary/chamferMask_neighborhoods.png
+	lyxscale 50
+	width 55text%
+
+\end_inset
+
 
 \end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Chamfer-Mask-Neighborhoods"
+
+\end_inset
+
+Computation of distance maps using chamfer masks.
+ The distance associated to each pixel is updated according to the distances
+ associated to the neighbor pixels.
+ Left: 3x3 neighborhood.
+ Right: 5x5 neighborhood.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In practice, using integer weights may result in faster computations.
+ This also allows to store the resulting distance map within 16-bits grayscale
+ images, resulting in more efficient memory usage than floating point computatio
+n.
+\end_layout
+
+\begin_layout Standard
+Several typical choices for chamfer weights are illustrated on Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Chamfer-Weights-2D"
+
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Itemize
+The simplest one is the 
+\series bold
+
+\begin_inset Quotes eld
+\end_inset
+
+Chessboard
+\begin_inset Quotes erd
+\end_inset
+
+ mask
+\series default
+, that considers distance equal to 1 for both orthogonal and diagonal neighbors
+ (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Chamfer-Weights-2D"
+
+\end_inset
+
+-a).
+ The propagation of distances from a center pixel follow a square pattern.
+ 
+\end_layout
+
+\begin_layout Itemize
+The 
+\series bold
+City-block
+\series default
+ or 
+\series bold
+Manhattan mask
+\series default
+ uses a weight equal to 2 for diagonal neighbord, resulting in diamond-like
+ propagation of distance (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Chamfer-Weights-2D"
+
+\end_inset
+
+-b).
+ 
+\end_layout
+
+\begin_layout Itemize
+The 
+\begin_inset Quotes eld
+\end_inset
+
+
+\series bold
+Borgefors
+\series default
+
+\begin_inset Quotes erd
+\end_inset
+
+ distance uses the weight 3 for orthogonal pixels and 4 for diagonal pixels
+ 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Borgefors1986"
+literal "false"
+
+\end_inset
+
+.
+ It was claimed to be best integer approximation when considering the 3-by-3
+ neighborhood (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Chamfer-Weights-2D"
+
+\end_inset
+
+-c).
+ 
+\end_layout
+
+\begin_layout Itemize
+The 
+\begin_inset Quotes eld
+\end_inset
+
+
+\series bold
+Chess-knight
+\series default
+
+\begin_inset Quotes erd
+\end_inset
+
+ distance 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Das_1988_PRL"
+literal "false"
+
+\end_inset
+
+ also takes into account the pixels located at a distance from 
+\begin_inset Formula $(\pm1,\pm2)$
+\end_inset
+
+ in any direction (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Chamfer-Weights-2D"
+
+\end_inset
+
+-d).
+ It is usually the best choice, as it considers a larger neighborhood.
+\end_layout
+
+\begin_layout Itemize
+The MorphoLibJ library also provides chamfer masks with four weights, as
+ proposed by 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Verwer_1989_PAMI"
+literal "false"
+
+\end_inset
+
+.
+ The fourth weight corresponds to pixels located at a distance of 
+\begin_inset Formula $(\pm1,\pm3)$
+\end_inset
+
+ from the reference pixel, in any direction.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -11858,7 +12087,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Chess knight (5,7,11)
+Chess-knight (5,7,11)
 \end_layout
 
 \end_inset
@@ -11881,7 +12110,7 @@ name "fig:Chamfer-Weights-2D"
 
 \end_inset
 
-Several chamfer weights for computing distance maps.
+Several examples of distance maps computed with different chamfer masks.
  For each image, the distance to the lower-left pixel is represented both
  with numeric value and with color code.
  Numbers in brackets correspond to the weights associated with orthogonal
@@ -11905,79 +12134,85 @@ Several chamfer weights for computing distance maps.
 \end_layout
 
 \begin_layout Standard
-Several choices for chamfer weights are illustrated on Figure
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Chamfer-Weights-2D"
-
-\end_inset
-
-.
- The 
+As chamfer masks are only an approximation of the real Euclidean distance,
+ some differences are expected compared to the actual Euclidean distance
+ map.
+ Using larger weights reduces the relative error, but the largest possible
+ distance (that depends on the bit-depth of the output image) may be reached
+ faster, leading to 
 \begin_inset Quotes eld
 \end_inset
 
-Borgefors
+saturation
 \begin_inset Quotes erd
 \end_inset
 
- weights were claimed to be best approximation when considering the 3-by-3
- neighborhood (Fig.
-\begin_inset space ~
+ of the distance map.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
 \end_inset
 
 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Chamfer-Weights-2D"
-
-\end_inset
-
--c).
- The 
-\begin_inset Quotes eld
-\end_inset
-
-Chess-knight
-\begin_inset Quotes erd
-\end_inset
-
- distance also takes into account the pixels located at a distance from
- 
-\begin_inset Formula $(\pm1,\pm2)$
-\end_inset
-
- in any direction (Fig.
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Chamfer-Weights-2D"
-
-\end_inset
-
--d).
- It is usually the best choice, as it considers a larger neighborhood.
 \end_layout
 
 \begin_layout Subsubsection
-Distance maps for label images
+Chamfer distance computation
 \end_layout
 
 \begin_layout Standard
-The distance transform algorithm may also be applied to label images.
- However, as regions corresponding to each label may be continuous, the
- algorithm need to be adapted.
- 
-\end_layout
+A great advantage of chamfer masks is that they allow fast computation of
+ distance maps by dividing the process into two passes.
+ During the first pass (in 
+\begin_inset Quotes eld
+\end_inset
 
-\begin_layout Standard
+forward
+\begin_inset Quotes erd
+\end_inset
+
+ direction), pixels are iterated from left to right and from top to bottom.
+ The distance associated to each pixel is updated based on pixels already
+ updated, located upper and on the left (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Chamfer-Masks"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+-a).
+ During the second pass, pixels are iterated 
+\begin_inset Quotes eld
+\end_inset
+
+backward
+\begin_inset Quotes erd
+\end_inset
+
+ (from right to left and from bottom to top), and the distance map is updated
+ based on the pixels located bottom and on the right (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Chamfer-Masks"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+-b).
 \begin_inset Float figure
 wide false
 sideways false
@@ -11985,16 +12220,66 @@ status open
 
 \begin_layout Plain Layout
 \align center
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
 \begin_inset Graphics
-	filename images/blobs/blobs-basins.png
-	width 35text%
+	filename images/binary/chamferMask_fwd.png
+	lyxscale 50
+	width 22text%
 
 \end_inset
 
- 
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Forward mask
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
 \begin_inset Graphics
-	filename images/blobs/blobs-basins-distmap-fire.png
-	width 35text%
+	filename images/binary/chamferMask_bwd.png
+	lyxscale 50
+	width 22text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Backward mask
+\end_layout
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
@@ -12007,12 +12292,20 @@ status open
 \begin_layout Plain Layout
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Distance-Transform-Label-Image"
+name "fig:Chamfer-Masks"
 
 \end_inset
 
-An example of a label image containing contiguous regions, and result of
- the distance transform applied on the label image.
+Implementation of two-passes chamfer distances.
+ The 5x5 chamfer mask is decomposed into two 
+\begin_inset Quotes eld
+\end_inset
+
+half-masks
+\begin_inset Quotes erd
+\end_inset
+
+, one for each pass.
 \end_layout
 
 \end_inset
@@ -12023,34 +12316,14 @@ An example of a label image containing contiguous regions, and result of
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
-For label image, distances are computed between each foreground (greater
- than zero) pixel and the nearest pixel with a different value : either
- 0 (the background) or another label.
- Distances are propagated as for binary images, using a pair of forward
- and backward passes.
- An example of result is provided on Figure
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Distance-Transform-Label-Image"
-
-\end_inset
-
-.
 \end_layout
 
 \begin_layout Subsubsection
-Chamfer distances for 3D images
+3D chamfer masks
 \end_layout
 
 \begin_layout Standard
-For 3D images, distance maps can be computed as well.
+For 3D images, chamfer distance maps can be computed using the same principle.
  Three different chamfer weights can be associated to the 6 orthogonal neighbors
 , to the 12 neighbor voxel sharing an edge with reference voxel, and to
  the 8 neighbor voxel sharing only a corner with reference voxel.
@@ -12063,24 +12336,12 @@ For 3D images, distance maps can be computed as well.
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Chamfer-Weights-3D"
+reference "fig:Chamfer-Masks-3D-1"
 
 \end_inset
 
 ).
- The Borgefors weights (3,4,5) usually give a good approximation of the
- Euclidean distance when considering only the 3-by-3-by-3 neighborhood (Fig.
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Chamfer-Weights-3D"
-
-\end_inset
-
--c).
+ 
 \end_layout
 
 \begin_layout Standard
@@ -12195,15 +12456,13 @@ Borgefors (3,4,5)
 \begin_layout Plain Layout
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Chamfer-Weights-3D"
+name "fig:Chamfer-Masks-3D-1"
 
 \end_inset
 
 Discrete 3D balls resulting from different chamfer distances.
  The distance map is computed to the center voxel, then the result is thresholde
 d and represented in 3D.
- Numbers in brackets correspond to the weights associated with orthogonal,
- edge-diagonal, and corner-diagonal directions.
  
 \end_layout
 
@@ -12218,39 +12477,58 @@ d and represented in 3D.
 \end_layout
 
 \begin_layout Standard
-Larger neighborhood may be considered, resulting in a better approximation
- (Fig.
+Several 3D chamfer distances can be used:
+\end_layout
+
+\begin_layout Itemize
+The (3D) chessboard distance uses the same weight for all the 26 neighbors.
+ This results in distance propagation in a cubic shape pattern (Fig.
 \begin_inset space ~
 \end_inset
 
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Chamfer-Masks-3D-2"
-plural "false"
-caps "false"
-noprefix "false"
+reference "fig:Chamfer-Masks-3D-1"
 
 \end_inset
 
-).
- Svensson and Borgefors found that adding a fourth weight for voxels shifted
- by 
-\begin_inset Formula $(\pm1,\pm1,\pm2)$
+-a).
+\end_layout
+
+\begin_layout Itemize
+The (3D) Manhattan distance considers weights triplet equal to 
+\begin_inset Formula $(1,2,3)$
 \end_inset
 
- in any direction results in a substantial error reduction while preserving
- a low complexity of the algorithm 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Svensson_Borgefors_2002_prl,Svensson_Borgefors_2002_cviu"
-literal "true"
+, resulting in octagon-like distance propagation (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Chamfer-Masks-3D-1"
 
 \end_inset
 
-.
- Starting from version 1.5, MorphoLibJ allows using up to six weights (correspond
-ing to the complete 5–by–5-by–5 neighborhood).
+-b).
+\end_layout
+
+\begin_layout Itemize
+The Borgefors weights (3,4,5) usually give a good approximation of the Euclidean
+ distance when considering only the 3-by-3-by-3 neighborhood (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Chamfer-Masks-3D-1"
+
+\end_inset
+
+-c).
 \end_layout
 
 \begin_layout Standard
@@ -12373,9 +12651,116 @@ Enhancement of 3D distance maps when using larger chamfer masks.
  Masks are based on (a) four, (b) five, or (c) six weights.
  Using All images represent the threshold of the distance 100 from image
  center.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Larger neighborhood may be considered, resulting in a better approximation
+ (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Chamfer-Masks-3D-2"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+):
+\end_layout
+
+\begin_layout Itemize
+Svensson and Borgefors found that adding a fourth weight for voxels shifted
+ by 
+\begin_inset Formula $(\pm1,\pm1,\pm2)$
+\end_inset
+
+ in any direction results in a substantial error reduction while preserving
+ a low complexity of the algorithm 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Svensson_Borgefors_2002_prl,Svensson_Borgefors_2002_cviu"
+literal "true"
+
+\end_inset
+
+.
  
 \end_layout
 
+\begin_layout Itemize
+Starting from version 1.5, MorphoLibJ allows using up to six weights (correspondi
+ng to the complete 5–by–5-by–5 neighborhood).
+\end_layout
+
+\begin_layout Standard
+As for the 2D case, the choice of the chamfer distance is compromise between
+ the accuracy (larger neighborhood and weights are usually more accurate)
+ and the largest distance that can be represented.
+\end_layout
+
+\begin_layout Subsubsection
+Case of label images
+\end_layout
+
+\begin_layout Standard
+The distance transform algorithm may also be applied to label images.
+ However, as regions corresponding to each label may be continuous, the
+ algorithm need to be adapted.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/blobs/blobs-basins.png
+	width 35text%
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/blobs/blobs-basins-distmap-fire.png
+	width 35text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Distance-Transform-Label-Image"
+
+\end_inset
+
+An example of a label image containing contiguous regions, and result of
+ the distance transform applied on the label image.
+\end_layout
+
 \end_inset
 
 
@@ -12384,6 +12769,26 @@ Enhancement of 3D distance maps when using larger chamfer masks.
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+For label image, distances are computed between each foreground (greater
+ than zero) pixel and the nearest pixel with a different value : either
+ 0 (the background) or another label.
+ Distances are propagated as for binary images, using a pair of forward
+ and backward passes.
+ An example of result is provided on Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Distance-Transform-Label-Image"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsubsection
@@ -12411,9 +12816,9 @@ name "op:Chamfer-Distance-Map"
 
 \end_inset
 
-computes an approximate distance map from a binary or label image, between
- each foreground pixel to the nearest pixel with a different value (background
- or label image).
+computes a chamfer distance map from a binary or label image, between each
+ foreground pixel to the nearest pixel with a different value (either background
+ or another label).
 \end_layout
 
 \begin_layout Description
@@ -12436,9 +12841,10 @@ name "op:Chamfer-Distance-Map-3d"
 
 \end_inset
 
-computes an approximate distance map from a 3D binary image between each
- foreground voxel to the nearest background voxel.
- Binary image is assumed to have cubic voxels.
+computes a chamfer distance map from a 3D binary image between each foreground
+ voxel to the nearest voxel with a different value (either background or
+ another label).
+ Input image is assumed to have cubic voxels.
 \end_layout
 
 \begin_layout Standard
@@ -12447,11 +12853,8 @@ For each plugin, a dialog opens and allows to select the following parameters:
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-Chamfer
-\begin_inset space ~
-\end_inset
-
-Weights the weights to use for computing the distance map
+Distances the weights of the chamfer mask used for computing the distance
+ map
 \end_layout
 
 \begin_layout Labeling
@@ -12468,7 +12871,7 @@ Type specify if the result should be stored in 16-bits image (uses less
 \labelwidthstring 00.00.0000
 Normalize specify if the resulting map should be divided by the weight associate
 d with orthogonal pixels or voxels.
- This may be useful for Borgefors or Chess-kneight weights to have distances
+ This may be useful for masks with large weights to have resulting distances
  comparable to Euclidean ones.
 \end_layout
 
@@ -12629,7 +13032,7 @@ literal "true"
 
 .
  (a) Original image with marker superimposed in red.
- (b) Color representation of th geodesic distance map: hot colors correspond
+ (b) Color representation of the geodesic distance map: hot colors correspond
  to large distances, cold colors correspond to small distances.
 \end_layout
 
