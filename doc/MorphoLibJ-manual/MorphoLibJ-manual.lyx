@@ -10648,179 +10648,6 @@ e_{12}=\frac{r_{1}}{r_{2}},\,e_{23}=\frac{r_{2}}{r_{3}},\,e_{13}=\frac{r_{1}}{r_
 \end_layout
 
 \begin_layout Subsection
-Region Adjacency Graph
-\end_layout
-
-\begin_layout Standard
-\begin_inset CommandInset label
-LatexCommand label
-name "sec:Region-Adjacency-Graph"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The 
-\series bold
-region adjacency graph 
-\series default
-plugin gives access to the neighborhood relationship between adjacent regions
- (Figure
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Region-Adjacency-Graph"
-
-\end_inset
-
-).
- This can be particularly informative for exploring collections of cells
- within cellular tissues 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Florindo_2016_botanique"
-literal "true"
-
-\end_inset
-
-.
- 
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename images/analysis/maize-clsm.png
-	lyxscale 60
-	width 31text%
-
-\end_inset
-
- 
-\begin_inset Graphics
-	filename images/analysis/maize-clsm-watDyn10.png
-	lyxscale 60
-	width 31text%
-
-\end_inset
-
- 
-\begin_inset Graphics
-	filename images/analysis/maize-clsm-rag.png
-	lyxscale 60
-	width 31text%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:Region-Adjacency-Graph"
-
-\end_inset
-
-Computation of the Region Adjacency Graph (RAG) on a microscopy image of
- plant tissue.
- Left: original image.
- Middle: result of watershed segmentation.
- Right: overlay of edges representing adjacent regions.
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The plugin (under 
-\begin_inset Quotes eld
-\end_inset
-
-Plugins\SpecialChar menuseparator
-MorphoLibJ\SpecialChar menuseparator
-Analyze\SpecialChar menuseparator
-Region Adjacency Graph
-\begin_inset Quotes erd
-\end_inset
-
-) works for both 2D and 3D images, and requires a label image as input.
- A typical input is the result of a watershed segmentation (see section
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "chap:Watershed-segmentation"
-
-\end_inset
-
-), eventually followed by manual edition of the labels (see section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:Label-Edition-plugin"
-
-\end_inset
-
-).
- The output of the plugin is a results table with as many rows as the number
- of pairs of adjacent regions, containing the labels of the two adjacent
- regions.
-\end_layout
-
-\begin_layout Standard
-Note that in the current implementation, MorphoLibJ considers that two regions
- are adjacent if they are separated by 0 or 1 voxel in one of the three
- main directions.
- Therefore, other plugins such as the 
-\series bold
-interface surface area 
-\series default
-(section
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:Interface-Surface-Area"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-) can provide results that may not seem consistent with the region adjacency
- graph.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Newpage newpage
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
 Plugins
 \end_layout
 
@@ -13484,7 +13311,21 @@ reference "fig:Connected-component-labeling"
 
 ).
  Label images can be represented with colored LUT to help distinguish adjacent
- labels.
+ labels (see section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Visualization-of-Label-Images"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Standard
@@ -13497,14 +13338,14 @@ status open
 \align center
 \begin_inset Graphics
 	filename images/grains/grains-binary-crop-ext.png
-	width 25text%
+	width 28text%
 
 \end_inset
 
  
 \begin_inset Graphics
 	filename images/grains/grains-binary-crop-lbl-ext.png
-	width 25text%
+	width 28text%
 
 \end_inset
 
@@ -13821,10 +13662,16 @@ transforms the binary image into a label image by assigning a specific number
 \end_layout
 
 \begin_layout Subsection
-Display label image
+Visualization of label images
 \end_layout
 
 \begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Visualization-of-Label-Images"
+
+\end_inset
+
 Label images can be represented either using shades of gray, or using color
  maps to better distinguish the different regions.
  
@@ -13847,16 +13694,96 @@ status open
 
 \begin_layout Plain Layout
 \align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
 \begin_inset Graphics
-	filename images/grains/grains-binary-crop-lbl-ext.png
-	width 4cm
+	filename images/grains/grains-WTH-areaOpen-lbl2-border.png
+	height 4cm
 
 \end_inset
 
- 
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Using Colormap
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
 \begin_inset Graphics
-	filename images/grains/grains-binary-crop-1-lbl-Elong.png
-	width 4cm
+	filename images/grains/grains-drawLabels.png
+	height 4cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Draw Labels as Overlay
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/grains/grains-OverlayLabels.png
+	lyxscale 60
+	height 4cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Overlay Label Image
+\end_layout
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
@@ -13869,13 +13796,15 @@ status open
 \begin_layout Plain Layout
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Assign-Measure-To-Label"
+name "fig:Label-Images-Visualization"
 
 \end_inset
 
-Assign result of a measurement to a label image.
- In this example, the elongation is represented using a color code, between
- dark purple (circular) to yellow (very elongated).
+Various visualization modes of label images.
+ (a) Display regions using appropriate colormap.
+ (b) The label associated to each region is overlaid on another image.
+ (c) Label map or binary images can be overlaid on another grayscale image
+ using user-defined opacity.
 \end_layout
 
 \end_inset
@@ -13904,9 +13833,26 @@ name "op:Set-Label-Map"
 
 \end_inset
 
-allows to choose the color map used to display a label image.
+allows to choose the color map used to display a label image (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Label-Images-Visualization"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+-a).
  In particular, shuffling the color map and/or choosing a specific color
  for background allows better visualization than with only gray levels.
+ Note that when the number of regions is large, regions with small labels
+ will be associated to the same color as background, and will therefore
+ not be visible!
 \end_layout
 
 \begin_layout Description
@@ -13918,10 +13864,83 @@ To
 \begin_inset space ~
 \end_inset
 
-RGB converts a label image to a true RGB image.
+RGB 
+\begin_inset CommandInset label
+LatexCommand label
+name "op:Label-To-RGB"
+
+\end_inset
+
+converts a label image to a true RGB image.
  Similar to ImageJ native conversion, but this plugin avoids confusion between
  background pixels and labels with small values when the number of labels
  is large.
+\end_layout
+
+\begin_layout Description
+Draw
+\begin_inset space ~
+\end_inset
+
+Labels
+\begin_inset space ~
+\end_inset
+
+As_Overlay Choose another image, and display the label associated to each
+ region as a text overlay (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Label-Images-Visualization"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+-b).
+ The position of the overlay is the centroid of each region, and a small
+ shift can be specified.
+\end_layout
+
+\begin_layout Description
+Overlay
+\begin_inset space ~
+\end_inset
+
+Binary
+\begin_inset space ~
+\end_inset
+
+Or
+\begin_inset space ~
+\end_inset
+
+Label
+\begin_inset space ~
+\end_inset
+
+Image Opens a dialog to choose a reference/background image, and an image
+ to overlay, that can be either a binary image or a label map (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Label-Images-Visualization"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+-c).
+ User can specifiy the opacity of the overlay, and generate a new Color
+ image for the result.
 \end_layout
 
 \begin_layout Subsection
@@ -13950,69 +13969,64 @@ Draw Label Values
  plugins provide some help to facilitate this exploration.
 \end_layout
 
-\begin_layout Description
-Assign
-\begin_inset space ~
-\end_inset
-
-Measure
-\begin_inset space ~
-\end_inset
-
-To
-\begin_inset space ~
-\end_inset
-
-Label 
-\begin_inset CommandInset label
-LatexCommand label
-name "op:Colorize-Labels"
-
-\end_inset
-
-combines a label image with a results table, and creates a new image for
- which each pixel/voxel is assigned the measurement value corresponding
- to the label it belongs to (Figure
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Assign-Measure-To-Label"
-
-\end_inset
-
-).
- Background pixels/voxels are associated to NaN (Not-A-Number) value.
- See also the 
-\begin_inset ERT
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
 status open
 
 \begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/grains/grains-WTH-areaOpen-lbl2-border-drawLabelValues.png
+	lyxscale 60
+	height 4cm
+
+\end_inset
 
 
-\backslash
-hyperref[op:Draw-Label-Vales]{Draw Label Values plugin}
+\begin_inset Graphics
+	filename images/grains/grains-lbl2-ElongMap.png
+	height 4cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Display-Region-Feature"
+
+\end_inset
+
+Various possibilities to graphically visualize region feature.
+ On the left, the table used for display.
+ Center, overlay of the elongation feature using the 
+\begin_inset Quotes eld
+\end_inset
+
+Draw Label Values
+\begin_inset Quotes erd
+\end_inset
+
+ plugin.
+ On the right, color representation of the elongation using a color code:
+ between dark purple (circular, compact) to white (very elongated).
 \end_layout
 
 \end_inset
 
- (page
-\begin_inset space ~
-\end_inset
 
-
-\begin_inset CommandInset ref
-LatexCommand pageref
-reference "op:Draw-Label-Values"
-plural "false"
-caps "false"
-noprefix "false"
+\end_layout
 
 \end_inset
 
-).
+
 \end_layout
 
 \begin_layout Description
@@ -14040,7 +14054,7 @@ draws the value of a feature measured on each label of an image using two
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Draw-Label-Values"
+reference "fig:Display-Region-Feature"
 plural "false"
 caps "false"
 noprefix "false"
@@ -14048,7 +14062,11 @@ noprefix "false"
 \end_inset
 
 .
- See also the plugin Assign
+ 
+\end_layout
+
+\begin_layout Description
+Assign
 \begin_inset space ~
 \end_inset
 
@@ -14060,14 +14078,23 @@ To
 \begin_inset space ~
 \end_inset
 
-Label (page
+Label 
+\begin_inset CommandInset label
+LatexCommand label
+name "op:Colorize-Labels"
+
+\end_inset
+
+combines a label image with a results table, and creates a new 32-bits image
+ for which each pixel/voxel is assigned the measurement value corresponding
+ to the label it belongs to (Figure
 \begin_inset space ~
 \end_inset
 
 
 \begin_inset CommandInset ref
-LatexCommand pageref
-reference "op:Colorize-Labels"
+LatexCommand ref
+reference "fig:Display-Region-Feature"
 plural "false"
 caps "false"
 noprefix "false"
@@ -14075,6 +14102,64 @@ noprefix "false"
 \end_inset
 
 ).
+ Background pixels/voxels are associated to NaN (Not-A-Number) value.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Region adjacencies
+\end_layout
+
+\begin_layout Subsubsection
+Region Adjacency Graph
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Region-Adjacency-Graph"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+region adjacency graph 
+\series default
+plugin gives access to the neighborhood relationship between adjacent regions
+ (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Region-Adjacency-Graph"
+
+\end_inset
+
+).
+ This can be particularly informative for exploring collections of cells
+ within cellular tissues 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Florindo_2016_botanique"
+literal "true"
+
+\end_inset
+
+.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -14086,8 +14171,25 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename images/grains/grains-WTH-areaOpen-lbl2-border-drawLabelValues.png
-	width 100text%
+	filename images/analysis/maize-clsm.png
+	lyxscale 60
+	width 31text%
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/analysis/maize-clsm-watDyn10.png
+	lyxscale 60
+	width 31text%
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/analysis/maize-clsm-rag.png
+	lyxscale 60
+	width 31text%
 
 \end_inset
 
@@ -14100,21 +14202,15 @@ status open
 \begin_layout Plain Layout
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Draw-Label-Values"
+name "fig:Region-Adjacency-Graph"
 
 \end_inset
 
-Example use of the 
-\begin_inset Quotes eld
-\end_inset
-
-Draw Label Values
-\begin_inset Quotes erd
-\end_inset
-
- plugin.
- The value of the elongation column are drawn as overlay on the image using
- the position given by Bounding Box coordinates.
+Computation of the Region Adjacency Graph (RAG) on a microscopy image of
+ plant tissue.
+ Left: original image.
+ Middle: result of watershed segmentation.
+ Right: overlay of edges representing adjacent regions.
 \end_layout
 
 \end_inset
@@ -14128,13 +14224,66 @@ Draw Label Values
 \end_layout
 
 \begin_layout Standard
-\begin_inset Newpage newpage
+The plugin (under 
+\begin_inset Quotes eld
+\end_inset
+
+Plugins\SpecialChar menuseparator
+MorphoLibJ\SpecialChar menuseparator
+Analyze\SpecialChar menuseparator
+Region Adjacency Graph
+\begin_inset Quotes erd
+\end_inset
+
+) works for both 2D and 3D images, and requires a label image as input.
+ A typical input is the result of a watershed segmentation (see section
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "chap:Watershed-segmentation"
+
+\end_inset
+
+), eventually followed by manual edition of the labels (see section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Label-Edition-plugin"
+
+\end_inset
+
+).
+ The output of the plugin is a results table with as many rows as the number
+ of pairs of adjacent regions, containing the labels of the two adjacent
+ regions.
+\end_layout
+
+\begin_layout Standard
+Note that in the current implementation, MorphoLibJ considers that two regions
+ are adjacent if they are separated by 0 or 1 voxel in one of the three
+ main directions.
+ Therefore, other plugins such as the 
+\series bold
+interface surface area 
+\series default
+(section
+\begin_inset space ~
 \end_inset
 
 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Interface-Surface-Area"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) can provide results that may not seem consistent with the region adjacency
+ graph.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 Region Boundary Labeling
 \end_layout
 
