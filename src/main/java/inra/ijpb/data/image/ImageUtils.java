@@ -5,7 +5,10 @@ package inra.ijpb.data.image;
 
 import ij.ImagePlus;
 import ij.ImageStack;
+import ij.process.ByteProcessor;
+import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
+import ij.process.ShortProcessor;
 
 /**
  * A collection of static utility methods for processing 2D or 3D images.
@@ -14,6 +17,114 @@ import ij.process.ImageProcessor;
  */
 public class ImageUtils
 {
+    /**
+     * Creates a new ByteProcessor initialized with the content of the input
+     * array.
+     * 
+     * <pre>{@code
+    ImageProcessor image = ImageUtils.createByteProcessor(new int[][] {
+        { 0,  0,  0,  0,  0},  
+        { 0, 20, 20, 20,  0},  
+        { 0, 20, 50, 20,  0},  
+        { 0, 20, 20, 20,  0},  
+        { 0,  0,  0,  0,  0},  
+    });
+     * }
+     * </pre>
+     * 
+     * @param data
+     *            the array containing image data, as integer values
+     * @return a new ByteProcessor initialized with data array.
+     */
+    public static final ByteProcessor createByteProcessor(int[][] data)
+    {
+        int sizeY = data.length;
+        int sizeX = data[0].length;
+        
+        ByteProcessor image = new ByteProcessor(sizeX, sizeY);
+        for (int y = 0; y < sizeY; y++)
+        {
+            for (int x = 0; x < sizeX; x++)
+            {
+                image.set(x, y, data[y][x]);
+            }
+        }
+        
+        return image;
+    }
+    
+    /**
+     * Creates a new ShortProcessor initialized with the content of the input
+     * array.
+     * 
+     * <pre>{@code
+    ImageProcessor image = ImageUtils.createShortProcessor(new int[][] {
+        { 0,  0,  0,  0,  0},  
+        { 0, 20, 20, 20,  0},  
+        { 0, 20, 50, 20,  0},  
+        { 0, 20, 20, 20,  0},  
+        { 0,  0,  0,  0,  0},  
+    });
+     * }
+     * </pre>
+     * 
+     * @param data
+     *            the array containing image data, as integer values
+     * @return a new ShortProcessor initialized with data array.
+     */
+    public static final ShortProcessor createShortProcessor(int[][] data)
+    {
+        int sizeY = data.length;
+        int sizeX = data[0].length;
+        
+        ShortProcessor image = new ShortProcessor(sizeX, sizeY);
+        for (int y = 0; y < sizeY; y++)
+        {
+            for (int x = 0; x < sizeX; x++)
+            {
+                image.set(x, y, data[y][x]);
+            }
+        }
+        
+        return image;
+    }
+    
+    /**
+     * Creates a new FloatProcessor initialized with the content of the input
+     * array.
+     * 
+     * <pre>{@code
+    ImageProcessor image = ImageUtils.createFloatProcessor(new float[][] {
+        { 0,  0,  0,  0,  0},  
+        { 0, 20, 20, 20,  0},  
+        { 0, 20, 50, 20,  0},  
+        { 0, 20, 20, 20,  0},  
+        { 0,  0,  0,  0,  0},  
+    });
+     * }
+     * </pre>
+     * 
+     * @param data
+     *            the array containing image data, as float values
+     * @return a new FloatProcessor initialized with data array.
+     */
+    public static final FloatProcessor createFloatProcessor(float[][] data)
+    {
+        int sizeY = data.length;
+        int sizeX = data[0].length;
+        
+        FloatProcessor image = new FloatProcessor(sizeX, sizeY);
+        for (int y = 0; y < sizeY; y++)
+        {
+            for (int x = 0; x < sizeX; x++)
+            {
+                image.setf(x, y, data[y][x]);
+            }
+        }
+        
+        return image;
+    }
+    
     /**
      * Checks if the specified image is a color image.
      * 
