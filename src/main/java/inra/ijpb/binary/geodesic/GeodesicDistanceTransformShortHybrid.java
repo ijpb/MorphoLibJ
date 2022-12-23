@@ -21,16 +21,15 @@
  */
 package inra.ijpb.binary.geodesic;
 
-import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Deque;
+import java.util.PriorityQueue;
 
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.binary.distmap.ChamferMask2D;
 import inra.ijpb.binary.distmap.ChamferMask2D.ShortOffset;
-import inra.ijpb.data.Cursor2D;
 
 /**
  * Computation of geodesic distances based on a chamfer mask using short integer
@@ -98,37 +97,6 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
 		this.normalizeMap = normalizeMap;
 	}
 
-	/**
-	 * Creates a new algorithm for propagating geodesic distances.
-	 * 
-	 * @param weights
-	 *            the weights to use for propagating distances
-	 *            
-	 * @deprecated should use an instance of ChamferMask2D at construction
-	 */
-	@Deprecated
-	public GeodesicDistanceTransformShortHybrid(short[] weights) 
-	{
-		this.mask = ChamferMask2D.fromWeights(weights);
-	}
-
-	/**
-	 * Creates a new algorithm for propagating geodesic distances.
-	 * 
-	 * @param weights
-	 *            the weights to use for propagating distances
-	 * @param normalizeMap
-	 *            the flag for normalization
-	 *            
-	 * @deprecated should use an instance of ChamferMask2D at construction
-	 */
-	@Deprecated
-	public GeodesicDistanceTransformShortHybrid(short[] weights, boolean normalizeMap) 
-	{
-		this.mask = ChamferMask2D.fromWeights(weights);
-		this.normalizeMap = normalizeMap;
-	}
-
 	
 	// ==================================================
 	// Methods 
@@ -167,7 +135,7 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
 
 		// backward iteration
 		fireStatusChanged(this, "Backward iteration"); 
-		Deque<Cursor2D> queue = backwardIteration(distMap, labelImage);
+		PriorityQueue<Record> queue = backwardIteration(distMap, labelImage);
 
 		// Iterate while pixels have been modified
         fireStatusChanged(this, "Process queue"); 
@@ -291,7 +259,7 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
 		this.fireProgressChanged(this, sizeY, sizeY);
 	}
 
-	private Deque<Cursor2D> backwardIteration(ShortProcessor distMap, ImageProcessor labelImage)
+	private PriorityQueue<Record> backwardIteration(ShortProcessor distMap, ImageProcessor labelImage)
 	{
 		// size of image
 		int sizeX = labelImage.getWidth();
@@ -299,8 +267,8 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
 		Collection<ShortOffset> offsets = mask.getBackwardOffsets();
 		
 		// initialize queue
-		// TODO: could use priority based on distance map value
-		ArrayDeque<Cursor2D> queue = new ArrayDeque<Cursor2D>();
+        PriorityQueue<Record> queue = new PriorityQueue<>();
+		ArrayList<Neighbor> neighbors = new ArrayList<Neighbor>(offsets.size());
 		
 		// Iterate over pixels
 		for (int y = sizeY-1; y >= 0; y--)
@@ -318,6 +286,7 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
 				// current distance value
 				int currentDist = distMap.get(x, y);
 				int newDist = currentDist;
+				neighbors.clear();
 				
 				// iterate over neighbors
 				for (ShortOffset offset : offsets)
@@ -335,7 +304,10 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
 					if (((int) labelImage.getf(x2, y2)) == label)
 					{
 						// Increment distance
-						newDist = Math.min(newDist, distMap.get(x2, y2) + offset.weight);
+					    int dist2 = distMap.get(x2, y2);
+						newDist = Math.min(newDist, dist2 + offset.weight);
+						// update list of neighbors
+						neighbors.add(new Neighbor(x2, y2, dist2, offset.weight));
 					}
 				}
 				
@@ -344,30 +316,16 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
 					distMap.set(x, y, newDist);
 					
 					// eventually add lower-right neighbors to queue
-					for (ShortOffset offset : offsets)
+					for (Neighbor neighbor : neighbors)
 					{
-	                    // compute neighbor coordinates
-	                    int x2 = x + offset.dx;
-	                    int y2 = y + offset.dy;
-	                    
-	                    // check bounds
-	                    if (x2 < 0 || x2 >= sizeX)
-	                        continue;
-	                    if (y2 < 0 || y2 >= sizeY)
-	                        continue;
-	                    
-	                    if (((int) labelImage.getf(x2, y2)) == label)
-	                    {
-	                        // update queue
-	                        if (newDist < distMap.get(x2, y2) + offset.weight)
-	                        {
-	                            Cursor2D c = new Cursor2D(x2, y2);
-	                            if (!queue.contains(c))
-	                            {
-	                                queue.add(c);
-	                            }
-	                        }
-	                    }
+                        // compute new possible distance
+                        int dist2 = newDist + neighbor.offsetWeight;
+                        
+                        // update queue
+                        if (neighbor.value > dist2)
+                        {
+                            queue.offer(new Record(neighbor.x, neighbor.y, dist2));
+                        }
 					}
 				}
 			}
@@ -377,25 +335,32 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
 		return queue;
 	}
 	
-    private void processQueue(ShortProcessor distMap, ImageProcessor labelImage, Deque<Cursor2D> queue)
+    private void processQueue(ShortProcessor distMap, ImageProcessor labelImage, PriorityQueue<Record> queue)
     {
         // size of image
         int sizeX = labelImage.getWidth();
         int sizeY = labelImage.getHeight();
         Collection<ShortOffset> offsets = mask.getOffsets();
+        ArrayList<Neighbor> neighbors = new ArrayList<Neighbor>(offsets.size());
         
+//        System.out.println("  queue size: " + queue.size());
         while (!queue.isEmpty()) 
         {
-//          System.out.println("  queue size: " + queue.size());
             // get current position
-            Cursor2D p = queue.removeFirst();
-            int x = p.getX();
-            int y = p.getY();
+            Record p = queue.poll();
+            int x = p.x;
+            int y = p.y;
             
             // retrieve properties of current pixel
             int label = (int) labelImage.getf(x, y);
             int currentDist = distMap.get(x, y);
+            // check if current position was already updated
+            if (currentDist <= p.value)
+            {
+                continue;
+            }
             int newDist = currentDist;
+            neighbors.clear();
             
             // iterate over (all) neighbors within chamfer mask
             for (ShortOffset offset : offsets)
@@ -413,7 +378,10 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
                 if (((int) labelImage.getf(x2, y2)) == label)
                 {
                     // Increment distance
-                    newDist = Math.min(newDist, distMap.get(x2, y2) + offset.weight);
+                    int dist2 = distMap.get(x2, y2);
+                    newDist = Math.min(newDist, dist2 + offset.weight);
+                    // update list of neighbors
+                    neighbors.add(new Neighbor(x2, y2, dist2, offset.weight));
                 }
             }
             
@@ -423,29 +391,14 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
                 distMap.set(x, y, newDist);
                 
                 // check if some neighbors must be added into queue
-                for (ShortOffset offset : offsets)
+                for (Neighbor neighbor : neighbors)
                 {
-                    // compute neighbor coordinates
-                    int x2 = x + offset.dx;
-                    int y2 = y + offset.dy;
+                    int dist2 = newDist + neighbor.offsetWeight;
                     
-                    // check bounds
-                    if (x2 < 0 || x2 >= sizeX)
-                        continue;
-                    if (y2 < 0 || y2 >= sizeY)
-                        continue;
-                    
-                    if (((int) labelImage.getf(x2, y2)) == label)
+                    // update queue
+                    if (neighbor.value > dist2)
                     {
-                        // update queue
-                        if (newDist < distMap.get(x2, y2) + offset.weight)
-                        {
-                            Cursor2D c = new Cursor2D(x2, y2);
-                            if (!queue.contains(c))
-                            {
-                                queue.add(c);
-                            }
-                        }
+                        queue.offer(new Record(neighbor.x, neighbor.y, dist2));
                     }
                 }
             }
@@ -482,4 +435,48 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
 			}
 		}
 	}
+	
+	private class Neighbor
+	{
+	    int x;
+	    int y;
+	    
+        int value;
+        int offsetWeight;
+	    
+	    public Neighbor(int x, int y, int value, int offsetWeight)
+	    {
+	        this.x = x;
+	        this.y = y;
+	        this.value = value;
+	        this.offsetWeight = offsetWeight;
+	    }
+	}
+	
+	/**
+     * Records a position and its current distance value. The Record are
+     * compared according to the inner value, and the comparator is not
+     * consistent with equal (two instances may be different and compare to
+     * zero).
+     */
+    private class Record implements Comparable<Record>
+    {
+        int x;
+        int y;
+        
+        int value;
+        
+        public Record(int x, int y, int value)
+        {
+            this.x = x;
+            this.y = y;
+            this.value = value;
+        }
+
+        @Override
+        public int compareTo(Record that)
+        {
+            return this.value - that.value;
+        }
+    }
 }

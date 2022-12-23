@@ -42,9 +42,11 @@ import java.awt.image.IndexColorModel;
  * Plugin for computing geodesic distance map from binary images using chamfer
  * weights.
  * 
+ * @deprecated use GeodesicDistanceMap3DPlugin instead
  * @author dlegland
  *
  */
+@Deprecated
 public class GeodesicDistanceMap3D implements PlugIn
 {
 	/*

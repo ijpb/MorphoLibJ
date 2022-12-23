@@ -34,7 +34,7 @@ import inra.ijpb.binary.distmap.ChamferMask2D;
 import inra.ijpb.binary.distmap.ChamferMasks2D;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransform;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat;
-import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort;
+import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShortHybrid;
 import inra.ijpb.color.ColorMaps;
 import inra.ijpb.util.IJUtils;
 
@@ -111,10 +111,15 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 
 		// Execute core of the plugin
 		String newName = createResultImageName(maskImage);
+        long t0 = System.currentTimeMillis();
 		ImagePlus res = process(markerImage, maskImage, newName,
 				weights, resultAsFloat, normalizeWeights);
+        long t1 = System.currentTimeMillis();
 
 		res.show();
+		
+        // Display elapsed time
+        IJUtils.showElapsedTime("distance map", t1 - t0, markerImage);
 	}
 
 	/**
@@ -435,7 +440,7 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 		}
 		else
 		{
-			algo = new GeodesicDistanceTransformShort(weights, normalize);
+            algo = new GeodesicDistanceTransformShortHybrid(weights, normalize);
 		}
 
 		DefaultAlgoListener.monitor(algo);
