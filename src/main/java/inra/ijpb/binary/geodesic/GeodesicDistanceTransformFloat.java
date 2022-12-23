@@ -31,7 +31,14 @@ import inra.ijpb.binary.distmap.ChamferMask2D.FloatOffset;
 
 /**
  * Computation of Chamfer geodesic distances using floating point array for
- * storing result, and 3-by-3 chamfer masks.
+ * storing result.
+ * 
+ * This implementation is based on iteration of forward-backward passes, until
+ * idempotence. The "hybrid" implementation is usually more efficient for
+ * complex images.
+ * 
+ * @see GeodesicDistanceTransformFloatHybrid
+ * @see GeodesicDistanceTransformShort
  * 
  * @author David Legland
  * 

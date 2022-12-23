@@ -37,6 +37,13 @@ import inra.ijpb.binary.distmap.ChamferMask2D.ShortOffset;
  * 
  * All computations are performed using integers, results are stored as shorts.
  * 
+ * This implementation is based on iteration of forward-backward passes, until
+ * idempotence. The "hybrid" implementation is usually more efficient for
+ * complex images.
+ * 
+ * @see GeodesicDistanceTransformShortHybrid
+ * @see GeodesicDistanceTransformFloat
+ * 
  * @author David Legland
  * 
  */

@@ -34,6 +34,7 @@ import inra.ijpb.binary.distmap.ChamferMask2D;
 import inra.ijpb.binary.distmap.ChamferMasks2D;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransform;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat;
+import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloatHybrid;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShortHybrid;
 import inra.ijpb.color.ColorMaps;
 import inra.ijpb.util.IJUtils;
@@ -436,7 +437,7 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 		GeodesicDistanceTransform algo;
 		if (floatComputation)
 		{
-			algo = new GeodesicDistanceTransformFloat(weights, normalize);
+			algo = new GeodesicDistanceTransformFloatHybrid(weights, normalize);
 		}
 		else
 		{

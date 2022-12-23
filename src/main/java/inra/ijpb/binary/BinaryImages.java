@@ -41,8 +41,8 @@ import inra.ijpb.binary.distmap.ChamferMask3D;
 import inra.ijpb.binary.distmap.DistanceTransform;
 import inra.ijpb.binary.distmap.DistanceTransform3D;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransform;
-import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat;
-import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShort;
+import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloatHybrid;
+import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShortHybrid;
 import inra.ijpb.binary.skeleton.ImageJSkeleton;
 import inra.ijpb.data.image.Image3D;
 import inra.ijpb.data.image.ImageUtils;
@@ -60,13 +60,6 @@ import inra.ijpb.label.LabelImages;
  */
 public class BinaryImages 
 {
-	/**
-	 * Private constructor to prevent class instantiation.
-	 */
-	private BinaryImages()
-	{
-	}
-
 	/**
 	 * Check if input image is binary (8-bit with only 0 or 255 values)
 	 * @param image input image
@@ -575,7 +568,7 @@ public class BinaryImages
 			ImageProcessor mask, short[] weights, boolean normalize) 
 	{
 		ChamferMask2D chamferMask = ChamferMask2D.fromWeights(weights);
-		GeodesicDistanceTransform algo = new GeodesicDistanceTransformShort(chamferMask, normalize);
+		GeodesicDistanceTransform algo = new GeodesicDistanceTransformShortHybrid(chamferMask, normalize);
 		return algo.geodesicDistanceMap(marker, mask);
 	}
 	
@@ -599,7 +592,7 @@ public class BinaryImages
 			ImageProcessor mask, float[] weights, boolean normalize) 
 	{
 		ChamferMask2D chamferMask = ChamferMask2D.fromWeights(weights);
-		GeodesicDistanceTransform algo = new GeodesicDistanceTransformFloat(chamferMask, normalize);
+		GeodesicDistanceTransform algo = new GeodesicDistanceTransformFloatHybrid(chamferMask, normalize);
 		return algo.geodesicDistanceMap(marker, mask);
 	}
 	
@@ -997,5 +990,12 @@ public class BinaryImages
     public static final ImageProcessor skeleton(ImageProcessor image) 
     {
         return new ImageJSkeleton().process(image);
+    }
+    
+    /**
+     * Private constructor to prevent class instantiation.
+     */
+    private BinaryImages()
+    {
     }
 }

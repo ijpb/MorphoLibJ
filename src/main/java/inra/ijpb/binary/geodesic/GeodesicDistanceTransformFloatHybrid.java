@@ -26,39 +26,35 @@ import java.util.Collection;
 import java.util.PriorityQueue;
 
 import ij.process.ImageProcessor;
-import ij.process.ShortProcessor;
+import ij.process.FloatProcessor;
 import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.binary.distmap.ChamferMask2D;
-import inra.ijpb.binary.distmap.ChamferMask2D.ShortOffset;
+import inra.ijpb.binary.distmap.ChamferMask2D.FloatOffset;
 
 /**
- * Computation of geodesic distances based on a chamfer mask using short integer
+ * Computation of geodesic distances based on a chamfer mask using floating point
  * array for storing result.
  * 
- * The maximum propagated distance is limited to Short.MAX_VALUE.
- * 
- * All computations are performed using integers, results are stored as shorts.
- * 
- * @see GeodesicDistanceTransformFloatHybrid
+ * @see GeodesicDistanceTransformShortHybrid
  * 
  * @author David Legland
- * 
  */
-public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements GeodesicDistanceTransform
+public class GeodesicDistanceTransformFloatHybrid extends AlgoStub implements GeodesicDistanceTransform
 {
 	// ==================================================
 	// Class variables
 	
-	/**
-	 * The value used to initialize the distance map.
-	 */
-	public static final short MAX_DIST = Short.MAX_VALUE;
-	
-	/**
-	 * The value associated to the background in the result image.
-	 */
-	public static final short BACKGROUND = 0;
-	
+    /**
+     * The value used to initialize the distance map, corresponding to positive
+     * infinity.
+     */
+    public static final float MAX_DIST = Float.POSITIVE_INFINITY;
+    
+    /**
+     * The value associated to the background in the result image.
+     */
+    public static final float BACKGROUND = Float.NaN;
+    
 	/**
 	 * The chamfer mask used for propagating distances from the marker.
 	 */
@@ -80,7 +76,7 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
 	 * @param mask
 	 *            the chamfer mask to use for propagating distances
 	 */
-	public GeodesicDistanceTransformShortHybrid(ChamferMask2D mask) 
+	public GeodesicDistanceTransformFloatHybrid(ChamferMask2D mask) 
 	{
 		this.mask = mask;
 	}
@@ -93,7 +89,7 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
 	 * @param normalizeMap
 	 *            the flag for normalization
 	 */
-	public GeodesicDistanceTransformShortHybrid(ChamferMask2D mask, boolean normalizeMap) 
+	public GeodesicDistanceTransformFloatHybrid(ChamferMask2D mask, boolean normalizeMap) 
 	{
 		this.mask = mask;
 		this.normalizeMap = normalizeMap;
@@ -108,7 +104,7 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
 	 * image, using the given binary marker image. Mask and marker should be
 	 * ImageProcessor the same size and containing integer values.
 	 * 
-	 * The function returns a new ShortProcessor the same size as the input,
+	 * The function returns a new FloatProcessor the same size as the input,
 	 * with values greater or equal to zero.
 	 *
 	 * @param marker
@@ -129,7 +125,7 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
 		
 		// create new empty image, and fill it with black
 		fireStatusChanged(this, "Initialization..."); 
-		ShortProcessor distMap = initialize(marker, labelImage);
+		FloatProcessor distMap = initialize(marker, labelImage);
 
 		// forward iteration
 		fireStatusChanged(this, "Forward iteration");
@@ -157,7 +153,7 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
 		{
 			for (int j = 0; j < sizeY; j++)
 			{
-				short val = (short) distMap.get(i, j);
+				float val = distMap.getf(i, j);
 				if (val != MAX_DIST)
 				{
 					maxVal = Math.max(maxVal, val);
@@ -177,13 +173,13 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
 		return distMap;
 	}
 
-	private ShortProcessor initialize(ImageProcessor marker, ImageProcessor labelImage)
+	private FloatProcessor initialize(ImageProcessor marker, ImageProcessor labelImage)
 	{
 		// size of image
 		int sizeX = marker.getWidth();
 		int sizeY = marker.getHeight();
 		
-		ShortProcessor distMap = new ShortProcessor(sizeX, sizeY);
+		FloatProcessor distMap = new FloatProcessor(sizeX, sizeY);
 		distMap.setValue(0);
 		distMap.fill();
 
@@ -192,27 +188,27 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
 		{
 			for (int x = 0; x < sizeX; x++) 
 			{
-				int label = (int) labelImage.getf(x, y);
-				if (label == 0)
-				{
-					distMap.set(x, y, BACKGROUND);
-				}
-				else
-				{
-					distMap.set(x, y, marker.get(x, y) == 0 ? MAX_DIST : 0);
-				}
+                int label = (int) labelImage.getf(x, y);
+                if (label == 0)
+                {
+                    distMap.setf(x, y, BACKGROUND);
+                }
+                else
+                {
+                    distMap.setf(x, y, marker.get(x, y) == 0 ? MAX_DIST : 0);
+                }
 			}
 		}
 
 		return distMap;
 	}
 	
-	private void forwardIteration(ShortProcessor distMap, ImageProcessor labelImage) 
+	private void forwardIteration(FloatProcessor distMap, ImageProcessor labelImage) 
 	{
 		// size of image
 		int sizeX = labelImage.getWidth();
 		int sizeY = labelImage.getHeight();
-		Collection<ShortOffset> offsets = mask.getForwardOffsets();
+		Collection<FloatOffset> offsets = mask.getForwardFloatOffsets();
 		
 		// Iterate over pixels
 		for (int y = 0; y < sizeY; y++)
@@ -228,11 +224,11 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
 					continue;
 				
 				// current distance value
-				int currentDist = distMap.get(x, y);
-				int newDist = currentDist;
+				double currentDist = distMap.getf(x, y);
+				double newDist = currentDist;
 				
 				// iterate over neighbors
-				for (ShortOffset offset : offsets)
+				for (FloatOffset offset : offsets)
 				{
 					// compute neighbor coordinates
 					int x2 = x + offset.dx;
@@ -247,13 +243,13 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
 					if (((int) labelImage.getf(x2, y2)) == label)
 					{
 						// Increment distance
-						newDist = Math.min(newDist, distMap.get(x2, y2) + offset.weight);
+						newDist = Math.min(newDist, distMap.getf(x2, y2) + offset.weight);
 					}
 				}
 				
 				if (newDist < currentDist) 
 				{
-					distMap.set(x, y, newDist);
+					distMap.setf(x, y, (float) newDist);
 				}
 			}
 		}
@@ -261,12 +257,12 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
 		this.fireProgressChanged(this, sizeY, sizeY);
 	}
 
-	private PriorityQueue<Record> backwardIteration(ShortProcessor distMap, ImageProcessor labelImage)
+	private PriorityQueue<Record> backwardIteration(FloatProcessor distMap, ImageProcessor labelImage)
 	{
 		// size of image
 		int sizeX = labelImage.getWidth();
 		int sizeY = labelImage.getHeight();
-		Collection<ShortOffset> offsets = mask.getBackwardOffsets();
+		Collection<FloatOffset> offsets = mask.getBackwardFloatOffsets();
 		
 		// initialize queue
         PriorityQueue<Record> queue = new PriorityQueue<>();
@@ -286,12 +282,12 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
 					continue;
 				
 				// current distance value
-				int currentDist = distMap.get(x, y);
-				int newDist = currentDist;
+				double currentDist = distMap.getf(x, y);
+				double newDist = currentDist;
 				neighbors.clear();
 				
 				// iterate over neighbors
-				for (ShortOffset offset : offsets)
+				for (FloatOffset offset : offsets)
 				{
 					// compute neighbor coordinates
 					int x2 = x + offset.dx;
@@ -306,7 +302,7 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
 					if (((int) labelImage.getf(x2, y2)) == label)
 					{
 						// Increment distance
-					    int dist2 = distMap.get(x2, y2);
+					    double dist2 = distMap.getf(x2, y2);
 						newDist = Math.min(newDist, dist2 + offset.weight);
 						// update list of neighbors
 						neighbors.add(new Neighbor(x2, y2, dist2, offset.weight));
@@ -315,13 +311,13 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
 				
 				if (newDist < currentDist) 
 				{
-					distMap.set(x, y, newDist);
+					distMap.setf(x, y, (float) newDist);
 					
 					// eventually add lower-right neighbors to queue
 					for (Neighbor neighbor : neighbors)
 					{
                         // compute new possible distance
-                        int dist2 = newDist + neighbor.offsetWeight;
+					    double dist2 = newDist + neighbor.offsetWeight;
                         
                         // update queue
                         if (neighbor.value > dist2)
@@ -337,12 +333,12 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
 		return queue;
 	}
 	
-    private void processQueue(ShortProcessor distMap, ImageProcessor labelImage, PriorityQueue<Record> queue)
+    private void processQueue(FloatProcessor distMap, ImageProcessor labelImage, PriorityQueue<Record> queue)
     {
         // size of image
         int sizeX = labelImage.getWidth();
         int sizeY = labelImage.getHeight();
-        Collection<ShortOffset> offsets = mask.getOffsets();
+        Collection<FloatOffset> offsets = mask.getFloatOffsets();
         ArrayList<Neighbor> neighbors = new ArrayList<Neighbor>(offsets.size());
         
 //        System.out.println("  queue size: " + queue.size());
@@ -355,17 +351,17 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
             
             // retrieve properties of current pixel
             int label = (int) labelImage.getf(x, y);
-            int currentDist = distMap.get(x, y);
+            double currentDist = distMap.getf(x, y);
             // check if current position was already updated
             if (currentDist <= p.value)
             {
                 continue;
             }
-            int newDist = currentDist;
+            double newDist = currentDist;
             neighbors.clear();
             
             // iterate over (all) neighbors within chamfer mask
-            for (ShortOffset offset : offsets)
+            for (FloatOffset offset : offsets)
             {
                 // compute neighbor coordinates
                 int x2 = x + offset.dx;
@@ -380,7 +376,7 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
                 if (((int) labelImage.getf(x2, y2)) == label)
                 {
                     // Increment distance
-                    int dist2 = distMap.get(x2, y2);
+                    double dist2 = distMap.getf(x2, y2);
                     newDist = Math.min(newDist, dist2 + offset.weight);
                     // update list of neighbors
                     neighbors.add(new Neighbor(x2, y2, dist2, offset.weight));
@@ -390,12 +386,12 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
             // Check if we need to update current pixel
             if (newDist < currentDist) 
             {
-                distMap.set(x, y, newDist);
+                distMap.setf(x, y, (float) newDist);
                 
                 // check if some neighbors must be added into queue
                 for (Neighbor neighbor : neighbors)
                 {
-                    int dist2 = newDist + neighbor.offsetWeight;
+                    double dist2 = newDist + neighbor.offsetWeight;
                     
                     // update queue
                     if (neighbor.value > dist2)
@@ -407,7 +403,7 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
         }
     }
     
-	private void normalizeResult(ShortProcessor distMap, ImageProcessor labelImage)
+	private void normalizeResult(FloatProcessor distMap, ImageProcessor labelImage)
 	{
 		// size of image
 		int sizeX = distMap.getWidth();
@@ -425,11 +421,11 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
 					continue;
 				}
 				
-				short val = (short) distMap.get(x, y);
-				if (val != MAX_DIST)
-				{
-					distMap.set(x, y, (int) Math.round(val / w0));
-				}
+                float val = distMap.getf(x, y);
+                if (val != MAX_DIST)
+                {
+                    distMap.setf(x, y, (float) (val / w0));
+                }
 			}
 		}
 	}
@@ -439,10 +435,10 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
 	    int x;
 	    int y;
 	    
-        int value;
-        int offsetWeight;
+	    double value;
+	    double offsetWeight;
 	    
-	    public Neighbor(int x, int y, int value, int offsetWeight)
+	    public Neighbor(int x, int y, double value, double offsetWeight)
 	    {
 	        this.x = x;
 	        this.y = y;
@@ -462,9 +458,9 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
         int x;
         int y;
         
-        int value;
+        double value;
         
-        public Record(int x, int y, int value)
+        public Record(int x, int y, double value)
         {
             this.x = x;
             this.y = y;
@@ -474,7 +470,7 @@ public class GeodesicDistanceTransformShortHybrid extends AlgoStub implements Ge
         @Override
         public int compareTo(Record that)
         {
-            return this.value - that.value;
+            return (int) (100 * (this.value - that.value));
         }
     }
 }
