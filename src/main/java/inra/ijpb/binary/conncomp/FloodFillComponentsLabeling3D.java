@@ -33,6 +33,19 @@ import inra.ijpb.morphology.FloodFill3D;
  * time a foreground voxel not yet associated with a label is encountered, its
  * connected component is associated with a new label.
  * 
+ * Example of use:
+ * <pre>{@code
+    int conn = 6;
+    int bitDepth = 16;
+    FloodFillComponentsLabeling3D algo = new FloodFillComponentsLabeling3D(conn, bitDepth);
+    DefaultAlgoListener.monitor(algo);
+    ImageStack labels = algo.computeLabels(image);
+    // or:
+    FloodFillComponentsLabeling3D.Result res = algo.computeResult(image);
+    ImageStack labels = res.labelMap; 
+ * }</pre> 
+ * 
+ * @see FloodFillComponentsLabeling
  * @see inra.ijpb.morphology.FloodFill3D
  * 
  * @author dlegland
@@ -93,56 +106,100 @@ public class FloodFillComponentsLabeling3D extends AlgoStub implements
 		if ( Thread.currentThread().isInterrupted() )					
 			return null;
 		
-		// get image size
-		int sizeX = image.getWidth();
-		int sizeY = image.getHeight();
-		int sizeZ = image.getSize();
-
-		// initialize result image
-		fireStatusChanged(this, "Allocate memory...");
-		ImageStack labels = ImageStack.create(sizeX, sizeY, sizeZ, bitDepth);
-
-		// identify the maximum label index
-		int maxLabel = FloodFillComponentsLabeling.largestPossibleLabel(this.bitDepth);
-
-		fireStatusChanged(this, "Compute Labels...");
-		
-		// Iterate over image voxels. 
-		// Each time a white voxel not yet associated
-		// with a label is encountered, uses flood-fill to associate its
-		// connected component to a new label
-		int nLabels = 0;
-		for (int z = 0; z < sizeZ; z++) 
-		{
-			fireProgressChanged(this, z, sizeZ);
-			for (int y = 0; y < sizeY; y++) 
-			{
-				for (int x = 0; x < sizeX; x++) 
-				{
-					// Do not process background voxels
-					if (image.getVoxel(x, y, z) == 0)
-						continue;
-
-					// Do not process voxels already labeled
-					if (labels.getVoxel(x, y, z) > 0)
-						continue;
-
-					// a new label is found: check current label number  
-					if (nLabels == maxLabel)
-					{
-						throw new RuntimeException("Max number of label reached (" + maxLabel + ")");
-					}
-					
-					// increment label index, and propagate
-					nLabels++;
-					fireStatusChanged(this, "Process label " + nLabels);
-					FloodFill3D.floodFillFloat(image, x, y, z, labels, nLabels, this.connectivity);
-				}
-			}
-		}
-		
-		fireStatusChanged(this, "");
-		fireProgressChanged(this, 1, 1);
-		return labels;
+		return computeResult(image).labelMap;
 	}
+	
+    /**
+     * Computes connected components labeling on the input binary image, and
+     * returns the results encapsulated into a <code>Result</code> class
+     * together with the largest label index.
+     * 
+     * @param image
+     *            the input binary image
+     * @return an instance of the Result class that can be used to retrieve the
+     *         label map.
+     */
+    public Result computeResult(ImageStack image)
+    {
+        if ( Thread.currentThread().isInterrupted() )                   
+            return null;
+        
+        // get image size
+        int sizeX = image.getWidth();
+        int sizeY = image.getHeight();
+        int sizeZ = image.getSize();
+
+        // initialize result image
+        fireStatusChanged(this, "Allocate memory...");
+        Result res = new Result(ImageStack.create(sizeX, sizeY, sizeZ, bitDepth));
+
+        // identify the maximum label index
+        int maxLabel = FloodFillComponentsLabeling.largestPossibleLabel(this.bitDepth);
+
+        fireStatusChanged(this, "Compute Labels...");
+        
+        // Iterate over image voxels. 
+        // Each time a white voxel not yet associated
+        // with a label is encountered, uses flood-fill to associate its
+        // connected component to a new label
+        for (int z = 0; z < sizeZ; z++) 
+        {
+            fireProgressChanged(this, z, sizeZ);
+            for (int y = 0; y < sizeY; y++) 
+            {
+                for (int x = 0; x < sizeX; x++) 
+                {
+                    // Do not process background voxels
+                    if (image.getVoxel(x, y, z) == 0)
+                        continue;
+
+                    // Do not process voxels already labeled
+                    if (res.labelMap.getVoxel(x, y, z) > 0)
+                        continue;
+
+                    // a new label is found: check current label number  
+                    if (res.nLabels == maxLabel)
+                    {
+                        throw new RuntimeException("Max number of label reached (" + maxLabel + ")");
+                    }
+                    
+                    // increment label index, and propagate
+                    res.nLabels++;
+                    fireStatusChanged(this, "Process label " + res.nLabels);
+                    FloodFill3D.floodFillFloat(image, x, y, z, res.labelMap, res.nLabels, this.connectivity);
+                }
+            }
+        }
+        
+        fireStatusChanged(this, "");
+        fireProgressChanged(this, 1, 1);
+        return res;
+    }
+	
+    /**
+     * Data class that stores result of connected component labeling.
+     */
+    public class Result
+    {
+        /**
+         * The image stack containing labels of connected components, or 0 for background.
+         */
+        public ImageStack labelMap;
+        
+        /**
+         * The number of labels within the label map.
+         */
+        public int nLabels = 0;
+        
+        /**
+         * Creates a new Result class from an (empty) labelMap.
+         * 
+         * @param labelMap
+         *            the labelMap that will be initialized during processing.
+         */
+        public Result(ImageStack labelMap)
+        {
+            this.labelMap = labelMap;
+        }
+    }
 }

@@ -45,7 +45,6 @@ import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloatHybrid;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShortHybrid;
 import inra.ijpb.binary.skeleton.ImageJSkeleton;
 import inra.ijpb.data.image.Image3D;
-import inra.ijpb.data.image.ImageUtils;
 import inra.ijpb.data.image.Images3D;
 import inra.ijpb.label.LabelImages;
 
@@ -186,21 +185,19 @@ public class BinaryImages
 		// Dispatch processing depending on input image dimensionality
 		if (imagePlus.getStackSize() == 1)
 		{
-			ImageProcessor labels = componentsLabeling(imagePlus.getProcessor(),
-					conn, bitDepth);
-			labelPlus = new ImagePlus("Labels", labels);
-			
+		    FloodFillComponentsLabeling algo = new FloodFillComponentsLabeling(conn, bitDepth);
+		    FloodFillComponentsLabeling.Result res = algo.computeResult(imagePlus.getProcessor());
+			labelPlus = new ImagePlus("Labels", res.labelMap);
+			labelPlus.setDisplayRange(0, res.nLabels);
 		}
 		else 
 		{
-			ImageStack labels = componentsLabeling(imagePlus.getStack(), conn,
-					bitDepth);
-			labelPlus = new ImagePlus("Labels", labels);
+            FloodFillComponentsLabeling3D algo = new FloodFillComponentsLabeling3D(conn, bitDepth);
+            FloodFillComponentsLabeling3D.Result res = algo.computeResult(imagePlus.getStack());
+            labelPlus = new ImagePlus("Labels", res.labelMap);
+            labelPlus.setDisplayRange(0, res.nLabels);
 		}
 
-		// setup display range to show largest label as white
-		double nLabels = ImageUtils.findMaxValue(labelPlus);
-		labelPlus.setDisplayRange(0, nLabels);
 		return labelPlus;
 	}
 	

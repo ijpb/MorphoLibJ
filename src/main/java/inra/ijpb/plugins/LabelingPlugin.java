@@ -25,7 +25,10 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
-import inra.ijpb.binary.BinaryImages;
+import inra.ijpb.algo.DefaultAlgoListener;
+import inra.ijpb.binary.conncomp.FloodFillComponentsLabeling;
+import inra.ijpb.binary.conncomp.FloodFillComponentsLabeling3D;
+import inra.ijpb.util.IJUtils;
 
 /**
  * Computes label image of connected components in a binary planar image or 3D
@@ -64,32 +67,53 @@ public class LabelingPlugin implements PlugIn
 		int connValue = isPlanar ? Connectivity2D.fromLabel(str).getValue()
 				: Connectivity3D.fromLabel(str).getValue();
 
-		// Compute components labeling
-		ImagePlus resultPlus;
-		try
-		{ 	
-			resultPlus = BinaryImages.componentsLabeling(imagePlus, connValue, bitDepth);
-		} 
-		catch(RuntimeException ex)
-		{
-			IJ.error("Components Labeling Error", ex.getMessage() + "\nTry with larger data type (short or float)");
-			return;
-		}
-		
-		// update meta information of result image
-		String newName = imagePlus.getShortTitle() + "-lbl";
-		resultPlus.setTitle(newName);
-		resultPlus.copyScale(imagePlus);
-		
-		// Display with same settings as original image
-		resultPlus.show();
-		
-		// For 3D images, select the same visible slice as original image
-		if (!isPlanar)
-		{
-			resultPlus.setZ(imagePlus.getZ());
-			resultPlus.setSlice(imagePlus.getCurrentSlice());
-		}
-	}
+        // initializations
+        String newName = imagePlus.getShortTitle() + "-lbl";
+        ImagePlus resultPlus;
+        long t0 = System.nanoTime();
+        
+        // Compute components labeling
+        try
+        {
+            // Dispatch processing depending on input image dimensionality
+            if (imagePlus.getStackSize() == 1)
+            {
+                FloodFillComponentsLabeling algo = new FloodFillComponentsLabeling(connValue, bitDepth);
+                DefaultAlgoListener.monitor(algo);
+                FloodFillComponentsLabeling.Result res = algo
+                        .computeResult(imagePlus.getProcessor());
+                resultPlus = new ImagePlus(newName, res.labelMap);
+                resultPlus.setDisplayRange(0, res.nLabels);
+            } else
+            {
+                FloodFillComponentsLabeling3D algo = new FloodFillComponentsLabeling3D(connValue, bitDepth);
+                DefaultAlgoListener.monitor(algo);
+                FloodFillComponentsLabeling3D.Result res = algo
+                        .computeResult(imagePlus.getStack());
+                resultPlus = new ImagePlus(newName, res.labelMap);
+                resultPlus.setDisplayRange(0, res.nLabels);
+            }
+        } catch (RuntimeException ex)
+        {
+            IJ.error("Components Labeling Error", ex.getMessage()
+                    + "\nTry with larger data type (short or float)");
+            return;
+        }
+        long t1 = System.nanoTime();
+        
+        // Display with same settings as original image
+        resultPlus.copyScale(imagePlus);
+        resultPlus.show();
+        
+        // For 3D images, select the same visible slice as original image
+        if (!isPlanar)
+        {
+            resultPlus.setZ(imagePlus.getZ());
+            resultPlus.setSlice(imagePlus.getCurrentSlice());
+        }
+        
+        // show elapsed time
+        IJUtils.showElapsedTime("Labeling", t1 - t0, resultPlus);
+    }
 
 }

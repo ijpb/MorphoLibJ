@@ -34,6 +34,19 @@ import inra.ijpb.morphology.FloodFill;
  * time a foreground pixel not yet associated with a label is encountered, its
  * connected component is associated with a new label.
  *
+ * Example of use:
+ * <pre>{@code
+    int conn = 4;
+    int bitDepth = 16;
+    ConnectedComponentsLabeling algo = new FloodFillComponentsLabeling(conn, bitDepth);
+    DefaultAlgoListener.monitor(algo);
+    ImageProcessor labels = algo.computeLabels(image);
+    // or:
+    FloodFillComponentsLabeling.Result res = algo.computeResult(image);
+    ImageProcessor labels = res.labelMap; 
+ * }</pre> 
+ * 
+ * @see FloodFillComponentsLabeling3D
  * @see inra.ijpb.morphology.FloodFill
  * 
  * @author dlegland
@@ -119,44 +132,82 @@ public class FloodFillComponentsLabeling extends AlgoStub implements
 	@Override
 	public ImageProcessor computeLabels(ImageProcessor image)
 	{
-		// get image size
-		int width = image.getWidth();
-		int height = image.getHeight();
-		int maxLabel = largestPossibleLabel(this.bitDepth);
+		return computeResult(image).labelMap;
+	}
+	
+	/**
+     * Computes connected components labeling on the input binary image, and
+     * returns the results encapsulated into a <code>Result</code> class
+     * together with the largest label index.
+     * 
+     * @param image
+     *            the input binary image
+     * @return an instance of the Result class that can be used to retrieve the
+     *         label map.
+     */
+	public Result computeResult(ImageProcessor image)
+	{
+        // get image size
+        int width = image.getWidth();
+        int height = image.getHeight();
+        int maxLabel = largestPossibleLabel(this.bitDepth);
 
-		// Depending on bitDepth, create result image, and choose max label 
-		// number
-		ImageProcessor labels = ImageUtils.createImageProcessor(width, height, this.bitDepth);
+        // Depending on bitDepth, create result image, and determine max label number
+        Result res = new Result(ImageUtils.createImageProcessor(width, height, this.bitDepth));
+        
+        // iterate on image pixels to find new regions
+        for (int y = 0; y < height; y++) 
+        {
+            this.fireProgressChanged(this, y, height);
+            for (int x = 0; x < width; x++) 
+            {
+                if (image.get(x, y) == 0)
+                    continue;
+                if (res.labelMap.get(x, y) > 0)
+                    continue;
 
-		// the label counter
-		int nLabels = 0;
+                // a new label is found: check current label number  
+                if (res.nLabels == maxLabel)
+                {
+                    throw new RuntimeException("Max number of label reached (" + maxLabel + ")");
+                }
+                
+                // increment label index, and propagate
+                res.nLabels++;
+                FloodFill.floodFillFloat(image, x, y, res.labelMap, res.nLabels, this.connectivity);
+            }
+        }
+        this.fireProgressChanged(this, 1, 1);
 
-		// iterate on image pixels to find new regions
-		for (int y = 0; y < height; y++) 
-		{
-			this.fireProgressChanged(this, y, height);
-			for (int x = 0; x < width; x++) 
-			{
-				if (image.get(x, y) == 0)
-					continue;
-				if (labels.get(x, y) > 0)
-					continue;
-
-				// a new label is found: check current label number  
-				if (nLabels == maxLabel)
-				{
-					throw new RuntimeException("Max number of label reached (" + maxLabel + ")");
-				}
-				
-				// increment label index, and propagate
-				nLabels++;
-				FloodFill.floodFillFloat(image, x, y, labels, nLabels, this.connectivity);
-			}
-		}
-		this.fireProgressChanged(this, 1, 1);
-
-		labels.setMinAndMax(0, nLabels);
-		return labels;
+        res.labelMap.setMinAndMax(0, res.nLabels);
+        return res;
+	}
+	
+    /**
+     * Data class that stores result of connected component labeling.
+     */
+	public class Result
+	{
+	    /**
+	     * The image processor containing labels of connected components, or 0 for background.
+	     */
+	    public ImageProcessor labelMap;
+	    
+        /**
+         * The number of labels within the label map.
+         */
+	    public int nLabels = 0;
+	    
+	    /**
+         * Creates a new Result class from an (empty) labelMap.
+         * 
+         * @param labelMap
+         *            the labelMap that will be initialized during processing.
+         */
+	    Result(ImageProcessor labelMap)
+	    {
+	        this.labelMap = labelMap;
+	    }
 	}
 
 }
