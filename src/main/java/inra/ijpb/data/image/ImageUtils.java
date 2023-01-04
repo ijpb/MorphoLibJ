@@ -6,6 +6,7 @@ package inra.ijpb.data.image;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ByteProcessor;
+import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
@@ -17,6 +18,31 @@ import ij.process.ShortProcessor;
  */
 public class ImageUtils
 {
+    /**
+     * Creates a new ImageProcessor from image dimensions and bit depth.
+     * 
+     * @param width
+     *            the width of the new image
+     * @param height
+     *            the height of the new image
+     * @param bitDepth
+     *            the bit-depth of the new image (must be one of 8, 16, 24, or
+     *            32).
+     * @return the new image
+     */
+    public static final ImageProcessor createImageProcessor(int width, int height, int bitDepth)
+    {
+        switch (bitDepth)
+        {
+        case 8: return new ByteProcessor(width, height);
+        case 16: return new ShortProcessor(width, height);
+        case 24: return new ColorProcessor(width, height);
+        case 32: return new FloatProcessor(width, height);
+        default: throw new IllegalArgumentException(
+                "Bit Depth should be 8, 16, 24 or 32.");
+        }
+    }
+    
     /**
      * Creates a new ByteProcessor initialized with the content of the input
      * array.

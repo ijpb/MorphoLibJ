@@ -103,21 +103,7 @@ public class FloodFillComponentsLabeling3D extends AlgoStub implements
 		ImageStack labels = ImageStack.create(sizeX, sizeY, sizeZ, bitDepth);
 
 		// identify the maximum label index
-		int maxLabel;
-		switch (this.bitDepth) {
-		case 8: 
-			maxLabel = 255;
-			break; 
-		case 16: 
-			maxLabel = 65535;
-			break;
-		case 32:
-			maxLabel = 0x01 << 23;
-			break;
-		default:
-			throw new IllegalArgumentException(
-					"Bit Depth should be 8, 16 or 32.");
-		}
+		int maxLabel = FloodFillComponentsLabeling.largestPossibleLabel(this.bitDepth);
 
 		fireStatusChanged(this, "Compute Labels...");
 		
@@ -159,5 +145,4 @@ public class FloodFillComponentsLabeling3D extends AlgoStub implements
 		fireProgressChanged(this, 1, 1);
 		return labels;
 	}
-
 }
