@@ -21,6 +21,9 @@
  */
 package inra.ijpb.plugins;
 
+import java.awt.Color;
+import java.awt.image.ColorModel;
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.GenericDialog;
@@ -28,6 +31,8 @@ import ij.plugin.PlugIn;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.binary.conncomp.FloodFillComponentsLabeling;
 import inra.ijpb.binary.conncomp.FloodFillComponentsLabeling3D;
+import inra.ijpb.color.ColorMaps;
+import inra.ijpb.color.ColorMaps.CommonLabelMaps;
 import inra.ijpb.util.IJUtils;
 
 /**
@@ -70,9 +75,13 @@ public class LabelingPlugin implements PlugIn
         // initializations
         String newName = imagePlus.getShortTitle() + "-lbl";
         ImagePlus resultPlus;
-        long t0 = System.nanoTime();
+        
+        // create default label Color Model
+        byte[][] colorMap = CommonLabelMaps.GLASBEY_BRIGHT.computeLut(255, false);
+        ColorModel cm = ColorMaps.createColorModel(colorMap, Color.BLACK);
         
         // Compute components labeling
+        long t0 = System.nanoTime();
         try
         {
             // Dispatch processing depending on input image dimensionality
@@ -80,20 +89,25 @@ public class LabelingPlugin implements PlugIn
             {
                 FloodFillComponentsLabeling algo = new FloodFillComponentsLabeling(connValue, bitDepth);
                 DefaultAlgoListener.monitor(algo);
-                FloodFillComponentsLabeling.Result res = algo
-                        .computeResult(imagePlus.getProcessor());
+                FloodFillComponentsLabeling.Result res = algo.computeResult(imagePlus.getProcessor());
                 resultPlus = new ImagePlus(newName, res.labelMap);
-                resultPlus.setDisplayRange(0, res.nLabels);
-            } else
+                // uses colored colormap
+                resultPlus.getProcessor().setColorModel(cm);
+                resultPlus.setDisplayRange(0, Math.max(res.nLabels, 255));
+            } 
+            else
             {
                 FloodFillComponentsLabeling3D algo = new FloodFillComponentsLabeling3D(connValue, bitDepth);
                 DefaultAlgoListener.monitor(algo);
-                FloodFillComponentsLabeling3D.Result res = algo
-                        .computeResult(imagePlus.getStack());
+                FloodFillComponentsLabeling3D.Result res = algo.computeResult(imagePlus.getStack());
                 resultPlus = new ImagePlus(newName, res.labelMap);
-                resultPlus.setDisplayRange(0, res.nLabels);
+                // uses colored colormap
+                resultPlus.getProcessor().setColorModel(cm);
+                resultPlus.getStack().setColorModel(cm);
+                resultPlus.setDisplayRange(0, Math.max(res.nLabels, 255));
             }
-        } catch (RuntimeException ex)
+        } 
+        catch (RuntimeException ex)
         {
             IJ.error("Components Labeling Error", ex.getMessage()
                     + "\nTry with larger data type (short or float)");
@@ -101,7 +115,7 @@ public class LabelingPlugin implements PlugIn
         }
         long t1 = System.nanoTime();
         
-        // Display with same settings as original image
+        // Display with same spatial calibration as original image
         resultPlus.copyScale(imagePlus);
         resultPlus.show();
         
