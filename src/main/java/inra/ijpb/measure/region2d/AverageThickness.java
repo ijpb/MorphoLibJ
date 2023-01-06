@@ -40,6 +40,9 @@ public class AverageThickness extends RegionAnalyzer2D<AverageThickness.Result>
     {
         // Initialize a new result table
         ResultsTable table = new ResultsTable();
+        
+        String unit = results.values().iterator().next().unit;
+        String colName = "AverageThickness_[" + unit + "]"; 
     
         // Convert all results that were computed during execution of the
         // "analyzeRegions()" method into rows of the results table
@@ -51,7 +54,7 @@ public class AverageThickness extends RegionAnalyzer2D<AverageThickness.Result>
             // add an entry to the resulting data table
             table.incrementCounter();
             table.addLabel(Integer.toString(label));
-            table.addValue("AverageThickness", res.avgThickness);
+            table.addValue(colName, res.avgThickness);
         }
     
         return table;
@@ -61,6 +64,12 @@ public class AverageThickness extends RegionAnalyzer2D<AverageThickness.Result>
     public AverageThickness.Result[] analyzeRegions(ImageProcessor image, int[] labels,
             Calibration calib)
     {
+        // check input validity
+        if (calib.pixelWidth != calib.pixelHeight)
+        {
+            throw new IllegalArgumentException("Requires input image to have square pixels (width = height)");
+        }
+        
         Map<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
 
         // first compute distance map of each label
@@ -101,8 +110,9 @@ public class AverageThickness extends RegionAnalyzer2D<AverageThickness.Result>
         for (int i = 0; i < nLabels; i++)
         {
             Result res = new Result();
-            res.meanDist = sums[i] / counts[i];
+            res.meanDist = calib.pixelWidth * (sums[i] / counts[i]);
             res.avgThickness = res.meanDist * 2 - 1;
+            res.unit = calib.getUnit();
             results[i] = res;
         }
         return results;
@@ -131,6 +141,8 @@ public class AverageThickness extends RegionAnalyzer2D<AverageThickness.Result>
          * Typically: avgThickness = avgDist * 2 - 1.
          */
         public double avgThickness;
+        
+        public String unit = "pixel";
     }
 
 }
