@@ -4,6 +4,7 @@
 package inra.ijpb.label.conncomp;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.TreeSet;
 
 /**
@@ -60,5 +61,26 @@ public class Boundary
             return false;
         }
         return this.regionLabels.containsAll(regionLabels);
+    }
+    
+    @Override
+    public String toString()
+    {
+        return String.format("Boundary(label=%d, regions={%s})", this.label, createRegionLabelsString(this.regionLabels));   
+    }
+    
+    private static final String createRegionLabelsString(TreeSet<Integer> labels)
+    {
+        StringBuilder sb = new StringBuilder();
+        Iterator<Integer> iter = labels.iterator();
+        if (iter.hasNext())
+        {
+            sb.append(Integer.toString(iter.next()));
+        }
+        while (iter.hasNext())
+        {
+            sb.append(", " + Integer.toString(iter.next()));
+        }
+        return sb.toString();
     }
 }

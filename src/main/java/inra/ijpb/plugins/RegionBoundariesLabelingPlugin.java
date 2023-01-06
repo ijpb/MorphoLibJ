@@ -21,11 +21,16 @@
  */
 package inra.ijpb.plugins;
 
+import java.awt.Color;
+import java.awt.image.ColorModel;
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
+import inra.ijpb.color.ColorMaps;
+import inra.ijpb.color.ColorMaps.CommonLabelMaps;
 import inra.ijpb.label.conncomp.LabelBoundariesLabeling2D;
 import inra.ijpb.label.conncomp.LabelBoundariesLabeling3D;
 
@@ -33,38 +38,55 @@ import inra.ijpb.label.conncomp.LabelBoundariesLabeling3D;
  * @author David Legland
  *
  */
-public class RegionBoundariesLabelingPlugin implements PlugIn {
-
+public class RegionBoundariesLabelingPlugin implements PlugIn 
+{
 	/* (non-Javadoc)
 	 * @see ij.plugin.PlugIn#run(java.lang.String)
 	 */
 	@Override
-	public void run(String arg0) {
+	public void run(String arg0) 
+	{
 		ImagePlus imagePlus = IJ.getImage();
 		
         String newName = imagePlus.getShortTitle() + "-bnd";
 		ImageStack stack = imagePlus.getStack();
 		
+        // create default label Color Model
+        byte[][] colorMap = CommonLabelMaps.GLASBEY_BRIGHT.computeLut(255, false);
+        ColorModel cm = ColorMaps.createColorModel(colorMap, Color.BLACK);
+        
 		ImagePlus resultPlus;
-		if( stack.getSize() > 1 )
-		{
+        if (stack.getSize() == 1)
+        {
+            LabelBoundariesLabeling2D algo = new LabelBoundariesLabeling2D();
+            LabelBoundariesLabeling2D.Result res = algo.process(imagePlus.getProcessor());
+            ImageProcessor boundaries = res.boundaryLabelMap;
+            
+            resultPlus = new ImagePlus(newName, boundaries);
+            
+            // uses colored colormap
+            resultPlus.getProcessor().setColorModel(cm);
+            resultPlus.setDisplayRange(0, Math.max(res.boundaries.size(), 255));
+
+            IJ.log("Boundary Set result:");
+            IJ.log(res.boundaries.toString());
+        }
+        else
+        {
             LabelBoundariesLabeling3D algo = new LabelBoundariesLabeling3D();
             LabelBoundariesLabeling3D.Result res = algo.process(imagePlus.getStack());
             ImageStack boundaries = res.boundaryLabelMap;
-			
-			resultPlus = new ImagePlus(newName, boundaries);
-			
-	        // setup display range to show largest label as white
-	        double nLabels = res.boundaries.size();
-	        resultPlus.setDisplayRange(0, nLabels);
-		}
-		else
-		{
-			LabelBoundariesLabeling2D algo = new LabelBoundariesLabeling2D();
-			ImageProcessor boundaries = algo.process(imagePlus.getProcessor()).boundaryLabelMap;
-
+            
             resultPlus = new ImagePlus(newName, boundaries);
-		}
+            
+            // uses colored colormap
+            resultPlus.getProcessor().setColorModel(cm);
+            resultPlus.getStack().setColorModel(cm);
+            resultPlus.setDisplayRange(0, Math.max(res.boundaries.size(), 255));
+
+            IJ.log("Boundary Set result:");
+            IJ.log(res.boundaries.toString());
+        }
 		
 		// Update meta information of result image
 		resultPlus.copyScale(imagePlus);

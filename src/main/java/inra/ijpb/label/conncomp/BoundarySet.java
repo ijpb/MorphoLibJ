@@ -119,4 +119,16 @@ public class BoundarySet
         // return new boundary
         return boundary;
     }
+    
+    @Override
+    public String toString()
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append("BoundarySet with " + boundaries.size() + " boundaries:");
+        for (Boundary bnd : this.boundaries.values())
+        {
+            sb.append(String.format("\n%s", bnd.toString()));
+        }
+        return sb.toString();
+    }
 }
