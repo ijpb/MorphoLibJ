@@ -545,6 +545,581 @@ Apply changes
 \end_layout
 
 \begin_layout Chapter
+Definitions and data types
+\end_layout
+
+\begin_layout Standard
+This chapter recalls some principles from the ImageJ software, summarizes
+ the vocabulary and definitions used within the library, and presents some
+ generic concepts about image processing and associated data structures.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+minitoc
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Digital images
+\end_layout
+
+\begin_layout Standard
+Digital images may be defined by a mapping from a pair 
+\begin_inset Formula $(i,j)$
+\end_inset
+
+ of integer coordinates to a value.
+ The value may be an integer, a floating point number, a color...
+ Image elements are usually refered to as 
+\begin_inset Quotes eld
+\end_inset
+
+pixels
+\begin_inset Quotes erd
+\end_inset
+
+, for 
+\begin_inset Quotes eld
+\end_inset
+
+picture element
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Data types
+\end_layout
+
+\begin_layout Standard
+Images are usually represented as 2D arrays of elementary data types.
+ Within ImageJ, the pixels may be of different types, according to the bit
+ depth:
+\end_layout
+
+\begin_layout Itemize
+8-bits images contains pixels with (positive) integer values between 
+\begin_inset Formula $0$
+\end_inset
+
+ and 
+\begin_inset Formula $255$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+16-bits images contains pixels with (positive) integer values between 
+\begin_inset Formula $0$
+\end_inset
+
+ and 
+\begin_inset Formula $2^{16}=65536$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+24-bits images corresponds to color images.
+ Pixels are represented as triplet of red, green and blue components, each
+ of them ranging between 0 and 255.
+\end_layout
+
+\begin_layout Itemize
+32-bits images contains pixels with floating-points values, possibly negative
+\end_layout
+
+\begin_layout Subsection
+Image types
+\end_layout
+
+\begin_layout Standard
+Apart from the data type / bit depth, image data may be interpreted in different
+ ways.
+ The MorphoLibJ library focusses on the following image types:
+\end_layout
+
+\begin_layout Description
+grayscale
+\begin_inset space ~
+\end_inset
+
+images contains pixels with positive integer values.
+ They can correspond to either 8-bits or 16-bits images.
+\end_layout
+
+\begin_layout Description
+binary
+\begin_inset space ~
+\end_inset
+
+images are expected to contain only two possible values.
+ Within ImageJ, they are represented as 8-bits images containing only the
+ values 0 (for the background) and 255 (for the foreground).
+\end_layout
+
+\begin_layout Description
+intensity
+\begin_inset space ~
+\end_inset
+
+images may correspond to any types that can be interpreted as a single scalar
+ value.
+ They may correspond to 8-bits, 16-bits, or 32-bits images.
+\end_layout
+
+\begin_layout Description
+label
+\begin_inset space ~
+\end_inset
+
+images (also called 
+\series bold
+label maps
+\series default
+) contains values that can be interpreted as the label or index of a region
+ (See section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:label-images"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+ The label 0 usually refer to the background (i.e., no region).
+ Label images can be represented using 8-bits, 16-bits, or 32-bits images.
+ Binary images can be seen as a special case of label images.
+\end_layout
+
+\begin_layout Subsection
+3D images
+\end_layout
+
+\begin_layout Standard
+Most algorithms from mathematical morphology extends naturally from two
+ dimensions to three dimensions.
+ Within ImageJ, 3D images are represented as 
+\begin_inset Quotes eld
+\end_inset
+
+image stacks
+\begin_inset Quotes erd
+\end_inset
+
+, seen as a stack of 2D arrays.
+ Elements of a 3D image are usually refered to as 
+\begin_inset Quotes eld
+\end_inset
+
+
+\series bold
+voxels
+\series default
+
+\begin_inset Quotes erd
+\end_inset
+
+, for volumetric picture element.
+ 
+\end_layout
+
+\begin_layout Section
+Digital connectivity
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Digital-Connectivity"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+When reconstructing structures or regions from digital images, it is often
+ necessary to define an 
+\series bold
+adjacency relationship
+\series default
+, or 
+\series bold
+connectivity
+\series default
+, between pixels of voxels 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Rosenfeld_1970_ACM,Serra_1982,Kong_1989_CVGIP,Soille_2003"
+literal "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+2D connectivities
+\end_layout
+
+\begin_layout Standard
+For planar images, a typical choice is the 4-connectivity, that considers
+ only the orthogonal neighbors of a given pixel (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Digital-connectivities-2D"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+-a).
+ When two pixels are located in a diagonal, they are not considered as adjacent.
+ The 8-connectivity is an alternative that also considers the diagonal pixels
+ as neighbors (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Digital-connectivities-2D"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+-b).
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/connectivity/connectivity2D_C4.png
+	width 30text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/connectivity/connectivity2D_C8.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Digital-connectivities-2D"
+
+\end_inset
+
+Digital connectivities for 2D images
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The discrete nature of images results in potential problems when considering
+ geometric properties on reconstructed structures.
+ A typical example is the Jordan curve theorem, which states than any curve
+ of the plane that do not self-intersects divides the plane into exactly
+ two regions: one interior and one exterior (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Jordan-Curve-Theorem"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+-a).
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/connectivity/JordanCurve_continuous.png
+	width 35text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Continuous curve
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/connectivity/JordanCurve_C4.png
+	width 35text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Digital curve using the 4-adjacency
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Jordan-Curve-Theorem"
+
+\end_inset
+
+Jordan curve theorem in continuous plane and in digital plane.
+ The digitization of a 4-connected curve results in the creation of two
+ inner regions that are not 4-connected.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+When choosing a digital connectivity and considering reconstructed curves,
+ the theorem is not always true, as a 4-connected curve may create several
+ disconnected interior regions (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Jordan-Curve-Theorem"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+-b).
+ The common solution is to consider pairs of adjacencies, one for the foreground
+ (here the curve), and one for the background.
+ One can check that the two interior regions are 8-connected, making the
+ Jordan curve theorem valid for the (4,8)-adjacency pair.
+\end_layout
+
+\begin_layout Subsection
+3D connectivities
+\end_layout
+
+\begin_layout Standard
+In 3D, two connectivities are commonly used.
+ The 6-connectivity considers only orthogonal neighbors of the center voxel
+ along the three principal directions (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Digital-connectivities-3D"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+-a).
+ The 26-connectivity considers all the possible neighbors within a 
+\begin_inset Formula $3\times3\times3$
+\end_inset
+
+ cube centered around the reference voxel (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Digital-connectivities-3D"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+-b).
+ As for the 2D case, one often considers pairs of complementary adjacencies
+ for the foreground and for the background 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Kong_1989_CVGIP,Ohser2009"
+literal "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/connectivity/connectivity3D_C6.png
+	width 25text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/connectivity/connectivity3D_C26.png
+	width 25text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Digital-connectivities-3D"
+
+\end_inset
+
+Digital connectivities for 3D images
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Chapter
 Morphological filtering
 \end_layout
 
