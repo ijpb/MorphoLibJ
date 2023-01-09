@@ -707,7 +707,7 @@ label maps
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sec:label-images"
+reference "chap:label-images"
 plural "false"
 caps "false"
 noprefix "false"
@@ -7523,7 +7523,7 @@ reference "sec:Region-Analysis-3D"
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sec:label-images"
+reference "chap:label-images"
 
 \end_inset
 
@@ -11981,7 +11981,7 @@ Think about incorporating gray level granulometries
 \end_layout
 
 \begin_layout Chapter
-Binary and label images
+Binary images
 \end_layout
 
 \begin_layout Standard
@@ -12109,6 +12109,16 @@ Binary image, and result of computation of the distance transform.
 
 \begin_layout Subsection
 Chamfer distances
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Chamfer-Distances"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -13955,6 +13965,18 @@ noprefix "false"
 ).
 \end_layout
 
+\begin_layout Standard
+The number of labels that can be represented within a label map depends
+ on the image type: 255 for byte images, 65535 for short images, and around
+ 16 millions for 32-bit floating point images (only the 24 bits of the mantissa
+ are used for label representation, leading to a maximum number of labels
+ equal to 
+\begin_inset Formula $2^{24}$
+\end_inset
+
+).
+\end_layout
+
 \begin_layout Description
 Connected
 \begin_inset space ~
@@ -14167,21 +14189,177 @@ for a binary image, generate the smallest convex region containing a region
  in the image.
 \end_layout
 
+\begin_layout Subsection
+Selection of binary regions
+\end_layout
+
 \begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Binary-Images-Selection"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The MorphoLibJ library offers several tools for automatically selecting
+ binary regions based on size or position criteria.
+ Some of them are illustrated on Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Binary-Images-Utilities"
+
+\end_inset
+
+.
+ As the algorithms usually requires connected component labeling, it is
+ often more convenient to use corresponding methods for label images (Section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Label-Images-Selection"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/grains/grains-binary-crop-ext.png
+	width 3.5cm
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/grains/grains-binary-crop-largest-ext.png
+	width 3.5cm
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/grains/grains-binary-crop-killLargest-ext.png
+	width 3.5cm
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/grains/grains-binary-crop-areaOpen-ext.png
+	width 3.5cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Binary-Images-Utilities"
+
+\end_inset
+
+Utilities for binary images.
+ From left to right: original image, keep largest region, remove largest
+ region, apply size opening for keeping only regions with at least 150 pixels.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Keep
+\begin_inset space ~
+\end_inset
+
+Largest
+\begin_inset space ~
+\end_inset
+
+Region identifies the largest connected component, and remove all other
+ regions.
+\end_layout
+
+\begin_layout Description
+Remove
+\begin_inset space ~
+\end_inset
+
+Largest
+\begin_inset space ~
+\end_inset
+
+Region identifies the largest connected component, and remove it from image.
+\end_layout
+
+\begin_layout Description
+Size
+\begin_inset space ~
+\end_inset
+
+Opening 
+\begin_inset CommandInset label
+LatexCommand label
+name "op:Size-Opening"
+
+\end_inset
+
+computes the size (area in 2D, volume in 3D) of each connected component,
+ and remove all particles whose size is below the value specified by the
+ user.
+\end_layout
+
+\begin_layout Standard
+Algorithms work for both 2D or 3D images.
+ Default connectivity 4 (resp.
+ 6) is used for 2D (resp.
+ 3D) images.
 \begin_inset Newpage clearpage
 \end_inset
 
 
 \end_layout
 
-\begin_layout Section
+\begin_layout Chapter
 Label images
 \end_layout
 
 \begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
-name "sec:label-images"
+name "chap:label-images"
 
 \end_inset
 
@@ -14194,10 +14372,14 @@ When several structures or components are present within an image, it may
 \series bold
 label images
 \series default
+, or 
+\series bold
+label maps
+\series default
 .
- Each pixel or voxel of a label image corresponds to the integer index of
- the particle it belongs to.
- By convention, the value 0 is assumed to correspond to the background.
+ Within a label map, each pixel or voxel of a label image corresponds to
+ the integer index of the particle it belongs to.
+ By convention, the value 0 corresponds to the background.
  Label images are typically computed from binary images by connected component
  algorithms (section 
 \begin_inset CommandInset ref
@@ -14224,18 +14406,29 @@ hyperref[sec:Morphological-Segmentation-Plugin]{Watershed}
 \end_layout
 
 \begin_layout Standard
-The number of labels that can be represented depends on the image type:
- 255 for byte images, 65535 for short images, and around 16 millions for
- 32-bit floating point images (only the 24 bits of the mantissa are used
- for label representation, leading to a maximum number of labels equal to
- 
-\begin_inset Formula $2^{24}$
-\end_inset
+\begin_inset ERT
+status open
 
-).
+\begin_layout Plain Layout
+
+
+\backslash
+minitoc
 \end_layout
 
-\begin_layout Subsection
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
 Visualization of label images
 \end_layout
 
@@ -14387,7 +14580,7 @@ Various visualization modes of label images.
 
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 Color maps
 \end_layout
 
@@ -14416,6 +14609,37 @@ status open
 
 \begin_layout Plain Layout
 \align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/blobs/blobs-lbl-gt50_Glasbey_Black.png
+	width 22text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Glasbey, Black
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \begin_inset Float figure
 wide false
 sideways false
@@ -14468,37 +14692,6 @@ status open
 
 \begin_layout Plain Layout
 GlasbeyDark, White
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename images/blobs/blobs-lbl-gt50_Glasbey_Black.png
-	width 22text%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Glasbey, Black
 \end_layout
 
 \end_inset
@@ -14574,9 +14767,30 @@ Glasbey
 \begin_inset Quotes erd
 \end_inset
 
- colormap generates colors that are perceptually contrasted.
- Default behaviour generates black and white colors, making them difficult
- to distinguish from background.
+ colormap, included within ImageJ, generates colors that are perceptually
+ contrasted (Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:ColorMaps"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+-a).
+ It however generates black and white colors, making them difficult to distingui
+sh from background (on the example from Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:ColorMaps"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+-a, the region in the top-right corner is not visible anymore).
  Therefore, the 
 \begin_inset Quotes eld
 \end_inset
@@ -14603,7 +14817,7 @@ literal "false"
 \end_inset
 
 .
- The choice of colormaps was made following the colorcet library
+ The choice of these colormaps was inspired by the colorcet library
 \begin_inset Foot
 status collapsed
 
@@ -14624,9 +14838,23 @@ https://colorcet.holoviz.org/index.html
 \end_inset
 
 .
+ The Golden Angle colormap is an alternative to the Glasbey family, that
+ provides more saturated colors (Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:ColorMaps"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+-d).
+ The contrast between colors is less than for Glasbey colormaps, making
+ adjacent region potentially more difficult to distinguish.
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 Plugins
 \end_layout
 
@@ -14772,7 +15000,7 @@ noprefix "false"
 
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Visualization of region features
 \end_layout
 
@@ -14942,379 +15170,42 @@ noprefix "false"
 
 \end_layout
 
-\begin_layout Subsection
-Region adjacencies
-\end_layout
-
-\begin_layout Subsubsection
-Region Adjacency Graph
-\end_layout
-
-\begin_layout Standard
-\begin_inset CommandInset label
-LatexCommand label
-name "sec:Region-Adjacency-Graph"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The 
-\series bold
-region adjacency graph 
-\series default
-plugin gives access to the neighborhood relationship between adjacent regions
- (Figure
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Region-Adjacency-Graph"
-
-\end_inset
-
-).
- This can be particularly informative for exploring collections of cells
- within cellular tissues 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Florindo_2016_botanique"
-literal "true"
-
-\end_inset
-
-.
- 
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename images/analysis/maize-clsm.png
-	lyxscale 60
-	width 31text%
-
-\end_inset
-
- 
-\begin_inset Graphics
-	filename images/analysis/maize-clsm-watDyn10.png
-	lyxscale 60
-	width 31text%
-
-\end_inset
-
- 
-\begin_inset Graphics
-	filename images/analysis/maize-clsm-rag.png
-	lyxscale 60
-	width 31text%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:Region-Adjacency-Graph"
-
-\end_inset
-
-Computation of the Region Adjacency Graph (RAG) on a microscopy image of
- plant tissue.
- Left: original image.
- Middle: result of watershed segmentation.
- Right: overlay of edges representing adjacent regions.
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The plugin (under 
-\begin_inset Quotes eld
-\end_inset
-
-Plugins\SpecialChar menuseparator
-MorphoLibJ\SpecialChar menuseparator
-Analyze\SpecialChar menuseparator
-Region Adjacency Graph
-\begin_inset Quotes erd
-\end_inset
-
-) works for both 2D and 3D images, and requires a label image as input.
- A typical input is the result of a watershed segmentation (see section
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "chap:Watershed-segmentation"
-
-\end_inset
-
-), eventually followed by manual edition of the labels (see section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:Label-Edition-plugin"
-
-\end_inset
-
-).
- The output of the plugin is a results table with as many rows as the number
- of pairs of adjacent regions, containing the labels of the two adjacent
- regions.
-\end_layout
-
-\begin_layout Standard
-Note that in the current implementation, MorphoLibJ considers that two regions
- are adjacent if they are separated by 0 or 1 voxel in one of the three
- main directions.
- Therefore, other plugins such as the 
-\series bold
-interface surface area 
-\series default
-(section
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:Interface-Surface-Area"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-) can provide results that may not seem consistent with the region adjacency
- graph.
-\end_layout
-
-\begin_layout Subsubsection
-Region Boundary Labeling
-\end_layout
-
-\begin_layout Standard
-It may sometimes be useful to visualize the boundaries between adjacent
- regions (Fig.
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Region-Boundary-Labeling"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-).
- 
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename images/blobs/blobs-lbl-killBorders-sizeFilt-Dil18.png
-	width 6cm
-
-\end_inset
-
- 
-\begin_inset Graphics
-	filename images/blobs/blobs-lbl-killBorders-sizeFilt-Dil18-bnd.png
-	width 6cm
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:Region-Boundary-Labeling"
-
-\end_inset
-
-Example use of the plugin 
-\begin_inset Quotes eld
-\end_inset
-
-Label Region Boundaries
-\begin_inset Quotes erd
-\end_inset
-
- plugin.
- Left: a label image containing regions with various adjacencies.
- Right: a new label map was created, where each label corresponds to the
- boundary between two or more regions within the original image.
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The 
-\begin_inset Quotes eld
-\end_inset
-
-Region Boundaries Labeling
-\begin_inset Quotes erd
-\end_inset
-
- computes a new label map, where each label corresponds to the boundary
- between two (or more) regions.
- The background is also considered as a region.
- Most boundaries are adjacent to two regions, but the junctions between
- boundaries may be adjacent to three or more regions.
- 
-\end_layout
-
-\begin_layout Standard
-Label maps of boundaries are represented using floating point numbers, leading
- to a maximum number of 2^23 boundaries.
- The number of boundaries is usually much larger than the number of regions,
- and the maximum number of label may be reached quickly.
-\end_layout
-
-\begin_layout Standard
-See also the 
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-hyperref[sec:Region-Adjacency-Graph]{
-\end_layout
-
-\end_inset
-
-region adjacency graph
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-}
-\end_layout
-
-\end_inset
-
- plugin (section
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:Region-Adjacency-Graph"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-), or the 
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-hyperref[subsec:Interface-Surface-Area]{
-\end_layout
-
-\end_inset
-
-Interface Surface Area
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-}
-\end_layout
-
-\end_inset
-
- plugin (section
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:Interface-Surface-Area"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-).
-\end_layout
-
-\begin_layout Standard
-\begin_inset Newpage newpage
-\end_inset
-
-
-\end_layout
-
 \begin_layout Section
+Label image processing
+\end_layout
+
+\begin_layout Subsection
 Region and label selection
 \end_layout
 
 \begin_layout Standard
-It is often convenient to select regions in a binary or label image based
- on their size or their location (e.g.
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Label-Images-Selection"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+It is often convenient to select regions in a label image based on their
+ size or their location (e.g.
  removing the regions touching the border).
  The MorphoLibJ library offers several utility tools for automatically selecting
  or removing specific regions, or to edit the label images.
+ Some of them are illustrated on Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Label-Images-Utilities"
+
+\end_inset
+
+.
  The 
 \begin_inset ERT
 status open
@@ -15339,182 +15230,6 @@ noprefix "false"
 \end_inset
 
 ) provides some of these operators integrated into a graphical user interface.
-\end_layout
-
-\begin_layout Subsection
-Binary images
-\end_layout
-
-\begin_layout Standard
-\begin_inset CommandInset label
-LatexCommand label
-name "subsec:Binary-Images-Selection"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The MorphoLibJ library offers several tools for automatically selecting
- binary regions based on size or position criteria.
- Some of them are illustrated on Figure
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Binary-Images-Utilities"
-
-\end_inset
-
-.
- 
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename images/grains/grains-binary-crop-ext.png
-	width 3.5cm
-
-\end_inset
-
- 
-\begin_inset Graphics
-	filename images/grains/grains-binary-crop-largest-ext.png
-	width 3.5cm
-
-\end_inset
-
- 
-\begin_inset Graphics
-	filename images/grains/grains-binary-crop-killLargest-ext.png
-	width 3.5cm
-
-\end_inset
-
- 
-\begin_inset Graphics
-	filename images/grains/grains-binary-crop-areaOpen-ext.png
-	width 3.5cm
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:Binary-Images-Utilities"
-
-\end_inset
-
-Utilities for binary images.
- From left to right: original image, keep largest region, remove largest
- region, apply size opening for keeping only regions with at least 150 pixels.
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Description
-Keep
-\begin_inset space ~
-\end_inset
-
-Largest
-\begin_inset space ~
-\end_inset
-
-Region identifies the largest connected component, and remove all other
- regions.
-\end_layout
-
-\begin_layout Description
-Remove
-\begin_inset space ~
-\end_inset
-
-Largest
-\begin_inset space ~
-\end_inset
-
-Region identifies the largest connected component, and remove it from image.
-\end_layout
-
-\begin_layout Description
-Size
-\begin_inset space ~
-\end_inset
-
-Opening 
-\begin_inset CommandInset label
-LatexCommand label
-name "op:Size-Opening"
-
-\end_inset
-
-computes the size (area in 2D, volume in 3D) of each connected component,
- and remove all particles whose size is below the value specified by the
- user.
-\end_layout
-
-\begin_layout Standard
-Algorithms work for both 2D or 3D images.
- Default connectivity 4 (resp.
- 6) is used for 2D (resp.
- 3D) images.
-\end_layout
-
-\begin_layout Subsection
-Label images
-\end_layout
-
-\begin_layout Standard
-\begin_inset CommandInset label
-LatexCommand label
-name "subsec:Label-Images-Selection"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-This section describes several operators allowing to select labels based
- on a size criterium, or to edit the label image by removing or replacing
- label values.
- Some of them are illustrated on Figure
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Label-Images-Utilities"
-
-\end_inset
-
-.
 \end_layout
 
 \begin_layout Standard
@@ -15611,49 +15326,6 @@ Label(s) enters a set of labels, and creates a new label image containing
 \end_layout
 
 \begin_layout Description
-Crop
-\begin_inset space ~
-\end_inset
-
-Label 
-\begin_inset CommandInset label
-LatexCommand label
-name "op:Crop-Label"
-
-\end_inset
-
-creates a new binary image containing only the label specified by the user.
- The size of the new image is fitted to the region.
-\end_layout
-
-\begin_layout Description
-Replace
-\begin_inset space ~
-\end_inset
-
-Value replaces the value of a region by another value.
- Can be used to 
-\begin_inset Quotes eld
-\end_inset
-
-clear
-\begin_inset Quotes erd
-\end_inset
-
- a label, by replacing its value by 0, or to merge to adjacent regions,
- by replacing the value of a label by the value of its neighbor.
-\end_layout
-
-\begin_layout Description
-Label
-\begin_inset space ~
-\end_inset
-
-Boundaries creates a new binary image containing value 255 for pixels/voxels
- having a neighbor with a different value.
-\end_layout
-
-\begin_layout Description
 Keep
 \begin_inset space ~
 \end_inset
@@ -15720,6 +15392,355 @@ computes the size (area in 2D, volume in 3D) of each region, and remove
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Morphological filtering
+\end_layout
+
+\begin_layout Standard
+Several morpological filters have been adapted to process label map.
+ The principle is the same as morphological filtering on grayscale images,
+ but using label values instead of gray levels, and avoiding 
+\begin_inset Quotes eld
+\end_inset
+
+collisions
+\begin_inset Quotes erd
+\end_inset
+
+ between labels:
+\end_layout
+
+\begin_layout Itemize
+when applying an erosion, label pixels or voxels are removed if and only
+ if a background pixel or voxel is contained within the neighborhood (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Morphological-Filtering-Label"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+-b).
+ 
+\end_layout
+
+\begin_layout Itemize
+when applying a dilation, only background pixels or voxels are updated,
+ according to the closest label within the neighborhood (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Morphological-Filtering-Label"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+-c).
+\end_layout
+
+\begin_layout Standard
+When two regions are adjacent without background pixel between them, the
+ application of dilation or erosion do not transform nor move their boundary.
+ That way, performing a morphological closing results in a label map with
+ more regular regions, with less gaps between regions, and preserved boundaries
+ betwseen adjacent regions (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Morphological-Filtering-Label"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+-d).
+\end_layout
+
+\begin_layout Standard
+The computation of the neighborhood, and of the closest label, is based
+ on chamfer masks (see Section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Distance-Transform"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/arabidopsisEmbryo/arabidopsis-embryo_watershedC4Tol06_lbl2_z061.png
+	width 23text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Label image
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/arabidopsisEmbryo/arabidopsis-embryo_watershedC4Tol06_lbl2_z061-Erosion.png
+	width 23text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Erosion
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/arabidopsisEmbryo/arabidopsis-embryo_watershedC4Tol06_lbl2_z061-Dilation.png
+	width 23text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Dilation
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/arabidopsisEmbryo/arabidopsis-embryo_watershedC4Tol06_lbl2_z061-Closing.png
+	width 23text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Closing
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Morphological-Filtering-Label"
+
+\end_inset
+
+Morphological filtering of label images.
+ Morphological erosion (b) and erosion (c) take care of adjacent regions.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Label
+\begin_inset space ~
+\end_inset
+
+Morphological
+\begin_inset space ~
+\end_inset
+
+Filtering Applies morphological filtering operators on the label map, by
+ choosing the type of operation (dilation, erosion, opening or closing),
+ and the radius of the operation.
+\end_layout
+
+\begin_layout Description
+Fill
+\begin_inset space ~
+\end_inset
+
+Label
+\begin_inset space ~
+\end_inset
+
+Holes Fills the holes within regions.
+ Only the holes that are adjacent to a single region are filled, using a
+ fill corresponding to the label of the adjacent region.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Edition of label maps
+\end_layout
+
+\begin_layout Standard
+Several plugins allow for basic edition of filtering of label images.
+ They result in another label image.
+\end_layout
+
+\begin_layout Description
+Crop
+\begin_inset space ~
+\end_inset
+
+Label 
+\begin_inset CommandInset label
+LatexCommand label
+name "op:Crop-Label"
+
+\end_inset
+
+creates a new binary image containing only the label specified by the user.
+ The size of the new image is fitted to the region.
+\end_layout
+
+\begin_layout Description
+Replace
+\begin_inset space ~
+\end_inset
+
+Value replaces the value of a region by another value.
+ Can be used to 
+\begin_inset Quotes eld
+\end_inset
+
+clear
+\begin_inset Quotes erd
+\end_inset
+
+ a label, by replacing its value by 0, or to merge to adjacent regions,
+ by replacing the value of a label by the value of its neighbor.
+\end_layout
+
 \begin_layout Description
 Remap
 \begin_inset space ~
@@ -15733,7 +15754,21 @@ name "op:Remap-Labels"
 \end_inset
 
 re-computes the label of each region such that the largest label is equal
- to the number of labels.
+ to the number of labels (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Remap-Labels"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
  This tool can be useful to remove 
 \begin_inset Quotes eld
 \end_inset
@@ -15757,7 +15792,7 @@ status open
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -15950,7 +15985,386 @@ reference "fig:Remap-Labels"
  image (in this case, 71).
 \end_layout
 
-\begin_layout Paragraph
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Region adjacencies
+\end_layout
+
+\begin_layout Standard
+It may sometimes be useful to consider the adjacency relationships between
+ regions.
+ This can be useful for post-processing of segmentation results (using e.g.
+ graph processing algorithms), or for exploring collections of cells within
+ cellular tissues 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Florindo_2016_botanique"
+literal "true"
+
+\end_inset
+
+.
+ Several plugins are available within the library.
+ The definition of adjacency is not totally consistent between the plugins,
+ and results may greatly differ when applied on the same input label image.
+\end_layout
+
+\begin_layout Subsection
+Region Adjacency Graph
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Region-Adjacency-Graph"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+region adjacency graph 
+\series default
+plugin gives access to the neighborhood relationship between adjacent regions
+ (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Region-Adjacency-Graph"
+
+\end_inset
+
+).
+ 
+\end_layout
+
+\begin_layout Minisec
+Region Adjacency Graph
+\end_layout
+
+\begin_layout Standard
+The plugin works for both 2D and 3D images, and requires a label image as
+ input.
+ The output of the plugin is a results table with as many rows as the number
+ of pairs of adjacent regions, containing the labels of the two adjacent
+ regions.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/analysis/maize-clsm.png
+	lyxscale 60
+	width 31text%
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/analysis/maize-clsm-watDyn10.png
+	lyxscale 60
+	width 31text%
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/analysis/maize-clsm-rag.png
+	lyxscale 60
+	width 31text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Region-Adjacency-Graph"
+
+\end_inset
+
+Computation of the Region Adjacency Graph (RAG) on a microscopy image of
+ plant tissue.
+ Left: original image.
+ Middle: result of watershed segmentation.
+ Right: overlay of edges representing adjacent regions.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In the current implementation, MorphoLibJ considers that two regions are
+ adjacent if they are separated by 0 or 1 pixel (or voxel) in one of the
+ two (or three) main directions.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Adjacent region boundaries
+\end_layout
+
+\begin_layout Standard
+It may sometimes be useful to visualize the boundaries between adjacent
+ regions (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Region-Boundary-Labeling"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/blobs/blobs-lbl-killBorders-gt50-Dil17.png
+	width 25text%
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename images/blobs/blobs-lbl-killBorders-gt50-Dil17-bnd.png
+	width 25text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/blobs/blobs-lbl-killBorders-gt50-Dil17-bnd2.png
+	width 25text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/blobs/blobs-lbl-killBorders-gt50-Dil17-bnd2-log.png
+	width 22text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Region-Boundary-Labeling"
+
+\end_inset
+
+Example use of the plugin 
+\begin_inset Quotes eld
+\end_inset
+
+Label Region Boundaries
+\begin_inset Quotes erd
+\end_inset
+
+ plugin.
+ Left: a label image containing regions with various adjacencies.
+ Right: a new label map was created, where each label corresponds to the
+ boundary between two or more regions within the original image.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The 
+\begin_inset Quotes eld
+\end_inset
+
+Label Boundaries
+\begin_inset Quotes erd
+\end_inset
+
+ plugin generates a binary image of the boundaries between regions.
+ The 
+\begin_inset Quotes eld
+\end_inset
+
+Region Boundaries Labeling
+\begin_inset Quotes erd
+\end_inset
+
+ considers similar boundaries, but in addition it associates a label to
+ each boundary.
+ 
+\end_layout
+
+\begin_layout Minisec
+Label
+\begin_inset space ~
+\end_inset
+
+Boundaries
+\end_layout
+
+\begin_layout Standard
+Creates a new binary image containing value 255 for pixels/voxels having
+ a neighbor with a different value.
+ The background is taken into account for computing boundaries.
+ Only the bottom-left neighborhood is checked during image iteration, to
+ generate a thinner boundary image.
+\end_layout
+
+\begin_layout Minisec
+Region
+\begin_inset space ~
+\end_inset
+
+Boundaries
+\begin_inset space ~
+\end_inset
+
+Labeling 
+\end_layout
+
+\begin_layout Standard
+Computes a new label map, where each label corresponds to the boundary between
+ two (or more) regions.
+ The background is also considered as a region.
+ The list of identified boundaries together with their label and bounding
+ regions is displayed in the log window.
+ Most boundaries are adjacent to two regions, but the junctions between
+ boundaries may be adjacent to three or more regions.
+ Label map of boundaries is represented using floating point numbers, leading
+ to a maximum number of 
+\begin_inset Formula $2^{23}$
+\end_inset
+
+ (around 
+\begin_inset Formula $8.3$
+\end_inset
+
+ millions) boundaries.
+ The number of boundaries is usually much larger than the number of regions,
+ and the maximum number of label may be reached quickly.
+\end_layout
+
+\begin_layout Standard
+See also the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[subsec:Interface-Surface-Area]{
+\end_layout
+
+\end_inset
+
+Interface Surface Area
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ plugin (section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Interface-Surface-Area"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+), that measures the surface area between adjacent 3D regions.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Region adjacencies
+\end_layout
+
+\begin_layout Standard
+Another usage of adjacencies is to select regions around a given one.
+ 
+\end_layout
+
+\begin_layout Minisec
 Select
 \begin_inset space ~
 \end_inset
@@ -15991,14 +16405,14 @@ status open
 \align center
 \begin_inset Graphics
 	filename images/blobs/blobs-basins.png
-	width 35text%
+	width 30text%
 
 \end_inset
 
  
 \begin_inset Graphics
 	filename images/blobs/blobs-basins-selectNeighbors.png
-	width 35text%
+	width 30text%
 
 \end_inset
 
