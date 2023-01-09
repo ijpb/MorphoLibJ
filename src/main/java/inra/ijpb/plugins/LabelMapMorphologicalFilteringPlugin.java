@@ -36,7 +36,13 @@ import inra.ijpb.label.filter.ChamferLabelErosion3DShort;
 import inra.ijpb.util.IJUtils;
 
 /**
- * Dilate all labels within a label image.
+ * Applies morphological filtering on a label image.
+ * 
+ * Supported operations are erosion, dilation, opening and closing.
+ * 
+ * Note that the algorithm is different that for grayscale images. Instead of
+ * using a structuring element, the a chamfer mask is used, allowing to choose
+ * between closest labels for dilation.
  */
 public class LabelMapMorphologicalFilteringPlugin implements PlugIn
 {
@@ -198,7 +204,14 @@ public class LabelMapMorphologicalFilteringPlugin implements PlugIn
         }
     };
     
+    /**
+     * The filtering operation to apply. 
+     */
     Operation op = Operation.DILATION;
+    
+    /**
+     * The radius defining the circular neighborhood around each pixel or voxel. Default is 2.0.
+     */
     double radius = 2.0;
 
 	@Override
@@ -207,7 +220,7 @@ public class LabelMapMorphologicalFilteringPlugin implements PlugIn
 		ImagePlus imagePlus = IJ.getImage();
 		
 		// open a dialog to choose options
-        GenericDialog gd = new GenericDialog("Dilate Labels");
+        GenericDialog gd = new GenericDialog("Label Morphological Filter");
         gd.addChoice("Operation", Operation.getAllLabels(), this.op.toString());
         gd.addNumericField("Radius", this.radius, 1);
         
@@ -245,9 +258,6 @@ public class LabelMapMorphologicalFilteringPlugin implements PlugIn
 			ImageStack image = imagePlus.getStack();
 			ChamferMask3D mask = ChamferMask3D.SVENSSON_3_4_5_7;
 						
-//			ChamferLabelDilation3DShort algo = new ChamferLabelDilation3DShort(ChamferMask3D.SVENSSON_3_4_5_7, radius);
-//			DefaultAlgoListener.monitor(algo);
-//			ImageProcessor result = op.process(image, mask, radius);
             ImageStack result = op.process(image, mask, radius);
             
 			result.setColorModel(image.getColorModel());
