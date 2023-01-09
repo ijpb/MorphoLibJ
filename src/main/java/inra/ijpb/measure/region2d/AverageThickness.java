@@ -142,6 +142,9 @@ public class AverageThickness extends RegionAnalyzer2D<AverageThickness.Result>
          */
         public double avgThickness;
         
+        /**
+         * The unit associated to the measure.
+         */
         public String unit = "pixel";
     }
 

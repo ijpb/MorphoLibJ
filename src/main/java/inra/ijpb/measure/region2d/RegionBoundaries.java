@@ -16,7 +16,7 @@ import inra.ijpb.label.LabelImages;
  * Utility functions for computing position of boundary points/corners of
  * regions within binary or label images.
  * 
- * The methods in this can are mostly used for computing convex hulls.
+ * The methods in this class are mostly used for computing convex hulls.
  * 
  * @see inra.ijpb.measure.region2d.Convexity
  * 
@@ -25,13 +25,6 @@ import inra.ijpb.label.LabelImages;
  */
 public class RegionBoundaries
 {
-	/**
-	 * private constructor to prevent instantiations.
-	 */
-	private RegionBoundaries()
-	{
-	}
-
 	/**
      * Returns a set of points located at the corners of a binary particle.
      * Point coordinates are integer (ImageJ locates pixels in a [0 1]^d area).
@@ -370,5 +363,12 @@ public class RegionBoundaries
         }
 
         return pointArrays;
+    }
+
+    /**
+     * private constructor to prevent instantiations.
+     */
+    private RegionBoundaries()
+    {
     }
 }
