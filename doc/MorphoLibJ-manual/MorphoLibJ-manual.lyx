@@ -676,8 +676,23 @@ binary
 \end_inset
 
 images are expected to contain only two possible values.
- Within ImageJ, they are represented as 8-bits images containing only the
- values 0 (for the background) and 255 (for the foreground).
+ Within ImageJ, they are represented as 8-bits images containing only two
+ values: 0 for the background, and 255 for the foreground (See chapter
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "chap:Binary-Images"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+ 
 \end_layout
 
 \begin_layout Description
@@ -700,7 +715,7 @@ images (also called
 label maps
 \series default
 ) contains values that can be interpreted as the label or index of a region
- (See section
+ (See chapter
 \begin_inset space ~
 \end_inset
 
@@ -785,6 +800,36 @@ literal "false"
 \end_inset
 
 .
+ The notion of connectivity determines the result of many algorithms such
+ as connected component labeling (see Section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Connected-Components-Labeling"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+), or the result of image quantification based on Euler number (see Section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Digital-Euler-Number"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Subsection
@@ -792,8 +837,9 @@ literal "false"
 \end_layout
 
 \begin_layout Standard
-For planar images, a typical choice is the 4-connectivity, that considers
- only the orthogonal neighbors of a given pixel (Figure
+For planar images, typical choices are the 4- and the 8-connectivities.
+ The 4-connectivity considers only the orthogonal neighbors of a given pixel
+ (Figure
 \begin_inset space ~
 \end_inset
 
@@ -808,9 +854,7 @@ noprefix "false"
 \end_inset
 
 -a).
- When two pixels are located in a diagonal, they are not considered as adjacent.
- The 8-connectivity is an alternative that also considers the diagonal pixels
- as neighbors (Figure
+ The 8-connectivity also considers the diagonal pixels (Figure
 \begin_inset space ~
 \end_inset
 
@@ -836,16 +880,64 @@ status open
 
 \begin_layout Plain Layout
 \align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
 \begin_inset Graphics
 	filename images/connectivity/connectivity2D_C4.png
-	width 30text%
+	width 22text%
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+4-connectivity
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
 \begin_inset Graphics
 	filename images/connectivity/connectivity2D_C8.png
-	width 30text%
+	width 22text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+8-connectivity
+\end_layout
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
@@ -902,7 +994,7 @@ noprefix "false"
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -915,7 +1007,7 @@ status open
 \align center
 \begin_inset Graphics
 	filename images/connectivity/JordanCurve_continuous.png
-	width 35text%
+	width 30text%
 
 \end_inset
 
@@ -940,13 +1032,13 @@ Continuous curve
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
 	filename images/connectivity/JordanCurve_C4.png
-	width 35text%
+	width 30text%
 
 \end_inset
 
@@ -3310,7 +3402,8 @@ Principle
 \end_layout
 
 \begin_layout Standard
-The principle of morphological reconstruction is to repeat 
+The principle of morphological reconstruction canbe illustrated by applying
+ 
 \series bold
 conditional dilations or erosions
 \series default
@@ -3409,6 +3502,26 @@ reference "fig:Morphological-Reconstruction-Principle"
  dilation will not modify the image any more.
  The result is the set of regions that contains the markers, with the same
  shape as in the original image.
+\end_layout
+
+\begin_layout Standard
+In practice, morphological reconstruction is often implemented using more
+ efficient algorithms based on queues, by a adding pixels or voxels to the
+ queue based on the connectivity with processed elements (see Section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Digital-Connectivity"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Subsection
@@ -4046,6 +4159,22 @@ are regions of connected pixels or voxels with the same value, and whose
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:Regional-Maxima"
+
+\end_inset
+
+).
+ In both cases, the result depends on the choice of the connectivity of
+ the regions (see section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Digital-Connectivity"
+plural "false"
+caps "false"
+noprefix "false"
 
 \end_inset
 
@@ -5309,7 +5438,21 @@ Morphological parameters:
 Use diagonal connectivity
 \series default
 : select to allow the flooding in diagonal directions (8-connectivity in
- 2D and 26-connectivity in 3D).
+ 2D and 26-connectivity in 3D, see Section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Digital-Connectivity"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
  
 \end_layout
 
@@ -8252,7 +8395,22 @@ reference "fig:Euler-Number-Computation-2D"
 \end_inset
 
 ).
- The resulting reconstruction depends on the choice of the connectivity.
+ The resulting reconstruction depends on the choice of the connectivity
+ (see Section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Digital-Connectivity"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
  For planar images, typical choices are the 4-connectivity, corresponding
  to the orthogonal neighbors (Fig.
 \begin_inset space ~
@@ -11985,6 +12143,16 @@ Binary images
 \end_layout
 
 \begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "chap:Binary-Images"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 Binary and label images are a convenient way of representing the result
  of segmentation algorithms.
  The MorphoLibJ library provides several plugins for the processing and
@@ -13718,7 +13886,21 @@ reference "fig:Connectivity-2D"
 \end_inset
 
 ).
- 
+ See also Section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Digital-Connectivity"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
