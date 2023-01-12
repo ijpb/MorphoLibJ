@@ -11,7 +11,7 @@
 
 	<groupId>fr.inra.ijpb</groupId>
 	<artifactId>MorphoLibJ_</artifactId>
-	<version>1.6.1-SNAPSHOT</version>
+	<version>1.6.0.1-SNAPSHOT</version>
 
 	<name>MorphoLibJ</name>
 	<description>Mathematical morphology library and plugins for ImageJ/Fiji.</description>
