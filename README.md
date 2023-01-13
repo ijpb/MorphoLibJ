@@ -42,7 +42,7 @@ If you develop plugins / applications based on MorphoLibJ, you can use add the f
   <dependency>
     <groupId>fr.inra.ijpb</groupId>
     <artifactId>MorphoLibJ_</artifactId>
-    <version>1.5.0</version>
+    <version>1.6.0.1</version>
   </dependency>
 ```
 
