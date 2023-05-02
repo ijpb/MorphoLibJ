@@ -592,7 +592,11 @@ Digital images may be defined by a mapping from a pair
 \begin_inset Quotes eld
 \end_inset
 
+
+\series bold
 pixels
+\series default
+
 \begin_inset Quotes erd
 \end_inset
 
@@ -626,7 +630,7 @@ Images are usually represented as 2D arrays of elementary data types.
 \begin_inset Formula $255$
 \end_inset
 
-
+.
 \end_layout
 
 \begin_layout Itemize
@@ -638,17 +642,26 @@ Images are usually represented as 2D arrays of elementary data types.
 \begin_inset Formula $2^{16}=65536$
 \end_inset
 
-
+.
 \end_layout
 
 \begin_layout Itemize
-24-bits images corresponds to color images.
+24-bits images corresponds to
+\series bold
+ color images
+\series default
+.
  Pixels are represented as triplet of red, green and blue components, each
  of them ranging between 0 and 255.
 \end_layout
 
 \begin_layout Itemize
-32-bits images contains pixels with floating-points values, possibly negative
+32-bits images contains pixels with floating-points values, possibly negative.
+\end_layout
+
+\begin_layout Standard
+Note that other software may use additionnal data type for representation
+ of images, such as 32-bits integers, complex values, booleans...
 \end_layout
 
 \begin_layout Subsection
@@ -702,7 +715,8 @@ intensity
 
 images may correspond to any types that can be interpreted as a single scalar
  value.
- They may correspond to 8-bits, 16-bits, or 32-bits images.
+ They can be represented with 8-bits, 16-bits, or 32-bits images.
+ 
 \end_layout
 
 \begin_layout Description
@@ -732,7 +746,8 @@ noprefix "false"
 ).
  The label 0 usually refer to the background (i.e., no region).
  Label images can be represented using 8-bits, 16-bits, or 32-bits images.
- Binary images can be seen as a special case of label images.
+ Binary images can be seen as a special case of label images that contain
+ only one label.
 \end_layout
 
 \begin_layout Subsection
@@ -740,17 +755,22 @@ noprefix "false"
 \end_layout
 
 \begin_layout Standard
-Most algorithms from mathematical morphology extends naturally from two
- dimensions to three dimensions.
+Most algorithms from mathematical morphology (and more generally, many image
+ processing algorithms) extends naturally from two dimensions to three dimension
+s.
  Within ImageJ, 3D images are represented as 
 \begin_inset Quotes eld
 \end_inset
 
+
+\series bold
 image stacks
+\series default
+
 \begin_inset Quotes erd
 \end_inset
 
-, seen as a stack of 2D arrays.
+, seen as stacks of 2D arrays.
  Elements of a 3D image are usually refered to as 
 \begin_inset Quotes eld
 \end_inset
