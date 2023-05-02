@@ -32,6 +32,8 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.measure.Calibration;
+import inra.ijpb.data.image.ImageUtils;
+import inra.ijpb.data.image.Images3D;
 import inra.ijpb.geometry.Point3D;
 
 /**
@@ -46,7 +48,7 @@ public class IntrinsicVolumes3DTest
     @Test
     public final void testVolumes()
     {
-        ImageStack image = createBallImage();
+        ImageStack image = createBallImage_50x50x50();
         int[] labels = new int[] {255};
         Calibration calib = new Calibration();
         
@@ -129,7 +131,7 @@ public class IntrinsicVolumes3DTest
     @Test
     public final void testSurfaceAreas_SingleBall_D3()
     {
-        ImageStack image = createBallImage();
+        ImageStack image = createBallImage_50x50x50();
         int[] labels = new int[] {255};
         Calibration calib = new Calibration();
         
@@ -228,7 +230,7 @@ public class IntrinsicVolumes3DTest
     @Test
     public final void testSurfaceAreas_SingleBall_D13()
     {
-        ImageStack image = createBallImage();
+        ImageStack image = createBallImage_50x50x50();
         int[] labels = new int[] {255};
         Calibration calib = new Calibration();
         
@@ -299,7 +301,7 @@ public class IntrinsicVolumes3DTest
     @Test
     public final void testSurfaceAreas_ManyBalls_D13()
     {
-        ImageStack image = createManyBallsImage();
+        ImageStack image = createManyBallsImage_100x100x100();
         int[] labels = new int[27];
         for(int i = 0; i < 27; i++)
         {
@@ -463,7 +465,7 @@ public class IntrinsicVolumes3DTest
     @Test
     public final void testMeanBreadth_SingleBall_D3()
     {
-        ImageStack image = createBallImage();
+        ImageStack image = createBallImage_50x50x50();
         Calibration calib = new Calibration();
         
         double meanBreadth = IntrinsicVolumes3D.meanBreadth(image, calib, 3, 8);
@@ -478,7 +480,7 @@ public class IntrinsicVolumes3DTest
     @Test
     public final void testMeanBreadth_SingleBall_D13()
     {
-        ImageStack image = createBallImage();
+        ImageStack image = createBallImage_50x50x50();
         Calibration calib = new Calibration();
         
         double meanBreadth = IntrinsicVolumes3D.meanBreadth(image, calib, 13, 8);
@@ -515,7 +517,7 @@ public class IntrinsicVolumes3DTest
     @Test
     public final void testEulerNumber_ball_C6()
     {
-        ImageStack image = createBallImage();
+        ImageStack image = createBallImage_50x50x50();
     
         double euler = IntrinsicVolumes3D.eulerNumber(image, 6);
         
@@ -528,7 +530,7 @@ public class IntrinsicVolumes3DTest
     @Test
     public final void testEulerNumber_ball_C26()
     {
-        ImageStack image = createBallImage();
+        ImageStack image = createBallImage_50x50x50();
     
         double euler = IntrinsicVolumes3D.eulerNumber(image, 26);
         
@@ -541,7 +543,7 @@ public class IntrinsicVolumes3DTest
     @Test
     public final void testEulerNumbers_C6()
     {
-        ImageStack image = createEulerImage();
+        ImageStack image = createEulerNumber3DTestImage();
         int[] labels = {1, 2, 3, 4};
 
         double[] euler = IntrinsicVolumes3D.eulerNumbers(image, labels, 6);
@@ -558,7 +560,7 @@ public class IntrinsicVolumes3DTest
     @Test
     public final void testEulerNumbers_C26()
     {
-        ImageStack image = createEulerImage();
+        ImageStack image = createEulerNumber3DTestImage();
         int[] labels = {1, 2, 3, 4};
 
         double[] euler = IntrinsicVolumes3D.eulerNumbers(image, labels, 26);
@@ -570,13 +572,64 @@ public class IntrinsicVolumes3DTest
     }
 
     /**
+     * Test method for {@link inra.ijpb.measure.IntrinsicVolumes3D#eulerNumbers(ij.ImageStack, int[], int)}.
+     */
+    @Test
+    public final void testEulerNumberConsistency_C6_C26()
+    {
+        // one stack containing the configuration tile
+        ImageStack stack1 = ImageStack.create(4, 4, 4, 8);
+        // one stack containing the complementary of the configuration tile,
+        // surrounded by foreground values
+        ImageStack stack2 = ImageStack.create(4, 4, 4, 8);
+        Images3D.fill(stack2, 255);
+        
+        // iterate over 2-by-2-by2 voxel configurations
+        for (int index = 0; index < 256; index++)
+        {
+            int v0 = (index & 1) > 0 ? 255 : 0;
+            int v1 = (index & 2) > 0 ? 255 : 0;
+            int v2 = (index & 4) > 0 ? 255 : 0;
+            int v3 = (index & 8) > 0 ? 255 : 0;
+            int v4 = (index & 16) > 0 ? 255 : 0;
+            int v5 = (index & 32) > 0 ? 255 : 0;
+            int v6 = (index & 64) > 0 ? 255 : 0;
+            int v7 = (index & 128) > 0 ? 255 : 0;
+            
+            stack1.setVoxel(1, 1, 1, v0);
+            stack2.setVoxel(1, 1, 1, 255-v0);
+            stack1.setVoxel(2, 1, 1, v1);
+            stack2.setVoxel(2, 1, 1, 255-v1);
+            stack1.setVoxel(1, 2, 1, v2);
+            stack2.setVoxel(1, 2, 1, 255-v2);
+            stack1.setVoxel(2, 2, 1, v3);
+            stack2.setVoxel(2, 2, 1, 255-v3);
+            stack1.setVoxel(1, 1, 2, v4);
+            stack2.setVoxel(1, 1, 2, 255-v4);
+            stack1.setVoxel(2, 1, 2, v5);
+            stack2.setVoxel(2, 1, 2, 255-v5);
+            stack1.setVoxel(1, 2, 2, v6);
+            stack2.setVoxel(1, 2, 2, 255-v6);
+            stack1.setVoxel(2, 2, 2, v7);
+            stack2.setVoxel(2, 2, 2, 255-v7);
+            
+            double euler1 = IntrinsicVolumes3D.eulerNumber(stack1, 6);
+            double euler2 = IntrinsicVolumes3D.eulerNumber(stack2, 26);
+            
+            assertEquals(euler1, euler2 - 1, 0.01);        
+        }
+        
+        
+    }
+    
+    /**
      * Generate a ball of radius 20 in a discrete image of size 50x50x50, with a
      * center not exactly in the center of the central voxel.
      * 
      * Expected surface area is around 5026.
      * Expected mean breadth is equal to the diameter, i.e. 40.
      */
-	private final static ImageStack createBallImage()
+	private final static ImageStack createBallImage_50x50x50()
 	{
 		// ball features
         double xc = 25.12;
@@ -611,7 +664,7 @@ public class IntrinsicVolumes3DTest
     
 	private final static ImageStack createBallImage_HalfResolX()
 	{
-		ImageStack baseImage = createBallImage();
+		ImageStack baseImage = createBallImage_50x50x50();
 		int size1 = baseImage.getWidth() / 2;
 		int size2 = baseImage.getHeight();
 		int size3 = baseImage.getSize();
@@ -634,7 +687,7 @@ public class IntrinsicVolumes3DTest
 		
 	private final static ImageStack createBallImage_HalfResolY()
 	{
-		ImageStack baseImage = createBallImage();
+		ImageStack baseImage = createBallImage_50x50x50();
 		int size1 = baseImage.getWidth();
 		int size2 = baseImage.getHeight() / 2;
 		int size3 = baseImage.getSize();
@@ -657,7 +710,7 @@ public class IntrinsicVolumes3DTest
 		
 	private final static ImageStack createBallImage_HalfResolZ()
 	{
-		ImageStack baseImage = createBallImage();
+		ImageStack baseImage = createBallImage_50x50x50();
 		int size1 = baseImage.getWidth();
 		int size2 = baseImage.getHeight();
 		int size3 = baseImage.getSize() / 2;
@@ -679,10 +732,12 @@ public class IntrinsicVolumes3DTest
 	}
 		
     /**
-     * Generate an image containing 27 balls with same radius.
-     * Radius of the ball is 12.61, resulting in a surface area of around 2000.
+     * Generate an image containing 27 balls with the same radius evenly spaced
+     * within the image cube.
+     * 
+     * Radius of the balls is 12.65, resulting in a surface area of around 2000.
      */
-    private final static ImageStack createManyBallsImage() {
+    private final static ImageStack createManyBallsImage_100x100x100() {
         // ball features
         double xc = 20.12;
         double yc = 20.23;
@@ -734,7 +789,6 @@ public class IntrinsicVolumes3DTest
                         result.setVoxel(x, y + 60, z + 60, 25);
                         result.setVoxel(x + 30, y + 60, z + 60, 26);
                         result.setVoxel(x + 60, y + 60, z + 60, 27);
-
                     }
                 }
             }
@@ -744,31 +798,25 @@ public class IntrinsicVolumes3DTest
     }   
     
     /**
-     * Generate the 3D test image with 7 labels for measuring Euler Number.
+     * Generate the 3D test image with four labels for testing Euler Number
+     * determination.
      * 
      * Labels:
-     * 1: a single blob, with some thickness (Euler = 1)
-     * 2: a set of single points (Euler = 8)
-     * 3: a single loop, one voxel thickness (Euler = 0)
-     * 4: a hollow sphere (Euler = 2)
+     * <ul>
+     * <li>Label 1: a single blob, with some thickness (Euler Number = 1)</li>
+     * <li>Label 2: a set of single points (Euler Number = 8)</li>
+     * <li>Label 3: a single loop, one voxel thickness (Euler Number = 0)</li>
+     * <li>Label 4: a hollow sphere (Euler Number = 2)</li>
+     * </ul>
      */
-    private final static ImageStack createEulerImage() 
+    private final static ImageStack createEulerNumber3DTestImage() 
     {
         ImageStack labelImage = ImageStack.create(10, 10, 10, 8);
         
         // Label 1 -> a single compact blob
-        for(int z = 1; z < 4; z++)
-        {
-            for(int y = 1; y < 4; y++)
-            {
-                for(int x = 1; x < 4; x++)
-                {
-                    labelImage.setVoxel(x, y, z, 1);
-                }
-            }
-        }
+        ImageUtils.fillRect3d(labelImage, 1, 1, 1, 3, 3, 3, 1);
         
-        // Label 2 -> eight indivdual voxels
+        // Label 2 -> eight individual voxels
         labelImage.setVoxel(5, 1, 1, 2);
         labelImage.setVoxel(7, 1, 1, 2);
         labelImage.setVoxel(5, 3, 1, 2);
@@ -792,16 +840,7 @@ public class IntrinsicVolumes3DTest
         labelImage.setVoxel(1, 7, 2, 3);
     
         // Label 4 -> hollow cube
-        for(int z = 1; z < 4; z++)
-        {
-            for(int y = 5; y < 8; y++)
-            {
-                for(int x = 5; x < 8; x++)
-                {
-                    labelImage.setVoxel(x, y, z, 4);
-                }
-            }
-        }
+        ImageUtils.fillRect3d(labelImage, 5, 5, 1, 3, 3, 3, 4);
         labelImage.setVoxel(6, 6, 2, 0);
         
         return labelImage;
