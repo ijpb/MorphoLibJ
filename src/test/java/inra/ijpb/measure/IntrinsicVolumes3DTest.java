@@ -35,6 +35,7 @@ import ij.measure.Calibration;
 import inra.ijpb.data.image.ImageUtils;
 import inra.ijpb.data.image.Images3D;
 import inra.ijpb.geometry.Point3D;
+import inra.ijpb.shape.ImageShape;
 
 /**
  * @author dlegland
@@ -98,6 +99,7 @@ public class IntrinsicVolumes3DTest
         
         double surface = IntrinsicVolumes3D.surfaceArea(image, calib, 3);
         
+        // When using 3 directions, consider a rather large range of error (20 %)
         double exp = 16.0;
         assertEquals(exp, surface, 16.0*0.2);
     }
@@ -139,7 +141,7 @@ public class IntrinsicVolumes3DTest
         
         double exp = 5026.0;
         assertEquals(1, surfaces.length);
-        assertEquals(exp, surfaces[0], 2.);
+        assertEquals(exp, surfaces[0], 2.0);
     }
 
     /**
@@ -148,7 +150,7 @@ public class IntrinsicVolumes3DTest
     @Test
     public final void testSurfaceAreas_SingleBall_D3_HalfResolX()
     {
-        ImageStack image = createBallImage_HalfResolX();
+        ImageStack image = ImageShape.subsample(createBallImage_50x50x50(), 2, 1, 1);
         int[] labels = new int[] {255};
         Calibration calib = new Calibration();
         calib.pixelWidth = 2.0;
@@ -166,7 +168,7 @@ public class IntrinsicVolumes3DTest
     @Test
     public final void testSurfaceAreas_SingleBall_D3_HalfResolY()
     {
-        ImageStack image = createBallImage_HalfResolY();
+        ImageStack image = ImageShape.subsample(createBallImage_50x50x50(), 1, 2, 1);
         int[] labels = new int[] {255};
         Calibration calib = new Calibration();
         calib.pixelHeight = 2.0;
@@ -184,7 +186,7 @@ public class IntrinsicVolumes3DTest
     @Test
     public final void testSurfaceAreas_SingleBall_D3_HalfResolZ()
     {
-        ImageStack image = createBallImage_HalfResolZ();
+        ImageStack image = ImageShape.subsample(createBallImage_50x50x50(), 1, 1, 2);
         int[] labels = new int[] {255};
         Calibration calib = new Calibration();
         calib.pixelDepth = 2.0;
@@ -247,7 +249,7 @@ public class IntrinsicVolumes3DTest
     @Test
     public final void testSurfaceAreas_SingleBall_D13_HalfResolX()
     {
-        ImageStack image = createBallImage_HalfResolX();
+        ImageStack image = ImageShape.subsample(createBallImage_50x50x50(), 2, 1, 1);
         int[] labels = new int[] {255};
         Calibration calib = new Calibration();
         calib.pixelWidth = 2.0;
@@ -265,7 +267,7 @@ public class IntrinsicVolumes3DTest
     @Test
     public final void testSurfaceAreas_SingleBall_D13_HalfResolY()
     {
-        ImageStack image = createBallImage_HalfResolY();
+        ImageStack image = ImageShape.subsample(createBallImage_50x50x50(), 1, 2, 1);
         int[] labels = new int[] {255};
         Calibration calib = new Calibration();
         calib.pixelHeight = 2.0;
@@ -283,7 +285,7 @@ public class IntrinsicVolumes3DTest
     @Test
     public final void testSurfaceAreas_SingleBall_D13_HalfResolZ()
     {
-        ImageStack image = createBallImage_HalfResolZ();
+        ImageStack image = ImageShape.subsample(createBallImage_50x50x50(), 1, 1, 2);
         int[] labels = new int[] {255};
         Calibration calib = new Calibration();
         calib.pixelDepth = 2.0;
@@ -315,7 +317,7 @@ public class IntrinsicVolumes3DTest
         assertEquals(27, surfaces.length);
         for (int i = 0; i < 27; i++)
         {
-            assertEquals(exp, surfaces[i], 2.);
+            assertEquals(exp, surfaces[i], 2.0);
         }
     }
 
@@ -326,23 +328,14 @@ public class IntrinsicVolumes3DTest
     public final void testSurfaceAreas_TouchingLabels_D3()
     {
         ImageStack image = ImageStack.create(9, 9, 9, 8);
-        for (int i = 0; i < 3; i++)
-        {
-            for (int j = 0; j < 3; j++)
-            {
-                for (int k = 0; k < 3; k++)
-                {
-                    image.setVoxel(    i,     j,     k,  1);
-                    image.setVoxel(i + 3,     j,     k,  2);
-                    image.setVoxel(    i, j + 3,     k,  3);
-                    image.setVoxel(i + 3, j + 3,     k,  4);
-                    image.setVoxel(    i,     j, k + 3,  5);
-                    image.setVoxel(i + 3,     j, k + 3,  6);
-                    image.setVoxel(    i, j + 3, k + 3,  7);
-                    image.setVoxel(i + 3, j + 3, k + 3,  8);
-                }
-            }
-        }
+        ImageUtils.fillRect3d(image, 0, 0, 0, 3, 3, 3, 1);
+        ImageUtils.fillRect3d(image, 3, 0, 0, 3, 3, 3, 2);
+        ImageUtils.fillRect3d(image, 0, 3, 0, 3, 3, 3, 3);
+        ImageUtils.fillRect3d(image, 3, 3, 0, 3, 3, 3, 4);
+        ImageUtils.fillRect3d(image, 0, 0, 3, 3, 3, 3, 5);
+        ImageUtils.fillRect3d(image, 3, 0, 3, 3, 3, 3, 6);
+        ImageUtils.fillRect3d(image, 0, 3, 3, 3, 3, 3, 7);
+        ImageUtils.fillRect3d(image, 3, 3, 3, 3, 3, 3, 8);
         int[] labels = new int[] {1, 2, 3, 4, 5, 6, 7, 8};
         Calibration calib = new Calibration();
         
@@ -362,23 +355,14 @@ public class IntrinsicVolumes3DTest
     public final void testSurfaceAreas_TouchingLabels_D13()
     {
         ImageStack image = ImageStack.create(9, 9, 9, 8);
-        for (int i = 0; i < 3; i++)
-        {
-            for (int j = 0; j < 3; j++)
-            {
-                for (int k = 0; k < 3; k++)
-                {
-                    image.setVoxel(    i,     j,     k,  1);
-                    image.setVoxel(i + 3,     j,     k,  2);
-                    image.setVoxel(    i, j + 3,     k,  3);
-                    image.setVoxel(i + 3, j + 3,     k,  4);
-                    image.setVoxel(    i,     j, k + 3,  5);
-                    image.setVoxel(i + 3,     j, k + 3,  6);
-                    image.setVoxel(    i, j + 3, k + 3,  7);
-                    image.setVoxel(i + 3, j + 3, k + 3,  8);
-                }
-            }
-        }
+        ImageUtils.fillRect3d(image, 0, 0, 0, 3, 3, 3, 1);
+        ImageUtils.fillRect3d(image, 3, 0, 0, 3, 3, 3, 2);
+        ImageUtils.fillRect3d(image, 0, 3, 0, 3, 3, 3, 3);
+        ImageUtils.fillRect3d(image, 3, 3, 0, 3, 3, 3, 4);
+        ImageUtils.fillRect3d(image, 0, 0, 3, 3, 3, 3, 5);
+        ImageUtils.fillRect3d(image, 3, 0, 3, 3, 3, 3, 6);
+        ImageUtils.fillRect3d(image, 0, 3, 3, 3, 3, 3, 7);
+        ImageUtils.fillRect3d(image, 3, 3, 3, 3, 3, 3, 8);
         int[] labels = new int[] {1, 2, 3, 4, 5, 6, 7, 8};
         Calibration calib = new Calibration();
         
@@ -618,8 +602,6 @@ public class IntrinsicVolumes3DTest
             
             assertEquals(euler1, euler2 - 1, 0.01);        
         }
-        
-        
     }
     
     /**
@@ -636,7 +618,6 @@ public class IntrinsicVolumes3DTest
         double yc = 25.23;
         double zc = 25.34;
         double radius = 20;
-        double r2 = radius * radius;
         
         // image size
         int size1 = 50;
@@ -644,93 +625,11 @@ public class IntrinsicVolumes3DTest
         int size3 = 50;
         
         ImageStack result = ImageStack.create(size1, size2, size3, 8);
-        
-        for (int z = 0; z < size3; z++) {
-            double z2 = z - zc; 
-            for (int y = 0; y < size2; y++) {
-                double y2 = y - yc; 
-                for (int x = 0; x < size1; x++) {
-                    double x2 = x - xc;
-                    double ri = x2 * x2 + y2 * y2 + z2 * z2; 
-                    if (ri <= r2) {
-                        result.setVoxel(x, y, z, 255);
-                    }
-                }
-            }
-        }
+        ImageUtils.fill(result, (x,y,z) -> Math.hypot(Math.hypot(x - xc, y- yc), z - zc) <= radius ? 255.0 : 0.0);
         
         return result;
     }
     
-	private final static ImageStack createBallImage_HalfResolX()
-	{
-		ImageStack baseImage = createBallImage_50x50x50();
-		int size1 = baseImage.getWidth() / 2;
-		int size2 = baseImage.getHeight();
-		int size3 = baseImage.getSize();
-		
-        ImageStack result = ImageStack.create(size1, size2, size3, 8);
-        
-		for (int z = 0; z < size3; z++)
-		{
-			for (int y = 0; y < size2; y++)
-			{
-				for (int x = 0; x < size1; x++)
-				{
-                    result.setVoxel(x, y, z, baseImage.getVoxel(2 * x, y, z));
-                }
-            }
-        }
-		
-		return result;
-	}
-		
-	private final static ImageStack createBallImage_HalfResolY()
-	{
-		ImageStack baseImage = createBallImage_50x50x50();
-		int size1 = baseImage.getWidth();
-		int size2 = baseImage.getHeight() / 2;
-		int size3 = baseImage.getSize();
-		
-        ImageStack result = ImageStack.create(size1, size2, size3, 8);
-        
-		for (int z = 0; z < size3; z++)
-		{
-			for (int y = 0; y < size2; y++)
-			{
-				for (int x = 0; x < size1; x++)
-				{
-                    result.setVoxel(x, y, z, baseImage.getVoxel(x, 2 * y, z));
-                }
-            }
-        }
-		
-		return result;
-	}
-		
-	private final static ImageStack createBallImage_HalfResolZ()
-	{
-		ImageStack baseImage = createBallImage_50x50x50();
-		int size1 = baseImage.getWidth();
-		int size2 = baseImage.getHeight();
-		int size3 = baseImage.getSize() / 2;
-		
-        ImageStack result = ImageStack.create(size1, size2, size3, 8);
-        
-		for (int z = 0; z < size3; z++)
-		{
-			for (int y = 0; y < size2; y++)
-			{
-				for (int x = 0; x < size1; x++)
-				{
-                    result.setVoxel(x, y, z, baseImage.getVoxel(x, y, 2 * z));
-                }
-            }
-        }
-		
-		return result;
-	}
-		
     /**
      * Generate an image containing 27 balls with the same radius evenly spaced
      * within the image cube.
