@@ -39,6 +39,39 @@ import ij.process.ImageProcessor;
 public class ImageUtilsTest
 {
     /**
+     * Test method for {@link inra.ijpb.data.image.ImageUtils#fill(ij.process.ImageProcessor, java.util.function.BiFunction)}.
+     */
+    @Test
+    public final void testFill_2D_functionXY()
+    {
+        ImageProcessor image = new ByteProcessor(8, 6);
+        ImageUtils.fill(image, (x,y) -> (x + y * 10.0));
+        
+        assertEquals( 0.0, image.getf(0, 0), 0.01);
+        assertEquals( 7.0, image.getf(7, 0), 0.01);
+        assertEquals(50.0, image.getf(0, 5), 0.01);
+        assertEquals(57.0, image.getf(7, 5), 0.01);
+    }
+    
+    /**
+     * Test method for {@link inra.ijpb.data.image.ImageUtils#fill(ij.ImageStack, inra.ijpb.data.image.TriFunction)}.
+     */
+    @Test
+    public final void testFill_3D_functionXYZ()
+    {
+        ImageStack image = ImageStack.create(7, 5, 3, 8);
+        ImageUtils.fill(image, (x,y,z) -> (x + y * 10.0 + z * 100.0));
+        
+        assertEquals(  0.0, image.getVoxel(0, 0, 0), 0.01);
+        assertEquals(  6.0, image.getVoxel(6, 0, 0), 0.01);
+        assertEquals( 40.0, image.getVoxel(0, 4, 0), 0.01);
+        assertEquals(200.0, image.getVoxel(0, 0, 2), 0.01);
+        assertEquals(246.0, image.getVoxel(6, 4, 2), 0.01);
+    }
+
+    
+    
+    /**
      * Test method for {@link inra.ijpb.data.image.ImageUtils#fillRect(ij.process.ImageProcessor, int, int, int, int, double)}.
      */
     @Test

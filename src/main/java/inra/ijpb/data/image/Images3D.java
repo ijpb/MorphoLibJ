@@ -252,7 +252,7 @@ public class Images3D
 	 *            the 3D image to process
 	 * @param value
 	 *            the value used to fill input image
-	 */ 
+	 */
 	public static final void fill(ImageStack image, double value) 
 	{
 		for (int z = 0; z < image.getSize(); z++)
