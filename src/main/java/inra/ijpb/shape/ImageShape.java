@@ -227,6 +227,112 @@ public class ImageShape
     }
 
     /**
+     * Sub-samples the input image by retaining one pixel over k along each
+     * direction.
+     * 
+     * @param image
+     *            the input image
+     * @param k
+     *            the sampling ratio of pixels in each direction
+     * @return a new sub-sampled image
+     */
+    public static final ImageProcessor subsample(ImageProcessor image, int k)
+    {
+        return subsample(image, k, k);
+    }
+    
+    /**
+     * Sub-samples the input image by retaining one pixel over k_i along each
+     * direction.
+     * 
+     * @param image
+     *            the input image
+     * @param kx
+     *            the sampling ratio of pixels in the x-direction
+     * @param ky
+     *            the sampling ratio of pixels in the y-direction
+     * @return a new sub-sampled image
+     */
+    public static final ImageProcessor subsample(ImageProcessor image, int kx, int ky)
+    {
+        // get image dimensions
+        int sizeX = image.getWidth();
+        int sizeY = image.getHeight();
+        
+        // compute result dimensions
+        int sizeX2 = Math.floorDiv(sizeX, kx);
+        int sizeY2 = Math.floorDiv(sizeY, ky);
+        ImageProcessor result = image.createProcessor(sizeX2, sizeY2);
+        
+        // fill result image
+        for (int y = 0; y < sizeY2; y++)
+        {
+            for (int x = 0; x < sizeX2; x++)
+            {
+                result.set(x, y, image.get(x * kx, y * ky));
+            }
+        }
+        
+        return result;
+    }
+    
+    /**
+     * Sub-samples the input image by retaining one voxel over k along each
+     * direction.
+     * 
+     * @param image
+     *            the input 3D image
+     * @param k
+     *            the sampling ratio of voxels in each direction
+     * @return a new sub-sampled image
+     */
+    public static final ImageStack subsample(ImageStack image, int k)
+    {
+        return subsample(image, k, k, k);
+    }
+    
+    /**
+     * Sub-samples the input image by retaining one voxel over k_i along each
+     * direction.
+     * 
+     * @param image
+     *            the input 3D image
+     * @param kx
+     *            the sampling ratio of voxels in the x-direction
+     * @param ky
+     *            the sampling ratio of voxels in the y-direction
+     * @param kz
+     *            the sampling ratio of voxels in the z-direction
+     * @return a new sub-sampled image
+     */
+    public static final ImageStack subsample(ImageStack image, int kx, int ky, int kz)
+    {
+        // get image dimensions
+        int sizeX = image.getWidth();
+        int sizeY = image.getHeight();
+        int sizeZ = image.getSize();
+        
+        // compute result dimensions
+        int sizeX2 = Math.floorDiv(sizeX, kx);
+        int sizeY2 = Math.floorDiv(sizeY, ky);
+        int sizeZ2 = Math.floorDiv(sizeZ, kz);
+        ImageStack result = ImageStack.create(sizeX2, sizeY2, sizeZ2, image.getBitDepth());
+        
+        // fill result image
+        for (int z = 0; z < sizeZ2; z++)
+        {
+            for (int y = 0; y < sizeY2; y++)
+            {
+                for (int x = 0; x < sizeX2; x++)
+                {
+                    result.setVoxel(x, y, z, image.getVoxel(x * kx, y * ky, z * kz));
+                }
+            }
+        }        
+        return result;
+    }
+
+    /**
      * Private constructor to prevent instantiation.
      */
     private ImageShape()
