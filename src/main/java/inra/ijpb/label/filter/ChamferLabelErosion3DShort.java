@@ -59,6 +59,12 @@ public class ChamferLabelErosion3DShort extends AlgoStub
     Strel3D strel;
     
     /**
+     * Choose whether we erode from any other label including background (option
+     * is true), or only from background (option is false).
+     */
+    boolean anyLabel = true;
+    
+    /**
      * Creates a new operator for erosion of label images based on Chamfer
      * masks. The principle is to compute for each non-zero voxel (label), the
      * distance to the nearest background voxel, and to apply a threshold on
@@ -70,6 +76,29 @@ public class ChamferLabelErosion3DShort extends AlgoStub
      *            the radius used to compute erosion from distance map.
      */
     public ChamferLabelErosion3DShort(ChamferMask3D mask, double radius)
+    {
+        this.mask = mask;
+        this.radius = radius;
+        
+        this.strel = new ChamferStrel3D(mask, radius);
+    }
+    
+    /**
+     * Creates a new operator for erosion of label images based on Chamfer
+     * masks. The principle is to compute for each non-zero voxel (label), the
+     * distance to the nearest background voxel, and to apply a threshold on
+     * this distance map.
+     * 
+     * @param mask
+     *            the Chamfer mask use to propagate distances
+     * @param radius
+     *            the radius used to compute erosion from distance map.
+     * @param anyLabel
+     *            Choose whether we erode from any other label including
+     *            background (option is true), or only from background (option
+     *            is false).
+     */
+    public ChamferLabelErosion3DShort(ChamferMask3D mask, double radius, boolean anyLabel)
     {
         this.mask = mask;
         this.radius = radius;
@@ -130,6 +159,13 @@ public class ChamferLabelErosion3DShort extends AlgoStub
                         int label2 = (int) image.getVoxel(x2, y2, z2);
                         if (label2 == 0)
                         {
+                            // in any case, erode from background
+                            label = 0;
+                            break;
+                        }
+                        if (anyLabel && label2 != label)
+                        {
+                            // may also erode from label with appropriate option
                             label = 0;
                             break;
                         }

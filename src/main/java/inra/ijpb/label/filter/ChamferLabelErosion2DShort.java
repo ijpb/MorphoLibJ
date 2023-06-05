@@ -59,6 +59,12 @@ public class ChamferLabelErosion2DShort extends AlgoStub
     Strel strel;
     
     /**
+     * Choose whether we erode from any other label including background (option
+     * is true), or only from background (option is false).
+     */
+    boolean anyLabel = true;
+    
+    /**
      * Creates a new operator for erosion of label images based on Chamfer
      * masks. The principle is to compute for each non-zero pixel (label), the
      * distance to the nearest background pixel, and to apply a threshold on
@@ -75,6 +81,30 @@ public class ChamferLabelErosion2DShort extends AlgoStub
         this.radius = radius;
         
         this.strel = new ChamferStrel(mask, radius);
+    }
+    
+    /**
+     * Creates a new operator for erosion of label images based on Chamfer
+     * masks. The principle is to compute for each non-zero pixel (label), the
+     * distance to the nearest background pixel, and to apply a threshold on
+     * this distance map.
+     * 
+     * @param mask
+     *            the Chamfer mask use to propagate distances
+     * @param radius
+     *            the radius used to compute erosion from distance map.
+     * @param anyLabel
+     *            Choose whether we erode from any other label including
+     *            background (option is true), or only from background (option
+     *            is false).
+     */
+    public ChamferLabelErosion2DShort(ChamferMask2D mask, double radius, boolean anyLabel)
+    {
+        this.mask = mask;
+        this.radius = radius;
+        
+        this.strel = new ChamferStrel(mask, radius);
+        this.anyLabel = anyLabel;
     }
     
     /**
@@ -121,10 +151,17 @@ public class ChamferLabelErosion2DShort extends AlgoStub
                     if (x2 < 0 || x2 >= sizeX) continue;
                     if (y2 < 0 || y2 >= sizeY) continue;
                     
-                    // check if neighbor is background
+                    // check if neighbor is background or another label
                     int label2 = (int) image.getf(x2, y2);
                     if (label2 == 0)
                     {
+                        // in any case, erode from background
+                        label = 0;
+                        break;
+                    }
+                    if (anyLabel && label2 != label)
+                    {
+                        // may also erode from label with appropriate option
                         label = 0;
                         break;
                     }

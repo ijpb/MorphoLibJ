@@ -90,7 +90,7 @@ public class LabelMapMorphologicalFilteringPlugin implements PlugIn
          *            the radius used to threshold the distance map
          * @return the result of morphological operation applied to image
          */
-        public ImageProcessor process(ImageProcessor image, ChamferMask2D mask, double radius) 
+        public ImageProcessor process(ImageProcessor image, ChamferMask2D mask, double radius, boolean anyLabel) 
         {
             if (this == DILATION)
             {
@@ -99,18 +99,18 @@ public class LabelMapMorphologicalFilteringPlugin implements PlugIn
             }
             if (this == EROSION)
             {
-                ChamferLabelErosion2DShort erosion = new ChamferLabelErosion2DShort(mask, radius);
+                ChamferLabelErosion2DShort erosion = new ChamferLabelErosion2DShort(mask, radius, anyLabel);
                 return erosion.process(image);
             }
             if (this == CLOSING)
             {
                 ChamferLabelDilation2DShort dilation = new ChamferLabelDilation2DShort(mask, radius);
-                ChamferLabelErosion2DShort erosion = new ChamferLabelErosion2DShort(mask, radius);
+                ChamferLabelErosion2DShort erosion = new ChamferLabelErosion2DShort(mask, radius, anyLabel);
                 return erosion.process(dilation.process(image));
             }
             if (this == OPENING)
             {
-                ChamferLabelErosion2DShort erosion = new ChamferLabelErosion2DShort(mask, radius);
+                ChamferLabelErosion2DShort erosion = new ChamferLabelErosion2DShort(mask, radius, anyLabel);
                 ChamferLabelDilation2DShort dilation = new ChamferLabelDilation2DShort(mask, radius);
                 return dilation.process(erosion.process(image));
             }
@@ -128,9 +128,12 @@ public class LabelMapMorphologicalFilteringPlugin implements PlugIn
          *            the chamfer mask used for propagating distances
          * @param radius
          *            the radius used to threshold the distance map
+         * @param anyLabel
+         *            choose whether erosion operation must erode from any other
+         *            label (true) or only from background (false)
          * @return the result of morphological operation applied to image
          */
-        public ImageStack process(ImageStack image, ChamferMask3D mask, double radius)
+        public ImageStack process(ImageStack image, ChamferMask3D mask, double radius, boolean anyLabel)
         {
             if (this == DILATION)
             {
@@ -139,19 +142,19 @@ public class LabelMapMorphologicalFilteringPlugin implements PlugIn
             }
             if (this == EROSION)
             {
-                ChamferLabelErosion3DShort erosion = new ChamferLabelErosion3DShort(mask, radius);
+                ChamferLabelErosion3DShort erosion = new ChamferLabelErosion3DShort(mask, radius, anyLabel);
                 return erosion.process(image);
             }
             if (this == CLOSING)
             {
                 ChamferLabelDilation3DShort dilation = new ChamferLabelDilation3DShort(mask, radius);
-                ChamferLabelErosion3DShort erosion = new ChamferLabelErosion3DShort(mask, radius);
+                ChamferLabelErosion3DShort erosion = new ChamferLabelErosion3DShort(mask, radius, anyLabel);
                 return erosion.process(dilation.process(image));
             }
             if (this == OPENING)
             {
                 ChamferLabelDilation3DShort dilation = new ChamferLabelDilation3DShort(mask, radius);
-                ChamferLabelErosion3DShort erosion = new ChamferLabelErosion3DShort(mask, radius);
+                ChamferLabelErosion3DShort erosion = new ChamferLabelErosion3DShort(mask, radius, anyLabel);
                 return dilation.process(erosion.process(image));
             }
             
@@ -223,6 +226,7 @@ public class LabelMapMorphologicalFilteringPlugin implements PlugIn
         GenericDialog gd = new GenericDialog("Label Morphological Filter");
         gd.addChoice("Operation", Operation.getAllLabels(), this.op.toString());
         gd.addNumericField("Radius", this.radius, 1);
+        gd.addCheckbox("From_Any_Label", true);
         
         // If cancel was clicked, do nothing
         gd.showDialog();
@@ -232,6 +236,7 @@ public class LabelMapMorphologicalFilteringPlugin implements PlugIn
         // parse user options
         Operation op = Operation.fromLabel(gd.getNextChoice());
         double radius = gd.getNextNumber();
+        boolean anyLabel = gd.getNextBoolean();
         this.op = op;
         this.radius = radius;
 
@@ -246,7 +251,7 @@ public class LabelMapMorphologicalFilteringPlugin implements PlugIn
 		    ImageProcessor image = imagePlus.getProcessor();
 		    
 		    ChamferMask2D mask = ChamferMask2D.CHESSKNIGHT;	    
-		    ImageProcessor result = op.process(image, mask, radius);
+		    ImageProcessor result = op.process(image, mask, radius, anyLabel);
             
 			result.setMinAndMax(image.getMin(), image.getMax());
             result.setColorModel(image.getColorModel());
@@ -258,7 +263,7 @@ public class LabelMapMorphologicalFilteringPlugin implements PlugIn
 			ImageStack image = imagePlus.getStack();
 			ChamferMask3D mask = ChamferMask3D.SVENSSON_3_4_5_7;
 						
-            ImageStack result = op.process(image, mask, radius);
+            ImageStack result = op.process(image, mask, radius, anyLabel);
             
 			result.setColorModel(image.getColorModel());
 			resultPlus = new ImagePlus(newName, result);
@@ -280,6 +285,6 @@ public class LabelMapMorphologicalFilteringPlugin implements PlugIn
 		}
 		
 		// display elapsed time
-		IJUtils.showElapsedTime("Dilate Labels", elapsedTime, imagePlus);
+		IJUtils.showElapsedTime("Label Morphological Filtering", elapsedTime, imagePlus);
 	}
 }
