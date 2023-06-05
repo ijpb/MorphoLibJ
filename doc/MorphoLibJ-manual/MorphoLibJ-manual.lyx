@@ -15069,7 +15069,7 @@ Several plugins allow to control the appearance of label images.
  similar labels.
 \end_layout
 
-\begin_layout Description
+\begin_layout Minisec
 Set
 \begin_inset space ~
 \end_inset
@@ -15078,7 +15078,10 @@ Label
 \begin_inset space ~
 \end_inset
 
-Map 
+Map
+\end_layout
+
+\begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
 name "op:Set-Label-Map"
@@ -15107,7 +15110,7 @@ noprefix "false"
  not be visible!
 \end_layout
 
-\begin_layout Description
+\begin_layout Minisec
 Label
 \begin_inset space ~
 \end_inset
@@ -15116,7 +15119,10 @@ To
 \begin_inset space ~
 \end_inset
 
-RGB 
+RGB
+\end_layout
+
+\begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
 name "op:Label-To-RGB"
@@ -15129,7 +15135,7 @@ converts a label image to a true RGB image.
  is large.
 \end_layout
 
-\begin_layout Description
+\begin_layout Minisec
 Draw
 \begin_inset space ~
 \end_inset
@@ -15142,7 +15148,10 @@ As
 \begin_inset space ~
 \end_inset
 
-Overlay 
+Overlay
+\end_layout
+
+\begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
 name "op:Draw-Labels-As-Overlay"
@@ -15169,7 +15178,7 @@ noprefix "false"
  shift can be specified.
 \end_layout
 
-\begin_layout Description
+\begin_layout Minisec
 Overlay
 \begin_inset space ~
 \end_inset
@@ -15186,7 +15195,10 @@ Label
 \begin_inset space ~
 \end_inset
 
-Image 
+Image
+\end_layout
+
+\begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
 name "op:Overlay-Binary-Or-Label-Image"
@@ -15306,7 +15318,7 @@ Draw Label Values
 
 \end_layout
 
-\begin_layout Description
+\begin_layout Minisec
 Draw
 \begin_inset space ~
 \end_inset
@@ -15315,7 +15327,10 @@ Label
 \begin_inset space ~
 \end_inset
 
-Values 
+Values
+\end_layout
+
+\begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
 name "op:Draw-Label-Values"
@@ -15342,7 +15357,7 @@ noprefix "false"
  
 \end_layout
 
-\begin_layout Description
+\begin_layout Minisec
 Assign
 \begin_inset space ~
 \end_inset
@@ -15355,7 +15370,10 @@ To
 \begin_inset space ~
 \end_inset
 
-Label 
+Label
+\end_layout
+
+\begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
 name "op:Colorize-Labels"
@@ -15516,16 +15534,12 @@ Utilities for label images.
 
 \end_layout
 
-\begin_layout Description
-Remove
-\begin_inset space ~
-\end_inset
+\begin_layout Minisec
+Remove Border Labels 
+\end_layout
 
-Border
-\begin_inset space ~
-\end_inset
-
-Labels similar to the 
+\begin_layout Standard
+Similar to the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -15536,52 +15550,39 @@ kill borders
  function, but operates faster as no morphological reconstruction is required.
 \end_layout
 
-\begin_layout Description
+\begin_layout Minisec
 Select
 \begin_inset space ~
 \end_inset
 
-Label(s) enters a set of labels, and creates a new label image containing
- only the selected labels.
+ abel(s) 
 \end_layout
 
-\begin_layout Description
-Keep
-\begin_inset space ~
-\end_inset
-
-/
-\begin_inset space ~
-\end_inset
-
-Remove
-\begin_inset space ~
-\end_inset
-
-Largest
-\begin_inset space ~
-\end_inset
-
-Label identifies the largest label, and keep it or remove it
+\begin_layout Standard
+Enters a set of labels, and creates a new label image containing only the
+ selected labels.
 \end_layout
 
-\begin_layout Description
-Label
-\begin_inset space ~
-\end_inset
+\begin_layout Minisec
+Keep / Remove Largest Label 
+\end_layout
 
-Size
-\begin_inset space ~
-\end_inset
+\begin_layout Standard
+Identifies the largest label, and keep it or remove it
+\end_layout
 
-Filtering 
+\begin_layout Minisec
+Label Size Filtering 
+\end_layout
+
+\begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
 name "op:Label-Size-Filtering"
 
 \end_inset
 
-filters the labels according to their size (area in 2D, volume in 3D), by
+Filters the labels according to their size (area in 2D, volume in 3D), by
  specifying a comparison operator and a threshold value.
 \begin_inset Note Note
 status collapsed
@@ -15624,7 +15625,18 @@ Morphological filtering
 \end_layout
 
 \begin_layout Standard
-Several morpological filters have been adapted to process label map.
+Several morpological filters have been adapted to process label maps.
+ 
+\end_layout
+
+\begin_layout Minisec
+Label Morphological Filtering
+\end_layout
+
+\begin_layout Standard
+Applies morphological filtering operators on the label map, by choosing
+ the type of operation (dilation, erosion, opening or closing), and the
+ radius of the operation.
  The principle is the same as morphological filtering on grayscale images,
  but using label values instead of gray levels, and avoiding 
 \begin_inset Quotes eld
@@ -15635,26 +15647,6 @@ collisions
 \end_inset
 
  between labels:
-\end_layout
-
-\begin_layout Itemize
-when applying an erosion, label pixels or voxels are removed if and only
- if a background pixel or voxel is contained within the neighborhood (Figure
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Morphological-Filtering-Label"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
--b).
- 
 \end_layout
 
 \begin_layout Itemize
@@ -15673,15 +15665,64 @@ noprefix "false"
 
 \end_inset
 
--c).
+-b).
+ When two regions are adjacent without background pixel between them, the
+ application of dilation do not transform nor move their boundary.
+ 
 \end_layout
 
+\begin_layout Itemize
+when applying an erosion, label pixels or voxels are removed depending on
+ the labels within the neighborhood and on the 
+\begin_inset Quotes eld
+\end_inset
+
+any Label
+\begin_inset Quotes erd
+\end_inset
+
+ option:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+if true, current label is removed if any other label (background or another
+ region) is contained within the neighborhood 
+\end_layout
+
+\begin_layout Itemize
+if false, current label is removed if and only if a background pixel or
+ voxel is contained within the neighborhood (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Morphological-Filtering-Label"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+-c).
+ 
+\end_layout
+
+\end_deeper
 \begin_layout Standard
-When two regions are adjacent without background pixel between them, the
- application of dilation or erosion do not transform nor move their boundary.
- That way, performing a morphological closing results in a label map with
- more regular regions, with less gaps between regions, and preserved boundaries
- betwseen adjacent regions (Figure
+When the 
+\begin_inset Quotes eld
+\end_inset
+
+Any Label
+\begin_inset Quotes erd
+\end_inset
+
+ option is set to false, performing a morphological closing results in a
+ label map with more regular regions, with less gaps between regions, and
+ preserved boundaries between adjacent regions (Figure
 \begin_inset space ~
 \end_inset
 
@@ -15724,10 +15765,6 @@ sideways false
 status open
 
 \begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
 \align center
 \begin_inset Float figure
 wide false
@@ -15768,7 +15805,7 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename images/arabidopsisEmbryo/arabidopsis-embryo_watershedC4Tol06_lbl2_z061-Erosion.png
+	filename images/arabidopsisEmbryo/arabidopsis-embryo_watershedC4Tol06_lbl2_z061-Dilation.png
 	width 23text%
 
 \end_inset
@@ -15780,7 +15817,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Erosion
+Dilation
 \end_layout
 
 \end_inset
@@ -15799,7 +15836,7 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename images/arabidopsisEmbryo/arabidopsis-embryo_watershedC4Tol06_lbl2_z061-Dilation.png
+	filename images/arabidopsisEmbryo/arabidopsis-embryo_watershedC4Tol06_lbl2_z061-Erosion.png
 	width 23text%
 
 \end_inset
@@ -15811,7 +15848,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Dilation
+Erosion
 \end_layout
 
 \end_inset
@@ -15866,15 +15903,11 @@ name "fig:Morphological-Filtering-Label"
 \end_inset
 
 Morphological filtering of label images.
- Morphological erosion (b) and erosion (c) take care of adjacent regions.
+ Morphological dilation (b) and erosion (c) take care of adjacent regions.
 \end_layout
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Plain Layout
 
 \end_layout
 
@@ -15883,30 +15916,12 @@ Morphological filtering of label images.
 
 \end_layout
 
-\begin_layout Description
-Label
-\begin_inset space ~
-\end_inset
-
-Morphological
-\begin_inset space ~
-\end_inset
-
-Filtering Applies morphological filtering operators on the label map, by
- choosing the type of operation (dilation, erosion, opening or closing),
- and the radius of the operation.
+\begin_layout Minisec
+Fill Label Holes 
 \end_layout
 
-\begin_layout Description
-Fill
-\begin_inset space ~
-\end_inset
-
-Label
-\begin_inset space ~
-\end_inset
-
-Holes Fills the holes within regions.
+\begin_layout Standard
+Fills the holes within regions.
  Only the holes that are adjacent to a single region are filled, using a
  fill corresponding to the label of the adjacent region.
 \end_layout
@@ -15927,12 +15942,11 @@ Several plugins allow for basic edition of filtering of label images.
  They result in another label image.
 \end_layout
 
-\begin_layout Description
-Crop
-\begin_inset space ~
-\end_inset
+\begin_layout Minisec
+Crop Label 
+\end_layout
 
-Label 
+\begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
 name "op:Crop-Label"
@@ -15943,12 +15957,12 @@ creates a new binary image containing only the label specified by the user.
  The size of the new image is fitted to the region.
 \end_layout
 
-\begin_layout Description
-Replace
-\begin_inset space ~
-\end_inset
+\begin_layout Minisec
+Replace Value 
+\end_layout
 
-Value replaces the value of a region by another value.
+\begin_layout Standard
+replaces the value of a region by another value.
  Can be used to 
 \begin_inset Quotes eld
 \end_inset
@@ -15961,12 +15975,11 @@ clear
  by replacing the value of a label by the value of its neighbor.
 \end_layout
 
-\begin_layout Description
-Remap
-\begin_inset space ~
-\end_inset
+\begin_layout Minisec
+Remap Labels 
+\end_layout
 
-Labels 
+\begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
 name "op:Remap-Labels"
@@ -16477,11 +16490,7 @@ Region Boundaries Labeling
 \end_layout
 
 \begin_layout Minisec
-Label
-\begin_inset space ~
-\end_inset
-
-Boundaries
+Label Boundaries
 \end_layout
 
 \begin_layout Standard
@@ -16493,15 +16502,7 @@ Creates a new binary image containing value 255 for pixels/voxels having
 \end_layout
 
 \begin_layout Minisec
-Region
-\begin_inset space ~
-\end_inset
-
-Boundaries
-\begin_inset space ~
-\end_inset
-
-Labeling 
+Region Boundaries Labeling
 \end_layout
 
 \begin_layout Standard
@@ -16585,15 +16586,7 @@ Another usage of adjacencies is to select regions around a given one.
 \end_layout
 
 \begin_layout Minisec
-Select
-\begin_inset space ~
-\end_inset
-
-Region
-\begin_inset space ~
-\end_inset
-
-Neighbors 
+Select Region Neighbors 
 \end_layout
 
 \begin_layout Standard
