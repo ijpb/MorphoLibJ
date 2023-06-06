@@ -40,10 +40,10 @@ import ij.plugin.PlugIn;
 import ij.plugin.frame.RoiManager;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.binary.distmap.ChamferMask2D;
-import inra.ijpb.binary.distmap.ChamferMasks2D;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.region2d.GeodesicDiameter;
 import inra.ijpb.util.IJUtils;
+import inra.ijpb.plugins.options.ChamferMask2DOption;
 
 /**
  * Plugin for computing geodesic distances of labeled particles using chamfer
@@ -73,14 +73,15 @@ public class GeodesicDiameterPlugin implements PlugIn
 		// name of current image
 		String currentImageName = IJ.getImage().getTitle();
 		
+		ChamferMask2DOption maskOption = new ChamferMask2DOption();
+		
 		// Open a dialog to choose:
 		// - a label image
 		// - a set of weights
 		GenericDialog gd = new GenericDialog("Geodesic Diameter");
 		gd.addChoice("Label Image:", imageNames, currentImageName);
 		// Set Chess Knight weights as default
-		gd.addChoice("Distances", ChamferMasks2D.getAllLabels(), 
-				ChamferMasks2D.CHESSKNIGHT.toString());
+		maskOption.populateDialog(gd, "Distances");
 		gd.addCheckbox("Show Overlay Result", true);
 		gd.addChoice("Image to overlay:", imageNames, currentImageName);
 		gd.addCheckbox("Export to ROI Manager", true);
@@ -92,7 +93,7 @@ public class GeodesicDiameterPlugin implements PlugIn
 		// set up current parameters
 		int labelImageIndex = gd.getNextChoiceIndex();
 		ImagePlus labelPlus = WindowManager.getImage(labelImageIndex + 1);
-		ChamferMask2D chamferMask = ChamferMasks2D.fromLabel(gd.getNextChoice()).getMask();
+		ChamferMask2D chamferMask = maskOption.parseValue(gd);
         boolean overlayPaths = gd.getNextBoolean();
 		int resultImageIndex = gd.getNextChoiceIndex();
 		boolean createPathRois = gd.getNextBoolean();

@@ -31,12 +31,12 @@ import ij.process.LUT;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.binary.distmap.ChamferMask2D;
-import inra.ijpb.binary.distmap.ChamferMasks2D;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransform;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloat;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformFloatHybrid;
 import inra.ijpb.binary.geodesic.GeodesicDistanceTransformShortHybrid;
 import inra.ijpb.color.ColorMaps;
+import inra.ijpb.plugins.options.ChamferMask2DOption;
 import inra.ijpb.util.IJUtils;
 
 import java.awt.image.IndexColorModel;
@@ -67,6 +67,8 @@ public class GeodesicDistanceMapPlugin implements PlugIn
         }
         String currentImageName = IJ.getImage().getTitle();
 
+        ChamferMask2DOption maskOption = new ChamferMask2DOption(ChamferMask2D.CHESSKNIGHT);
+        
 		// Open a dialog to choose:
 		// - marker image
 		// - mask image
@@ -75,8 +77,7 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 		gd.addChoice("Marker Image", imageNames, currentImageName);
 		gd.addChoice("Mask Image", imageNames, currentImageName);
 		// Set Chessknight weights as default
-		gd.addChoice("Distances", ChamferMasks2D.getAllLabels(),
-				ChamferMasks2D.CHESSKNIGHT.toString());
+		maskOption.populateDialog(gd, "Distances");
 		String[] outputTypes = new String[] { "32 bits", "16 bits" };
 		gd.addChoice("Output Type", outputTypes, outputTypes[0]);
 		gd.addCheckbox("Normalize weights", true);
@@ -91,10 +92,9 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 		ImagePlus markerImage = WindowManager.getImage(markerImageIndex + 1);
 		int maskImageIndex = gd.getNextChoiceIndex();
 		ImagePlus maskImage = WindowManager.getImage(maskImageIndex + 1);
-		String weightLabel = gd.getNextChoice();
 		
 		// identify which weights should be used
-		ChamferMask2D weights = ChamferMasks2D.fromLabel(weightLabel).getMask();
+		ChamferMask2D chamferMask = maskOption.parseValue(gd);
 		boolean resultAsFloat = gd.getNextChoiceIndex() == 0;
 		boolean normalizeWeights = gd.getNextBoolean();
 
@@ -114,7 +114,7 @@ public class GeodesicDistanceMapPlugin implements PlugIn
 		String newName = createResultImageName(maskImage);
         long t0 = System.currentTimeMillis();
 		ImagePlus res = process(markerImage, maskImage, newName,
-				weights, resultAsFloat, normalizeWeights);
+				chamferMask, resultAsFloat, normalizeWeights);
         long t1 = System.currentTimeMillis();
 
 		res.show();

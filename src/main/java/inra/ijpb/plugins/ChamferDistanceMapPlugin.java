@@ -31,10 +31,10 @@ import ij.plugin.filter.PlugInFilterRunner;
 import ij.process.ImageProcessor;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.binary.distmap.ChamferMask2D;
-import inra.ijpb.binary.distmap.ChamferMasks2D;
 import inra.ijpb.label.distmap.ChamferDistanceTransform2DFloat;
 import inra.ijpb.label.distmap.ChamferDistanceTransform2DShort;
 import inra.ijpb.label.distmap.DistanceTransform2D;
+import inra.ijpb.plugins.options.ChamferMask2DOption;
 
 /**
  * Compute distance map, with possibility to choose the chamfer mask, the result
@@ -73,6 +73,9 @@ public class ChamferDistanceMapPlugin
 	/** Keep instance of result image */
 	private ImageProcessor result;
 
+    // create dialog options
+    ChamferMask2DOption maskOption = new ChamferMask2DOption(ChamferMask2D.CHESSKNIGHT);
+    
 	/**
 	 * Called at the beginning of the process to know if the plugin can be run
 	 * with current image, and at the end to finalize.
@@ -103,11 +106,10 @@ public class ChamferDistanceMapPlugin
 		this.imagePlus = imp;
 		this.baseImage = imp.getProcessor().duplicate();
 		this.pfr = pfr;
-
+		
 		// Create a new generic dialog with appropriate options
 		GenericDialog gd = new GenericDialog("Chamfer Distance Transform");
-		gd.addChoice("Distances", ChamferMasks2D.getAllLabels(),
-				ChamferMasks2D.CHESSKNIGHT.toString());
+		maskOption.populateDialog(gd, "Distances");
 		String[] outputTypes = new String[] { "16 bits", "32 bits" };
 		gd.addChoice("Output Type", outputTypes, outputTypes[0]);
 		gd.addCheckbox("Normalize weights", true);
@@ -123,12 +125,9 @@ public class ChamferDistanceMapPlugin
 			return DONE;
 
 		// set up current parameters
-		String maskLabel = gd.getNextChoice();
+		mask = maskOption.parseValue(gd);
 		floatProcessing = gd.getNextChoiceIndex() == 1;
 		normalize = gd.getNextBoolean();
-
-		// identify which mask should be used
-		mask = ChamferMasks2D.fromLabel(maskLabel).getMask();
 
 		return flags;
 	}
@@ -140,12 +139,9 @@ public class ChamferDistanceMapPlugin
 	public boolean dialogItemChanged(GenericDialog gd, AWTEvent evt)
 	{
 		// set up current parameters
-		String maskLabel = gd.getNextChoice();
+	    mask = maskOption.parseValue(gd);
 		floatProcessing = gd.getNextChoiceIndex() == 1;
 		normalize = gd.getNextBoolean();
-
-		// identify which weights should be used
-		mask = ChamferMasks2D.fromLabel(maskLabel).getMask();
 		return true;
 	}
 
