@@ -39,30 +39,38 @@ package inra.ijpb.morphology.strel;
  */
 public class LocalExtremumBufferGray8 implements LocalExtremum 
 {
+    // ==================================================
+    // Class variables
+    
 	/**
-	 * Current max value
-	 */
-	int maxValue = Integer.MIN_VALUE;
-
-	boolean updateNeeded = false;
-	
-	/**
-	 * Use a sign flag for managing both min and max.
-	 * sign = +1 -> compute max values
-	 * sign = -1 -> compute min values
-	 */
-	int sign;
-	
-	/**
-	 * Circular buffer of stored values
+	 * Circular buffer of stored values.
 	 */
 	int[] buffer;
 	
 	/**
-	 * Current index in circular buffer
+	 * Current index in circular buffer.
 	 */
 	int bufferIndex = 0;
 	
+    /**
+     * Use a sign flag for managing both min and max.
+     * sign = +1 -> compute max values
+     * sign = -1 -> compute min values
+     */
+    int sign;
+    
+    /**
+     * Current max value.
+     */
+    int maxValue = Integer.MIN_VALUE;
+
+    boolean updateNeeded = false;
+    
+	
+	
+    // ==================================================
+    // Constructor and initialization
+    
 	/**
 	 * Main constructor.
 	 * 
@@ -89,8 +97,8 @@ public class LocalExtremumBufferGray8 implements LocalExtremum
 		this(n);
 		switch (type)
 		{
-		case MINIMUM: setMinMaxSign(-1); break;
-		case MAXIMUM: setMinMaxSign(+1); break;
+		case MINIMUM: this.sign = -1; break;
+		case MAXIMUM: this.sign = +1; break;
 		}
 	}
 	
@@ -112,16 +120,21 @@ public class LocalExtremumBufferGray8 implements LocalExtremum
 
 	/**
 	 * Changes the sign used for distinguishing minimum and maximum.
-	 * 
+	 *
+	 * @deprecated should specify Extremum type at construction instead
 	 * @param sign
 	 *            +1 for maximum, -1 for minimum
 	 */
+	@Deprecated
 	public void setMinMaxSign(int sign) 
 	{
 		this.sign = sign;
 	}
 	
 	
+    // ==================================================
+    // General methods
+    
 	/**
 	 * Adds a value to the local histogram, and update bounds if needed. Then
 	 * removes the last stored value, and update bounds if needed.
@@ -152,6 +165,7 @@ public class LocalExtremumBufferGray8 implements LocalExtremum
 		if (value * sign > this.maxValue * sign) 
 		{
 			this.maxValue = value;
+            updateNeeded = false;
 		}
 	}
 	
@@ -170,7 +184,7 @@ public class LocalExtremumBufferGray8 implements LocalExtremum
 		}
 	}
 	
-	private void updateMaxValue() 
+	private void recomputeMaxValue() 
 	{
 		if (sign == 1)
 		{
@@ -224,6 +238,7 @@ public class LocalExtremumBufferGray8 implements LocalExtremum
 
 		// update max and max values
 		this.maxValue = value;
+        updateNeeded = false;
 	}
 
 	/**
@@ -234,7 +249,7 @@ public class LocalExtremumBufferGray8 implements LocalExtremum
 	{
 		if (updateNeeded)
 		{
-			updateMaxValue();
+			recomputeMaxValue();
 		}
 		
 		return this.maxValue;
