@@ -131,13 +131,13 @@ public class BinaryImages
 	 *            a binary 3D image with zero values for background
 	 * @return the number of voxels with value greater than zero
 	 */
-	public static final int countForegroundVoxels(ImageStack image)
+	public static final long countForegroundVoxels(ImageStack image)
 	{
 		int width = image.getWidth();
 		int height = image.getHeight();
 		int depth = image.getSize();
 
-		int count = 0;
+		long count = 0;
 		
 		// iterate over 3D image, using Image3D wrapper
 		Image3D image3d = Images3D.createWrapper(image);

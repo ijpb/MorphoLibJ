@@ -73,7 +73,7 @@ public class IntrinsicVolumes3D
         double voxelVolume = calib.pixelWidth * calib.pixelHeight * calib.pixelDepth;
         
         // count non-zero voxels
-        int voxelCount = BinaryImages.countForegroundVoxels(image);
+        long voxelCount = BinaryImages.countForegroundVoxels(image);
 
         // convert voxel count to particle volume
         double volume = voxelCount * voxelVolume;
@@ -121,10 +121,10 @@ public class IntrinsicVolumes3D
     public static final double volumeDensity(ImageStack image)
     {
         // count non-zero voxels
-        double voxelCount = BinaryImages.countForegroundVoxels(image);
+        long voxelCount = BinaryImages.countForegroundVoxels(image);
     
         // Normalizes voxel count by image volume.
-        double voxelNumber = image.getWidth() * image.getWidth() * image.getSize();
+        double voxelNumber = ((double) image.getWidth()) * image.getWidth() * image.getSize();
         return voxelCount / voxelNumber;
     }
 
@@ -476,10 +476,10 @@ public class IntrinsicVolumes3D
 	 */
     public static final double samplingVolume(ImageStack image, Calibration calib)
     {
-        // size of image
-        int sizeX = image.getWidth();
-        int sizeY = image.getHeight();
-        int sizeZ = image.getSize();
+        // size of image, converted to double to avoid capacity overflow
+        double sizeX = image.getWidth();
+        double sizeY = image.getHeight();
+        double sizeZ = image.getSize();
         return (sizeX - 1) * calib.pixelWidth * (sizeY - 1) * calib.pixelHeight * (sizeZ - 1) * calib.pixelDepth;   
     }
     
