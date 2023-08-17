@@ -363,7 +363,7 @@ public class LabelImages
             croppedPlus = new ImagePlus(newName, cropped);
             
             // update spatial calibration
-			Calibration calib = croppedPlus.getCalibration().copy();
+			Calibration calib = imagePlus.getCalibration().copy();
 			calib.xOrigin += (bounds.getXMin() - border) * calib.pixelWidth;
 			calib.yOrigin += (bounds.getYMin() - border) * calib.pixelHeight;
 			croppedPlus.setCalibration(calib);
@@ -377,7 +377,7 @@ public class LabelImages
             croppedPlus = new ImagePlus(newName, cropped);
             
             // update spatial calibration
-			Calibration calib = croppedPlus.getCalibration().copy();
+			Calibration calib = imagePlus.getCalibration().copy();
 			calib.xOrigin += (bounds.getXMin() - border) * calib.pixelWidth;
 			calib.yOrigin += (bounds.getYMin() - border) * calib.pixelHeight;
 			calib.zOrigin += (bounds.getZMin() - border) * calib.pixelDepth;
