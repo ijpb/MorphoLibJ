@@ -32,6 +32,7 @@ import org.junit.Test;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
+import ij.measure.Calibration;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
@@ -41,6 +42,68 @@ import inra.ijpb.data.image.ImageUtils;
 
 public class LabelImagesTest
 {
+    @Test
+    public final void test_cropLabel_ImagePlus2D()
+    {
+        // create a byte processor containing four labels
+        ImageProcessor image = new ByteProcessor(10, 10);
+        for (int y = 0; y < 3; y++)
+        {
+            for (int x = 0; x < 3; x++)
+            {
+                image.set(x + 1, y + 1, 1);
+                image.set(x + 5, y + 1, 2);
+                image.set(x + 1, y + 5, 3);
+                image.set(x + 5, y + 5, 4);
+            }
+        }
+        ImagePlus imagePlus = new ImagePlus("image", image);
+        
+        ImagePlus cropPlus = LabelImages.cropLabel(imagePlus, 4, 1);
+
+        assertEquals(5, cropPlus.getWidth());
+        assertEquals(5, cropPlus.getHeight());
+
+        Calibration calib = cropPlus.getCalibration();
+        assertEquals(4, calib.xOrigin, 0.01);
+        assertEquals(4, calib.yOrigin, 0.01);
+    }
+    
+    @Test
+    public final void test_cropLabel_ImagePlus3D()
+    {
+        // create a byte processor containing four labels
+        ImageStack image = ImageStack.create(8, 8, 8, 8);
+        for (int z = 0; z < 3; z++)
+        {
+            for (int y = 0; y < 3; y++)
+            {
+                for (int x = 0; x < 3; x++)
+                {
+                    image.setVoxel(x + 1, y + 1, z + 1, 1);
+                    image.setVoxel(x + 5, y + 1, z + 1, 2);
+                    image.setVoxel(x + 1, y + 5, z + 1, 3);
+                    image.setVoxel(x + 5, y + 5, z + 1, 4);
+                    image.setVoxel(x + 1, y + 1, z + 5, 5);
+                    image.setVoxel(x + 5, y + 1, z + 5, 6);
+                    image.setVoxel(x + 1, y + 5, z + 5, 7);
+                    image.setVoxel(x + 5, y + 5, z + 5, 8);
+                }
+            }
+        }
+        ImagePlus imagePlus = new ImagePlus("image", image);
+        
+        ImagePlus cropPlus = LabelImages.cropLabel(imagePlus, 8, 1);
+        assertEquals(5, cropPlus.getWidth());
+        assertEquals(5, cropPlus.getHeight());
+        assertEquals(5, cropPlus.getImageStackSize());
+        
+        Calibration calib = cropPlus.getCalibration();
+        assertEquals(4, calib.xOrigin, 0.01);
+        assertEquals(4, calib.yOrigin, 0.01);
+        assertEquals(4, calib.zOrigin, 0.01);
+    }
+    
 	@Test
 	public final void testLabelToRGB_ImageProcessorByteArrayColor()
 	{
