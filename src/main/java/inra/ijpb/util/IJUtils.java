@@ -154,6 +154,16 @@ public class IJUtils
         
         return windows.toArray(new TextWindow[0]);
     }
+    
+    public static final String[] getWindowNames(TextWindow[] textWindows)
+    {
+        String[] names = new String[textWindows.length];
+        for (int i = 0; i < textWindows.length; i++)
+        {
+            names[i] = textWindows[i].getTitle();
+        }
+        return names;
+    }
 
     /**
      * Extracts a list of integer labels from a string representation.

@@ -59,25 +59,26 @@ public class DrawTableValuesPlugin implements PlugIn, DialogListener
     static int xOffsetSave = -10;
     static int yOffsetSave = -10;
     static String valueHeaderNameSave = null;
-    static String patternSave = null;
-
+    static String patternSave = "%5.2f";
     
-	ImagePlus targetImagePlus;
-	
-	ImagePlus resultPlus;
+    /**
+     * The image to overlay, initialized as the current image when plugin is run
+     */
+	ImagePlus imagePlus;
 	
 	ResultsTable table = null;
 		
 	GenericDialog gd = null;
 	
     String selectedHeaderName = selectedHeaderNameSave;
-    boolean calibratedPosition = false;
+    boolean calibratedPosition = calibratedPositionSave;
     String xPosHeaderName = xPosHeaderNameSave;
     String yPosHeaderName = yPosHeaderNameSave;
     int xOffset = xOffsetSave;
     int yOffset = yOffsetSave;
     String valueHeaderName = valueHeaderNameSave;
     String pattern = patternSave;
+    
 
 	/* (non-Javadoc)
 	 * @see ij.plugin.PlugIn#run(java.lang.String)
@@ -86,11 +87,10 @@ public class DrawTableValuesPlugin implements PlugIn, DialogListener
 	public void run(String arg0) 
 	{
 		// Work on current image, and exit if no one is open
-		this.targetImagePlus = IJ.getImage();
+		this.imagePlus = IJ.getImage();
 	
 		// Check that a table window is open
-		TextWindow[] textWindows = IJUtils.getTableWindows();
-        if (textWindows.length == 0)
+        if (IJUtils.getTableWindows().length == 0)
         {
             IJ.error("Requires at least one Table window");
             return;
@@ -103,25 +103,18 @@ public class DrawTableValuesPlugin implements PlugIn, DialogListener
 		// parse dialog
 		if (gd.wasCanceled())
 			return;
+		
 		parseDialogOptions();
 		saveDialogOptions();
 		
-		drawValues(this.targetImagePlus);
+		drawValues(this.imagePlus);
 	}
 	
 	private GenericDialog createDialog()
 	{
 		// Get the list of windows containing tables
 		TextWindow[] textWindows = IJUtils.getTableWindows();
-		if (textWindows.length == 0)
-		{
-			IJ.error("Requires at least one Table window");
-			return null;
-		}
-		String[] tableNames = new String[textWindows.length];
-		for (int i = 0; i < textWindows.length; i++) {
-			tableNames[i] = textWindows[i].getTitle();
-		}
+		String[] tableNames = IJUtils.getWindowNames(textWindows);
 		
 		// Choose current table
 		TextPanel tp = textWindows[0].getTextPanel();
@@ -138,13 +131,13 @@ public class DrawTableValuesPlugin implements PlugIn, DialogListener
 
 		this.gd = new GenericDialog("Draw Text from Column");
 		gd.addChoice("Results Table:", tableNames, tableNames[0]);
-        gd.addCheckbox("Calibrated Position:", false);
+        gd.addCheckbox("Calibrated Position:", this.calibratedPosition);
         gd.addChoice("X-Position:", headings, defaultHeading);
         gd.addChoice("Y-Position:", headings, defaultHeading);
         gd.addNumericField("X-Offset:", this.xOffset, 0, 5, "pixels");
         gd.addNumericField("Y-Offset:", this.yOffset, 0, 5, "pixels");
         gd.addChoice("Values:", headings, defaultHeading);
-        gd.addStringField("Pattern:", "%5.2f", 10);
+        gd.addStringField("Pattern:", this.pattern, 10);
         
         @SuppressWarnings("unchecked")
         Vector<Choice> choices = gd.getChoices();
@@ -158,7 +151,7 @@ public class DrawTableValuesPlugin implements PlugIn, DialogListener
 	}
 
 	/**
-	 * analyse dialog, and setup inner fields of the class.
+	 * Parses dialog options, and setup inner fields of the class.
 	 */
 	private void parseDialogOptions() 
 	{
@@ -269,29 +262,33 @@ public class DrawTableValuesPlugin implements PlugIn, DialogListener
 	 */
 	public void drawValues(ImagePlus target)
 	{
-	    Overlay overlay = new Overlay();
-//	    Calibration calib = target.getCalibration();
-	    
+	    // coordinates of labels
         double[] xPos = getColumnValues(this.table, this.xPosHeaderName);
         double[] yPos = getColumnValues(this.table, this.yPosHeaderName);
+        
+        // convert from (optionally calibrated) coordinates to pixel coordinates
         if (this.calibratedPosition)
         {
             Calibration calib = target.getCalibration();
             for (int i = 0; i < xPos.length; i++)
             {
-                xPos[i] = xPos[i] * calib.pixelWidth  + calib.xOrigin;
-                yPos[i] = yPos[i] * calib.pixelHeight + calib.yOrigin;
+                xPos[i] = (xPos[i] - calib.xOrigin) / calib.pixelWidth;
+                yPos[i] = (yPos[i] - calib.yOrigin) / calib.pixelHeight;
             }
         }
             
+        // retrieve values to display
         double[] values = getColumnValues(this.table, this.valueHeaderName);
-
+        
+        // update overlay by creating one ROI for each label 
+        Overlay overlay = new Overlay();
         for (int i = 0; i < xPos.length; i++)
         {
+            String text = String.format(this.pattern,  values[i]);
             Roi roi = new TextRoi(
                     xPos[i] + this.xOffset,
                     yPos[i] + this.yOffset,
-                    String.format(this.pattern,  values[i]));
+                    text);
             overlay.add(roi);
         }
 
@@ -299,13 +296,13 @@ public class DrawTableValuesPlugin implements PlugIn, DialogListener
 	}
 	    
 
-    private double[] getColumnValues(ResultsTable table, String heading)
+    private double[] getColumnValues(ResultsTable table, String colName)
     {
         String[] allHeaders = table.getHeadings();
 
         // Check if column header corresponds to row label header
         boolean hasRowLabels = hasRowLabelColumn(table);
-        if (hasRowLabels && heading.equals(allHeaders[0]))
+        if (hasRowLabels && colName.equals(allHeaders[0]))
         {
             // need to parse row label column
             int nr = table.size();
@@ -319,10 +316,10 @@ public class DrawTableValuesPlugin implements PlugIn, DialogListener
         }
 
         // determine index of column
-        int index = table.getColumnIndex(heading);
+        int index = table.getColumnIndex(colName);
         if (index == ResultsTable.COLUMN_NOT_FOUND)
         {
-            throw new RuntimeException("Unable to find column index from header: " + heading);
+            throw new RuntimeException("Unable to find column index from header: " + colName);
         }
         return table.getColumnAsDoubles(index);
     }
