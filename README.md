@@ -1,7 +1,7 @@
 [![](https://github.com/ijpb/MorphoLibJ/actions/workflows/build-main.yml/badge.svg)](https://github.com/ijpb/MorphoLibJ/actions/workflows/build-main.yml)
 [![DOI](https://zenodo.org/badge/21349/ijpb/MorphoLibJ.svg)](https://zenodo.org/badge/latestdoi/21349/ijpb/MorphoLibJ)
 
-MorphoLibJ
+![MorphoLibJ logo](doc/logo/logo-64x64.png) MorphoLibJ
 ============
 
 MorphoLibJ is a collection of mathematical morphology methods and plugins for [ImageJ](http://imagej.net/Welcome), 
@@ -69,3 +69,5 @@ Citation
 --------
 Please note that MorphoLibJ is based on a publication. If you use it successfully for your research please be so kind to cite our work:
 * David Legland, Ignacio Arganda-Carreras, Philippe Andrey; [MorphoLibJ: integrated library and plugins for mathematical morphology with ImageJ](http://bioinformatics.oxfordjournals.org/content/early/2016/07/19/bioinformatics.btw413). Bioinformatics 2016; 32 (22): 3532-3534. doi: 10.1093/bioinformatics/btw413
+
+The [MorphoLibJ logo](doc/logo) is available as PNG file in various formats.
