@@ -5,13 +5,13 @@
 	<parent>
 		<groupId>org.scijava</groupId>
 		<artifactId>pom-scijava</artifactId>
-		<version>26.0.0</version>
+		<version>31.1.0</version>
 		<relativePath />
 	</parent>
 
 	<groupId>fr.inra.ijpb</groupId>
 	<artifactId>MorphoLibJ_</artifactId>
-	<version>1.6.2-SNAPSHOT</version>
+	<version>1.6.1-SNAPSHOT</version>
 
 	<name>MorphoLibJ</name>
 	<description>Mathematical morphology library and plugins for ImageJ/Fiji.</description>
