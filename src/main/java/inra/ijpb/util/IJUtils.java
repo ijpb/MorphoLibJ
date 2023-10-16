@@ -155,6 +155,15 @@ public class IJUtils
         return windows.toArray(new TextWindow[0]);
     }
     
+    /**
+     * Returns the names of the windows provided in input array of TextWindow
+     * instances.
+     * 
+     * @param textWindows
+     *            an array of TextWindow
+     * @return a String array the same size as input array containing the name
+     *         of each window
+     */
     public static final String[] getWindowNames(TextWindow[] textWindows)
     {
         String[] names = new String[textWindows.length];

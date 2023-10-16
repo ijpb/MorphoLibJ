@@ -88,6 +88,11 @@ public class LabelMapMorphologicalFilteringPlugin implements PlugIn
          *            the chamfer mask used for propagating distances
          * @param radius
          *            the radius used to threshold the distance map
+         * @param anyLabel
+         *            if true, the operator will be performs with respect to
+         *            pixels with any different label. If false, the operation
+         *            will be performed only with respect to background pixels
+         *            (label 0)
          * @return the result of morphological operation applied to image
          */
         public ImageProcessor process(ImageProcessor image, ChamferMask2D mask, double radius, boolean anyLabel) 
