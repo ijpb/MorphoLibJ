@@ -131,13 +131,13 @@ public class MergeLabelsPlugin implements PlugIn
         }
         case 1:
         {
-            int conn = imagePlus.isStack() ? 6 : 4;
+            int conn = imagePlus.hasImageStack() ? 6 : 4;
             LabelImages.mergeLabelsWithGap(imagePlus, imagePlus.getRoi(), conn, true);
             break;
         }
         case 2:
         {
-            int conn = imagePlus.isStack() ? 26 : 6;
+            int conn = imagePlus.hasImageStack() ? 26 : 6;
             LabelImages.mergeLabelsWithGap(imagePlus, imagePlus.getRoi(), conn, true);
             break;
         }
