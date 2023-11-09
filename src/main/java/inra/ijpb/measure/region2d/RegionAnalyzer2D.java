@@ -29,7 +29,6 @@ import java.util.TreeMap;
 
 import ij.ImagePlus;
 import ij.measure.Calibration;
-import ij.measure.ResultsTable;
 import ij.process.ImageProcessor;
 import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.label.LabelImages;
@@ -122,20 +121,5 @@ public abstract class RegionAnalyzer2D<T> extends AlgoStub implements RegionAnal
 		}
 		
 		return map;
-	}
-
-
-	/**
-	 * Default implementation of computeTable method, using the two other
-	 * methods {@link #analyzeRegions(ImagePlus)} and {@link #createTable(Map)}:
-	 * 
-	 * @param labelPlus
-	 *            a label or binary image of region(s)
-	 * @return an instance of ResultsTable containing results presented in a
-	 *         tabular format.
-	 */
-	public ResultsTable computeTable(ImagePlus labelPlus)
-	{
-		return createTable(analyzeRegions(labelPlus));
 	}
 }

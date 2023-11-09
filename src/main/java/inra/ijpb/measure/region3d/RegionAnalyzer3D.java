@@ -30,7 +30,6 @@ import java.util.TreeMap;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.measure.Calibration;
-import ij.measure.ResultsTable;
 import inra.ijpb.algo.AlgoEvent;
 import inra.ijpb.algo.AlgoListener;
 import inra.ijpb.algo.AlgoStub;
@@ -156,21 +155,7 @@ public abstract class RegionAnalyzer3D<T> extends AlgoStub implements RegionAnal
 		fireStatusChanged(this, "");
         return map;
 	}
-
-	/**
-	 * Default implementation of computeTable method, using the two other
-	 * methods {@link #analyzeRegions(ImagePlus)} and {@link #createTable(Map)}:
-	 * 
-	 * @param labelPlus
-	 *            a label or binary image of region(s)
-	 * @return an instance of ResultsTable containing results presented in a
-	 *         tabular format.
-	 */
-	public ResultsTable computeTable(ImagePlus labelPlus)
-	{
-		return createTable(analyzeRegions(labelPlus));
-	}
-
+	
     @Override
     public void algoProgressChanged(AlgoEvent evt)
     {

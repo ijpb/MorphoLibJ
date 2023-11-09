@@ -54,27 +54,33 @@ public interface RegionAnalyzer<T>
 	public Map<Integer, T> analyzeRegions(ImagePlus labelPlus);
 	
 	/**
-	 * <p>Returns the result of the analysis in the form of a ResultsTable, to
-	 * facilitate concatenation of results obtained from several instances of
-	 * RegionAnalyzer.</p>
-	 * 
-	 * <p>
-	 * This method can be quickly implemented by using the two other methods {@link #analyzeRegions(ImagePlus)} and {@link #createTable(Map)}:
-	 * <pre>{@code
-	 *  public ResultsTable computeTable(ImagePlus labelPlus)
-	 *  {
-	 *      return createTable(analyzeRegions(labelPlus));
-	 *  }
-	 * }
-	 * </pre> 
-	 * 
-	 * 
-	 * @param labelPlus
-	 *            a label or binary image of region(s)
-	 * @return an instance of ResultsTable containing results presented in a
-	 *         tabular format.
-	 */
-	public ResultsTable computeTable(ImagePlus labelPlus);
+     * <p>
+     * Returns the result of the analysis in the form of a ResultsTable, to
+     * facilitate concatenation of results obtained from several instances of
+     * RegionAnalyzer.
+     * </p>
+     * 
+     * <p>
+     * This method is simply implemented by using the two other methods
+     * {@link #analyzeRegions(ImagePlus)} and {@link #createTable(Map)}:
+     * 
+     * <pre>{@code
+     * public ResultsTable computeTable(ImagePlus labelPlus)
+     * {
+     *     return createTable(analyzeRegions(labelPlus));
+     * }
+     * }
+     * </pre>
+     * 
+     * @param labelPlus
+     *            a label or binary image of region(s)
+     * @return an instance of ResultsTable containing results presented in a
+     *         tabular format.
+     */
+	public default ResultsTable computeTable(ImagePlus labelPlus)
+	{
+	    return createTable(analyzeRegions(labelPlus));
+	}
 
 	/**
 	 * Utility method that converts the detailed results of the
