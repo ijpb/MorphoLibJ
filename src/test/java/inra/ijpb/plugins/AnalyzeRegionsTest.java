@@ -42,6 +42,7 @@ public class AnalyzeRegionsTest
      * Test method for {@link inra.ijpb.plugins.AnalyzeRegions#process(ij.ImagePlus, inra.ijpb.plugins.AnalyzeRegions.Features)}.
      */
     @Test
+    @Deprecated
     public final void testProcess_labeledBlobs()
     {
         // open test image
@@ -66,6 +67,7 @@ public class AnalyzeRegionsTest
      * Test method for {@link inra.ijpb.plugins.AnalyzeRegions#process(ij.ImagePlus, inra.ijpb.plugins.AnalyzeRegions.Features)}.
      */
     @Test
+    @Deprecated
     public final void testProcess_labeledBlobs_allFeatures()
     {
         // open test image
