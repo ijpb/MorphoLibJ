@@ -69,9 +69,9 @@ public class MorphometricFeatures2D extends AlgoStub
         PERIMETER,
         /** The Euler number of the region, to quantify its topology.*/ 
         EULER_NUMBER,
-        /** The circularity, as normalized ration of area and squared perimeter.*/
+        /** The circularity, as normalized ratio of area and squared perimeter.*/
         CIRCULARITY,
-        /** he bounding box along each dimension.*/
+        /** The bounding box, defined from extents along each dimension.*/
         BOUNDING_BOX,
         /** The centroid.*/
         CENTROID,
@@ -83,7 +83,7 @@ public class MorphometricFeatures2D extends AlgoStub
         CONVEXITY,
         /** The largest Feret diameter.*/
         MAX_FERET_DIAMETER,
-        /** The oriented box  with minimum width.*/
+        /** The oriented box with minimum width.*/
         ORIENTED_BOX,
         /** The elongation of the oriented box.*/
         ORIENTED_BOX_ELONGATION,
@@ -139,28 +139,66 @@ public class MorphometricFeatures2D extends AlgoStub
     // ====================================================
     // Management of features
     
+    /**
+     * Returns the features this MorphometricFeatures2D instance will compute.
+     * 
+     * @return the collection of features that will be computed.
+     */
     public Collection<Feature> features()
     {
         return features;
     }
     
+    /**
+     * Adds a new feature to the collection of features to compute.
+     * 
+     * @param f
+     *            the feature to add
+     * @return this instance of MorphometricFeatures2D, to allow chaining
+     *         operations
+     */
     public MorphometricFeatures2D add(Feature f)
     {
         features.add(f);
         return this;
     }
     
+    /**
+     * Removes a feature from the collection of features to compute.
+     * 
+     * @param f
+     *            the feature to remove
+     * @return this instance of MorphometricFeatures2D, to allow chaining
+     *         operations
+     */
     public MorphometricFeatures2D remove(Feature f)
     {
         features.remove(f);
         return this;
     }
     
+    /**
+     * Checks if this MorphometricFeatures2D instance contains the specified
+     * feature.
+     * 
+     * @param f
+     *            the feature to test
+     * @return true if this instance contains the specified feature
+     */
     public boolean contains(Feature f)
     {
         return this.features.contains(f);
     }
     
+    /**
+     * Checks if this MorphometricFeatures2D instance contains any of the
+     * specified features.
+     * 
+     * @param features
+     *            the list of features to test
+     * @return true if this instance contains at least one of the specified
+     *         feature
+     */
     public boolean containsAny(Feature... features)
     {
         for (Feature f : features)
@@ -180,8 +218,6 @@ public class MorphometricFeatures2D extends AlgoStub
      * 
      * @param imagePlus
      *            the image to analyze.
-     * @param features
-     *            the features to compute.
      * @return the results of the analysis as a Results Table
      */
     public ResultsTable computeTable(ImagePlus imagePlus)
