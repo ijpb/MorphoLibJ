@@ -276,5 +276,20 @@ public class IntrinsicVolumes3D extends RegionAnalyzer3D<IntrinsicVolumes3D.Resu
             this.meanBreadth = breadth;
             this.eulerNumber = euler;
         }
+        
+        /**
+         * Computes the sphericity shape feature for the region described by
+         * this result. Both volume and surface must have been computed.
+         * 
+         * The sphericity is computed using the following formula: <code>
+         * sphericity = 36 * PI * V^2 / S^3
+         * </code>
+         * 
+         * @return the sphericity of the region.
+         */
+        public double sphericity()
+        {
+            return inra.ijpb.measure.IntrinsicVolumes3D.sphericity(volume, surfaceArea);
+        }
     }
 }

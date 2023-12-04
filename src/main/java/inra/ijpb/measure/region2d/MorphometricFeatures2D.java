@@ -51,6 +51,8 @@ import inra.ijpb.label.LabelImages;
  *  }
  *  </pre>
  *
+ * @see inra.ijpb.measure.region3d.MorphometricFeatures3D
+ * 
  * @author dlegland
  */
 public class MorphometricFeatures2D extends AlgoStub
@@ -283,7 +285,7 @@ public class MorphometricFeatures2D extends AlgoStub
         } 
         else if (contains(CENTROID))
         {
-            // Compute centroids if not already computed from inertia ellipsoid
+            // Compute centroids if not already computed from equivalent ellipses
             this.fireStatusChanged(this, "Centroids");
             Centroid algo = new Centroid();
             DefaultAlgoListener.monitor(algo);
