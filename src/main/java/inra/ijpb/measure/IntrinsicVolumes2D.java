@@ -40,7 +40,7 @@ import inra.ijpb.measure.region2d.IntrinsicVolumes2DUtils;
  * images should be specified as an array of integers.
  * 
  * @see IntrinsicVolumes3D
- * @see inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D
+ * @see inra.ijpb.measure.region2d.IntrinsicVolumes2D
  * @see inra.ijpb.measure.region2d.IntrinsicVolumes2DUtils
  * 
  * @author dlegland

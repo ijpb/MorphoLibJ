@@ -41,7 +41,7 @@ import inra.ijpb.algo.AlgoListener;
  * facilitate usage when no algorithm monitoring is necessary.
  * 
  * @see inra.ijpb.measure.IntrinsicVolumes3D
- * @see inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D
+ * @see inra.ijpb.measure.region2d.IntrinsicVolumes2D
  * 
  * @author dlegland
  *

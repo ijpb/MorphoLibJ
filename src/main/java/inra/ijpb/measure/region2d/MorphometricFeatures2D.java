@@ -252,7 +252,7 @@ public class MorphometricFeatures2D extends AlgoStub
             this.fireStatusChanged(this, "Intrinsic Volumes");
             
             // Create and setup computation class
-            IntrinsicVolumesAnalyzer2D algo = new IntrinsicVolumesAnalyzer2D();
+            IntrinsicVolumes2D algo = new IntrinsicVolumes2D();
             algo.setDirectionNumber(4);
             algo.setConnectivity(4);
             DefaultAlgoListener.monitor(algo);
@@ -564,7 +564,7 @@ public class MorphometricFeatures2D extends AlgoStub
         public int[] labels = null;
         
         public int[] pixelCounts = null;
-        public IntrinsicVolumesAnalyzer2D.Result[] intrinsicVolumes = null;
+        public IntrinsicVolumes2D.Result[] intrinsicVolumes = null;
         public Box2D[] boundingBoxes = null;
         public Point2D[] centroids = null;
         public Ellipse[] ellipses = null;

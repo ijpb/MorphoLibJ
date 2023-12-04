@@ -25,7 +25,7 @@
 package inra.ijpb.measure.region2d;
 
 import ij.measure.Calibration;
-import inra.ijpb.measure.region2d.IntrinsicVolumesAnalyzer2D.Result;
+import inra.ijpb.measure.region2d.IntrinsicVolumes2D.Result;
 
 /**
  * Utility functions for classes that compute 2D intrinsic volumes measures.
