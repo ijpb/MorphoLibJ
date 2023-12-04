@@ -26,7 +26,7 @@ import inra.ijpb.label.LabelImages;
  * for 3D regions.
  * 
  * The class works both as a container of features, used to identify which features will
- * quantify regions, and as a computation class. It may extend the "RegionAnalyzer" 
+ * quantify regions, and as a computation class. It may extend the "RegionAnalyzer3D" 
  * interface in a future release.
  * 
  *  <p>
@@ -120,7 +120,47 @@ public class MorphometricFeatures3D extends AlgoStub
         }
     }
     
+    
+    // ==================================================
+    // setup computation options
 
+    /**
+     * @return the directionNumber used to compute surface area and mean breadth
+     */
+    public int getDirectionNumber()
+    {
+        return directionNumber;
+    }
+
+    /**
+     * @param directionNumber
+     *            the number of directions used to compute surface area and mean
+     *            breadth (either 3 or 13, default is 13)
+     */
+    public void setDirectionNumber(int directionNumber)
+    {
+        this.directionNumber = directionNumber;
+    }
+
+    /**
+     * @return the connectivity used to compute Euler number
+     */
+    public int getConnectivity()
+    {
+        return connectivity;
+    }
+
+    /**
+     * @param connectivity
+     *            the connectivity used to compute Euler number (either 6 or 26,
+     *            default is 6)
+     */
+    public void setConnectivity(int connectivity)
+    {
+        this.connectivity = connectivity;
+    }
+
+    
     // ====================================================
     // Management of features
     

@@ -81,7 +81,7 @@ public class IntrinsicVolumes3D extends RegionAnalyzer3D<IntrinsicVolumes3D.Resu
     
     
     // ==================================================
-    // Implementation of RegionAnalyzer3D methods
+    // setup computation options
 
     /**
      * @return the directionNumber used to compute surface area and mean breadth
