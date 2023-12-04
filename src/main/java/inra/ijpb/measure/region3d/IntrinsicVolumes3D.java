@@ -37,7 +37,7 @@ import inra.ijpb.algo.AlgoListener;
  * Euler Number) for 3D binary or label images, based on the
  * <code>RegionAnalyzer3D</code> interface.
  * 
- * The <code>IntrinsicVolumes3D</code> class provides static classes to
+ * The <code>inra.ijpb.measure.IntrinsicVolumes3D</code> class provides static classes to
  * facilitate usage when no algorithm monitoring is necessary.
  * 
  * @see inra.ijpb.measure.IntrinsicVolumes3D
@@ -46,82 +46,9 @@ import inra.ijpb.algo.AlgoListener;
  * @author dlegland
  *
  */
-public class IntrinsicVolumesAnalyzer3D extends RegionAnalyzer3D<IntrinsicVolumesAnalyzer3D.Result>
+public class IntrinsicVolumes3D extends RegionAnalyzer3D<IntrinsicVolumes3D.Result>
         implements AlgoListener
 {
-    // ==================================================
-    // Static methods
-
-    /**
-     * @deprecated use {@link IntrinsicVolumes3DUtils} instead
-     * @param calib
-     *            spatial calibration
-     * @return volume LUT
-     */
-    @Deprecated
-    public static final double[] volumeLut(Calibration calib)
-    {
-        return IntrinsicVolumes3DUtils.volumeLut(calib);
-    }
-
-    /**
-     * Computes the Look-up table that is used to compute surface area.
-     * 
-     * @deprecated use {@link IntrinsicVolumes3DUtils}  instead
-     * 
-     * @param calib
-     *            the spatial calibration of the image
-     * @param nDirs
-     *            the number of directions to consider, either 3 or 13
-     * @return the look-up-table between binary voxel configuration index and
-     *         contribution to surface area measure
-     */
-    @Deprecated
-    public final static double[] surfaceAreaLut(Calibration calib, int nDirs) 
-    {
-        return IntrinsicVolumes3DUtils.surfaceAreaLut(calib, nDirs);
-    }
-
-    /**
-     * Computes the Look-up table used to measure mean breadth within 3D images.
-     * 
-     * @deprecated use {@link IntrinsicVolumes3DUtils}  instead
-     * 
-     * @param calib
-     *            the spatial calibration of image
-     * @param nDirs
-     *            the number of directions (3 or 13)
-     * @param conn2d
-     *            the connectivity to use on square faces of plane sections (4 or 8)
-     * @return a look-up table with 256 entries
-     */
-    @Deprecated
-    public static final double[] meanBreadthLut(Calibration calib, int nDirs, int conn2d)
-    {
-        return IntrinsicVolumes3DUtils.meanBreadthLut(calib, nDirs, conn2d);
-    }
-    
-    /**
-     * Computes the look-up table for measuring Euler number in binary 3D image,
-     * depending on the connectivity. The input structure should not touch image
-     * border.
-     * 
-     * See "3D Images of Material Structures", from J. Ohser and K. Schladitz,
-     * Wiley 2009, tables 3.2 p. 52 and 3.3 p. 53.
-     * 
-     * @deprecated use {@link IntrinsicVolumes3DUtils}  instead
-     * 
-     * @param conn
-     *            the 3D connectivity, either 6 or 26
-     * @return a look-up-table with 256 entries
-     */
-    @Deprecated
-    public static final double[] eulerNumberLut(int conn)
-    {
-        return IntrinsicVolumes3DUtils.eulerNumberLut(conn);
-    }
-
-
     // ==================================================
     // Class members
 
@@ -148,7 +75,7 @@ public class IntrinsicVolumesAnalyzer3D extends RegionAnalyzer3D<IntrinsicVolume
     /**
      * Default empty constructor.
      */
-    public IntrinsicVolumesAnalyzer3D()
+    public IntrinsicVolumes3D()
     {
     }
     

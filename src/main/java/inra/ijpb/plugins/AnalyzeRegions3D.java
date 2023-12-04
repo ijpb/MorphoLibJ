@@ -35,11 +35,10 @@ import inra.ijpb.geometry.Ellipsoid;
 import inra.ijpb.geometry.Point3D;
 import inra.ijpb.geometry.Sphere;
 import inra.ijpb.label.LabelImages;
-import inra.ijpb.measure.IntrinsicVolumes3D;
 import inra.ijpb.measure.region3d.BoundingBox3D;
 import inra.ijpb.measure.region3d.Centroid3D;
 import inra.ijpb.measure.region3d.EquivalentEllipsoid;
-import inra.ijpb.measure.region3d.IntrinsicVolumesAnalyzer3D;
+import inra.ijpb.measure.region3d.IntrinsicVolumes3D;
 import inra.ijpb.measure.region3d.LargestInscribedBall;
 
 /**
@@ -81,14 +80,7 @@ public class AnalyzeRegions3D implements PlugIn
     
     // ====================================================
     // Class variables
-    
-   /**
-     * When this options is set to true, information messages are displayed on
-     * the console, and the number of counts for each direction is included in
-     * results table. 
-     */
-    public boolean debug  = false;
-    
+       
 	boolean computeVoxelCount 	= true;
 	boolean computeVolume 		= true;
 	boolean computeSurface 		= true;
@@ -215,7 +207,7 @@ public class AnalyzeRegions3D implements PlugIn
 
         // declare arrays for results
         int[] voxelCounts = null;
-        IntrinsicVolumesAnalyzer3D.Result[] intrinsicVolumes = null; 
+        IntrinsicVolumes3D.Result[] intrinsicVolumes = null; 
         Box3D[] boxes = null;
         Point3D[] centroids = null;
         Ellipsoid[] ellipsoids = null;
@@ -240,7 +232,7 @@ public class AnalyzeRegions3D implements PlugIn
             
             long tic = System.nanoTime();
             // Create and setup computation class
-            IntrinsicVolumesAnalyzer3D algo = new IntrinsicVolumesAnalyzer3D();
+            IntrinsicVolumes3D algo = new IntrinsicVolumes3D();
             algo.setDirectionNumber(this.surfaceAreaDirs);
             algo.setConnectivity(this.connectivity.getValue());
             DefaultAlgoListener.monitor(algo);
@@ -332,7 +324,7 @@ public class AnalyzeRegions3D implements PlugIn
         	{
                 double vol =  intrinsicVolumes[i].volume;
                 double surf =  intrinsicVolumes[i].surfaceArea;
-        		table.addValue("Sphericity", IntrinsicVolumes3D.sphericity(vol, surf));
+        		table.addValue("Sphericity", inra.ijpb.measure.IntrinsicVolumes3D.sphericity(vol, surf));
         	}
         	if (computeEulerNumber)
         		table.addValue("EulerNumber", intrinsicVolumes[i].eulerNumber);
