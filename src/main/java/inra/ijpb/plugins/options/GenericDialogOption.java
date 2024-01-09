@@ -6,6 +6,13 @@ package inra.ijpb.plugins.options;
 import ij.gui.GenericDialog;
 
 /**
+ * An interface for facilitating the usage of GenericDialog instances.
+ * 
+ * Specializations of this interface can populate a dialog with one or several
+ * widgets. When the <code>parseValue</code> method is called, the user input(s)
+ * are automatically converted into an instance of the class defined by the type
+ * <code>T</code>.
+ * 
  * @author dlegland
  *
  */
