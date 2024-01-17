@@ -1115,7 +1115,7 @@ public class MorphologicalSegmentation implements PlugIn {
 								if( gradientList.getSelectedItem().equals("Internal") )
 									gradient = Morphology.internalGradient( image.getProcessor( 1 ), strel );
 								else if( gradientList.getSelectedItem().equals("External") )
-									gradient = Morphology.internalGradient( image.getProcessor( 1 ), strel );
+									gradient = Morphology.externalGradient( image.getProcessor( 1 ), strel );
 								else
 									gradient = Morphology.gradient( image.getProcessor( 1 ), strel );
 								image = new ImageStack(image.getWidth(), image.getHeight());
