@@ -151,7 +151,7 @@ public class AnalyzeRegions3D implements PlugIn
         gd.addCheckbox("Bounding_Box", initialChoice.contains(Feature.BOUNDING_BOX));
         gd.addCheckbox("Centroid", initialChoice.contains(Feature.CENTROID));
         gd.addCheckbox("Equivalent_Ellipsoid", initialChoice.contains(Feature.EQUIVALENT_ELLIPSOID));
-        gd.addCheckbox("Ellipsoid_Elongations", initialChoice.contains(Feature.ELLIPSOID_ELONGATION));
+        gd.addCheckbox("Ellipsoid_Elongations", initialChoice.contains(Feature.ELLIPSOID_ELONGATIONS));
         gd.addCheckbox("Max._Inscribed Ball", initialChoice.contains(Feature.MAX_INSCRIBED_BALL));
         gd.addMessage("");
         gd.addChoice("Surface_area_method:", surfaceAreaMethods, surfaceAreaMethods[1]);
@@ -175,7 +175,7 @@ public class AnalyzeRegions3D implements PlugIn
         if (gd.getNextBoolean()) features.add(Feature.BOUNDING_BOX);
         if (gd.getNextBoolean()) features.add(Feature.CENTROID);
         if (gd.getNextBoolean()) features.add(Feature.EQUIVALENT_ELLIPSOID);
-        if (gd.getNextBoolean()) features.add(Feature.ELLIPSOID_ELONGATION);
+        if (gd.getNextBoolean()) features.add(Feature.ELLIPSOID_ELONGATIONS);
         if (gd.getNextBoolean()) features.add(Feature.MAX_INSCRIBED_BALL);
         
         // setup options

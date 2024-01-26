@@ -66,10 +66,10 @@ public class MorphometricFeatures3D extends AlgoStub
         BOUNDING_BOX,
         /** The centroid.*/
         CENTROID,
-        /** The equivalent ellipsoid with same second order moment as the region.*/
+        /** The equivalent ellipsoid with same moments up to the second order as the region.*/
         EQUIVALENT_ELLIPSOID,
         /** The elongation factor of the equivalent ellipsoid.*/
-        ELLIPSOID_ELONGATION,
+        ELLIPSOID_ELONGATIONS,
         /** The radius of the largest inscribed ball.*/
         MAX_INSCRIBED_BALL,
     };
@@ -96,7 +96,7 @@ public class MorphometricFeatures3D extends AlgoStub
     
     
     // ====================================================
-    // Constructor
+    // Constructors
     
     /**
      * Creates a new MorphometricFeatures3D instance containing no feature.
@@ -179,7 +179,7 @@ public class MorphometricFeatures3D extends AlgoStub
      * 
      * @param f
      *            the feature to add
-     * @return this instance of MorphometricFeatures3D, to allow chaining
+     * @return this instance of MorphometricFeatures3D, to allow chaining of
      *         operations
      */
     public MorphometricFeatures3D add(Feature f)
@@ -193,7 +193,7 @@ public class MorphometricFeatures3D extends AlgoStub
      * 
      * @param f
      *            the feature to remove
-     * @return this instance of MorphometricFeatures3D, to allow chaining
+     * @return this instance of MorphometricFeatures3D, to allow chaining of
      *         operations
      */
     public MorphometricFeatures3D remove(Feature f)
@@ -217,10 +217,10 @@ public class MorphometricFeatures3D extends AlgoStub
     
     /**
      * Checks if this MorphometricFeatures3D instance contains any of the
-     * specified feature.
+     * specified features.
      * 
      * @param features
-     *            the features to test
+     *            the list of features to test
      * @return true if this instance contains any of the specified features
      */
     public boolean containsAny(Feature... features)
@@ -270,7 +270,7 @@ public class MorphometricFeatures3D extends AlgoStub
             results.voxelCounts = LabelImages.voxelCount(image, labels);
         }
         
-        // compute intrinsic volumes
+        // compute intrinsic volumes, and related shape factor
         if (containsAny(VOLUME, SURFACE_AREA, MEAN_BREADTH, EULER_NUMBER, SPHERICITY))
         {
             this.fireStatusChanged(this, "Intrinsic Volumes");
@@ -285,6 +285,7 @@ public class MorphometricFeatures3D extends AlgoStub
             results.intrinsicVolumes = algo.analyzeRegions(image, labels, calib);
         }
         
+        // compute 3D bounding box
         if (contains(BOUNDING_BOX))
         {
             this.fireStatusChanged(this, "Bounding boxes");
@@ -293,7 +294,8 @@ public class MorphometricFeatures3D extends AlgoStub
             results.boundingBoxes = algo.analyzeRegions(image, labels, calib);
         }
         
-        if (containsAny(EQUIVALENT_ELLIPSOID, ELLIPSOID_ELONGATION))
+        // compute equivalent ellipsoids and their elongations
+        if (containsAny(EQUIVALENT_ELLIPSOID, ELLIPSOID_ELONGATIONS))
         {
             this.fireStatusChanged(this, "Equivalent Ellipsoids");
             EquivalentEllipsoid algo = new EquivalentEllipsoid();
@@ -305,7 +307,7 @@ public class MorphometricFeatures3D extends AlgoStub
                 results.centroids = Ellipsoid.centers(results.ellipsoids);
             }
             
-            if (contains(ELLIPSOID_ELONGATION))
+            if (contains(ELLIPSOID_ELONGATIONS))
             {
                 this.fireStatusChanged(this, "Ellipsoid elongations");
                 results.ellipsoidElongations = Ellipsoid.elongations(results.ellipsoids);
@@ -320,7 +322,8 @@ public class MorphometricFeatures3D extends AlgoStub
             results.centroids = algo.analyzeRegions(image, labels, calib);
         }
         
-        if (containsAny(MAX_INSCRIBED_BALL))
+        // compute position and radius of maximal inscribed ball
+        if (contains(MAX_INSCRIBED_BALL))
         {
             this.fireStatusChanged(this, "Inscribed circles");
             LargestInscribedBall algo = new LargestInscribedBall();
@@ -445,7 +448,7 @@ public class MorphometricFeatures3D extends AlgoStub
             }
         }
         
-        if (features.contains(ELLIPSOID_ELONGATION))
+        if (features.contains(ELLIPSOID_ELONGATIONS))
         {
             for (int i = 0; i < nLabels; i++)
             {

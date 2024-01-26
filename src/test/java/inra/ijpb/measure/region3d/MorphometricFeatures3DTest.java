@@ -74,4 +74,92 @@ public class MorphometricFeatures3DTest
         assertEquals(5, table.getCounter());
     }
 
+    /**
+     * Test method for {@link inra.ijpb.measure.region3d.MorphometricFeatures3D#computeTable(ij.ImagePlus)}.
+     */
+    @Test
+    public final void testComputeTable_Centroid()
+    {
+        ImagePlus image = createEightRegionsImage(); 
+        MorphometricFeatures3D morpho = new MorphometricFeatures3D()
+                .add(Feature.CENTROID);
+        
+        ResultsTable table = morpho.computeTable(image);
+        
+        assertEquals(8, table.getCounter());
+        assertEquals(2, table.getLastColumn());
+    }
+    
+    /**
+     * Test method for {@link inra.ijpb.measure.region3d.MorphometricFeatures3D#computeTable(ij.ImagePlus)}.
+     */
+    @Test
+    public final void testComputeTable_Sphericity()
+    {
+        ImagePlus image = createEightRegionsImage(); 
+        MorphometricFeatures3D morpho = new MorphometricFeatures3D()
+                .add(Feature.SPHERICITY);
+        
+        ResultsTable table = morpho.computeTable(image);
+        
+        assertEquals(8, table.getCounter());
+        assertEquals(0, table.getLastColumn());
+    }
+    
+    /**
+     * Test method for {@link inra.ijpb.measure.region3d.MorphometricFeatures3D#computeTable(ij.ImagePlus)}.
+     */
+    @Test
+    public final void testComputeTable_EllipsoidElongations()
+    {
+        ImagePlus image = createEightRegionsImage(); 
+        MorphometricFeatures3D morpho = new MorphometricFeatures3D()
+                .add(Feature.ELLIPSOID_ELONGATIONS);
+        
+        ResultsTable table = morpho.computeTable(image);
+        
+        assertEquals(8, table.getCounter());
+        assertEquals(2, table.getLastColumn());
+    }
+    
+    private ImagePlus createEightRegionsImage()
+    {
+        ImageStack array = ImageStack.create(9, 9, 9, 8);
+        
+        // create a singlee-voxel region
+        array.setVoxel(1, 1, 1, 1);
+        
+        // create three 1-by-5 voxels line regions
+        for (int i = 0; i < 5; i++)
+        {
+            array.setVoxel(i+2, 1, 1, 3);
+            array.setVoxel(1, i+2, 1, 5);
+            array.setVoxel(1, 1, i+2, 11);
+        }
+        
+        // create three 5-by-5 voxels plane regions
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < 5; j++)
+            {
+                array.setVoxel(i+2, j+2, 1, 7);
+                array.setVoxel(i+2, 1, j+2, 13);
+                array.setVoxel(1, i+2, j+2, 17);
+            }
+        }
+        
+        // create a single 5-by-5-by-5 voxels cubic regions
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < 5; j++)
+            {
+                for (int k = 0; k < 5; k++)
+                {
+                array.setVoxel(i+2, j+2, k+2, 19);
+                }
+            }
+        }
+        
+        return new ImagePlus("labels", array);
+    }
 }

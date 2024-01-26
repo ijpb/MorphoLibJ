@@ -77,7 +77,7 @@ public class MorphometricFeatures2D extends AlgoStub
         BOUNDING_BOX,
         /** The centroid.*/
         CENTROID,
-        /** The equivalent ellipse with same second order moment as the region.*/
+        /** The equivalent ellipse with same moments up to the second order as the region.*/
         EQUIVALENT_ELLIPSE,
         /** The elongation factor of the equivalent ellipse.*/
         ELLIPSE_ELONGATION,
