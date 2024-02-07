@@ -178,12 +178,14 @@ public class EllipsoidStrel extends AbstractStrel3D
 		return mask;
 	}
 
-	@Override
-	public int[] getOffset()
-	{
-		int intRadius = (int) Math.round(xRadius);
-		return new int[]{intRadius, intRadius, intRadius};
-	}
+    @Override
+    public int[] getOffset()
+    {
+        int intRadiusX = (int) Math.round(xRadius);
+        int intRadiusY = (int) Math.round(yRadius);
+        int intRadiusZ = (int) Math.round(zRadius);
+        return new int[] { intRadiusX, intRadiusY, intRadiusZ };
+    }
 
 	@Override
 	public int[][] getShifts3D()
