@@ -21,7 +21,8 @@
  */
 package inra.ijpb.plugins;
 
-import ij.IJ;
+import java.awt.AWTEvent;
+
 import ij.ImagePlus;
 import ij.gui.DialogListener;
 import ij.gui.GenericDialog;
@@ -32,8 +33,6 @@ import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.morphology.directional.DirectionalFilter;
 import inra.ijpb.morphology.directional.DirectionalFilter.Operation;
 import inra.ijpb.morphology.directional.DirectionalFilter.Type;
-
-import java.awt.AWTEvent;
 
 /**
  * Plugin for computing directional filtering.
@@ -107,7 +106,6 @@ public class DirectionalFilteringPlugin implements ExtendedPlugInFilter, DialogL
 		gd.addPreviewCheckbox(pfr);
 		gd.addDialogListener(this);
         previewing = true;
-//		gd.addHelp("http://imagejdocu.tudor.lu/doku.php?id=plugin:morphology:fast_morphological_filters:start");
         gd.showDialog();
         previewing = false;
         
@@ -141,8 +139,6 @@ public class DirectionalFilteringPlugin implements ExtendedPlugInFilter, DialogL
 	@Override
 	public void run(ImageProcessor image)
 	{
-		IJ.log("Run directional filter");
-		
 		DirectionalFilter filter = new DirectionalFilter(this.type, this.op, this.lineLength, this.nDirections);
 		DefaultAlgoListener.monitor(filter);
 		
