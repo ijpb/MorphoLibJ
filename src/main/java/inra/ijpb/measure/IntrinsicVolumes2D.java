@@ -295,7 +295,7 @@ public class IntrinsicVolumes2D
      *            the spatial calibration
      * @return the calibrated area of the sampling window
      */
-    private static final double samplingArea(ImageProcessor image, Calibration calib)
+    public static final double samplingArea(ImageProcessor image, Calibration calib)
     {
         // size of image
         int sizeX = image.getWidth();
