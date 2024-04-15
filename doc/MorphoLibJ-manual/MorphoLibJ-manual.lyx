@@ -13629,6 +13629,7 @@ reference "fig:Geodesic-Distance-Map-3d"
 \end_inset
 
 .
+ 
 \end_layout
 
 \begin_layout Standard
@@ -13741,13 +13742,6 @@ literal "true"
 \end_layout
 
 \begin_layout Standard
-Geodesic distance maps are computed by propagating chamfer weights, as for
- the computation of distance maps.
- As chamfer weights are only an approximation of the real Euclidean distance,
- some differences are expected compared to the actual geodesic distance.
-\end_layout
-
-\begin_layout Standard
 \begin_inset Float figure
 wide false
 sideways false
@@ -13786,6 +13780,10 @@ Computation of the geodesic distance map on a 3D binary image.
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsubsection
+Plugins
 \end_layout
 
 \begin_layout Minisec
@@ -13862,6 +13860,199 @@ reference "fig:Geodesic-Distance-Map-3d"
 
 ).
  Binary image is assumed to have cubic voxels.
+\end_layout
+
+\begin_layout Subsubsection
+Results interpretation
+\end_layout
+
+\begin_layout Standard
+Geodesic distance transforms plugins result in images that contains the
+ geodesic distance of foreground pixels or voxels, but also background pixels/vo
+xels of the mask.
+ Also, some regions may not be reacheable by the propagation algorithm.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/binary/geodDist_interp_input.png
+	width 40text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Input marker and mask images.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/binary/geodDist_interp_res_annot.png
+	width 40text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Geodesic Distance Map.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Interpretation-Geodesic-Distance-Map"
+
+\end_inset
+
+Interpretation of geodesic distance maps.
+ (a) Input marker (magenta) and mask images (green).
+ Overlay of marker and mask is shown in black.
+ (b) Geodesic Distance Map.
+ Numeric values correspond to distances (values are rounded for readability).
+ Non-reacheable components are set to +infinity.
+ Background of original mask is set to NaN.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Values in geodesic distance maps can be interpreted this way:
+\end_layout
+
+\begin_layout Itemize
+0: the pixel is contained both within the original marker and mask images
+ (distance is zero by definition)
+\end_layout
+
+\begin_layout Itemize
+numerical value: the value corresponds to the length of the path that joins
+ the current pixel or voxel to the closest pixel or voxel belonging to the
+ mask.
+ 
+\end_layout
+
+\begin_layout Itemize
+NaN: the pixel/voxel does not belong to the mask, and is not considered
+ during propagation.
+\end_layout
+
+\begin_layout Itemize
+“Infinity”, or very large value: the pixel does belong to the mask, but
+ can not be reached by propagation.
+ This corresponds to the case where the mask is composed of several components.
+\end_layout
+
+\begin_layout Standard
+Geodesic distance maps are computed by propagating chamfer weights, as for
+ the computation of distance maps.
+ As chamfer weights are only an approximation of the real Euclidean distance,
+ some differences are expected compared to the actual geodesic distance.
+ 
+\end_layout
+
+\begin_layout Standard
+When computation are performed with integers, special values like Inf or
+ Nan can not be represented.
+ In these cases, they are replaced by the largest possible value for 16-bits
+ unsigned integer type.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+Algorithms
+\end_layout
+
+\begin_layout Standard
+Various algorithms are decribed in 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Soille_2003"
+literal "false"
+
+\end_inset
+
+.
+ The simplest one consists in iterating forward and backward passes that
+ update the result map according to the neighbors pixels, until no more
+ modification occurs.
+ An alternative is to propagate the distance maps from the pixels within
+ the markers using a priority queue.
+ 
+\end_layout
+
+\begin_layout Standard
+The MorphoLibJ plugins use an hybrid algorithm, that initializes the distance
+ map by a single sequence of forward and backward passes, and initializes
+ the queue during the backward pass.
+ This reduces the amount of memory required by the priority queue.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
