@@ -4526,10 +4526,6 @@ sideways false
 status open
 
 \begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
 \align center
 \begin_inset Graphics
 	filename images/reconstruction/extendedMaxima.png
@@ -8062,7 +8058,7 @@ noprefix "false"
 \end_layout
 
 \begin_layout Standard
-The following sections will present these featuers.
+The following sections will present these features.
  For each family of features, we first provide mathematical definitions
  of the implemented features, eventually completed by the methods used to
  measure them from discrete images.
@@ -8871,10 +8867,6 @@ centered moments
 wide false
 sideways false
 status open
-
-\begin_layout Plain Layout
-
-\end_layout
 
 \begin_layout Plain Layout
 \align center
@@ -16278,7 +16270,7 @@ status open
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
