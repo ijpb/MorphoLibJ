@@ -66,9 +66,13 @@ public class KillBordersPlugin implements PlugIn
 		} 
 		long elapsedTime = System.currentTimeMillis() - t0;
 		
+		// copy image settings
 		resultPlus.copyScale(imagePlus);
+        resultPlus.setDisplayRange(imagePlus.getDisplayRangeMin(), imagePlus.getDisplayRangeMax());
+        resultPlus.setLut(imagePlus.getProcessor().getLut());
+        
+        // display with same settings
 		resultPlus.show();
-		
 		if (imagePlus.getStackSize() > 1) 
 		{
 			resultPlus.setSlice(imagePlus.getCurrentSlice());
