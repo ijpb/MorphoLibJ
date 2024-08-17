@@ -28,6 +28,7 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import ij.gui.PolygonRoi;
 import ij.gui.Roi;
@@ -42,15 +43,45 @@ import ij.gui.Roi;
  */
 public class Polygon2D implements Iterable <Point2D>
 {
-    // ====================================================
-    // Class variables
-    
+	// ====================================================
+	// Static factories
+
+	/**
+	 * Creates a new polygon from a list of vertices.
+	 * 
+	 * @param vertices
+	 *            the vertices of the new polygon
+	 * @return a new polygon
+	 */
+	public static final Polygon2D create(List<Point2D> vertices)
+	{
+		return new Polygon2D(vertices);
+	}
+
+	/**
+	 * Creates a new polygon from two lists of vertex coordinates.
+	 * 
+	 * @param xdata
+	 *            the x-coordinates of the polygon
+	 * @param ydata
+	 *            the y-coordinates of the polygon
+	 * @return a new polygon
+	 */
+	public static final Polygon2D create(double[] xdata, double[] ydata)
+	{
+		return new Polygon2D(xdata, ydata);
+	}
+	
+
+	// ====================================================
+	// Class variables
+
 	ArrayList<Point2D> vertices;
 
 	
 	// ====================================================
-    // Constructors
-    
+	// Constructors
+
 	/**
 	 * Creates a new empty polygon.
 	 * 
@@ -222,22 +253,22 @@ public class Polygon2D implements Iterable <Point2D>
 	public boolean contains(Point2D point)
 	{
 		// the winding number counter for the point
-        int wn = 0; 
+		int wn = 0;
 
-        // Extract the last point of the collection
-        Point2D previous = vertices.get(vertices.size() - 1);
-        double y1 = previous.getY();
-        double y2;
+		// Extract the last point of the collection
+		Point2D previous = vertices.get(vertices.size() - 1);
+		double y1 = previous.getY();
+		double y2;
 
-        // y-coordinate of query point
-        double y = point.getY();
+		// y-coordinate of query point
+		double y = point.getY();
 
-        // Iterate on couple of vertices, starting from couple (last,first)
-        for (Point2D current : vertices) 
-        {
-            // second vertex of current edge
-            y2 = current.getY();
-            
+		// Iterate on couple of vertices, starting from couple (last,first)
+		for (Point2D current : vertices)
+		{
+			// second vertex of current edge
+			y2 = current.getY();
+
 			if (y1 <= y)
 			{
 				if (y2 > y) // an upward crossing
@@ -251,10 +282,10 @@ public class Polygon2D implements Iterable <Point2D>
 						wn--;
 			}
 
-            // for next iteration
-            y1 = y2;
-            previous = current;
-        }
+			// for next iteration
+			y1 = y2;
+			previous = current;
+		}
 
 		if (this.signedArea() > 0)
 		{
@@ -286,12 +317,11 @@ public class Polygon2D implements Iterable <Point2D>
 	 */
 	private final static int isLeft(Point2D p1, Point2D p2, Point2D pt)
 	{
-    	double x = p1.getX();
-    	double y = p1.getY();
-    	return (int) Math.signum(
-    			(p2.getX() - x) * (pt.getY() - y) - (pt.getX() - x) * (p2.getY() - y));
-    }
-    
+		double x = p1.getX();
+		double y = p1.getY();
+		return (int) Math.signum((p2.getX() - x) * (pt.getY() - y) - (pt.getX() - x) * (p2.getY() - y));
+	}
+
 	/**
 	 * Computes the complementary polygon, whose interior is the exterior of
 	 * this polygon.
@@ -312,9 +342,9 @@ public class Polygon2D implements Iterable <Point2D>
 		return result;
 	}
 	
-    // ====================================================
-    // GUI Tools
-    
+	// ====================================================
+	// GUI Tools
+
 	/**
 	 * Converts this polygon into an ImageJ Polygon ROI.
 	 * 
@@ -341,8 +371,8 @@ public class Polygon2D implements Iterable <Point2D>
 
 	
 	// ====================================================
-    // Management of vertices
-    
+	// Management of vertices
+
 	/**
 	 * Returns the number of vertices within this polygon
 	 * 
