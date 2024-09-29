@@ -330,8 +330,11 @@ public class BinaryConfigurationsHistogram2D extends AlgoStub
                 localLabels.clear();
                 for (int label : configValues)
                 {
-                    if (label == 0)
-                        continue;
+                    // do not consider background
+                    if (label == 0) continue;
+                    // do not consider labels not in the requested list
+                    if (!labelIndices.containsKey(label)) continue;
+                    
                     // keep only one instance of each label
                     if (!localLabels.contains(label))
                         localLabels.add(label);

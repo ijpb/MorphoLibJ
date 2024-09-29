@@ -24,11 +24,13 @@
  */
 package inra.ijpb.measure.region2d;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
 import ij.process.ByteProcessor;
+import ij.process.ImageProcessor;
+import inra.ijpb.label.LabelImages;
 
 /**
  * @author dlegland
@@ -36,6 +38,39 @@ import ij.process.ByteProcessor;
  */
 public class BinaryConfigurationsHistogram2DTest
 {
+
+	/**
+	 * Test method for {@link inra.ijpb.measure.region2d.BinaryConfigurationsHistogram2D#process(ij.process.ImageProcessor, int[])}.
+	 */
+	@Test
+	public final void test_processImageProcessor_allLabels()
+	{
+		ImageProcessor image = createFourRegionsLabelMap();
+		int[] labels = LabelImages.findAllLabels(image);
+		
+		int[][] histo = new BinaryConfigurationsHistogram2D().process(image, labels);
+		
+		// check size of histograms
+		assertEquals(histo.length, labels.length);
+		assertEquals(histo[0].length, 16);
+	}
+
+	/**
+	 * Test method for {@link inra.ijpb.measure.region2d.BinaryConfigurationsHistogram2D#process(ij.process.ImageProcessor, int[])}.
+	 */
+	@Test
+	public final void test_processImageProcessor_selectedLabels()
+	{
+		ImageProcessor image = createFourRegionsLabelMap();
+		int[] labels = new int[] {5, 8, 9};
+		
+		int[][] histo = new BinaryConfigurationsHistogram2D().process(image, labels);
+		
+		// check size of histograms
+		assertEquals(histo.length, labels.length);
+		assertEquals(histo[0].length, 16);
+	}
+
 	/**
 	 * Test method for {@link inra.ijpb.measure.region2d.BinaryConfigurationsHistogram2D#processInnerFrame(ij.process.ImageProcessor)}.
 	 */
@@ -93,4 +128,27 @@ public class BinaryConfigurationsHistogram2DTest
 		}
 	}
 
+	/**
+	 * Creates a label map containing four regions.
+	 * 
+	 * @return a label map containing four regions.
+	 */
+	private static final ImageProcessor createFourRegionsLabelMap()
+	{
+		ImageProcessor array = new ByteProcessor(8, 8);
+		array.set(1, 1, 3);
+		for (int i = 3; i < 7; i++)
+		{
+			array.set(i, 1, 5);
+			array.set(1, i, 8);
+		}
+		for (int i = 3; i < 7; i++)
+		{
+			for (int j = 3; j < 7; j++)
+			{
+				array.set(i, j, 9);
+			}
+		}
+		return array;
+	}
 }
