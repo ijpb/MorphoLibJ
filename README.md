@@ -42,7 +42,7 @@ If you develop plugins / applications based on MorphoLibJ, you can use add the f
   <dependency>
     <groupId>fr.inra.ijpb</groupId>
     <artifactId>MorphoLibJ_</artifactId>
-    <version>1.6.3</version>
+    <version>1.6.4</version>
   </dependency>
 ```
 
@@ -59,7 +59,7 @@ Documentation
 
 A more detailed presentation of the library and its plugins is available on the [ImageJ/Fiji Wiki](http://imagej.net/MorphoLibJ).
 
-We have as well a [User Manual](https://github.com/ijpb/MorphoLibJ/releases/download/MorphoLibJ_-1.6.3/MorphoLibJ-manual-v1.6.3.pdf) in pdf format.
+We have as well a [User Manual](https://github.com/ijpb/MorphoLibJ/releases/download/MorphoLibJ_-1.6.4/MorphoLibJ-manual-v1.6.4.pdf) in pdf format.
 
 The main source code directory is [src/main/java/inra/ijpb](http://github.com/ijpb/MorphoLibJ/tree/master/src/main/java/inra/ijpb).
 
