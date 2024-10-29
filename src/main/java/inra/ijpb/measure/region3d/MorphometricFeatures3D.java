@@ -459,10 +459,10 @@ public class MorphometricFeatures3D extends AlgoStub
                 Point3D center = elli.center();
                 table.setValue("Elli.Center.X", i, center.getX());
                 table.setValue("Elli.Center.Y", i, center.getY());
-                table.setValue("Elli.Center.Z", i, center.getY());
+                table.setValue("Elli.Center.Z", i, center.getZ());
                 table.setValue("Elli.Radius1", i, elli.radius1());
                 table.setValue("Elli.Radius2", i, elli.radius2());
-                table.setValue("Elli.Radius3", i, elli.radius2());
+                table.setValue("Elli.Radius3", i, elli.radius3());
                 table.setValue("Elli.Azim", i, elli.phi());
                 table.setValue("Elli.Elev", i, elli.theta());
                 table.setValue("Elli.Roll", i, elli.psi());
