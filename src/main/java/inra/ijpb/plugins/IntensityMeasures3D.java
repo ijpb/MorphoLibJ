@@ -25,9 +25,11 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
 import ij.gui.GenericDialog;
+import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
+import inra.ijpb.label.LabelImages;
 import inra.ijpb.measure.IntensityMeasures;
-import inra.ijpb.measure.ResultsBuilder;
+import inra.ijpb.util.Tables;
 
 /**
  * This class implements a set of photometric (intensity) measurements over
@@ -66,31 +68,30 @@ public class IntensityMeasures3D implements PlugIn{
 			return;
 		}
 
-        String[] names = new String[ nImages ];        
-        
-        for (int i = 0; i < nImages; i++)         
-            names[ i ] = WindowManager.getImage(i + 1).getTitle();
-        
-        if( inputIndex > nImages-1 )
-        	inputIndex = nImages - 1;
-        if( labelsIndex > nImages-1 )
-        	labelsIndex = nImages - 1;
-        
-        // open a dialog to choose user options
-        GenericDialog gd = new GenericDialog( "Intensity Measurements 2D/3D" );
-        gd.addChoice( "Input", names, names[ inputIndex ] );
-        gd.addChoice( "Labels", names, names[ labelsIndex ] );
-        gd.addMessage("Measurements:");
+		String[] names = new String[nImages];
+
+		for (int i = 0; i < nImages; i++)
+			names[i] = WindowManager.getImage(i + 1).getTitle();
+
+		if (inputIndex > nImages - 1) inputIndex = nImages - 1;
+		if (labelsIndex > nImages - 1) labelsIndex = nImages - 1;
+
+		// open a dialog to choose user options
+		GenericDialog gd = new GenericDialog("Intensity Measurements 2D/3D");
+		gd.addChoice("Input", names, names[inputIndex]);
+		gd.addChoice("Labels", names, names[labelsIndex]);
+		gd.addMessage("Measurements:");
 		gd.addCheckboxGroup(measureLabels.length / 2 + 1, 2, measureLabels, measureStates);
-        
-        gd.showDialog();
-        
+
+		gd.showDialog();
+
 		if (!gd.wasOKed()) return;
 
-		// retrieve index of intensity image ans label image
+		// retrieve index of intensity image and label image
 		inputIndex = gd.getNextChoiceIndex();
 		labelsIndex = gd.getNextChoiceIndex();
 
+		// retrieve measure options, and keep them for later use 
 		for (int i = 0; i < measureStates.length; i++)
 		{
 			measureStates[i] = gd.getNextBoolean();
@@ -98,9 +99,9 @@ public class IntensityMeasures3D implements PlugIn{
 		
 		// count the number of measures
 		int numMeasures = 0;
-		for (int i = 0; i < measureStates.length; i++)
+		for (boolean state : measureStates)
 		{
-			if (measureStates[i])
+			if (state)
 			{
 				numMeasures++;
 			}
@@ -127,15 +128,24 @@ public class IntensityMeasures3D implements PlugIn{
 			return;
 		}
 
-		ResultsBuilder rb = new ResultsBuilder();
-
+		// initialize results table
+		int[] labels = LabelImages.findAllLabels(labelImage);
+		ResultsTable table = new ResultsTable();
+		for (int i = 0; i < labels.length; i++)
+		{
+			table.incrementCounter();
+			table.addLabel(Integer.toString(labels[i]));
+		}
+		
+		// create measure computation class
 		final IntensityMeasures im = new IntensityMeasures(inputImage, labelImage);
 		int calculated = 0;
+		
 		if (measureStates[0]) // Mean
 		{
 			IJ.showStatus("Calculating mean intensity...");
 			IJ.showProgress(calculated, numMeasures);
-			rb.addResult(im.getMean());
+			Tables.appendColumns(table, im.getMean());
 			calculated++;
 		}
 
@@ -143,7 +153,7 @@ public class IntensityMeasures3D implements PlugIn{
 		{
 			IJ.showStatus("Calculating standard deviation of intensity...");
 			IJ.showProgress(calculated, numMeasures);
-			rb.addResult(im.getStdDev());
+			Tables.appendColumns(table, im.getStdDev());
 			calculated++;
 		}
 
@@ -151,7 +161,7 @@ public class IntensityMeasures3D implements PlugIn{
 		{
 			IJ.showStatus("Calculating maximum intensity...");
 			IJ.showProgress(calculated, numMeasures);
-			rb.addResult(im.getMax());
+			Tables.appendColumns(table, im.getMax());
 			calculated++;
 		}
 
@@ -159,7 +169,7 @@ public class IntensityMeasures3D implements PlugIn{
 		{
 			IJ.showStatus("Calculating minimum intensity...");
 			IJ.showProgress(calculated, numMeasures);
-			rb.addResult(im.getMin());
+			Tables.appendColumns(table, im.getMin());
 			calculated++;
 		}
 
@@ -167,7 +177,7 @@ public class IntensityMeasures3D implements PlugIn{
 		{
 			IJ.showStatus("Calculating median intensity...");
 			IJ.showProgress(calculated, numMeasures);
-			rb.addResult(im.getMedian());
+			Tables.appendColumns(table, im.getMedian());
 			calculated++;
 		}
 
@@ -175,7 +185,7 @@ public class IntensityMeasures3D implements PlugIn{
 		{
 			IJ.showStatus("Calculating intensity mode...");
 			IJ.showProgress(calculated, numMeasures);
-			rb.addResult(im.getMode());
+			Tables.appendColumns(table, im.getMode());
 			calculated++;
 		}
 
@@ -183,7 +193,7 @@ public class IntensityMeasures3D implements PlugIn{
 		{
 			IJ.showStatus("Calculating intensity skewness...");
 			IJ.showProgress(calculated, numMeasures);
-			rb.addResult(im.getSkewness());
+			Tables.appendColumns(table, im.getSkewness());
 			calculated++;
 		}
 
@@ -191,7 +201,7 @@ public class IntensityMeasures3D implements PlugIn{
 		{
 			IJ.showStatus("Calculating minimum kurtosis...");
 			IJ.showProgress(calculated, numMeasures);
-			rb.addResult(im.getKurtosis());
+			Tables.appendColumns(table, im.getKurtosis());
 			calculated++;
 		}
 
@@ -199,7 +209,7 @@ public class IntensityMeasures3D implements PlugIn{
 		{
 			IJ.showStatus("Calculating number of pixels/voxels...");
 			IJ.showProgress(calculated, numMeasures);
-			rb.addResult(im.getNumberOfVoxels());
+			Tables.appendColumns(table, im.getNumberOfVoxels());
 			calculated++;
 		}
 
@@ -207,7 +217,7 @@ public class IntensityMeasures3D implements PlugIn{
 		{
 			IJ.showStatus("Calculating volume...");
 			IJ.showProgress(calculated, numMeasures);
-			rb.addResult(im.getVolume());
+			Tables.appendColumns(table, im.getVolume());
 			calculated++;
 		}
 
@@ -215,7 +225,7 @@ public class IntensityMeasures3D implements PlugIn{
 		{
 			IJ.showStatus("Calculating neighbors mean intensity...");
 			IJ.showProgress(calculated, numMeasures);
-			rb.addResult(im.getNeighborsMean());
+			Tables.appendColumns(table, im.getNeighborsMean());
 			calculated++;
 		}
 
@@ -223,7 +233,7 @@ public class IntensityMeasures3D implements PlugIn{
 		{
 			IJ.showStatus("Calculating neighbors standard deviation of intensity...");
 			IJ.showProgress(calculated, numMeasures);
-			rb.addResult(im.getNeighborsStdDev());
+			Tables.appendColumns(table, im.getNeighborsStdDev());
 			calculated++;
 		}
 
@@ -231,7 +241,7 @@ public class IntensityMeasures3D implements PlugIn{
 		{
 			IJ.showStatus("Calculating neighbors maximum intensity...");
 			IJ.showProgress(calculated, numMeasures);
-			rb.addResult(im.getNeighborsMax());
+			Tables.appendColumns(table, im.getNeighborsMax());
 			calculated++;
 		}
 
@@ -239,14 +249,15 @@ public class IntensityMeasures3D implements PlugIn{
 		{
 			IJ.showStatus("Calculating neighbors minimum intensity...");
 			IJ.showProgress(calculated, numMeasures);
-			rb.addResult(im.getNeighborsMin());
+			Tables.appendColumns(table, im.getNeighborsMin());
+			calculated++;
 		}
 
 		if (measureStates[14]) // Neighbors median intensity
 		{
 			IJ.showStatus("Calculating neighbors median intensity...");
 			IJ.showProgress(calculated, numMeasures);
-			rb.addResult(im.getNeighborsMedian());
+			Tables.appendColumns(table, im.getNeighborsMedian());
 			calculated++;
 		}
 
@@ -254,7 +265,7 @@ public class IntensityMeasures3D implements PlugIn{
 		{
 			IJ.showStatus("Calculating neighbors intensity mode...");
 			IJ.showProgress(calculated, numMeasures);
-			rb.addResult(im.getNeighborsMode());
+			Tables.appendColumns(table, im.getNeighborsMode());
 			calculated++;
 		}
 
@@ -262,7 +273,7 @@ public class IntensityMeasures3D implements PlugIn{
 		{
 			IJ.showStatus("Calculating neighbors intensity skewness...");
 			IJ.showProgress(calculated, numMeasures);
-			rb.addResult(im.getNeighborsSkewness());
+			Tables.appendColumns(table, im.getNeighborsSkewness());
 			calculated++;
 		}
 
@@ -270,12 +281,12 @@ public class IntensityMeasures3D implements PlugIn{
 		{
 			IJ.showStatus("Calculating neighbors intensity kurtosis...");
 			IJ.showProgress(calculated, numMeasures);
-			rb.addResult(im.getNeighborsKurtosis());
+			Tables.appendColumns(table, im.getNeighborsKurtosis());
 			calculated++;
 		}
 		IJ.showStatus("Done");
 		IJ.showProgress(calculated, numMeasures);
 
-		rb.getResultsTable().show(inputImage.getShortTitle() + "-intensity-measurements");
+		table.show(inputImage.getShortTitle() + "-intensity-measurements");
 	}
 }
