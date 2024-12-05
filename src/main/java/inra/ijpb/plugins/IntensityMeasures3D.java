@@ -38,8 +38,11 @@ import inra.ijpb.measure.ResultsBuilder;
  */
 public class IntensityMeasures3D implements PlugIn{
 
+	// keep index of images when plugin is called again 
 	static int inputIndex = 0;
 	static int labelsIndex = 1;
+	
+	
 	static String[] measureLabels = new String[]{ "Mean", "StdDev", "Max",
 			"Min", "Median", "Mode", "Skewness", "Kurtosis",
 			"NumberOfVoxels", "Volume", "NeighborsMean", "NeighborsStdDev",
@@ -53,9 +56,9 @@ public class IntensityMeasures3D implements PlugIn{
 	@Override
 	public void run(String arg) 
 	{		
-		int nbima = WindowManager.getImageCount();
+		int nImages = WindowManager.getImageCount();
 		
-		if( nbima < 2 )
+		if( nImages < 2 )
 		{
 			IJ.error( "Intensity Measures 2D/3D input error",
 					"ERROR: At least two images need to be open to run "
@@ -63,207 +66,216 @@ public class IntensityMeasures3D implements PlugIn{
 			return;
 		}
 
-        String[] names = new String[ nbima ];        
+        String[] names = new String[ nImages ];        
         
-        for (int i = 0; i < nbima; i++)         
+        for (int i = 0; i < nImages; i++)         
             names[ i ] = WindowManager.getImage(i + 1).getTitle();
         
-        if( inputIndex > nbima-1 )
-        	inputIndex = nbima - 1;
-        if( labelsIndex > nbima-1 )
-        	labelsIndex = nbima - 1;
+        if( inputIndex > nImages-1 )
+        	inputIndex = nImages - 1;
+        if( labelsIndex > nImages-1 )
+        	labelsIndex = nImages - 1;
         
+        // open a dialog to choose user options
         GenericDialog gd = new GenericDialog( "Intensity Measurements 2D/3D" );
         gd.addChoice( "Input", names, names[ inputIndex ] );
         gd.addChoice( "Labels", names, names[ labelsIndex ] );
         gd.addMessage("Measurements:");
-        gd.addCheckboxGroup( measureLabels.length / 2 + 1, 2, measureLabels,
-        		measureStates );
+		gd.addCheckboxGroup(measureLabels.length / 2 + 1, 2, measureLabels, measureStates);
         
         gd.showDialog();
         
-        if( gd.wasOKed() )
-        {
-        	inputIndex = gd.getNextChoiceIndex();
-        	labelsIndex = gd.getNextChoiceIndex();
-           
-        	for( int i=0; i<measureStates.length; i++ )        	
-        		measureStates[ i ] = gd.getNextBoolean();
-        	        		                        
-            boolean calculateMeasures = false;
-            int numMeasures = 0;
-            for( int i=0; i<measureStates.length; i++ )
-            	if( measureStates[ i ] )
-            	{
-            		calculateMeasures = true;
-            		numMeasures ++;
-            	}
-            
-            if ( calculateMeasures == false )
-            	return;
-                        
-            ImagePlus inputImage = WindowManager.getImage( inputIndex + 1 );
-            ImagePlus labelImage = WindowManager.getImage( labelsIndex + 1 );
-            
-            if( inputImage.getWidth() != labelImage.getWidth() || 
-            		inputImage.getHeight() != labelImage.getHeight() )
-            {
-            	IJ.error( "Intensity Measures 2D/3D input error", "Error: input"
-            			+ " and label images must have the same size" );
-            	return;
-            }
+		if (!gd.wasOKed()) return;
 
-            ResultsBuilder rb = new ResultsBuilder();
-            
-            final IntensityMeasures im = new IntensityMeasures( inputImage, labelImage );
-            int calculated = 0;
-            if( measureStates[ 0 ] ) // Mean
-            {
-            	IJ.showStatus( "Calculating mean intensity..." );
-            	IJ.showProgress( calculated, numMeasures );
-            	rb.addResult( im.getMean() );
-            	calculated ++;
-            }
+		// retrieve index of intensity image ans label image
+		inputIndex = gd.getNextChoiceIndex();
+		labelsIndex = gd.getNextChoiceIndex();
 
-            if( measureStates[ 1 ] ) // Standard deviation
-            {
-            	IJ.showStatus( "Calculating standard deviation of intensity..." );
-            	IJ.showProgress( calculated, numMeasures );
-            	rb.addResult( im.getStdDev() );
-            	calculated ++;
-            }
+		for (int i = 0; i < measureStates.length; i++)
+		{
+			measureStates[i] = gd.getNextBoolean();
+		}
+		
+		// count the number of measures
+		int numMeasures = 0;
+		for (int i = 0; i < measureStates.length; i++)
+		{
+			if (measureStates[i])
+			{
+				numMeasures++;
+			}
+		}
+		
+		// avoid unnecessary computation
+		if (numMeasures == 0) return;
 
-            if( measureStates[ 2 ] ) // Max
-            {
-            	IJ.showStatus( "Calculating maximum intensity..." );
-            	IJ.showProgress( calculated, numMeasures );
-            	rb.addResult( im.getMax() );
-            	calculated ++;
-            }
+		// retrieve images
+		ImagePlus inputImage = WindowManager.getImage(inputIndex + 1);
+		ImagePlus labelImage = WindowManager.getImage(labelsIndex + 1);
 
-            if( measureStates[ 3 ] ) // Min
-            {
-            	IJ.showStatus( "Calculating minimum intensity..." );
-            	IJ.showProgress( calculated, numMeasures );
-            	rb.addResult( im.getMin() );
-            	calculated ++;
-            }
+		// check dimensionality and size
+		if (inputImage.getNDimensions() != labelImage.getNDimensions())
+		{
+			IJ.error("Intensity Measures 2D/3D input error",
+					"Error: input and label images must have the same dimension");
+			return;
+		}
+		if (inputImage.getWidth() != labelImage.getWidth() || inputImage.getHeight() != labelImage.getHeight())
+		{
+			IJ.error("Intensity Measures 2D/3D input error",
+					"Error: input and label images must have the same size");
+			return;
+		}
 
-            if( measureStates[ 4 ] ) // Median
-            {
-            	IJ.showStatus( "Calculating median intensity..." );
-            	IJ.showProgress( calculated, numMeasures );
-            	rb.addResult( im.getMedian() );
-            	calculated ++;
-            }
+		ResultsBuilder rb = new ResultsBuilder();
 
-            if( measureStates[ 5 ] ) // Mode
-            {
-            	IJ.showStatus( "Calculating intensity mode..." );
-            	IJ.showProgress( calculated, numMeasures );
-            	rb.addResult( im.getMode() );
-            	calculated ++;
-            }
+		final IntensityMeasures im = new IntensityMeasures(inputImage, labelImage);
+		int calculated = 0;
+		if (measureStates[0]) // Mean
+		{
+			IJ.showStatus("Calculating mean intensity...");
+			IJ.showProgress(calculated, numMeasures);
+			rb.addResult(im.getMean());
+			calculated++;
+		}
 
-            if( measureStates[ 6 ] ) // Skewness
-            {
-            	IJ.showStatus( "Calculating intensity skewness..." );
-            	IJ.showProgress( calculated, numMeasures );
-            	rb.addResult( im.getSkewness() );
-            	calculated ++;
-            }
+		if (measureStates[1]) // Standard deviation
+		{
+			IJ.showStatus("Calculating standard deviation of intensity...");
+			IJ.showProgress(calculated, numMeasures);
+			rb.addResult(im.getStdDev());
+			calculated++;
+		}
 
-            if( measureStates[ 7 ] ) // Kurtosis
-            {
-            	IJ.showStatus( "Calculating minimum kurtosis..." );
-            	IJ.showProgress( calculated, numMeasures );
-            	rb.addResult( im.getKurtosis() );
-            	calculated ++;
-            }
+		if (measureStates[2]) // Max
+		{
+			IJ.showStatus("Calculating maximum intensity...");
+			IJ.showProgress(calculated, numMeasures);
+			rb.addResult(im.getMax());
+			calculated++;
+		}
 
-            if( measureStates[ 8 ] ) // Number of voxels
-            {
-            	IJ.showStatus( "Calculating number of pixels/voxels..." );
-            	IJ.showProgress( calculated, numMeasures );
-            	rb.addResult( im.getNumberOfVoxels() );
-            	calculated ++;
-            }
+		if (measureStates[3]) // Min
+		{
+			IJ.showStatus("Calculating minimum intensity...");
+			IJ.showProgress(calculated, numMeasures);
+			rb.addResult(im.getMin());
+			calculated++;
+		}
 
-            if( measureStates[ 9 ] ) // Volume
-            {
-            	IJ.showStatus( "Calculating volume..." );
-            	IJ.showProgress( calculated, numMeasures );
-            	rb.addResult( im.getVolume() );
-            	calculated ++;
-            }
+		if (measureStates[4]) // Median
+		{
+			IJ.showStatus("Calculating median intensity...");
+			IJ.showProgress(calculated, numMeasures);
+			rb.addResult(im.getMedian());
+			calculated++;
+		}
 
-            if( measureStates[ 10 ] ) // Neighbors mean intensity
-            {
-            	IJ.showStatus( "Calculating neighbors mean intensity..." );
-            	IJ.showProgress( calculated, numMeasures );
-            	rb.addResult( im.getNeighborsMean() );
-            	calculated ++;
-            }
+		if (measureStates[5]) // Mode
+		{
+			IJ.showStatus("Calculating intensity mode...");
+			IJ.showProgress(calculated, numMeasures);
+			rb.addResult(im.getMode());
+			calculated++;
+		}
 
-            if( measureStates[ 11 ] ) // Neighbors standard deviation intensity
-            {
-            	IJ.showStatus( "Calculating neighbors standard deviation of intensity..." );
-            	IJ.showProgress( calculated, numMeasures );
-            	rb.addResult( im.getNeighborsStdDev() );
-            	calculated ++;
-            }
+		if (measureStates[6]) // Skewness
+		{
+			IJ.showStatus("Calculating intensity skewness...");
+			IJ.showProgress(calculated, numMeasures);
+			rb.addResult(im.getSkewness());
+			calculated++;
+		}
 
-            if( measureStates[ 12 ] ) // Neighbors maximum intensity
-            {
-            	IJ.showStatus( "Calculating neighbors maximum intensity..." );
-            	IJ.showProgress( calculated, numMeasures );
-            	rb.addResult( im.getNeighborsMax() );
-            	calculated ++;
-            }
+		if (measureStates[7]) // Kurtosis
+		{
+			IJ.showStatus("Calculating minimum kurtosis...");
+			IJ.showProgress(calculated, numMeasures);
+			rb.addResult(im.getKurtosis());
+			calculated++;
+		}
 
-            if( measureStates[ 13 ] ) // Neighbors minimum intensity
-            {
-            	IJ.showStatus( "Calculating neighbors minimum intensity..." );
-            	IJ.showProgress( calculated, numMeasures );
-            	rb.addResult( im.getNeighborsMin() );
-            }
+		if (measureStates[8]) // Number of voxels
+		{
+			IJ.showStatus("Calculating number of pixels/voxels...");
+			IJ.showProgress(calculated, numMeasures);
+			rb.addResult(im.getNumberOfVoxels());
+			calculated++;
+		}
 
-            if( measureStates[ 14 ] ) // Neighbors median intensity
-            {
-            	IJ.showStatus( "Calculating neighbors median intensity..." );
-            	IJ.showProgress( calculated, numMeasures );
-            	rb.addResult( im.getNeighborsMedian() );
-            	calculated ++;
-            }
+		if (measureStates[9]) // Volume
+		{
+			IJ.showStatus("Calculating volume...");
+			IJ.showProgress(calculated, numMeasures);
+			rb.addResult(im.getVolume());
+			calculated++;
+		}
 
-            if( measureStates[ 15 ] ) // Neighbors mode intensity
-            {
-            	IJ.showStatus( "Calculating neighbors intensity mode..." );
-            	IJ.showProgress( calculated, numMeasures );
-            	rb.addResult( im.getNeighborsMode() );
-            	calculated ++;
-            }
+		if (measureStates[10]) // Neighbors mean intensity
+		{
+			IJ.showStatus("Calculating neighbors mean intensity...");
+			IJ.showProgress(calculated, numMeasures);
+			rb.addResult(im.getNeighborsMean());
+			calculated++;
+		}
 
-            if( measureStates[ 16 ] ) // Neighbors skewness intensity
-            {
-            	IJ.showStatus( "Calculating neighbors intensity skewness..." );
-            	IJ.showProgress( calculated, numMeasures );
-            	rb.addResult( im.getNeighborsSkewness() );
-            	calculated ++;
-            }
+		if (measureStates[11]) // Neighbors standard deviation intensity
+		{
+			IJ.showStatus("Calculating neighbors standard deviation of intensity...");
+			IJ.showProgress(calculated, numMeasures);
+			rb.addResult(im.getNeighborsStdDev());
+			calculated++;
+		}
 
-            if( measureStates[ 17 ] ) // Neighbors kurtosis intensity
-            {
-            	IJ.showStatus( "Calculating neighbors intensity kurtosis..." );
-            	IJ.showProgress( calculated, numMeasures );
-            	rb.addResult( im.getNeighborsKurtosis() );
-            	calculated ++;
-            }
-            IJ.showStatus( "Done" );
-            IJ.showProgress( calculated, numMeasures );
+		if (measureStates[12]) // Neighbors maximum intensity
+		{
+			IJ.showStatus("Calculating neighbors maximum intensity...");
+			IJ.showProgress(calculated, numMeasures);
+			rb.addResult(im.getNeighborsMax());
+			calculated++;
+		}
 
-            rb.getResultsTable().show( inputImage.getShortTitle() +
-            		"-intensity-measurements" );
-        }
+		if (measureStates[13]) // Neighbors minimum intensity
+		{
+			IJ.showStatus("Calculating neighbors minimum intensity...");
+			IJ.showProgress(calculated, numMeasures);
+			rb.addResult(im.getNeighborsMin());
+		}
+
+		if (measureStates[14]) // Neighbors median intensity
+		{
+			IJ.showStatus("Calculating neighbors median intensity...");
+			IJ.showProgress(calculated, numMeasures);
+			rb.addResult(im.getNeighborsMedian());
+			calculated++;
+		}
+
+		if (measureStates[15]) // Neighbors mode intensity
+		{
+			IJ.showStatus("Calculating neighbors intensity mode...");
+			IJ.showProgress(calculated, numMeasures);
+			rb.addResult(im.getNeighborsMode());
+			calculated++;
+		}
+
+		if (measureStates[16]) // Neighbors skewness intensity
+		{
+			IJ.showStatus("Calculating neighbors intensity skewness...");
+			IJ.showProgress(calculated, numMeasures);
+			rb.addResult(im.getNeighborsSkewness());
+			calculated++;
+		}
+
+		if (measureStates[17]) // Neighbors kurtosis intensity
+		{
+			IJ.showStatus("Calculating neighbors intensity kurtosis...");
+			IJ.showProgress(calculated, numMeasures);
+			rb.addResult(im.getNeighborsKurtosis());
+			calculated++;
+		}
+		IJ.showStatus("Done");
+		IJ.showProgress(calculated, numMeasures);
+
+		rb.getResultsTable().show(inputImage.getShortTitle() + "-intensity-measurements");
 	}
 }
