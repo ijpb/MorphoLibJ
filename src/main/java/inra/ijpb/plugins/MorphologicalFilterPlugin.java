@@ -24,6 +24,7 @@ package inra.ijpb.plugins;
 
 import ij.IJ;
 import ij.ImagePlus;
+import ij.ImageStack;
 import ij.gui.DialogListener;
 import ij.gui.GenericDialog;
 import ij.plugin.filter.ExtendedPlugInFilter;
@@ -38,6 +39,7 @@ import inra.ijpb.morphology.Morphology.Operation;
 import inra.ijpb.morphology.Strel;
 
 import java.awt.AWTEvent;
+import java.awt.Checkbox;
 
 /**
  * Plugin for computing various morphological filters on gray scale or color
@@ -68,14 +70,32 @@ public class MorphologicalFilterPlugin implements ExtendedPlugInFilter,
 	/** an instance of ImagePlus to display the Strel */
 	private ImagePlus strelDisplay = null;
 	
+	/**
+	 * The morphological operation to apply.
+	 */
 	Operation op = Operation.DILATION;
+	/**
+	 * The shape of the structuring element.
+	 */
 	Strel.Shape shape = Strel.Shape.SQUARE;
+	
+	/**
+	 * The size of the structuring element, in pixels.
+	 */
 	int radius = 2;
+	
+	/**
+	 * Whether an image showing the structuring element must be displayed or not.
+	 */
 	boolean showStrel;
 	
 	/**
 	 * Setup function is called in the beginning of the process, but also at the
 	 * end. It is also used for displaying "about" frame.
+	 *
+	 * When the plugin is applied to a stack, it processes all ImageProcessor
+	 * instances within the stack, and displays the result as a new Stack.
+	 * 
 	 */
 	public int setup(String arg, ImagePlus imp) 
 	{
@@ -87,23 +107,35 @@ public class MorphologicalFilterPlugin implements ExtendedPlugInFilter,
 		}
 
 		// Called at the end for cleaning the results
-		if (arg.equals("final")) 
+		if (arg.equals("final"))
 		{
-			// replace the preview image by the original image 
+			// replace the preview image by the original image
 			resetPreview();
 			imagePlus.updateAndDraw();
-	    	
-			// Create a new ImagePlus with the filter result
-			String newName = createResultImageName(imagePlus);
-			ImagePlus resPlus = new ImagePlus(newName, result);
-			resPlus.copyScale(imagePlus);
+
+			Strel strel = shape.fromRadius(radius);
+			ImagePlus resPlus = process(imagePlus, this.op, strel);
+			
+			// display result image in a new frame
 			resPlus.show();
+			if (imagePlus.getStackSize() > 1) 
+			{
+				resPlus.setZ(imagePlus.getZ());
+				resPlus.setSlice(imagePlus.getCurrentSlice());
+			}
+			
 			return DONE;
 		}
-		
-		return flags;
+
+		if (imp.getStackSize() == 1)
+		{
+			return flags | KEEP_PREVIEW;
+		}
+		else
+		{
+			return flags;
+		}
 	}
-	
 	
 	public int showDialog(ImagePlus imp, String command, PlugInFilterRunner pfr)
 	{
@@ -114,60 +146,62 @@ public class MorphologicalFilterPlugin implements ExtendedPlugInFilter,
 		// Create the configuration dialog
 		GenericDialog gd = new GenericDialog("Morphological Filters");
 		
-		gd.addChoice("Operation", Operation.getAllLabels(), 
-				this.op.toString());
-		gd.addChoice("Element", Strel.Shape.getAllLabels(), 
-				this.shape.toString());
+		gd.addChoice("Operation", Operation.getAllLabels(), this.op.toString());
+		gd.addChoice("Element", Strel.Shape.getAllLabels(), this.shape.toString());
 		gd.addNumericField("Radius (in pixels)", this.radius, 0);
 		gd.addCheckbox("Show Element", false);
 		gd.addPreviewCheckbox(pfr);
 		gd.addDialogListener(this);
-        previewing = true;
+		previewing = true;
 		gd.addHelp("http://imagej.net/MorphoLibJ#Morphological_filters");
-        gd.showDialog();
-        previewing = false;
-        
-        if (gd.wasCanceled()) 
-        {
-        	resetPreview();
-        	return DONE;
-        }	
-        
-    	parseDialogParameters(gd);
-			
+		gd.showDialog();
+		previewing = false;
+
+		if (gd.wasCanceled())
+		{
+			resetPreview();
+			return DONE;
+		}
+
+		parseDialogParameters(gd);
+
 		// clean up an return 
 		gd.dispose();
 		return flags;
 	}
 
-    public boolean dialogItemChanged(GenericDialog gd, AWTEvent evt)
-    {
-    	boolean wasPreview = this.previewing;
-    	parseDialogParameters(gd);
-    	
-    	// if preview checkbox was unchecked, replace the preview image by the original image
-    	if (wasPreview && !this.previewing)
-    	{
-    		resetPreview();
-    	}
-    	return true;
-    }
+	public boolean dialogItemChanged(GenericDialog gd, AWTEvent evt)
+	{
+		boolean wasPreview = this.previewing;
+		parseDialogParameters(gd);
 
-    private void parseDialogParameters(GenericDialog gd) 
-    {
+		// if preview checkbox was unchecked, replace the preview image by the
+		// original image
+		if (wasPreview && !this.previewing)
+		{
+			resetPreview();
+		}
+		return true;
+	}
+
+	private void parseDialogParameters(GenericDialog gd)
+	{
 		// extract chosen parameters
-		this.op 		= Operation.fromLabel(gd.getNextChoice());
-		this.shape 		= Strel.Shape.fromLabel(gd.getNextChoice());
-		this.radius 	= (int) gd.getNextNumber();		
-		this.showStrel 	= gd.getNextBoolean();
-		this.previewing = gd.getPreviewCheckbox().getState();
-    }
-    
-    public void setNPasses (int nPasses) 
-    {
-    	this.nPasses = nPasses;
-    }
-    
+		this.op = Operation.fromLabel(gd.getNextChoice());
+		this.shape = Strel.Shape.fromLabel(gd.getNextChoice());
+		this.radius = (int) gd.getNextNumber();
+		this.showStrel = gd.getNextBoolean();
+		// in the case of hyperstack images, the preview checkbox is not
+		// displayed
+		Checkbox checkBox = gd.getPreviewCheckbox();
+		if (checkBox != null) this.previewing = checkBox.getState();
+	}
+
+	public void setNPasses(int nPasses)
+	{
+		this.nPasses = nPasses;
+	}
+
 	@Override
 	public void run(ImageProcessor image)
 	{
@@ -184,21 +218,21 @@ public class MorphologicalFilterPlugin implements ExtendedPlugInFilter,
 		}
 		
 		// Execute core of the plugin on the original image
-		result = op.apply(this.baseImage, strel);
+		result = processSlice(this.baseImage, op, strel);
 		if (!(result instanceof ColorProcessor))
 			result.setLut(this.baseImage.getLut());
 
-    	if (previewing) 
-    	{
-    		// Fill up the values of original image with values of the result
-    		for (int i = 0; i < image.getPixelCount(); i++)
-    		{
-    			image.setf(i, result.getf(i));
-    		}
-    		image.resetMinAndMax();
-        }
+		if (previewing)
+		{
+			// Fill up the values of original image with values of the result
+			for (int i = 0; i < image.getPixelCount(); i++)
+			{
+				image.setf(i, result.getf(i));
+			}
+			image.resetMinAndMax();
+		}
 	}
-	
+
 	// About...
 	private void showAbout()
 	{
@@ -207,17 +241,24 @@ public class MorphologicalFilterPlugin implements ExtendedPlugInFilter,
 				"http://imagej.net/MorphoLibJ\n" +
 				"\n" +
 				"by David Legland\n" +
-				"(david.legland@inra.fr)\n" + 
+				"(david.legland@inrae.fr)\n" + 
 				"by Ignacio Arganda-Carreras\n" +
-		        "(iargandacarreras@gmail.com)" + 
-		        "\n" + 
-		        "Project page:\n" + 
-                "https://github.com/ijpb/MorphoLibJ\n" 
-                );
+				"(iargandacarreras@gmail.com)" + 
+				"\n" + 
+				"Project page:\n" + 
+				"https://github.com/ijpb/MorphoLibJ\n" 
+				);
 	}
 
 	private void resetPreview()
 	{
+		// do not preview for composite images
+		if (this.imagePlus.isComposite())
+		{
+			IJ.log("composite image -> abort reset preview");
+			return;
+		}
+
 		ImageProcessor image = this.imagePlus.getProcessor();
 		if (image instanceof FloatProcessor)
 		{
@@ -305,6 +346,74 @@ public class MorphologicalFilterPlugin implements ExtendedPlugInFilter,
 	 * Applies the specified morphological operation with specified structuring
 	 * element to the input image.
 	 * 
+	 * @param imagePlus
+	 *            the input image
+	 * @param op
+	 *            the operation to apply
+	 * @param strel
+	 *            the structuring element to use for the operation
+	 * @return the result of morphological operation applied to the input image
+	 */
+	public ImagePlus process(ImagePlus imagePlus, Operation op, Strel strel)
+	{
+		// Check validity of parameters
+		if (imagePlus == null)
+			return null;
+		
+		ImagePlus resPlus = imagePlus.duplicate();
+		if (imagePlus.getStackSize() == 1)
+		{
+			// Create a new ImagePlus with the filter result
+			ImageProcessor img = imagePlus.getProcessor();
+			ImageProcessor res = processSlice(img, op, strel);
+			resPlus.setProcessor(res);
+		}
+		else
+		{
+			ImageStack stack = imagePlus.getStack();
+			ImageStack resStack = processStack(stack, op, strel);
+			resPlus.setStack(resStack);
+		}
+		
+		resPlus.setTitle(createResultImageName(imagePlus));
+		resPlus.copyScale(imagePlus);
+		
+		// return the created array
+		return resPlus;
+	}
+	
+	/**
+	 * In the case of stacks, processes each slice of the stack and returns a
+	 * result the same size as the input stack.
+	 * 
+	 * @param image
+	 *            the image stack to process
+	 * @param op
+	 *            the operator to apply
+	 * @param strel
+	 *            the structuring element
+	 * @return the result of operation applied on input image
+	 */
+	private static ImageStack processStack(ImageStack stack, Operation op, Strel strel)
+	{
+		ImageStack resStack = stack.duplicate();
+
+		// apply morphological operation to each slice of the stack
+		for (int i = 1; i <= stack.size(); i++)
+		{
+			ImageProcessor slice = stack.getProcessor(i);
+			ImageProcessor resSlice = processSlice(slice, op, strel);
+			resStack.setProcessor(resSlice, i);
+		}
+
+		// return the created array
+		return resStack;
+	}
+	
+	/**
+	 * Applies the specified morphological operation with specified structuring
+	 * element to the input image.
+	 * 
 	 * @param image
 	 *            the input image (grayscale or color)
 	 * @param op
@@ -313,32 +422,25 @@ public class MorphologicalFilterPlugin implements ExtendedPlugInFilter,
 	 *            the structuring element to use for the operation
 	 * @return the result of morphological operation applied to the input image
 	 */
-	public ImagePlus process(ImagePlus image, Operation op, Strel strel)
+	private static ImageProcessor processSlice(ImageProcessor image, Operation op, Strel strel)
 	{
 		// Check validity of parameters
 		if (image == null)
 			return null;
 		
-		// extract the input processor
-		ImageProcessor inputProcessor = image.getProcessor();
-		
 		// apply morphological operation
-		ImageProcessor resultProcessor = op.apply(inputProcessor, strel);
+		ImageProcessor res = op.apply(image, strel);
 		
 		// Keep same color model
-		resultProcessor.setColorModel(inputProcessor.getColorModel());
+		res.setColorModel(image.getColorModel());
 		
-		// create the new image plus from the processor
-		ImagePlus resultImage = new ImagePlus(op.toString(), resultProcessor);
-		resultImage.copyScale(image);
-					
 		// return the created array
-		return resultImage;
+		return res;
 	}
-	
+
 	/**
-	 * Creates the name for result image, by adding a suffix to the base name
-	 * of original image.
+	 * Creates the name for result image, by adding a suffix to the base name of
+	 * original image.
 	 */
 	private String createResultImageName(ImagePlus baseImage) 
 	{
