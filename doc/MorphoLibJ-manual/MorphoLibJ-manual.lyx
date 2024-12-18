@@ -15472,6 +15472,178 @@ Various visualization modes of label images.
 \end_layout
 
 \begin_layout Subsection
+Plugins
+\end_layout
+
+\begin_layout Standard
+Several plugins allow to control the appearance of label images.
+ It is possible to choose a given color map,
+ or to transform a label image into a color image.
+ In both cases,
+ the background color can be specified,
+ and the color order can be shuffled to facilitate the discrimination of neighbor regions with similar labels.
+\end_layout
+
+\begin_layout Minisec
+Set
+\begin_inset space ~
+\end_inset
+
+Label
+\begin_inset space ~
+\end_inset
+
+Map
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "op:Set-Label-Map"
+
+\end_inset
+
+Allows to choose the color map used to display a label image (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Label-Images-Visualization"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+-a).
+ In particular,
+ shuffling the color map and/or choosing a specific color for background allows better visualization than with only gray levels.
+ Note that when the number of regions is large,
+ regions with small labels will be associated to the same color as background,
+ and will therefore not be visible!
+\end_layout
+
+\begin_layout Minisec
+Label
+\begin_inset space ~
+\end_inset
+
+To
+\begin_inset space ~
+\end_inset
+
+RGB
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "op:Label-To-RGB"
+
+\end_inset
+
+Converts a label image to a true RGB image.
+ Similar to ImageJ native conversion,
+ but this plugin avoids confusion between background pixels and labels with small values when the number of labels is large.
+\end_layout
+
+\begin_layout Minisec
+Draw
+\begin_inset space ~
+\end_inset
+
+Labels
+\begin_inset space ~
+\end_inset
+
+As
+\begin_inset space ~
+\end_inset
+
+Overlay
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "op:Draw-Labels-As-Overlay"
+
+\end_inset
+
+Choose another image,
+ and display the label associated to each region as a text overlay (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Label-Images-Visualization"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+-b).
+ The position of the overlay is the centroid of each region,
+ and a small shift can be specified.
+\end_layout
+
+\begin_layout Minisec
+Overlay
+\begin_inset space ~
+\end_inset
+
+Binary
+\begin_inset space ~
+\end_inset
+
+Or
+\begin_inset space ~
+\end_inset
+
+Label
+\begin_inset space ~
+\end_inset
+
+Image
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "op:Overlay-Binary-Or-Label-Image"
+
+\end_inset
+
+Opens a dialog to choose a reference/background image,
+ and an image to overlay,
+ that can be either a binary image or a label map (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Label-Images-Visualization"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+-c).
+ User can specify the opacity of the overlay,
+ and generate a new Color image for the result.
+\end_layout
+
+\begin_layout Subsection
 Color maps
 \end_layout
 
@@ -15766,176 +15938,30 @@ nolink "false"
  making adjacent region potentially more difficult to distinguish.
 \end_layout
 
-\begin_layout Subsection
-Plugins
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Conversion to ROI 
 \end_layout
 
 \begin_layout Standard
-Several plugins allow to control the appearance of label images.
- It is possible to choose a given color map,
- or to transform a label image into a color image.
- In both cases,
- the background color can be specified,
- and the color order can be shuffled to facilitate the discrimination of neighbor regions with similar labels.
-\end_layout
-
-\begin_layout Minisec
-Set
-\begin_inset space ~
+When working with label maps,
+ it is often convenient to convert one or several regions into a Region Of Interest (ROI) that can be managed by the ROI Manager from ImageJ.
+ Several macros and plugins have been developed for this.
+ MorphoLibJ also provides a plugin 
+\begin_inset Quotes eld
 \end_inset
 
-Label
-\begin_inset space ~
+Label Map To ROI
+\begin_inset Quotes erd
 \end_inset
 
-Map
-\end_layout
-
-\begin_layout Standard
-\begin_inset CommandInset label
-LatexCommand label
-name "op:Set-Label-Map"
-
-\end_inset
-
-Allows to choose the color map used to display a label image (Fig.
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Label-Images-Visualization"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
--a).
- In particular,
- shuffling the color map and/or choosing a specific color for background allows better visualization than with only gray levels.
- Note that when the number of regions is large,
- regions with small labels will be associated to the same color as background,
- and will therefore not be visible!
-\end_layout
-
-\begin_layout Minisec
-Label
-\begin_inset space ~
-\end_inset
-
-To
-\begin_inset space ~
-\end_inset
-
-RGB
-\end_layout
-
-\begin_layout Standard
-\begin_inset CommandInset label
-LatexCommand label
-name "op:Label-To-RGB"
-
-\end_inset
-
-Converts a label image to a true RGB image.
- Similar to ImageJ native conversion,
- but this plugin avoids confusion between background pixels and labels with small values when the number of labels is large.
-\end_layout
-
-\begin_layout Minisec
-Draw
-\begin_inset space ~
-\end_inset
-
-Labels
-\begin_inset space ~
-\end_inset
-
-As
-\begin_inset space ~
-\end_inset
-
-Overlay
-\end_layout
-
-\begin_layout Standard
-\begin_inset CommandInset label
-LatexCommand label
-name "op:Draw-Labels-As-Overlay"
-
-\end_inset
-
-Choose another image,
- and display the label associated to each region as a text overlay (Fig.
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Label-Images-Visualization"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
--b).
- The position of the overlay is the centroid of each region,
- and a small shift can be specified.
-\end_layout
-
-\begin_layout Minisec
-Overlay
-\begin_inset space ~
-\end_inset
-
-Binary
-\begin_inset space ~
-\end_inset
-
-Or
-\begin_inset space ~
-\end_inset
-
-Label
-\begin_inset space ~
-\end_inset
-
-Image
-\end_layout
-
-\begin_layout Standard
-\begin_inset CommandInset label
-LatexCommand label
-name "op:Overlay-Binary-Or-Label-Image"
-
-\end_inset
-
-Opens a dialog to choose a reference/background image,
- and an image to overlay,
- that can be either a binary image or a label map (Fig.
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Label-Images-Visualization"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
--c).
- User can specifiy the opacity of the overlay,
- and generate a new Color image for the result.
+.
 \end_layout
 
 \begin_layout Minisec
@@ -15949,17 +15975,34 @@ name "op:Label-Map-To-ROIs"
 
 \end_inset
 
-Converts a label into a series of ROI:
- one polygon ROI per label.
- Different connectivities can be chosen,
- as well as the boundary points to extract from each boundary pixel (see Figue
+Converts regions of a label map into a series of ROI,
+ by traveling long the boundary pixels of the regions.
+ For each region,
+ one or several polygonal ROI are created,
+ depending on the topology of the region.
+ Different options can be chosen:
+\end_layout
+
+\begin_layout Description
+Connectivity the connectivity to use for iterating over the boundary pixels.
+ It is advised to use the same connectivy as the one that was used for computing connected components.
+\end_layout
+
+\begin_layout Description
+Vertex
+\begin_inset space ~
+\end_inset
+
+Location determines the location of the vertices used for creating the polygons,
+ with respect to the position of the boundary pixels.
+ The different choices are illustrated on Figure
 \begin_inset space ~
 \end_inset
 
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Region-Boundary-Points"
+reference "fig:LabelMapToRoi-Examples"
 plural "false"
 caps "false"
 noprefix "false"
@@ -15967,7 +16010,23 @@ nolink "false"
 
 \end_inset
 
-).
+.
+\end_layout
+
+\begin_layout Description
+Name_Pattern the string pattern used to name each ROI.
+ When a boundary of a region is composed of several polygons,
+ they are identified by a trailing dash and index.
+ Example:
+ 
+\begin_inset Quotes eld
+\end_inset
+
+r003-2
+\begin_inset Quotes erd
+\end_inset
+
+ corresponds to the second polygon of the boundary of the region with label 3.
 \end_layout
 
 \begin_layout Standard
@@ -15980,9 +16039,101 @@ status open
 
 \begin_layout Plain Layout
 \align center
+\begin_inset Float figure
+placement document
+alignment document
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
 \begin_inset Graphics
-	filename images/region/regionBoundaryPoints.png
-	width 7cm
+	filename images/region/markers_C4_roiCorners_selection.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Corners
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+placement document
+alignment document
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/region/markers_C4_roiEdges_selection.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Edge Middles
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+placement document
+alignment document
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/region/markers_C4_roiPixels_selection.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Pixel Centers
+\end_layout
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
@@ -15995,14 +16146,27 @@ status open
 \begin_layout Plain Layout
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Region-Boundary-Points"
+name "fig:LabelMapToRoi-Examples"
 
 \end_inset
 
-Boundary points of a regions.
- The boundary points can correspond to pixel centers (black dots),
- to pixel corners (red squares),
- or to the middle of pixel edges (green diamonds).
+Differerent results of the 
+\begin_inset Quotes eld
+\end_inset
+
+Label Map To ROIs
+\begin_inset Quotes erd
+\end_inset
+
+ plugin,
+ using different vertex locations.
+ Boundary polygons are shown in black.
+ For each image,
+ one of the polygons is selected and displayed in light blue.
+ For the three examples,
+ labels were obtained with connectivity 4,
+ and the ROI polygons were computed with the same connectivity.
+ Note the management of the hole within the red region.
 \end_layout
 
 \end_inset
@@ -16010,10 +16174,13 @@ Boundary points of a regions.
 
 \end_layout
 
-\begin_layout Plain Layout
+\end_inset
+
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Newpage pagebreak
 \end_inset
 
 
@@ -16175,7 +16342,7 @@ name "op:Colorize-Labels"
 \end_inset
 
 combines a label image with a results table,
- and creates a new 32-bits image for which each pixel/voxel is assigned the measurement value corresponding to the label it belongs to (Figure
+ and creates a new 32-bits image for which each pixel/voxel is assigned the measurement value corresponding to the region it belongs to (Figure
 \begin_inset space ~
 \end_inset
 
