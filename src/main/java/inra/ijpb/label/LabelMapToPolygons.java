@@ -60,9 +60,16 @@ public class LabelMapToPolygons
 	/**
 	 * Enumeration of the different directions that be considered during
 	 * processing.
+	 * 
+	 * For each direction, different methods allow for iterating between
+	 * successive positions depending on the direction.
 	 */
 	public enum Direction
 	{
+		/**
+		 * Iterates to the right, by incrementing the x-coordinate without
+		 * modifying the y-coordinate.
+		 */
 		RIGHT
 		{
 			@Override
@@ -96,6 +103,10 @@ public class LabelMapToPolygons
 			}
 		},
 
+		/**
+		 * Iterates in the upward direction, by decrementing the y-coordinate without
+		 * modifying the x-coordinate.
+		 */
 		UP
 		{
 			@Override
@@ -129,6 +140,10 @@ public class LabelMapToPolygons
 			}
 		},
 
+		/**
+		 * Iterates to the left, by decrementing the x-coordinate without
+		 * modifying the y-coordinate.
+		 */
 		LEFT
 		{
 			@Override
@@ -162,6 +177,10 @@ public class LabelMapToPolygons
 			}
 		},
 
+		/**
+		 * Iterates in the downward direction, by incrementing the y-coordinate without
+		 * modifying the x-coordinate.
+		 */
 		DOWN
 		{
 			@Override
@@ -208,6 +227,15 @@ public class LabelMapToPolygons
 		 */
 		public abstract int[][] coordsShifts();
 
+		/**
+		 * Retrieves the position of the vertex associated to the
+		 * (position,direction) pair specified by the <code>pos</code> argument.
+		 * 
+		 * @param pos
+		 *            the position of the current pixel and the direction of
+		 *            tracking
+		 * @return the coordinates to the vertex
+		 */
 		public abstract Point getVertex(Position pos);
 
 		/**
@@ -240,13 +268,31 @@ public class LabelMapToPolygons
 		 */
 		public abstract Position turnRight(Position pos);
 	}
-
+	
+	/**
+	 * Encapsulates a 2D (integer) position and a (isothetic) direction. The
+	 * coordinates of the position correspond to those of the current pixel. The
+	 * current direction has to be chosen among the four main directions.
+	 * 
+	 * @see Direction
+	 */
 	public static final class Position
 	{
 		int x;
 		int y;
 		Direction direction;
 
+		/**
+		 * Creates a new <code>Position</code> from two coordinates, and a
+		 * direction.
+		 * 
+		 * @param x
+		 *            the x-coordiante of the position
+		 * @param y
+		 *            the y-coordiante of the position
+		 * @param direction
+		 *            the direction this position is pointing to.
+		 */
 		Position(int x, int y, Direction direction)
 		{
 			this.x = x;
@@ -254,12 +300,16 @@ public class LabelMapToPolygons
 			this.direction = direction;
 		}
 
-		public Point getVertex(Position pos)
-		{
-			return this.direction.getVertex(this);
-		}
-
-		public Point2D getVertex(Position pos, VertexLocation vertex)
+		/**
+		 * Retrieves the position of a vertex associated to the current pixel,
+		 * depending on both the type of vertex (corner, pixel, or edge center),
+		 * and the current direction of this position.
+		 * 
+		 * @param vertex
+		 *            the type of vertex to retrieve
+		 * @return the position a vertex associated to the current pixel.
+		 */
+		public Point2D getVertex(VertexLocation vertex)
 		{
 			switch (vertex)
 			{
@@ -347,6 +397,8 @@ public class LabelMapToPolygons
 	 * 
 	 * @param conn
 	 *            the connectivity to use (must be either 4 or 8)
+	 * @param loc
+	 *            the location of boundary vertices with respect to the pixels.
 	 */
 	public LabelMapToPolygons(int conn, VertexLocation loc)
 	{
@@ -393,7 +445,7 @@ public class LabelMapToPolygons
 		// iterate over boundary until we come back at initial position
 		do
 		{
-			vertices.add(pos.getVertex(pos, vertexLocation));
+			vertices.add(pos.getVertex(vertexLocation));
 
 			// compute position of the two other points in current 2-by-2
 			// configuration
@@ -446,6 +498,15 @@ public class LabelMapToPolygons
 		return vertices;
 	}
 
+	/**
+	 * Computes region boundaries from a label map and returns the result as a
+	 * Map from region label to polygon.
+	 * 
+	 * @param array
+	 *            the label map to process
+	 * @return an associative array between the region label (as integer) and
+	 *         the region boundary (as polygon)
+	 */
 	public Map<Integer, ArrayList<Polygon2D>> process(ImageProcessor array)
 	{
 		// retrieve image size
@@ -546,26 +607,10 @@ public class LabelMapToPolygons
 		do
 		{
 			// update vertices
-			vertices.add(pos.getVertex(pos, vertexLocation));
+			vertices.add(pos.getVertex(vertexLocation));
 
 			// mark the current pixel with integer that depends on position
-			int mask = maskArray.get(pos.x, pos.y);
-			switch (pos.direction)
-			{
-				case RIGHT:
-					mask = mask | 0x01;
-					break;
-				case UP:
-					mask = mask | 0x02;
-					break;
-				case LEFT:
-					mask = mask | 0x04;
-					break;
-				case DOWN:
-					mask = mask | 0x08;
-					break;
-			}
-			maskArray.set(pos.x, pos.y, mask);
+			updateMaskArray(maskArray, pos);
 
 			// compute position of the two other points in current 2-by-2
 			// configuration
@@ -616,5 +661,37 @@ public class LabelMapToPolygons
 		} while (!pos0.equals(pos));
 
 		return vertices;
+	}
+	
+	/**
+	 * Updates, within the mask array, the pixel identified with the position,
+	 * by adding a marker that depends on the direction of the position.
+	 * 
+	 * @param maskArray
+	 *            the array of markers.
+	 * @param pos
+	 *            the data structure containing position of current pixel and
+	 *            current direction
+	 */
+	private static final void updateMaskArray(ImageProcessor maskArray, Position pos)
+	{
+		// mark the current pixel with integer that depends on position
+		int mask = maskArray.get(pos.x, pos.y);
+		switch (pos.direction)
+		{
+			case RIGHT:
+				mask = mask | 0x01;
+				break;
+			case UP:
+				mask = mask | 0x02;
+				break;
+			case LEFT:
+				mask = mask | 0x04;
+				break;
+			case DOWN:
+				mask = mask | 0x08;
+				break;
+		}
+		maskArray.set(pos.x, pos.y, mask);
 	}
 }
