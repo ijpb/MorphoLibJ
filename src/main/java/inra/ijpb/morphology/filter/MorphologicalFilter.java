@@ -43,12 +43,16 @@ import inra.ijpb.morphology.Strel3D;
 /**
  * Base class for morphological filters, based on a structuring element.
  * 
- * Can process ScalarArray instances, or VectorArray instances, and return array
- * the same type and the same size as input arrays. In the case of VectorArray
- * instances the process is applied on each channel / component image of the
- * vector image).
+ * Can process either an <code>ImageProcessor</code>, an
+ * <code>ImageStack</code>, or an <code>ImagePlus</code>. The resulting image
+ * has same type as the input image. In the case of a color image, the process
+ * is applied on each channel independently.
  * 
- * @see Strel
+ * In practice, each sub-class need to implement only the methods devoted to the
+ * processing of <code>ImageProcessor</code> and <code>ImageStack</code>.
+ * 
+ * @see inra.ijpb.morphology.Strel3D
+ * @see inra.ijpb.morphology.Strel
  * 
  * @author dlegland
  */

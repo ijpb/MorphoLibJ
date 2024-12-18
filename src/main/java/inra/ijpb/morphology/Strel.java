@@ -33,9 +33,13 @@ import inra.ijpb.morphology.strel.OctagonStrel;
 import inra.ijpb.morphology.strel.SquareStrel;
 
 /**
- * Interface for planar structuring elements. 
+ * Interface for planar structuring elements.
  * 
- * <pre><code>
+ * The interface inherits the <code>Strel3D</code> interface, making it possible
+ * to apply a filter defined with a 2D Strel onto an <code>ImageStack</code>.
+ * 
+ * <pre>
+ * <code>
  *  // Creates a 5x5 square structuring element
  *  Strel strel = Strel.Shape.SQUARE.fromRadius(2);
  *  // applies dilation on current image
@@ -43,7 +47,8 @@ import inra.ijpb.morphology.strel.SquareStrel;
  *  ImageProcessor dilated = strel.dilation(image);
  *  // Display results
  *  new ImagePlus("dilated", dilated).show();
- * </code></pre>
+ * </code>
+ * </pre>
  * 
  * @author David Legland
  *
