@@ -15264,7 +15264,15 @@ label maps
  each pixel or voxel of a label image corresponds to the integer index of the particle it belongs to.
  By convention,
  the value 0 corresponds to the background.
- Label images are typically computed from binary images by connected component algorithms (section 
+ 
+\end_layout
+
+\begin_layout Standard
+Label images are typically computed from binary images by 
+\series bold
+connected component algorithms
+\series default
+ (section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:Connected-Components-Labeling"
@@ -15281,12 +15289,22 @@ status open
 
 
 \backslash
-hyperref[sec:Morphological-Segmentation-Plugin]{Watershed}
+hyperref[sec:Morphological-Segmentation-Plugin]{watershed}
 \end_layout
 
 \end_inset
 
  may also return their result as a label image.
+\end_layout
+
+\begin_layout Standard
+This chapter presents several utilities for managing label maps,
+ in particular for facilitating their visualisation,
+ to convert them into ROI,
+ or to visualize the result of region features.
+ Several plugins allows for selecting or filtering label maps,
+ some of them being implemented into the Label Edition Plugin.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -15732,7 +15750,7 @@ status open
 
 \begin_layout Plain Layout
 GlasbeyBright,
- White
+ Black
 \end_layout
 
 \end_inset
@@ -15952,7 +15970,36 @@ Conversion to ROI
 \begin_layout Standard
 When working with label maps,
  it is often convenient to convert one or several regions into a Region Of Interest (ROI) that can be managed by the ROI Manager from ImageJ.
- Several macros and plugins have been developed for this.
+ Several macros and plugins have been developed for this,
+ see for example the BIOP plugin 
+\begin_inset Quotes eld
+\end_inset
+
+Label image to ROIs
+\begin_inset Quotes erd
+\end_inset
+
+
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+https://github.com/BIOP/ijp-LaRoMe
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
  MorphoLibJ also provides a plugin 
 \begin_inset Quotes eld
 \end_inset
@@ -16015,7 +16062,7 @@ nolink "false"
 
 \begin_layout Description
 Name_Pattern the string pattern used to name each ROI.
- When a boundary of a region is composed of several polygons,
+ When the boundary of a region is composed of several polygons,
  they are identified by a trailing dash and index.
  Example:
  
@@ -16035,7 +16082,7 @@ placement document
 alignment document
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -16044,7 +16091,7 @@ placement document
 alignment document
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -16077,7 +16124,7 @@ placement document
 alignment document
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -16110,7 +16157,7 @@ placement document
 alignment document
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
