@@ -111,9 +111,16 @@ public class AverageThickness extends RegionAnalyzer2D<AverageThickness.Result>
         {
             for (int x = 0; x < sizeX; x++)
             {
-                // label of current pixel 
+                // label of current pixel
                 int label = (int) skeleton.getf(x, y);
+                
+                // do not process background pixels
                 if (label == 0)
+                {
+                    continue;
+                }
+                // do not process labels not in the list
+                if (labelIndices.containsKey(label))
                 {
                     continue;
                 }
