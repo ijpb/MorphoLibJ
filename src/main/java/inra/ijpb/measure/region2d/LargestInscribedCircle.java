@@ -33,6 +33,7 @@ import ij.measure.ResultsTable;
 import ij.process.ImageProcessor;
 import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.geometry.Circle2D;
+import inra.ijpb.label.LabelImages;
 
 /**
  * Computes the largest inscribed circle for each region of a label or binary
@@ -68,11 +69,11 @@ public class LargestInscribedCircle extends RegionAnalyzer2D<Circle2D>
 	
 	// ==================================================
 	// Constructors
-	
+
 	/**
-     * Default empty constructor.
-     */
-    public LargestInscribedCircle()
+	 * Default empty constructor.
+	 */
+	public LargestInscribedCircle()
 	{
 	}
 
@@ -128,12 +129,12 @@ public class LargestInscribedCircle extends RegionAnalyzer2D<Circle2D>
 	 *         region, in calibrated coordinates
 	 */
 	public Circle2D[] analyzeRegions(ImageProcessor labelImage, int[] labels, Calibration calib)
-    {
-    	// compute max label within image
-    	int nLabels = labels.length;
-    	
+	{
+		// compute max label within image
+		int nLabels = labels.length;
+
 		// first distance propagation to find an arbitrary center
-    	fireStatusChanged(this, "Compute distance map");
+		fireStatusChanged(this, "Compute distance map");
 		ImageProcessor distanceMap = BinaryImages.distanceMap(labelImage);
 		
 		// Extract position of maxima
@@ -153,7 +154,7 @@ public class LargestInscribedCircle extends RegionAnalyzer2D<Circle2D>
 		}
 
 		return circles;
-    }
+	}
 	
 	/**
 	 * Returns the set of values from input image for each specified position.
@@ -164,8 +165,7 @@ public class LargestInscribedCircle extends RegionAnalyzer2D<Circle2D>
 	 *            the set of positions
 	 * @return the array of values corresponding to each position
 	 */
-	private final static float[] getValues(ImageProcessor image, 
-			Point[] positions) 
+	private final static float[] getValues(ImageProcessor image, Point[] positions)
 	{
 		// allocate memory
 		float[] values = new float[positions.length];
@@ -205,13 +205,8 @@ public class LargestInscribedCircle extends RegionAnalyzer2D<Circle2D>
 			maxLabel = Math.max(maxLabel, labels[i]);
 		}
 		
-		// init index of each label
-		// to make correspondence between label value and label index
-		int[] labelIndex = new int[maxLabel+1];
-		for (int i = 0; i < nbLabel; i++)
-		{
-			labelIndex[labels[i]] = i;
-		}
+		// keep correspondences between label value and label index
+		Map<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
 		
 		// Init Position and value of maximum for each label
 		Point[] posMax 	= new Point[nbLabel];
@@ -233,11 +228,12 @@ public class LargestInscribedCircle extends RegionAnalyzer2D<Circle2D>
 			{
 				int label = (int) labelImage.getf(x, y);
 				
-				// do not process pixels that do not belong to particle
-				if (label==0)
-					continue;
-
-				index = labelIndex[label];
+				// do not process background pixels
+				if (label == 0) continue;
+				// process only specified labels
+				if (!labelIndices.containsKey(label)) continue;
+				
+				index = labelIndices.get(label);
 				
 				// update values and positions
 				value = image.get(x, y);

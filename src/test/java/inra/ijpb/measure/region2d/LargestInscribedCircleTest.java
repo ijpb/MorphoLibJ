@@ -32,6 +32,8 @@ import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
+import inra.ijpb.data.image.ImageUtils;
+import inra.ijpb.geometry.Circle2D;
 
 /**
  * @author dlegland
@@ -39,7 +41,6 @@ import ij.process.ImageProcessor;
  */
 public class LargestInscribedCircleTest
 {
-
 	/**
 	 * Test method for {@link inra.ijpb.measure.region2d.LargestInscribedCircle#analyzeRegions(ij.ImagePlus)}.
 	 */
@@ -48,9 +49,9 @@ public class LargestInscribedCircleTest
 	{
 		ImageProcessor image = new ByteProcessor(14, 9);
 		image.set(1, 1, 1);
-		fillRect(image, 3, 4, 1, 2, 2);		// radius 2
-		fillRect(image, 1, 1+3, 4, 4+3, 3); // radius 4
-		fillRect(image, 6, 6+6, 1, 1+6, 4); // radius 7
+		ImageUtils.fillRect(image, 3, 1, 2, 2, 2); // diameter 2
+		ImageUtils.fillRect(image, 1, 4, 4, 4, 3); // diameter 4
+		ImageUtils.fillRect(image, 6, 1, 7, 7, 4); // diameter 7
 		
 		LargestInscribedCircle op = new LargestInscribedCircle();
 		ResultsTable table = op.createTable(op.analyzeRegions(image, new Calibration()));
@@ -61,16 +62,22 @@ public class LargestInscribedCircleTest
 		assertEquals(4, table.getValue("InscrCircle.Radius", 3), .1);
 	}
 	
-	private static final void fillRect(ImageProcessor image, int xmin,
-			int xmax, int ymin, int ymax, double value)
+	/**
+	 * Test method for {@link inra.ijpb.measure.region2d.LargestInscribedCircle#analyzeRegions(ij.ImagePlus)}.
+	 */
+	@Test
+	public final void testAnalyzeRegionsImagePlus_Rectangles_notAllLabels()
 	{
-		for (int y = ymin; y <= ymax; y++)
-		{
-			for (int x = xmin; x <= xmax; x++) 
-			{
-				image.setf(x, y, (float) value);
-			}
-		}
+		ImageProcessor image = new ByteProcessor(14, 9);
+		image.set(1, 1, 1);
+		ImageUtils.fillRect(image, 3, 1, 2, 2, 2); // diameter 2
+		ImageUtils.fillRect(image, 1, 4, 4, 4, 3); // diameter 4
+		ImageUtils.fillRect(image, 6, 1, 7, 7, 4); // diameter 7
 		
+		LargestInscribedCircle op = new LargestInscribedCircle();
+		Circle2D[] circles = op.analyzeRegions(image, new int[] {2, 3}, new Calibration());
+		assertEquals(2, circles.length);
+		assertEquals(1.0, circles[0].getRadius(), 0.01);
+		assertEquals(2.0, circles[1].getRadius(), 0.01);
 	}
 }
