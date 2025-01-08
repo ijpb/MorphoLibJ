@@ -37,13 +37,6 @@ import inra.ijpb.data.Cursor3D;
 public class LabelValues
 {
 	/**
-	 * Private constructor to prevent class instantiation.
-	 */
-	private LabelValues()
-	{
-	}
-	
-	/**
 	 * Computes the largest value within the <code>valueImage</code>, using the
 	 * strictly positive values in <code>labelImage</code> as mask. Can be used
 	 * to setup min/max display value after computing a distance transform.
@@ -486,7 +479,7 @@ public class LabelValues
 				{
 					int label = (int) labelImage.getVoxel(x, y, z);
 
-					// do not process pixels that do not belong to any particle
+					// do not process voxels that do not belong to any particle
 					if (label == 0)
 						continue;
 					if (!labelIndices.containsKey(label))
@@ -548,9 +541,10 @@ public class LabelValues
 			{
 				int label = (int) labelImage.getf(x, y);
 				
+				// do not process background pixels
+				if (label == 0) continue;
 				// do not process pixels that do not belong to any particle
-				if (label == 0)
-					continue;
+				if (!labelIndices.containsKey(label)) continue;
 
 				int index = labelIndices.get(label);
 				
@@ -616,9 +610,10 @@ public class LabelValues
 				{
 					int label = (int) labelImage.getVoxel(x, y, z);
 
-					// do not process pixels that do not belong to any particle
-					if (label == 0)
-						continue;
+					// do not process background voxels
+					if (label == 0) continue;
+					// do not process voxels that do not belong to any particle
+					if (!labelIndices.containsKey(label)) continue;
 
 					int index = labelIndices.get(label);
 
@@ -674,9 +669,10 @@ public class LabelValues
 			{
 				int label = (int) labelImage.getf(x, y);
 				
+				// do not process background pixels
+				if (label == 0) continue;
 				// do not process pixels that do not belong to any particle
-				if (label == 0)
-					continue;
+				if (!labelIndices.containsKey(label)) continue;
 
 				int index = labelIndices.get(label);
 				
@@ -742,9 +738,10 @@ public class LabelValues
 				{
 					int label = (int) labelImage.getVoxel(x, y, z);
 
-					// do not process pixels that do not belong to any particle
-					if (label == 0)
-						continue;
+					// do not process background voxels
+					if (label == 0) continue;
+					// do not process voxels that do not belong to any particle
+					if (!labelIndices.containsKey(label)) continue;
 
 					int index = labelIndices.get(label);
 
@@ -848,5 +845,12 @@ public class LabelValues
 		{
 			return value;
 		}
+	}
+	
+	/**
+	 * Private constructor to prevent class instantiation.
+	 */
+	private LabelValues()
+	{
 	}
 }
