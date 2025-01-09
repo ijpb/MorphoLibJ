@@ -45,7 +45,7 @@ public class AverageThicknessTest
      * Test method for {@link inra.ijpb.measure.region2d.AverageThickness#analyzeRegions(ij.process.ImageProcessor, int[], ij.measure.Calibration)}.
      */
     @Test
-    public final void testAnalyzeRegionsImageProcessorIntArrayCalibration()
+    public final void test_process_rectangle()
     {
         ImageProcessor image = new ByteProcessor(12, 8);
         for (int y = 2; y <= 6; y++)
@@ -69,7 +69,7 @@ public class AverageThicknessTest
     }
 
     @Test
-    public void test_process_ThinLines_TouchingLabels()
+    public final void test_process_ThinLines_TouchingLabels()
     {
         // Create a synthetic image containing 5 bars
         // bar 1: x =  0 ->  2,  y = 0 -> 9, label 2

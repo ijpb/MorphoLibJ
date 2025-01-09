@@ -120,7 +120,7 @@ public class AverageThickness extends RegionAnalyzer2D<AverageThickness.Result>
                     continue;
                 }
                 // do not process labels not in the list
-                if (labelIndices.containsKey(label))
+                if (!labelIndices.containsKey(label))
                 {
                     continue;
                 }
