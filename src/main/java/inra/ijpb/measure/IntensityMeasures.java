@@ -24,10 +24,14 @@ package inra.ijpb.measure;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
+import ij.IJ;
 import ij.ImagePlus;
 import ij.measure.ResultsTable;
+import ij.process.ImageProcessor;
+import inra.ijpb.label.LabelImages;
 import inra.ijpb.label.RegionAdjacencyGraph;
 import inra.ijpb.label.RegionAdjacencyGraph.LabelPair;
 
@@ -63,11 +67,14 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
     ImagePlus labelImage = null;
     
 	/**
-	 * Initialize the measurements by reading the input (grayscale) 
-	 * image and its corresponding labels.
+	 * Initialize the measurements by reading the input (intensity) image and
+	 * its corresponding labels.
 	 * 
-	 * @param inputImage input (grayscale) image
-	 * @param labelImage label image (labels are positive integer values)
+	 * @param inputImage
+	 *            the input image containing intensities
+	 * @param labelImage
+	 *            the label map, containing for each pixel or voxel the label of
+	 *            the region it belongs to, or zero if it belongs to background.
 	 */
 	public IntensityMeasures(
 			ImagePlus inputImage,
@@ -78,7 +85,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 	}
 	
 	/**
-	 * Get mean voxel values per label
+	 * Get mean voxel values per labeled region.
 	 * 
 	 * @return result table with mean values per label
 	 */
@@ -97,6 +104,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 
 		return table;
 	}
+	
 	/**
 	 * Get the mean intensity value per labeled region.
 	 * @return mean intensity value per labeled region
@@ -115,6 +123,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 		}
 		return mean;
 	}
+	
 	/**
 	 * Get the mean intensity values of the neighbor labels
 	 *
@@ -134,6 +143,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 
 		return table;
 	}
+	
 	/**
 	 * Get the neighbors mean intensity value per labeled region.
 	 * @return neighbors mean intensity value per labeled region
@@ -176,6 +186,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 		}
 		return neighborsMean;
 	}
+	
 	/**
 	 * Get median voxel values per label
 	 *
@@ -204,6 +215,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 
 		return table;
 	}
+	
 	/**
 	 * Get the median intensity values of the neighbor labels
 	 *
@@ -237,6 +249,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 
 		return table;
 	}
+	
 	/**
 	 * Get mode voxel values per label
 	 *
@@ -278,6 +291,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 
 		return table;
 	}
+	
 	/**
 	 * Get the intensity histogram of each label.
 	 * @return the intensity histogram of each label
@@ -304,6 +318,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 		}
 		return hm;
 	}
+	
 	/**
 	 * Get the intensity mode value of the neighbor labels
 	 *
@@ -383,6 +398,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 
 		return table;
 	}
+	
 	/**
 	 * Get skewness voxel values per label
 	 *
@@ -428,6 +444,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 
 		return table;
 	}
+	
 	/**
 	 * Get the intensity skewness values of the neighbor labels
 	 *
@@ -480,6 +497,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 
 		return table;
 	}
+	
 	/**
 	 * Compute the lists of pixels/voxels belonging to each adjacent label region.
 	 * @return array with lists of pixels/voxels belonging to each adjacent label region
@@ -509,6 +527,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 		}
 		return neighborVoxels;
 	}
+	
 	/**
 	 * Get kurtosis voxel values per label
 	 *
@@ -556,6 +575,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 
 		return table;
 	}
+	
 	/**
 	 * Get the intensity kurtosis values of the neighbor labels
 	 *
@@ -608,6 +628,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 
 		return table;
 	}
+	
 	/**
 	 * Get standard deviation of voxel values per label
 	 * 
@@ -647,6 +668,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 
 		return table;
 	}
+	
 	/**
 	 * Get the standard deviation of the intensity values of the neighbor labels
 	 *
@@ -691,6 +713,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 
 		return table;
 	}
+	
 	/**
 	 * Get maximum voxel values per label
 	 * 
@@ -710,6 +733,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 
 		return table;
 	}
+	
 	/**
 	 * Calculate maximum intensity value per labeled region.
 	 * @return maximum intensity value per labeled region
@@ -729,6 +753,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 		}
 		return max;
 	}
+	
 	/**
 	 * Get the maximum intensity values of the neighbor labels
 	 *
@@ -784,6 +809,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 
 		return table;
 	}
+	
 	/**
 	 * Get minimum voxel values per label
 	 * 
@@ -803,6 +829,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 
 		return table;
 	}
+	
 	/**
 	 * Calculate minimum intensity value per labeled region.
 	 * @return minimum intensity value per labeled region
@@ -822,6 +849,7 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 		}
 		return min;
 	}
+	
 	/**
 	 * Get the minimum intensity values of the neighbor labels
 	 *
@@ -875,6 +903,86 @@ public class IntensityMeasures extends LabeledVoxelsMeasure{
 			table.addValue( "NeighborsMin", adjacentMin[ i ] );
 		}
 
+		return table;
+	}
+	
+	/**
+	 * Computes the center of mass, i.e. the centroid weighted by the
+	 * intensities, of each region.
+	 * 
+	 * 
+	 * @param inputImage
+	 *            the input image containing intensities
+	 * @param labelImage
+	 *            the label map, containing for each pixel or voxel the label of
+	 *            the region it belongs to, or zero if it belongs to background.
+	 * @return the center of mass of each region, in pixels or voxels.
+	 */
+	public static final ResultsTable getCenterOfMassInPixels(ImagePlus inputImage, ImagePlus labelImage)
+	{
+		// retrieve image size
+		final int width = inputImage.getWidth();
+		final int height = inputImage.getHeight();
+		final int nSlices = inputImage.getImageStackSize();
+		
+		if (width != labelImage.getWidth() || height != labelImage.getHeight())
+			throw new IllegalArgumentException("Input and label images must have the same size");
+		
+		// extract the labels from the input image
+		int[] labels = LabelImages.findAllLabels(labelImage.getImageStack());
+		int nLabels = labels.length;
+
+		// create associative hash table to know the index of each label
+		Map<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
+		
+		// initialize values
+		double[] sumWX = new double[nLabels]; 
+		double[] sumWY = new double[nLabels]; 
+		double[] sumWZ = new double[nLabels]; 
+		double[] sumWeights = new double[nLabels]; 
+
+		// iterate over image elements to compute coordinates of center of mass
+		for (int z = 1; z <= nSlices; z++)
+		{
+			IJ.showProgress(z, nSlices);
+
+			// retrieve current slices
+			final ImageProcessor intensitySlice = inputImage.getImageStack().getProcessor(z);
+			final ImageProcessor labelMapSlice = labelImage.getImageStack().getProcessor(z);
+
+			// iterate over pixels of current slice
+			for (int x = 0; x < width; x++)
+			{
+				for (int y = 0; y < height; y++)
+				{
+					int label = (int) labelMapSlice.getf(x, y);
+					if (label == 0) continue;
+
+					int index = labelIndices.get(label);
+					double weight = intensitySlice.getf(x, y);
+
+					sumWX[index] += x * weight;
+					sumWY[index] += y * weight;
+					sumWZ[index] += (z - 1) * weight;
+					sumWeights[index] += weight;
+				}
+			}
+		}
+		IJ.showProgress( 1.0 );
+		
+		// create data table
+		ResultsTable table = new ResultsTable();
+		for (int i = 0; i < nLabels; i++) {
+			table.incrementCounter();
+			table.addLabel(Integer.toString(labels[i]));
+			table.addValue("CenterOfMass.X", sumWX[i] / sumWeights[i]);
+			table.addValue("CenterOfMass.Y", sumWY[i] / sumWeights[i]);
+			if (nSlices > 1)
+			{
+				table.addValue("CenterOfMass.Z", sumWZ[i] / sumWeights[i]);
+			}
+		}
+		
 		return table;
 	}
 }

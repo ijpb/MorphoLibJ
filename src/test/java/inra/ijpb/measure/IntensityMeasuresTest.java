@@ -316,6 +316,26 @@ public class IntensityMeasuresTest
 			assertEquals(medianValues[i], table.getValueAsDouble(0, i), .01);
 		}
 	}
+	
+	/**
+	 * Test method for {@link inra.ijpb.measure.IntensityMeasures#getMedian()}.
+	 */
+	@Test
+	public final void testGetCenterOfMassInPixels()
+	{
+		String fileName = getClass().getResource("/files/grains.tif").getFile();
+		ImagePlus grayImagePlus = IJ.openImage(fileName);
+		assertNotNull(grayImagePlus);
+
+		fileName = getClass().getResource("/files/grains-med-WTH-lbl.tif")
+				.getFile();
+		ImagePlus labelImagePlus = IJ.openImage(fileName);
+		assertNotNull(labelImagePlus);
+
+		ResultsTable table = IntensityMeasures.getCenterOfMassInPixels(grayImagePlus, labelImagePlus);
+		assertTrue(table.getCounter() > 80);
+	}
+
 
 	// -------------------------------------------------------------------
 	// Static factories for test images
