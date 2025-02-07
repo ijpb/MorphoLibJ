@@ -45,15 +45,21 @@ public class IntensityMeasures3D implements PlugIn{
 	static int labelsIndex = 1;
 	
 	
-	static String[] measureLabels = new String[]{ "Mean", "StdDev", "Max",
-			"Min", "Median", "Mode", "Skewness", "Kurtosis",
-			"NumberOfVoxels", "Volume", "NeighborsMean", "NeighborsStdDev",
-			"NeighborsMax", "NeighborsMin", "NeighborsMedian",
-			"NeighborsMode", "NeighborsSkewness", "NeighborsKurtosis" };
+	static String[] measureLabels = new String[]{
+			"Mean", "StdDev", 
+			"Max", "Min", 
+			"Median", "Mode", 
+			"Skewness", "Kurtosis",
+			"NumberOfVoxels", "Volume", 
+			"NeighborsMean", "NeighborsStdDev",
+			"NeighborsMax", "NeighborsMin", 
+			"NeighborsMedian", "NeighborsMode", 
+			"NeighborsSkewness", "NeighborsKurtosis", 
+			"CenterOfMass"};
 
 	static boolean[] measureStates = new boolean[]{ true, true, true, true,
 			true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true };
+			true, true, true, false };
 
 	@Override
 	public void run(String arg) 
@@ -282,6 +288,14 @@ public class IntensityMeasures3D implements PlugIn{
 			IJ.showStatus("Calculating neighbors intensity kurtosis...");
 			IJ.showProgress(calculated, numMeasures);
 			Tables.appendColumns(table, im.getNeighborsKurtosis());
+			calculated++;
+		}
+		
+		if (measureStates[18]) // center of mass
+		{
+			IJ.showStatus("Calculating center of mass...");
+			IJ.showProgress(calculated, numMeasures);
+			Tables.appendColumns(table, IntensityMeasures.getCenterOfMassInPixels(inputImage, labelImage));
 			calculated++;
 		}
 		IJ.showStatus("Done");
