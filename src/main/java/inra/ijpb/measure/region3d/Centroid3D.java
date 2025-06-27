@@ -43,7 +43,7 @@ public class Centroid3D extends RegionAnalyzer3D<Point3D>
 {
 	// ==================================================
 	// Static methods
-	
+
 	/**
 	 * Compute centroid of each region in input 3D label image and returns the
 	 * result as an array of Point3D.
@@ -57,11 +57,11 @@ public class Centroid3D extends RegionAnalyzer3D<Point3D>
 	 * @return an array of Point3D instances, corresponding to the centroid of
 	 *         each region
 	 */
-	public final static Point3D[] centroids(ImageStack labelImage, int[] labels, Calibration calib) 
+	public final static Point3D[] centroids(ImageStack labelImage, int[] labels, Calibration calib)
 	{
 		return new Centroid3D().analyzeRegions(labelImage, labels, calib);
 	}
-	
+
 	/**
 	 * Computes centroid of each label in input image and returns the result as
 	 * an array of double for each label.
@@ -77,11 +77,11 @@ public class Centroid3D extends RegionAnalyzer3D<Point3D>
 	 * @return an array containing for each label, the coordinates of the
 	 *         centroid, in pixel coordinates
 	 */
-	public static final double[][] centroids(ImageStack labelImage, int[] labels) 
+	public static final double[][] centroids(ImageStack labelImage, int[] labels)
 	{
 		// create associative array to know index of each label
 		int nLabels = labels.length;
-        HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
+		HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
 
 		// allocate memory for result
 		int[] counts = new int[nLabels];
@@ -91,20 +91,18 @@ public class Centroid3D extends RegionAnalyzer3D<Point3D>
 		int sizeX = labelImage.getWidth();
 		int sizeY = labelImage.getHeight();
 		int sizeZ = labelImage.getSize();
-		
-		for (int z = 0; z < sizeZ; z++) 
+
+		for (int z = 0; z < sizeZ; z++)
 		{
-			for (int y = 0; y < sizeY; y++) 
+			for (int y = 0; y < sizeY; y++)
 			{
 				for (int x = 0; x < sizeX; x++)
 				{
 					int label = (int) labelImage.getVoxel(x, y, z);
-					if (label == 0)
-						continue;
+					if (label == 0) continue;
 
-					// do not process labels that are not in the input list 
-					if (!labelIndices.containsKey(label))
-						continue;
+					// do not process labels that are not in the input list
+					if (!labelIndices.containsKey(label)) continue;
 
 					int index = labelIndices.get(label);
 					centroids[index][0] += x;
@@ -114,7 +112,7 @@ public class Centroid3D extends RegionAnalyzer3D<Point3D>
 				}
 			}
 		}
-		
+
 		// normalize by number of voxels in each region
 		for (int i = 0; i < nLabels; i++)
 		{
@@ -135,7 +133,6 @@ public class Centroid3D extends RegionAnalyzer3D<Point3D>
 	{
 	}
 
-	
 	// ==================================================
 	// Implementation of RegionAnalyzer interface
 
@@ -151,28 +148,27 @@ public class Centroid3D extends RegionAnalyzer3D<Point3D>
 	{
 		// Initialize a new result table
 		ResultsTable table = new ResultsTable();
-	
+
 		// Convert all results that were computed during execution of the
 		// "computeGeodesicDistanceMap()" method into rows of the results table
 		for (int label : map.keySet())
 		{
 			// current diameter
 			Point3D point = map.get(label);
-			
+
 			// add an entry to the resulting data table
 			table.incrementCounter();
 			table.addLabel(Integer.toString(label));
-			
+
 			// coordinates of centroid
 			table.addValue("Centroid.X", point.getX());
 			table.addValue("Centroid.Y", point.getY());
 			table.addValue("Centroid.Z", point.getZ());
 		}
-	
+
 		return table;
 	}
 
-	
 	/**
 	 * Computes centroid of each region in input label image.
 	 * 
@@ -182,18 +178,18 @@ public class Centroid3D extends RegionAnalyzer3D<Point3D>
 	 *            the array of labels within the image
 	 * @param calib
 	 *            the calibration of the image
-	 * @return an array of Point3D representing the calibrated centroid coordinates 
+	 * @return an array of Point3D representing the calibrated centroid
+	 *         coordinates
 	 */
 	public Point3D[] analyzeRegions(ImageStack image, int[] labels, Calibration calib)
 	{
 		// Check validity of parameters
-		if (image == null)
-			return null;
+		if (image == null) return null;
 
 		// size of image
 		int sizeX = image.getWidth();
-        int sizeY = image.getHeight();
-        int sizeZ = image.getSize();
+		int sizeY = image.getHeight();
+		int sizeZ = image.getSize();
 
 		// Extract spatial calibration
 		double sx = 1, sy = 1, sz = 1;
@@ -207,9 +203,9 @@ public class Centroid3D extends RegionAnalyzer3D<Point3D>
 			oy = calib.yOrigin;
 			oz = calib.zOrigin;
 		}
-		
+
 		// create associative array to know index of each label
-        HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
+		HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
 
 		// allocate memory for result
 		int nLabels = labels.length;
@@ -218,35 +214,57 @@ public class Centroid3D extends RegionAnalyzer3D<Point3D>
 		double[] cy = new double[nLabels];
 		double[] cz = new double[nLabels];
 
-    	fireStatusChanged(this, "Compute centroids");
+		fireStatusChanged(this, "Compute centroids");
 		// compute centroid of each region
-    	for (int z = 0; z < sizeZ; z++) 
-    	{
-    		for (int y = 0; y < sizeY; y++) 
-    		{
-    			for (int x = 0; x < sizeX; x++)
-    			{
-    				int label = (int) image.getVoxel(x, y, z);
-    				if (label == 0)
-    					continue;
+		for (int z = 0; z < sizeZ; z++)
+		{
+			this.fireProgressChanged(this, z, sizeZ);
 
-                    // do not process labels that are not in the input list 
-                    if (!labelIndices.containsKey(label))
-                        continue;
+			for (int y = 0; y < sizeY; y++)
+			{
+				for (int x = 0; x < sizeX; x++)
+				{
+					int label = (int) image.getVoxel(x, y, z);
+					if (label == 0) continue;
 
-                    int index = labelIndices.get(label);
-    				cx[index] += x * sx;
-    				cy[index] += y * sy;
-    				cz[index] += z * sz;
-    				counts[index]++;
-    			}
-    		}
-    	}
-		// normalize by number of pixels in each region
-    	Point3D[] points = new Point3D[nLabels];
+					// do not process labels that are not in the input list
+					if (!labelIndices.containsKey(label)) continue;
+
+					int index = labelIndices.get(label);
+					cx[index] += x * sx;
+					cy[index] += y * sy;
+					cz[index] += z * sz;
+					counts[index]++;
+				}
+			}
+		}
+		this.fireProgressChanged(this, 1, 1);
+
+		// normalize by number of voxels in each region
 		for (int i = 0; i < nLabels; i++)
 		{
-			points[i] = new Point3D(cx[i] / counts[i] + ox, cy[i] / counts[i] + oy, cz[i] / counts[i] + oz);
+			if (counts[i] == 0) continue;
+
+			cx[i] /= counts[i];
+			cy[i] /= counts[i];
+			cz[i] /= counts[i];
+		}
+
+		// add coordinates of origin pixel (IJ coordinate system)
+		for (int i = 0; i < nLabels; i++)
+		{
+			if (counts[i] == 0) continue;
+
+			cx[i] += .5 * sx + ox;
+			cy[i] += .5 * sy + oy;
+			cz[i] += .5 * sz + oz;
+		}
+
+		// create array of Point3D
+		Point3D[] points = new Point3D[nLabels];
+		for (int i = 0; i < nLabels; i++)
+		{
+			points[i] = new Point3D(cx[i], cy[i], cz[i]);
 		}
 
 		return points;

@@ -84,7 +84,7 @@ public class Centroid extends RegionAnalyzer2D<Point2D>
 	{
 		// create associative array to know index of each label
 		int nLabels = labels.length;
-        HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
+		HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
 
 		// allocate memory for result
 		int[] counts = new int[nLabels];
@@ -115,8 +115,19 @@ public class Centroid extends RegionAnalyzer2D<Point2D>
 		// normalize by number of pixels in each region
 		for (int i = 0; i < nLabels; i++)
 		{
+			if (counts[i] == 0) continue;
+			
 			centroids[i][0] /= counts[i];
 			centroids[i][1] /= counts[i];
+		}
+
+		// add coordinates of origin pixel (IJ coordinate system)
+		for (int i = 0; i < nLabels; i++)
+		{
+			if (counts[i] == 0) continue;
+			
+			centroids[i][0] += 0.5;
+			centroids[i][1] += 0.5;
 		}
 
 		return centroids;
@@ -201,9 +212,9 @@ public class Centroid extends RegionAnalyzer2D<Point2D>
 			ox = calib.xOrigin;
 			oy = calib.yOrigin;
 		}
-		
+
 		// create associative array to know index of each label
-        HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
+		HashMap<Integer, Integer> labelIndices = LabelImages.mapLabelIndices(labels);
 
 		// allocate memory for result
 		int nLabels = labels.length;
@@ -211,9 +222,9 @@ public class Centroid extends RegionAnalyzer2D<Point2D>
 		double[] cx = new double[nLabels];
 		double[] cy = new double[nLabels];
 
-    	fireStatusChanged(this, "Compute centroids");
+		fireStatusChanged(this, "Compute centroids");
 		// compute centroid of each region
-    	for (int y = 0; y < height; y++) 
+		for (int y = 0; y < height; y++)
 		{
 			for (int x = 0; x < width; x++)
 			{
@@ -227,12 +238,31 @@ public class Centroid extends RegionAnalyzer2D<Point2D>
 				counts[index]++;
 			}
 		}
+		this.fireProgressChanged(this, 1, 1);
 
 		// normalize by number of pixels in each region
-    	Point2D[] points = new Point2D[nLabels];
 		for (int i = 0; i < nLabels; i++)
 		{
-			points[i] = new Point2D.Double(cx[i] / counts[i] + ox, cy[i] / counts[i] + oy);
+			if (counts[i] == 0) continue;
+
+			cx[i] /= counts[i];
+			cy[i] /= counts[i];
+		}
+
+		// add coordinates of origin pixel (IJ coordinate system)
+		for (int i = 0; i < nLabels; i++)
+		{
+			if (counts[i] == 0) continue;
+
+			cx[i] += .5 * sx + ox;
+			cy[i] += .5 * sy + oy;
+		}
+
+		// create array of Point3D
+		Point2D[] points = new Point2D[nLabels];
+		for (int i = 0; i < nLabels; i++)
+		{
+			points[i] = new Point2D.Double(cx[i], cy[i]);
 		}
 
 		return points;
