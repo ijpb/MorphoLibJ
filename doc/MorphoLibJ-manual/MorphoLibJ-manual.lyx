@@ -3336,7 +3336,7 @@ Similar results may be obtained for enhancing dark curvilinear structures,
 \end_layout
 
 \begin_layout Section
-Plugin Usage
+Plugins
 \end_layout
 
 \begin_layout Standard
@@ -3637,7 +3637,347 @@ Direction
 \end_inset
 
 Number the number of oriented structuring elements to consider.
- To be increased if the length of line is large.
+ To be increased if the length of the line is large.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Utility plugins
+\end_layout
+
+\begin_layout Minisec
+Extend Image Borders 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Extend Image Borders
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This plugin generates a new image larger than the original one,
+ by padding border pixels with a specified strategy.
+ Works for grayscale and color images,
+ in 2D or 3D.
+ The padding value can be specified for each direction.
+ The different strategies for filling pixels can be:
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Replicate pads the values with the closest pixel from the original image (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Extend-Borders"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+-b).
+ This is often the default value for filtering operators.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Periodid pads the values by considering periodic boundaries:
+ the pixels after the right border are retrieved from the left side of the image (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Extend-Borders"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+-c)
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Mirrored pads the value by mirroring the image along each dimension (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Extend-Borders"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+-d).
+ 
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Black pads the values with the value (or the color) corresponding to the black color (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Extend-Borders"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+-e).
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+White pads the values with the value (or the color) corresponding to the white color.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Grey pads the values with the value (or the color) corresponding to the grey color.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement document
+alignment document
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+placement document
+alignment document
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/utilities/blobs-crop-ext-white.png
+	width 2.5cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Original
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+placement document
+alignment document
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/utilities/blobs-crop-ext-replicate.png
+	width 2.5cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Replicate
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+placement document
+alignment document
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/utilities/blobs-crop-ext-periodic.png
+	width 2.5cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Periodic
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+placement document
+alignment document
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/utilities/blobs-crop-ext-mirrored.png
+	width 2.5cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Mirrored
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+placement document
+alignment document
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/utilities/blobs-crop-ext-black.png
+	width 2.5cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Value (Black)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Extend-Borders"
+
+\end_inset
+
+Illustration of the different strategies for generating a larger image by padding borders.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Chapter
@@ -6946,7 +7286,8 @@ literal "true"
 
 \end_inset
 
-.and it floods the image from specific seed points,
+.
+ It floods the image from specific seed points,
  but this time 
 \series bold
 the points are introduced interactively by the user
@@ -7003,7 +7344,7 @@ Interactive Marker-controlled Watershed
 \begin_inset Index plu
 range none
 pageformat default
-status open
+status collapsed
 
 \begin_layout Plain Layout
 Interactive Marker-controlled Watershed
@@ -7347,7 +7688,33 @@ Introduction
 \end_layout
 
 \begin_layout Standard
-Morphological Segmentation is an ImageJ/Fiji plugin that combines morphological operations,
+Morphological Segmentation 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Morphological Segmentation 
+\end_layout
+
+\end_inset
+
+ is an ImageJ/Fiji plugin that combines morphological operations,
  such as extended minima and morphological gradient,
  with watershed flooding algorithms to segment grayscale images of any type (8,
  16 and 32-bit) in 2D and 3D.
@@ -11669,6 +12036,112 @@ nolink "false"
 -c).
 \end_layout
 
+\begin_layout Subsubsection
+Average Thickness 
+\end_layout
+
+\begin_layout Standard
+The Average Thickness plugin 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+Average Thickness
+\end_layout
+
+\end_inset
+
+ computes the average thickness of each region within a label map.
+ The Plugin computes both the skeleton and the distance map within each label,
+ and combines the two to compute the average of the distance map values within the skeleton pixels.
+\end_layout
+
+\begin_layout Subsubsection
+Skeleton Geodesic Diameter
+\end_layout
+
+\begin_layout Standard
+The Skeleton Geodesic Diameter Plugin 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Skeleton Geodesic Diameter
+\end_layout
+
+\end_inset
+
+ consists in computing the geodesic diameter of the skeleton of each region.
+ The results may be used to assess the geodesic length of the largest path within the region.
+ Contrary to the geodesic diameter,
+ the path is computed such that is stays close to the medial axis of the region.
+\end_layout
+
+\begin_layout Standard
+The Plugin provides several options:
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Input
+\begin_inset space ~
+\end_inset
+
+Label
+\begin_inset space ~
+\end_inset
+
+Image The label map containing the image of the regions to analyze
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Dilate
+\begin_inset space ~
+\end_inset
+
+Skeleton Can be used to allow more freedom on the way the geodesic path is computed.
+ If set to false,
+ only orthogonal and diagonal steps will be considered.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Chamfer
+\begin_inset space ~
+\end_inset
+
+mask The chamfer mask used to compute the geodesic path
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Overlay
+\begin_inset space ~
+\end_inset
+
+Options Allows to choose to overlay the result over an image,
+ and/or to export the computed geodesic paths to the ROI Manager.
+\end_layout
+
 \begin_layout Standard
 \begin_inset Newpage newpage
 \end_inset
@@ -12972,7 +13445,19 @@ name "sec:Label-Overlap-measures"
 
 \begin_layout Standard
 Given two label images,
- there are different measures that allow us to evaluate the overlap agreement (or error) between the labels.
+ there are different measures that allow us to evaluate the overlap agreement (or error) between the labels
+\begin_inset Index plu
+range none
+pageformat default
+status open
+
+\begin_layout Plain Layout
+Label Overlap Measures
+\end_layout
+
+\end_inset
+
+.
  Following 
 \begin_inset CommandInset citation
 LatexCommand citet
@@ -16414,7 +16899,7 @@ Identifies the largest connected component,
 \end_layout
 
 \begin_layout Minisec
-Size Opening
+Area Opening 
 \begin_inset Index plu
 range none
 pageformat default
@@ -16435,7 +16920,44 @@ status collapsed
 \uwave off
 \noun off
 \color none
-Size Opening
+Area Opening
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Computes the size of each region (as the number of voxels),
+ and removes all regions whose size is below the specified threshold.
+ The plugin works only for 2D images,
+ but provides a preview.
+\end_layout
+
+\begin_layout Minisec
+Size Opening 2D/3D
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Size Opening 2D/3D
 \end_layout
 
 \end_inset
@@ -17682,7 +18204,7 @@ Various possibilities to graphically visualize region feature.
 \begin_inset Quotes eld
 \end_inset
 
-Draw Label Values
+Draw Table Values
 \begin_inset Quotes erd
 \end_inset
 
@@ -17708,7 +18230,7 @@ Draw
 \begin_inset space ~
 \end_inset
 
-Label
+Table
 \begin_inset space ~
 \end_inset
 
@@ -17716,7 +18238,7 @@ Values
 \begin_inset Index plu
 range none
 pageformat default
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
@@ -17737,7 +18259,7 @@ Draw
 \begin_inset space ~
 \end_inset
 
-Label
+Table
 \begin_inset space ~
 \end_inset
 
@@ -17752,7 +18274,7 @@ Values
 \begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
-name "op:Draw-Label-Values"
+name "op:Draw-Table-Values"
 
 \end_inset
 
