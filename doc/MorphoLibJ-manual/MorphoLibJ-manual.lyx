@@ -88,6 +88,7 @@
 % resulting in an extra empty page at the end of the document.
 \usepackage[nohints]{minitoc}
 \end_preamble
+\options idxtotoc
 \use_default_options true
 \maintain_unincluded_children no
 \language english
@@ -114,6 +115,7 @@
 \bibtex_command default
 \index_command default
 \float_placement h
+\float_alignment class
 \paperfontsize default
 \spacing single
 \use_hyperref true
@@ -145,7 +147,7 @@
 \cite_engine_type authoryear
 \biblio_style plainnat
 \use_bibtopic false
-\use_indices false
+\use_indices true
 \paperorientation portrait
 \suppress_date false
 \justification true
@@ -157,6 +159,10 @@
 \shortcut idx
 \color #008000
 \end_index
+\index Plugins Index
+\shortcut plu
+\color #008000
+\end_index
 \secnumdepth 3
 \tocdepth 1
 \paragraph_separation indent
@@ -166,7 +172,7 @@
 \quotes_style english
 \dynamic_quotes 0
 \papercolumns 1
-\papersides 1
+\papersides 2
 \paperpagestyle plain
 \tablestyle default
 \bullet 2 0 10 -1
@@ -3364,7 +3370,33 @@ name "op:Morphological-Filters"
 \end_layout
 
 \begin_layout Standard
-Morphological filters for planar images are available 
+Morphological filters
+\begin_inset Index plu
+range none
+pageformat default
+status open
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Morphological Filters
+\end_layout
+
+\end_inset
+
+ for planar images are available 
 \begin_inset Quotes eld
 \end_inset
 
@@ -3477,7 +3509,33 @@ name "op:Morphological-Filters-3D"
 \end_layout
 
 \begin_layout Standard
-Morphological filters for 3D images are available under 
+Morphological filters
+\begin_inset Index plu
+range none
+pageformat default
+status open
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Morphological Filters (3D)
+\end_layout
+
+\end_inset
+
+ for 3D images are available under 
 \begin_inset Quotes eld
 \end_inset
 
@@ -3511,7 +3569,33 @@ name "op:Directional-Filters"
 \end_layout
 
 \begin_layout Standard
-Directional filtering is available from 
+Directional filtering
+\begin_inset Index plu
+range none
+pageformat default
+status open
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Directional Filtering
+\end_layout
+
+\end_inset
+
+ is available from 
 \begin_inset Quotes eld
 \end_inset
 
@@ -4357,6 +4441,18 @@ Morphological
 \end_inset
 
 Reconstruction 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+Morphological Reconstruction
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -4374,7 +4470,19 @@ Morphological
 \begin_inset space ~
 \end_inset
 
-Reconstruction
+Reconstruction 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+Interactive Morphological Reconstruction
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -4399,6 +4507,18 @@ Reconstruction
 \end_inset
 
 3D 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+Morphological Reconstruction 3D
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -4418,7 +4538,19 @@ Reconstruction
 \begin_inset space ~
 \end_inset
 
-3D
+3D 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+Interactive Morphological Reconstruction 3D
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -4445,11 +4577,37 @@ The kill borders and fill holes operations are also provided as plugins.
 \end_layout
 
 \begin_layout Minisec
+Kill Borders 
+\begin_inset Index plu
+range none
+pageformat default
+status open
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
 Kill
 \begin_inset space ~
 \end_inset
 
 Borders 
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -4484,6 +4642,32 @@ nolink "false"
 
 \begin_layout Minisec
 Fill Holes 
+\begin_inset Index plu
+range none
+pageformat default
+status open
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Fill Holes 
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -5087,6 +5271,44 @@ Min
 \end_inset
 
 Max
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Regional
+\begin_inset space ~
+\end_inset
+
+Min
+\begin_inset space ~
+\end_inset
+
+/
+\begin_inset space ~
+\end_inset
+
+Max
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -5112,6 +5334,48 @@ Max
 \end_inset
 
 3D 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Regional
+\begin_inset space ~
+\end_inset
+
+Min
+\begin_inset space ~
+\end_inset
+
+/
+\begin_inset space ~
+\end_inset
+
+Max
+\begin_inset space ~
+\end_inset
+
+3D 
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -5133,6 +5397,44 @@ Min
 \end_inset
 
 Max
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Extended
+\begin_inset space ~
+\end_inset
+
+Min
+\begin_inset space ~
+\end_inset
+
+/
+\begin_inset space ~
+\end_inset
+
+Max
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -5158,6 +5460,48 @@ Max
 \end_inset
 
 3D
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Extended
+\begin_inset space ~
+\end_inset
+
+Min
+\begin_inset space ~
+\end_inset
+
+/
+\begin_inset space ~
+\end_inset
+
+Max
+\begin_inset space ~
+\end_inset
+
+3D
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -5179,6 +5523,44 @@ Min
 \end_inset
 
 Max
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Impose
+\begin_inset space ~
+\end_inset
+
+Min
+\begin_inset space ~
+\end_inset
+
+/
+\begin_inset space ~
+\end_inset
+
+Max
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -5203,6 +5585,48 @@ Max
 \end_inset
 
 3D
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Impose
+\begin_inset space ~
+\end_inset
+
+Min
+\begin_inset space ~
+\end_inset
+
+/
+\begin_inset space ~
+\end_inset
+
+Max
+\begin_inset space ~
+\end_inset
+
+3D
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -5596,7 +6020,7 @@ MorphoLibJ
 ):
 \end_layout
 
-\begin_layout Description
+\begin_layout Minisec
 Gray
 \begin_inset space ~
 \end_inset
@@ -5609,7 +6033,49 @@ Attribute
 \begin_inset space ~
 \end_inset
 
-Filtering opens a dialog to perform between attribute opening,
+Filtering 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Gray
+\begin_inset space ~
+\end_inset
+
+Scale
+\begin_inset space ~
+\end_inset
+
+Attribute
+\begin_inset space ~
+\end_inset
+
+Filtering 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Opens a dialog to perform between attribute opening,
  closing,
  and black or white top-hat on a planar (2D) grayscale image.
  Two size criteria can be used:
@@ -5617,7 +6083,7 @@ Filtering opens a dialog to perform between attribute opening,
  or the diameter (length of the diagonal of the bounding box).
 \end_layout
 
-\begin_layout Description
+\begin_layout Minisec
 Gray
 \begin_inset space ~
 \end_inset
@@ -5634,7 +6100,53 @@ Filtering
 \begin_inset space ~
 \end_inset
 
-3D opens a dialog to perform between attribute opening,
+3D 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Gray
+\begin_inset space ~
+\end_inset
+
+Scale
+\begin_inset space ~
+\end_inset
+
+Attribute
+\begin_inset space ~
+\end_inset
+
+Filtering
+\begin_inset space ~
+\end_inset
+
+3D 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Opens a dialog to perform between attribute opening,
  closing,
  and black or white top-hat on a 3D grayscale image.
  The size criterion is the number of voxels.
@@ -5817,7 +6329,33 @@ Usage
 \end_layout
 
 \begin_layout Standard
-The Classic Watershed plugin runs on any grayscale image (8,
+The Classic Watershed
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Classic Watershed
+\end_layout
+
+\end_inset
+
+ plugin runs on any grayscale image (8,
  16 and 32-bit) in 2D and 3D.
  At least one image needs to be open in order for the plugin to run.
  If that's the case,
@@ -6172,7 +6710,33 @@ Introduction
 \end_layout
 
 \begin_layout Standard
-Marker-controlled Watershed is an ImageJ/Fiji plugin to segment grayscale images of any type (8,
+Marker-controlled Watershed
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Marker-controlled Watershed
+\end_layout
+
+\end_inset
+
+ is an ImageJ/Fiji plugin to segment grayscale images of any type (8,
  16 and 32-bit) in 2D and 3D based on the marker-controlled watershed algorithm by 
 \begin_inset CommandInset citation
 LatexCommand citet
@@ -6435,7 +6999,19 @@ Usage
 \end_layout
 
 \begin_layout Standard
-Interactive Marker-controlled Watershed runs on any open grayscale image,
+Interactive Marker-controlled Watershed 
+\begin_inset Index plu
+range none
+pageformat default
+status open
+
+\begin_layout Plain Layout
+Interactive Marker-controlled Watershed
+\end_layout
+
+\end_inset
+
+ runs on any open grayscale image,
  single 2D image or (3D) stack.
  If no image is open when calling the plugin,
  an Open dialog will pop up.
@@ -10052,6 +10628,32 @@ global geometry
 \series bold
 Analyze Regions
 \series default
+ 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Analyze Regions 
+\end_layout
+
+\end_inset
+
  plugin (under 
 \begin_inset Quotes eld
 \end_inset
@@ -10240,7 +10842,33 @@ Bounding Box
 \begin_layout Standard
 The 
 \series bold
-Bounding Box plugin
+Bounding Box
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Bounding Box
+\end_layout
+
+\end_inset
+
+ plugin
 \series default
  computes the minimum and maximum 
 \begin_inset Formula $x$
@@ -10439,7 +11067,33 @@ Equivalent Ellipse
 \begin_layout Standard
 The 
 \series bold
-Equivalent Ellipse plugin
+Equivalent Ellipse 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Equivalent Ellipse 
+\end_layout
+
+\end_inset
+
+plugin
 \series default
  computes the equivalent ellipse for each region within a binary or label image.
  The result of the plugin comprises the following features:
@@ -10499,7 +11153,33 @@ Max Feret Diameter
 \begin_layout Standard
 The 
 \series bold
-Max Feret Diameter plugin
+Max Feret Diameter
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Max Feret Diameter
+\end_layout
+
+\end_inset
+
+ plugin
 \series default
  computes the length of the largest Feret diameter of each region within a binary or label image,
  as well as the position of the extreme points.
@@ -10559,13 +11239,43 @@ nolink "false"
 \end_layout
 
 \begin_layout Subsubsection
-Oriented Box
+Oriented Bounding Box
 \end_layout
 
 \begin_layout Standard
 The 
 \series bold
-Oriented Box plugin
+Oriented Bounding Box plugin
+\series default
+ 
+\series bold
+
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Oriented Bounding Box
+\end_layout
+
+\end_inset
+
+
 \series default
  computes the minimal width oriented bounding box of each region within a binary or label image.
  The result of the plugin comprises the following features:
@@ -10762,7 +11472,33 @@ Geodesic Diameter
 \begin_layout Standard
 The 
 \series bold
-Geodesic Diameter plugin
+Geodesic Diameter 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Geodesic Diameter 
+\end_layout
+
+\end_inset
+
+plugin
 \series default
  computes several geodesic measures for each particle in a label image.
  The result of the plugin comprises the following features:
@@ -10860,9 +11596,37 @@ name "subsec:Largest-inscribed-circle-plugin"
 \begin_layout Standard
 The 
 \series bold
-largest inscribed circle plugin 
+Max.
+ Inscribed Circle plugin 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Max.
+ Inscribed Circle
+\end_layout
+
+\end_inset
+
+
 \series default
-computes for each label the largest disk that can be enclosed within the corresponding particle.
+ computes for each label the largest disk that can be enclosed within the corresponding particle.
  The plugin opens a dialog that allows to choose the label image to characterize,
  the choice of the method for computing distance,
  and eventually the image on which overlaid circles can be drawn.
@@ -10871,7 +11635,7 @@ computes for each label the largest disk that can be enclosed within the corresp
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-Label the label of the region measured on the current line (equal to 255 for bionary images)
+Label the label of the region measured on the current line (equal to 255 for binary images)
 \end_layout
 
 \begin_layout Labeling
@@ -11921,6 +12685,32 @@ Analyze Regions 3D
 \begin_inset Quotes erd
 \end_inset
 
+ 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Analyze Regions 3D
+\end_layout
+
+\end_inset
+
  gathers most 3D measures implemented within the MorphoLibJ library.
  It can be found under 
 \begin_inset Quotes eld
@@ -11955,7 +12745,33 @@ name "op:Interface-Surface-Area"
 
 The
 \series bold
- Interface Surface Area
+ Interface Surface Area 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Interface Surface Area
+\end_layout
+
+\end_inset
+
+
 \series default
  plugin allows to measure the surface area of the interface between two labels within a 
 \begin_inset ERT
@@ -12085,7 +12901,33 @@ Intensity Measurements 2D/3D
 \begin_inset Quotes erd
 \end_inset
 
-).
+)
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Intensity Measurements 2D/3D
+\end_layout
+
+\end_inset
+
+.
  The label image can correspond to a segmented particle,
  or to a more generic region of interest.
 \end_layout
@@ -12625,6 +13467,32 @@ Microstructure Analysis
 \begin_inset Quotes erd
 \end_inset
 
+
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Microstructure Analysis
+\end_layout
+
+\end_inset
+
  and 
 \begin_inset Quotes eld
 \end_inset
@@ -12634,6 +13502,32 @@ MorphoLibJ\SpecialChar menuseparator
 Analyze\SpecialChar menuseparator
 Microstructure 3D
 \begin_inset Quotes erd
+\end_inset
+
+
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Microstructure 3D
+\end_layout
+
 \end_inset
 
 .
@@ -13966,6 +14860,32 @@ The MorphoLibJ library provides two plugins for computing chamfer distance maps 
 
 \begin_layout Minisec
 Chamfer Distance Map 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Chamfer Distance Map 
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -13981,6 +14901,32 @@ computes a chamfer distance map from a binary or label image,
 
 \begin_layout Minisec
 Chamfer Distance Map 3D
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Chamfer Distance Map 3D
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -14250,6 +15196,32 @@ Plugins
 
 \begin_layout Minisec
 Geodesic Distance Map
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Geodesic Distance Map
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -14281,6 +15253,36 @@ Interactive Geodesic Distance
 \end_inset
 
 Map
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Interactive Geodesic Distance
+\begin_inset space ~
+\end_inset
+
+Map
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -14296,6 +15298,32 @@ Computes the geodesic distance between each foreground pixel of a the currently 
 
 \begin_layout Minisec
 Geodesic Distance Map 3D
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Geodesic Distance Map 3D
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -14930,7 +15958,33 @@ The number of labels that can be represented within a label map depends on the i
 \end_layout
 
 \begin_layout Minisec
+Connected Components Labeling 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
 Connected Components Labeling
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -15004,7 +16058,7 @@ placement document
 alignment document
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -15133,7 +16187,33 @@ Convexification of a binary image containing several disjoint components.
 \end_layout
 
 \begin_layout Minisec
+Convexify 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
 Convexify
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -15265,6 +16345,32 @@ Utilities for binary images.
 
 \begin_layout Minisec
 Keep Largest Region 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Keep Largest Region 
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -15274,6 +16380,32 @@ Identifies the largest connected component,
 
 \begin_layout Minisec
 Remove Largest Region 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Remove Largest Region 
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -15283,6 +16415,32 @@ Identifies the largest connected component,
 
 \begin_layout Minisec
 Size Opening
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Size Opening
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -15299,6 +16457,9 @@ computes the size (area in 2D,
  Default connectivity 4 (resp.
  6) is used for 2D (resp.
  3D) images.
+\end_layout
+
+\begin_layout Standard
 \begin_inset Newpage clearpage
 \end_inset
 
@@ -15583,6 +16744,40 @@ Label
 \end_inset
 
 Map
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Set
+\begin_inset space ~
+\end_inset
+
+Label
+\begin_inset space ~
+\end_inset
+
+Map
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -15616,7 +16811,7 @@ nolink "false"
 \end_layout
 
 \begin_layout Minisec
-Label
+Labels
 \begin_inset space ~
 \end_inset
 
@@ -15625,12 +16820,38 @@ To
 \end_inset
 
 RGB
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Labels To RGB
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
-name "op:Label-To-RGB"
+name "op:Labels-To-RGB"
 
 \end_inset
 
@@ -15653,6 +16874,44 @@ As
 \end_inset
 
 Overlay
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Draw
+\begin_inset space ~
+\end_inset
+
+Labels
+\begin_inset space ~
+\end_inset
+
+As
+\begin_inset space ~
+\end_inset
+
+Overlay
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -15684,29 +16943,51 @@ nolink "false"
 \end_layout
 
 \begin_layout Minisec
-Overlay
-\begin_inset space ~
-\end_inset
-
 Binary
 \begin_inset space ~
 \end_inset
 
-Or
+/
 \begin_inset space ~
 \end_inset
 
-Label
+Labels
 \begin_inset space ~
 \end_inset
 
-Image
+Overlay
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Binary Labels Overlay
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
-name "op:Overlay-Binary-Or-Label-Image"
+name "op:Binary-Labels-Overlay"
 
 \end_inset
 
@@ -16084,6 +17365,32 @@ Label Map To ROI
 
 \begin_layout Minisec
 Label Map To ROIs
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Label Map To ROIs
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -16406,6 +17713,40 @@ Label
 \end_inset
 
 Values
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Draw
+\begin_inset space ~
+\end_inset
+
+Label
+\begin_inset space ~
+\end_inset
+
+Values
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -16450,6 +17791,44 @@ To
 \end_inset
 
 Label
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Assign
+\begin_inset space ~
+\end_inset
+
+Measure
+\begin_inset space ~
+\end_inset
+
+To
+\begin_inset space ~
+\end_inset
+
+Label
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -16620,6 +17999,32 @@ Utilities for label images.
 
 \begin_layout Minisec
 Remove Border Labels 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Remove Border Labels 
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -16643,6 +18048,32 @@ kill borders
 
 \begin_layout Minisec
 Select Label(s) 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Select Label(s) 
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -16652,6 +18083,32 @@ Enters a set of labels,
 
 \begin_layout Minisec
 Keep / Remove Largest Label 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Keep / Remove Largest Label 
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -16661,6 +18118,32 @@ Identifies the largest label,
 
 \begin_layout Minisec
 Label Size Filtering 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Label Size Filtering 
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -16723,6 +18206,32 @@ Several morpological filters have been adapted to process label maps.
 
 \begin_layout Minisec
 Label Morphological Filtering
+\begin_inset Index plu
+range none
+pageformat default
+status open
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Label Morphological Filtering
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -17030,6 +18539,32 @@ Morphological filtering of label images.
 
 \begin_layout Minisec
 Fill Label Holes 
+\begin_inset Index plu
+range none
+pageformat default
+status open
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Fill Label Holes 
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -17056,6 +18591,32 @@ Several plugins allow for basic edition of filtering of label images.
 
 \begin_layout Minisec
 Crop Label 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Crop Label 
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -17071,6 +18632,32 @@ creates a new binary image containing only the label specified by the user.
 
 \begin_layout Minisec
 Replace Value 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Replace Value 
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -17091,6 +18678,32 @@ clear
 
 \begin_layout Minisec
 Remap Labels 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Remap Labels 
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -17412,6 +19025,32 @@ nolink "false"
 
 \begin_layout Minisec
 Region Adjacency Graph
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Region Adjacency Graph
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -17624,6 +19263,32 @@ Region Boundaries Labeling
 
 \begin_layout Minisec
 Label Boundaries
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Label Boundaries
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -17635,6 +19300,32 @@ Creates a new binary image containing value 255 for pixels/voxels having a neigh
 
 \begin_layout Minisec
 Region Boundaries Labeling
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Region Boundaries Labeling
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -17720,6 +19411,32 @@ Another usage of adjacencies is to select regions around a given one.
 
 \begin_layout Minisec
 Select Region Neighbors 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Select Region Neighbors 
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -17815,7 +19532,33 @@ name "sec:Label-Edition-plugin"
 
 \begin_layout Standard
 To ease the processing of label images,
- MorphoLibJ provides the Label Edition plugin (available under 
+ MorphoLibJ provides the Label Edition
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Label Edition
+\end_layout
+
+\end_inset
+
+ plugin (available under 
 \begin_inset Quotes eld
 \end_inset
 
@@ -18781,6 +20524,18 @@ Characterization of dairy matrix microstructure
  granulometry,
  area and boundary length densities]
 \end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset index_print
+LatexCommand printindex
+type "plu"
+name "Plugins Index"
+literal "false"
 
 \end_inset
 
@@ -21853,7 +23608,7 @@ n.a.
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "op:Overlay-Binary-Or-Label-Image"
+reference "op:Binary-Labels-Overlay"
 plural "false"
 caps "false"
 noprefix "false"
