@@ -16981,11 +16981,108 @@ computes the size (area in 2D,
  3D) images.
 \end_layout
 
-\begin_layout Standard
-\begin_inset Newpage clearpage
+\begin_layout Subsection
+Utilities
+\end_layout
+
+\begin_layout Minisec
+Binarize Image 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Binarize Image
+\end_layout
+
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+Converts the current image into a binary image,
+ by setting all values greater than 0 to 255,
+ and the values (lower than or) equal to zero to 0.
+ Can be used to quickly convert a label map into a binary image,
+ with display options consistent within the MorphoLibJ library.
+\end_layout
+
+\begin_layout Minisec
+Binary Overlay
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Binary Overlay
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "op:Binary-Overlay"
+
+\end_inset
+
+Computes the color image obtained by combining a reference image,
+ a binary image,
+ and an overlay color.
+ If a pixel is set to true in the binary image,
+ it is set to the overlay color.
+ Otherwise,
+ it is set to the value of the reference image.
+ See also the Binary/Labels Overlay plugin (section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "op:Binary-Labels-Overlay"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Chapter
@@ -17465,15 +17562,7 @@ nolink "false"
 \end_layout
 
 \begin_layout Minisec
-Binary
-\begin_inset space ~
-\end_inset
-
-/
-\begin_inset space ~
-\end_inset
-
-Labels
+Binary/Labels
 \begin_inset space ~
 \end_inset
 
@@ -17498,7 +17587,7 @@ status collapsed
 \uwave off
 \noun off
 \color none
-Binary Labels Overlay
+Binary/Labels Overlay
 \end_layout
 
 \end_inset
@@ -17533,6 +17622,22 @@ nolink "false"
 -c).
  User can specify the opacity of the overlay,
  and generate a new Color image for the result.
+ See also the Binary Overlay plugin (section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "op:Binary-Overlay"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Subsection
@@ -17831,7 +17936,7 @@ nolink "false"
 \end_layout
 
 \begin_layout Standard
-\begin_inset Newpage pagebreak
+\begin_inset Newpage newpage
 \end_inset
 
 
@@ -18127,7 +18232,7 @@ Label Map To ROIs
 \end_layout
 
 \begin_layout Standard
-\begin_inset Newpage pagebreak
+\begin_inset Newpage newpage
 \end_inset
 
 
@@ -18604,7 +18709,7 @@ Enters a set of labels,
 \end_layout
 
 \begin_layout Minisec
-Keep / Remove Largest Label 
+Keep Largest Label 
 \begin_inset Index plu
 range none
 pageformat default
@@ -18625,7 +18730,7 @@ status collapsed
 \uwave off
 \noun off
 \color none
-Keep / Remove Largest Label 
+Keep Largest Label
 \end_layout
 
 \end_inset
@@ -18634,8 +18739,43 @@ Keep / Remove Largest Label
 \end_layout
 
 \begin_layout Standard
-Identifies the largest label,
- and keep it or remove it
+Identifies the largest region within the label,
+ and creates a new label map containing only this region.
+\end_layout
+
+\begin_layout Minisec
+Remove Largest Label 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Remove Largest Label
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Identifies the largest region within the label,
+ and creates a new label map containing all the labels but the largest one.
 \end_layout
 
 \begin_layout Minisec
