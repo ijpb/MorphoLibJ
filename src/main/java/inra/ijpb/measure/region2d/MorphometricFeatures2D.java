@@ -85,41 +85,59 @@ public class MorphometricFeatures2D extends AlgoStub
     public enum Feature
     {
         /** The number of pixels that compose the region.*/
-        PIXEL_COUNT, 
+        PIXEL_COUNT("Pixel_Count"), 
         /** The area occupied by the region, as the number of pixels multiplied by image resolution.*/
-        AREA,
+        AREA("Area"),
         /** The (Crofton) perimeter of the region.*/
-        PERIMETER,
+        PERIMETER("Perimeter"),
         /** The Euler number of the region, to quantify its topology.*/ 
-        EULER_NUMBER,
+        EULER_NUMBER("Euler_Number"),
         /** The circularity, as normalized ratio of area and squared perimeter.*/
-        CIRCULARITY,
+        CIRCULARITY("Circularity"),
         /** The bounding box, defined from extents along each dimension.*/
-        BOUNDING_BOX,
+        BOUNDING_BOX("Bounding_Box"),
         /** The centroid.*/
-        CENTROID,
+        CENTROID("Centroid"),
         /** The equivalent ellipse with same moments up to the second order as the region.*/
-        EQUIVALENT_ELLIPSE,
+        EQUIVALENT_ELLIPSE("Equivalent_Ellipse"),
         /** The elongation factor of the equivalent ellipse.*/
-        ELLIPSE_ELONGATION,
+        ELLIPSE_ELONGATION("Ellipse_Elong."),
         /** The ration of area over area of convex hull.*/
-        CONVEXITY,
+        CONVEXITY("Convexity"),
         /** The largest Feret diameter.*/
-        MAX_FERET_DIAMETER,
+        MAX_FERET_DIAMETER("Max._Feret_Diameter"),
         /** The oriented box with minimum width.*/
-        ORIENTED_BOX,
+        ORIENTED_BOX("Oriented_Box"),
         /** The elongation of the oriented box.*/
-        ORIENTED_BOX_ELONGATION,
+        ORIENTED_BOX_ELONGATION("Oriented_Box_Elong."),
         /** The largest geodesic diameter within the region.*/
-        GEODESIC_DIAMETER,
+        GEODESIC_DIAMETER("Geodesic_Diameter"),
         /** The ratio of geodesic diameter over Feret diameter.*/
-        TORTUOSITY,
+        TORTUOSITY("Tortuosity"),
         /** The radius of the largest inscribed disk.*/
-        MAX_INSCRIBED_DISK,
+        MAX_INSCRIBED_DISK("Max._Inscribed_Disc"),
         /** The average thickness, measured along the skeleton.*/
-        AVERAGE_THICKNESS,
+        AVERAGE_THICKNESS("Average_Thickness"),
         /** The ratio of geodesic diameter over diameter of inscribed disk.*/
-        GEODESIC_ELONGATION;
+        GEODESIC_ELONGATION("Geodesic_Elong.");
+    	
+    	String label;
+    	
+    	private Feature(String label)
+    	{
+    		this.label = label;
+    	}
+    	
+    	/**
+		 * Returns the label associated to this feature.
+		 * 
+		 * @return the label associated to this feature.
+		 */
+    	@Override
+    	public String toString()
+    	{
+    		return this.label;
+    	}
     };
     
     

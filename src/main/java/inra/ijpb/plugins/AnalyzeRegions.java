@@ -22,6 +22,9 @@
 package inra.ijpb.plugins;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.GenericDialog;
@@ -94,21 +97,47 @@ public class AnalyzeRegions implements PlugInFilter
     }
     
     
-    // ====================================================
-    // Class variables
-    
-    /**
-     * The image to work on.
-     */
-    ImagePlus imagePlus;
-    
-    /**
-     * The instance of Morphometry2D that will compute the features. As it is
-     * static, it will keep chosen features when plugin is run again.
-     */
-    static MorphometricFeatures2D features = null;
-    
-    
+	// ====================================================
+	// Class variables
+
+	static final List<Feature> featureList;
+	static
+	{
+		// initializes the list of features that will populate the GUI,
+		// in the order they will be displayed
+		featureList = new ArrayList<>();
+		featureList.add(Feature.PIXEL_COUNT);
+		featureList.add(null);
+		featureList.add(Feature.AREA);
+		featureList.add(Feature.PERIMETER);
+		featureList.add(Feature.CIRCULARITY);
+		featureList.add(Feature.EULER_NUMBER);
+		featureList.add(Feature.BOUNDING_BOX);
+		featureList.add(Feature.CENTROID);
+		featureList.add(Feature.EQUIVALENT_ELLIPSE);
+		featureList.add(Feature.ELLIPSE_ELONGATION);
+		featureList.add(Feature.CONVEXITY);
+		featureList.add(Feature.MAX_FERET_DIAMETER);
+		featureList.add(Feature.ORIENTED_BOX);
+		featureList.add(Feature.ORIENTED_BOX_ELONGATION);
+		featureList.add(Feature.GEODESIC_DIAMETER);
+		featureList.add(Feature.TORTUOSITY);
+		featureList.add(Feature.MAX_INSCRIBED_DISK);
+		featureList.add(Feature.GEODESIC_ELONGATION);
+		featureList.add(Feature.AVERAGE_THICKNESS);
+	}
+
+	/**
+	 * The instance of Morphometry2D that will compute the features. As it is
+	 * static, it will keep chosen features when plugin is run again.
+	 */
+	static MorphometricFeatures2D features = null;
+
+	/**
+	 * The image to work on.
+	 */
+	ImagePlus imagePlus;
+
     // ====================================================
     // Implementation of Plugin and PluginFilter interface 
     
@@ -176,62 +205,44 @@ public class AnalyzeRegions implements PlugInFilter
     }
     
     private static final MorphometricFeatures2D chooseFeatures(MorphometricFeatures2D initialChoice)
-    {
-        if (initialChoice == null)
-        {
-            initialChoice = new MorphometricFeatures2D();
-        }
-        
-        GenericDialog gd = new GenericDialog("Analyze Regions");
-        gd.addCheckbox("Pixel_Count", initialChoice.contains(Feature.PIXEL_COUNT));
-        gd.addCheckbox("Area", initialChoice.contains(Feature.AREA));
-        gd.addCheckbox("Perimeter", initialChoice.contains(Feature.PERIMETER));
-        gd.addCheckbox("Circularity", initialChoice.contains(Feature.CIRCULARITY));
-        gd.addCheckbox("Euler_Number", initialChoice.contains(Feature.EULER_NUMBER));
-        gd.addCheckbox("Bounding_Box", initialChoice.contains(Feature.BOUNDING_BOX));
-        gd.addCheckbox("Centroid", initialChoice.contains(Feature.CENTROID));
-        gd.addCheckbox("Equivalent_Ellipse", initialChoice.contains(Feature.EQUIVALENT_ELLIPSE));
-        gd.addCheckbox("Ellipse_Elong.", initialChoice.contains(Feature.ELLIPSE_ELONGATION));
-        gd.addCheckbox("Convexity", initialChoice.contains(Feature.CONVEXITY));
-        gd.addCheckbox("Max._Feret Diameter", initialChoice.contains(Feature.MAX_FERET_DIAMETER));
-        gd.addCheckbox("Oriented_Box", initialChoice.contains(Feature.ORIENTED_BOX));
-        gd.addCheckbox("Oriented_Box_Elong.", initialChoice.contains(Feature.ORIENTED_BOX_ELONGATION));
-        gd.addCheckbox("Geodesic Diameter", initialChoice.contains(Feature.GEODESIC_DIAMETER));
-        gd.addCheckbox("Tortuosity", initialChoice.contains(Feature.TORTUOSITY));
-        gd.addCheckbox("Max._Inscribed_Disc", initialChoice.contains(Feature.MAX_INSCRIBED_DISK));
-        gd.addCheckbox("Average_Thickness", initialChoice.contains(Feature.AVERAGE_THICKNESS));
-        gd.addCheckbox("Geodesic_Elong.", initialChoice.contains(Feature.GEODESIC_ELONGATION));
-        gd.showDialog();
-        
-        // If cancel was clicked, do nothing
-        if (gd.wasCanceled())
-        {
-            return null;
-        }
-    
-        // Extract features to quantify from image
-        MorphometricFeatures2D features = new MorphometricFeatures2D();
-        if (gd.getNextBoolean()) features.add(Feature.PIXEL_COUNT);
-        if (gd.getNextBoolean()) features.add(Feature.AREA);
-        if (gd.getNextBoolean()) features.add(Feature.PERIMETER);
-        if (gd.getNextBoolean()) features.add(Feature.CIRCULARITY);
-        if (gd.getNextBoolean()) features.add(Feature.EULER_NUMBER);
-        if (gd.getNextBoolean()) features.add(Feature.BOUNDING_BOX);
-        if (gd.getNextBoolean()) features.add(Feature.CENTROID);
-        if (gd.getNextBoolean()) features.add(Feature.EQUIVALENT_ELLIPSE);
-        if (gd.getNextBoolean()) features.add(Feature.ELLIPSE_ELONGATION);
-        if (gd.getNextBoolean()) features.add(Feature.CONVEXITY);
-        if (gd.getNextBoolean()) features.add(Feature.MAX_FERET_DIAMETER);
-        if (gd.getNextBoolean()) features.add(Feature.ORIENTED_BOX);
-        if (gd.getNextBoolean()) features.add(Feature.ORIENTED_BOX_ELONGATION);
-        if (gd.getNextBoolean()) features.add(Feature.GEODESIC_DIAMETER);
-        if (gd.getNextBoolean()) features.add(Feature.TORTUOSITY);
-        if (gd.getNextBoolean()) features.add(Feature.MAX_INSCRIBED_DISK);
-        if (gd.getNextBoolean()) features.add(Feature.AVERAGE_THICKNESS);
-        if (gd.getNextBoolean()) features.add(Feature.GEODESIC_ELONGATION);
-        
-        return features;
-    }
+	{
+		if (initialChoice == null)
+		{
+			initialChoice = new MorphometricFeatures2D();
+		}
+
+		// initialize the data for populating GUI
+		int nf = featureList.size();
+		String[] labels = new String[nf];
+		boolean[] states = new boolean[nf];
+		for (int i = 0; i < featureList.size(); i++)
+		{
+			Feature feature = featureList.get(i);
+			labels[i] = feature != null ? feature.toString() : null;
+			states[i] = initialChoice.contains(featureList.get(i));
+		}
+
+		// create dialog for choosing features
+		GenericDialog gd = new GenericDialog("Analyze Regions");
+		gd.addCheckboxGroup(labels.length / 2 + 1, 2, labels, states, new String[] { "Features" });
+		gd.showDialog();
+
+		// If cancel was clicked, return null to avoid computation
+		if (gd.wasCanceled())
+		{ return null; }
+
+		// Extract features to quantify from image
+		MorphometricFeatures2D features = new MorphometricFeatures2D();
+		for (Feature feature : featureList)
+		{
+			if (feature != null)
+			{
+				if (gd.getNextBoolean()) features.add(feature);
+			}
+		}
+
+		return features;
+	}
 
     /**
      * Process the input image.
