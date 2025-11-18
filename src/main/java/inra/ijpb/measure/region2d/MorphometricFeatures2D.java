@@ -30,7 +30,9 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
+import ij.IJ;
 import ij.ImagePlus;
 import ij.measure.Calibration;
 import ij.measure.ResultsTable;
@@ -378,6 +380,7 @@ public class MorphometricFeatures2D extends AlgoStub
             results.avgThickness = algo.analyzeRegions(image, labels, calib);
         }
         
+        this.fireStatusChanged(this, "");
         return results;
     }
     
@@ -405,170 +408,190 @@ public class MorphometricFeatures2D extends AlgoStub
             table.addLabel("" + results.labels[i]);
         }
         
-        if (features.contains(PIXEL_COUNT))
-        {
-            addColumnToTable(table, "PixelCount", results.pixelCounts);
-        }
-        
-        if (features.contains(AREA))
-        {
-            for (int i = 0; i < nLabels; i++)
-            {
-                table.setValue("Area", i, results.intrinsicVolumes[i].area);
-            }
-        }
-        
-        if (features.contains(PERIMETER))
-        {
-            for (int i = 0; i < nLabels; i++)
-            {
-                table.setValue("Perimeter", i, results.intrinsicVolumes[i].perimeter);
-            }
-        }
-        
-        if (features.contains(CIRCULARITY))
-        {
-            double[] circularities = IntrinsicVolumes2DUtils.computeCircularities(results.intrinsicVolumes);
-            addColumnToTable(table, "Circularity", circularities);
-        }
-        
-        if (features.contains(EULER_NUMBER))
-        {
-            for (int i = 0; i < nLabels; i++)
-            {
-                table.setValue("EulerNumber", i, results.intrinsicVolumes[i].eulerNumber);
-            }
-        }
-        
-        if (features.contains(BOUNDING_BOX))
-        {
-            for (int i = 0; i < nLabels; i++)
-            {
-                Box2D box = results.boundingBoxes[i];
-                table.setValue("Box.X.Min", i, box.getXMin());
-                table.setValue("Box.X.Max", i, box.getXMax());
-                table.setValue("Box.Y.Min", i, box.getYMin());
-                table.setValue("Box.Y.Max", i, box.getYMax());
-            }
-        }
-        
-        if (features.contains(CENTROID))
-        {
-            for (int i = 0; i < nLabels; i++)
-            {
-                Point2D center = results.centroids[i];
-                table.setValue("Centroid.X", i, center.getX());
-                table.setValue("Centroid.Y", i, center.getY());
-            }
-        }
-        
-        if (features.contains(EQUIVALENT_ELLIPSE))
-        {
-            for (int i = 0; i < nLabels; i++)
-            {
-                Ellipse elli = results.ellipses[i];
-                Point2D center = elli.center();
-                table.setValue("Ellipse.Center.X", i, center.getX());
-                table.setValue("Ellipse.Center.Y", i, center.getY());
-                table.setValue("Ellipse.Radius1", i, elli.radius1());
-                table.setValue("Ellipse.Radius2", i, elli.radius2());
-                table.setValue("Ellipse.Orientation", i, elli.orientation());
-            }
-        }
-        
-        if (features.contains(ELLIPSE_ELONGATION))
-        {
-            double[] elong = new double[nLabels];
-            for (int i = 0; i < nLabels; i++)
-            {
-                Ellipse elli = results.ellipses[i];
-                elong[i] = elli.radius1() / elli.radius2();
-            }
-            addColumnToTable(table, "Ellipse.Elong", elong);
-        }
-        
-        if (features.contains(CONVEXITY))
-        {
-            for (int i = 0; i < nLabels; i++)
-            {
-                table.setValue("ConvexArea", i, results.convexities[i].convexArea);
-                table.setValue("Convexity", i, results.convexities[i].convexity);
-            }
-        }
-        
-        if (features.contains(MAX_FERET_DIAMETER))
-        {
-            for (int i = 0; i < nLabels; i++)
-            {
-                table.setValue("MaxFeretDiam", i, results.maxFeretDiams[i].diameter());
-                table.setValue("MaxFeretDiamAngle", i, Math.toDegrees(results.maxFeretDiams[i].angle()));
-            }
-        }
-        
-        if (features.contains(ORIENTED_BOX))
-        {
-            for (int i = 0; i < nLabels; i++)
-            {
-                OrientedBox2D obox = results.orientedBoxes[i];
-                Point2D center = obox.center();
-                table.setValue("OBox.Center.X", i, center.getX());
-                table.setValue("OBox.Center.Y", i, center.getY());
-                table.setValue("OBox.Length", i, obox.length());
-                table.setValue("OBox.Width", i, obox.width());
-                table.setValue("OBox.Orientation", i, obox.orientation());
-            }
-        }
-        
-        if (features.contains(GEODESIC_DIAMETER))
-        {
-            for (int i = 0; i < nLabels; i++)
-            {
-                GeodesicDiameter.Result result = results.geodDiams[i];
-                table.setValue("GeodesicDiameter", i, result.diameter);
-            }
-        }
-        
-        if (features.contains(TORTUOSITY))
-        {
-            double[] tortuosity = new double[nLabels];
-            for (int i = 0; i < nLabels; i++)
-            {
-                tortuosity[i] = results.geodDiams[i].diameter / results.maxFeretDiams[i].diameter();
-            }
-            addColumnToTable(table, "Tortuosity", tortuosity);
-        }
-        
-        if (features.contains(MAX_INSCRIBED_DISK))
-        {
-            for (int i = 0; i < nLabels; i++)
-            {
-                Point2D center = results.inscrDiscs[i].getCenter();
-                table.setValue("InscrDisc.Center.X", i, center.getX());
-                table.setValue("InscrDisc.Center.Y", i, center.getY());
-                table.setValue("InscrDisc.Radius", i, results.inscrDiscs[i].getRadius());
-            }
-        }
-        
-        if (features.contains(AVERAGE_THICKNESS))
-        {
-            for (int i = 0; i < nLabels; i++)
-            {
-                AverageThickness.Result res = results.avgThickness[i];
-                table.setValue("AverageThickness", i, res.avgThickness);
-            }
-        }
-        
-        if (features.contains(GEODESIC_ELONGATION))
-        {
-            double[] elong = new double[nLabels];
-            for (int i = 0; i < nLabels; i++)
-            {
-                elong[i] = results.geodDiams[i].diameter
-                        / (results.inscrDiscs[i].getRadius() * 2);
-            }
-            addColumnToTable(table, "GeodesicElongation", elong);
-        }
-        
+        /**
+		 * Iterate over features, in the order they are specified.
+		 */
+		for (Feature feature : features)
+		{
+			switch (feature)
+			{
+				case PIXEL_COUNT:
+				{
+					addColumnToTable(table, "PixelCount", results.pixelCounts);
+					break;
+				}
+				case AREA:
+				{
+					double[] areas = Stream.of(results.intrinsicVolumes)
+							.mapToDouble(res -> res.area)
+							.toArray();
+					addColumnToTable(table, "Area", areas);
+					break;
+				}
+				case PERIMETER:
+				{
+					double[] perimeters = Stream.of(results.intrinsicVolumes)
+							.mapToDouble(res -> res.perimeter)
+							.toArray();
+					addColumnToTable(table, "Perimeter", perimeters);
+					break;
+				}
+				case CIRCULARITY:
+				{
+					double[] circularities = IntrinsicVolumes2DUtils.computeCircularities(results.intrinsicVolumes);
+					addColumnToTable(table, "Circularity", circularities);
+					break;
+				}
+				case EULER_NUMBER:
+				{
+					double[] eulerNumbers = Stream.of(results.intrinsicVolumes)
+							.mapToDouble(res -> res.eulerNumber)
+							.toArray();
+					addColumnToTable(table, "EulerNumber", eulerNumbers);
+					break;
+				}
+				case BOUNDING_BOX:
+				{
+					for (int i = 0; i < nLabels; i++)
+					{
+						Box2D box = results.boundingBoxes[i];
+						table.setValue("Box.X.Min", i, box.getXMin());
+						table.setValue("Box.X.Max", i, box.getXMax());
+						table.setValue("Box.Y.Min", i, box.getYMin());
+						table.setValue("Box.Y.Max", i, box.getYMax());
+					}
+					break;
+				}
+				case CENTROID:
+				{
+					for (int i = 0; i < nLabels; i++)
+					{
+						Point2D center = results.centroids[i];
+						table.setValue("Centroid.X", i, center.getX());
+						table.setValue("Centroid.Y", i, center.getY());
+					}
+					break;
+				}
+				case EQUIVALENT_ELLIPSE:
+				{
+					for (int i = 0; i < nLabels; i++)
+					{
+						Ellipse elli = results.ellipses[i];
+						Point2D center = elli.center();
+						table.setValue("Ellipse.Center.X", i, center.getX());
+						table.setValue("Ellipse.Center.Y", i, center.getY());
+						table.setValue("Ellipse.Radius1", i, elli.radius1());
+						table.setValue("Ellipse.Radius2", i, elli.radius2());
+						table.setValue("Ellipse.Orientation", i, elli.orientation());
+					}
+					break;
+				}
+				case ELLIPSE_ELONGATION:
+				{
+					double[] elong = new double[nLabels];
+					for (int i = 0; i < nLabels; i++)
+					{
+						Ellipse elli = results.ellipses[i];
+						elong[i] = elli.radius1() / elli.radius2();
+					}
+					addColumnToTable(table, "Ellipse.Elong", elong);
+					break;
+				}
+				case CONVEXITY:
+				{
+					for (int i = 0; i < nLabels; i++)
+					{
+						table.setValue("ConvexArea", i, results.convexities[i].convexArea);
+						table.setValue("Convexity", i, results.convexities[i].convexity);
+					}
+					break;
+				}
+				case MAX_FERET_DIAMETER:
+				{
+					for (int i = 0; i < nLabels; i++)
+					{
+						table.setValue("MaxFeretDiam", i, results.maxFeretDiams[i].diameter());
+						table.setValue("MaxFeretDiamAngle", i, Math.toDegrees(results.maxFeretDiams[i].angle()));
+					}
+					break;
+				}
+				case ORIENTED_BOX:
+				{
+					for (int i = 0; i < nLabels; i++)
+					{
+						OrientedBox2D obox = results.orientedBoxes[i];
+						Point2D center = obox.center();
+						table.setValue("OBox.Center.X", i, center.getX());
+						table.setValue("OBox.Center.Y", i, center.getY());
+						table.setValue("OBox.Length", i, obox.length());
+						table.setValue("OBox.Width", i, obox.width());
+						table.setValue("OBox.Orientation", i, obox.orientation());
+					}
+					break;
+				}
+				case ORIENTED_BOX_ELONGATION:
+				{
+					double[] elongations = Stream.of(results.orientedBoxes)
+							.mapToDouble(obox ->  obox.length() / obox.width())
+							.toArray();
+					addColumnToTable(table, "OBox.Elongation", elongations);
+					break;
+				}
+				case GEODESIC_DIAMETER:
+				{
+					double[] diameter = Stream.of(results.geodDiams)
+							.mapToDouble(gdData ->  gdData.diameter)
+							.toArray();
+					addColumnToTable(table, "GeodesicDiameter", diameter);
+					break;
+				}
+				case TORTUOSITY:
+				{
+					double[] tortuosity = new double[nLabels];
+					for (int i = 0; i < nLabels; i++)
+					{
+						tortuosity[i] = results.geodDiams[i].diameter / results.maxFeretDiams[i].diameter();
+					}
+					addColumnToTable(table, "Tortuosity", tortuosity);
+					break;
+				}
+				case MAX_INSCRIBED_DISK:
+				{
+					for (int i = 0; i < nLabels; i++)
+					{
+						Point2D center = results.inscrDiscs[i].getCenter();
+						table.setValue("InscrDisc.Center.X", i, center.getX());
+						table.setValue("InscrDisc.Center.Y", i, center.getY());
+						table.setValue("InscrDisc.Radius", i, results.inscrDiscs[i].getRadius());
+					}
+					break;
+				}
+				case AVERAGE_THICKNESS:
+				{
+					for (int i = 0; i < nLabels; i++)
+					{
+						AverageThickness.Result res = results.avgThickness[i];
+						table.setValue("AverageThickness", i, res.avgThickness);
+					}
+					break;
+				}
+				case GEODESIC_ELONGATION:
+				{
+					double[] elong = new double[nLabels];
+					for (int i = 0; i < nLabels; i++)
+					{
+						elong[i] = results.geodDiams[i].diameter / (results.inscrDiscs[i].getRadius() * 2);
+					}
+					addColumnToTable(table, "GeodesicElongation", elong);
+					break;
+				}
+				default:
+				{
+					IJ.log("Unknown feature: " + feature.toString());
+				}
+			}
+		}
+		
         this.fireStatusChanged(this, "");
         return table;
     }
