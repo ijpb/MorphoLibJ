@@ -29,7 +29,9 @@ import static inra.ijpb.measure.region3d.MorphometricFeatures3D.Feature.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
+import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.measure.Calibration;
@@ -65,54 +67,66 @@ import inra.ijpb.label.LabelImages;
  */
 public class MorphometricFeatures3D extends AlgoStub
 {
-    /**
-     * An enumeration used to identify which features have to be
-     * computed by the MorphometricFeatures3D class.
-     */
-    public enum Feature
-    {
-        /** The number of voxels that compose the region.*/
-        VOXEL_COUNT("Voxel_Count"), 
-        /** The volume occupied by the region, as the number of voxels multiplied by image resolution.*/
-        VOLUME("Volume"),
-        /** The surface area of the region (measured by Crofton formula) .*/
-        SURFACE_AREA("Surface_Area"),
-        /** The mean breadth, proportional to the integral of mean curvature .*/
-        MEAN_BREADTH("Mean_Breadth"),
-        /** The Euler number of the region, to quantify its topology.*/ 
-        EULER_NUMBER("Euler_Number"),
-        /** The sphericity, as normalized ratio of powers of volume and surface area.*/
-        SPHERICITY("Sphericity"),
-        /** The bounding box along each dimension.*/
-        BOUNDING_BOX("Bounding_Box"),
-        /** The centroid.*/
-        CENTROID("Centroid"),
-        /** The equivalent ellipsoid with same moments up to the second order as the region.*/
-        EQUIVALENT_ELLIPSOID("Equivalent_Ellipsoid"),
-        /** The elongation factor of the equivalent ellipsoid.*/
-        ELLIPSOID_ELONGATIONS("Ellipsoid_Elong."),
-        /** The radius of the largest inscribed ball.*/
-        MAX_INSCRIBED_BALL("Max._Inscribed_Ball");
-    	
-    	String label;
-    	
-    	private Feature(String label)
-    	{
-    		this.label = label;
-    	}
-    	
-    	/**
+	/**
+	 * An enumeration used to identify which features have to be computed by the
+	 * MorphometricFeatures3D class.
+	 */
+	public enum Feature
+	{
+		/** The number of voxels that compose the region. */
+		VOXEL_COUNT("Voxel_Count"),
+		/**
+		 * The volume occupied by the region, as the number of voxels multiplied
+		 * by image resolution.
+		 */
+		VOLUME("Volume"),
+		/** The surface area of the region (measured by Crofton formula) . */
+		SURFACE_AREA("Surface_Area"),
+		/**
+		 * The mean breadth, proportional to the integral of mean curvature .
+		 */
+		MEAN_BREADTH("Mean_Breadth"),
+		/** The Euler number of the region, to quantify its topology. */
+		EULER_NUMBER("Euler_Number"),
+		/**
+		 * The sphericity, as normalized ratio of powers of volume and surface
+		 * area.
+		 */
+		SPHERICITY("Sphericity"),
+		/** The bounding box along each dimension. */
+		BOUNDING_BOX("Bounding_Box"),
+		/** The centroid. */
+		CENTROID("Centroid"),
+		/**
+		 * The equivalent ellipsoid with same moments up to the second order as
+		 * the region.
+		 */
+		EQUIVALENT_ELLIPSOID("Equivalent_Ellipsoid"),
+		/** The elongation factor of the equivalent ellipsoid. */
+		ELLIPSOID_ELONGATIONS("Ellipsoid_Elong."),
+		/** The radius of the largest inscribed ball. */
+		MAX_INSCRIBED_BALL("Max._Inscribed_Ball");
+
+		String label;
+
+		private Feature(String label)
+		{
+			this.label = label;
+		}
+
+		/**
 		 * Returns the label associated to this feature.
 		 * 
 		 * @return the label associated to this feature.
 		 */
-    	@Override
-    	public String toString()
-    	{
-    		return this.label;
-    	}    };
-    
-    
+		@Override
+		public String toString()
+		{
+			return this.label;
+		}
+	};
+
+	
     // ====================================================
     // Inner fields
     
@@ -396,122 +410,134 @@ public class MorphometricFeatures3D extends AlgoStub
             table.addLabel("" + results.labels[i]);
         }
         
-        if (features.contains(VOXEL_COUNT))
-        {
-            addColumnToTable(table, "VoxelCount", results.voxelCounts);
-        }
-        
-        if (features.contains(VOLUME))
-        {
-            for (int i = 0; i < nLabels; i++)
-            {
-                table.setValue("Volume", i, results.intrinsicVolumes[i].volume);
-            }
-        }
-        
-        if (features.contains(SURFACE_AREA))
-        {
-            for (int i = 0; i < nLabels; i++)
-            {
-                table.setValue("SurfaceArea", i, results.intrinsicVolumes[i].surfaceArea);
-            }
-        }
-        
-        if (features.contains(SPHERICITY))
-        {
-            double[] sphericities = new double[nLabels];
-            for (int i = 0; i < nLabels; i++)
-            {
-                sphericities[i] = results.intrinsicVolumes[i].sphericity();
-            }
-            addColumnToTable(table, "Sphericity", sphericities);
-        }
-        
-        if (features.contains(MEAN_BREADTH))
-        {
-            for (int i = 0; i < nLabels; i++)
-            {
-                table.setValue("MeanBreadth", i, results.intrinsicVolumes[i].meanBreadth);
-            }
-        }
-        
-        if (features.contains(EULER_NUMBER))
-        {
-            for (int i = 0; i < nLabels; i++)
-            {
-                table.setValue("EulerNumber", i, results.intrinsicVolumes[i].eulerNumber);
-            }
-        }
-        
-        if (features.contains(BOUNDING_BOX))
-        {
-            for (int i = 0; i < nLabels; i++)
-            {
-                Box3D box = results.boundingBoxes[i];
-                table.setValue("Box.X.Min", i, box.getXMin());
-                table.setValue("Box.X.Max", i, box.getXMax());
-                table.setValue("Box.Y.Min", i, box.getYMin());
-                table.setValue("Box.Y.Max", i, box.getYMax());
-                table.setValue("Box.Z.Min", i, box.getZMin());
-                table.setValue("Box.Z.Max", i, box.getZMax());
-            }
-        }
-        
-        if (features.contains(CENTROID))
-        {
-            for (int i = 0; i < nLabels; i++)
-            {
-                Point3D center = results.centroids[i];
-                table.setValue("Centroid.X", i, center.getX());
-                table.setValue("Centroid.Y", i, center.getY());
-                table.setValue("Centroid.Z", i, center.getZ());
-            }
-        }
-        
-        if (features.contains(EQUIVALENT_ELLIPSOID))
-        {
-            for (int i = 0; i < nLabels; i++)
-            {
-                Ellipsoid elli = results.ellipsoids[i];
-                Point3D center = elli.center();
-                table.setValue("Elli.Center.X", i, center.getX());
-                table.setValue("Elli.Center.Y", i, center.getY());
-                table.setValue("Elli.Center.Z", i, center.getZ());
-                table.setValue("Elli.Radius1", i, elli.radius1());
-                table.setValue("Elli.Radius2", i, elli.radius2());
-                table.setValue("Elli.Radius3", i, elli.radius3());
-                table.setValue("Elli.Azim", i, elli.phi());
-                table.setValue("Elli.Elev", i, elli.theta());
-                table.setValue("Elli.Roll", i, elli.psi());
-            }
-        }
-        
-        if (features.contains(ELLIPSOID_ELONGATIONS))
-        {
-            for (int i = 0; i < nLabels; i++)
-            {
-                double[] elongs = results.ellipsoidElongations[i];
-                table.setValue("Elli.R1/R2", i, elongs[0]);
-                table.setValue("Elli.R1/R3", i, elongs[1]);
-                table.setValue("Elli.R2/R3", i, elongs[2]);                
-            }
-        }
-        
-        if (features.contains(MAX_INSCRIBED_BALL))
-        {
-            for (int i = 0; i < nLabels; i++)
-            {
-                Point3D center = results.inscribedBalls[i].center();
-                table.setValue("InscrBall.Center.X", i, center.getX());
-                table.setValue("InscrBall.Center.Y", i, center.getY());
-                table.setValue("InscrBall.Center.Z", i, center.getZ());
-                table.setValue("InscrBall.Radius", i, results.inscribedBalls[i].radius());
-            }
-        }
-        
-        this.fireStatusChanged(this, "");
-        return table;
-    }
+        /**
+		 * Iterate over features, in the order they are specified.
+		 */
+		for (Feature feature : features)
+		{
+			switch (feature)
+			{
+				case VOXEL_COUNT:
+				{
+					addColumnToTable(table, "VoxelCount", results.voxelCounts);
+					break;
+				}
+				case VOLUME:
+				{
+					double[] volumes = Stream.of(results.intrinsicVolumes)
+							.mapToDouble(res -> res.volume)
+							.toArray();
+					addColumnToTable(table, "Volume", volumes);
+					break;
+				}
+				case SURFACE_AREA:
+				{
+					double[] surfaces = Stream.of(results.intrinsicVolumes)
+							.mapToDouble(res -> res.surfaceArea)
+							.toArray();
+					addColumnToTable(table, "SurfaceArea", surfaces);
+					break;
+				}
+				case MEAN_BREADTH:
+				{
+					double[] meanBreadths = Stream.of(results.intrinsicVolumes)
+							.mapToDouble(res -> res.meanBreadth)
+							.toArray();
+					addColumnToTable(table, "MeanBreadth", meanBreadths);
+					break;
+				}
+				case SPHERICITY:
+				{
+					double[] sphericites = Stream.of(results.intrinsicVolumes)
+							.mapToDouble(res -> res.sphericity())
+							.toArray();
+					addColumnToTable(table, "Sphericity", sphericites);
+					break;
+				}
+				case BOUNDING_BOX:
+				{
+					for (int i = 0; i < nLabels; i++)
+					{
+						Box3D box = results.boundingBoxes[i];
+						table.setValue("Box.X.Min", i, box.getXMin());
+						table.setValue("Box.X.Max", i, box.getXMax());
+						table.setValue("Box.Y.Min", i, box.getYMin());
+						table.setValue("Box.Y.Max", i, box.getYMax());
+						table.setValue("Box.Z.Min", i, box.getZMin());
+						table.setValue("Box.Z.Max", i, box.getZMax());
+					}
+					break;
+				}
+				case CENTROID:
+				{
+					for (int i = 0; i < nLabels; i++)
+					{
+						Point3D center = results.centroids[i];
+						table.setValue("Centroid.X", i, center.getX());
+						table.setValue("Centroid.Y", i, center.getY());
+						table.setValue("Centroid.Z", i, center.getZ());
+					}
+					break;
+				}
+				case EQUIVALENT_ELLIPSOID:
+				{
+					for (int i = 0; i < nLabels; i++)
+					{
+						Ellipsoid elli = results.ellipsoids[i];
+						Point3D center = elli.center();
+						table.setValue("Elli.Center.X", i, center.getX());
+						table.setValue("Elli.Center.Y", i, center.getY());
+						table.setValue("Elli.Center.Z", i, center.getZ());
+						table.setValue("Elli.Radius1", i, elli.radius1());
+						table.setValue("Elli.Radius2", i, elli.radius2());
+						table.setValue("Elli.Radius3", i, elli.radius3());
+						table.setValue("Elli.Azim", i, elli.phi());
+						table.setValue("Elli.Elev", i, elli.theta());
+						table.setValue("Elli.Roll", i, elli.psi());
+					}
+					break;
+				}
+				case ELLIPSOID_ELONGATIONS:
+				{
+					for (int i = 0; i < nLabels; i++)
+					{
+						double[] elongs = results.ellipsoidElongations[i];
+						table.setValue("Elli.R1/R2", i, elongs[0]);
+						table.setValue("Elli.R1/R3", i, elongs[1]);
+						table.setValue("Elli.R2/R3", i, elongs[2]);
+					}
+					break;
+				}
+				case MAX_INSCRIBED_BALL:
+				{
+					for (int i = 0; i < nLabels; i++)
+					{
+						Point3D center = results.inscribedBalls[i].center();
+						table.setValue("InscrBall.Center.X", i, center.getX());
+						table.setValue("InscrBall.Center.Y", i, center.getY());
+						table.setValue("InscrBall.Center.Z", i, center.getZ());
+						table.setValue("InscrBall.Radius", i, results.inscribedBalls[i].radius());
+					}
+					break;
+				}
+				case EULER_NUMBER:
+				{
+					double[] eulerNumbers = Stream.of(results.intrinsicVolumes)
+							.mapToDouble(res -> res.eulerNumber)
+							.toArray();
+					addColumnToTable(table, "EulerNumber", eulerNumbers);
+					break;
+				}
+				default:
+				{
+					IJ.log("Unknown feature: " + feature.toString());
+				}
+			}
+		}
+
+		this.fireStatusChanged(this, "");
+		return table;
+	}
     
     private static final void addColumnToTable(ResultsTable table,
             String colName, double[] values)
