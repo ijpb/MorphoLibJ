@@ -90,7 +90,13 @@ public class AnalyzeRegions3D implements PlugIn
 		featureList.add(Feature.EQUIVALENT_ELLIPSOID);
 		featureList.add(Feature.ELLIPSOID_ELONGATIONS);
 		
+		featureList.add(Feature.MAX_FERET_DIAMETER);
+		featureList.add(Feature.GEODESIC_DIAMETER);
+
 		featureList.add(Feature.MAX_INSCRIBED_BALL);
+		featureList.add(Feature.GEODESIC_ELONGATION);
+		
+		featureList.add(Feature.TORTUOSITY);
 		featureList.add(Feature.EULER_NUMBER);
 	}
 

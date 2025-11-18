@@ -38,9 +38,11 @@ import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import inra.ijpb.algo.AlgoStub;
 import inra.ijpb.algo.DefaultAlgoListener;
+import inra.ijpb.binary.distmap.ChamferMask3D;
 import inra.ijpb.geometry.Box3D;
 import inra.ijpb.geometry.Ellipsoid;
 import inra.ijpb.geometry.Point3D;
+import inra.ijpb.geometry.PointPair3D;
 import inra.ijpb.geometry.Sphere;
 import inra.ijpb.label.LabelImages;
 import inra.ijpb.util.Tables;
@@ -105,8 +107,16 @@ public class MorphometricFeatures3D extends AlgoStub
 		EQUIVALENT_ELLIPSOID("Equivalent_Ellipsoid"),
 		/** The elongation factor of the equivalent ellipsoid. */
 		ELLIPSOID_ELONGATIONS("Ellipsoid_Elong."),
+        /** The largest Feret diameter.*/
+        MAX_FERET_DIAMETER("Max._Feret_Diameter"),
+        /** The largest geodesic diameter within the region.*/
+        GEODESIC_DIAMETER("Geodesic_Diameter"),
+        /** The ratio of geodesic diameter over Feret diameter.*/
+        TORTUOSITY("Tortuosity"),
 		/** The radius of the largest inscribed ball. */
-		MAX_INSCRIBED_BALL("Max._Inscribed_Ball");
+		MAX_INSCRIBED_BALL("Max._Inscribed_Ball"),
+        /** The ratio of geodesic diameter over diameter of inscribed ball.*/
+        GEODESIC_ELONGATION("Geodesic_Elong.");
 
 		String label;
 
@@ -374,18 +384,36 @@ public class MorphometricFeatures3D extends AlgoStub
             DefaultAlgoListener.monitor(algo);
             results.centroids = algo.analyzeRegions(image, labels, calib);
         }
-        
-        // compute position and radius of maximal inscribed ball
-        if (contains(MAX_INSCRIBED_BALL))
-        {
-            this.fireStatusChanged(this, "Inscribed circles");
-            LargestInscribedBall algo = new LargestInscribedBall();
-            DefaultAlgoListener.monitor(algo);
-            results.inscribedBalls = algo.analyzeRegions(image, labels, calib);
-        }
-        
-        return results;
-    }
+
+		// compute max Feret diameter
+		if (containsAny(MAX_FERET_DIAMETER, TORTUOSITY))
+		{
+			this.fireStatusChanged(this, "Max Feret Diameters");
+			MaxFeretDiameter3D algo = new MaxFeretDiameter3D();
+			DefaultAlgoListener.monitor(algo);
+			results.maxFeretDiameters = algo.analyzeRegions(image, labels, calib);
+		}
+
+		// compute geodesic diameter
+		if (containsAny(GEODESIC_DIAMETER, TORTUOSITY, GEODESIC_ELONGATION))
+		{
+			this.fireStatusChanged(this, "Max Feret Diameters");
+			GeodesicDiameter3D algo = new GeodesicDiameter3D(ChamferMask3D.SVENSSON_3_4_5_7);
+			DefaultAlgoListener.monitor(algo);
+			results.geodesicDiameters = algo.analyzeRegions(image, labels, calib);
+		}
+
+		// compute position and radius of maximal inscribed ball
+		if (containsAny(MAX_INSCRIBED_BALL, GEODESIC_ELONGATION))
+		{
+			this.fireStatusChanged(this, "Inscribed circles");
+			LargestInscribedBall algo = new LargestInscribedBall();
+			DefaultAlgoListener.monitor(algo);
+			results.inscribedBalls = algo.analyzeRegions(image, labels, calib);
+		}
+
+		return results;
+	}
     
     /**
      * Creates the results table that summarizes the features computed on the
@@ -509,6 +537,32 @@ public class MorphometricFeatures3D extends AlgoStub
 					}
 					break;
 				}
+				case MAX_FERET_DIAMETER:
+				{
+					for (int i = 0; i < nLabels; i++)
+					{
+						table.setValue("MaxFeretDiam", i, results.maxFeretDiameters[i].diameter());
+					}
+					break;
+				}
+				case GEODESIC_DIAMETER:
+				{
+					double[] diameter = Stream.of(results.geodesicDiameters)
+							.mapToDouble(gdData ->  gdData.diameter)
+							.toArray();
+					Tables.addColumnToTable(table, "GeodesicDiameter", diameter);
+					break;
+				}
+				case TORTUOSITY:
+				{
+					double[] tortuosity = new double[nLabels];
+					for (int i = 0; i < nLabels; i++)
+					{
+						tortuosity[i] = results.geodesicDiameters[i].diameter / results.maxFeretDiameters[i].diameter();
+					}
+					Tables.addColumnToTable(table, "Tortuosity", tortuosity);
+					break;
+				}
 				case MAX_INSCRIBED_BALL:
 				{
 					for (int i = 0; i < nLabels; i++)
@@ -519,6 +573,16 @@ public class MorphometricFeatures3D extends AlgoStub
 						table.setValue("InscrBall.Center.Z", i, center.getZ());
 						table.setValue("InscrBall.Radius", i, results.inscribedBalls[i].radius());
 					}
+					break;
+				}
+				case GEODESIC_ELONGATION:
+				{
+					double[] elong = new double[nLabels];
+					for (int i = 0; i < nLabels; i++)
+					{
+						elong[i] = results.geodesicDiameters[i].diameter / (results.inscribedBalls[i].radius() * 2);
+					}
+					Tables.addColumnToTable(table, "GeodesicElongation", elong);
 					break;
 				}
 				case EULER_NUMBER:
@@ -559,6 +623,8 @@ public class MorphometricFeatures3D extends AlgoStub
         public Point3D[] centroids = null;
         public Ellipsoid[] ellipsoids = null;
         public double[][] ellipsoidElongations = null;
+        public PointPair3D[] maxFeretDiameters = null;
+        public GeodesicDiameter3D.Result[] geodesicDiameters = null;
         public Sphere[] inscribedBalls = null;
     }
 }
