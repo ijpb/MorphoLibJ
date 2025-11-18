@@ -45,6 +45,7 @@ import inra.ijpb.geometry.Ellipse;
 import inra.ijpb.geometry.OrientedBox2D;
 import inra.ijpb.geometry.PointPair2D;
 import inra.ijpb.label.LabelImages;
+import inra.ijpb.util.Tables;
 
 /**
  * An analyzer class that aggregates the computation of several morphometric features 
@@ -348,7 +349,7 @@ public class MorphometricFeatures2D extends AlgoStub
                     calib);
         }
         
-        if (contains(ORIENTED_BOX))
+        if (containsAny(ORIENTED_BOX, ORIENTED_BOX_ELONGATION))
         {
             this.fireStatusChanged(this, "Oriented Bounding Boxes");
             OrientedBoundingBox2D algo = new OrientedBoundingBox2D();
@@ -417,7 +418,7 @@ public class MorphometricFeatures2D extends AlgoStub
 			{
 				case PIXEL_COUNT:
 				{
-					addColumnToTable(table, "PixelCount", results.pixelCounts);
+					Tables.addColumnToTable(table, "PixelCount", results.pixelCounts);
 					break;
 				}
 				case AREA:
@@ -425,7 +426,7 @@ public class MorphometricFeatures2D extends AlgoStub
 					double[] areas = Stream.of(results.intrinsicVolumes)
 							.mapToDouble(res -> res.area)
 							.toArray();
-					addColumnToTable(table, "Area", areas);
+					Tables.addColumnToTable(table, "Area", areas);
 					break;
 				}
 				case PERIMETER:
@@ -433,13 +434,13 @@ public class MorphometricFeatures2D extends AlgoStub
 					double[] perimeters = Stream.of(results.intrinsicVolumes)
 							.mapToDouble(res -> res.perimeter)
 							.toArray();
-					addColumnToTable(table, "Perimeter", perimeters);
+					Tables.addColumnToTable(table, "Perimeter", perimeters);
 					break;
 				}
 				case CIRCULARITY:
 				{
 					double[] circularities = IntrinsicVolumes2DUtils.computeCircularities(results.intrinsicVolumes);
-					addColumnToTable(table, "Circularity", circularities);
+					Tables.addColumnToTable(table, "Circularity", circularities);
 					break;
 				}
 				case EULER_NUMBER:
@@ -447,7 +448,7 @@ public class MorphometricFeatures2D extends AlgoStub
 					double[] eulerNumbers = Stream.of(results.intrinsicVolumes)
 							.mapToDouble(res -> res.eulerNumber)
 							.toArray();
-					addColumnToTable(table, "EulerNumber", eulerNumbers);
+					Tables.addColumnToTable(table, "EulerNumber", eulerNumbers);
 					break;
 				}
 				case BOUNDING_BOX:
@@ -494,7 +495,7 @@ public class MorphometricFeatures2D extends AlgoStub
 						Ellipse elli = results.ellipses[i];
 						elong[i] = elli.radius1() / elli.radius2();
 					}
-					addColumnToTable(table, "Ellipse.Elong", elong);
+					Tables.addColumnToTable(table, "Ellipse.Elong", elong);
 					break;
 				}
 				case CONVEXITY:
@@ -534,7 +535,7 @@ public class MorphometricFeatures2D extends AlgoStub
 					double[] elongations = Stream.of(results.orientedBoxes)
 							.mapToDouble(obox ->  obox.length() / obox.width())
 							.toArray();
-					addColumnToTable(table, "OBox.Elongation", elongations);
+					Tables.addColumnToTable(table, "OBox.Elongation", elongations);
 					break;
 				}
 				case GEODESIC_DIAMETER:
@@ -542,7 +543,7 @@ public class MorphometricFeatures2D extends AlgoStub
 					double[] diameter = Stream.of(results.geodDiams)
 							.mapToDouble(gdData ->  gdData.diameter)
 							.toArray();
-					addColumnToTable(table, "GeodesicDiameter", diameter);
+					Tables.addColumnToTable(table, "GeodesicDiameter", diameter);
 					break;
 				}
 				case TORTUOSITY:
@@ -552,7 +553,7 @@ public class MorphometricFeatures2D extends AlgoStub
 					{
 						tortuosity[i] = results.geodDiams[i].diameter / results.maxFeretDiams[i].diameter();
 					}
-					addColumnToTable(table, "Tortuosity", tortuosity);
+					Tables.addColumnToTable(table, "Tortuosity", tortuosity);
 					break;
 				}
 				case MAX_INSCRIBED_DISK:
@@ -582,7 +583,7 @@ public class MorphometricFeatures2D extends AlgoStub
 					{
 						elong[i] = results.geodDiams[i].diameter / (results.inscrDiscs[i].getRadius() * 2);
 					}
-					addColumnToTable(table, "GeodesicElongation", elong);
+					Tables.addColumnToTable(table, "GeodesicElongation", elong);
 					break;
 				}
 				default:
@@ -594,24 +595,6 @@ public class MorphometricFeatures2D extends AlgoStub
 		
         this.fireStatusChanged(this, "");
         return table;
-    }
-    
-    private static final void addColumnToTable(ResultsTable table,
-            String colName, double[] values)
-    {
-        for (int i = 0; i < values.length; i++)
-        {
-            table.setValue(colName, i, values[i]);
-        }
-    }
-
-    private static final void addColumnToTable(ResultsTable table,
-            String colName, int[] values)
-    {
-        for (int i = 0; i < values.length; i++)
-        {
-            table.setValue(colName, i, values[i]);
-        }
     }
     
     

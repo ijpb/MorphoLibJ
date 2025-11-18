@@ -43,6 +43,7 @@ import inra.ijpb.geometry.Ellipsoid;
 import inra.ijpb.geometry.Point3D;
 import inra.ijpb.geometry.Sphere;
 import inra.ijpb.label.LabelImages;
+import inra.ijpb.util.Tables;
 
 /**
  * An analyzer class that aggregates the computation of several morphometric features 
@@ -419,7 +420,7 @@ public class MorphometricFeatures3D extends AlgoStub
 			{
 				case VOXEL_COUNT:
 				{
-					addColumnToTable(table, "VoxelCount", results.voxelCounts);
+					Tables.addColumnToTable(table, "VoxelCount", results.voxelCounts);
 					break;
 				}
 				case VOLUME:
@@ -427,7 +428,7 @@ public class MorphometricFeatures3D extends AlgoStub
 					double[] volumes = Stream.of(results.intrinsicVolumes)
 							.mapToDouble(res -> res.volume)
 							.toArray();
-					addColumnToTable(table, "Volume", volumes);
+					Tables.addColumnToTable(table, "Volume", volumes);
 					break;
 				}
 				case SURFACE_AREA:
@@ -435,7 +436,7 @@ public class MorphometricFeatures3D extends AlgoStub
 					double[] surfaces = Stream.of(results.intrinsicVolumes)
 							.mapToDouble(res -> res.surfaceArea)
 							.toArray();
-					addColumnToTable(table, "SurfaceArea", surfaces);
+					Tables.addColumnToTable(table, "SurfaceArea", surfaces);
 					break;
 				}
 				case MEAN_BREADTH:
@@ -443,7 +444,7 @@ public class MorphometricFeatures3D extends AlgoStub
 					double[] meanBreadths = Stream.of(results.intrinsicVolumes)
 							.mapToDouble(res -> res.meanBreadth)
 							.toArray();
-					addColumnToTable(table, "MeanBreadth", meanBreadths);
+					Tables.addColumnToTable(table, "MeanBreadth", meanBreadths);
 					break;
 				}
 				case SPHERICITY:
@@ -451,7 +452,7 @@ public class MorphometricFeatures3D extends AlgoStub
 					double[] sphericites = Stream.of(results.intrinsicVolumes)
 							.mapToDouble(res -> res.sphericity())
 							.toArray();
-					addColumnToTable(table, "Sphericity", sphericites);
+					Tables.addColumnToTable(table, "Sphericity", sphericites);
 					break;
 				}
 				case BOUNDING_BOX:
@@ -525,7 +526,7 @@ public class MorphometricFeatures3D extends AlgoStub
 					double[] eulerNumbers = Stream.of(results.intrinsicVolumes)
 							.mapToDouble(res -> res.eulerNumber)
 							.toArray();
-					addColumnToTable(table, "EulerNumber", eulerNumbers);
+					Tables.addColumnToTable(table, "EulerNumber", eulerNumbers);
 					break;
 				}
 				default:
@@ -538,24 +539,6 @@ public class MorphometricFeatures3D extends AlgoStub
 		this.fireStatusChanged(this, "");
 		return table;
 	}
-    
-    private static final void addColumnToTable(ResultsTable table,
-            String colName, double[] values)
-    {
-        for (int i = 0; i < values.length; i++)
-        {
-            table.setValue(colName, i, values[i]);
-        }
-    }
-
-    private static final void addColumnToTable(ResultsTable table,
-            String colName, int[] values)
-    {
-        for (int i = 0; i < values.length; i++)
-        {
-            table.setValue(colName, i, values[i]);
-        }
-    }
     
     
     /**

@@ -52,6 +52,46 @@ public class Tables
 	}
 
 	/**
+	 * Adds a numeric column given by an array of double values to the specified
+	 * table. If the column already exists within the table, its values are
+	 * updated.
+	 * 
+	 * @param table
+	 *            The instance of ResultsTable to update
+	 * @param colName
+	 *            the name of the column.
+	 * @param values
+	 *            the values contained within the column.
+	 */
+	public static final void addColumnToTable(ResultsTable table, String colName, double[] values)
+	{
+		for (int i = 0; i < values.length; i++)
+		{
+			table.setValue(colName, i, values[i]);
+		}
+	}
+
+	/**
+	 * Adds a numeric column given by an array of integer values to the specified
+	 * table. If the column already exists within the table, its values are
+	 * updated.
+	 * 
+	 * @param table
+	 *            The instance of ResultsTable to update
+	 * @param colName
+	 *            the name of the column.
+	 * @param values
+	 *            the values contained within the column.
+	 */
+	public static final void addColumnToTable(ResultsTable table, String colName, int[] values)
+	{
+		for (int i = 0; i < values.length; i++)
+		{
+			table.setValue(colName, i, values[i]);
+		}
+	}
+
+	/**
 	 * Private constructor to prevent instantiation. 
 	 */
 	private Tables()
