@@ -72,28 +72,45 @@ public class MorphometricFeatures3D extends AlgoStub
     public enum Feature
     {
         /** The number of voxels that compose the region.*/
-        VOXEL_COUNT, 
+        VOXEL_COUNT("Voxel_Count"), 
         /** The volume occupied by the region, as the number of voxels multiplied by image resolution.*/
-        VOLUME,
+        VOLUME("Volume"),
         /** The surface area of the region (measured by Crofton formula) .*/
-        SURFACE_AREA,
+        SURFACE_AREA("Surface_Area"),
         /** The mean breadth, proportional to the integral of mean curvature .*/
-        MEAN_BREADTH,
+        MEAN_BREADTH("Mean_Breadth"),
         /** The Euler number of the region, to quantify its topology.*/ 
-        EULER_NUMBER,
+        EULER_NUMBER("Euler_Number"),
         /** The sphericity, as normalized ratio of powers of volume and surface area.*/
-        SPHERICITY,
+        SPHERICITY("Sphericity"),
         /** The bounding box along each dimension.*/
-        BOUNDING_BOX,
+        BOUNDING_BOX("Bounding_Box"),
         /** The centroid.*/
-        CENTROID,
+        CENTROID("Centroid"),
         /** The equivalent ellipsoid with same moments up to the second order as the region.*/
-        EQUIVALENT_ELLIPSOID,
+        EQUIVALENT_ELLIPSOID("Equivalent_Ellipsoid"),
         /** The elongation factor of the equivalent ellipsoid.*/
-        ELLIPSOID_ELONGATIONS,
+        ELLIPSOID_ELONGATIONS("Ellipsoid_Elong."),
         /** The radius of the largest inscribed ball.*/
-        MAX_INSCRIBED_BALL,
-    };
+        MAX_INSCRIBED_BALL("Max._Inscribed_Ball");
+    	
+    	String label;
+    	
+    	private Feature(String label)
+    	{
+    		this.label = label;
+    	}
+    	
+    	/**
+		 * Returns the label associated to this feature.
+		 * 
+		 * @return the label associated to this feature.
+		 */
+    	@Override
+    	public String toString()
+    	{
+    		return this.label;
+    	}    };
     
     
     // ====================================================
