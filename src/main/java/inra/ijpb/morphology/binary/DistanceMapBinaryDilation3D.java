@@ -21,6 +21,13 @@ public class DistanceMapBinaryDilation3D extends DistanceMapBasedOperator3D
 {
 	double radius;
 
+	/**
+	 * Creates a new dilation operator for 3D binary images, using a ball with
+	 * the specified radius as structuring element.
+	 * 
+	 * @param radius
+	 *            the radius of the ball structuring element
+	 */
 	public DistanceMapBinaryDilation3D(double radius)
 	{
 		this.radius = radius;

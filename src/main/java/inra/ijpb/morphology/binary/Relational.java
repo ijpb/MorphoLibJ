@@ -405,7 +405,7 @@ public abstract class Relational extends AlgoStub
 	 *            the 3D image to process
 	 * @param value
 	 *            the value to use as threshold
-	 * @param image
+	 * @param target
 	 *            the 3D image containing the results the comparison of each
 	 *            element within the input image with the specified value.
 	 */

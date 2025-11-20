@@ -21,6 +21,13 @@ public class DistanceMapBinaryDilation extends DistanceMapBasedOperator
 {
 	double radius;
 	
+	/**
+	 * Creates a new dilation operator for binary images, using a disk with the
+	 * specified radius as structuring element.
+	 * 
+	 * @param radius
+	 *            the radius of the disk structuring element
+	 */
 	public DistanceMapBinaryDilation(double radius)
 	{
 		this.radius = radius;

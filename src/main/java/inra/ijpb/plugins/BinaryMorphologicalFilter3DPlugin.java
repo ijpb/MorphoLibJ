@@ -41,7 +41,7 @@ import inra.ijpb.util.IJUtils;
  * 
  * Morphological operations are computed using thresholding distance maps.
  * 
- * @see net.ijt.BinaryMorphology
+ * @see inra.ijpb.morphology.BinaryMorphology
  * 
  * @author David Legland
  *
@@ -224,6 +224,18 @@ public class BinaryMorphologicalFilter3DPlugin implements PlugIn
 		strelImage.show();
 	}
 
+	/**
+	 * Applies the specified morphological operation to the image, using a ball
+	 * structuring element.
+	 * 
+	 * @param image
+	 *            the input image (grayscale or color)
+	 * @param op
+	 *            the operation to apply
+	 * @param radius
+	 *            the radius of the ball used as structuring element
+	 * @return the result of morphological operation applied to the input image
+	 */
 	public ImagePlus process(ImagePlus image, Operation op, double radius) 
 	{
 		// Check validity of parameters

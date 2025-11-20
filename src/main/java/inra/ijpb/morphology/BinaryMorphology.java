@@ -11,10 +11,10 @@ import inra.ijpb.morphology.binary.DistanceMapBinaryErosion3D;
  * A collection of static method for performing morphological filters (erosion,
  * dilation) on binary 2D or 3D images.
  * 
- * @see net.ijt.binary.ops.DistanceMapBinaryDilation;
- * @see net.ijt.binary.ops.DistanceMapBinaryErosion;
- * @see net.ijt.binary.ops.DistanceMapBinaryDilation3D;
- * @see net.ijt.binary.ops.DistanceMapBinaryErosion3D;
+ * @see inra.ijpb.morphology.binary.DistanceMapBinaryDilation
+ * @see inra.ijpb.morphology.binary.DistanceMapBinaryErosion
+ * @see inra.ijpb.morphology.binary.DistanceMapBinaryDilation3D
+ * @see inra.ijpb.morphology.binary.DistanceMapBinaryErosion3D
  * 
  * @author dlegland
  *

@@ -309,15 +309,15 @@ public class BinaryMorphologicalFilterPlugin implements ExtendedPlugInFilter,
 	}
 
 	/**
-	 * Applies the specified morphological operation with specified structuring
-	 * element to the input image.
+	 * Applies the specified morphological operation to the image, using a disk
+	 * structuring element.
 	 * 
 	 * @param image
 	 *            the input image (grayscale or color)
 	 * @param op
 	 *            the operation to apply
-	 * @param strel
-	 *            the structuring element to use for the operation
+	 * @param radius
+	 *            the radius of the disk used as structuring element
 	 * @return the result of morphological operation applied to the input image
 	 */
 	public ImagePlus process(ImagePlus image, Operation op, double radius)

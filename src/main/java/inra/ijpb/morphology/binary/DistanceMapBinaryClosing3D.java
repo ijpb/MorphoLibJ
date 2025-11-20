@@ -21,6 +21,13 @@ public class DistanceMapBinaryClosing3D extends DistanceMapBasedOperator3D
 {
 	double radius;
 	
+	/**
+	 * Creates a new closing operator for 3D binary images, using a ball with
+	 * the specified radius as structuring element.
+	 * 
+	 * @param radius
+	 *            the radius of the ball structuring element
+	 */
 	public DistanceMapBinaryClosing3D(double radius)
 	{
 		this.radius = radius;
