@@ -14188,6 +14188,53 @@ Binary image,
 
 \end_layout
 
+\begin_layout Standard
+Different algorithms exist for computing distance transforms,
+ mostly depending on the choice of the metric for the distance.
+ MorpholLibJ provides implementations for both Euclidean and chamfer masks distance transforms.
+\end_layout
+
+\begin_layout Subsection
+Euclidean distance transform
+\end_layout
+
+\begin_layout Standard
+The most natural choice for computing distance map is to consider the 
+\series bold
+Euclidean distance
+\series default
+ to the background.
+ Several algorithms have been proposed,
+ with various performance 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Borgefors1984,Cuisenaire1999,Maurer_2003_PAMI,Fabbri_2008_ACMCS,Wang_2013_PattRec"
+literal "false"
+
+\end_inset
+
+.
+ The MorphoLibJ library implements Euclidean distance transforms based on the algorithm from 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Saito_Toriwaki_1994_PattRec"
+literal "false"
+
+\end_inset
+
+.
+ This algorithm has the advantage of being rather simple to implement,
+ and to generalize easily to arbitrary dimension.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 Chamfer distances
 \end_layout
@@ -14203,13 +14250,7 @@ name "subsec:Chamfer-Distances"
 \end_layout
 
 \begin_layout Standard
-Several methods exist for computing distance maps.
- The MorphoLibJ library implements distance transforms based on 
-\series bold
-chamfer masks
-\series default
-,
- that are simpler to compute than exact Euclidean distance 
+Chamfer distance transform is an alternative to Euclidean distance transform that is often simpler to compute 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Rosenfeld_1968_PattRec,Borgefors1984,Borgefors1986"
@@ -14288,8 +14329,9 @@ Computation of distance maps using chamfer masks.
 \begin_layout Standard
 In practice,
  using integer weights may result in faster computations.
- This also allows to store the resulting distance map within 16-bits grayscale images,
- resulting in more efficient memory usage than floating point computation.
+ This allows to store the resulting distance map within 16-bits grayscale images,
+ resulting in more efficient memory usage than 32-bits floating point computation,
+ and may be computationnally more efficient.
 \end_layout
 
 \begin_layout Standard
@@ -14659,13 +14701,6 @@ saturation
 \end_inset
 
  of the distance map.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Newpage clearpage
-\end_inset
-
-
 \end_layout
 
 \begin_layout Subsubsection
@@ -15192,7 +15227,7 @@ Enhancement of 3D distance maps when using larger chamfer masks.
  Masks are based on (a) four,
  (b) five,
  or (c) six weights.
- Using All images represent the threshold of the distance 100 from image center.
+ All images represent the threshold for the distance 100 from image center.
 \end_layout
 
 \end_inset
@@ -15249,18 +15284,18 @@ Starting from version 1.5,
 
 \begin_layout Standard
 As for the 2D case,
- the choice of the chamfer distance is compromise between the accuracy (larger neighborhood and weights are usually more accurate) and the largest distance that can be represented.
+ the choice of the chamfer distance is a compromise between the accuracy (larger neighborhood and weights are usually more accurate) and the largest distance that can be represented.
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 Case of label images
 \end_layout
 
 \begin_layout Standard
-The distance transform algorithm may also be applied to label images.
+The distance transform algorithms may also be applied to label images.
  However,
  as regions corresponding to each label may be continuous,
- the algorithm need to be adapted.
+ the algorithms need to be adapted.
  
 \end_layout
 
@@ -15318,8 +15353,7 @@ An example of a label image containing contiguous regions,
 For label image,
  distances are computed between each foreground (greater than zero) pixel and the nearest pixel with a different value :
  either 0 (the background) or another label.
- Distances are propagated as for binary images,
- using a pair of forward and backward passes.
+ Distances are propagated as for binary images.
  An example of result is provided on Figure
 \begin_inset space ~
 \end_inset
@@ -15335,12 +15369,101 @@ nolink "false"
 .
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
 Plugin usage
 \end_layout
 
 \begin_layout Standard
 The MorphoLibJ library provides two plugins for computing chamfer distance maps for 2D or 3D binary images:
+\end_layout
+
+\begin_layout Minisec
+Euclidean Distance Map 
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Euclidean Distance Map
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "op:Euclidean-Distance-Map"
+
+\end_inset
+
+Computes the Euclidean distance map from a binary or label image,
+ between each foreground pixel to the nearest pixel with a different value (either background or another label).
+\end_layout
+
+\begin_layout Minisec
+Euclidean Distance Map 3D
+\begin_inset Index plu
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Euclidean Distance Map 3D
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "op:Euclidean-Distance-Map-3D"
+
+\end_inset
+
+Computes the Euclidean distance map from a 3D binary or label image,
+ between each foreground pixel to the nearest pixel with a different value (either background or another label).
 \end_layout
 
 \begin_layout Minisec
@@ -15380,7 +15503,7 @@ name "op:Chamfer-Distance-Map"
 
 \end_inset
 
-computes a chamfer distance map from a binary or label image,
+Computes a chamfer distance map from a binary or label image,
  between each foreground pixel to the nearest pixel with a different value (either background or another label).
 \end_layout
 
@@ -15417,17 +15540,16 @@ Chamfer Distance Map 3D
 \begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
-name "op:Chamfer-Distance-Map-3d"
+name "op:Chamfer-Distance-Map-3D"
 
 \end_inset
 
-computes a chamfer distance map from a 3D binary image between each foreground voxel to the nearest voxel with a different value (either background or another label).
+Computes a chamfer distance map from a 3D binary image between each foreground voxel to the nearest voxel with a different value (either background or another label).
  Input image is assumed to have cubic voxels.
 \end_layout
 
 \begin_layout Standard
-For each plugin,
- a dialog opens and allows to select the following parameters:
+The following options may be adjusted:
 \end_layout
 
 \begin_layout Labeling
@@ -15463,7 +15585,7 @@ Preview (2D only) enable the preview of the result
 
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Geodesic distance transform
 \end_layout
 
@@ -15675,7 +15797,7 @@ Computation of the geodesic distance map on a 3D binary image.
 
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 Plugins
 \end_layout
 
@@ -15835,7 +15957,7 @@ nolink "false"
  Binary image is assumed to have cubic voxels.
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 Results interpretation
 \end_layout
 
@@ -16000,7 +16122,7 @@ When computation are performed with integers,
  
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 Algorithms
 \end_layout
 
@@ -25061,7 +25183,7 @@ n.a.
 \begin_layout Plain Layout
 \begin_inset CommandInset ref
 LatexCommand pageref
-reference "op:Chamfer-Distance-Map-3d"
+reference "op:Chamfer-Distance-Map-3D"
 nolink "false"
 
 \end_inset
