@@ -999,6 +999,32 @@ adjacency relationship
 \series bold
 connectivity
 \series default
+
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+connectivity
+\end_layout
+
+\end_inset
+
 ,
  between pixels of voxels 
 \begin_inset CommandInset citation
@@ -1520,7 +1546,33 @@ morphological dilation
 morphological erosion
 \series default
 .
- The principle of morphological dilation is to test for each point of the plane,
+ The principle of morphological dilation
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+dilation
+\end_layout
+
+\end_inset
+
+ is to test for each point of the plane,
  if the structuring element centred on this point 
 \series bold
 intersects
@@ -1537,18 +1589,56 @@ nolink "false"
 
 \end_inset
 
-).
+-b).
  It results in a set larger than the original set.
  
 \end_layout
 
 \begin_layout Standard
-The principle of morphological erosion is to test for each point of the plane if the structuring element centred on this point 
+The principle of morphological erosion
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+erosion
+\end_layout
+
+\end_inset
+
+ is to test for each point of the plane if the structuring element centred on this point 
 \series bold
 is contained
 \series default
  within the original set.
- It results in a set smaller than original set.
+ It results in a set smaller than original set (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Principle-Dilation-Erosion"
+nolink "false"
+
+\end_inset
+
+-c).
 \end_layout
 
 \begin_layout Standard
@@ -1765,8 +1855,60 @@ name "subsec:Erosion-Dilation"
 \begin_layout Standard
 Morphological erosion and dilation may also be applied on grayscale images.
  In that case,
- the morphological dilation computes for each pixel the maximum within its neighborhood (defined by the structuring element),
- whereas the morphological erosion considers the minimum value within the neighborhood (Fig
+ the morphological dilation
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+dilation!grayscale
+\end_layout
+
+\end_inset
+
+ computes for each pixel the maximum within its neighborhood (defined by the structuring element),
+ whereas the morphological erosion
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+erosion!grayscale
+\end_layout
+
+\end_inset
+
+ considers the minimum value within the neighborhood (Fig
 \begin_inset space ~
 \end_inset
 
@@ -1952,6 +2094,32 @@ removing noise within images
 \series bold
 morphological closing
 \series default
+
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+closing
+\end_layout
+
+\end_inset
+
 ,
  and removes dark structures smaller than the structuring element (Figure
 \begin_inset space ~
@@ -2116,6 +2284,32 @@ morphological
 \series bold
 opening
 \series default
+
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+opening
+\end_layout
+
+\end_inset
+
 ,
  and removes bright structures smaller than the structuring element (Figure
 \begin_inset space ~
@@ -2441,6 +2635,32 @@ More complicated combinations of elementary operations can be used.
  The 
 \series bold
 morphological gradient
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+gradient
+\end_layout
+
+\end_inset
+
+
 \series default
  (also known as the 
 \series bold
@@ -2451,6 +2671,32 @@ Beucher gradient
  It reveals the 
 \series bold
 boundaries
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+boundary
+\end_layout
+
+\end_inset
+
+
 \series default
  of the structures within the image (Figure
 \begin_inset space ~
@@ -2675,12 +2921,64 @@ name "subsec:Top-hats"
 \begin_layout Standard
 The 
 \series bold
-white top-hat 
+white top-hat
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+top-hat
+\end_layout
+
+\end_inset
+
+ 
 \series default
 operator first computes a morphological opening (resulting in removing bright structures smaller than structuring elements),
  and removes the result from the original image.
  When applied with a large structuring element,
- the result is an homogenization of the background,
+ the result is an homogenization of the background
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+inhomogeneous background
+\end_layout
+
+\end_inset
+
+,
  making bright structures easier to segment (Figure
 \begin_inset space ~
 \end_inset
@@ -3074,7 +3372,19 @@ literal "true"
 \end_layout
 
 \begin_layout Standard
-An alternative is to apply directional filtering.
+An alternative is to apply directional filtering
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+directional filtering
+\end_layout
+
+\end_inset
+
+.
  The principle is to consider an oriented structuring element such as a line segment of a given length,
  and to perform morphological operations for various orientations of the structuring element 
 \begin_inset CommandInset citation
@@ -3513,7 +3823,7 @@ Morphological filters
 \begin_inset Index plu
 range none
 pageformat default
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -3573,7 +3883,7 @@ Directional filtering
 \begin_inset Index plu
 range none
 pageformat default
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -3591,6 +3901,18 @@ status open
 \noun off
 \color none
 Directional Filtering
+\end_layout
+
+\end_inset
+
+
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+directional filtering
 \end_layout
 
 \end_inset
@@ -4133,7 +4455,33 @@ name "sec:Morphological-Reconstruction"
 \end_layout
 
 \begin_layout Standard
-The morphological reconstruction is at the basis of many useful algorithms,
+The morphological reconstruction
+\begin_inset Index idx
+range none
+pageformat default
+status open
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+reconstruction
+\end_layout
+
+\end_inset
+
+ is at the basis of many useful algorithms,
  such as border removing,
  hole filling,
  or detection of regional minima or maxima in grayscale images.
@@ -4150,7 +4498,33 @@ The principle of morphological reconstruction canbe illustrated by applying
 conditional dilations or erosions
 \series default
  until idempotence.
- Conditional dilation is the result of a dilation,
+ Conditional dilation
+\begin_inset Index idx
+range none
+pageformat default
+status open
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+dilation!conditional
+\end_layout
+
+\end_inset
+
+ is the result of a dilation,
  combined with a mask image using a logical operation.
  Conditional dilations are repeated until no more modification occur (idempotence condition).
  
@@ -4279,6 +4653,32 @@ By choosing the marker image,
  and combining with original image will 
 \series bold
 remove particles or regions touching the borders
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+kill borders
+\end_layout
+
+\end_inset
+
+
 \series default
  (Figure
 \begin_inset space ~
@@ -4360,6 +4760,32 @@ In a similar way,
  computing morphological reconstruction by using the border of the complement of the image makes it possible to 
 \series bold
 fill holes
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+fill holes
+\end_layout
+
+\end_inset
+
+
 \series default
  that may appear in particles.
 \end_layout
@@ -5054,14 +5480,66 @@ name "subsec:Regional-Extrema"
 \begin_layout Standard
 
 \series bold
-Regional minima 
+Regional minima
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+regional minima
+\end_layout
+
+\end_inset
+
+ 
 \series default
 are defined as connected regions of elements (pixels or voxels) with the same value,
  and whose neighboring elements all have values greater than that of the region.
  Similarly,
  
 \series bold
-regional maxima 
+regional maxima
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+regional maxima
+\end_layout
+
+\end_inset
+
+ 
 \series default
 are regions of connected pixels or voxels with the same value,
  and whose neighbors all have smaller value (Figure
@@ -5272,7 +5750,67 @@ extended extrema
 \end_layout
 
 \begin_layout Standard
-Extended minima and maxima are based on the 
+Extended minima
+\series bold
+
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+extended minima
+\end_layout
+
+\end_inset
+
+
+\series default
+ and maxima
+\series bold
+
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+extended maxima
+\end_layout
+
+\end_inset
+
+
+\series default
+ are based on the 
 \series bold
 H-extrema transformations
 \series default
@@ -5287,7 +5825,33 @@ H-extrema transformations
 \begin_inset Formula $f$
 \end_inset
 
- is obtained by performing a morphological reconstruction by dilation of the function 
+ is obtained by performing a morphological reconstruction
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+reconstruction
+\end_layout
+
+\end_inset
+
+ by dilation of the function 
 \begin_inset Formula $f-h$
 \end_inset
 
@@ -5554,7 +6118,33 @@ name "subsec:Extrema-Imposition"
 \begin_layout Standard
 It is sometimes useful to transform an input grayscale image by 
 \series bold
-imposing minima or maxima 
+imposing minima or maxima
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+imposition of minima/maxima
+\end_layout
+
+\end_inset
+
+ 
 \series default
 specified by a binary image.
  Such process is at the basis of watershed-based morphological segmentation (Section
@@ -5995,12 +6585,62 @@ name "sec:Attribute-Filtering"
 \end_layout
 
 \begin_layout Standard
-Attribute filters aim at removing components of an image based on a certain size criterion,
+Attribute filters
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+attribute filtering
+\end_layout
+
+\end_inset
+
+ aim at removing components of an image based on a certain size criterion,
  rather than on intensity.
  The most common and useful criterion is the number of pixels/voxels (i.e.,
  the area or volume).
  For example,
- a size opening operation with a threshold value equal to 20 will remove all blobs containing fewer than 20 voxels.
+ a size opening
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+size opening
+\end_layout
+
+\end_inset
+
+
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+opening!size
+\end_layout
+
+\end_inset
+
+ operation with a threshold value equal to 20 will remove all blobs containing fewer than 20 voxels.
  The length of the diagonal of the bounding box can also be of interest to discriminate elongated versus round component shapes.
  
 \end_layout
@@ -6333,7 +6973,33 @@ Example of area opening on a grayscale image.
 
 \begin_layout Standard
 As for classical morphological filters,
- grayscale attribute closing or tophat can be defined.
+ grayscale attribute closing or tophat
+\begin_inset Index idx
+range none
+pageformat default
+status open
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+top-hat
+\end_layout
+
+\end_inset
+
+ can be defined.
  Grayscale attribute closing consists in removing dark connected components whose size is smaller than a specified value.
  White [resp.
  Black] Attribute Top-Hat considers the difference of the attribute opening [resp.
@@ -6509,7 +7175,33 @@ name "chap:Watershed-segmentation"
 \begin_layout Standard
 The 
 \series bold
-watershed algorithm
+watershed
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+watershed
+\end_layout
+
+\end_inset
+
+ algorithm
 \series default
  assimilates the grayscale image to a digital elevation model,
  and aims at detecting the different catchment basins.
@@ -6590,6 +7282,32 @@ The basic idea consists of considering the input image as topographic surface an
 All points in the surface at a given minimum constitute the 
 \series bold
 catchment basin
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+catchment basin
+\end_layout
+
+\end_inset
+
+
 \series default
  associated with that minimum.
  The 
@@ -7076,6 +7794,18 @@ Marker-controlled Watershed
 
 \end_inset
 
+
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+watershed!marker-controlled
+\end_layout
+
+\end_inset
+
  is an ImageJ/Fiji plugin to segment grayscale images of any type (8,
  16 and 32-bit) in 2D and 3D based on the marker-controlled watershed algorithm by 
 \begin_inset CommandInset citation
@@ -7092,7 +7822,33 @@ literal "true"
  specific seed points or markers
 \series default
 .
- A common choice for the markers are the local minima of the gradient of the image,
+ A common choice for the markers are the local minima of the gradient
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+gradient
+\end_layout
+
+\end_inset
+
+ of the image,
  but the method works on any specific marker,
  either selected manually by the user or determined automatically by another algorithm (see Fig.
  
@@ -7276,6 +8032,17 @@ Introduction
 \end_layout
 
 \begin_layout Standard
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+watershed!interactive
+\end_layout
+
+\end_inset
+
 Similar to the Marker-controlled Watershed plugin,
  this ImageJ/Fiji plugin segments grayscale images of any type (8,
  16 and 32-bit) in 2D and 3D using the marker-controlled watershed algorithm by 
@@ -7716,7 +8483,19 @@ Morphological Segmentation
 
  is an ImageJ/Fiji plugin that combines morphological operations,
  such as extended minima and morphological gradient,
- with watershed flooding algorithms to segment grayscale images of any type (8,
+ with watershed
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+watershed!morphological segmentation
+\end_layout
+
+\end_inset
+
+ flooding algorithms to segment grayscale images of any type (8,
  16 and 32-bit) in 2D and 3D.
 \end_layout
 
@@ -8506,7 +9285,33 @@ Introduction
 \end_layout
 
 \begin_layout Standard
-A classic way of separating touching objects in binary images makes use of the distance transform and the watershed method.
+A classic way of separating touching objects in binary images makes use of the distance transform
+\begin_inset Index idx
+range none
+pageformat default
+status open
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+distance transform
+\end_layout
+
+\end_inset
+
+ and the watershed method.
  The idea is to create a border as far as possible from the center of the overlapping objects.
  This strategy works very well on rounded objects and it is called Distance Transform Watershed.
  It consists on calculating the distance transform of the binary image,
@@ -9137,7 +9942,33 @@ name "sec:Region-Analysis"
 \end_layout
 
 \begin_layout Standard
-Region analysis usually refers to the quantification of features related to the 
+Region analysis
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+region analysis
+\end_layout
+
+\end_inset
+
+ usually refers to the quantification of features related to the 
 \series bold
 size
 \series default
@@ -9664,6 +10495,32 @@ Euler Number
 The 
 \series bold
 Euler number
+\begin_inset Index idx
+range none
+pageformat default
+status open
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Euler number
+\end_layout
+
+\end_inset
+
+
 \series default
  is a feature that describes the 
 \series bold
@@ -9786,7 +10643,33 @@ nolink "false"
 \end_inset
 
 ).
- The resulting reconstruction depends on the choice of the connectivity (see Section
+ The resulting reconstruction depends on the choice of the connectivity
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+connectivity
+\end_layout
+
+\end_inset
+
+ (see Section
 \begin_inset space ~
 \end_inset
 
@@ -10208,6 +11091,32 @@ By computing the parameters of the ellipse that produces the same moments up to 
  one obtains the 
 \series bold
 equivalent ellipse
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ellipse
+\end_layout
+
+\end_inset
+
+
 \series default
  
 \begin_inset CommandInset citation
@@ -10772,7 +11681,33 @@ solidity
 \begin_inset Quotes erd
 \end_inset
 
-) is defined as the ratio of the area of the region over the area of its convex hull.
+) is defined as the ratio of the area of the region over the area of its convex hull
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+convex hull
+\end_layout
+
+\end_inset
+
+.
 \begin_inset Formula 
 \begin{align*}
 \text{convexity} & =\frac{A(X)}{A(\text{ConvHull}(X))}
@@ -10925,6 +11860,32 @@ Tortuosity
 The 
 \series bold
 tortuosity
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+tortuosity
+\end_layout
+
+\end_inset
+
+
 \series default
  is defined as the ratio of the geodesic diameter over the largest Feret diameter.
  
@@ -12089,7 +13050,33 @@ Skeleton Geodesic Diameter
 
 \end_inset
 
- consists in computing the geodesic diameter of the skeleton of each region.
+ consists in computing the geodesic diameter of the skeleton
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+skeleton
+\end_layout
+
+\end_inset
+
+ of each region.
  The results may be used to assess the geodesic length of the largest path within the region.
  Contrary to the geodesic diameter,
  the path is computed such that is stays close to the medial axis of the region.
@@ -12164,7 +13151,33 @@ name "sec:Region-Analysis-3D"
 \end_layout
 
 \begin_layout Standard
-Region analysis may also be performed on 3D images.
+Region analysis
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+region analysis!3D
+\end_layout
+
+\end_inset
+
+ may also be performed on 3D images.
  As for 2D images,
  input images may be either binary (corresponding to a single region),
  or contain the labels of the different regions to analyze.
@@ -12592,7 +13605,33 @@ Euler number
 As in 2D,
  the 
 \series bold
-3D Euler number 
+3D Euler number
+\begin_inset Index idx
+range none
+pageformat default
+status open
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Euler number
+\end_layout
+
+\end_inset
+
+ 
 \series default
 also quantifies the topology of a set.
  It corresponds to the number of connected components,
@@ -14115,6 +15154,32 @@ When analyzing images,
 \series bold
  distance transform
 \series default
+
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+distance transform
+\end_layout
+
+\end_inset
+
 .
  Its principle is to compute,
  for each foreground pixel,
@@ -14203,6 +15268,32 @@ The most natural choice for computing distance map is to consider the
 \series bold
 Euclidean distance
 \series default
+
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+distance transform!Euclidean
+\end_layout
+
+\end_inset
+
  to the background.
  Several algorithms have been proposed,
  with various performance 
@@ -14250,7 +15341,33 @@ name "subsec:Chamfer-Distances"
 \end_layout
 
 \begin_layout Standard
-Chamfer distance transform is an alternative to Euclidean distance transform that is often simpler to compute 
+Chamfer distance transform
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+distance transform!chamfer
+\end_layout
+
+\end_inset
+
+ is an alternative to Euclidean distance transform that is often simpler to compute 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Rosenfeld_1968_PattRec,Borgefors1984,Borgefors1986"
@@ -15292,7 +16409,33 @@ Case of label images
 \end_layout
 
 \begin_layout Standard
-The distance transform algorithms may also be applied to label images.
+The distance transform
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+distance transform!label image
+\end_layout
+
+\end_inset
+
+ algorithms may also be applied to label images.
  However,
  as regions corresponding to each label may be continuous,
  the algorithms need to be adapted.
@@ -15608,6 +16751,58 @@ In some cases it may be useful to restrict the propagation of distances to a spe
 \series bold
 geodesic distance transform
 \series default
+
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+distance transform!geodesic
+\end_layout
+
+\end_inset
+
+
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+geodesic distance transform
+\end_layout
+
+\end_inset
+
  consists in computing the distance from a given binary marker,
  while constraining the propagation of the distance within a binary mask.
  An illustration is given in Figure
@@ -16175,6 +17370,32 @@ The different structures within a binary images can be individualised by using a
 \series bold
 component labeling algorithm
 \series default
+
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+connected component algorithm
+\end_layout
+
+\end_inset
+
 .
  The result is an image containing integer label,
  each label corresponding to a set of connected pixels or voxels (Figure
@@ -16263,6 +17484,32 @@ The result of a connected component labeling depends on the chosen
 \series bold
 connectivity
 \series default
+
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+connectivity
+\end_layout
+
+\end_inset
+
 ,
  that corresponds to the convention used to decide wether two pixels or voxels are connected or not (Figure
 \begin_inset space ~
@@ -16614,7 +17861,33 @@ Convexification
 
 \begin_layout Standard
 When processing a binary region,
- it can sometimes be useful to consider the binary region corresponding to the convex hull of the original region (Fig.
+ it can sometimes be useful to consider the binary region corresponding to the convex hull
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+convex hull
+\end_layout
+
+\end_inset
+
+ of the original region (Fig.
 \begin_inset space ~
 \end_inset
 
@@ -19326,7 +20599,7 @@ Fill Label Holes
 \begin_inset Index plu
 range none
 pageformat default
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -19362,7 +20635,7 @@ Skeletonize Labels
 \begin_inset Index plu
 range none
 pageformat default
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -19388,7 +20661,33 @@ Skeletonize Labels
 \end_layout
 
 \begin_layout Standard
-Computes the skeleton of each region within a 2D label map,
+Computes the skeleton
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+skeleton!label map
+\end_layout
+
+\end_inset
+
+ of each region within a 2D label map,
  and returns the result within a new label map.
 \end_layout
 
@@ -19925,7 +21224,33 @@ name "sec:Region-Adjacency-Graph"
 \begin_layout Standard
 The 
 \series bold
-region adjacency graph 
+region adjacency graph
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+region adjacency graph
+\end_layout
+
+\end_inset
+
+ 
 \series default
 plugin gives access to the neighborhood relationship between adjacent regions (Figure
 \begin_inset space ~
@@ -20204,6 +21529,18 @@ status collapsed
 \noun off
 \color none
 Label Boundaries
+\end_layout
+
+\end_inset
+
+
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+boundary
 \end_layout
 
 \end_inset
@@ -21444,6 +22781,17 @@ Characterization of dairy matrix microstructure
  granulometry,
  area and boundary length densities]
 \end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset index_print
+LatexCommand printindex
+type "idx"
+name "Index"
 
 \end_inset
 
