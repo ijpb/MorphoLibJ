@@ -42,7 +42,7 @@ public class ChamferDistanceTransform3DShortTest
 	 * Test method for {@link inra.ijpb.label.distmap.ChamferDistanceTransform3DShort#distanceMap(ij.ImageStack)}.
 	 */
 	@Test
-	public void testDistanceMap()
+	public void test_distanceMap_Borgefors()
 	{
 		// create 3D image containing a cube 
 		ImageStack image = ImageStack.create(20, 20, 20, 8);
@@ -63,11 +63,35 @@ public class ChamferDistanceTransform3DShortTest
 		ImageStack result = algo.distanceMap(image);
 		assertEquals(16, result.getBitDepth());
 		
-//		System.out.println("result:");
-//		for (int x = 0; x < 100; x++)
-//		{
-//			System.out.print(((int)result.getVoxel(x, 50, 50)) + " ");
-//		}
+		double middle = result.getVoxel(10, 10, 10);
+		assertEquals(9, middle, .1);
+	}
+
+	/**
+	 * Test method for {@link inra.ijpb.label.distmap.ChamferDistanceTransform3DShort#distanceMap(ij.ImageStack)}.
+	 */
+	@Test
+	public void test_distanceMap_Svensson()
+	{
+		// create 3D image containing a cube 
+		ImageStack image = ImageStack.create(20, 20, 20, 8);
+		for (int z = 2; z < 19; z++)
+		{
+			for (int y = 2; y < 19; y++)
+			{
+				for (int x = 2; x < 19; x++)
+				{
+					image.setVoxel(x, y, z, 255);
+				}
+			}
+		}
+		
+		ChamferMask3D mask = ChamferMask3D.SVENSSON_3_4_5_7;
+		DistanceTransform3D algo = new ChamferDistanceTransform3DShort(mask, true);
+		
+		ImageStack result = algo.distanceMap(image);
+		assertEquals(16, result.getBitDepth());
+
 		double middle = result.getVoxel(10, 10, 10);
 		assertEquals(9, middle, .1);
 	}

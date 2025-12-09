@@ -226,7 +226,7 @@ public class ChamferDistanceTransform3DFloat extends AlgoStub implements Distanc
 						if (((int) labels.getValue(x2, y2, z2)) != label)
 						{
 							// Update with distance to nearest different label
-							newDist = offset.weight;
+							newDist = Math.min(newDist, offset.weight);
 						}
 						else
 						{
@@ -295,7 +295,7 @@ public class ChamferDistanceTransform3DFloat extends AlgoStub implements Distanc
 						if (((int) labels.getValue(x2, y2, z2)) != label)
 						{
 							// Update with distance to nearest different label
-							newDist = offset.weight;
+							newDist = Math.min(newDist, offset.weight);
 						}
 						else
 						{
