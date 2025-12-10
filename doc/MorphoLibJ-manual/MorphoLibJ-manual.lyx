@@ -1530,10 +1530,20 @@ literal "true"
 structuring element
 \series default
 .
- Common structuring element include squares,
- discrete disks and octagons.
+ Common structuring element include squares or disks.
  Linear structuring element of various orientations may also be used to assess local orientation of the structures.
- 
+ The discretization of structuring element is discussed in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Structuring-Elements"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -3643,6 +3653,118 @@ Similar results may be obtained for enhancing dark curvilinear structures,
  by using morphological closing or median filters,
  and combining the results by computing the minimum over all directions.
  
+\end_layout
+
+\begin_layout Section
+Structuring elements
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Structuring-Elements"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Common structuring element include squares,
+ discrete disks and octagons.
+ Linear structuring element of various orientations may also be used to assess local orientation of the structures.
+ 
+\end_layout
+
+\begin_layout Standard
+The size of the structuring element is often expressed with its 
+\series bold
+radius
+\series default
+.
+ For symmetry reasons,
+ structuring elements are centered on a center pixel or voxel.
+ For square or disk structuring elements,
+ the size therefore corresponds to the diameter,
+ given as twice the radius plus the central pixel:
+\begin_inset Formula 
+\[
+d=2\cdot r+1
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Structuring elements with 
+\begin_inset Quotes eld
+\end_inset
+
+Disk
+\begin_inset Quotes erd
+\end_inset
+
+ shape (and Ball in 3D) are generated based on the inner 
+\begin_inset Quotes eld
+\end_inset
+
+RankFilters
+\begin_inset Quotes erd
+\end_inset
+
+ computation class from ImageJ (see Figure).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement document
+alignment document
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/strel/disk_strels.png
+	width 80text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Disk structuring elements for radius values 1,
+ 2,
+ 3 and 5.
+ The center pixel is indicated with a black dot.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
