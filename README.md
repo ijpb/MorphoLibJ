@@ -58,11 +58,11 @@ Documentation
 -------------
 
 A more detailed presentation of the library and its plugins is available on the [ImageJ/Fiji Wiki](http://imagej.net/MorphoLibJ).
-
 We have as well a [User Manual](https://github.com/ijpb/MorphoLibJ/releases/download/MorphoLibJ_-1.6.4/MorphoLibJ-manual-v1.6.4.pdf) in pdf format.
 
-The main source code directory is [src/main/java/inra/ijpb](http://github.com/ijpb/MorphoLibJ/tree/master/src/main/java/inra/ijpb).
+The library have been presented during several meetings. In particular, it was presented during a [NeuBIAS NEUBIASAcademy@Home webinar](https://www.youtube.com/watch?v=_SiM33C3KcE) in 2020 ([slides are available](https://f1000research.com/slides/9-1378) as well).
 
+The main source code directory is [src/main/java/inra/ijpb](http://github.com/ijpb/MorphoLibJ/tree/master/src/main/java/inra/ijpb). 
 You can browse the [javadoc](https://ijpb.github.io/MorphoLibJ/javadoc/index.html) for more information about its API.
 
 Citation
