@@ -274,40 +274,58 @@ public class AnalyzeRegions implements PlugInFilter
     public static final class Features
     {
         /** The boolean flag for computing pixel count.*/
-        public boolean pixelCount = false;
+        @Deprecated
+		public boolean pixelCount = false;
         /** The boolean flag for computing area.*/
+        @Deprecated
         public boolean area = true;
         /** The boolean flag for computing perimeter.*/
+        @Deprecated
         public boolean perimeter = true;
         /** The boolean flag for computing circularity.*/
+        @Deprecated
         public boolean circularity = true;
         /** The boolean flag for computing Euler number.*/
+        @Deprecated
         public boolean eulerNumber = true;
         /** The boolean flag for computing bounding box.*/
+        @Deprecated
         public boolean boundingBox = true;
         /** The boolean flag for computing centroid.*/
+        @Deprecated
         public boolean centroid = true;
         /** The boolean flag for computing equivalent ellipse.*/
+        @Deprecated
         public boolean equivalentEllipse = true;
         /** The boolean flag for computing ellipse elongation.*/
+        @Deprecated
         public boolean ellipseElongation = true;
         /** The boolean flag for computing convexity.*/
+        @Deprecated
         public boolean convexity = true;
         /** The boolean flag for computing maximum Feret diameter.*/
+        @Deprecated
         public boolean maxFeretDiameter = true;
         /** The boolean flag for computing oriented box.*/
+        @Deprecated
         public boolean orientedBox = true;
         /** The boolean flag for computing elongation of oriented box.*/
+        @Deprecated
         public boolean orientedBoxElongation = true;
         /** The boolean flag for computing geodesic diameter.*/
+        @Deprecated
         public boolean geodesicDiameter = true;
         /** The boolean flag for computing tortuosity.*/
+        @Deprecated
         public boolean tortuosity = true;
         /** The boolean flag for computing largest inscribed disc.*/
+        @Deprecated
         public boolean maxInscribedDisc = true;
         /** The boolean flag for computing average thickness.*/
+        @Deprecated
         public boolean averageThickness = true;
         /** The boolean flag for computing geodesic elongation.*/
+        @Deprecated
         public boolean geodesicElongation = true;
         
         /**
@@ -316,6 +334,7 @@ public class AnalyzeRegions implements PlugInFilter
          * @param state
          *            the state to set.
          */
+        @Deprecated
         public void setAll(boolean state)
         {
             this.pixelCount = state;

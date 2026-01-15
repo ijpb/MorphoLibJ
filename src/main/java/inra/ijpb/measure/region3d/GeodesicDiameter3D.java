@@ -71,11 +71,6 @@ public class GeodesicDiameter3D extends RegionAnalyzer3D<GeodesicDiameter3D.Resu
 	 */
 	ChamferMask3D chamferMask;
 
-	/**
-	 * The string used for indicating the current step in algo events.
-	 */
-	String currentStep = "";
-	
 	
 	// ==================================================
 	// Constructors 
@@ -198,10 +193,10 @@ public class GeodesicDiameter3D extends RegionAnalyzer3D<GeodesicDiameter3D.Resu
 
 		this.fireStatusChanged(this, "Computing first geodesic extremities...");
 
-		// Second distance propagation from first maximum
+		// Distance propagation from initial markers
 		distanceMap = gdt.geodesicDistanceMap(marker, labelImage);
 
-		// find position of maximal value for each label
+		// find position of maximum value for each label
 		// this is expected to correspond to a geodesic extremity 
 		Cursor3D[] firstGeodesicExtremities = LabelValues.findPositionOfMaxValues(distanceMap, labelImage, labels);
 
@@ -250,25 +245,15 @@ public class GeodesicDiameter3D extends RegionAnalyzer3D<GeodesicDiameter3D.Resu
 			result[i] = res;
 		}
 
-		//		// calibrate the results
-		//		if (calib.scaled())
-		//		{
-		//			this.fireStatusChanged(this, "Re-calibrating results");
-		//			for (int i = 0; i < nLabels; i++)
-		//			{
-		//				result[i] = result[i].recalibrate(calib);
-		//			}
-		//		}
-
 		// returns the results
 		return result;
 	}
 
 
-		// ==================================================
-		// Implementation of AlgoListener interface 
+	// ==================================================
+	// Implementation of AlgoListener interface 
 
-		@Override
+	@Override
 	public void algoProgressChanged(AlgoEvent evt) 
 	{
 		fireProgressChanged(new Event(this, evt));
@@ -289,10 +274,6 @@ public class GeodesicDiameter3D extends RegionAnalyzer3D<GeodesicDiameter3D.Resu
 		public Event(GeodesicDiameter3D source, AlgoEvent evt)
 		{
 			super(source, "(GeodDiam3d) " + evt.getStatus(), evt.getCurrentProgress(), evt.getTotalProgress());
-			if (!currentStep.isEmpty())
-			{
-				this.status = "(GeodDiam3d-" + currentStep + ") " + evt.getStatus();
-			}
 		}
 	}
 	

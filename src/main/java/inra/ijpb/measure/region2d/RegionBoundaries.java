@@ -243,6 +243,8 @@ public class RegionBoundaries
      * <li><i>(x+0.5, y+1)</i>: bottom boundary</li>
      * </ul>
      * 
+     * Method used for computation of convexity.
+     * 
      * @param binaryImage
      *            the image processor containing the binary region
      * @return an array of Point2D, located on the boundary of the region.
@@ -302,6 +304,8 @@ public class RegionBoundaries
      * <li><i>(x+1 , y+0.5)</i>: right boundary</li>
      * <li><i>(x+0.5, y+1)</i>: bottom boundary</li>
      * </ul>
+     * 
+     * Method used for computation of convexity.
      * 
      * @param labelImage
      *            the image processor containing the region labels
