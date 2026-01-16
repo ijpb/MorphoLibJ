@@ -20453,7 +20453,33 @@ collisions
 \end_layout
 
 \begin_layout Itemize
-when applying a dilation,
+when applying a dilation
+\begin_inset Index idx
+range none
+pageformat default
+status open
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+dilation!label map
+\end_layout
+
+\end_inset
+
+,
  only background pixels or voxels are updated,
  according to the closest label within the neighborhood (Figure
 \begin_inset space ~
@@ -20472,12 +20498,38 @@ nolink "false"
 
 -b).
  When two regions are adjacent without background pixel between them,
- the application of dilation do not transform nor move their boundary.
+ the application of the dilation does not transform nor move their boundary.
  
 \end_layout
 
 \begin_layout Itemize
-when applying an erosion,
+when applying an erosion
+\begin_inset Index idx
+range none
+pageformat default
+status open
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+erosion!label map
+\end_layout
+
+\end_inset
+
+,
  label pixels or voxels are removed depending on the labels within the neighborhood and on the 
 \begin_inset Quotes eld
 \end_inset
@@ -20934,7 +20986,174 @@ Skeletonization of a label map with adjacent regions.
 
 \end_layout
 
+\begin_layout Minisec
+Region Inflence Zones
+\begin_inset Index plu
+range none
+pageformat default
+status open
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Region Influence Zones
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Standard
+Computes the 
+\series bold
+influence zone
+\series default
+
+\begin_inset Index idx
+range none
+pageformat default
+status collapsed
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+influence zone
+\end_layout
+
+\end_inset
+
+ of each region within a label map,
+ and returns the result within a new label map.
+ The influence zone of a region is comprises all the pixels within the region,
+ plus the background pixels that are closer to this region than any other region.
+ The result of this plugin may be seen as a special case of label dilation,
+ using an arbitrary large dilation size.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement document
+alignment document
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+placement document
+alignment document
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/blobs/blobs-lb2.png
+	width 35text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Original Label Map
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+placement document
+alignment document
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/blobs/blobs-lb2-InfluenceZones.png
+	width 35text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Influence Zones
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Region-Influence-Zones"
+
+\end_inset
+
+Computation of influence zones of a label map.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newpage newpage
 \end_inset
 
