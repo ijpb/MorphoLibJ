@@ -33,9 +33,10 @@ import inra.ijpb.binary.distmap.ChamferMask2D.ShortOffset;
  * Computation of geodesic distances based on a chamfer mask using short integer
  * array for storing result.
  * 
- * The maximum propagated distance is limited to Short.MAX_VALUE.
+ * This implementation also works on label maps as input.
  * 
  * All computations are performed using integers, results are stored as shorts.
+ * The maximum propagated distance is limited to Short.MAX_VALUE.
  * 
  * This implementation is based on iteration of forward-backward passes, until
  * idempotence. The "hybrid" implementation is usually more efficient for
@@ -366,12 +367,9 @@ public class GeodesicDistanceTransformShort extends AlgoStub implements Geodesic
 		int sizeY = distMap.getHeight();
 
 		// retrieve the minimum weight
-		double w0 = Double.POSITIVE_INFINITY;
-		for (ShortOffset offset : this.mask.getOffsets())
-		{
-			w0 = Math.min(w0, offset.weight);
-		}
+		double w0 = this.mask.getShortNormalizationWeight();
 		
+		// iterate over pixels within map to normalize values
 		for (int y = 0; y < sizeY; y++)
 		{
 			for (int x = 0; x < sizeX; x++)

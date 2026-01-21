@@ -35,6 +35,8 @@ import inra.ijpb.binary.distmap.ChamferMask2D.FloatOffset;
  * Computation of geodesic distances based on a chamfer mask using floating point
  * array for storing result.
  * 
+ * This implementation also works on label maps as input.
+ * 
  * @see GeodesicDistanceTransformShortHybrid
  * 
  * @author David Legland
@@ -412,6 +414,7 @@ public class GeodesicDistanceTransformFloatHybrid extends AlgoStub implements Ge
         // retrieve the minimum weight
         double w0 = this.mask.getNormalizationWeight();
 		
+        // iterate over pixels within map to normalize values
 		for (int y = 0; y < sizeY; y++)
 		{
 			for (int x = 0; x < sizeX; x++)

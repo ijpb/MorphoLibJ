@@ -34,7 +34,8 @@ import inra.ijpb.data.image.Images3D;
  * Computation of geodesic distance transform for 3D images, using floating
  * point computation.
  * 
- * Adapted for the management of label images.
+ * This implementation also works on label maps as input.
+ * 
  * 
  * @author dlegland
  *
@@ -351,6 +352,7 @@ public class GeodesicDistanceTransform3DFloat extends AlgoStub implements Geodes
 		// retrieve the minimum weight
 		double w0 = this.chamferMask.getNormalizationWeight();
 		
+		 // iterate over voxels within map to normalize values
 		for (int z = 0; z < sizeZ; z++)
 		{
 			fireProgressChanged(this, z, sizeZ);

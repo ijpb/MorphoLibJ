@@ -33,6 +33,8 @@ import inra.ijpb.binary.distmap.ChamferMask2D.FloatOffset;
  * Computation of Chamfer geodesic distances using floating point array for
  * storing result.
  * 
+ * This implementation also works on label maps as input.
+ * 
  * This implementation is based on iteration of forward-backward passes, until
  * idempotence. The "hybrid" implementation is usually more efficient for
  * complex images.
@@ -365,6 +367,7 @@ public class GeodesicDistanceTransformFloat extends AlgoStub implements
 		// retrieve the minimum weight
 		double w0 = this.mask.getNormalizationWeight();
 		
+		 // iterate over pixels within map to normalize values
 		for (int y = 0; y < sizeY; y++)
 		{
 			this.fireProgressChanged(this, y, sizeY);
