@@ -42,7 +42,7 @@ If you develop plugins / applications based on MorphoLibJ, you can use add the f
   <dependency>
     <groupId>fr.inra.ijpb</groupId>
     <artifactId>MorphoLibJ_</artifactId>
-    <version>1.6.4</version>
+    <version>1.6.5</version>
   </dependency>
 ```
 
@@ -51,14 +51,14 @@ one workaround is to download the jar file of the last version,
 and to add it to the local maven repository. 
 The following command may help (adapt version number as necessary):
 ```
-mvn install:install-file -Dfile=MorphoLibJ_-1.6.3.jar -DgroupId=fr.inra.ijpb -DartifactId=MorphoLibJ_ -Dversion=1.6.3 -Dpackaging=jar -DgeneratePom=true
+mvn install:install-file -Dfile=MorphoLibJ_-1.6.5.jar -DgroupId=fr.inra.ijpb -DartifactId=MorphoLibJ_ -Dversion=1.6.5 -Dpackaging=jar -DgeneratePom=true
 ```
 
 Documentation
 -------------
 
 A more detailed presentation of the library and its plugins is available on the [ImageJ/Fiji Wiki](http://imagej.net/MorphoLibJ).
-We have as well a [User Manual](https://github.com/ijpb/MorphoLibJ/releases/download/MorphoLibJ_-1.6.4/MorphoLibJ-manual-v1.6.4.pdf) in pdf format.
+We have as well a [User Manual](https://github.com/ijpb/MorphoLibJ/releases/download/MorphoLibJ_-1.6.5/MorphoLibJ-manual-v1.6.5.pdf) in pdf format.
 
 The library have been presented during several meetings. In particular, it was presented during a [NeuBIAS NEUBIASAcademy@Home webinar](https://www.youtube.com/watch?v=_SiM33C3KcE) in 2020 ([slides are available](https://f1000research.com/slides/9-1378) as well).
 
