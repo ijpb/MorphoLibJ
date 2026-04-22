@@ -133,15 +133,11 @@ public class AverageThickness extends RegionAnalyzer2D<AverageThickness.Result>
             }
         }
 
-        // convert to array of results
+        // convert to array of (calibrated) results 
         AverageThickness.Result[] results = new AverageThickness.Result[nLabels];
         for (int i = 0; i < nLabels; i++)
         {
-            Result res = new Result();
-            res.meanDist = calib.pixelWidth * (sums[i] / counts[i]);
-            res.avgThickness = res.meanDist * 2 - 1;
-            res.unit = calib.getUnit();
-            results[i] = res;
+        	results[i] = new Result(sums[i] / counts[i], calib);
         }
         return results;
     }
@@ -160,20 +156,33 @@ public class AverageThickness extends RegionAnalyzer2D<AverageThickness.Result>
     public class Result
     {
         /**
-         * Average distance computed along the skeleton
+         * Average distance computed along the skeleton, in pixels.
          */
-        public double meanDist;
+        public final double meanDist_Pixels;
+        
+        /**
+         * Average distance computed along the skeleton, converted in user units.
+         */
+        public final double meanDist;
         
         /**
          * Average thickness value computed from the average distance.
          * Typically: avgThickness = avgDist * 2 - 1.
          */
-        public double avgThickness;
+        public final double avgThickness;
         
         /**
          * The unit associated to the measure.
          */
-        public String unit = "pixel";
+        public final String unit;
+        
+        public Result(double meanDistInPixels, Calibration calib)
+        {
+            this.meanDist_Pixels = meanDistInPixels;
+            this.meanDist = calib.pixelWidth * this.meanDist_Pixels;
+            this.avgThickness = calib.pixelWidth * (this.meanDist_Pixels * 2 - 1);
+            this.unit = calib.getUnit();
+        }
     }
 
 }

@@ -64,8 +64,8 @@ public class AverageThicknessTest
         assertEquals(1, results.length);
         
         Result res = results[0];
-        assertTrue(res.meanDist > 2);
-        assertTrue(res.meanDist <= 3);
+        assertTrue(res.meanDist_Pixels > 2);
+        assertTrue(res.meanDist_Pixels <= 3);
     }
 
     @Test
@@ -102,8 +102,8 @@ public class AverageThicknessTest
         for (int i = 0; i < labels.length; i++)
         {
             Result res = results[i];
-            assertTrue(res.meanDist > 1.5);
-            assertTrue(res.meanDist < 2.5);
+            assertTrue(res.meanDist_Pixels > 1.5);
+            assertTrue(res.meanDist_Pixels < 2.5);
         }
     }
 }
