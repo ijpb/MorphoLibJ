@@ -52,8 +52,6 @@ import ij.process.ShortProcessor;
 import inra.ijpb.algo.DefaultAlgoListener;
 import inra.ijpb.binary.distmap.ChamferMask2D;
 import inra.ijpb.binary.distmap.ChamferMask3D;
-import inra.ijpb.data.Cursor2D;
-import inra.ijpb.data.Cursor3D;
 import inra.ijpb.data.image.ImageUtils;
 import inra.ijpb.label.conncomp.FloodFillRegionComponentsLabeling;
 import inra.ijpb.label.conncomp.FloodFillRegionComponentsLabeling3D;
@@ -66,6 +64,7 @@ import inra.ijpb.label.distmap.ChamferDistanceTransform3DShort;
 import inra.ijpb.label.distmap.DistanceTransform2D;
 import inra.ijpb.label.distmap.DistanceTransform3D;
 import inra.ijpb.label.edit.FindAllLabels;
+import inra.ijpb.label.edit.MergeLabels;
 import inra.ijpb.label.edit.ReplaceLabelValues;
 import inra.ijpb.label.filter.ChamferLabelDilation2DShort;
 import inra.ijpb.label.filter.ChamferLabelDilation3DShort;
@@ -2079,77 +2078,7 @@ public class LabelImages
      */
     public static final void mergeLabelsWithGap(ImageProcessor image, float[] labels, float newLabel, int conn)
     {
-        // get image size
-        int sizeX = image.getWidth();
-        int sizeY = image.getHeight();
-        
-        // convert array to tree (to accelerate search)
-        TreeSet<Float> labelSet = new TreeSet<Float>();
-        for (int i = 0; i < labels.length; i++)
-        {
-            labelSet.add(labels[i]);
-        }
-        
-        // determines the shift to compute neighbor coordinates
-        int[][] shifts;
-        if (conn == 4)
-        {
-            shifts = new int[][] {{0, -1}, {-1, 0}, {1, 0}, {0, 1}};
-        }
-        else if (conn == 8)
-        {
-            shifts = new int[][] { 
-                { -1, -1 }, { 0, -1 }, { 1, -1 },   // previous line
-                { -1, 0 }, { 1, 0 },                // current line
-                { -1, 1 }, { 0, 1 }, { 1, 1 } };    // next line
-        }
-        else
-        {
-            throw new IllegalArgumentException("Connectivity value should be either 4 or 8.");
-        }
-        
-        // create structure to store the boundary pixels
-        ArrayList<Cursor2D> boundaryPixels = new ArrayList<Cursor2D>();
-        
-        // process background pixels in-between two or more labels
-        for (int y = 0; y < sizeY; y++)
-        {
-            for (int x = 0; x < sizeX; x++)
-            {
-                // focus on background pixels
-                if (image.getf(x, y) != 0)
-                    continue;
-
-                // extract the neighbor labels
-                ArrayList<Float> neighborLabels = new ArrayList<Float>(shifts.length);
-                for (int[] shift : shifts)
-                {
-                    int x2 = x + shift[0];
-                    if (x2 < 0 || x2 >= sizeX) continue;
-
-                    int y2 = y + shift[1];
-                    if (y2 < 0 || y2 >= sizeY) continue;
-
-                    float value2 = image.getf(x2, y2);
-                    if (value2 == 0) continue;
-
-                    if (!neighborLabels.contains(value2))
-                    {
-                        neighborLabels.add(value2);
-                    }
-                }
-
-                // count number of neighbors
-                if (neighborLabels.size() > 1 && labelSet.containsAll(neighborLabels))
-                    boundaryPixels.add(new Cursor2D(x, y));
-            }
-        }
-        
-        // replace label value of all regions
-        replaceLabels(image, labels, newLabel);
-
-        for (Cursor2D c : boundaryPixels)
-            image.setf(c.getX(), c.getY(), newLabel);          
+    	new MergeLabels().process(image, labels, newLabel, conn);
     }
 
     /**
@@ -2165,87 +2094,7 @@ public class LabelImages
      */
     public static final void mergeLabelsWithGap(ImageStack image, float[] labels, float newLabel, int conn)
     {
-        // get image size
-        int sizeX = image.getWidth();
-        int sizeY = image.getHeight();
-        int sizeZ = image.getSize();
-        
-        // convert array to tree (to accelerate search)
-        TreeSet<Float> labelSet = new TreeSet<Float>();
-        for (int i = 0; i < labels.length; i++)
-        {
-            labelSet.add(labels[i]);
-        }
-        
-        // determines the shift to compute neighbor coordinates
-        int[][] shifts;
-        if (conn == 6)
-        {
-            shifts = new int[][] {{0, 0, -1}, {0, -1, 0}, {-1, 0, 0}, {1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
-        }
-        else if (conn == 26)
-        {
-            shifts = new int[][] {
-                // previous slice (dz = -1)
-                {-1, -1, -1}, {0, -1, -1}, {1, -1, -1},   {-1, 0, -1}, {0, 0, -1}, {1, 0, -1},   {-1, 1, -1}, {0, 1, -1}, {1, 1, -1},   
-                // current slice (dz = 0)
-                {-1, -1, 0}, {0, -1, 0}, {1, -1, 0},   {-1, 0, 0}, {1, 0, 0},   {-1, 1, 0}, {0, 1, 0}, {1, 1, 0},   
-                // next slice (dz = +1 )
-                {-1, -1, 1}, {0, -1, 1}, {1, -1, 1},   {-1, 0, 1}, {0, 0, 1}, {1, 0, 1},   {-1, 1, 1}, {0, 1, 1}, {1, 1, 1}};
-        }
-        else
-        {
-            throw new IllegalArgumentException("Connectivity value should be either 6 or 26.");
-        }
-        
-        // create structure to store the boundary voxels
-        ArrayList<Cursor3D> boundaryVoxels = new ArrayList<Cursor3D>();
-        
-        // process background pixels in-between two or more labels
-        for (int z = 0; z < sizeZ; z++)
-        {
-            for (int y = 0; y < sizeY; y++)
-            {
-                for (int x = 0; x < sizeX; x++)
-                {
-                    // process only background voxels
-                    if(image.getVoxel(x, y, z) != 0)
-                        continue;
-
-                    // extract the neighbor labels
-                    ArrayList<Float> neighborLabels = new ArrayList<Float>(shifts.length);
-                    for (int[] shift : shifts)
-                    {
-                        int x2 = x + shift[0];
-                        if (x2 < 0 || x2 >= sizeX) continue;
-
-                        int y2 = y + shift[1];
-                        if (y2 < 0 || y2 >= sizeY) continue;
-
-                        int z2 = z + shift[2];
-                        if (z2 < 0 || z2 >= sizeZ) continue;
-
-                        float value2 = (float) image.getVoxel(x2, y2, z2);
-                        if (value2 == 0) continue;
-
-                        if (!neighborLabels.contains(value2))
-                        {
-                            neighborLabels.add(value2);
-                        }
-                    }
-
-                    // check if all neighbor labels are in the label set
-                    if (neighborLabels.size() > 1 && labelSet.containsAll(neighborLabels))
-                        boundaryVoxels.add(new Cursor3D(x, y, z));
-                }
-            }
-        }
-        
-        // replace label value of all regions
-        replaceLabels(image, labels, newLabel);
-        
-        for (Cursor3D c : boundaryVoxels)
-          image.setVoxel(c.getX(), c.getY(), c.getZ(), newLabel);          
+    	new MergeLabels().process(image, labels, newLabel, conn);
     }
 
     /**
