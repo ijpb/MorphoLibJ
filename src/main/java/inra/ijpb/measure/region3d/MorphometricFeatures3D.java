@@ -45,6 +45,7 @@ import inra.ijpb.geometry.Point3D;
 import inra.ijpb.geometry.PointPair3D;
 import inra.ijpb.geometry.Sphere;
 import inra.ijpb.label.LabelImages;
+import inra.ijpb.label.edit.FindAllLabels;
 import inra.ijpb.util.Tables;
 
 /**
@@ -320,7 +321,10 @@ public class MorphometricFeatures3D extends AlgoStub
         Calibration calib = imagePlus.getCalibration();
         
         // identify labels
-        int[] labels = LabelImages.findAllLabels(image);
+        this.fireStatusChanged(this, "Find Region Labels");
+        FindAllLabels findLabels = new FindAllLabels();
+        DefaultAlgoListener.monitor(findLabels);
+        int[] labels = findLabels.process(image);
         
         // Parameters to be computed
         Results results = new Results();
