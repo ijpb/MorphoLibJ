@@ -50,6 +50,7 @@ public class LabelDilation2DShort extends AlgoStub
 	// ==================================================
 	// Class variables
 	
+	@Deprecated
 	ChamferMask2D mask;
 
 	
@@ -63,6 +64,7 @@ public class LabelDilation2DShort extends AlgoStub
 	 * @param mask
 	 *            the Chamfer mask to use.
 	 */
+	@Deprecated
 	public LabelDilation2DShort(ChamferMask2D mask) 
 	{
 		this.mask = mask;
@@ -87,6 +89,7 @@ public class LabelDilation2DShort extends AlgoStub
 	 * @return a new label image where each label is dilated over background
 	 *         pixels.
 	 */
+	@Deprecated
 	public ImageProcessor process(ImageProcessor labelImage, double distMax)
 	{
 		// use max distance relative to chamfer weights

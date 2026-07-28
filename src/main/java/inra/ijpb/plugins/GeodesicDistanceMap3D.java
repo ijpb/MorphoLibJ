@@ -55,6 +55,7 @@ public class GeodesicDistanceMap3D implements PlugIn
 	 * @see ij.plugin.PlugIn#run(java.lang.String)
 	 */
 	@Override
+	@Deprecated
 	public void run(String arg0)
 	{
 		// Open a dialog to choose:
@@ -141,6 +142,7 @@ public class GeodesicDistanceMap3D implements PlugIn
 	 * @return an array of object, containing the name of the new image, and the
 	 *         new ImagePlus instance
 	 */
+	@Deprecated
 	public ImagePlus process(ImagePlus marker, ImagePlus mask, String newName,
 			ChamferMask3D chamferMask, boolean normalize)
 	{

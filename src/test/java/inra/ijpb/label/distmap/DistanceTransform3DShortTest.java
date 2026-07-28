@@ -32,6 +32,7 @@ public class DistanceTransform3DShortTest
 {
 
 	@Test
+	@Deprecated
 	public void testDistanceMap()
 	{
 		// create 3D image containing a cube 
@@ -62,6 +63,7 @@ public class DistanceTransform3DShortTest
 	}
 
 	@Test
+	@Deprecated
 	public void testDistanceMap_FromCenter()
 	{
 		// create 3D image containing a cube 
@@ -105,6 +107,7 @@ public class DistanceTransform3DShortTest
 	 * Test propagation of distance maps within touching labels
 	 */
 	@Test
+	@Deprecated
 	public void testDistanceMap_Labels()
 	{
 		// create 3D image containing eight cubes with labels between 1 and 8 

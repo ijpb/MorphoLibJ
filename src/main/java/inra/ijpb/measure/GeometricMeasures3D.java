@@ -109,6 +109,7 @@ public class GeometricMeasures3D
 	 * @return a new array of doubles  containing for each label, the extent of the
 	 *         corresponding region
 	 */
+	@Deprecated
 	public final static double[][] boundingBox(ImageStack labelImage, int[] labels) 
 	{
         // create associative array to know index of each label
@@ -272,6 +273,7 @@ public class GeometricMeasures3D
 	 *            the number of directions to consider, either 3 or 13
 	 * @return the surface area of each particle in the image
 	 */
+	@Deprecated
 	public final static ResultsTable surfaceArea(ImageStack labelImage, 
 			double[] resol, int nDirs)
 	{
@@ -663,6 +665,7 @@ public class GeometricMeasures3D
 	 * @return an array with as many rows as the number of labels, and 4 columns
 	 *         (xi, yi, zi, radius)
 	 */
+	@Deprecated
     public final static double[][] maximumInscribedSphere(ImageStack labelImage, 
     		int[] labels, double[] resol)
     {

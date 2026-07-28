@@ -31,6 +31,7 @@ import org.junit.Test;
 public class DistanceTransform3DFloatTest
 {
 	@Test
+	@Deprecated
 	public void testDistanceMap()
 	{
 		// create 3D image containing a cube 
@@ -62,6 +63,7 @@ public class DistanceTransform3DFloatTest
 	}
 
 	@Test
+	@Deprecated
 	public void testDistanceMap_FromCenter()
 	{
 		// create 3D image containing a cube 
@@ -106,6 +108,7 @@ public class DistanceTransform3DFloatTest
 	 * Test propagation of distance maps within touching labels
 	 */
 	@Test
+	@Deprecated
 	public void testDistanceMap_Labels()
 	{
 		// create 3D image containing a cube 

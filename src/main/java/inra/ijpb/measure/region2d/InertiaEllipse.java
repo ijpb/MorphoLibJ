@@ -63,6 +63,7 @@ public class InertiaEllipse extends RegionAnalyzer2D<Ellipse>
 	 * @return an array of Ellipse representing the calibrated coordinates of
 	 *         the inertia ellipse of each region
 	 */
+	@Deprecated
 	public static final Ellipse[] inertiaEllipses(ImageProcessor image,
 			int[] labels, Calibration calib)
 	{
@@ -75,6 +76,7 @@ public class InertiaEllipse extends RegionAnalyzer2D<Ellipse>
 	/**
 	 * Default constructor
 	 */
+	@Deprecated
 	public InertiaEllipse()
 	{
 	}
@@ -91,6 +93,7 @@ public class InertiaEllipse extends RegionAnalyzer2D<Ellipse>
 	 *            the mapping between labels and Inertia Ellipses
 	 * @return a ResultsTable that can be displayed with ImageJ.
 	 */
+	@Deprecated
 	public ResultsTable createTable(Map<Integer, Ellipse> map)
 	{
 		// Initialize a new result table
@@ -135,6 +138,7 @@ public class InertiaEllipse extends RegionAnalyzer2D<Ellipse>
 	 * @return an array of Ellipse representing the calibrated coordinates of
 	 *         the inertia ellipse of each region
 	 */
+	@Deprecated
 	public Ellipse[] analyzeRegions(ImageProcessor image, int[] labels, Calibration calib)
 	{
 		// size of image

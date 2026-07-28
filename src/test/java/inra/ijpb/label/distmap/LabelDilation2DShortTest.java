@@ -44,6 +44,7 @@ public class LabelDilation2DShortTest
 	 * Test method for {@link inra.ijpb.label.distmap.LabelDilation2DShort#process(ij.process.ImageProcessor, double)}.
 	 */
 	@Test
+	@Deprecated
 	public final void testProcess()
 	{
 		// Generate a label image with four regions with labels 3, 4, 5 and 6,

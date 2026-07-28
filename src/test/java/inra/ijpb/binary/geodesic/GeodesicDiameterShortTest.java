@@ -48,6 +48,7 @@ public class GeodesicDiameterShortTest
 	 * operating on a 9-by-3 rectangle.
 	 */
 	@Test
+	@Deprecated
 	public void testAnalyzeImage_Rect_ChessKnight()
 	{
 		ImageProcessor image = new ByteProcessor(11, 5);
@@ -71,6 +72,7 @@ public class GeodesicDiameterShortTest
 	 * Test method for {@link inra.ijpb.binary.geodesic.GeodesicDiameterShort#analyzeImage(ij.process.ImageProcessor)}.
 	 */
 	@Test
+	@Deprecated
 	public void testAnalyzeImage_Circle()
 	{
 		ImagePlus imagePlus = IJ.openImage(getClass().getResource("/files/circles.tif").getFile());
@@ -86,6 +88,7 @@ public class GeodesicDiameterShortTest
 	 * Test method for {@link inra.ijpb.binary.geodesic.GeodesicDiameterShort#analyzeImage(ij.process.ImageProcessor)}.
 	 */
 	@Test
+	@Deprecated
 	public void testAnalyzeImage_Grains()
 	{
 		ImagePlus imagePlus = IJ.openImage(getClass().getResource("/files/grains-WTH-areaOpen-lbl2.tif").getFile());
@@ -102,6 +105,7 @@ public class GeodesicDiameterShortTest
 	 * Test method for {@link inra.ijpb.binary.geodesic.GeodesicDiameterShort#longestGeodesicPaths(ij.process.ImageProcessor)}.
 	 */
 	@Test
+	@Deprecated
 	public void testLongestGeodesicPaths_Rect()
 	{
 		ImageProcessor image = new ByteProcessor(10, 3);
@@ -124,6 +128,7 @@ public class GeodesicDiameterShortTest
 	 * Test method for {@link inra.ijpb.binary.geodesic.GeodesicDiameterShort#longestGeodesicPaths(ij.process.ImageProcessor)}.
 	 */
 	@Test
+	@Deprecated
 	public void testLongestGeodesicPaths_Circles()
 	{
 		ImagePlus imagePlus = IJ.openImage(getClass().getResource("/files/circles.tif").getFile());
@@ -140,7 +145,8 @@ public class GeodesicDiameterShortTest
      * Test method for {@link inra.ijpb.binary.geodesic.GeodesicDiameterShort#longestGeodesicPaths(ij.process.ImageProcessor)}.
      */
     @Test
-    public void testLongestGeodesicPaths_Grains()
+	@Deprecated
+	public void testLongestGeodesicPaths_Grains()
     {
         ImagePlus imagePlus = IJ.openImage(getClass().getResource("/files/grains-WTH-areaOpen-lbl2.tif").getFile());
         ImageProcessor image = imagePlus.getProcessor();
@@ -157,7 +163,8 @@ public class GeodesicDiameterShortTest
      * Test method for {@link inra.ijpb.binary.geodesic.GeodesicDiameterShort#longestGeodesicPaths(ij.process.ImageProcessor)}.
      */
     @Test
-    public void testLongestGeodesicPaths_LargeLabels()
+	@Deprecated
+	public void testLongestGeodesicPaths_LargeLabels()
     {
         ImagePlus imagePlus = IJ.openImage(getClass().getResource("/files/particles_largeLabels.tif").getFile());
         ImageProcessor image = imagePlus.getProcessor();

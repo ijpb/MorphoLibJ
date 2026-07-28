@@ -63,6 +63,7 @@ public abstract class GeodesicReconstruction3D
 	 * @param image the image to process
 	 * @return a new image with borders removed
 	 */
+	@Deprecated
 	public final static ImageStack killBorders(ImageStack image)
 	{
 		// Image size
@@ -111,6 +112,7 @@ public abstract class GeodesicReconstruction3D
 	 * @param image the image to process
 	 * @return a new image with holes filled
 	 */
+	@Deprecated
 	public final static ImageStack fillHoles(ImageStack image) 
 	{
 		// Image size
@@ -143,6 +145,7 @@ public abstract class GeodesicReconstruction3D
 	 * @param mask mask image
 	 * @return the result of 3D geodesic reconstruction
 	 */
+	@Deprecated
 	public final static ImageStack reconstructByDilation(ImageStack marker,
 			ImageStack mask)
 	{
@@ -180,6 +183,7 @@ public abstract class GeodesicReconstruction3D
 	 * @param connectivity 3d connectivity (6 or 26)
 	 * @return the result of 3D geodesic reconstruction
 	 */
+	@Deprecated
 	public final static ImageStack reconstructByDilation(ImageStack marker,
 			ImageStack mask, int connectivity)
 	{
@@ -218,13 +222,13 @@ public abstract class GeodesicReconstruction3D
 	 * @param binaryMask binary mask to restrict area of application
 	 * @return geodesic reconstruction by dilation of input image
 	 */
+	@Deprecated
 	public final static ImageStack reconstructByDilation(
 			ImageStack marker,
 			ImageStack mask, 
 			int connectivity,
 			ImageStack binaryMask ) 
 	{
-		//TODO: add support for non gray8 stacks
 		GeodesicReconstruction3DAlgo algo = new GeodesicReconstructionByDilation3DScanningGray8(
 				connectivity);
 		DefaultAlgoListener.monitor(algo);
@@ -240,6 +244,7 @@ public abstract class GeodesicReconstruction3D
 	 * @param mask mask image
 	 * @return the result of 3D geodesic reconstruction
 	 */
+	@Deprecated
 	public final static ImageStack reconstructByErosion(ImageStack marker,
 			ImageStack mask)
 	{
@@ -279,6 +284,7 @@ public abstract class GeodesicReconstruction3D
 	 * @param connectivity 3d connectivity (6 or 26)
 	 * @return the result of 3D geodesic reconstruction
 	 */
+	@Deprecated
 	public final static ImageStack reconstructByErosion(ImageStack marker,
 			ImageStack mask, int connectivity)
 	{

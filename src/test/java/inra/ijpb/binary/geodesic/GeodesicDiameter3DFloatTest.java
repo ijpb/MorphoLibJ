@@ -44,6 +44,7 @@ public class GeodesicDiameter3DFloatTest
 	 * Test method for {@link inra.ijpb.binary.geodesic.GeodesicDiameterFloat#analyzeImage(ij.process.ImageProcessor)}.
 	 */
 	@Test
+	@Deprecated
 	public void testAnalyzeImage_BatCochlea()
 	{
 		String fileName = getClass().getResource("/files/bat-cochlea_sub25.tif").getFile();

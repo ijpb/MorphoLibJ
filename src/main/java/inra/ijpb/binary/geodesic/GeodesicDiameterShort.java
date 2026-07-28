@@ -68,28 +68,33 @@ public class GeodesicDiameterShort extends AlgoStub implements GeodesicDiameter
 	 * The weights for orthogonal, diagonal, and eventually chess-knight moves
 	 * neighbors
 	 */
+	@Deprecated
 	short[] weights;
 	
 	/**
 	 * The algorithm used for computing geodesic distances.
 	 */
+	@Deprecated
 	GeodesicDistanceTransform calculator;
 
 	/**
 	 * An array of shifts corresponding to the weights, for computing geodesic
 	 * longest paths.
 	 */
+	@Deprecated
 	int[][] shifts;
 	
 	/**
 	 * Keep a reference to the label image to dispatch the process into several methods.
 	 */
+	@Deprecated
 	ImageProcessor labelImage;
 	
 	/**
 	 * The array that stores Chamfer distances. The content of the array will
 	 * change during the different steps of the algorithms.
 	 */
+	@Deprecated
 	ImageProcessor distanceMap;
 
 	
@@ -103,6 +108,7 @@ public class GeodesicDiameterShort extends AlgoStub implements GeodesicDiameter
 	 *            an instance of ChamferWeights, which provides the float values
 	 *            used for propagating distances
 	 */
+	@Deprecated
 	public GeodesicDiameterShort(ChamferWeights chamferWeights)
 	{
 		this(chamferWeights.getShortWeights());
@@ -115,6 +121,7 @@ public class GeodesicDiameterShort extends AlgoStub implements GeodesicDiameter
 	 *            the array of weights for orthogonal, diagonal, and eventually
 	 *            chess-knight moves neighbors
 	 */
+	@Deprecated
 	public GeodesicDiameterShort(short[] weights) 
 	{
 		this.weights = weights;
@@ -164,6 +171,7 @@ public class GeodesicDiameterShort extends AlgoStub implements GeodesicDiameter
 	 * @return a ResultsTable containing for each label the geodesic diameter of
 	 *         the corresponding particle
 	 */
+	@Deprecated
 	public ResultsTable analyzeImage(ImageProcessor labelImage) 
 	{
 		// Check validity of parameters
@@ -280,6 +288,7 @@ public class GeodesicDiameterShort extends AlgoStub implements GeodesicDiameter
 	 * @return A map that associate to each integer label the list of positions
 	 *         that constitutes the geodesic path
 	 */
+	@Deprecated
 	public Map<Integer, List<Point>> longestGeodesicPaths() 
 	{
 		// extract labels

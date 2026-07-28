@@ -33,6 +33,7 @@ import org.junit.Test;
 public class DistanceTransform5x5FloatTest {
 
 	@Test
+	@Deprecated
 	public final void testDistanceMap_ChessBoard() 
 	{
 		ByteProcessor image = new ByteProcessor(12, 10);
@@ -55,6 +56,7 @@ public class DistanceTransform5x5FloatTest {
 	}
 	
 	@Test
+	@Deprecated
 	public final void testDistanceMap_UntilCorners_CityBlock() 
 	{
 		ByteProcessor image = new ByteProcessor(7, 7);
@@ -77,6 +79,7 @@ public class DistanceTransform5x5FloatTest {
 	}
 
 	@Test
+	@Deprecated
 	public final void testDistanceMap_UntilCorners_Chessboard()
 	{
 		ByteProcessor image = new ByteProcessor(7, 7);
@@ -100,6 +103,7 @@ public class DistanceTransform5x5FloatTest {
 	}
 	
 	@Test
+	@Deprecated
 	public final void testDistanceMap_UntilCorners_Weights23() 
 	{
 		ByteProcessor image = new ByteProcessor(7, 7);
@@ -123,6 +127,7 @@ public class DistanceTransform5x5FloatTest {
 	}
 	
 	@Test
+	@Deprecated
 	public final void testDistanceMap_UntilCorners_Borgefors34() 
 	{
 		ByteProcessor image = new ByteProcessor(7, 7);
@@ -150,6 +155,7 @@ public class DistanceTransform5x5FloatTest {
 	 * checked image bounds.
 	 */
 	@Test
+	@Deprecated
 	public final void testDistanceMap_UntilCorners_ChessKnight2()
 	{
 		ByteProcessor image = new ByteProcessor(9, 9);
@@ -176,6 +182,7 @@ public class DistanceTransform5x5FloatTest {
 	 * Test method for {@link inra.ijpb.label.distmap.LabelDistanceTransform3x3Short#distanceMap(ij.process.ImageProcessor)}.
 	 */
 	@Test
+	@Deprecated
 	public final void testDistanceMap_TouchingLabels()
 	{
 		ByteProcessor image = new ByteProcessor(8, 8);

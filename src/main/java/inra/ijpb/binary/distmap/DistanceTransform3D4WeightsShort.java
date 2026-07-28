@@ -82,6 +82,7 @@ public class DistanceTransform3D4WeightsShort extends AlgoStub implements Distan
 	 * Default constructor that specifies the chamfer weights.
 	 * @param weights an array of two weights for orthogonal and diagonal directions
 	 */
+	@Deprecated
 	public DistanceTransform3D4WeightsShort(ChamferWeights3D weights)
 	{
 		this(weights.getShortWeights());
@@ -91,6 +92,7 @@ public class DistanceTransform3D4WeightsShort extends AlgoStub implements Distan
 	 * Default constructor that specifies the chamfer weights.
 	 * @param weights an array of two weights for orthogonal and diagonal directions
 	 */
+	@Deprecated
 	public DistanceTransform3D4WeightsShort(short[] weights)
 	{
 		this.weights = weights;
@@ -108,6 +110,7 @@ public class DistanceTransform3D4WeightsShort extends AlgoStub implements Distan
 	 *            flag indicating whether the final distance map should be
 	 *            normalized by the first weight
 	 */
+	@Deprecated
 	public DistanceTransform3D4WeightsShort(ChamferWeights3D weights, boolean normalize)
 	{
 		this(weights.getShortWeights(), normalize);
@@ -121,6 +124,7 @@ public class DistanceTransform3D4WeightsShort extends AlgoStub implements Distan
 	 *            flag indicating whether the final distance map should be
 	 *            normalized by the first weight
 	 */
+	@Deprecated
 	public DistanceTransform3D4WeightsShort(short[] weights, boolean normalize)
 	{
 		this(weights);
@@ -142,6 +146,7 @@ public class DistanceTransform3D4WeightsShort extends AlgoStub implements Distan
 	 * <li> the distance to the nearest background pixel otherwise</li>
 	 * </ul>
 	 */
+	@Deprecated
 	public ImageStack distanceMap(ImageStack image) 
 	{
 		// size of image

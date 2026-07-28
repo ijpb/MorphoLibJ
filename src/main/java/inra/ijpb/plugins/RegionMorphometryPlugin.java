@@ -45,6 +45,7 @@ public class RegionMorphometryPlugin implements PlugInFilter {
     /**
      * List of available numbers of directions
      */
+	@Deprecated
     public final static String[] dirNumberLabels = {
             "2 directions", 
             "4 directions" 
@@ -53,6 +54,7 @@ public class RegionMorphometryPlugin implements PlugInFilter {
     /**
      *  Array of weights, in the same order than the array of names.
      */
+	@Deprecated
     public final static int[] dirNumbers = {
         2, 4
     };
@@ -66,8 +68,10 @@ public class RegionMorphometryPlugin implements PlugInFilter {
      * the console, and the number of counts for each direction is included in
      * results table. 
      */
+	@Deprecated
     public boolean debug  = false;
     
+	@Deprecated
 	ImagePlus imagePlus;
 	
     
@@ -78,6 +82,7 @@ public class RegionMorphometryPlugin implements PlugInFilter {
 	 * @see ij.plugin.filter.PlugInFilter#setup(java.lang.String, ij.ImagePlus)
 	 */
 	@Override
+	@Deprecated
 	public int setup(String arg, ImagePlus imp) {
 		if (imp == null) {
 			IJ.noImage();
@@ -91,6 +96,7 @@ public class RegionMorphometryPlugin implements PlugInFilter {
 	/* (non-Javadoc)
      * @see ij.plugin.PlugIn#run(java.lang.String)
      */
+	@Deprecated
     public void run(ImageProcessor ip) {
         
         // check if image is a label image
@@ -118,6 +124,7 @@ public class RegionMorphometryPlugin implements PlugInFilter {
 	 *            the number of directions to use
 	 * @return the results table containing morphometry features of regions
 	 */
+	@Deprecated
     public ResultsTable process(ImagePlus inputImage, int nDirs) 
     {
         // Check validity of parameters

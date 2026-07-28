@@ -79,6 +79,7 @@ public class DistanceTransform3x3Short extends AlgoStub implements DistanceTrans
 	 * @param weights
 	 *            an array of two weights for orthogonal and diagonal directions
 	 */
+	@Deprecated
 	public DistanceTransform3x3Short(short[] weights)
 	{
 		this(weights, true);
@@ -94,6 +95,7 @@ public class DistanceTransform3x3Short extends AlgoStub implements DistanceTrans
 	 *            flag indicating whether the final distance map should be
 	 *            normalized by the first weight
 	 */
+	@Deprecated
 	public DistanceTransform3x3Short(ChamferWeights weights, boolean normalize)
 	{
 		this(weights.getShortWeights(), normalize);
@@ -109,6 +111,7 @@ public class DistanceTransform3x3Short extends AlgoStub implements DistanceTrans
 	 *            flag indicating whether the final distance map should be
 	 *            normalized by the first weight
 	 */
+	@Deprecated
 	public DistanceTransform3x3Short(short[] weights, boolean normalize)
 	{
 		this.weights = weights;
@@ -129,6 +132,7 @@ public class DistanceTransform3x3Short extends AlgoStub implements DistanceTrans
 	 * <li> the (strictly positive) distance to the nearest background pixel otherwise</li>
 	 * </ul>
 	 */
+	@Deprecated
 	public ShortProcessor distanceMap(ImageProcessor labelImage) 
 	{
 		ShortProcessor distMap = initializeResult(labelImage);

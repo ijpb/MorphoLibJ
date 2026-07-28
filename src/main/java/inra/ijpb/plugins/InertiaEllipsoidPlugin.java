@@ -48,6 +48,7 @@ public class InertiaEllipsoidPlugin implements PlugIn
     // ====================================================
     // Class variables
     
+	@Deprecated
 	ImagePlus imagePlus;
 	
     
@@ -58,6 +59,7 @@ public class InertiaEllipsoidPlugin implements PlugIn
 	/* (non-Javadoc)
      * @see ij.plugin.PlugIn#run(java.lang.String)
      */
+	@Deprecated
     public void run(String args)
     {
         ImagePlus imagePlus = IJ.getImage();

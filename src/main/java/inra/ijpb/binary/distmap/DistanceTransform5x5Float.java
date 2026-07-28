@@ -84,6 +84,7 @@ public class DistanceTransform5x5Float extends AlgoStub implements DistanceTrans
 	/**
 	 * Default constructor with predefined chamfer weights.
 	 */
+	@Deprecated
 	public DistanceTransform5x5Float() 
 	{
 		this(new float[] { 5, 7, 11 }, true);
@@ -96,6 +97,7 @@ public class DistanceTransform5x5Float extends AlgoStub implements DistanceTrans
 	 * @param weights
 	 *            a set of chamfer weights with at least three values
 	 */
+	@Deprecated
 	public DistanceTransform5x5Float(ChamferWeights weights)
 	{
 		this(weights.getFloatWeights(), true);
@@ -106,6 +108,7 @@ public class DistanceTransform5x5Float extends AlgoStub implements DistanceTrans
 	 * @param weights
 	 *            an array of two weights for orthogonal and diagonal directions
 	 */
+	@Deprecated
 	public DistanceTransform5x5Float(float[] weights) 
 	{
 		this(weights, true);
@@ -121,6 +124,7 @@ public class DistanceTransform5x5Float extends AlgoStub implements DistanceTrans
 	 *            flag indicating whether the final distance map should be
 	 *            normalized by the first weight
 	 */
+	@Deprecated
 	public DistanceTransform5x5Float(ChamferWeights weights, boolean normalize)
 	{
 		this(weights.getFloatWeights(), normalize);
@@ -136,6 +140,7 @@ public class DistanceTransform5x5Float extends AlgoStub implements DistanceTrans
 	 *            flag indicating whether the final distance map should be
 	 *            normalized by the first weight
 	 */
+	@Deprecated
 	public DistanceTransform5x5Float(float[] weights, boolean normalize) 
 	{
 		if (weights.length < 3) 
@@ -164,6 +169,7 @@ public class DistanceTransform5x5Float extends AlgoStub implements DistanceTrans
 	 * <li> the (strictly positive) distance to the nearest background pixel otherwise</li>
 	 * </ul>
 	 */
+	@Deprecated
 	public FloatProcessor distanceMap(ImageProcessor labelImage) 
 	{
 		FloatProcessor distMap = initializeResult(labelImage);

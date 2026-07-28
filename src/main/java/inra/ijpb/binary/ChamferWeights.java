@@ -53,13 +53,16 @@ package inra.ijpb.binary;
 public enum ChamferWeights
 {
 	/** Use weight equal to 1 for all neighbors */
+	@Deprecated
 	CHESSBOARD("Chessboard (1,1)", new short[] { 1, 1 }), 
 	/** Use weights 1 for orthogonal neighbors and 2 for diagonal neighbors */
+	@Deprecated
 	CITY_BLOCK("City-Block (1,2)", new short[] { 1, 2 }), 
 	/**
 	 * Use weights 1 for orthogonal neighbors and sqrt(2) for diagonal
 	 * neighbors. Use 10 and 14 for short version.
 	 */
+	@Deprecated
 	QUASI_EUCLIDEAN("Quasi-Euclidean (1,1.41)", 
 			new short[] { 10, 14 }, 
 			new float[] {1, (float) Math.sqrt(2) }),
@@ -67,15 +70,19 @@ public enum ChamferWeights
 	 * Use weights 3 for orthogonal neighbors and 4 for diagonal neighbors (best
 	 * approximation of Euclidean distance for 3-by-3 masks)
 	 */
+	@Deprecated
 	BORGEFORS("Borgefors (3,4)", new short[] { 3, 4 }),
 	/** Use weights 2 for orthogonal neighbors and 3 for diagonal neighbors */
+	@Deprecated
 	WEIGHTS_23("Weights (2,3)", new short[] { 2, 3 }),
 	/** Use weights 5 for orthogonal neighbors and 7 for diagonal neighbors */
+	@Deprecated
 	WEIGHTS_57("Weights (5,7)", new short[] { 5, 7 }), 
 	/**
 	 * Use weights 5 for orthogonal neighbors and 7 for diagonal neighbors, and
 	 * 11 for chess-knight moves (best approximation for 5-by-5 masks).
 	 */
+	@Deprecated
 	CHESSKNIGHT("Chessknight (5,7,11)", new short[] { 5, 7, 11 });
 
 	private final String label;
@@ -102,6 +109,7 @@ public enum ChamferWeights
 	/**
 	 * @return the weights as shorts
 	 */
+	@Deprecated
 	public short[] getShortWeights()
 	{
 		return this.shortWeights;
@@ -110,6 +118,7 @@ public enum ChamferWeights
 	/**
 	 * @return the weights as floats
 	 */
+	@Deprecated
 	public float[] getFloatWeights()
 	{
 		return this.floatWeights;
@@ -118,6 +127,7 @@ public enum ChamferWeights
 	/**
 	 * @return the label associated to this chamfer weight
 	 */
+	@Deprecated
 	public String toString()
 	{
 		return this.label;
@@ -126,6 +136,7 @@ public enum ChamferWeights
 	/**
 	 * @return all the chamfer weights labels
 	 */
+	@Deprecated
 	public static String[] getAllLabels()
 	{
 		int n = ChamferWeights.values().length;
@@ -147,6 +158,7 @@ public enum ChamferWeights
 	 * @throws IllegalArgumentException
 	 *             if label name is not recognized.
 	 */
+	@Deprecated
 	public static ChamferWeights fromLabel(String label)
 	{
 		if (label != null)

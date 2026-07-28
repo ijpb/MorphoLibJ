@@ -45,26 +45,34 @@ public class GeodesicDistanceTransformFloat5x5 extends AlgoStub implements
 	 * The value used to initialize the distance map, corresponding to positive
 	 * infinity.
 	 */
+	@Deprecated
 	public static final float MAX_DIST = Float.POSITIVE_INFINITY;
 	
+	@Deprecated
 	float[] weights = new float[]{5, 7, 11};
 
 	/**
 	 * Flag for dividing final distance map by the value first weight. 
 	 * This results in distance map values closer to Euclidean distance. 
 	 */
+	@Deprecated
 	boolean normalizeMap = true;
 
+	@Deprecated
 	int sizeX;
+	@Deprecated
 	int sizeY;
 
 	/** The label image used as mask */
+	@Deprecated
 	ImageProcessor labelImage;
 	
 	/** the instance of ImageProcessor storing the result */
+	@Deprecated
 	ImageProcessor distMap;
 
 	/** the flag indicating whether the image has been modified or not */
+	@Deprecated
 	boolean modif;
 
 	
@@ -74,6 +82,7 @@ public class GeodesicDistanceTransformFloat5x5 extends AlgoStub implements
 	/**
 	 * Creates a new algorithm for propagating geodesic distances.
 	 */
+	@Deprecated
 	public GeodesicDistanceTransformFloat5x5()
 	{
 	}
@@ -84,6 +93,7 @@ public class GeodesicDistanceTransformFloat5x5 extends AlgoStub implements
 	 * @param weights
 	 *            the weights to use for propagating distances
 	 */
+	@Deprecated
 	public GeodesicDistanceTransformFloat5x5(float[] weights)
 	{
 		this(weights, true);
@@ -97,6 +107,7 @@ public class GeodesicDistanceTransformFloat5x5 extends AlgoStub implements
 	 * @param normalizeMap
 	 *            the flag for normalization
 	 */
+	@Deprecated
 	public GeodesicDistanceTransformFloat5x5(ChamferWeights weights, boolean normalizeMap) 
 	{
 		this(weights.getFloatWeights(), normalizeMap);
@@ -110,6 +121,7 @@ public class GeodesicDistanceTransformFloat5x5 extends AlgoStub implements
 	 * @param normalizeMap
 	 *            the flag for normalization
 	 */
+	@Deprecated
 	public GeodesicDistanceTransformFloat5x5(float[] weights, boolean normalizeMap) 
 	{
 		this.weights = weights;
@@ -147,6 +159,7 @@ public class GeodesicDistanceTransformFloat5x5 extends AlgoStub implements
 	 *      ij.process.ImageProcessor)
 	 */
 	@Override
+	@Deprecated
 	public ImageProcessor geodesicDistanceMap(ImageProcessor marker, ImageProcessor mask)
 	{
 		// size of image

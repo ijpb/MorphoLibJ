@@ -46,7 +46,9 @@ public class LabelDilation3DShort extends AlgoStub
 	// ==================================================
 	// Class variables
 	
+	@Deprecated
 	short[] weights = new short[]{5, 7, 11};
+	@Deprecated
 	ChamferMask3D mask;
 	
 	
@@ -60,6 +62,7 @@ public class LabelDilation3DShort extends AlgoStub
 	 * @param mask
 	 *            the Chamfer mask to use.
 	 */
+	@Deprecated
 	public LabelDilation3DShort(ChamferMask3D mask) 
 	{
 		this.mask = mask;
@@ -84,6 +87,7 @@ public class LabelDilation3DShort extends AlgoStub
 	 * @return a new label image where each label is dilated over background
 	 *         pixels.
 	 */
+	@Deprecated
 	public ImageStack process(ImageStack labelImage, double distMax)
 	{
 		// use max distance relative to chamfer weights

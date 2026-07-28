@@ -31,6 +31,7 @@ import org.junit.Test;
 public class DistanceTransform3D4WeightsFloatTest
 {
 	@Test
+	@Deprecated
 	public void testDistanceMap()
 	{
 		// create 3D image containing a cube 
@@ -57,6 +58,7 @@ public class DistanceTransform3D4WeightsFloatTest
 	}
 
 	@Test
+	@Deprecated
 	public void testDistanceMap_FromCenter()
 	{
 		// create 3D image containing a cube 

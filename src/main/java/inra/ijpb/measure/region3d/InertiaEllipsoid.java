@@ -68,6 +68,7 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 	 * @return an array of Ellipsoid instances representing the calibrated
 	 *         coordinates of the inertia ellipsoid of each region
 	 */
+	@Deprecated
 	public static final Ellipsoid[] inertiaEllipsoids(ImageStack image, int[] labels, Calibration calib)
 	{
 		return new InertiaEllipsoid().analyzeRegions(image, labels, calib);
@@ -80,6 +81,7 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 	/**
 	 * Default constructor
 	 */
+	@Deprecated
 	public InertiaEllipsoid()
 	{
 	}
@@ -96,6 +98,7 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 	 *            the mapping between labels and Inertia Ellipsoids
 	 * @return a ResultsTable that can be displayed with ImageJ.
 	 */
+	@Deprecated
 	public ResultsTable createTable(Map<Integer, Ellipsoid> map)
 	{
 		// Initialize a new result table
@@ -144,6 +147,7 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 	 * @return an array of Ellipsoid instances representing the calibrated
 	 *         coordinates of the inertia ellipsoid of each region
 	 */
+	@Deprecated
 	public Ellipsoid[] analyzeRegions(ImageStack image, int[] labels, Calibration calib)
 	{
         // check if JAMA package is present
@@ -198,6 +202,7 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 	 * @return an array the same size as <code>labels</code>, containing for
 	 *         each processed region result of 3D Moments computations
 	 */
+	@Deprecated
 	public InertiaMoments3D[] computeMoments(ImageStack image, int[] labels, Calibration calib)
 	{
 	    // size of image
@@ -339,22 +344,33 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 	/**
 	 * Inner class for storing result if moments computation.
 	 */
+	@Deprecated
 	public class InertiaMoments3D
 	{
 	    // the number of voxels 
+		@Deprecated
 	    int count = 0;
 	    
 	    // The coordinates of the center
+		@Deprecated
         double cx = 0;
+		@Deprecated
         double cy = 0;
+		@Deprecated
         double cz = 0;
         
         // the second-order coefficients
+		@Deprecated
         double Ixx = 0;
+		@Deprecated
         double Ixy = 0;
+		@Deprecated
         double Ixz = 0;
+		@Deprecated
         double Iyy = 0;
+		@Deprecated
         double Iyz = 0;
+		@Deprecated
         double Izz = 0;
         
         /**
@@ -362,7 +378,8 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 		 * 
 		 * @return the equivalent ellipsoid with same moments.
 		 */
-        public Ellipsoid equivalentEllipsoid()
+		@Deprecated
+       public Ellipsoid equivalentEllipsoid()
         {
             // Extract singular values
             SingularValueDecomposition svd = computeSVD();
@@ -402,6 +419,7 @@ public class InertiaEllipsoid extends RegionAnalyzer3D<Ellipsoid>
 		 * @return The eigen vectors of the moment matrix, as an ArrayList of
 		 *         Vector3D with three elements.
 		 */
+		@Deprecated
         public ArrayList<Vector3D> eigenVectors()
         {
             // Extract singular values

@@ -52,6 +52,7 @@ public class GeometricMeasures2D
 	// Class constants
 
 	/** option for debugging */
+	@Deprecated
 	public static boolean debug = false;
 
 	// ====================================================

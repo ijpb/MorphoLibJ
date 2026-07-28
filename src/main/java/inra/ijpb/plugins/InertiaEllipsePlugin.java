@@ -62,6 +62,7 @@ public class InertiaEllipsePlugin implements PlugIn
 	/* (non-Javadoc)
      * @see ij.plugin.PlugIn#run(java.lang.String)
      */
+	@Deprecated
 	public void run(String args)
 	{
 		// Open a dialog to choose:

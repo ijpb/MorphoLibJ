@@ -46,6 +46,7 @@ public class LabelDilationShort5x5 extends AlgoStub
 	// ==================================================
 	// Class variables
 	
+	@Deprecated
 	short[] weights = new short[]{5, 7, 11};
 
 	
@@ -57,6 +58,7 @@ public class LabelDilationShort5x5 extends AlgoStub
 	 * 
 	 * @param weights the weights to use for dilation
 	 */
+	@Deprecated
 	public LabelDilationShort5x5(ChamferWeights weights) 
 	{
 		this(weights.getShortWeights());
@@ -67,6 +69,7 @@ public class LabelDilationShort5x5 extends AlgoStub
 	 * 
 	 * @param weights the weights to use for dilation
 	 */
+	@Deprecated
 	public LabelDilationShort5x5(short[] weights) 
 	{
 		this.weights = weights;
@@ -100,6 +103,7 @@ public class LabelDilationShort5x5 extends AlgoStub
 	 * @return a new label image where each label is dilated over background
 	 *         pixels.
 	 */
+	@Deprecated
 	public ImageProcessor process(ImageProcessor labelImage, double distMax)
 	{
 		// use max distance relative to chamfer weights

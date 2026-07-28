@@ -57,5 +57,6 @@ public interface GeodesicDiameter extends Algo
 	 *            the label image containing regions.
 	 * @return a ResultsTable containing the geodesic diameter of each region.
 	 */
+	@Deprecated
 	public abstract ResultsTable analyzeImage(ImageProcessor labelImage);
 }

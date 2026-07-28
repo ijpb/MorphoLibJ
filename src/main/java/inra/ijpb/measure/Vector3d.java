@@ -50,6 +50,7 @@ public class Vector3d
 	/**
 	 * Empty constructor, with all coordinates initialized to zero. 
 	 */
+	@Deprecated
 	public Vector3d()
 	{
 		this.x = 0;
@@ -64,6 +65,7 @@ public class Vector3d
 	 * @param y the y coordinate
 	 * @param z the z coordinate
 	 */
+	@Deprecated
 	public Vector3d(double x, double y, double z)
 	{
 		this.x = x;
@@ -83,6 +85,7 @@ public class Vector3d
 	 * @param v2 the second vector
 	 * @return the cross product of the two vectors
 	 */
+	@Deprecated
 	public static final Vector3d crossProduct(Vector3d v1, Vector3d v2)
 	{
 		return new Vector3d(
@@ -104,6 +107,7 @@ public class Vector3d
 	 * @param v2 the second vector
 	 * @return the dot product of the two vectors
 	 */
+	@Deprecated
 	public static final double dotProduct(Vector3d v1, Vector3d v2)
 	{
 		return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
@@ -117,6 +121,7 @@ public class Vector3d
 	 * @param v2 the second vector
 	 * @return the angle between the two vectors, in radians
 	 */
+	@Deprecated
 	public static final double angle(Vector3d v1, Vector3d v2)
 	{
 		// compute angle using arc-tangent to get better precision for angles
@@ -136,6 +141,7 @@ public class Vector3d
 	 * 
 	 * @return the x coordinate of the vector
 	 */
+	@Deprecated
 	public double getX()
 	{
 		return this.x;
@@ -146,6 +152,7 @@ public class Vector3d
 	 * 
 	 * @return the y coordinate of the vector
 	 */
+	@Deprecated
 	public double getY()
 	{
 		return this.y;
@@ -156,6 +163,7 @@ public class Vector3d
 	 * 
 	 * @return the z coordinate of the vector
 	 */
+	@Deprecated
 	public double getZ()
 	{
 		return this.z;
@@ -170,6 +178,7 @@ public class Vector3d
 	 * @param v the vector to add
 	 * @return the results of the vector addition 
 	 */
+	@Deprecated
 	public Vector3d plus(Vector3d v)
 	{
 		double x = this.x + v.x;
@@ -184,6 +193,7 @@ public class Vector3d
 	 * @param v the vector to subtract
 	 * @return the results of the vector subtraction 
 	 */
+	@Deprecated
 	public Vector3d minus(Vector3d v)
 	{
 		double x = this.x - v.x;
@@ -199,6 +209,7 @@ public class Vector3d
 	 * @return the results of scalar multiplication 
 
 	 */
+	@Deprecated
 	public Vector3d times(double k)
 	{
 		double x = this.x * k;
@@ -212,6 +223,7 @@ public class Vector3d
 	 * 
 	 * @return the normalized vector with same direction as this.
 	 */
+	@Deprecated
 	public Vector3d normalize()
 	{
 		double norm = this.getNorm();
@@ -224,6 +236,7 @@ public class Vector3d
 	 * 
 	 * @return the norm of the vector
 	 */
+	@Deprecated
 	public double getNorm()
 	{
 		double norm = Math.hypot(this.x, this.y);
@@ -241,6 +254,7 @@ public class Vector3d
 	 *            the absolute tolerance for comparing coodinates
 	 * @return true if vector have same coordinates with respect to tolerance
 	 */
+	@Deprecated
 	public boolean almostEquals(Vector3d v, double eps)
 	{
 		if (Math.abs(this.x - v.x) > eps) return false;

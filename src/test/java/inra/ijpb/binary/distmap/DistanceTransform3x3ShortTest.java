@@ -33,6 +33,7 @@ import org.junit.Test;
 public class DistanceTransform3x3ShortTest {
 
 	@Test
+	@Deprecated
 	public final void testDistanceMapImageProcessor() 
 	{
 		ByteProcessor image = new ByteProcessor(12, 10);
@@ -58,6 +59,7 @@ public class DistanceTransform3x3ShortTest {
 	}
 	
 	@Test
+	@Deprecated
 	public final void testDistanceMap_UntilCorners_CityBlock()
 	{
 		ByteProcessor image = new ByteProcessor(7, 7);
@@ -80,6 +82,7 @@ public class DistanceTransform3x3ShortTest {
 	}
 
 	@Test
+	@Deprecated
 	public final void testDistanceMap_UntilCorners_Chessboard() 
 	{
 		ByteProcessor image = new ByteProcessor(7, 7);
@@ -102,6 +105,7 @@ public class DistanceTransform3x3ShortTest {
 	}
 	
 	@Test
+	@Deprecated
 	public final void testDistanceMap_UntilCorners_Weights23() 
 	{
 		ByteProcessor image = new ByteProcessor(7, 7);
@@ -124,6 +128,7 @@ public class DistanceTransform3x3ShortTest {
 	}
 	
 	@Test
+	@Deprecated
 	public final void testDistanceMap_UntilCorners_Borgefors34()
 	{
 		ByteProcessor image = new ByteProcessor(7, 7);
@@ -149,6 +154,7 @@ public class DistanceTransform3x3ShortTest {
 	 * Test method for {@link inra.ijpb.label.distmap.LabelDistanceTransform3x3Short#distanceMap(ij.process.ImageProcessor)}.
 	 */
 	@Test
+	@Deprecated
 	public final void testDistanceMap_TouchingLabels()
 	{
 		ByteProcessor image = new ByteProcessor(8, 8);

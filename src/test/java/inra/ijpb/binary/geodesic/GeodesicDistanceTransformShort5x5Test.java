@@ -34,6 +34,7 @@ public class GeodesicDistanceTransformShort5x5Test
 {
 
 	@Test
+	@Deprecated
 	public void testGeodesicDistanceMap_Borgefors()
 	{
 		ImagePlus maskPlus = IJ.openImage(getClass().getResource("/files/circles.tif").getFile());

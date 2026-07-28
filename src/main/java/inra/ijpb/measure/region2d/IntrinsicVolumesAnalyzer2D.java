@@ -139,18 +139,23 @@ public class IntrinsicVolumesAnalyzer2D extends RegionAnalyzer2D<IntrinsicVolume
     // ==================================================
     // Class members
 
+	@Deprecated
     boolean computeArea = true;
+	@Deprecated
     boolean computePerimeter = true;
+	@Deprecated
     boolean computeEulerNumber = true;
     
     /**
      * Number of directions for computing perimeter with Crofton Formula. Default is 4.
      */
+	@Deprecated
     int directionNumber = 4;
 
     /**
      * Connectivity for computing Euler number. Default is 4. 
      */
+	@Deprecated
     int connectivity = 4;
    
     
@@ -160,6 +165,7 @@ public class IntrinsicVolumesAnalyzer2D extends RegionAnalyzer2D<IntrinsicVolume
     /**
      * Default empty constructor.
      */
+	@Deprecated
     public IntrinsicVolumesAnalyzer2D()
     {
     }
@@ -171,6 +177,7 @@ public class IntrinsicVolumesAnalyzer2D extends RegionAnalyzer2D<IntrinsicVolume
     /**
      * @return the number of directions used to compute perimeter
      */
+	@Deprecated
     public int getDirectionNumber()
     {
         return directionNumber;
@@ -181,6 +188,7 @@ public class IntrinsicVolumesAnalyzer2D extends RegionAnalyzer2D<IntrinsicVolume
      *            the number of directions used to compute perimeter (either 2
      *            or 4, default is 4)
      */
+	@Deprecated
     public void setDirectionNumber(int directionNumber)
     {
         this.directionNumber = directionNumber;
@@ -189,6 +197,7 @@ public class IntrinsicVolumesAnalyzer2D extends RegionAnalyzer2D<IntrinsicVolume
     /**
      * @return the connectivity used for computing Euler number
      */
+	@Deprecated
     public int getConnectivity()
     {
         return connectivity;
@@ -199,6 +208,7 @@ public class IntrinsicVolumesAnalyzer2D extends RegionAnalyzer2D<IntrinsicVolume
      *            the connectivity for computing Euler number (either 4 or 8,
      *            default is 4)
      */
+	@Deprecated
     public void setConnectivity(int connectivity)
     {
         this.connectivity = connectivity;
@@ -209,6 +219,7 @@ public class IntrinsicVolumesAnalyzer2D extends RegionAnalyzer2D<IntrinsicVolume
     // General methods
 
     @Override
+	@Deprecated
     public ResultsTable createTable(Map<Integer, IntrinsicVolumesAnalyzer2D.Result> results)
     {
         // Initialize a new result table
@@ -235,6 +246,7 @@ public class IntrinsicVolumesAnalyzer2D extends RegionAnalyzer2D<IntrinsicVolume
     }
 
     @Override
+	@Deprecated
     public IntrinsicVolumesAnalyzer2D.Result[] analyzeRegions(ImageProcessor image, int[] labels,
             Calibration calib)
     {
@@ -292,12 +304,14 @@ public class IntrinsicVolumesAnalyzer2D extends RegionAnalyzer2D<IntrinsicVolume
     // Implementation of Algolistener interface
     
     @Override
+	@Deprecated
     public void algoProgressChanged(AlgoEvent evt)
     {
         this.fireProgressChanged(evt);
     }
 
     @Override
+	@Deprecated
     public void algoStatusChanged(AlgoEvent evt)
     {
         this.fireStatusChanged(evt);
@@ -310,20 +324,25 @@ public class IntrinsicVolumesAnalyzer2D extends RegionAnalyzer2D<IntrinsicVolume
     /**
      * Inner class for storing results.
      */
+	@Deprecated
     public class Result
     {
 		/** the area of the region. */
+		@Deprecated
 		public double area = Double.NaN;
 		
 		/** the perimeter of the region. */
+		@Deprecated
 		public double perimeter = Double.NaN;
 		
 		/** the Euler Number of the region. */
+		@Deprecated
 		public double eulerNumber = Double.NaN;
         
         /**
          * Default empty constructor.
          */
+		@Deprecated
         public Result()
         {
         }
@@ -338,6 +357,7 @@ public class IntrinsicVolumesAnalyzer2D extends RegionAnalyzer2D<IntrinsicVolume
 		 * @param euler
 		 *            the Euler number of the region
 		 */
+		@Deprecated
         public Result(double area, double perim, double euler)
         {
             this.area = area;
@@ -354,6 +374,7 @@ public class IntrinsicVolumesAnalyzer2D extends RegionAnalyzer2D<IntrinsicVolume
          * 
          * @return the circularity value.
          */
+		@Deprecated
         public double circularity()
         {
             return 4 * Math.PI * area / (perimeter * perimeter);
