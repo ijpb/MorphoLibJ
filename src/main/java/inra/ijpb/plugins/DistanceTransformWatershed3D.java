@@ -182,14 +182,102 @@ public class DistanceTransformWatershed3D implements PlugIn
 			boolean floatProcessing,
 			boolean normalize )
 	{
-		final ImageStack dist = BinaryImages.distanceMap(image.getImageStack(),
-				chamferMask, floatProcessing, normalize);
-		
+		return distanceTransformWatershed( image, chamferMask, floatProcessing,
+				normalize, dynamic, connectivity.value );
+	}
+
+	/**
+	 * Computes the distance transform watershed of a 3D binary stack.
+	 *
+	 * @param image
+	 *            binary stack (8-bit, foreground 255)
+	 * @param chamferMask
+	 *            chamfer mask used to compute the distance map
+	 * @param floatProcessing
+	 *            true for float distance map and 32-bit labels, false for
+	 *            short distance map and 16-bit labels
+	 * @param normalize
+	 *            true to normalize the chamfer weights
+	 * @param dynamic
+	 *            dynamic of the extended minima
+	 * @param connectivity
+	 *            3D connectivity (6 or 26)
+	 * @return the label stack of the watershed regions
+	 */
+	public static ImageStack distanceTransformWatershed(
+			ImageStack image,
+			ChamferMask3D chamferMask,
+			boolean floatProcessing,
+			boolean normalize,
+			int dynamic,
+			int connectivity )
+	{
+		final ImageStack dist = BinaryImages.distanceMap( image, chamferMask,
+				floatProcessing, normalize );
+
 		// invert distance map
 		Images3D.invert( dist );
 
-		ImageStack result = ExtendedMinimaWatershed.extendedMinimaWatershed(
-				dist, image.getImageStack(), dynamic, connectivity.value, 32, false );
+		return ExtendedMinimaWatershed.extendedMinimaWatershed( dist, image,
+				dynamic, connectivity, floatProcessing ? 32 : 16, false );
+	}
+
+	/**
+	 * Computes the distance transform watershed of a 3D binary stack using a
+	 * float distance map (32-bit result).
+	 *
+	 * @param image binary stack
+	 * @param chamferMask chamfer mask
+	 * @param normalize true to normalize the chamfer weights
+	 * @param dynamic dynamic of the extended minima
+	 * @param connectivity 3D connectivity (6 or 26)
+	 * @return 32-bit label stack
+	 */
+	public static ImageStack distanceTransformWatershedFloat(
+			ImageStack image, ChamferMask3D chamferMask,
+			boolean normalize, int dynamic, int connectivity )
+	{
+		return distanceTransformWatershed( image, chamferMask, true,
+				normalize, dynamic, connectivity );
+	}
+
+	/**
+	 * Computes the distance transform watershed of a 3D binary stack using a
+	 * short distance map (16-bit result).
+	 *
+	 * @param image binary stack
+	 * @param chamferMask chamfer mask
+	 * @param normalize true to normalize the chamfer weights
+	 * @param dynamic dynamic of the extended minima
+	 * @param connectivity 3D connectivity (6 or 26)
+	 * @return 16-bit label stack
+	 */
+	public static ImageStack distanceTransformWatershedShort(
+			ImageStack image, ChamferMask3D chamferMask,
+			boolean normalize, int dynamic, int connectivity )
+	{
+		return distanceTransformWatershed( image, chamferMask, false,
+				normalize, dynamic, connectivity );
+	}
+
+	/**
+	 * Computes the distance transform watershed of a 3D binary image.
+	 *
+	 * @param image binary 3D image
+	 * @param chamferMask chamfer mask
+	 * @param floatProcessing true for 32-bit output, false for 16-bit
+	 * @param normalize true to normalize the chamfer weights
+	 * @param dynamic dynamic of the extended minima
+	 * @param connectivity 3D connectivity (6 or 26)
+	 * @return label image with calibration copied from the input
+	 */
+	public static ImagePlus distanceTransformWatershed(
+			ImagePlus image, ChamferMask3D chamferMask,
+			boolean floatProcessing, boolean normalize, int dynamic,
+			int connectivity )
+	{
+		ImageStack result = distanceTransformWatershed( image.getImageStack(),
+				chamferMask, floatProcessing, normalize, dynamic, connectivity );
 		ImagePlus ip = new ImagePlus( image.getShortTitle() + "dist-watershed",
 				result );
 		ip.setCalibration( image.getCalibration() );

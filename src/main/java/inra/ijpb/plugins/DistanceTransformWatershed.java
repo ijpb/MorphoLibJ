@@ -260,12 +260,8 @@ DialogListener
 			ChamferMask2D chamferMask,
 			boolean normalize )
 	{
-		final ImageProcessor dist =
-				BinaryImages.distanceMap( image, chamferMask, true, normalize );
-		dist.invert();
-
-		return ExtendedMinimaWatershed.extendedMinimaWatershed(
-				dist, image, dynamic, connectivity, 32, false );
+		return distanceTransformWatershed( image, chamferMask, true,
+				normalize, dynamic, connectivity );
 	}
 
 	private ImageProcessor processShort(
@@ -273,13 +269,104 @@ DialogListener
 			ChamferMask2D chamferMask,
 			boolean normalize )
 	{
-		// Compute distance on specified image
-		final ImageProcessor dist =
-				BinaryImages.distanceMap( image, chamferMask, false, normalize );
+		return distanceTransformWatershed( image, chamferMask, false,
+				normalize, dynamic, connectivity );
+	}
+
+	/**
+	 * Computes the distance transform watershed of a binary image.
+	 *
+	 * @param image
+	 *            binary image (8-bit, foreground 255)
+	 * @param chamferMask
+	 *            chamfer mask used to compute the distance map
+	 * @param floatProcessing
+	 *            true to use a float distance map and 32-bit labels, false to
+	 *            use a short distance map and 16-bit labels
+	 * @param normalize
+	 *            true to normalize the chamfer weights
+	 * @param dynamic
+	 *            dynamic of the extended minima
+	 * @param connectivity
+	 *            2D connectivity (4 or 8)
+	 * @return the label image of the watershed regions (16 or 32 bits)
+	 */
+	public static ImageProcessor distanceTransformWatershed(
+			ImageProcessor image,
+			ChamferMask2D chamferMask,
+			boolean floatProcessing,
+			boolean normalize,
+			int dynamic,
+			int connectivity )
+	{
+		final ImageProcessor dist = BinaryImages.distanceMap( image,
+				chamferMask, floatProcessing, normalize );
 		dist.invert();
 
-		return ExtendedMinimaWatershed.extendedMinimaWatershed(
-				dist, image, dynamic, connectivity, 16, false );
+		return ExtendedMinimaWatershed.extendedMinimaWatershed( dist, image,
+				dynamic, connectivity, floatProcessing ? 32 : 16, false );
+	}
+
+	/**
+	 * Computes the distance transform watershed of a binary image, using a
+	 * float distance map (32-bit result).
+	 *
+	 * @param image binary image
+	 * @param chamferMask chamfer mask
+	 * @param normalize true to normalize the chamfer weights
+	 * @param dynamic dynamic of the extended minima
+	 * @param connectivity 2D connectivity (4 or 8)
+	 * @return 32-bit label image
+	 */
+	public static ImageProcessor distanceTransformWatershedFloat(
+			ImageProcessor image, ChamferMask2D chamferMask,
+			boolean normalize, int dynamic, int connectivity )
+	{
+		return distanceTransformWatershed( image, chamferMask, true,
+				normalize, dynamic, connectivity );
+	}
+
+	/**
+	 * Computes the distance transform watershed of a binary image, using a
+	 * short distance map (16-bit result).
+	 *
+	 * @param image binary image
+	 * @param chamferMask chamfer mask
+	 * @param normalize true to normalize the chamfer weights
+	 * @param dynamic dynamic of the extended minima
+	 * @param connectivity 2D connectivity (4 or 8)
+	 * @return 16-bit label image
+	 */
+	public static ImageProcessor distanceTransformWatershedShort(
+			ImageProcessor image, ChamferMask2D chamferMask,
+			boolean normalize, int dynamic, int connectivity )
+	{
+		return distanceTransformWatershed( image, chamferMask, false,
+				normalize, dynamic, connectivity );
+	}
+
+	/**
+	 * Computes the distance transform watershed of a binary ImagePlus (2D
+	 * image or 3D stack processed slice by slice is NOT supported here).
+	 *
+	 * @param image binary 2D image
+	 * @param chamferMask chamfer mask
+	 * @param floatProcessing true for 32-bit output, false for 16-bit
+	 * @param normalize true to normalize the chamfer weights
+	 * @param dynamic dynamic of the extended minima
+	 * @param connectivity 2D connectivity (4 or 8)
+	 * @return label image with calibration copied from the input
+	 */
+	public static ImagePlus distanceTransformWatershed(
+			ImagePlus image, ChamferMask2D chamferMask,
+			boolean floatProcessing, boolean normalize, int dynamic,
+			int connectivity )
+	{
+		ImageProcessor res = distanceTransformWatershed( image.getProcessor(),
+				chamferMask, floatProcessing, normalize, dynamic, connectivity );
+		ImagePlus resPlus = new ImagePlus( createResultImageName( image ), res );
+		resPlus.copyScale( image );
+		return resPlus;
 	}
 
 	private static String createResultImageName(ImagePlus baseImage) {
