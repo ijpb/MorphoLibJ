@@ -172,6 +172,8 @@ public class MorphologicalFilter3DPlugin implements PlugIn
 		String newName = image.getShortTitle() + "-" + op.toString();
 		ImagePlus resultPlus = new ImagePlus(newName, resultStack);
 		resultPlus.copyScale(image);
+		// set original look-up table to the result image
+		resultPlus.setLut(image.getProcessor().getLut());
 		
 		// return the created array
 		return resultPlus;
