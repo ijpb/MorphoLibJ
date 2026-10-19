@@ -420,6 +420,7 @@ public class LabelEdition implements PlugIn
 			LabelImages.mergeLabels( displayImage, displayImage.getRoi(),
 					true );
 			displayImage.deleteRoi();
+			displayImage.setLut( inputImage.getProcessor().getLut() );
 			displayImage.updateAndDraw();
 		}
 
@@ -440,6 +441,7 @@ public class LabelEdition implements PlugIn
 						displayImage.getImageStack(),
 						Strel3D.Shape.CUBE.fromRadius( 1 ) ) );
 			}
+			displayImage.setLut( inputImage.getProcessor().getLut() );
 			displayImage.updateAndDraw();
 		}
 
@@ -460,6 +462,7 @@ public class LabelEdition implements PlugIn
 						displayImage.getImageStack(),
 						Strel3D.Shape.CUBE.fromRadius( 1 ) ) );
 			}
+			displayImage.setLut( inputImage.getProcessor().getLut() );
 			displayImage.updateAndDraw();
 		}
 
@@ -480,6 +483,7 @@ public class LabelEdition implements PlugIn
 						displayImage.getImageStack(),
 						Strel3D.Shape.CUBE.fromRadius( 1 ) ) );
 			}
+			displayImage.setLut( inputImage.getProcessor().getLut() );
 			displayImage.updateAndDraw();
 		}
 
@@ -500,6 +504,7 @@ public class LabelEdition implements PlugIn
 						displayImage.getImageStack(),
 						Strel3D.Shape.CUBE.fromRadius( 1 ) ) );
 			}
+			displayImage.setLut( inputImage.getProcessor().getLut() );
 			displayImage.updateAndDraw();
 		}
 
@@ -511,6 +516,7 @@ public class LabelEdition implements PlugIn
 			LabelImages.removeLabels( displayImage, displayImage.getRoi(),
 					true );
 			displayImage.deleteRoi();
+			displayImage.setLut( inputImage.getProcessor().getLut() );
 			displayImage.updateAndDraw();
 		}
 		/**
@@ -519,6 +525,7 @@ public class LabelEdition implements PlugIn
 		void removeLargestLabel()
 		{
 			LabelImages.removeLargestLabel( displayImage );
+			displayImage.setLut( inputImage.getProcessor().getLut() );
 			displayImage.updateAndDraw();
 		}
 		/**
@@ -527,6 +534,7 @@ public class LabelEdition implements PlugIn
 		void removeBorderLabels()
 		{
 			LabelImages.removeBorderLabels( displayImage );
+			displayImage.setLut( inputImage.getProcessor().getLut() );
 			displayImage.updateAndDraw();
 		}
 		/**
