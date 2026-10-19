@@ -86,18 +86,23 @@ public class FillLabelHolesPlugin implements PlugIn
         int conn = parseConnectivityValue(isPlanar ? 2 : 3, gd.getNextChoice());
         int bitDepth = resultBitDepthList[gd.getNextChoiceIndex()];
         
+        // work on a copy, to keep the input image intact
+        ImagePlus resultPlus = imagePlus.duplicate();
+        resultPlus.setTitle(imagePlus.getShortTitle() + "-fillHoles");
+        
         // dispatch processing according to image dimensionality
-        if (imagePlus.getStackSize() == 1)
+        if (isPlanar)
         {
-            process2d(imagePlus.getProcessor(), conn, bitDepth);
+            process2d(resultPlus.getProcessor(), conn, bitDepth);
         }
         else
         {
-            process3d(imagePlus.getStack(), conn, bitDepth);
+            process3d(resultPlus.getStack(), conn, bitDepth);
         }
         
-        // refresh display
-        imagePlus.updateAndDraw();
+        // display result
+        resultPlus.resetDisplayRange();
+        resultPlus.show();
     }
     
     private static final int parseConnectivityValue(int nd, String string)
@@ -107,7 +112,7 @@ public class FillLabelHolesPlugin implements PlugIn
         throw new RuntimeException("Requires dimensionality equal to 2 or 3, not " + nd);
     }
     
-    private void process2d(ImageProcessor labelImage, int conn, int bitDepth)
+    public static void process2d(ImageProcessor labelImage, int conn, int bitDepth)
     {
         // identified regions of the background
         ImageProcessor bgLabelMap = LabelImages.regionComponentsLabeling(labelImage, 0, conn, bitDepth);
@@ -120,7 +125,7 @@ public class FillLabelHolesPlugin implements PlugIn
             // if the background region is surrounded by only one region, then
             // the corresponding pixels in the original label map can be
             // replaced by the value of the surrounding region
-            if (region.values.size() == 1)
+            if (!region.touchesBorder && region.values.size() == 1)
             {
                 int value = region.values.get(0);
                 FloodFill.floodFill(bgLabelMap, region.x0, region.y0, labelImage, value, conn);
@@ -138,7 +143,7 @@ public class FillLabelHolesPlugin implements PlugIn
      *            the label map of the regions used to identify neighbors
      * @return the bipartite map of region labels
      */
-    private Map<Integer, BackgroundRegion2D> mapNeighbors(
+    private static Map<Integer, BackgroundRegion2D> mapNeighbors(
             ImageProcessor keyLabelMap, ImageProcessor valueLabelMap)
     {
         // retrieve image size
@@ -166,6 +171,10 @@ public class FillLabelHolesPlugin implements PlugIn
                 {
                     bgRegion = new BackgroundRegion2D(x, y);
                 }
+                if (x == 0 || y == 0 || x == sizeX - 1 || y == sizeY - 1)
+                {
+                    bgRegion.touchesBorder = true;
+                }
                 
                 // iterate over neighbors
                 for (int[] shift : shifts2d)
@@ -190,7 +199,7 @@ public class FillLabelHolesPlugin implements PlugIn
         return map;
     }
     
-    private void process3d(ImageStack labelImage, int conn, int bitDepth)
+    public static void process3d(ImageStack labelImage, int conn, int bitDepth)
     {
         // identified regions of the background
         ImageStack bgLabelMap = LabelImages.regionComponentsLabeling(labelImage, 0, conn, bitDepth);
@@ -204,7 +213,7 @@ public class FillLabelHolesPlugin implements PlugIn
             // if the background region is surrounded by only one region, then
             // the corresponding voxels in the original label map can be
             // replaced by the value of the surrounding region
-            if (region.values.size() == 1)
+            if (!region.touchesBorder && region.values.size() == 1)
             {
                 int value = region.values.get(0);
                 FloodFill3D.floodFill(bgLabelMap, region.x0, region.y0, region.z0, labelImage, value, conn);
@@ -222,7 +231,7 @@ public class FillLabelHolesPlugin implements PlugIn
      *            the label map of the regions used to identify neighbors
      * @return the bipartite map of region labels
      */
-    private Map<Integer, BackgroundRegion3D> mapNeighbors(
+    private static Map<Integer, BackgroundRegion3D> mapNeighbors(
             ImageStack keyLabelMap, ImageStack valueLabelMap)
     {
         // retrieve image size
@@ -253,6 +262,11 @@ public class FillLabelHolesPlugin implements PlugIn
                     {
                         bgRegion = new BackgroundRegion3D(x, y, z);
                     }
+                    if (x == 0 || y == 0 || z == 0 || x == sizeX - 1
+                            || y == sizeY - 1 || z == sizeZ - 1)
+                    {
+                        bgRegion.touchesBorder = true;
+                    }
                     
                     // iterate over neighbors
                     for (int[] shift : shifts3d)
@@ -281,8 +295,9 @@ public class FillLabelHolesPlugin implements PlugIn
     }
     
     
-    class BackgroundRegion2D
+    static class BackgroundRegion2D
     {
+        boolean touchesBorder = false;
         ArrayList<Integer> values = new ArrayList<Integer>(4);
         int x0;
         int y0;
@@ -294,12 +309,13 @@ public class FillLabelHolesPlugin implements PlugIn
         }
     }
     
-    class BackgroundRegion3D
+    static class BackgroundRegion3D
     {
         ArrayList<Integer> values = new ArrayList<Integer>(4);
         int x0;
         int y0;
         int z0;
+        boolean touchesBorder = false;
         
         public BackgroundRegion3D(int x0, int y0, int z0)
         {
