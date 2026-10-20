@@ -192,8 +192,12 @@ public class LabelEdition implements PlugIn
 						}
 						else if( e.getSource() == doneButton )
 						{
-							showResult();
-							win.windowClosing( null );
+							// run on the EDT: window creation/closing off the EDT
+							// (plus exec.shutdownNow() interrupting this very
+							// thread) can make the result window vanish
+							SwingUtilities.invokeLater( new Runnable() {
+								public void run() { showResult(); }
+							});
 						}
 					}
 				});
@@ -574,14 +578,19 @@ public class LabelEdition implements PlugIn
 		 */
 		void showResult()
 		{
+			ImagePlus result = null;
 			if( null != displayImage )
 			{
-				final ImagePlus result = displayImage.duplicate();
+				// duplicate before closing, as closing flushes displayImage
+				result = displayImage.duplicate();
 				result.setTitle( inputImage.getShortTitle() + "-edited" );
 				result.setSlice( displayImage.getCurrentSlice() );
 				result.setCalibration( inputImage.getCalibration() );
-				result.show();
 			}
+			// close the GUI first, then show the result so it can't be closed with it
+			win.windowClosing( null );
+			if( null != result )
+				result.show();
 		}
 		/**
 		 * Enable/disable all buttons
